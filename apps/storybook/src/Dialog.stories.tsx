@@ -24,7 +24,63 @@ import {
   Form,
   Input,
   Stack,
+  defineDethinkTheme,
 } from "@dethink/components";
+
+const operationsTheme = defineDethinkTheme({
+  colorSchemes: {
+    light: {
+      background: "oklch(0.98 0.012 225)",
+      foreground: "oklch(0.18 0.05 252)",
+      muted: "oklch(0.93 0.03 225)",
+      mutedForeground: "oklch(0.42 0.07 245)",
+      border: "oklch(0.82 0.04 225)",
+      input: "oklch(0.88 0.035 225)",
+      ring: "oklch(0.56 0.18 188)",
+      primary: "oklch(0.48 0.16 188)",
+      primaryForeground: "oklch(0.98 0.012 225)",
+      success: "oklch(0.54 0.14 150)",
+      successForeground: "oklch(0.98 0.012 150)",
+      warning: "oklch(0.7 0.16 78)",
+      warningForeground: "oklch(0.2 0.04 78)",
+      info: "oklch(0.55 0.16 245)",
+      infoForeground: "oklch(0.98 0.012 245)",
+    },
+    dark: {
+      background: "oklch(0.16 0.04 252)",
+      foreground: "oklch(0.96 0.02 230)",
+      muted: "oklch(0.24 0.05 252)",
+      mutedForeground: "oklch(0.76 0.05 230)",
+      border: "oklch(0.34 0.05 252)",
+      input: "oklch(0.31 0.05 252)",
+      ring: "oklch(0.72 0.15 188)",
+      primary: "oklch(0.7 0.15 188)",
+      primaryForeground: "oklch(0.15 0.04 252)",
+    },
+  },
+  density: {
+    comfortable: {
+      control: "3rem",
+      gap: "0.875rem",
+    },
+  },
+  fonts: {
+    body: "Avenir Next, Inter, ui-sans-serif, system-ui, sans-serif",
+    heading: "Charter, Georgia, ui-serif, serif",
+    mono: "JetBrains Mono, ui-monospace, SFMono-Regular, monospace",
+  },
+  radii: {
+    sm: "0.5rem",
+    md: "0.75rem",
+    lg: "1rem",
+  },
+  spacing: {
+    "2": "0.625rem",
+    "4": "1.125rem",
+    "6": "1.75rem",
+    "8": "2.25rem",
+  },
+});
 
 const meta = {
   title: "Components/Dialog",
@@ -312,6 +368,77 @@ export const ThemeDensityAndRTL: Story = {
     await expect(portalHost).toHaveAttribute("data-theme", "dark");
     await expect(portalHost).toHaveAttribute("data-density", "compact");
     await expect(portalHost).toHaveAttribute("dir", "rtl");
+  },
+};
+
+export const ThemeOverrides: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      density="comfortable"
+      themeConfig={operationsTheme}
+      className="min-h-[30rem] p-6"
+    >
+      <Container size="sm">
+        <Dialog defaultOpen>
+          <DialogTrigger>Open themed override dialog</DialogTrigger>
+          <DialogContent showCloseButton closeButtonLabel="Close themed dialog">
+            <DialogHeader>
+              <DialogTitle className="font-heading">Operations review</DialogTitle>
+              <DialogDescription>
+                Provider-level colors, typography, radius, spacing, and density
+                flow through the modal portal.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+              <div className="rounded-md border border-border bg-muted p-[var(--dt-space-4)]">
+                <div className="font-heading text-base font-semibold text-foreground">
+                  Theme tokens active
+                </div>
+                <p className="mt-[var(--dt-space-1)] text-muted-foreground">
+                  The dialog uses the custom provider font stack and tokenized
+                  surfaces instead of local hard-coded styles.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-[var(--dt-space-2)]">
+                <span className="rounded-sm bg-primary px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-primary-foreground">
+                  Primary
+                </span>
+                <span className="rounded-sm bg-success px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-success-foreground">
+                  Success
+                </span>
+                <span className="rounded-sm bg-warning px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-warning-foreground">
+                  Warning
+                </span>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose variant="outline">Cancel</DialogClose>
+              <DialogClose>Approve</DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </Container>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const dialog = await page.findByRole("dialog", { name: "Operations review" });
+    const portalHost = dialog.closest<HTMLElement>(
+      '[data-slot="dialog-portal-container"]',
+    );
+
+    if (!portalHost) {
+      throw new Error("Dialog story expected a provider-aware portal host.");
+    }
+
+    await expect(portalHost).toHaveAttribute("data-theme", "light");
+    await expect(portalHost).toHaveAttribute("data-density", "comfortable");
+    await expect(portalHost).toHaveStyle({
+      "--dt-color-background-light": "oklch(0.98 0.012 225)",
+      "--dt-font-heading": "Charter, Georgia, ui-serif, serif",
+      "--dt-radius-lg": "1rem",
+    });
   },
 };
 
