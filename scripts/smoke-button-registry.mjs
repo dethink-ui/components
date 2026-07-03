@@ -108,12 +108,15 @@ const flex = await readJson(join(registryRoot, "flex.json"));
 const grid = await readJson(join(registryRoot, "grid.json"));
 const link = await readJson(join(registryRoot, "link.json"));
 const numberInput = await readJson(join(registryRoot, "number-input.json"));
+const popover = await readJson(join(registryRoot, "popover.json"));
 const radioGroup = await readJson(join(registryRoot, "radio-group.json"));
 const separator = await readJson(join(registryRoot, "separator.json"));
 const select = await readJson(join(registryRoot, "select.json"));
 const stack = await readJson(join(registryRoot, "stack.json"));
 const switchItem = await readJson(join(registryRoot, "switch.json"));
 const textarea = await readJson(join(registryRoot, "textarea.json"));
+const tooltip = await readJson(join(registryRoot, "tooltip.json"));
+const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
 const timeline = await readJson(join(registryRoot, "timeline.json"));
@@ -136,12 +139,15 @@ const registryItemsByName = new Map(
     grid,
     link,
     numberInput,
+    popover,
     radioGroup,
     separator,
     select,
     stack,
     switchItem,
     textarea,
+    tooltip,
+    dropdownMenu,
     typography,
     dateTimePicker,
     timeline,
@@ -166,12 +172,15 @@ assert(flex.name === "flex", "flex registry item must be named flex.");
 assert(grid.name === "grid", "grid registry item must be named grid.");
 assert(link.name === "link", "link registry item must be named link.");
 assert(numberInput.name === "number-input", "number-input registry item must be named number-input.");
+assert(popover.name === "popover", "popover registry item must be named popover.");
 assert(radioGroup.name === "radio-group", "radio-group registry item must be named radio-group.");
 assert(separator.name === "separator", "separator registry item must be named separator.");
 assert(select.name === "select", "select registry item must be named select.");
 assert(stack.name === "stack", "stack registry item must be named stack.");
 assert(switchItem.name === "switch", "switch registry item must be named switch.");
 assert(textarea.name === "textarea", "textarea registry item must be named textarea.");
+assert(tooltip.name === "tooltip", "tooltip registry item must be named tooltip.");
+assert(dropdownMenu.name === "dropdown-menu", "dropdown-menu registry item must be named dropdown-menu.");
 assert(typography.name === "typography", "typography registry item must be named typography.");
 assert(
   dateTimePicker.name === "date-time-picker",
@@ -255,6 +264,14 @@ assert(
   "number-input registry item must depend on dethink-base.",
 );
 assert(
+  popover.registryDependencies?.includes("dethink-base"),
+  "popover registry item must depend on dethink-base.",
+);
+assert(
+  popover.registryDependencies?.includes("button"),
+  "popover registry item must depend on button for shared trigger and close styling.",
+);
+assert(
   radioGroup.registryDependencies?.includes("dethink-base"),
   "radio-group registry item must depend on dethink-base.",
 );
@@ -277,6 +294,22 @@ assert(
 assert(
   textarea.registryDependencies?.includes("dethink-base"),
   "textarea registry item must depend on dethink-base.",
+);
+assert(
+  tooltip.registryDependencies?.includes("dethink-base"),
+  "tooltip registry item must depend on dethink-base.",
+);
+assert(
+  tooltip.registryDependencies?.includes("button"),
+  "tooltip registry item must depend on button for shared trigger styling.",
+);
+assert(
+  dropdownMenu.registryDependencies?.includes("dethink-base"),
+  "dropdown-menu registry item must depend on dethink-base.",
+);
+assert(
+  dropdownMenu.registryDependencies?.includes("button"),
+  "dropdown-menu registry item must depend on button for shared trigger styling.",
 );
 assert(
   typography.registryDependencies?.includes("dethink-base"),
@@ -355,6 +388,14 @@ assert(
   "number-input registry item must not add runtime dependencies.",
 );
 assert(
+  popover.dependencies?.includes("react-aria"),
+  "popover registry item must include react-aria.",
+);
+assert(
+  popover.dependencies?.includes("react-aria-components"),
+  "popover registry item must include react-aria-components.",
+);
+assert(
   Array.isArray(radioGroup.dependencies) && radioGroup.dependencies.length === 0,
   "radio-group registry item must not add runtime dependencies.",
 );
@@ -377,6 +418,22 @@ assert(
 assert(
   Array.isArray(textarea.dependencies) && textarea.dependencies.length === 0,
   "textarea registry item must not add runtime dependencies.",
+);
+assert(
+  tooltip.dependencies?.includes("react-aria"),
+  "tooltip registry item must include react-aria.",
+);
+assert(
+  tooltip.dependencies?.includes("react-aria-components"),
+  "tooltip registry item must include react-aria-components.",
+);
+assert(
+  dropdownMenu.dependencies?.includes("react-aria"),
+  "dropdown-menu registry item must include react-aria.",
+);
+assert(
+  dropdownMenu.dependencies?.includes("react-aria-components"),
+  "dropdown-menu registry item must include react-aria-components.",
 );
 assert(
   Array.isArray(typography.dependencies) && typography.dependencies.length === 0,
@@ -412,12 +469,15 @@ for (const item of [
   grid,
   link,
   numberInput,
+  popover,
   radioGroup,
   separator,
   select,
   stack,
   switchItem,
   textarea,
+  tooltip,
+  dropdownMenu,
   typography,
   dateTimePicker,
   timeline,
@@ -437,11 +497,14 @@ await assertRegistryRelativeImportsResolve(formField, registryItemsByName);
 await assertRegistryRelativeImportsResolve(input, registryItemsByName);
 await assertRegistryRelativeImportsResolve(grid, registryItemsByName);
 await assertRegistryRelativeImportsResolve(numberInput, registryItemsByName);
+await assertRegistryRelativeImportsResolve(popover, registryItemsByName);
 await assertRegistryRelativeImportsResolve(radioGroup, registryItemsByName);
 await assertRegistryRelativeImportsResolve(separator, registryItemsByName);
 await assertRegistryRelativeImportsResolve(select, registryItemsByName);
 await assertRegistryRelativeImportsResolve(switchItem, registryItemsByName);
 await assertRegistryRelativeImportsResolve(textarea, registryItemsByName);
+await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
+await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
 
 const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
@@ -495,6 +558,10 @@ const linkSource = await readFile(
   join(root, "packages/components/src/components/link/link.tsx"),
   "utf8",
 );
+const popoverSource = await readFile(
+  join(root, "packages/components/src/components/popover/popover.tsx"),
+  "utf8",
+);
 const radioGroupSource = await readFile(
   join(root, "packages/components/src/components/radio-group/radio-group.tsx"),
   "utf8",
@@ -515,6 +582,14 @@ const switchSource = await readFile(
   join(root, "packages/components/src/components/switch/switch.tsx"),
   "utf8",
 );
+const tooltipSource = await readFile(
+  join(root, "packages/components/src/components/tooltip/tooltip.tsx"),
+  "utf8",
+);
+const dropdownMenuSource = await readFile(
+  join(root, "packages/components/src/components/dropdown-menu/dropdown-menu.tsx"),
+  "utf8",
+);
 const typographySource = await readFile(
   join(root, "packages/components/src/components/typography/typography.tsx"),
   "utf8",
@@ -529,6 +604,10 @@ const dialogSource = await readFile(
 );
 const providerPortalSource = await readFile(
   join(root, "packages/components/src/utils/provider-portal.tsx"),
+  "utf8",
+);
+const positionedOverlaySource = await readFile(
+  join(root, "packages/components/src/utils/positioned-overlay.tsx"),
   "utf8",
 );
 const timelineSource = await readFile(
@@ -1341,6 +1420,102 @@ assert(
   "provider portal helper must resync provider attribute changes.",
 );
 assert(!dialogSource.includes("@radix-ui"), "dialog source must remain Radix-free.");
+assert(
+  positionedOverlaySource.includes("positionedOverlayPopoverDefaults") &&
+    positionedOverlaySource.includes("positionedOverlayTooltipDefaults") &&
+    positionedOverlaySource.includes("positionedOverlayDropdownMenuDefaults"),
+  "positioned overlay helper must expose component-specific overlay defaults.",
+);
+assert(
+  positionedOverlaySource.includes("motion-safe:data-[entering]:animate-overlay-in") &&
+    positionedOverlaySource.includes("motion-reduce:animate-none"),
+  "positioned overlay helper must include reduced-motion-aware overlay classes.",
+);
+assert(
+  popoverSource.includes("react-aria-components"),
+  "popover source must use React Aria Components.",
+);
+assert(
+  popoverSource.includes('portalSlot: "popover-portal-container"'),
+  "popover source must use the provider-aware portal helper.",
+);
+assert(
+  popoverSource.includes('data-slot={dataSlot ?? "popover"}') &&
+    popoverSource.includes('data-slot="popover-trigger"') &&
+    popoverSource.includes('data-slot="popover-content"') &&
+    popoverSource.includes('data-slot="popover-panel"') &&
+    popoverSource.includes('data-slot="popover-title"') &&
+    popoverSource.includes('data-slot="popover-description"') &&
+    popoverSource.includes('data-slot="popover-arrow"'),
+  "popover source must expose stable overlay anatomy slots.",
+);
+assert(
+  popoverSource.includes("positionedOverlaySurfaceClassNames") &&
+    popoverSource.includes("focus-visible:outline-ring"),
+  "popover source must use provider-level token utilities.",
+);
+assert(
+  tooltipSource.includes("react-aria-components"),
+  "tooltip source must use React Aria Components.",
+);
+assert(
+  tooltipSource.includes('portalSlot: "tooltip-portal-container"'),
+  "tooltip source must use the provider-aware portal helper.",
+);
+assert(
+  tooltipSource.includes('data-slot={dataSlot ?? "tooltip"}') &&
+    tooltipSource.includes('data-slot="tooltip-trigger"') &&
+    tooltipSource.includes('data-slot="tooltip-content"') &&
+    tooltipSource.includes('data-slot="tooltip-arrow"'),
+  "tooltip source must expose stable overlay anatomy slots.",
+);
+assert(
+  tooltipSource.includes("bg-foreground") &&
+    tooltipSource.includes("text-background") &&
+    tooltipSource.includes("positionedOverlaySurfaceClassNames"),
+  "tooltip source must use provider tokens and reduced-motion-aware classes.",
+);
+assert(
+  dropdownMenuSource.includes("react-aria-components"),
+  "dropdown-menu source must use React Aria Components.",
+);
+assert(
+  dropdownMenuSource.includes('portalSlot: "dropdown-menu-portal-container"'),
+  "dropdown-menu source must use the provider-aware portal helper.",
+);
+assert(
+  dropdownMenuSource.includes('data-slot={dataSlot ?? "dropdown-menu"}') &&
+    dropdownMenuSource.includes('data-slot="dropdown-menu-trigger"') &&
+    dropdownMenuSource.includes('contentSlot = "dropdown-menu-content"') &&
+    dropdownMenuSource.includes('data-slot="dropdown-menu-menu"') &&
+    dropdownMenuSource.includes('data-slot="dropdown-menu-item"') &&
+    dropdownMenuSource.includes('data-slot="dropdown-menu-label"') &&
+    dropdownMenuSource.includes('data-slot="dropdown-menu-separator"') &&
+    dropdownMenuSource.includes("dropdown-menu-submenu-content") &&
+    dropdownMenuSource.includes('data-slot="dropdown-menu-arrow"'),
+  "dropdown-menu source must expose stable action-menu anatomy slots.",
+);
+assert(
+  dropdownMenuSource.includes("isDisabled={disabled || undefined}") &&
+    dropdownMenuSource.includes("data-destructive") &&
+    dropdownMenuSource.includes("hasSubmenu"),
+  "dropdown-menu source must support item disabled state, destructive items, and submenu state.",
+);
+assert(
+  dropdownMenuSource.includes("positionedOverlaySurfaceClassNames") &&
+    dropdownMenuSource.includes("text-destructive") &&
+    dropdownMenuSource.includes("motion-safe:transition"),
+  "dropdown-menu source must use provider tokens and reduced-motion-aware classes.",
+);
+for (const [name, source] of [
+  ["popover", popoverSource],
+  ["tooltip", tooltipSource],
+  ["dropdown-menu", dropdownMenuSource],
+]) {
+  assert(!source.includes("@radix-ui"), `${name} source must remain Radix-free.`);
+  assert(!source.includes("framer-motion"), `${name} source must not use Motion.`);
+  assert(!source.includes("floating-ui"), `${name} source must not use Floating UI.`);
+}
 assert(timelineSource.includes("data-slot=\"timeline\""), "timeline source must expose stable root slot data.");
 assert(timelineSource.includes("data-slot=\"timeline-viewport\""), "timeline source must expose viewport slot data.");
 assert(timelineSource.includes("<ol"), "timeline source must render an ordered list.");

@@ -31,6 +31,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuItemLabel,
+  DropdownMenuItemShortcut,
+  DropdownMenuLabel,
+  DropdownMenuSection,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Field,
   FieldContent,
   FieldControl,
@@ -52,6 +61,14 @@ import {
   Link,
   Divider,
   NumberInput,
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverDescription,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -61,6 +78,9 @@ import {
   Switch,
   Text,
   Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@dethink/components";
 
 function ArrowRightIcon() {
@@ -243,6 +263,77 @@ export function App() {
             <ComboboxItem value="staging">Staging</ComboboxItem>
             <ComboboxItem value="sandbox">Sandbox</ComboboxItem>
           </Combobox>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Popover smoke</CardTitle>
+              <CardDescription>
+                Verifies anchored overlay exports, provider-aware portals, and
+                token-backed content styling.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Popover>
+                <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+                <PopoverContent showArrow>
+                  <PopoverHeader>
+                    <PopoverTitle>Refresh filters</PopoverTitle>
+                    <PopoverDescription>
+                      Queue a refresh after changing report filters.
+                    </PopoverDescription>
+                  </PopoverHeader>
+                  <PopoverFooter>
+                    <PopoverClose>Done</PopoverClose>
+                  </PopoverFooter>
+                </PopoverContent>
+              </Popover>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Tooltip smoke</CardTitle>
+              <CardDescription>
+                Verifies hover and focus help through provider-aware portals.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tooltip delay={0} closeDelay={0}>
+                <TooltipTrigger aria-label="Refresh report" size="icon">
+                  <RefreshIcon />
+                </TooltipTrigger>
+                <TooltipContent showArrow>Refresh report data</TooltipContent>
+              </Tooltip>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>DropdownMenu smoke</CardTitle>
+              <CardDescription>
+                Verifies action-menu exports, menu semantics, shortcuts, and the
+                provider-aware portal path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DropdownMenu>
+                <DropdownMenuTrigger variant="outline">
+                  Open action menu
+                </DropdownMenuTrigger>
+                <DropdownMenuContent showArrow>
+                  <DropdownMenuSection>
+                    <DropdownMenuLabel>Report</DropdownMenuLabel>
+                    <DropdownMenuItem>
+                      <DropdownMenuItemLabel>Refresh report</DropdownMenuItemLabel>
+                      <DropdownMenuItemShortcut>R</DropdownMenuItemShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>Duplicate report</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem destructive>
+                      Delete report
+                    </DropdownMenuItem>
+                  </DropdownMenuSection>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </CardContent>
+          </Card>
           <Card as="section">
             <CardHeader>
               <CardTitle>Dialog smoke</CardTitle>
