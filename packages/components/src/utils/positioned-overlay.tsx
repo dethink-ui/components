@@ -53,6 +53,19 @@ export const positionedOverlayTooltipDefaults = {
   placement: "top",
 } satisfies Required<PositionedOverlayPositionProps>;
 
+export const positionedOverlayDropdownMenuDefaults = {
+  ...positionedOverlayPositionDefaults,
+  offset: 8,
+  placement: "bottom start",
+} satisfies Required<PositionedOverlayPositionProps>;
+
+export const positionedOverlayDropdownSubmenuDefaults = {
+  ...positionedOverlayPositionDefaults,
+  crossOffset: -4,
+  offset: -2,
+  placement: "right top",
+} satisfies Required<PositionedOverlayPositionProps>;
+
 const positionedOverlaySurfaceBaseClasses =
   "z-50 max-h-[min(var(--dt-overlay-max-height,18rem),calc(100dvh_-_var(--dt-space-4)))] min-w-[var(--dt-overlay-min-width,12rem)] overflow-auto rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [--dt-overlay-motion-x:0px] [--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=bottom]:[--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))] data-[placement=top]:[--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-x:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-y:0px] data-[placement=right]:[--dt-overlay-motion-x:calc(0px_-_var(--dt-space-1))] data-[placement=right]:[--dt-overlay-motion-y:0px] motion-safe:data-[entering]:animate-overlay-in motion-safe:data-[exiting]:animate-overlay-out motion-reduce:animate-none";
 

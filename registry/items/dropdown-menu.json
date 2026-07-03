@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dropdown-menu",
+  "type": "registry:ui",
+  "title": "DropdownMenu",
+  "description": "React Aria backed action menu primitive with provider-aware portals, controlled open state, menu sections, shortcuts, disabled and destructive items, submenus, token-backed styling, reduced-motion transitions, and positioning props.",
+  "dependencies": ["react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/dropdown-menu/dropdown-menu.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/dropdown-menu/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/positioned-overlay.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

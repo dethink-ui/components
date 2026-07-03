@@ -5,6 +5,8 @@ import {
   PositionedOverlayArrow,
   positionedOverlayArrowClassNames,
   positionedOverlayArrowShapeClassNames,
+  positionedOverlayDropdownMenuDefaults,
+  positionedOverlayDropdownSubmenuDefaults,
   positionedOverlayPopoverDefaults,
   positionedOverlayPositionDefaults,
   positionedOverlaySurfaceClassNames,
@@ -30,6 +32,17 @@ describe("positioned overlay utilities", () => {
       ...positionedOverlayPositionDefaults,
       offset: 8,
       placement: "top",
+    });
+    expect(positionedOverlayDropdownMenuDefaults).toEqual({
+      ...positionedOverlayPositionDefaults,
+      offset: 8,
+      placement: "bottom start",
+    });
+    expect(positionedOverlayDropdownSubmenuDefaults).toEqual({
+      ...positionedOverlayPositionDefaults,
+      crossOffset: -4,
+      offset: -2,
+      placement: "right top",
     });
   });
 

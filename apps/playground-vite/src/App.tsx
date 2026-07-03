@@ -31,6 +31,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuItemLabel,
+  DropdownMenuItemShortcut,
+  DropdownMenuLabel,
+  DropdownMenuSection,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Field,
   FieldContent,
   FieldControl,
@@ -293,6 +302,36 @@ export function App() {
                 </TooltipTrigger>
                 <TooltipContent showArrow>Refresh report data</TooltipContent>
               </Tooltip>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>DropdownMenu smoke</CardTitle>
+              <CardDescription>
+                Verifies action-menu exports, menu semantics, shortcuts, and the
+                provider-aware portal path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DropdownMenu>
+                <DropdownMenuTrigger variant="outline">
+                  Open action menu
+                </DropdownMenuTrigger>
+                <DropdownMenuContent showArrow>
+                  <DropdownMenuSection>
+                    <DropdownMenuLabel>Report</DropdownMenuLabel>
+                    <DropdownMenuItem>
+                      <DropdownMenuItemLabel>Refresh report</DropdownMenuItemLabel>
+                      <DropdownMenuItemShortcut>R</DropdownMenuItemShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>Duplicate report</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem destructive>
+                      Delete report
+                    </DropdownMenuItem>
+                  </DropdownMenuSection>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </CardContent>
           </Card>
           <Card as="section">
