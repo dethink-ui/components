@@ -141,6 +141,41 @@ describe("Dialog", () => {
     expect(screen.getByText("closed")).toBeInTheDocument();
   });
 
+  it("sizes close actions by content unless an explicit size is provided", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dialog>
+        <DialogTrigger>Open sizing dialog</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sizing dialog</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose>Save changes</DialogClose>
+            <DialogClose aria-label="Dismiss dialog" />
+            <DialogClose size="sm">Compact close</DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open sizing dialog" }));
+
+    expect(screen.getByRole("button", { name: "Save changes" })).toHaveClass(
+      "px-[var(--dt-space-4)]",
+    );
+    expect(screen.getByRole("button", { name: "Save changes" })).not.toHaveClass(
+      "w-density-control",
+    );
+    expect(screen.getByRole("button", { name: "Dismiss dialog" })).toHaveClass(
+      "w-density-control",
+    );
+    expect(screen.getByRole("button", { name: "Compact close" })).toHaveClass(
+      "px-[var(--dt-space-3)]",
+    );
+  });
+
   it("supports uncontrolled open state, Escape close, and keyboard dismiss prevention", async () => {
     const user = userEvent.setup();
     const handleOpenChange = vi.fn();

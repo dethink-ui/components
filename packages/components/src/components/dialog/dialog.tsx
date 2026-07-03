@@ -517,23 +517,32 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
       "aria-label": ariaLabel,
       children,
       className,
-      size = "icon",
+      size,
       variant = "ghost",
       ...props
     },
     ref,
-  ) => (
-    <AriaButton
-      {...props}
-      ref={ref}
-      aria-label={ariaLabel ?? (children ? undefined : "Close dialog")}
-      slot="close"
-      data-slot="dialog-close"
-      className={dialogTriggerClassNames({ className, size, variant })}
-    >
-      {children ?? <CloseIcon />}
-    </AriaButton>
-  ),
+  ) => {
+    const hasVisibleChildren = children != null;
+    const resolvedSize = size ?? (hasVisibleChildren ? "md" : "icon");
+
+    return (
+      <AriaButton
+        {...props}
+        ref={ref}
+        aria-label={ariaLabel ?? (hasVisibleChildren ? undefined : "Close dialog")}
+        slot="close"
+        data-slot="dialog-close"
+        className={dialogTriggerClassNames({
+          className,
+          size: resolvedSize,
+          variant,
+        })}
+      >
+        {hasVisibleChildren ? children : <CloseIcon />}
+      </AriaButton>
+    );
+  },
 );
 
 DialogClose.displayName = "DialogClose";
