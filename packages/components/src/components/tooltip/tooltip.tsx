@@ -74,7 +74,7 @@ const tooltipRootClasses = "contents";
 const tooltipContentClasses =
   "min-w-0 max-w-[min(var(--dt-tooltip-max-width,18rem),calc(100vw_-_var(--dt-space-4)))] overflow-visible rounded-md border-border/40 bg-foreground px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-xs leading-5 text-background shadow-md";
 
-const tooltipArrowShapeClasses = "border-border/40 bg-foreground";
+const tooltipArrowShapeClasses = "fill-foreground stroke-border/40";
 
 export function tooltipClassNames({
   className,

@@ -28,6 +28,7 @@ describe("positioned overlay utilities", () => {
     });
     expect(positionedOverlayTooltipDefaults).toEqual({
       ...positionedOverlayPositionDefaults,
+      offset: 8,
       placement: "top",
     });
   });
@@ -95,9 +96,15 @@ describe("positioned overlay utilities", () => {
       "data-[placement=bottom]:rotate-180",
     );
     expect(positionedOverlayArrowClassNames()).toContain(
-      "data-[placement=right]:-rotate-90",
+      "data-[placement=right]:rotate-90",
     );
-    expect(positionedOverlayArrowShapeClassNames()).toContain("bg-background");
+    expect(positionedOverlayArrowClassNames()).toContain(
+      "data-[placement=left]:-rotate-90",
+    );
+    expect(positionedOverlayArrowShapeClassNames()).toContain(
+      "fill-background",
+    );
+    expect(positionedOverlayArrowShapeClassNames()).toContain("stroke-border");
     expect(positionedOverlayArrowShapeClassNames({ className: "custom-shape" }))
       .toContain("custom-shape");
   });
@@ -123,6 +130,8 @@ describe("positioned overlay utilities", () => {
     expect(ref.current).toBe(arrow);
     expect(shape).toBeInTheDocument();
     expect(shape).toHaveAttribute("aria-hidden", "true");
+    expect(shape).toHaveAttribute("focusable", "false");
+    expect(shape?.tagName.toLowerCase()).toBe("svg");
     expect(shape).toHaveClass("custom-shape");
   });
 });

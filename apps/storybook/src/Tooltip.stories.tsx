@@ -35,13 +35,18 @@ type Story = StoryObj<typeof meta>;
 
 function RefreshIcon() {
   return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 16 16">
+    <svg
+      aria-hidden="true"
+      className="size-4"
+      fill="none"
+      viewBox="0 0 16 16"
+    >
       <path
-        d="M13 4.5V1.75h-2.75M3 11.5v2.75h2.75M12.15 6A4.5 4.5 0 0 0 4.2 3.7L3 5M3.85 10A4.5 4.5 0 0 0 11.8 12.3L13 11"
+        d="M12.75 8A4.75 4.75 0 1 1 11.36 4.64M12.75 3.5v3.25H9.5"
         stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
-        strokeWidth="1.75"
+        strokeWidth="1.5"
       />
     </svg>
   );
@@ -78,7 +83,15 @@ export const IconButton: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole("button", { name: "Refresh dashboard" });
+    const body = canvasElement.ownerDocument.body;
 
+    body.dispatchEvent(
+      new PointerEvent("pointerdown", {
+        bubbles: true,
+        pointerType: "mouse",
+      }),
+    );
+    body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
     await userEvent.hover(trigger);
     await expect(await page.findByRole("tooltip")).toHaveTextContent(
       "Refresh dashboard data",

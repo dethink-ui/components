@@ -265,7 +265,8 @@ describe("Tooltip", () => {
     expect(tooltipArrowClassNames({ className: "custom-arrow" })).toContain(
       "custom-arrow",
     );
-    expect(tooltipArrowShapeClassNames()).toContain("bg-foreground");
+    expect(tooltipArrowShapeClassNames()).toContain("fill-foreground");
+    expect(tooltipArrowShapeClassNames()).toContain("stroke-border/40");
   });
 
   it("renders a stable arrow slot and forwards refs", () => {
@@ -281,6 +282,7 @@ describe("Tooltip", () => {
     expect(arrow).toBeInTheDocument();
     expect(ref.current).toBe(arrow);
     expect(shape).toBeInTheDocument();
-    expect(shape).toHaveClass("bg-foreground");
+    expect(shape?.tagName.toLowerCase()).toBe("svg");
+    expect(shape).toHaveClass("fill-foreground");
   });
 });
