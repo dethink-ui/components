@@ -115,6 +115,7 @@ const select = await readJson(join(registryRoot, "select.json"));
 const stack = await readJson(join(registryRoot, "stack.json"));
 const switchItem = await readJson(join(registryRoot, "switch.json"));
 const table = await readJson(join(registryRoot, "table.json"));
+const dataTable = await readJson(join(registryRoot, "data-table.json"));
 const textarea = await readJson(join(registryRoot, "textarea.json"));
 const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
@@ -147,6 +148,7 @@ const registryItemsByName = new Map(
     stack,
     switchItem,
     table,
+    dataTable,
     textarea,
     tooltip,
     dropdownMenu,
@@ -181,6 +183,7 @@ assert(select.name === "select", "select registry item must be named select.");
 assert(stack.name === "stack", "stack registry item must be named stack.");
 assert(switchItem.name === "switch", "switch registry item must be named switch.");
 assert(table.name === "table", "table registry item must be named table.");
+assert(dataTable.name === "data-table", "data-table registry item must be named data-table.");
 assert(textarea.name === "textarea", "textarea registry item must be named textarea.");
 assert(tooltip.name === "tooltip", "tooltip registry item must be named tooltip.");
 assert(dropdownMenu.name === "dropdown-menu", "dropdown-menu registry item must be named dropdown-menu.");
@@ -297,6 +300,26 @@ assert(
 assert(
   table.registryDependencies?.includes("dethink-base"),
   "table registry item must depend on dethink-base.",
+);
+assert(
+  dataTable.registryDependencies?.includes("dethink-base"),
+  "data-table registry item must depend on dethink-base.",
+);
+assert(
+  dataTable.registryDependencies?.includes("table"),
+  "data-table registry item must depend on table for semantic table rendering.",
+);
+assert(
+  dataTable.registryDependencies?.includes("button"),
+  "data-table registry item must depend on button for pagination and action controls.",
+);
+assert(
+  dataTable.registryDependencies?.includes("checkbox"),
+  "data-table registry item must depend on checkbox for row selection controls.",
+);
+assert(
+  dataTable.registryDependencies?.includes("input"),
+  "data-table registry item must depend on input for filtering controls.",
 );
 assert(
   textarea.registryDependencies?.includes("dethink-base"),
@@ -435,6 +458,10 @@ assert(
   "table registry item must not add runtime dependencies.",
 );
 assert(
+  dataTable.dependencies?.includes("@tanstack/react-table"),
+  "data-table registry item must include @tanstack/react-table.",
+);
+assert(
   Array.isArray(textarea.dependencies) && textarea.dependencies.length === 0,
   "textarea registry item must not add runtime dependencies.",
 );
@@ -495,6 +522,7 @@ for (const item of [
   stack,
   switchItem,
   table,
+  dataTable,
   textarea,
   tooltip,
   dropdownMenu,
@@ -523,6 +551,7 @@ await assertRegistryRelativeImportsResolve(separator, registryItemsByName);
 await assertRegistryRelativeImportsResolve(select, registryItemsByName);
 await assertRegistryRelativeImportsResolve(switchItem, registryItemsByName);
 await assertRegistryRelativeImportsResolve(table, registryItemsByName);
+await assertRegistryRelativeImportsResolve(dataTable, registryItemsByName);
 await assertRegistryRelativeImportsResolve(textarea, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
@@ -605,6 +634,10 @@ const switchSource = await readFile(
 );
 const tableSource = await readFile(
   join(root, "packages/components/src/components/table/table.tsx"),
+  "utf8",
+);
+const dataTableSource = await readFile(
+  join(root, "packages/components/src/components/data-table/data-table.tsx"),
   "utf8",
 );
 const tooltipSource = await readFile(
@@ -1392,6 +1425,80 @@ assert(
   !tableSource.includes("react-aria"),
   "table source must remain dependency-free and avoid grid-style React Aria behavior.",
 );
+assert(
+  dataTableSource.includes("@tanstack/react-table"),
+  "data-table source must use TanStack Table for headless state.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table"'),
+  "data-table source must expose stable root slot data.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-toolbar"'),
+  "data-table source must expose toolbar slot data.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-global-filter"'),
+  "data-table source must expose global filter slot data.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-column-visibility"'),
+  "data-table source must expose column visibility slot data.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-pagination"'),
+  "data-table source must expose pagination slot data.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-sort-button"'),
+  "data-table source must expose sort button slot data.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-sort-icon"'),
+  "data-table source must expose icon-based sort state.",
+);
+assert(
+  dataTableSource.includes('data-slot="data-table-header-content"') &&
+    dataTableSource.includes('data-slot="data-table-column-filter"'),
+  "data-table source must separate header labels from column filter controls.",
+);
+assert(
+  dataTableSource.includes('data-table-slot="selection-cell"'),
+  "data-table source must expose selection cell slot data.",
+);
+assert(
+  dataTableSource.includes('data-table-slot="row-actions"'),
+  "data-table source must expose row action slot data.",
+);
+assert(
+  dataTableSource.includes("aria-sort={getAriaSort(sorted)}"),
+  "data-table source must expose aria-sort on sorted header cells.",
+);
+assert(
+  dataTableSource.includes("manualFiltering") &&
+    dataTableSource.includes("manualPagination") &&
+    dataTableSource.includes("manualSorting"),
+  "data-table source must expose manual server-mode flags.",
+);
+assert(
+  dataTableSource.includes("getFilteredRowModel") &&
+    dataTableSource.includes("getPaginationRowModel") &&
+    dataTableSource.includes("getSortedRowModel"),
+  "data-table source must wire local row models for filtering, pagination, and sorting.",
+);
+assert(
+  dataTableSource.includes("Checkbox") &&
+    dataTableSource.includes("Input") &&
+    dataTableSource.includes("Button"),
+  "data-table source must compose existing controls.",
+);
+assert(
+  dataTableSource.includes("role=\"status\"") &&
+    dataTableSource.includes("role=\"alert\""),
+  "data-table source must expose accessible loading and error states.",
+);
+assert(!dataTableSource.includes('role="grid"'), "data-table source must not add grid roles.");
+assert(!dataTableSource.includes("@radix-ui"), "data-table source must remain Radix-free.");
 assert(
   typographySource.includes('"data-slot": "typography"'),
   "typography source must expose stable typography slot data.",
