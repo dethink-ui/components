@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "table",
+  "type": "registry:ui",
+  "title": "Table",
+  "description": "Semantic Table primitive with native table anatomy, responsive overflow wrapping, density-aware cell spacing, caption placement, row state hooks, and token-backed alignment styles.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/table/table.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/table/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

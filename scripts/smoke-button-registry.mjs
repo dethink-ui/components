@@ -114,6 +114,7 @@ const separator = await readJson(join(registryRoot, "separator.json"));
 const select = await readJson(join(registryRoot, "select.json"));
 const stack = await readJson(join(registryRoot, "stack.json"));
 const switchItem = await readJson(join(registryRoot, "switch.json"));
+const table = await readJson(join(registryRoot, "table.json"));
 const textarea = await readJson(join(registryRoot, "textarea.json"));
 const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
@@ -145,6 +146,7 @@ const registryItemsByName = new Map(
     select,
     stack,
     switchItem,
+    table,
     textarea,
     tooltip,
     dropdownMenu,
@@ -178,6 +180,7 @@ assert(separator.name === "separator", "separator registry item must be named se
 assert(select.name === "select", "select registry item must be named select.");
 assert(stack.name === "stack", "stack registry item must be named stack.");
 assert(switchItem.name === "switch", "switch registry item must be named switch.");
+assert(table.name === "table", "table registry item must be named table.");
 assert(textarea.name === "textarea", "textarea registry item must be named textarea.");
 assert(tooltip.name === "tooltip", "tooltip registry item must be named tooltip.");
 assert(dropdownMenu.name === "dropdown-menu", "dropdown-menu registry item must be named dropdown-menu.");
@@ -290,6 +293,10 @@ assert(
 assert(
   switchItem.registryDependencies?.includes("dethink-base"),
   "switch registry item must depend on dethink-base.",
+);
+assert(
+  table.registryDependencies?.includes("dethink-base"),
+  "table registry item must depend on dethink-base.",
 );
 assert(
   textarea.registryDependencies?.includes("dethink-base"),
@@ -424,6 +431,10 @@ assert(
   "switch registry item must not add runtime dependencies.",
 );
 assert(
+  Array.isArray(table.dependencies) && table.dependencies.length === 0,
+  "table registry item must not add runtime dependencies.",
+);
+assert(
   Array.isArray(textarea.dependencies) && textarea.dependencies.length === 0,
   "textarea registry item must not add runtime dependencies.",
 );
@@ -483,6 +494,7 @@ for (const item of [
   select,
   stack,
   switchItem,
+  table,
   textarea,
   tooltip,
   dropdownMenu,
@@ -510,6 +522,7 @@ await assertRegistryRelativeImportsResolve(radioGroup, registryItemsByName);
 await assertRegistryRelativeImportsResolve(separator, registryItemsByName);
 await assertRegistryRelativeImportsResolve(select, registryItemsByName);
 await assertRegistryRelativeImportsResolve(switchItem, registryItemsByName);
+await assertRegistryRelativeImportsResolve(table, registryItemsByName);
 await assertRegistryRelativeImportsResolve(textarea, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
@@ -588,6 +601,10 @@ const stackSource = await readFile(
 );
 const switchSource = await readFile(
   join(root, "packages/components/src/components/switch/switch.tsx"),
+  "utf8",
+);
+const tableSource = await readFile(
+  join(root, "packages/components/src/components/table/table.tsx"),
   "utf8",
 );
 const tooltipSource = await readFile(
@@ -1272,6 +1289,109 @@ assert(
   "switch source must include visible focus styling.",
 );
 assert(!switchSource.includes("@radix-ui"), "switch source must remain Radix-free.");
+assert(
+  tableSource.includes('data-slot="table-container"'),
+  "table source must expose stable responsive wrapper slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table"'),
+  "table source must expose stable native table slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-header"'),
+  "table source must expose stable header slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-body"'),
+  "table source must expose stable body slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-footer"'),
+  "table source must expose stable footer slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-row"'),
+  "table source must expose stable row slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-head"'),
+  "table source must expose stable header cell slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-cell"'),
+  "table source must expose stable data cell slot data.",
+);
+assert(
+  tableSource.includes('data-slot="table-caption"'),
+  "table source must expose stable caption slot data.",
+);
+assert(tableSource.includes("TableDensity"), "table source must expose density typing.");
+assert(
+  tableSource.includes("TableCaptionPlacement"),
+  "table source must expose caption placement typing.",
+);
+assert(
+  tableSource.includes("TableCellAlign"),
+  "table source must expose logical cell alignment typing.",
+);
+assert(
+  tableSource.includes("TableRowTone"),
+  "table source must expose row tone typing.",
+);
+assert(
+  tableSource.includes("tableContainerClassNames"),
+  "table source must expose container class-name composition.",
+);
+assert(
+  tableSource.includes("tableCellClassNames"),
+  "table source must expose cell class-name composition.",
+);
+assert(
+  tableSource.includes("overflow-x-auto"),
+  "table source must wrap native tables with responsive horizontal overflow.",
+);
+assert(
+  tableSource.includes("scope = \"col\""),
+  "table source must default header cells to column scope.",
+);
+assert(
+  tableSource.includes("--table-cell-px") && tableSource.includes("--table-cell-py"),
+  "table source must use density-backed cell spacing variables.",
+);
+assert(
+  tableSource.includes("h-[var(--table-row-min-height)]"),
+  "table source must apply density-backed row height to table cells.",
+);
+assert(
+  tableSource.includes("[data-slot=checkbox-input]") &&
+    tableSource.includes("input[type=checkbox]") &&
+    !tableSource.includes("[role=checkbox]"),
+  "table source must target real checkbox markup for compact selection cell padding.",
+);
+assert(tableSource.includes("border-border"), "table source must use tokenized borders.");
+assert(tableSource.includes("bg-muted"), "table source must use tokenized muted row states.");
+assert(
+  tableSource.includes("motion-safe:transition-colors") &&
+    tableSource.includes("motion-safe:duration-150") &&
+    tableSource.includes("motion-safe:ease-out") &&
+    tableSource.includes("motion-reduce:transition-none"),
+  "table source must animate row hover color with a reduced-motion fallback.",
+);
+assert(
+  tableSource.includes("text-muted-foreground"),
+  "table source must use tokenized caption and header text.",
+);
+assert(tableSource.includes("tabular-nums"), "table source must expose numeric cell styling.");
+assert(tableSource.includes("text-end"), "table source must expose logical end alignment.");
+assert(
+  tableSource.includes("caption-top") && tableSource.includes("caption-bottom"),
+  "table source must expose caption placement utilities.",
+);
+assert(!tableSource.includes("@radix-ui"), "table source must remain Radix-free.");
+assert(
+  !tableSource.includes("react-aria"),
+  "table source must remain dependency-free and avoid grid-style React Aria behavior.",
+);
 assert(
   typographySource.includes('"data-slot": "typography"'),
   "typography source must expose stable typography slot data.",
