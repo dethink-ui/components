@@ -153,6 +153,9 @@ const dialogHeaderWithCloseButtonClasses =
 const dialogFooterClasses =
   "flex flex-col-reverse gap-density-gap p-[var(--dt-space-6)] pt-[var(--dt-space-3)] sm:flex-row sm:justify-end";
 
+const alertDialogFooterClasses =
+  "flex flex-row flex-wrap items-center justify-end gap-density-gap p-[var(--dt-space-6)] pt-[var(--dt-space-3)]";
+
 const dialogTitleClasses =
   "text-lg font-semibold leading-7 tracking-normal text-foreground";
 
@@ -626,3 +629,552 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 );
 
 DialogClose.displayName = "DialogClose";
+
+export interface AlertDialogProps extends DialogProps {}
+
+export interface AlertDialogTriggerProps extends DialogTriggerProps {}
+
+export interface AlertDialogContentProps extends DialogContentProps {}
+
+export interface AlertDialogHeaderProps extends DialogHeaderProps {}
+
+export interface AlertDialogFooterProps extends DialogFooterProps {}
+
+export interface AlertDialogTitleProps extends DialogTitleProps {}
+
+export interface AlertDialogDescriptionProps extends DialogDescriptionProps {}
+
+export interface AlertDialogCloseProps extends DialogCloseProps {}
+
+export interface AlertDialogCancelProps extends DialogCloseProps {}
+
+export interface AlertDialogActionProps extends DialogCloseProps {}
+
+interface AlertDialogContentContextValue {
+  defaultTitleId: string;
+  hasCloseButton: boolean;
+  setDescriptionId: (id: string | null) => void;
+  setTitleId: (id: string | null) => void;
+}
+
+const AlertDialogContentContext =
+  createContext<AlertDialogContentContextValue | null>(null);
+
+export function alertDialogClassNames({
+  className,
+}: Pick<AlertDialogProps, "className"> = {}) {
+  return cn(dialogRootClasses, className);
+}
+
+export function alertDialogTriggerClassNames({
+  className,
+  size = "md",
+  variant = "solid",
+}: Pick<AlertDialogTriggerProps, "className" | "size" | "variant"> = {}) {
+  return buttonClassNames({ className, size, variant });
+}
+
+export function alertDialogOverlayClassNames({
+  className,
+}: {
+  className?: string;
+} = {}) {
+  return cn(dialogOverlayBaseClasses, className);
+}
+
+export function alertDialogContentClassNames({
+  className,
+  scrollBehavior = "inside",
+  size = "md",
+}: Pick<
+  AlertDialogContentProps,
+  "className" | "scrollBehavior" | "size"
+> = {}) {
+  return cn(
+    dialogContentBaseClasses,
+    dialogContentSizeClasses[size],
+    dialogContentScrollBehaviorClasses[scrollBehavior],
+    className,
+  );
+}
+
+export function alertDialogHeaderClassNames({
+  className,
+  hasCloseButton = false,
+}: Pick<AlertDialogHeaderProps, "className"> & {
+  hasCloseButton?: boolean;
+} = {}) {
+  return cn(
+    dialogHeaderClasses,
+    hasCloseButton && dialogHeaderWithCloseButtonClasses,
+    className,
+  );
+}
+
+export function alertDialogFooterClassNames({
+  className,
+}: Pick<AlertDialogFooterProps, "className"> = {}) {
+  return cn(alertDialogFooterClasses, className);
+}
+
+export function alertDialogTitleClassNames({
+  className,
+  visuallyHidden = false,
+}: Pick<AlertDialogTitleProps, "className" | "visuallyHidden"> = {}) {
+  return cn(dialogTitleClasses, visuallyHidden && visuallyHiddenClasses, className);
+}
+
+export function alertDialogDescriptionClassNames({
+  className,
+}: Pick<AlertDialogDescriptionProps, "className"> = {}) {
+  return cn(dialogDescriptionClasses, className);
+}
+
+export function alertDialogCloseButtonClassNames({
+  className,
+}: {
+  className?: string;
+} = {}) {
+  return cn(dialogCloseButtonClasses, className);
+}
+
+function alertDialogButtonClassNames({
+  className,
+  size = "md",
+  variant = "solid",
+}: Pick<AlertDialogCloseProps, "className" | "size" | "variant"> = {}) {
+  return buttonClassNames({ className, size, variant });
+}
+
+export function alertDialogCloseClassNames({
+  className,
+  size = "icon",
+  variant = "ghost",
+}: Pick<AlertDialogCloseProps, "className" | "size" | "variant"> = {}) {
+  return alertDialogButtonClassNames({ className, size, variant });
+}
+
+export function alertDialogCancelClassNames({
+  className,
+  size = "md",
+  variant = "outline",
+}: Pick<AlertDialogCancelProps, "className" | "size" | "variant"> = {}) {
+  return alertDialogButtonClassNames({ className, size, variant });
+}
+
+export function alertDialogActionClassNames({
+  className,
+  size = "md",
+  variant = "solid",
+}: Pick<AlertDialogActionProps, "className" | "size" | "variant"> = {}) {
+  return alertDialogButtonClassNames({ className, size, variant });
+}
+
+export const AlertDialog = forwardRef<HTMLDivElement, AlertDialogProps>(
+  (
+    {
+      "data-slot": dataSlot,
+      children,
+      className,
+      defaultOpen,
+      onOpenChange,
+      open,
+      ...props
+    },
+    ref,
+  ) => {
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const isControlled = open !== undefined;
+    const resolvedOpen = open ?? uncontrolledOpen;
+    const {
+      portalContainer,
+      rootRef,
+    } = useProviderPortalRoot<HTMLDivElement>({
+      forwardedRef: ref,
+      portalSlot: "alert-dialog-portal-container",
+    });
+    const handleOpenChange = (isOpen: boolean) => {
+      if (!isControlled) {
+        setUncontrolledOpen(isOpen);
+      }
+
+      onOpenChange?.(isOpen);
+    };
+
+    return (
+      <div
+        ref={rootRef}
+        data-slot={dataSlot ?? "alert-dialog"}
+        className={alertDialogClassNames({ className })}
+      >
+        <DethinkPortalProvider container={portalContainer}>
+          <AriaDialogTrigger
+            {...props}
+            isOpen={resolvedOpen}
+            onOpenChange={handleOpenChange}
+          >
+            {children}
+          </AriaDialogTrigger>
+        </DethinkPortalProvider>
+      </div>
+    );
+  },
+);
+
+AlertDialog.displayName = "AlertDialog";
+
+export const AlertDialogTrigger = forwardRef<
+  HTMLButtonElement,
+  AlertDialogTriggerProps
+>(
+  (
+    {
+      children,
+      className,
+      size = "md",
+      variant = "solid",
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <AriaButton
+        {...props}
+        ref={ref}
+        data-slot="alert-dialog-trigger"
+        className={alertDialogTriggerClassNames({ className, size, variant })}
+      >
+        {children}
+      </AriaButton>
+    );
+  },
+);
+
+AlertDialogTrigger.displayName = "AlertDialogTrigger";
+
+export const AlertDialogContent = forwardRef<
+  HTMLDivElement,
+  AlertDialogContentProps
+>(
+  (
+    {
+      "aria-describedby": ariaDescribedBy,
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
+      children,
+      className,
+      closeButtonClassName,
+      closeButtonLabel = "Close alert dialog",
+      dismissible = false,
+      keyboardDismissDisabled = false,
+      overlayClassName,
+      scrollBehavior = "inside",
+      shouldCloseOnInteractOutside,
+      showCloseButton = false,
+      size = "md",
+      ...props
+    },
+    ref,
+  ) => {
+    const defaultTitleId = useId();
+    const [titleId, setTitleId] = useState<string | null>(null);
+    const [descriptionId, setDescriptionId] = useState<string | null>(null);
+    const labelledBy = ariaLabelledBy ??
+      (ariaLabel ? undefined : (titleId ?? defaultTitleId));
+    const contextValue = useMemo(
+      () => ({
+        defaultTitleId,
+        hasCloseButton: showCloseButton,
+        setDescriptionId,
+        setTitleId,
+      }),
+      [defaultTitleId, showCloseButton],
+    );
+
+    return (
+      <ModalOverlay
+        {...props}
+        data-slot="alert-dialog-overlay"
+        isDismissable={dismissible}
+        isKeyboardDismissDisabled={keyboardDismissDisabled}
+        shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
+        className={alertDialogOverlayClassNames({ className: overlayClassName })}
+      >
+        <Modal
+          ref={ref}
+          data-slot="alert-dialog-content"
+          data-size={size}
+          data-scroll-behavior={scrollBehavior}
+          className={alertDialogContentClassNames({
+            className,
+            scrollBehavior,
+            size,
+          })}
+        >
+          <AriaDialog
+            aria-describedby={joinIds(ariaDescribedBy, descriptionId ?? undefined)}
+            aria-label={ariaLabel}
+            aria-labelledby={labelledBy}
+            className={dialogPanelClasses}
+            data-slot="alert-dialog-panel"
+            role="alertdialog"
+          >
+            {(opts) => (
+              <AlertDialogContentContext.Provider value={contextValue}>
+                {showCloseButton ? (
+                  <AlertDialogClose
+                    aria-label={closeButtonLabel}
+                    className={alertDialogCloseButtonClassNames({
+                      className: closeButtonClassName,
+                    })}
+                  />
+                ) : null}
+                {renderDialogChildren(children, opts)}
+              </AlertDialogContentContext.Provider>
+            )}
+          </AriaDialog>
+        </Modal>
+      </ModalOverlay>
+    );
+  },
+);
+
+AlertDialogContent.displayName = "AlertDialogContent";
+
+export const AlertDialogHeader = forwardRef<
+  HTMLDivElement,
+  AlertDialogHeaderProps
+>(({ className, ...props }, ref) => {
+  const context = useContext(AlertDialogContentContext);
+
+  return (
+    <div
+      {...props}
+      ref={ref}
+      data-slot="alert-dialog-header"
+      className={alertDialogHeaderClassNames({
+        className,
+        hasCloseButton: context?.hasCloseButton,
+      })}
+    />
+  );
+});
+
+AlertDialogHeader.displayName = "AlertDialogHeader";
+
+export const AlertDialogFooter = forwardRef<
+  HTMLDivElement,
+  AlertDialogFooterProps
+>(({ className, ...props }, ref) => (
+  <div
+    {...props}
+    ref={ref}
+    data-slot="alert-dialog-footer"
+    className={alertDialogFooterClassNames({ className })}
+  />
+));
+
+AlertDialogFooter.displayName = "AlertDialogFooter";
+
+export const AlertDialogTitle = forwardRef<
+  HTMLHeadingElement,
+  AlertDialogTitleProps
+>(
+  (
+    {
+      className,
+      id,
+      level = 2,
+      visuallyHidden = false,
+      ...props
+    },
+    ref,
+  ) => {
+    const context = useContext(AlertDialogContentContext);
+    const generatedId = useId();
+    const resolvedId = id ?? context?.defaultTitleId ?? generatedId;
+
+    useIsomorphicLayoutEffect(() => {
+      context?.setTitleId(resolvedId);
+
+      return () => {
+        context?.setTitleId(null);
+      };
+    }, [context, resolvedId]);
+
+    return (
+      <AriaHeading
+        {...props}
+        ref={ref}
+        id={resolvedId}
+        slot="title"
+        level={level}
+        data-slot="alert-dialog-title"
+        className={alertDialogTitleClassNames({ className, visuallyHidden })}
+      />
+    );
+  },
+);
+
+AlertDialogTitle.displayName = "AlertDialogTitle";
+
+export const AlertDialogDescription = forwardRef<
+  HTMLParagraphElement,
+  AlertDialogDescriptionProps
+>(({ className, id, ...props }, ref) => {
+  const context = useContext(AlertDialogContentContext);
+  const generatedId = useId();
+  const resolvedId = id ?? generatedId;
+
+  useEffect(() => {
+    context?.setDescriptionId(resolvedId);
+
+    return () => {
+      context?.setDescriptionId(null);
+    };
+  }, [context, resolvedId]);
+
+  return (
+    <p
+      {...props}
+      ref={ref}
+      id={resolvedId}
+      data-slot="alert-dialog-description"
+      className={alertDialogDescriptionClassNames({ className })}
+    />
+  );
+});
+
+AlertDialogDescription.displayName = "AlertDialogDescription";
+
+function renderAlertDialogButton({
+  ariaLabel,
+  children,
+  className,
+  dataSlot,
+  defaultAriaLabel,
+  defaultVariant,
+  ref,
+  size,
+  variant,
+  ...props
+}: AlertDialogCloseProps & {
+  ariaLabel?: string;
+  dataSlot: string;
+  defaultAriaLabel: string;
+  defaultVariant: ButtonVariant;
+  ref: Ref<HTMLButtonElement>;
+}) {
+  const hasVisibleChildren = children != null;
+  const resolvedSize = size ?? (hasVisibleChildren ? "md" : "icon");
+
+  return (
+    <AriaButton
+      {...props}
+      ref={ref}
+      aria-label={ariaLabel ?? (hasVisibleChildren ? undefined : defaultAriaLabel)}
+      slot="close"
+      data-slot={dataSlot}
+      className={alertDialogButtonClassNames({
+        className,
+        size: resolvedSize,
+        variant: variant ?? defaultVariant,
+      })}
+    >
+      {hasVisibleChildren ? children : <CloseIcon />}
+    </AriaButton>
+  );
+}
+
+export const AlertDialogClose = forwardRef<
+  HTMLButtonElement,
+  AlertDialogCloseProps
+>(
+  (
+    {
+      "aria-label": ariaLabel,
+      children,
+      className,
+      size,
+      variant,
+      ...props
+    },
+    ref,
+  ) =>
+    renderAlertDialogButton({
+      ...props,
+      ariaLabel,
+      children,
+      className,
+      dataSlot: "alert-dialog-close",
+      defaultAriaLabel: "Close alert dialog",
+      defaultVariant: "ghost",
+      ref,
+      size,
+      variant,
+    }),
+);
+
+AlertDialogClose.displayName = "AlertDialogClose";
+
+export const AlertDialogCancel = forwardRef<
+  HTMLButtonElement,
+  AlertDialogCancelProps
+>(
+  (
+    {
+      "aria-label": ariaLabel,
+      children,
+      className,
+      size,
+      variant,
+      ...props
+    },
+    ref,
+  ) =>
+    renderAlertDialogButton({
+      ...props,
+      ariaLabel,
+      children,
+      className,
+      dataSlot: "alert-dialog-cancel",
+      defaultAriaLabel: "Cancel alert dialog",
+      defaultVariant: "outline",
+      ref,
+      size,
+      variant,
+    }),
+);
+
+AlertDialogCancel.displayName = "AlertDialogCancel";
+
+export const AlertDialogAction = forwardRef<
+  HTMLButtonElement,
+  AlertDialogActionProps
+>(
+  (
+    {
+      "aria-label": ariaLabel,
+      children,
+      className,
+      size,
+      variant,
+      ...props
+    },
+    ref,
+  ) =>
+    renderAlertDialogButton({
+      ...props,
+      ariaLabel,
+      children,
+      className,
+      dataSlot: "alert-dialog-action",
+      defaultAriaLabel: "Confirm alert dialog",
+      defaultVariant: "solid",
+      ref,
+      size,
+      variant,
+    }),
+);
+
+AlertDialogAction.displayName = "AlertDialogAction";

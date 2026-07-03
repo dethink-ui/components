@@ -54,6 +54,7 @@ The planned component family is:
 - `AlertDialogFooter`
 - `AlertDialogTitle`
 - `AlertDialogDescription`
+- `AlertDialogClose`
 - `AlertDialogCancel`
 - `AlertDialogAction`
 
@@ -103,9 +104,10 @@ AlertDialog should share the open-state contract but use safer defaults:
 - Stable slot attributes follow the existing `data-slot` convention:
   `dialog-overlay`, `dialog-content`, `dialog-header`, `dialog-footer`,
   `dialog-title`, `dialog-description`, `dialog-close`, and the
-  `alert-dialog-*` equivalents plus `alert-dialog-cancel` and
-  `alert-dialog-action`. Portal hosts follow the Select convention with
-  `data-slot="dialog-portal-container"`.
+  `alert-dialog-*` equivalents plus `alert-dialog-close`,
+  `alert-dialog-cancel`, and `alert-dialog-action`. Portal hosts use
+  `data-slot="dialog-portal-container"` and
+  `data-slot="alert-dialog-portal-container"`.
 - State is exposed through data attributes rather than classes: React Aria
   `data-entering`/`data-exiting` on overlay and content for animation, plus
   `data-size` and `data-scroll-behavior` reflecting resolved props.
