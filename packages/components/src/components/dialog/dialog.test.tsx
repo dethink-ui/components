@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
   dialogClassNames,
+  dialogCloseButtonClassNames,
   dialogContentClassNames,
   dialogOverlayClassNames,
   dialogTriggerClassNames,
@@ -174,6 +175,58 @@ describe("Dialog", () => {
     expect(screen.getByRole("button", { name: "Compact close" })).toHaveClass(
       "px-[var(--dt-space-3)]",
     );
+  });
+
+  it("can render an explicit close icon from DialogContent", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dialog>
+        <DialogTrigger>Open informational dialog</DialogTrigger>
+        <DialogContent
+          showCloseButton
+          closeButtonLabel="Dismiss workspace notice"
+          closeButtonClassName="custom-close-button"
+        >
+          <DialogHeader data-testid="informational-dialog-header">
+            <DialogTitle>Workspace notice</DialogTitle>
+            <DialogDescription>
+              This informational dialog closes through the top-right icon button.
+            </DialogDescription>
+          </DialogHeader>
+          <div>Read-only details without footer actions.</div>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const trigger = screen.getByRole("button", {
+      name: "Open informational dialog",
+    });
+
+    await user.click(trigger);
+
+    const closeButton = screen.getByRole("button", {
+      name: "Dismiss workspace notice",
+    });
+
+    expect(closeButton).toHaveAttribute("data-slot", "dialog-close");
+    expect(closeButton).toHaveClass("custom-close-button");
+    expect(closeButton).toHaveClass("absolute");
+    expect(closeButton).toHaveClass("end-[var(--dt-space-3)]");
+    expect(closeButton).toHaveClass("w-density-control");
+    expect(dialogCloseButtonClassNames({ className: "custom-close-button" })).toContain(
+      "custom-close-button",
+    );
+    expect(screen.getByTestId("informational-dialog-header")).toHaveClass(
+      "pe-[calc(var(--dt-space-6)+var(--dt-space-8))]",
+    );
+
+    await user.click(closeButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+    expect(trigger).toHaveFocus();
   });
 
   it("supports uncontrolled open state, Escape close, and keyboard dismiss prevention", async () => {

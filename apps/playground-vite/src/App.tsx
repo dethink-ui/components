@@ -245,7 +245,7 @@ export function App() {
             <CardContent>
               <Dialog>
                 <DialogTrigger>Open dialog</DialogTrigger>
-                <DialogContent>
+                <DialogContent showCloseButton closeButtonLabel="Close dialog smoke">
                   <DialogHeader>
                     <DialogTitle>Deploy workspace changes</DialogTitle>
                     <DialogDescription>

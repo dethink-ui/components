@@ -75,10 +75,13 @@ export interface DialogContentProps
   "aria-labelledby"?: string;
   children?: ReactNode | ((opts: AriaDialogRenderProps) => ReactNode);
   className?: string;
+  closeButtonClassName?: string;
+  closeButtonLabel?: string;
   dismissible?: boolean;
   keyboardDismissDisabled?: boolean;
   overlayClassName?: string;
   scrollBehavior?: DialogScrollBehavior;
+  showCloseButton?: boolean;
   size?: DialogSize;
 }
 
@@ -98,6 +101,7 @@ export interface DialogDescriptionProps
 export interface DialogCloseProps extends DialogTriggerProps {}
 
 interface DialogContentContextValue {
+  hasCloseButton: boolean;
   titleId: string;
   setDescriptionId: (id: string | null) => void;
 }
@@ -138,6 +142,9 @@ const dialogPanelClasses = "contents";
 const dialogHeaderClasses =
   "grid gap-[var(--dt-space-1-5)] p-[var(--dt-space-6)] pb-[var(--dt-space-3)] text-start";
 
+const dialogHeaderWithCloseButtonClasses =
+  "pe-[calc(var(--dt-space-6)+var(--dt-space-8))]";
+
 const dialogFooterClasses =
   "flex flex-col-reverse gap-density-gap p-[var(--dt-space-6)] pt-[var(--dt-space-3)] sm:flex-row sm:justify-end";
 
@@ -152,6 +159,9 @@ const visuallyHiddenClasses =
 
 const dialogCloseIconClasses =
   "pointer-events-none size-4 shrink-0";
+
+const dialogCloseButtonClasses =
+  "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
 
 function joinIds(...ids: Array<string | undefined>) {
   return ids.filter(Boolean).join(" ") || undefined;
@@ -219,8 +229,15 @@ export function dialogContentClassNames({
 
 export function dialogHeaderClassNames({
   className,
-}: Pick<DialogHeaderProps, "className"> = {}) {
-  return cn(dialogHeaderClasses, className);
+  hasCloseButton = false,
+}: Pick<DialogHeaderProps, "className"> & {
+  hasCloseButton?: boolean;
+} = {}) {
+  return cn(
+    dialogHeaderClasses,
+    hasCloseButton && dialogHeaderWithCloseButtonClasses,
+    className,
+  );
 }
 
 export function dialogFooterClassNames({
@@ -240,6 +257,14 @@ export function dialogDescriptionClassNames({
   className,
 }: Pick<DialogDescriptionProps, "className"> = {}) {
   return cn(dialogDescriptionClasses, className);
+}
+
+export function dialogCloseButtonClassNames({
+  className,
+}: {
+  className?: string;
+} = {}) {
+  return cn(dialogCloseButtonClasses, className);
 }
 
 function CloseIcon() {
@@ -363,11 +388,14 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
       "aria-labelledby": ariaLabelledBy,
       children,
       className,
+      closeButtonClassName,
+      closeButtonLabel = "Close dialog",
       dismissible = false,
       keyboardDismissDisabled = false,
       overlayClassName,
       scrollBehavior = "inside",
       shouldCloseOnInteractOutside,
+      showCloseButton = false,
       size = "md",
       ...props
     },
@@ -377,10 +405,11 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
     const [descriptionId, setDescriptionId] = useState<string | null>(null);
     const contextValue = useMemo(
       () => ({
+        hasCloseButton: showCloseButton,
         setDescriptionId,
         titleId,
       }),
-      [titleId],
+      [showCloseButton, titleId],
     );
     const labelledBy = ariaLabelledBy ?? (ariaLabel ? undefined : titleId);
 
@@ -414,6 +443,14 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
           >
             {(opts) => (
               <DialogContentContext.Provider value={contextValue}>
+                {showCloseButton ? (
+                  <DialogClose
+                    aria-label={closeButtonLabel}
+                    className={dialogCloseButtonClassNames({
+                      className: closeButtonClassName,
+                    })}
+                  />
+                ) : null}
                 {renderDialogChildren(children, opts)}
               </DialogContentContext.Provider>
             )}
@@ -427,14 +464,21 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
 DialogContent.displayName = "DialogContent";
 
 export const DialogHeader = forwardRef<HTMLDivElement, DialogHeaderProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      {...props}
-      ref={ref}
-      data-slot="dialog-header"
-      className={dialogHeaderClassNames({ className })}
-    />
-  ),
+  ({ className, ...props }, ref) => {
+    const context = useContext(DialogContentContext);
+
+    return (
+      <div
+        {...props}
+        ref={ref}
+        data-slot="dialog-header"
+        className={dialogHeaderClassNames({
+          className,
+          hasCloseButton: context?.hasCloseButton,
+        })}
+      />
+    );
+  },
 );
 
 DialogHeader.displayName = "DialogHeader";

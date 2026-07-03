@@ -1267,6 +1267,26 @@ assert(
   "dialog source must expose stable close slot data.",
 );
 assert(
+  dialogSource.includes("showCloseButton"),
+  "dialog source must expose optional content-level close button support.",
+);
+assert(
+  dialogSource.includes("closeButtonLabel"),
+  "dialog source must expose an accessible label for the content-level close button.",
+);
+assert(
+  dialogSource.includes("dialogCloseButtonClassNames"),
+  "dialog source must expose class-name composition for the content-level close button.",
+);
+assert(
+  dialogSource.includes("end-[var(--dt-space-3)]"),
+  "dialog source must position the content-level close button with logical end spacing.",
+);
+assert(
+  dialogSource.includes("pe-[calc(var(--dt-space-6)+var(--dt-space-8))]"),
+  "dialog source must reserve header inline space for the content-level close button.",
+);
+assert(
   dialogSource.includes('portalSlot: "dialog-portal-container"'),
   "dialog source must create an explicit provider-aware portal container.",
 );

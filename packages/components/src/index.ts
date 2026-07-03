@@ -313,6 +313,7 @@ export {
   DialogTitle,
   DialogTrigger,
   dialogClassNames,
+  dialogCloseButtonClassNames,
   dialogContentClassNames,
   dialogDescriptionClassNames,
   dialogFooterClassNames,

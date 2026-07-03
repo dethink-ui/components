@@ -131,7 +131,7 @@ export const FormDialog: Story = {
       <Container size="sm">
         <Dialog>
           <DialogTrigger>Invite teammate</DialogTrigger>
-          <DialogContent>
+          <DialogContent showCloseButton closeButtonLabel="Close invite dialog">
             <DialogHeader>
               <DialogTitle>Invite teammate</DialogTitle>
               <DialogDescription>
@@ -161,6 +161,46 @@ export const FormDialog: Story = {
       </Container>
     </DethinkProvider>
   ),
+};
+
+export const Informational: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="sm">
+        <Dialog>
+          <DialogTrigger>View service notice</DialogTrigger>
+          <DialogContent showCloseButton closeButtonLabel="Close service notice">
+            <DialogHeader>
+              <DialogTitle>Service window scheduled</DialogTitle>
+              <DialogDescription>
+                This informational dialog has no footer actions and closes through
+                the top-right icon button.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+              Workspace analytics may be read-only for a short maintenance window
+              while reports are reindexed.
+            </div>
+          </DialogContent>
+        </Dialog>
+      </Container>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole("button", { name: "View service notice" });
+
+    await userEvent.click(trigger);
+    await expect(
+      await page.findByRole("dialog", { name: "Service window scheduled" }),
+    ).toBeVisible();
+    await userEvent.click(page.getByRole("button", { name: "Close service notice" }));
+    await waitFor(() => {
+      expect(page.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+    await expect(trigger).toHaveFocus();
+  },
 };
 
 export const ScrollableContent: Story = {
