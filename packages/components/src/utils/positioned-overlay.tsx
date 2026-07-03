@@ -27,7 +27,9 @@ export interface PositionedOverlayArrowClassNameOptions {
 
 export interface PositionedOverlayArrowProps
   extends Omit<AriaOverlayArrowProps, "children" | "className"> {
+  "data-slot"?: string;
   className?: string;
+  shapeDataSlot?: string;
   shapeClassName?: string;
 }
 
@@ -51,7 +53,7 @@ export const positionedOverlayTooltipDefaults = {
 } satisfies Required<PositionedOverlayPositionProps>;
 
 const positionedOverlaySurfaceBaseClasses =
-  "z-50 max-h-[min(var(--dt-overlay-max-height,18rem),calc(100dvh_-_var(--dt-space-4)))] min-w-[var(--dt-overlay-min-width,12rem)] overflow-auto rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[entering]:opacity-100 data-[exiting]:translate-y-1 data-[exiting]:opacity-0";
+  "z-50 max-h-[min(var(--dt-overlay-max-height,18rem),calc(100dvh_-_var(--dt-space-4)))] min-w-[var(--dt-overlay-min-width,12rem)] overflow-auto rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [--dt-popover-motion-x:0px] [--dt-popover-motion-y:var(--dt-space-1)] data-[placement=bottom]:[--dt-popover-motion-y:calc(0px_-_var(--dt-space-1))] data-[placement=top]:[--dt-popover-motion-y:var(--dt-space-1)] data-[placement=left]:[--dt-popover-motion-x:var(--dt-space-1)] data-[placement=left]:[--dt-popover-motion-y:0px] data-[placement=right]:[--dt-popover-motion-x:calc(0px_-_var(--dt-space-1))] data-[placement=right]:[--dt-popover-motion-y:0px] motion-safe:data-[entering]:animate-popover-in motion-safe:data-[exiting]:animate-popover-out motion-reduce:animate-none";
 
 const positionedOverlayArrowBaseClasses =
   "z-50 flex size-3 items-center justify-center text-background drop-shadow-sm data-[placement=bottom]:rotate-180 data-[placement=left]:rotate-90 data-[placement=right]:-rotate-90";
@@ -96,21 +98,32 @@ export function positionedOverlayArrowShapeClassNames({
 export const PositionedOverlayArrow = forwardRef<
   HTMLDivElement,
   PositionedOverlayArrowProps
->(({ className, shapeClassName, ...props }, ref) => (
-  <AriaOverlayArrow
-    {...props}
-    ref={ref}
-    data-slot="positioned-overlay-arrow"
-    className={positionedOverlayArrowClassNames({ className })}
-  >
-    <span
-      aria-hidden="true"
-      data-slot="positioned-overlay-arrow-shape"
-      className={positionedOverlayArrowShapeClassNames({
-        className: shapeClassName,
-      })}
-    />
-  </AriaOverlayArrow>
-));
+>(
+  (
+    {
+      "data-slot": dataSlot = "positioned-overlay-arrow",
+      className,
+      shapeClassName,
+      shapeDataSlot,
+      ...props
+    },
+    ref,
+  ) => (
+    <AriaOverlayArrow
+      {...props}
+      ref={ref}
+      data-slot={dataSlot}
+      className={positionedOverlayArrowClassNames({ className })}
+    >
+      <span
+        aria-hidden="true"
+        data-slot={shapeDataSlot ?? `${dataSlot}-shape`}
+        className={positionedOverlayArrowShapeClassNames({
+          className: shapeClassName,
+        })}
+      />
+    </AriaOverlayArrow>
+  ),
+);
 
 PositionedOverlayArrow.displayName = "PositionedOverlayArrow";

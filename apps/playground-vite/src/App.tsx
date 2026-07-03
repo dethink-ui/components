@@ -52,6 +52,14 @@ import {
   Link,
   Divider,
   NumberInput,
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverDescription,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
   RadioGroup,
   RadioGroupItem,
   Select,
@@ -243,6 +251,31 @@ export function App() {
             <ComboboxItem value="staging">Staging</ComboboxItem>
             <ComboboxItem value="sandbox">Sandbox</ComboboxItem>
           </Combobox>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Popover smoke</CardTitle>
+              <CardDescription>
+                Verifies anchored overlay exports, provider-aware portals, and
+                token-backed content styling.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Popover>
+                <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+                <PopoverContent showArrow>
+                  <PopoverHeader>
+                    <PopoverTitle>Refresh filters</PopoverTitle>
+                    <PopoverDescription>
+                      Queue a refresh after changing report filters.
+                    </PopoverDescription>
+                  </PopoverHeader>
+                  <PopoverFooter>
+                    <PopoverClose>Done</PopoverClose>
+                  </PopoverFooter>
+                </PopoverContent>
+              </Popover>
+            </CardContent>
+          </Card>
           <Card as="section">
             <CardHeader>
               <CardTitle>Dialog smoke</CardTitle>

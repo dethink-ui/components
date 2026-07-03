@@ -44,6 +44,36 @@
   --spacing-dt-12: var(--dt-space-12);
   --spacing-density-control: var(--dt-density-control);
   --spacing-density-gap: var(--dt-density-gap);
+  --animate-popover-in: dt-popover-in 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-popover-out: dt-popover-out 120ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes dt-popover-in {
+  from {
+    opacity: 0;
+    translate: var(--dt-popover-motion-x, 0) var(--dt-popover-motion-y, var(--dt-space-1));
+    scale: 0.98;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+@keyframes dt-popover-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  to {
+    opacity: 0;
+    translate: var(--dt-popover-motion-x, 0) var(--dt-popover-motion-y, var(--dt-space-1));
+    scale: 0.98;
+  }
 }
 
 @layer base {
