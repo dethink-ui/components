@@ -120,14 +120,17 @@ focus behavior, Storybook examples, and tests.
 
 ## Acceptance criteria
 
-- [ ] AlertDialog components are exported with public prop/data types and class-name helpers.
+- [ ] AlertDialog components are exported with public prop/data types and class-name helpers, including an overlay class-name helper.
 - [ ] AlertDialog supports controlled/uncontrolled open state through the same public open contract as Dialog.
 - [ ] AlertDialog content uses `role="alertdialog"` and requires labelled/described examples.
-- [ ] AlertDialog exposes trigger, content, header, footer, title, description, cancel, action, and close slots with stable data attributes.
-- [ ] AlertDialog defaults prevent accidental outside dismissal while preserving documented keyboard and explicit cancel/action behavior.
-- [ ] AlertDialogCancel and AlertDialogAction compose Dethink Button semantics and variants.
-- [ ] Focus behavior sends users to a sensible initial control and restores focus to the trigger after close where React Aria supports it.
-- [ ] Tests, Storybook, accessibility, and SSR coverage verify alertdialog semantics and destructive flows.
+- [ ] AlertDialog supports visible title and description examples; visually hidden title examples are available when design hides the visible title.
+- [ ] AlertDialog exposes trigger, overlay, content, header, footer, title, description, close, cancel, and action slots with stable data attributes.
+- [ ] AlertDialog exposes `data-slot="alert-dialog-overlay"`, `data-slot="alert-dialog-content"`, `data-size`, `data-scroll-behavior`, and React Aria `data-entering` / `data-exiting` states where applicable.
+- [ ] AlertDialog defaults prevent accidental outside dismissal while preserving documented keyboard/platform close requests and explicit cancel/action behavior.
+- [ ] AlertDialogCancel and AlertDialogAction compose Dethink Button semantics and variants, including destructive action styling where appropriate.
+- [ ] Destructive AlertDialog examples move initial focus to the least destructive action, typically Cancel, per the WAI-ARIA APG alertdialog pattern.
+- [ ] Focus behavior sends users to a sensible initial control for confirmations and restores focus to the trigger after close where React Aria supports it.
+- [ ] Tests, Storybook, accessibility, and SSR coverage verify alertdialog semantics, visually hidden title support, provider token inheritance, and destructive flows.
 
 ## Blocked by
 

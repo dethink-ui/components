@@ -1,4 +1,13 @@
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Box,
   Button,
   Card,
@@ -265,6 +274,37 @@ export function App() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>AlertDialog smoke</CardTitle>
+              <CardDescription>
+                Verifies confirmation semantics, cancel/action slots, and the
+                provider-aware portal path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AlertDialog>
+                <AlertDialogTrigger variant="destructive">
+                  Delete smoke report
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete smoke report</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This confirmation exercises alertdialog semantics through
+                      the package entrypoint.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel autoFocus>Cancel</AlertDialogCancel>
+                    <AlertDialogAction variant="destructive">
+                      Delete report
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardContent>
           </Card>
           <Card as="section">

@@ -7,6 +7,15 @@ import {
   within,
 } from "storybook/test";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Container,
   DethinkProvider,
   Dialog,
@@ -460,6 +469,389 @@ export const VisuallyHiddenTitle: Story = {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </Container>
+    </DethinkProvider>
+  ),
+};
+
+export const AlertConfirmation: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="sm">
+        <AlertDialog>
+          <AlertDialogTrigger>Archive workspace</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Archive workspace</AlertDialogTitle>
+              <AlertDialogDescription>
+                Archived workspaces leave active dashboards and report filters.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Archive</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Container>
+    </DethinkProvider>
+  ),
+};
+
+export const AlertConfirmationInteraction: Story = {
+  tags: ["!dev", "!autodocs"],
+  render: AlertConfirmation.render!,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole("button", { name: "Archive workspace" });
+
+    await userEvent.click(trigger);
+    await expect(
+      await page.findByRole("alertdialog", { name: "Archive workspace" }),
+    ).toBeVisible();
+    await userEvent.click(page.getByRole("button", { name: "Cancel" }));
+    await waitFor(() => {
+      expect(page.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
+    await expect(trigger).toHaveFocus();
+  },
+};
+
+export const DestructiveAlert: Story = {
+  render: function DestructiveAlertStory() {
+    const [status, setStatus] = useState("No deletion requested");
+
+    return (
+      <DethinkProvider theme="light" className="p-6">
+        <Container size="sm">
+          <Stack gap="3">
+            <AlertDialog>
+              <AlertDialogTrigger variant="destructive">
+                Delete report
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete scheduled report</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This removes the report from scheduled exports and cannot be
+                    undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel autoFocus>Keep report</AlertDialogCancel>
+                  <AlertDialogAction
+                    variant="destructive"
+                    onPress={() => setStatus("Report deleted")}
+                  >
+                    Delete report
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <FieldDescription>{status}</FieldDescription>
+          </Stack>
+        </Container>
+      </DethinkProvider>
+    );
+  },
+};
+
+export const DestructiveAlertInteraction: Story = {
+  tags: ["!dev", "!autodocs"],
+  render: DestructiveAlert.render!,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole("button", { name: "Delete report" });
+
+    await userEvent.click(trigger);
+
+    const alertDialog = await page.findByRole("alertdialog", {
+      name: "Delete scheduled report",
+    });
+    const cancel = page.getByRole("button", { name: "Keep report" });
+
+    await waitFor(() => {
+      expect(cancel).toHaveFocus();
+    });
+    await userEvent.click(
+      within(alertDialog).getByRole("button", { name: "Delete report" }),
+    );
+    await waitFor(() => {
+      expect(page.queryByRole("alertdialog")).not.toBeInTheDocument();
+    });
+    await expect(canvas.getByText("Report deleted")).toBeVisible();
+  },
+};
+
+export const ControlledAlertDialog: Story = {
+  render: function ControlledAlertDialogStory() {
+    const [open, setOpen] = useState(false);
+
+    return (
+      <DethinkProvider theme="light" className="p-6">
+        <Container size="sm">
+          <Stack gap="3">
+            <AlertDialog open={open} onOpenChange={setOpen}>
+              <AlertDialogTrigger>Open controlled alert</AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Controlled confirmation</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    The consuming application owns the open state.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction>Confirm</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <FieldDescription>
+              Alert state: {open ? "open" : "closed"}
+            </FieldDescription>
+          </Stack>
+        </Container>
+      </DethinkProvider>
+    );
+  },
+};
+
+export const LongAlertDescription: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="sm">
+        <AlertDialog>
+          <AlertDialogTrigger>Reset integration token</AlertDialogTrigger>
+          <AlertDialogContent size="lg" scrollBehavior="inside">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Reset integration token</AlertDialogTitle>
+              <AlertDialogDescription>
+                Resetting the token immediately invalidates API clients, scheduled
+                sync jobs, and webhook retries that still use the current secret.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm leading-6 text-foreground">
+              {Array.from({ length: 8 }, (_, index) => (
+                <p key={index}>
+                  Dependent service {index + 1} must be rotated after this
+                  confirmation before the integration resumes normal traffic.
+                </p>
+              ))}
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive">Reset token</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Container>
+    </DethinkProvider>
+  ),
+};
+
+export const AlertThemeDensityAndRTL: Story = {
+  render: () => (
+    <DethinkProvider theme="dark" density="compact" dir="rtl" className="p-6">
+      <Container size="sm">
+        <AlertDialog defaultOpen>
+          <AlertDialogTrigger>Open themed alert</AlertDialogTrigger>
+          <AlertDialogContent size="sm">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm workspace change</AlertDialogTitle>
+              <AlertDialogDescription>
+                This change updates the workspace direction used for localized
+                review queues.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Container>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const alertDialog = await page.findByRole("alertdialog", {
+      name: "Confirm workspace change",
+    });
+    const portalHost = alertDialog.closest<HTMLElement>(
+      '[data-slot="alert-dialog-portal-container"]',
+    );
+
+    if (!portalHost) {
+      throw new Error("AlertDialog story expected a provider-aware portal host.");
+    }
+
+    await expect(portalHost).toHaveAttribute("data-theme", "dark");
+    await expect(portalHost).toHaveAttribute("data-density", "compact");
+    await expect(portalHost).toHaveAttribute("dir", "rtl");
+  },
+};
+
+export const AlertThemeOverrides: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      density="comfortable"
+      themeConfig={operationsTheme}
+      className="min-h-[30rem] p-6"
+    >
+      <Container size="sm">
+        <AlertDialog defaultOpen>
+          <AlertDialogTrigger>Open override alert</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="font-heading">
+                Approve operations change
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Custom provider colors, typography, radius, and density cross the
+                alert dialog portal.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)]">
+              <div className="rounded-md border border-border bg-muted p-[var(--dt-space-4)] text-sm text-muted-foreground">
+                Operations policy updates will apply to live dashboard alerts.
+              </div>
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Approve</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Container>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const alertDialog = await page.findByRole("alertdialog", {
+      name: "Approve operations change",
+    });
+    const portalHost = alertDialog.closest<HTMLElement>(
+      '[data-slot="alert-dialog-portal-container"]',
+    );
+
+    if (!portalHost) {
+      throw new Error("AlertDialog story expected a provider-aware portal host.");
+    }
+
+    await expect(portalHost).toHaveStyle({
+      "--dt-font-heading": "Charter, Georgia, ui-serif, serif",
+      "--dt-radius-lg": "1rem",
+    });
+  },
+};
+
+export const AlertVisuallyHiddenTitle: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="sm">
+        <AlertDialog>
+          <AlertDialogTrigger>Open compact alert</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle visuallyHidden>
+                Compact alert confirmation
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                The confirmation title is visually hidden but remains the
+                accessible name.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Container>
+    </DethinkProvider>
+  ),
+};
+
+export const AlertReducedMotion: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="sm">
+        <AlertDialog defaultOpen>
+          <AlertDialogTrigger>Open reduced motion alert</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm quiet transition</AlertDialogTitle>
+              <AlertDialogDescription>
+                This confirmation appears before advancing the rollout to the next
+                operations group.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Container>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const alertDialog = await page.findByRole("alertdialog", {
+      name: "Confirm quiet transition",
+    });
+    const content = alertDialog.closest<HTMLElement>(
+      '[data-slot="alert-dialog-content"]',
+    );
+    const overlay = alertDialog.closest<HTMLElement>(
+      '[data-slot="alert-dialog-overlay"]',
+    );
+
+    if (!content || !overlay) {
+      throw new Error("AlertDialog reduced-motion story expected overlay and content.");
+    }
+
+    await expect(overlay).toHaveClass("motion-safe:transition-opacity");
+    await expect(content).toHaveClass("motion-safe:transition-[opacity,transform]");
+  },
+};
+
+export const AdminRowAlert: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="md">
+        <div className="grid gap-[var(--dt-space-3)] rounded-lg border border-border bg-background p-[var(--dt-space-4)]">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--dt-space-4)]">
+            <div className="min-w-0">
+              <div className="text-sm font-medium text-foreground">
+                Production billing export
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Runs every weekday at 08:00 UTC.
+              </div>
+            </div>
+            <AlertDialog>
+              <AlertDialogTrigger size="sm" variant="outline">
+                Disable
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Disable billing export</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Finance users will stop receiving the weekday billing export.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel autoFocus>Keep enabled</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive">Disable export</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </Container>
     </DethinkProvider>
   ),

@@ -4,6 +4,15 @@ import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
   Dialog,
   DialogClose,
   DialogContent,
@@ -65,6 +74,66 @@ describe("Dialog accessibility", () => {
     await user.click(screen.getByRole("button", { name: "Open compact dialog" }));
 
     expect(screen.getByRole("dialog", { name: "Compact dialog" })).toBeInTheDocument();
+    await expect(axe(document.body)).resolves.toHaveNoViolations();
+  });
+});
+
+describe("AlertDialog accessibility", () => {
+  it("has no axe violations for a labelled alert dialog", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <AlertDialog>
+          <AlertDialogTrigger>Delete billing rule</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete billing rule</AlertDialogTitle>
+              <AlertDialogDescription>
+                This removes the rule from future invoice automation.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive">Delete rule</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </DethinkProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Delete billing rule" }));
+
+    expect(
+      screen.getByRole("alertdialog", { name: "Delete billing rule" }),
+    ).toBeInTheDocument();
+    await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations when an alert title is visually hidden", async () => {
+    const user = userEvent.setup();
+    render(
+      <DethinkProvider theme="light">
+        <AlertDialog>
+          <AlertDialogTrigger>Open compact alert</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle visuallyHidden>Compact alert</AlertDialogTitle>
+              <AlertDialogDescription>
+                Compact confirmations still expose an accessible name.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </DethinkProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open compact alert" }));
+
+    expect(screen.getByRole("alertdialog", { name: "Compact alert" })).toBeInTheDocument();
     await expect(axe(document.body)).resolves.toHaveNoViolations();
   });
 });
