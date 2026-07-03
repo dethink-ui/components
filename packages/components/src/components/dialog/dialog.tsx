@@ -20,6 +20,7 @@ import {
   useContext,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -101,9 +102,10 @@ export interface DialogDescriptionProps
 export interface DialogCloseProps extends DialogTriggerProps {}
 
 interface DialogContentContextValue {
+  defaultTitleId: string;
   hasCloseButton: boolean;
-  titleId: string;
   setDescriptionId: (id: string | null) => void;
+  setTitleId: (id: string | null) => void;
 }
 
 const DialogContentContext =
@@ -114,6 +116,9 @@ interface DialogRootContextValue {
 }
 
 const DialogRootContext = createContext<DialogRootContextValue | null>(null);
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const dialogRootClasses = "contents";
 
@@ -298,6 +303,10 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
     },
     ref,
   ) => {
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const isControlled = open !== undefined;
+    const resolvedOpen = open ?? uncontrolledOpen;
+    const previousOpenRef = useRef(resolvedOpen);
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
     const {
       portalContainer,
@@ -315,14 +324,30 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
       [],
     );
     const handleOpenChange = (isOpen: boolean) => {
-      onOpenChange?.(isOpen);
+      if (!isControlled) {
+        setUncontrolledOpen(isOpen);
+      }
 
-      if (!isOpen && typeof window !== "undefined") {
-        window.setTimeout(() => {
+      onOpenChange?.(isOpen);
+    };
+
+    useEffect(() => {
+      const wasOpen = previousOpenRef.current;
+
+      previousOpenRef.current = resolvedOpen;
+
+      if (wasOpen && !resolvedOpen && typeof window !== "undefined") {
+        const restoreFocus = window.setTimeout(() => {
           triggerElementRef.current?.focus();
         }, 0);
+
+        return () => {
+          window.clearTimeout(restoreFocus);
+        };
       }
-    };
+
+      return undefined;
+    }, [resolvedOpen]);
 
     return (
       <div
@@ -334,8 +359,7 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
           <DialogRootContext.Provider value={rootContextValue}>
             <AriaDialogTrigger
               {...props}
-              defaultOpen={defaultOpen}
-              isOpen={open}
+              isOpen={resolvedOpen}
               onOpenChange={handleOpenChange}
             >
               {children}
@@ -401,17 +425,20 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
     },
     ref,
   ) => {
-    const titleId = useId();
+    const defaultTitleId = useId();
+    const [titleId, setTitleId] = useState<string | null>(null);
     const [descriptionId, setDescriptionId] = useState<string | null>(null);
+    const labelledBy = ariaLabelledBy ??
+      (ariaLabel ? undefined : (titleId ?? defaultTitleId));
     const contextValue = useMemo(
       () => ({
+        defaultTitleId,
         hasCloseButton: showCloseButton,
         setDescriptionId,
-        titleId,
+        setTitleId,
       }),
-      [showCloseButton, titleId],
+      [defaultTitleId, showCloseButton],
     );
-    const labelledBy = ariaLabelledBy ?? (ariaLabel ? undefined : titleId);
 
     return (
       <ModalOverlay
@@ -508,7 +535,16 @@ export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
     ref,
   ) => {
     const context = useContext(DialogContentContext);
-    const resolvedId = id ?? context?.titleId;
+    const generatedId = useId();
+    const resolvedId = id ?? context?.defaultTitleId ?? generatedId;
+
+    useIsomorphicLayoutEffect(() => {
+      context?.setTitleId(resolvedId);
+
+      return () => {
+        context?.setTitleId(null);
+      };
+    }, [context, resolvedId]);
 
     return (
       <AriaHeading

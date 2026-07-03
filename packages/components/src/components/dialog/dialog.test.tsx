@@ -142,6 +142,68 @@ describe("Dialog", () => {
     expect(screen.getByText("closed")).toBeInTheDocument();
   });
 
+  it("does not restore focus to the trigger when a controlled close is rejected", async () => {
+    const user = userEvent.setup();
+    const handleOpenChange = vi.fn();
+
+    render(
+      <Dialog open onOpenChange={handleOpenChange}>
+        <DialogTrigger>Open forced dialog</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Forced dialog</DialogTitle>
+            <DialogDescription>
+              The parent keeps this controlled dialog open.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogClose>Try close</DialogClose>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const trigger = screen.getByText("Open forced dialog").closest("button");
+    const closeButton = screen.getByRole("button", { name: "Try close" });
+
+    if (!trigger) {
+      throw new Error("Expected controlled dialog trigger to render.");
+    }
+
+    closeButton.focus();
+    expect(closeButton).toHaveFocus();
+
+    await user.click(closeButton);
+    await new Promise((resolve) => {
+      window.setTimeout(resolve, 1);
+    });
+
+    expect(handleOpenChange).toHaveBeenCalledWith(false);
+    expect(screen.getByRole("dialog", { name: "Forced dialog" })).toBeInTheDocument();
+    expect(trigger).not.toHaveFocus();
+    expect(closeButton).toHaveFocus();
+  });
+
+  it("uses a custom DialogTitle id for dialog labelling", () => {
+    render(
+      <Dialog defaultOpen>
+        <DialogTrigger>Open custom labelled dialog</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle id="custom-dialog-title">Custom labelled dialog</DialogTitle>
+            <DialogDescription>
+              A custom heading id remains connected to the dialog.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: "Custom labelled dialog",
+    });
+
+    expect(dialog).toHaveAttribute("aria-labelledby", "custom-dialog-title");
+  });
+
   it("sizes close actions by content unless an explicit size is provided", async () => {
     const user = userEvent.setup();
 
