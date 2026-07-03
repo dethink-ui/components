@@ -158,3 +158,31 @@ component family.
 ## Blocked by
 
 - #118
+
+## Post-Publication Amendments (2026-07-02)
+
+The local spec and PRD were enhanced after issues #115-#119 were published.
+Implementers should treat these as part of the acceptance criteria, and the
+GitHub issues should get a sync comment referencing this section:
+
+- The shared provider-aware portal helper targets `UNSAFE_PortalProvider`
+  because React Aria Components 1.19 deprecates `UNSTABLE_portalContainer`
+  (affects #117; Select/Combobox migration is follow-up cleanup).
+- Content owns the backdrop overlay and exposes it through `overlayClassName`,
+  an exported overlay class-name helper, and
+  `data-slot="dialog-overlay"` / `data-slot="alert-dialog-overlay"`
+  (affects #117 and #118).
+- Entry/exit animation keys off React Aria `data-entering`/`data-exiting`
+  with tokenized `motion-safe:` transitions, and must respect
+  `prefers-reduced-motion` (new user story 25; affects #117 and #119).
+- Destructive AlertDialog examples move initial focus to the least
+  destructive action per the APG alertdialog pattern (affects #118).
+- A visually hidden title is required whenever design hides the visible title
+  (affects #117 and #118).
+- Content max-height and the `full` size use `dvh` with safe-area insets;
+  inside-scroll bodies use `overscroll-behavior: contain` (affects #117).
+- v1 stays on React Aria's div-based modal layer; native `<dialog>`,
+  top-layer rendering, and `closedby` light dismiss are out of scope and
+  documented as future platform alignment (affects #116 and #119).
+- Nested/stacked dialog orchestration beyond default React Aria behavior is
+  explicitly out of scope for v1.

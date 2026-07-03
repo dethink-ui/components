@@ -52,7 +52,7 @@ minimal provider-aware portal/helper foundation needed to keep
 2. As an admin-tool engineer, I want an AlertDialog component, so that destructive and confirmation flows use consistent alertdialog semantics.
 3. As a form builder, I want dialogs to contain Form and Field primitives safely, so that modal forms retain labels, descriptions, errors, validation, and submit/cancel actions.
 4. As a package consumer, I want `open`, `defaultOpen`, and `onOpenChange`, so that dialog state can be controlled or uncontrolled.
-5. As a package consumer, I want trigger, content, title, description, header, footer, close, cancel, and action slots, so that anatomy matches common shadcn-style usage.
+5. As a package consumer, I want trigger, overlay, content, title, description, header, footer, close, cancel, and action slots, so that anatomy matches common shadcn-style usage.
 6. As a package consumer, I want a close render prop or close button support, so that footer actions can close the dialog without bespoke state plumbing.
 7. As a package consumer, I want optional outside dismissal for normal dialogs, so that low-risk dialogs can support light-dismiss where appropriate.
 8. As a package consumer, I want AlertDialog to avoid accidental outside dismissal by default, so that destructive confirmations require an explicit user choice.
@@ -72,6 +72,7 @@ minimal provider-aware portal/helper foundation needed to keep
 22. As an SSR app developer, I want dialogs to render and hydrate without mismatch warnings.
 23. As a maintainer, I want dialog tests to cover public behavior instead of private implementation details.
 24. As a maintainer, I want Dialog and AlertDialog to stay separate from Drawer, Popover, Tooltip, DropdownMenu, Toast, CommandDialog, and generic OverlayManager scope.
+25. As a motion-sensitive user, I want dialog entry/exit animation to respect `prefers-reduced-motion`, so that modals appear without disorienting motion.
 
 ## Implementation Decisions
 
@@ -88,11 +89,21 @@ minimal provider-aware portal/helper foundation needed to keep
   `isKeyboardDismissDisabled`, and `shouldCloseOnInteractOutside`.
 - Use `role="dialog"` for Dialog and `role="alertdialog"` for AlertDialog.
 - Default AlertDialog to explicit cancel/action flows with no outside dismissal.
+- Default initial focus to React Aria behavior; destructive AlertDialog
+  examples focus the least destructive action per the APG alertdialog pattern.
 - Extract or reuse minimal provider-aware portal context sync so overlays
   inherit DethinkProvider theme, density, direction, font, and custom tokens.
+  Target `UNSAFE_PortalProvider` for the shared helper because React Aria
+  Components 1.19 deprecates `UNSTABLE_portalContainer`.
+- Stay on React Aria's div-based modal layer in v1; native `<dialog>`,
+  top-layer rendering, and declarative `closedby` light dismiss are documented
+  as future platform alignment.
 - Use provider-level theme tokens only; do not add a component-level theme prop.
-- Use tokenized Tailwind transitions and motion-safe utilities; do not add
-  Motion/Framer Motion for v1.
+- Use tokenized Tailwind transitions and motion-safe utilities keyed off React
+  Aria `data-entering`/`data-exiting` attributes; do not add Motion/Framer
+  Motion for v1.
+- Size content with dynamic viewport units (`dvh`) and safe-area awareness for
+  the `full` size; contain overscroll for inside-scroll bodies.
 
 ## Theming Token Plan
 
@@ -107,6 +118,10 @@ Required token coverage:
 - Focus-visible: ring tokens and outline-safe states.
 - Density: density control and density gap tokens for header/footer/action
   spacing.
+- Motion: tokenized transition durations/easings applied through motion-safe
+  utilities and React Aria entering/exiting data attributes.
+- Mobile: dynamic viewport sizing (`dvh`) and safe-area inset handling for
+  full-size dialogs.
 - RTL: logical spacing and alignment utilities.
 
 ## Testing Decisions
@@ -119,8 +134,11 @@ Required token coverage:
   Escape behavior, focus return, refs, className composition, data slots, size,
   scroll variants, and provider portal context.
 - AlertDialog tests should cover alertdialog role, title/description wiring,
-  cancel/action behavior, destructive styling, and absence of outside dismissal
+  cancel/action behavior, destructive styling, initial focus on the least
+  destructive action in destructive examples, and absence of outside dismissal
   by default.
+- Motion coverage should assert entry/exit transitions are gated behind
+  motion-safe utilities and driven by entering/exiting data attributes.
 - Accessibility tests should cover axe smoke for labelled Dialog,
   AlertDialog, modal form, and nested provider examples.
 - Storybook interaction tests should cover open/close, controlled dialog, form
@@ -150,4 +168,6 @@ Required token coverage:
   fetched on 2026-07-02.
 - The first implementation issue should handle provider-aware modal portal
   behavior because Select and Combobox currently each carry local portal sync
-  logic.
+  logic. The shared helper should adopt `UNSAFE_PortalProvider` (React Aria
+  Components 1.19 deprecates `UNSTABLE_portalContainer`); migrating Select and
+  Combobox onto the helper can follow as a separate cleanup.

@@ -60,6 +60,11 @@ The planned component family is:
 Exports should include class-name helpers and public prop/data types for each
 public slot where the implementation exposes a typed component.
 
+`DialogContent` and `AlertDialogContent` own the modal backdrop overlay. The
+overlay is not a separately mounted component; it is exposed for styling
+through `overlayClassName`, an exported overlay class-name helper, and stable
+`data-slot="dialog-overlay"` / `data-slot="alert-dialog-overlay"` attributes.
+
 ## Prop Contract
 
 Use Dethink public prop names while mapping to React Aria internals:
@@ -70,11 +75,12 @@ Use Dethink public prop names while mapping to React Aria internals:
 | `defaultOpen` | Uncontrolled initial open state. |
 | `onOpenChange` | Called when the modal opens or closes. |
 | `dismissible` | Allows outside interaction to close normal Dialog where appropriate. Maps to `isDismissable`. |
-| `keyboardDismissDisabled` | Disables Escape/platform close requests where React Aria supports it. Maps to `isKeyboardDismissDisabled`. |
+| `keyboardDismissDisabled` | Disables close requests (Escape and, where the platform supports them, back/dismiss gestures) as a group. Requires a visible close or cancel affordance. Maps to `isKeyboardDismissDisabled`. |
 | `shouldCloseOnInteractOutside` | Optional predicate for outside interaction filtering. |
 | `size` | Dialog content width preset, initially `sm`, `md`, `lg`, `xl`, or `full`. |
 | `scrollBehavior` | Long-content behavior, initially `inside` or `outside`. |
 | `className` | Consumer class composition for the public slot. |
+| `overlayClassName` | Consumer class composition for the backdrop overlay slot rendered by content. |
 | `children` | React node or render function where React Aria provides a close callback. |
 
 AlertDialog should share the open-state contract but use safer defaults:
@@ -82,6 +88,29 @@ AlertDialog should share the open-state contract but use safer defaults:
 - `dismissible` defaults to false.
 - `role` is fixed to `alertdialog` for alert content.
 - Cancel and action slots should be explicit and easy to find in examples.
+- Destructive examples move initial focus to the least destructive action
+  (typically Cancel) per the WAI-ARIA APG alertdialog pattern.
+
+## Public Contract
+
+- Open state supports controlled `open`, uncontrolled `defaultOpen`, and
+  `onOpenChange` for both directions of change (trigger, close affordances,
+  close requests, and outside dismissal where enabled).
+- Confirm-before-close flows (for example dirty modal forms) use controlled
+  `open` plus `shouldCloseOnInteractOutside`; the wrapper does not add its own
+  dirty-state layer.
+- Every public slot forwards refs and composes `className` via `cn`.
+- Stable slot attributes follow the existing `data-slot` convention:
+  `dialog-overlay`, `dialog-content`, `dialog-header`, `dialog-footer`,
+  `dialog-title`, `dialog-description`, `dialog-close`, and the
+  `alert-dialog-*` equivalents plus `alert-dialog-cancel` and
+  `alert-dialog-action`. Portal hosts follow the Select convention with
+  `data-slot="dialog-portal-container"`.
+- State is exposed through data attributes rather than classes: React Aria
+  `data-entering`/`data-exiting` on overlay and content for animation, plus
+  `data-size` and `data-scroll-behavior` reflecting resolved props.
+- A dialog is always modal in v1: background content is inert/hidden and body
+  scroll is locked while open.
 
 ## Implementation Substrate
 
@@ -89,12 +118,21 @@ AlertDialog should share the open-state contract but use safer defaults:
   `Dialog`, `Heading`, `Text`, and close render props.
 - Use the installed React Aria Components 1.19 prop surface:
   `isOpen`, `defaultOpen`, `onOpenChange`, `isDismissable`,
-  `isKeyboardDismissDisabled`, `shouldCloseOnInteractOutside`,
-  `UNSTABLE_portalContainer`, and dialog `role`.
+  `isKeyboardDismissDisabled`, `shouldCloseOnInteractOutside`, dialog `role`,
+  and the ModalOverlay/Modal `isEntering`/`isExiting` +
+  `data-entering`/`data-exiting` animation surface.
 - Keep public prop names stable even when React Aria prop names differ.
 - Extract or reuse a minimal provider-aware portal helper so modal portals
   inherit `DethinkProvider` theme, density, direction, font, and custom token
-  context.
+  context. React Aria Components 1.19 deprecates `UNSTABLE_portalContainer`
+  in favor of `UNSAFE_PortalProvider` (exported from `react-aria`), so the
+  shared helper should target `UNSAFE_PortalProvider`; Select and Combobox can
+  migrate to the shared helper in a follow-up.
+- Render the modal layer with React Aria's div-based ModalOverlay rather than
+  the native `<dialog>` element or the browser top layer in v1, and document
+  the z-index layering convention (same layer tokens as the Select/Combobox
+  popover, currently `z-50`) since portal order, not the top layer, resolves
+  stacking.
 - Do not introduce Radix UI, Floating UI, cmdk, Motion, or a standalone overlay
   manager for Dialog v1.
 - Do not hand-roll ARIA role, focus containment, hidden outside content, Escape
@@ -103,7 +141,8 @@ AlertDialog should share the open-state contract but use safer defaults:
 ## Accessibility
 
 - Dialog content must have an accessible name. Examples should use visible
-  `DialogTitle` / `AlertDialogTitle`.
+  `DialogTitle` / `AlertDialogTitle`. When design hides the title, a visually
+  hidden title element must still be rendered so the accessible name survives.
 - Dialog descriptions should be wired through visible
   `DialogDescription` / `AlertDialogDescription` where applicable.
 - Standard Dialog content uses `role="dialog"`.
@@ -111,8 +150,15 @@ AlertDialog should share the open-state contract but use safer defaults:
   description of the consequence or decision.
 - Focus should move into the dialog on open, remain contained while open, wrap
   through tabbable controls, and return to the trigger on close.
-- Escape should close where allowed. If disabled, there must be an obvious
-  visible close/cancel path.
+- Initial focus follows React Aria defaults; examples may opt a preferred
+  control in with `autoFocus`. Destructive AlertDialog examples must focus the
+  least destructive action (typically Cancel) per the APG alertdialog pattern.
+- Escape should close where allowed. Escape is one form of "close request";
+  platform dismiss controls (hardware back gesture, assistive-technology
+  dismiss) should behave the same way where supported. If close requests are
+  disabled, there must be an obvious visible close/cancel path.
+- Entry/exit animation must respect `prefers-reduced-motion` through
+  motion-safe utilities.
 - AlertDialog should avoid outside dismissal by default.
 - Background content must be inert or hidden from assistive technologies through
   the React Aria modal overlay behavior.
@@ -144,6 +190,18 @@ Use provider-level tokens for:
 The implementation should support light, dark, system, compact, default,
 comfortable, nested provider scope, custom `themeConfig`, and RTL examples.
 
+Additional styling requirements:
+
+- Motion: entry/exit styling keys off React Aria `data-entering` /
+  `data-exiting` attributes with tokenized `motion-safe:` Tailwind
+  transitions, matching the Select/Combobox popover convention.
+- Mobile viewports: content max-height and the `full` size use dynamic
+  viewport units (`dvh`) rather than `vh`, and the `full` size respects
+  safe-area insets.
+- Scroll: `scrollBehavior="inside"` bodies use `overscroll-behavior: contain`
+  so inner scrolling does not chain to the page. React Aria's scroll lock
+  handles body scroll and scrollbar-width compensation while open.
+
 ## Out Of Scope
 
 - Drawer/Sheet, Popover, Tooltip, DropdownMenu, HoverCard, ContextMenu,
@@ -152,6 +210,10 @@ comfortable, nested provider scope, custom `themeConfig`, and RTL examples.
   state protection, and wizard orchestration.
 - Non-modal dialogs and persistent floating panels.
 - Gesture-driven drawer behavior and heavy animation dependencies.
+- Nested/stacked dialog orchestration beyond default React Aria behavior.
+- Native `<dialog>` element and browser top-layer rendering (including
+  declarative `closedby` light dismiss), which remain a future
+  platform-alignment enhancement.
 - Form library adapters, validation schema resolvers, and server action
   orchestration.
 
@@ -162,8 +224,11 @@ comfortable, nested provider scope, custom `themeConfig`, and RTL examples.
   data slots, provider portal context, size, scroll behavior, and disabled
   dismissal states.
 - AlertDialog tests for `alertdialog` role, title/description relationships,
-  cancel/action behavior, destructive action callbacks, and outside-dismiss
+  cancel/action behavior, destructive action callbacks, initial focus on the
+  least destructive action in destructive examples, and outside-dismiss
   prevention.
+- Motion checks that entry/exit transitions are gated behind motion-safe
+  utilities and that state is driven by `data-entering`/`data-exiting`.
 - Accessibility automation with axe for labelled Dialog, labelled AlertDialog,
   modal forms, and destructive confirmations.
 - Storybook stories and play tests for base, controlled, form, scrollable,
