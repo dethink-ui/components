@@ -76,6 +76,14 @@ import {
   Separator,
   Stack,
   Switch,
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
   Text,
   Textarea,
   Tooltip,
@@ -218,6 +226,51 @@ export function App() {
               </CardContent>
             </Card>
           </CardStack>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Table smoke</CardTitle>
+              <CardDescription>
+                Verifies semantic table slots, density, caption, row headers, and
+                responsive overflow through the package export path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table density="compact" className="min-w-[36rem]">
+                <TableCaption>Workspace request volume</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Workspace</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead align="end">Requests</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow selected>
+                    <TableHead scope="row">Production</TableHead>
+                    <TableCell>Healthy</TableCell>
+                    <TableCell align="end" numeric>
+                      12,400
+                    </TableCell>
+                  </TableRow>
+                  <TableRow tone="muted">
+                    <TableHead scope="row">Staging</TableHead>
+                    <TableCell>Review</TableCell>
+                    <TableCell align="end" numeric>
+                      4,280
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+                <TableFooter>
+                  <TableRow hoverable={false}>
+                    <TableCell colSpan={2}>Total</TableCell>
+                    <TableCell align="end" numeric>
+                      16,680
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              </Table>
+            </CardContent>
+          </Card>
           <Box
             border="default"
             p="4"
