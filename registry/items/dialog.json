@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dialog",
+  "type": "registry:ui",
+  "title": "Dialog",
+  "description": "React Aria backed modal dialog primitive with provider-aware portals, token-backed overlay/content styling, controlled open state, dismissal controls, reduced-motion transitions, and accessible title/description wiring.",
+  "dependencies": ["react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/dialog/dialog.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/dialog/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
