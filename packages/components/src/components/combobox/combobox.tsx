@@ -23,9 +23,12 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { cn } from "../../utils/cn";
+import {
+  DethinkPortalProvider,
+  useProviderPortalRoot,
+} from "../../utils/provider-portal";
 
 export type ComboboxValue = string;
 export type ComboboxControlSize = "sm" | "md" | "lg";
@@ -147,12 +150,6 @@ const comboboxItemIndicatorClasses =
   "flex size-4 items-center justify-center text-current";
 
 const comboboxItemContentClasses = "min-w-0 truncate";
-const comboboxPortalDefaultClasses = "bg-background font-sans text-foreground";
-const comboboxPortalMirroredAttributes = [
-  "data-theme",
-  "data-density",
-  "dir",
-] as const;
 
 type ComboboxComponent = (<T extends ComboboxItemData = ComboboxItemData>(
   props: ComboboxProps<T> & RefAttributes<HTMLDivElement>,
@@ -168,55 +165,6 @@ function toSelectionKey(value: ComboboxValue | null | undefined) {
 
 function toDisabledKeys(disabledKeys: Iterable<ComboboxValue> | undefined) {
   return disabledKeys ? Array.from(disabledKeys) : undefined;
-}
-
-function assignForwardedRef<T>(ref: ForwardedRef<T>, value: T | null) {
-  if (typeof ref === "function") {
-    ref(value);
-  } else if (ref) {
-    ref.current = value;
-  }
-}
-
-function fallbackProviderAttribute(
-  name: (typeof comboboxPortalMirroredAttributes)[number],
-) {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  if (name === "data-density") {
-    return "default";
-  }
-
-  if (name === "data-theme") {
-    return document.documentElement.getAttribute(name) ?? "system";
-  }
-
-  return document.documentElement.getAttribute("dir") ?? document.dir ?? "ltr";
-}
-
-function syncComboboxPortalContainer(
-  container: HTMLElement,
-  provider: HTMLElement | null,
-) {
-  const source = provider ?? (typeof document === "undefined" ? null : document.documentElement);
-
-  container.setAttribute("data-slot", "combobox-portal-container");
-  container.setAttribute("data-dethink-provider", "");
-  container.className = provider?.className || comboboxPortalDefaultClasses;
-  container.style.cssText = provider?.getAttribute("style") ?? "";
-  container.style.display = "contents";
-
-  for (const attribute of comboboxPortalMirroredAttributes) {
-    const value = source?.getAttribute(attribute) ?? fallbackProviderAttribute(attribute);
-
-    if (value) {
-      container.setAttribute(attribute, value);
-    } else {
-      container.removeAttribute(attribute);
-    }
-  }
 }
 
 function syncAriaInvalidAttribute(
@@ -344,32 +292,12 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
   const resolvedInvalid = invalid || isAriaInvalid(ariaInvalid);
   const resolvedAriaInvalid = invalid ? true : ariaInvalid;
   const renderedChildren = renderComboboxChildren({ children, defaultItems, items });
-  const comboboxRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const [portalContainer] = useState<HTMLElement | null>(() => {
-    if (typeof document === "undefined") {
-      return null;
-    }
-
-    return document.createElement("div");
-  });
-  const setComboboxRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      comboboxRef.current = node;
-      assignForwardedRef(ref, node);
-
-      if (node && portalContainer && typeof document !== "undefined") {
-        const provider = node.closest<HTMLElement>("[data-dethink-provider]") ?? null;
-
-        syncComboboxPortalContainer(portalContainer, provider);
-
-        if (!portalContainer.isConnected) {
-          document.body.appendChild(portalContainer);
-        }
-      }
-    },
-    [portalContainer, ref],
-  );
+  const { portalContainer, rootRef } =
+    useProviderPortalRoot<HTMLDivElement>({
+      forwardedRef: ref,
+      portalSlot: "combobox-portal-container",
+    });
   const setInputRef = useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
@@ -379,143 +307,114 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
   );
 
   useEffect(() => {
-    if (!portalContainer || typeof document === "undefined") {
-      return undefined;
-    }
-
-    const provider = comboboxRef.current?.closest<HTMLElement>("[data-dethink-provider]") ?? null;
-    const syncContainer = () => syncComboboxPortalContainer(portalContainer, provider);
-
-    syncContainer();
-    document.body.appendChild(portalContainer);
-
-    const observerTarget = provider ?? document.documentElement;
-    const observer = new MutationObserver(syncContainer);
-    observer.observe(observerTarget, {
-      attributeFilter: [
-        "class",
-        "data-density",
-        "data-theme",
-        "dir",
-        "style",
-      ],
-      attributes: true,
-    });
-
-    return () => {
-      observer.disconnect();
-      portalContainer.remove();
-    };
-  }, [portalContainer]);
-
-  useEffect(() => {
     syncAriaInvalidAttribute(inputRef.current, resolvedAriaInvalid);
   }, [resolvedAriaInvalid]);
 
   return (
-    <AriaCombobox
-      {...props}
-      ref={setComboboxRef}
-      selectedKey={toSelectionKey(value)}
-      defaultSelectedKey={toSelectionKey(defaultValue)}
-      name={disabled ? undefined : name}
-      inputValue={inputValue}
-      defaultInputValue={defaultInputValue}
-      onInputChange={onInputValueChange}
-      onOpenChange={(isOpen, trigger) => {
-        if (!readOnly) {
-          onOpenChange?.(isOpen, trigger);
-        }
-      }}
-      onSelectionChange={(key: Key | null) => {
-        if (!readOnly) {
-          onValueChange?.(key === null ? null : String(key));
-        }
-      }}
-      disabledKeys={toDisabledKeys(disabledKeys)}
-      isDisabled={disabled}
-      isReadOnly={readOnly}
-      isRequired={required}
-      isInvalid={resolvedInvalid}
-      aria-invalid={resolvedAriaInvalid}
-      menuTrigger={menuTrigger}
-      formValue={formValue}
-      validationBehavior="aria"
-      data-slot={dataSlot ?? "combobox"}
-      data-size={controlSize}
-      data-readonly={readOnly ? "true" : undefined}
-      className={comboboxClassNames({ className })}
-    >
-      {label ? (
-        <Label
-          data-slot="combobox-label"
+    <DethinkPortalProvider container={portalContainer}>
+      <AriaCombobox
+        {...props}
+        ref={rootRef}
+        selectedKey={toSelectionKey(value)}
+        defaultSelectedKey={toSelectionKey(defaultValue)}
+        name={disabled ? undefined : name}
+        inputValue={inputValue}
+        defaultInputValue={defaultInputValue}
+        onInputChange={onInputValueChange}
+        onOpenChange={(isOpen, trigger) => {
+          if (!readOnly) {
+            onOpenChange?.(isOpen, trigger);
+          }
+        }}
+        onSelectionChange={(key: Key | null) => {
+          if (!readOnly) {
+            onValueChange?.(key === null ? null : String(key));
+          }
+        }}
+        disabledKeys={toDisabledKeys(disabledKeys)}
+        isDisabled={disabled}
+        isReadOnly={readOnly}
+        isRequired={required}
+        isInvalid={resolvedInvalid}
+        aria-invalid={resolvedAriaInvalid}
+        menuTrigger={menuTrigger}
+        formValue={formValue}
+        validationBehavior="aria"
+        data-slot={dataSlot ?? "combobox"}
+        data-size={controlSize}
+        data-readonly={readOnly ? "true" : undefined}
+        className={comboboxClassNames({ className })}
+      >
+        {label ? (
+          <Label
+            data-slot="combobox-label"
+            data-disabled={disabled ? "true" : undefined}
+            data-invalid={resolvedInvalid ? "true" : undefined}
+            data-required={required ? "true" : undefined}
+            className={comboboxLabelClasses}
+          >
+            {label}
+            {required ? <span aria-hidden="true"> *</span> : null}
+          </Label>
+        ) : null}
+        <div
+          data-slot="combobox-control"
+          data-size={controlSize}
           data-disabled={disabled ? "true" : undefined}
           data-invalid={resolvedInvalid ? "true" : undefined}
+          data-readonly={readOnly ? "true" : undefined}
           data-required={required ? "true" : undefined}
-          className={comboboxLabelClasses}
+          className={cn(comboboxControlBaseClasses, comboboxControlSizeClasses[controlSize])}
         >
-          {label}
-          {required ? <span aria-hidden="true"> *</span> : null}
-        </Label>
-      ) : null}
-      <div
-        data-slot="combobox-control"
-        data-size={controlSize}
-        data-disabled={disabled ? "true" : undefined}
-        data-invalid={resolvedInvalid ? "true" : undefined}
-        data-readonly={readOnly ? "true" : undefined}
-        data-required={required ? "true" : undefined}
-        className={cn(comboboxControlBaseClasses, comboboxControlSizeClasses[controlSize])}
-      >
-        <AriaInput
-          ref={setInputRef}
-          aria-invalid={resolvedAriaInvalid}
-          data-slot="combobox-input"
-          data-size={controlSize}
-          placeholder={placeholder}
-          className={comboboxInputClasses}
-        />
-        <AriaButton
-          aria-label="Show options"
-          data-slot="combobox-button"
-          className={comboboxButtonClasses}
-        >
-          <span
-            aria-hidden="true"
-            data-slot="combobox-icon"
-            className={comboboxIconClasses}
+          <AriaInput
+            ref={setInputRef}
+            aria-invalid={resolvedAriaInvalid}
+            data-slot="combobox-input"
+            data-size={controlSize}
+            placeholder={placeholder}
+            className={comboboxInputClasses}
+          />
+          <AriaButton
+            aria-label="Show options"
+            data-slot="combobox-button"
+            className={comboboxButtonClasses}
           >
-            <ChevronDownIcon />
-          </span>
-        </AriaButton>
-      </div>
-      {description ? (
-        <Text
-          slot="description"
-          data-slot="combobox-description"
-          className={comboboxHelpClasses}
+            <span
+              aria-hidden="true"
+              data-slot="combobox-icon"
+              className={comboboxIconClasses}
+            >
+              <ChevronDownIcon />
+            </span>
+          </AriaButton>
+        </div>
+        {description ? (
+          <Text
+            slot="description"
+            data-slot="combobox-description"
+            className={comboboxHelpClasses}
+          >
+            {description}
+          </Text>
+        ) : null}
+        {errorMessage ? (
+          <FieldError data-slot="combobox-error" className={comboboxErrorClasses}>
+            {errorMessage}
+          </FieldError>
+        ) : null}
+        <Popover
+          data-slot="combobox-popover"
+          className={comboboxPopoverClasses}
         >
-          {description}
-        </Text>
-      ) : null}
-      {errorMessage ? (
-        <FieldError data-slot="combobox-error" className={comboboxErrorClasses}>
-          {errorMessage}
-        </FieldError>
-      ) : null}
-      <Popover
-        data-slot="combobox-popover"
-        UNSTABLE_portalContainer={portalContainer ?? undefined}
-        className={comboboxPopoverClasses}
-      >
-        <ListBox
-          data-slot="combobox-listbox"
-          className={comboboxListBoxClasses}
-        >
-          {renderedChildren}
-        </ListBox>
-      </Popover>
-    </AriaCombobox>
+          <ListBox
+            data-slot="combobox-listbox"
+            className={comboboxListBoxClasses}
+          >
+            {renderedChildren}
+          </ListBox>
+        </Popover>
+      </AriaCombobox>
+    </DethinkPortalProvider>
   );
 }
 

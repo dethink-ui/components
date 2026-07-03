@@ -348,6 +348,10 @@ assert(
   "combobox registry item must include react-aria-components.",
 );
 assert(
+  combobox.dependencies?.includes("react-aria"),
+  "combobox registry item must include react-aria for portal provider support.",
+);
+assert(
   Array.isArray(container.dependencies) && container.dependencies.length === 0,
   "container registry item must not add runtime dependencies.",
 );
@@ -406,6 +410,10 @@ assert(
 assert(
   select.dependencies?.includes("react-aria-components"),
   "select registry item must include react-aria-components.",
+);
+assert(
+  select.dependencies?.includes("react-aria"),
+  "select registry item must include react-aria for portal provider support.",
 );
 assert(
   Array.isArray(stack.dependencies) && stack.dependencies.length === 0,
@@ -812,7 +820,7 @@ assert(
   "combobox source must expose stable popover slot data.",
 );
 assert(
-  comboboxSource.includes('container.setAttribute("data-slot", "combobox-portal-container")'),
+  comboboxSource.includes('portalSlot: "combobox-portal-container"'),
   "combobox source must expose stable portal host slot data.",
 );
 assert(
@@ -824,9 +832,13 @@ assert(
   "combobox source must expose stable item slot data.",
 );
 assert(
-  comboboxSource.includes("return document.createElement(\"div\")") &&
-    comboboxSource.includes("UNSTABLE_portalContainer={portalContainer ?? undefined}"),
-  "combobox source must create an explicit provider-aware portal container before client popover rendering.",
+  comboboxSource.includes("DethinkPortalProvider") &&
+    comboboxSource.includes("useProviderPortalRoot"),
+  "combobox source must render client popovers through the provider-aware portal helper.",
+);
+assert(
+  !comboboxSource.includes("UNSTABLE_portalContainer"),
+  "combobox source must not use React Aria's deprecated UNSTABLE_portalContainer prop.",
 );
 assert(
   comboboxSource.includes("selectedKey={toSelectionKey(value)}"),
@@ -1148,7 +1160,7 @@ assert(
   "select source must expose stable popover slot data.",
 );
 assert(
-  selectSource.includes('container.setAttribute("data-slot", "select-portal-container")'),
+  selectSource.includes('portalSlot: "select-portal-container"'),
   "select source must expose stable portal host slot data.",
 );
 assert(
@@ -1160,9 +1172,13 @@ assert(
   "select source must expose stable item slot data.",
 );
 assert(
-  selectSource.includes("return document.createElement(\"div\")") &&
-    selectSource.includes("UNSTABLE_portalContainer={portalContainer ?? undefined}"),
-  "select source must create an explicit provider-aware portal container before client popover rendering.",
+  selectSource.includes("DethinkPortalProvider") &&
+    selectSource.includes("useProviderPortalRoot"),
+  "select source must render client popovers through the provider-aware portal helper.",
+);
+assert(
+  !selectSource.includes("UNSTABLE_portalContainer"),
+  "select source must not use React Aria's deprecated UNSTABLE_portalContainer prop.",
 );
 assert(
   selectSource.includes("selectedText || defaultChildren"),

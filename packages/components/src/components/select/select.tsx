@@ -23,9 +23,12 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { cn } from "../../utils/cn";
+import {
+  DethinkPortalProvider,
+  useProviderPortalRoot,
+} from "../../utils/provider-portal";
 
 export type SelectValue = string;
 export type SelectControlSize = "sm" | "md" | "lg";
@@ -129,12 +132,6 @@ const selectItemIndicatorClasses =
   "flex size-4 items-center justify-center text-current";
 
 const selectItemContentClasses = "min-w-0 truncate";
-const selectPortalDefaultClasses = "bg-background font-sans text-foreground";
-const selectPortalMirroredAttributes = [
-  "data-theme",
-  "data-density",
-  "dir",
-] as const;
 
 type SelectComponent = (<T extends SelectItemData = SelectItemData>(
   props: SelectProps<T> & RefAttributes<HTMLDivElement>,
@@ -150,53 +147,6 @@ function toSelectionKey(value: SelectValue | undefined) {
 
 function toDisabledKeys(disabledKeys: Iterable<SelectValue> | undefined) {
   return disabledKeys ? Array.from(disabledKeys) : undefined;
-}
-
-function assignForwardedRef<T>(ref: ForwardedRef<T>, value: T | null) {
-  if (typeof ref === "function") {
-    ref(value);
-  } else if (ref) {
-    ref.current = value;
-  }
-}
-
-function fallbackProviderAttribute(name: (typeof selectPortalMirroredAttributes)[number]) {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  if (name === "data-density") {
-    return "default";
-  }
-
-  if (name === "data-theme") {
-    return document.documentElement.getAttribute(name) ?? "system";
-  }
-
-  return document.documentElement.getAttribute("dir") ?? document.dir ?? "ltr";
-}
-
-function syncSelectPortalContainer(
-  container: HTMLElement,
-  provider: HTMLElement | null,
-) {
-  const source = provider ?? (typeof document === "undefined" ? null : document.documentElement);
-
-  container.setAttribute("data-slot", "select-portal-container");
-  container.setAttribute("data-dethink-provider", "");
-  container.className = provider?.className || selectPortalDefaultClasses;
-  container.style.cssText = provider?.getAttribute("style") ?? "";
-  container.style.display = "contents";
-
-  for (const attribute of selectPortalMirroredAttributes) {
-    const value = source?.getAttribute(attribute) ?? fallbackProviderAttribute(attribute);
-
-    if (value) {
-      container.setAttribute(attribute, value);
-    } else {
-      container.removeAttribute(attribute);
-    }
-  }
 }
 
 function syncAriaInvalidAttribute(
@@ -318,32 +268,12 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
   const renderedChildren = renderSelectChildren({ children, items });
   const resolvedOpen = readOnly ? false : open;
   const resolvedDefaultOpen = readOnly ? false : defaultOpen;
-  const selectRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const [portalContainer] = useState<HTMLElement | null>(() => {
-    if (typeof document === "undefined") {
-      return null;
-    }
-
-    return document.createElement("div");
-  });
-  const setSelectRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      selectRef.current = node;
-      assignForwardedRef(ref, node);
-
-      if (node && portalContainer && typeof document !== "undefined") {
-        const provider = node.closest<HTMLElement>("[data-dethink-provider]") ?? null;
-
-        syncSelectPortalContainer(portalContainer, provider);
-
-        if (!portalContainer.isConnected) {
-          document.body.appendChild(portalContainer);
-        }
-      }
-    },
-    [portalContainer, ref],
-  );
+  const { portalContainer, rootRef } =
+    useProviderPortalRoot<HTMLDivElement>({
+      forwardedRef: ref,
+      portalSlot: "select-portal-container",
+    });
   const setTriggerRef = useCallback(
     (node: HTMLButtonElement | null) => {
       triggerRef.current = node;
@@ -353,129 +283,100 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
   );
 
   useEffect(() => {
-    if (!portalContainer || typeof document === "undefined") {
-      return undefined;
-    }
-
-    const provider = selectRef.current?.closest<HTMLElement>("[data-dethink-provider]") ?? null;
-    const syncContainer = () => syncSelectPortalContainer(portalContainer, provider);
-
-    syncContainer();
-    document.body.appendChild(portalContainer);
-
-    const observerTarget = provider ?? document.documentElement;
-    const observer = new MutationObserver(syncContainer);
-    observer.observe(observerTarget, {
-      attributeFilter: [
-        "class",
-        "data-density",
-        "data-theme",
-        "dir",
-        "style",
-      ],
-      attributes: true,
-    });
-
-    return () => {
-      observer.disconnect();
-      portalContainer.remove();
-    };
-  }, [portalContainer]);
-
-  useEffect(() => {
     syncAriaInvalidAttribute(triggerRef.current, resolvedAriaInvalid);
   }, [resolvedAriaInvalid]);
 
   return (
-    <AriaSelect
-      {...props}
-      ref={setSelectRef}
-      selectedKey={toSelectionKey(value)}
-      defaultSelectedKey={toSelectionKey(defaultValue)}
-      isOpen={resolvedOpen}
-      defaultOpen={resolvedDefaultOpen}
-      onOpenChange={(isOpen) => {
-        if (!readOnly) {
-          onOpenChange?.(isOpen);
-        }
-      }}
-      onSelectionChange={(key: Key | null) => {
-        if (key !== null && !readOnly) {
-          onValueChange?.(String(key));
-        }
-      }}
-      disabledKeys={toDisabledKeys(disabledKeys)}
-      isDisabled={disabled}
-      isRequired={required}
-      isInvalid={resolvedInvalid}
-      aria-invalid={resolvedAriaInvalid}
-      placeholder={placeholder}
-      validationBehavior="aria"
-      data-slot={dataSlot ?? "select"}
-      data-size={controlSize}
-      data-readonly={readOnly ? "true" : undefined}
-      className={selectClassNames({ className })}
-    >
-      {label ? (
-        <Label
-          data-slot="select-label"
-          data-disabled={disabled ? "true" : undefined}
-          data-invalid={resolvedInvalid ? "true" : undefined}
-          data-required={required ? "true" : undefined}
-          className={selectLabelClasses}
-        >
-          {label}
-          {required ? <span aria-hidden="true"> *</span> : null}
-        </Label>
-      ) : null}
-      <AriaButton
+    <DethinkPortalProvider container={portalContainer}>
+      <AriaSelect
+        {...props}
+        ref={rootRef}
+        selectedKey={toSelectionKey(value)}
+        defaultSelectedKey={toSelectionKey(defaultValue)}
+        isOpen={resolvedOpen}
+        defaultOpen={resolvedDefaultOpen}
+        onOpenChange={(isOpen) => {
+          if (!readOnly) {
+            onOpenChange?.(isOpen);
+          }
+        }}
+        onSelectionChange={(key: Key | null) => {
+          if (key !== null && !readOnly) {
+            onValueChange?.(String(key));
+          }
+        }}
+        disabledKeys={toDisabledKeys(disabledKeys)}
+        isDisabled={disabled}
+        isRequired={required}
+        isInvalid={resolvedInvalid}
         aria-invalid={resolvedAriaInvalid}
-        ref={setTriggerRef}
-        data-slot="select-trigger"
+        placeholder={placeholder}
+        validationBehavior="aria"
+        data-slot={dataSlot ?? "select"}
         data-size={controlSize}
-        data-invalid={resolvedInvalid ? "true" : undefined}
         data-readonly={readOnly ? "true" : undefined}
-        data-required={required ? "true" : undefined}
-        className={cn(selectTriggerBaseClasses, selectControlSizeClasses[controlSize])}
+        className={selectClassNames({ className })}
       >
-        <AriaSelectValue data-slot="select-value" className={selectValueClasses}>
-          {({ selectedText, defaultChildren }) => selectedText || defaultChildren}
-        </AriaSelectValue>
-        <span
-          aria-hidden="true"
-          data-slot="select-icon"
-          className={selectIconClasses}
+        {label ? (
+          <Label
+            data-slot="select-label"
+            data-disabled={disabled ? "true" : undefined}
+            data-invalid={resolvedInvalid ? "true" : undefined}
+            data-required={required ? "true" : undefined}
+            className={selectLabelClasses}
+          >
+            {label}
+            {required ? <span aria-hidden="true"> *</span> : null}
+          </Label>
+        ) : null}
+        <AriaButton
+          aria-invalid={resolvedAriaInvalid}
+          ref={setTriggerRef}
+          data-slot="select-trigger"
+          data-size={controlSize}
+          data-invalid={resolvedInvalid ? "true" : undefined}
+          data-readonly={readOnly ? "true" : undefined}
+          data-required={required ? "true" : undefined}
+          className={cn(selectTriggerBaseClasses, selectControlSizeClasses[controlSize])}
         >
-          <ChevronDownIcon />
-        </span>
-      </AriaButton>
-      {description ? (
-        <Text
-          slot="description"
-          data-slot="select-description"
-          className={selectHelpClasses}
+          <AriaSelectValue data-slot="select-value" className={selectValueClasses}>
+            {({ selectedText, defaultChildren }) => selectedText || defaultChildren}
+          </AriaSelectValue>
+          <span
+            aria-hidden="true"
+            data-slot="select-icon"
+            className={selectIconClasses}
+          >
+            <ChevronDownIcon />
+          </span>
+        </AriaButton>
+        {description ? (
+          <Text
+            slot="description"
+            data-slot="select-description"
+            className={selectHelpClasses}
+          >
+            {description}
+          </Text>
+        ) : null}
+        {errorMessage ? (
+          <FieldError data-slot="select-error" className={selectErrorClasses}>
+            {errorMessage}
+          </FieldError>
+        ) : null}
+        <Popover
+          data-slot="select-popover"
+          className={selectPopoverClasses}
         >
-          {description}
-        </Text>
-      ) : null}
-      {errorMessage ? (
-        <FieldError data-slot="select-error" className={selectErrorClasses}>
-          {errorMessage}
-        </FieldError>
-      ) : null}
-      <Popover
-        data-slot="select-popover"
-        UNSTABLE_portalContainer={portalContainer ?? undefined}
-        className={selectPopoverClasses}
-      >
-        <ListBox
-          data-slot="select-listbox"
-          className={selectListBoxClasses}
-        >
-          {renderedChildren}
-        </ListBox>
-      </Popover>
-    </AriaSelect>
+          <ListBox
+            data-slot="select-listbox"
+            className={selectListBoxClasses}
+          >
+            {renderedChildren}
+          </ListBox>
+        </Popover>
+      </AriaSelect>
+    </DethinkPortalProvider>
   );
 }
 

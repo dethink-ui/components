@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Select",
   "description": "React Aria backed single-select primitive with token-backed trigger, popover, item, form, invalid, disabled, read-only, density, dark mode, and provider-theme styling.",
-  "dependencies": ["react-aria-components"],
+  "dependencies": ["react-aria", "react-aria-components"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
   "files": [
@@ -15,6 +15,10 @@
     {
       "path": "packages/components/src/components/select/index.ts",
       "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
     },
     {
       "path": "packages/components/src/utils/cn.ts",

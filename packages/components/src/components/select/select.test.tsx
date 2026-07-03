@@ -144,7 +144,12 @@ describe("Select", () => {
       </Select>,
     );
 
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    const listbox = screen.getByRole("listbox");
+
+    expect(listbox).toBeInTheDocument();
+
+    listbox.focus();
+    expect(listbox).toHaveFocus();
 
     await user.keyboard("{Escape}");
 
