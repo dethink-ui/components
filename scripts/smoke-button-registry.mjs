@@ -100,6 +100,7 @@ const cardStack = await readJson(join(registryRoot, "card-stack.json"));
 const checkbox = await readJson(join(registryRoot, "checkbox.json"));
 const combobox = await readJson(join(registryRoot, "combobox.json"));
 const container = await readJson(join(registryRoot, "container.json"));
+const dialog = await readJson(join(registryRoot, "dialog.json"));
 const formField = await readJson(join(registryRoot, "form-field.json"));
 const input = await readJson(join(registryRoot, "input.json"));
 const iconButton = await readJson(join(registryRoot, "icon-button.json"));
@@ -127,6 +128,7 @@ const registryItemsByName = new Map(
     checkbox,
     combobox,
     container,
+    dialog,
     formField,
     input,
     iconButton,
@@ -156,6 +158,7 @@ assert(
 assert(checkbox.name === "checkbox", "checkbox registry item must be named checkbox.");
 assert(combobox.name === "combobox", "combobox registry item must be named combobox.");
 assert(container.name === "container", "container registry item must be named container.");
+assert(dialog.name === "dialog", "dialog registry item must be named dialog.");
 assert(formField.name === "form-field", "form-field registry item must be named form-field.");
 assert(input.name === "input", "input registry item must be named input.");
 assert(iconButton.name === "icon-button", "icon-button registry item must be named icon-button.");
@@ -210,6 +213,14 @@ assert(
 assert(
   container.registryDependencies?.includes("dethink-base"),
   "container registry item must depend on dethink-base.",
+);
+assert(
+  dialog.registryDependencies?.includes("dethink-base"),
+  "dialog registry item must depend on dethink-base.",
+);
+assert(
+  dialog.registryDependencies?.includes("button"),
+  "dialog registry item must depend on button for shared trigger and close styling.",
 );
 assert(
   formField.registryDependencies?.includes("dethink-base"),
@@ -308,6 +319,14 @@ assert(
   "container registry item must not add runtime dependencies.",
 );
 assert(
+  dialog.dependencies?.includes("react-aria"),
+  "dialog registry item must include react-aria.",
+);
+assert(
+  dialog.dependencies?.includes("react-aria-components"),
+  "dialog registry item must include react-aria-components.",
+);
+assert(
   Array.isArray(formField.dependencies) && formField.dependencies.length === 0,
   "form-field registry item must not add runtime dependencies.",
 );
@@ -385,6 +404,7 @@ for (const item of [
   checkbox,
   combobox,
   container,
+  dialog,
   formField,
   input,
   iconButton,
@@ -412,6 +432,7 @@ await assertRegistryRelativeImportsResolve(card, registryItemsByName);
 await assertRegistryRelativeImportsResolve(cardStack, registryItemsByName);
 await assertRegistryRelativeImportsResolve(checkbox, registryItemsByName);
 await assertRegistryRelativeImportsResolve(combobox, registryItemsByName);
+await assertRegistryRelativeImportsResolve(dialog, registryItemsByName);
 await assertRegistryRelativeImportsResolve(formField, registryItemsByName);
 await assertRegistryRelativeImportsResolve(input, registryItemsByName);
 await assertRegistryRelativeImportsResolve(grid, registryItemsByName);
@@ -500,6 +521,14 @@ const typographySource = await readFile(
 );
 const dateTimePickerSource = await readFile(
   join(root, "packages/components/src/components/date-time-picker/date-time-picker.tsx"),
+  "utf8",
+);
+const dialogSource = await readFile(
+  join(root, "packages/components/src/components/dialog/dialog.tsx"),
+  "utf8",
+);
+const providerPortalSource = await readFile(
+  join(root, "packages/components/src/utils/provider-portal.tsx"),
   "utf8",
 );
 const timelineSource = await readFile(
@@ -1193,6 +1222,105 @@ assert(
   "date-time-picker source must include visible focus styling.",
 );
 assert(!dateTimePickerSource.includes("@radix-ui"), "date-time-picker source must not use Radix.");
+assert(
+  dialogSource.includes("react-aria-components"),
+  "dialog source must use React Aria Components.",
+);
+assert(
+  dialogSource.includes('data-slot={dataSlot ?? "dialog"}'),
+  "dialog source must expose stable root slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-trigger"'),
+  "dialog source must expose stable trigger slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-overlay"'),
+  "dialog source must expose stable overlay slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-content"'),
+  "dialog source must expose stable content slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-panel"'),
+  "dialog source must expose stable panel slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-header"'),
+  "dialog source must expose stable header slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-footer"'),
+  "dialog source must expose stable footer slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-title"'),
+  "dialog source must expose stable title slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-description"'),
+  "dialog source must expose stable description slot data.",
+);
+assert(
+  dialogSource.includes('data-slot="dialog-close"'),
+  "dialog source must expose stable close slot data.",
+);
+assert(
+  dialogSource.includes('portalSlot: "dialog-portal-container"'),
+  "dialog source must create an explicit provider-aware portal container.",
+);
+assert(
+  dialogSource.includes("isDismissable={dismissible}"),
+  "dialog source must expose outside-dismiss behavior.",
+);
+assert(
+  dialogSource.includes("isKeyboardDismissDisabled={keyboardDismissDisabled}"),
+  "dialog source must expose keyboard-dismiss control.",
+);
+assert(
+  dialogSource.includes("shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}"),
+  "dialog source must expose custom outside-interaction close guards.",
+);
+assert(
+  dialogSource.includes("triggerElementRef.current?.focus()"),
+  "dialog source must restore focus to the trigger on close.",
+);
+assert(
+  dialogSource.includes("bg-background"),
+  "dialog source must use tokenized background utilities.",
+);
+assert(
+  dialogSource.includes("border-border"),
+  "dialog source must use tokenized border utilities.",
+);
+assert(
+  dialogSource.includes("motion-safe:transition"),
+  "dialog source must use reduced-motion-aware transitions.",
+);
+assert(
+  dialogSource.includes("100dvh") && dialogSource.includes("env(safe-area-inset-top)"),
+  "dialog source must constrain viewport sizing with dynamic viewport and safe-area units.",
+);
+assert(
+  providerPortalSource.includes("UNSAFE_PortalProvider"),
+  "provider portal helper must use React Aria's provider-aware portal API.",
+);
+assert(
+  providerPortalSource.includes("data-dethink-provider"),
+  "provider portal helper must preserve the provider hook for inherited tokens.",
+);
+assert(
+  providerPortalSource.includes('"data-theme"') &&
+    providerPortalSource.includes('"data-density"') &&
+    providerPortalSource.includes('"dir"'),
+  "provider portal helper must mirror theme, density, and direction attributes.",
+);
+assert(
+  providerPortalSource.includes("MutationObserver"),
+  "provider portal helper must resync provider attribute changes.",
+);
+assert(!dialogSource.includes("@radix-ui"), "dialog source must remain Radix-free.");
 assert(timelineSource.includes("data-slot=\"timeline\""), "timeline source must expose stable root slot data.");
 assert(timelineSource.includes("data-slot=\"timeline-viewport\""), "timeline source must expose viewport slot data.");
 assert(timelineSource.includes("<ol"), "timeline source must render an ordered list.");

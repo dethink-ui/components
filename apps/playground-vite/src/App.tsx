@@ -14,6 +14,14 @@ import {
   Container,
   DateTimePicker,
   DethinkProvider,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   Field,
   FieldContent,
   FieldControl,
@@ -226,6 +234,39 @@ export function App() {
             <ComboboxItem value="staging">Staging</ComboboxItem>
             <ComboboxItem value="sandbox">Sandbox</ComboboxItem>
           </Combobox>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Dialog smoke</CardTitle>
+              <CardDescription>
+                Verifies the package export, modal focus trap, and provider-aware
+                portal path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Dialog>
+                <DialogTrigger>Open dialog</DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Deploy workspace changes</DialogTitle>
+                    <DialogDescription>
+                      Dialog content renders through the provider portal while
+                      preserving tokens and focus behavior.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)]">
+                    <Text size="sm" tone="muted">
+                      This smoke path exercises the package entrypoint and copied
+                      registry files in a consumer app.
+                    </Text>
+                  </div>
+                  <DialogFooter>
+                    <DialogClose variant="outline">Cancel</DialogClose>
+                    <DialogClose>Confirm</DialogClose>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
           <Card as="section">
             <CardHeader>
               <CardTitle>Form field smoke</CardTitle>
