@@ -74,19 +74,19 @@ describe("positioned overlay utilities", () => {
       "focus-visible:outline-offset-2",
     );
     expect(positionedOverlaySurfaceClassNames()).toContain(
-      "motion-safe:data-[entering]:animate-popover-in",
+      "motion-safe:data-[entering]:animate-overlay-in",
     );
     expect(positionedOverlaySurfaceClassNames()).toContain(
-      "motion-safe:data-[exiting]:animate-popover-out",
+      "motion-safe:data-[exiting]:animate-overlay-out",
     );
     expect(positionedOverlaySurfaceClassNames()).toContain(
       "motion-reduce:animate-none",
     );
     expect(positionedOverlaySurfaceClassNames()).toContain(
-      "[--dt-popover-motion-y:var(--dt-space-1)]",
+      "[--dt-overlay-motion-y:var(--dt-space-1)]",
     );
     expect(positionedOverlaySurfaceClassNames()).toContain(
-      "data-[placement=bottom]:[--dt-popover-motion-y:calc(0px_-_var(--dt-space-1))]",
+      "data-[placement=bottom]:[--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))]",
     );
     expect(positionedOverlaySurfaceClassNames({ className: "custom-surface" }))
       .toContain("custom-surface");

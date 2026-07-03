@@ -321,6 +321,21 @@ export {
   type PopoverTriggerProps,
 } from "./components/popover";
 export {
+  Tooltip,
+  TooltipArrow,
+  TooltipContent,
+  TooltipTrigger,
+  tooltipArrowClassNames,
+  tooltipArrowShapeClassNames,
+  tooltipClassNames,
+  tooltipContentClassNames,
+  tooltipTriggerClassNames,
+  type TooltipArrowProps,
+  type TooltipContentProps,
+  type TooltipProps,
+  type TooltipTriggerProps,
+} from "./components/tooltip";
+export {
   Combobox,
   ComboboxItem,
   comboboxClassNames,

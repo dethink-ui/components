@@ -161,8 +161,17 @@ Build the Tooltip primitive path for supplemental non-interactive help text.
 The completed slice should provide Tooltip anatomy backed by React Aria
 TooltipTrigger, Tooltip, and OverlayArrow behavior; support delay, close delay,
 trigger mode, disabled state, positioning, optional arrows, provider-themed
-portal rendering, and focused tests/stories that verify hover, focus, keyboard
-dismissal, and accessibility expectations.
+portal rendering, minimal enter/exit motion, and focused tests/stories that
+verify hover, focus, keyboard dismissal, and accessibility expectations.
+
+## Motion scope
+
+This issue should include only minimal overlay motion: a short
+opacity/translate/scale enter and exit treatment driven by React Aria
+`data-entering`, `data-exiting`, and `data-placement` hooks, with
+`prefers-reduced-motion` support. Do not introduce richer choreography,
+gesture effects, sequencing, layout animations, or a new animation dependency
+in this issue; those belong in a separate animation PRD.
 
 ## Acceptance criteria
 
@@ -173,8 +182,9 @@ dismissal, and accessibility expectations.
 - [ ] Tooltip content is non-interactive in v1 and docs explicitly reject focusable content inside Tooltip.
 - [ ] Tooltip examples do not use tooltip text as the only accessible name for an icon-only control; the trigger retains an explicit accessible name.
 - [ ] Tooltip exposes `data-placement`, `data-entering`, and `data-exiting` state hooks where React Aria provides them.
+- [ ] Tooltip uses minimal provider-tokenized enter/exit motion for opacity, translate, and scale; it respects reduced motion and does not add a Motion dependency.
 - [ ] Tooltip styles content and arrow with provider-level background, foreground, border, radius, shadow, spacing, density, focus ring, RTL, and reduced-motion tokens.
-- [ ] Storybook examples cover icon-button tooltip, delayed tooltip, focus-triggered tooltip, disabled tooltip, arrow placement, long text wrapping, theme/density/RTL, and reduced-motion class coverage.
+- [ ] Storybook examples cover icon-button tooltip, delayed tooltip, focus-triggered tooltip, disabled tooltip, arrow placement, long text wrapping, theme/density/RTL, reduced-motion class coverage, and minimal motion behavior.
 - [ ] Render, fake-timer interaction, accessibility, SSR, registry, and playground smoke coverage verify the Tooltip path.
 
 ## Blocked by

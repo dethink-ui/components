@@ -69,6 +69,9 @@ import {
   Switch,
   Text,
   Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@dethink/components";
 
 function ArrowRightIcon() {
@@ -274,6 +277,22 @@ export function App() {
                   </PopoverFooter>
                 </PopoverContent>
               </Popover>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Tooltip smoke</CardTitle>
+              <CardDescription>
+                Verifies hover and focus help through provider-aware portals.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tooltip delay={0} closeDelay={0}>
+                <TooltipTrigger aria-label="Refresh report" size="icon">
+                  <RefreshIcon />
+                </TooltipTrigger>
+                <TooltipContent showArrow>Refresh report data</TooltipContent>
+              </Tooltip>
             </CardContent>
           </Card>
           <Card as="section">

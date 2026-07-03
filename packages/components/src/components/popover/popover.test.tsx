@@ -302,10 +302,10 @@ describe("Popover", () => {
     expect(popoverContentClassNames()).toContain("bg-background");
     expect(popoverContentClassNames()).toContain("focus-visible:outline-ring");
     expect(popoverContentClassNames()).toContain(
-      "motion-safe:data-[entering]:animate-popover-in",
+      "motion-safe:data-[entering]:animate-overlay-in",
     );
     expect(popoverContentClassNames()).toContain(
-      "motion-safe:data-[exiting]:animate-popover-out",
+      "motion-safe:data-[exiting]:animate-overlay-out",
     );
     expect(popoverPanelClassNames({ className: "custom-panel" })).toContain(
       "custom-panel",
