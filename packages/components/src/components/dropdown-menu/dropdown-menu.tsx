@@ -319,6 +319,7 @@ function DropdownMenuContentRoot<T extends object = object>(
   ref: ForwardedRef<HTMLElement>,
   defaults: Required<PositionedOverlayPositionProps> =
     positionedOverlayDropdownMenuDefaults,
+  contentSlot = "dropdown-menu-content",
 ) {
   const positionProps = resolvePositionedOverlayPositionProps(
     {
@@ -336,7 +337,7 @@ function DropdownMenuContentRoot<T extends object = object>(
     <AriaPopover
       {...positionProps}
       ref={ref}
-      data-slot="dropdown-menu-content"
+      data-slot={contentSlot}
       className={dropdownMenuContentClassNames({ className })}
     >
       {showArrow ? (
@@ -450,7 +451,12 @@ export const DropdownMenuSubmenuContent = forwardRef<
   HTMLElement,
   DropdownMenuSubmenuContentProps
 >((props, ref) =>
-  DropdownMenuContentRoot(props, ref, positionedOverlayDropdownSubmenuDefaults),
+  DropdownMenuContentRoot(
+    props,
+    ref,
+    positionedOverlayDropdownSubmenuDefaults,
+    "dropdown-menu-submenu-content",
+  ),
 );
 
 DropdownMenuSubmenuContent.displayName = "DropdownMenuSubmenuContent";

@@ -1486,11 +1486,12 @@ assert(
 assert(
   dropdownMenuSource.includes('data-slot={dataSlot ?? "dropdown-menu"}') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-trigger"') &&
-    dropdownMenuSource.includes('data-slot="dropdown-menu-content"') &&
+    dropdownMenuSource.includes('contentSlot = "dropdown-menu-content"') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-menu"') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-item"') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-label"') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-separator"') &&
+    dropdownMenuSource.includes("dropdown-menu-submenu-content") &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-arrow"'),
   "dropdown-menu source must expose stable action-menu anatomy slots.",
 );

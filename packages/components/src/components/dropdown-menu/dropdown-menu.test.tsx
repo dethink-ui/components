@@ -265,8 +265,89 @@ describe("DropdownMenu", () => {
 
     await user.keyboard("{ArrowDown}{ArrowRight}");
 
-    expect(await screen.findByText("Inbox")).toBeVisible();
+    const inboxItem = await screen.findByText("Inbox");
+    const submenuContent = inboxItem.closest(
+      '[data-slot="dropdown-menu-submenu-content"]',
+    );
+
+    expect(inboxItem).toBeVisible();
+    expect(submenuContent).toBeInTheDocument();
     expect(submenuItem).toHaveAttribute("data-open");
+  });
+
+  it("supports typeahead focus movement using item text values", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open typeahead actions</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Archive report</DropdownMenuItem>
+          <DropdownMenuItem textValue="Billing settings">
+            <DropdownMenuItemIcon>B</DropdownMenuItemIcon>
+            <DropdownMenuItemLabel>Billing settings</DropdownMenuItemLabel>
+          </DropdownMenuItem>
+          <DropdownMenuItem>Create export</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>,
+    );
+
+    const trigger = screen.getByRole("button", {
+      name: "Open typeahead actions",
+    });
+
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+
+    await user.keyboard("b");
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("menuitem", { name: "Billing settings" }),
+      ).toHaveAttribute("data-focused");
+    });
+  });
+
+  it("keeps the menu open when an item opts out of close-on-select", async () => {
+    const user = userEvent.setup();
+    const pinAction = vi.fn();
+    const archiveAction = vi.fn();
+
+    render(
+      <DropdownMenu>
+        <DropdownMenuTrigger>Open close behavior actions</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem
+            onAction={pinAction}
+            shouldCloseOnSelect={false}
+          >
+            Pin report
+          </DropdownMenuItem>
+          <DropdownMenuItem onAction={archiveAction}>
+            Archive report
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Open close behavior actions" }),
+    );
+
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("menuitem", { name: "Pin report" }));
+
+    expect(pinAction).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("menuitem", { name: "Archive report" }));
+
+    expect(archiveAction).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
   });
 
   it("composes class helpers", () => {
