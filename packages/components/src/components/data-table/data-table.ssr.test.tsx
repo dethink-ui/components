@@ -58,6 +58,7 @@ describe("DataTable SSR", () => {
     expect(markup).toContain('data-slot="data-table-toolbar"');
     expect(markup).toContain('data-slot="data-table-global-filter"');
     expect(markup).toContain('data-slot="data-table-sort-button"');
+    expect(markup).toContain('data-slot="data-table-sort-icon"');
     expect(markup).toContain('data-slot="data-table-pagination"');
     expect(markup).toContain('data-table-slot="selection-cell"');
     expect(markup).toContain('data-table-slot="row-actions"');

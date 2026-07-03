@@ -178,7 +178,14 @@ const dataTableColumnVisibilityOptionsBaseClasses =
 const dataTableCheckboxLabelBaseClasses =
   "inline-flex min-h-8 items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-1)] text-sm text-foreground";
 
-const dataTableColumnFilterBaseClasses = "mt-[var(--dt-space-2)]";
+const dataTableHeaderCellFilterableClasses = "min-w-40 align-top";
+
+const dataTableHeaderContentBaseClasses =
+  "grid min-w-0 gap-[var(--dt-space-2)]";
+
+const dataTableHeaderLabelBaseClasses = "block min-w-0 truncate";
+
+const dataTableColumnFilterBaseClasses = "block min-w-0";
 
 const dataTablePaginationBaseClasses =
   "mt-[var(--dt-space-3)] flex flex-wrap items-center justify-between gap-[var(--dt-space-3)] text-sm text-muted-foreground";
@@ -196,10 +203,12 @@ const dataTableErrorCellBaseClasses =
   "h-24 text-center text-sm font-medium text-destructive";
 
 const dataTableSortButtonBaseClasses =
-  "group inline-flex min-h-8 w-full items-center justify-start gap-[var(--dt-space-1-5)] rounded-sm text-start font-medium text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-150 motion-safe:ease-out motion-reduce:transition-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "group flex min-h-8 w-full min-w-0 items-center justify-start gap-[var(--dt-space-1-5)] rounded-sm text-start font-medium text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-150 motion-safe:ease-out motion-reduce:transition-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const dataTableSortLabelBaseClasses = "min-w-0 truncate";
 
 const dataTableSortIndicatorBaseClasses =
-  "inline-flex h-5 min-w-8 items-center justify-center rounded-sm border border-transparent px-[var(--dt-space-1)] text-[0.6875rem] font-medium uppercase text-muted-foreground group-hover:border-border group-hover:text-foreground";
+  "ms-auto inline-flex size-5 shrink-0 items-center justify-center rounded-sm text-muted-foreground motion-safe:transition-colors motion-safe:duration-150 group-hover:text-foreground group-data-[sorted=asc]:text-foreground group-data-[sorted=desc]:text-foreground";
 
 const dataTableEmptyBaseClasses =
   "h-24 text-center text-sm text-muted-foreground";
@@ -278,18 +287,6 @@ function getAriaSort(sorted: false | "asc" | "desc") {
   return undefined;
 }
 
-function getSortIndicator(sorted: false | "asc" | "desc") {
-  if (sorted === "asc") {
-    return "Asc";
-  }
-
-  if (sorted === "desc") {
-    return "Desc";
-  }
-
-  return "Sort";
-}
-
 function getColumnLabel<TData extends RowData>(column: Column<TData, unknown>) {
   const headerValue = column.columnDef.header;
 
@@ -302,6 +299,42 @@ function getColumnLabel<TData extends RowData>(column: Column<TData, unknown>) {
 
 function resolveUpdater<T>(updater: T | ((old: T) => T), current: T) {
   return typeof updater === "function" ? (updater as (old: T) => T)(current) : updater;
+}
+
+function getSelectedRowCount(rowSelection: RowSelectionState) {
+  return Object.values(rowSelection).filter(Boolean).length;
+}
+
+function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
+  return (
+    <svg
+      aria-hidden="true"
+      data-slot="data-table-sort-icon"
+      data-sort-state={sorted || "none"}
+      focusable="false"
+      viewBox="0 0 16 16"
+      className="size-4"
+    >
+      <path
+        d="M4.5 3 2 5.5h5L4.5 3Z"
+        fill="currentColor"
+        opacity={sorted === "desc" ? 0.35 : 1}
+      />
+      <path
+        d="M11.5 13 14 10.5H9l2.5 2.5Z"
+        fill="currentColor"
+        opacity={sorted === "asc" ? 0.35 : 1}
+      />
+      <path
+        d="M4.5 5v8M11.5 11V3"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+        opacity={sorted ? 1 : 0.65}
+      />
+    </svg>
+  );
 }
 
 function DefaultColumnFilter<TData extends RowData>({
@@ -446,6 +479,7 @@ export function DataTable<TData extends RowData>({
     enableGlobalFilter,
     enableHiding: enableColumnVisibility,
     enableMultiRowSelection: selectionMode === "multiple",
+    enableMultiSort: false,
     enableRowSelection: hasRowSelection,
     enableSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -524,7 +558,7 @@ export function DataTable<TData extends RowData>({
     sortDescFirst: false,
   });
   const rows = table.getRowModel().rows;
-  const selectedRowCount = table.getSelectedRowModel().rows.length;
+  const selectedRowCount = getSelectedRowCount(currentRowSelection);
   const totalRowCount = rowCount ?? table.getPrePaginationRowModel().rows.length;
   const visibleColumnCount = Math.max(
     table.getVisibleLeafColumns().length +
@@ -700,43 +734,56 @@ export function DataTable<TData extends RowData>({
                     colSpan={header.colSpan}
                     aria-sort={getAriaSort(sorted)}
                     data-table-slot="header-cell"
+                    data-filterable={canFilter ? "true" : undefined}
                     data-sortable={canSort ? "true" : undefined}
                     data-sorted={sorted || undefined}
-                  >
-                    {canSort && !header.isPlaceholder ? (
-                      <button
-                        type="button"
-                        data-slot="data-table-sort-button"
-                        data-sorted={sorted || undefined}
-                        aria-label={getNextSortLabel(
-                          mergedLabels,
-                          columnLabel,
-                          sorted,
-                        )}
-                        aria-pressed={sorted ? "true" : undefined}
-                        className={dataTableSortButtonClassNames()}
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        <span>{headerContent}</span>
-                        <span
-                          aria-hidden="true"
-                          data-slot="data-table-sort-indicator"
-                          className={dataTableSortIndicatorClassNames()}
-                        >
-                          {getSortIndicator(sorted)}
-                        </span>
-                      </button>
-                    ) : (
-                      headerContent
+                    className={cn(
+                      canFilter ? dataTableHeaderCellFilterableClasses : undefined,
                     )}
-                    {canFilter && !header.isPlaceholder
-                      ? renderColumnFilter?.(header.column) ?? (
-                          <DefaultColumnFilter
-                            column={header.column}
-                            label={columnLabel}
-                          />
-                        )
-                      : null}
+                  >
+                    <div
+                      data-slot="data-table-header-content"
+                      className={dataTableHeaderContentBaseClasses}
+                    >
+                      {canSort && !header.isPlaceholder ? (
+                        <button
+                          type="button"
+                          data-slot="data-table-sort-button"
+                          data-sorted={sorted || undefined}
+                          aria-label={getNextSortLabel(
+                            mergedLabels,
+                            columnLabel,
+                            sorted,
+                          )}
+                          aria-pressed={sorted ? "true" : undefined}
+                          className={dataTableSortButtonClassNames()}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          <span className={dataTableSortLabelBaseClasses}>
+                            {headerContent}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            data-slot="data-table-sort-indicator"
+                            className={dataTableSortIndicatorClassNames()}
+                          >
+                            <SortIcon sorted={sorted} />
+                          </span>
+                        </button>
+                      ) : (
+                        <span className={dataTableHeaderLabelBaseClasses}>
+                          {headerContent}
+                        </span>
+                      )}
+                      {canFilter && !header.isPlaceholder
+                        ? renderColumnFilter?.(header.column) ?? (
+                            <DefaultColumnFilter
+                              column={header.column}
+                              label={columnLabel}
+                            />
+                          )
+                        : null}
+                    </div>
                   </TableHead>
                 );
               })}

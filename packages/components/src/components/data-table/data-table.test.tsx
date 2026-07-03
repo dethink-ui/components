@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import {
@@ -7,6 +7,7 @@ import {
   dataTableClassNames,
   dataTableEmptyClassNames,
   dataTableSortButtonClassNames,
+  dataTableSortIndicatorClassNames,
   type DataTableColumnDef,
   type DataTableSortingState,
 } from ".";
@@ -116,6 +117,11 @@ describe("DataTable", () => {
     expect(requestsHeader).not.toHaveAttribute("aria-sort");
     expect(requestsHeader).toHaveAttribute("data-sortable", "true");
     expect(requestsButton).toHaveAttribute("data-slot", "data-table-sort-button");
+    expect(requestsButton).toHaveTextContent("Requests");
+    expect(requestsButton).not.toHaveTextContent("Sort");
+    expect(
+      requestsButton.querySelector('[data-slot="data-table-sort-icon"]'),
+    ).toHaveAttribute("data-sort-state", "none");
 
     requestsButton.focus();
     await user.keyboard("[Enter]");
@@ -123,6 +129,9 @@ describe("DataTable", () => {
     expect(requestsHeader).toHaveAttribute("aria-sort", "ascending");
     expect(requestsHeader).toHaveAttribute("data-sorted", "asc");
     expect(requestsButton).toHaveAccessibleName("Sort Requests descending");
+    expect(
+      requestsButton.querySelector('[data-slot="data-table-sort-icon"]'),
+    ).toHaveAttribute("data-sort-state", "asc");
     expect(within(getBodyRows()[0]).getByText("Audit")).toBeInTheDocument();
     expect(within(getBodyRows()[1]).getByText("Sandbox")).toBeInTheDocument();
     expect(within(getBodyRows()[2]).getByText("Production")).toBeInTheDocument();
@@ -132,6 +141,9 @@ describe("DataTable", () => {
     expect(requestsHeader).toHaveAttribute("aria-sort", "descending");
     expect(requestsHeader).toHaveAttribute("data-sorted", "desc");
     expect(requestsButton).toHaveAccessibleName("Clear Requests sort");
+    expect(
+      requestsButton.querySelector('[data-slot="data-table-sort-icon"]'),
+    ).toHaveAttribute("data-sort-state", "desc");
     expect(within(getBodyRows()[0]).getByText("Production")).toBeInTheDocument();
   });
 
@@ -163,6 +175,41 @@ describe("DataTable", () => {
       screen.getByRole("button", { name: "Sort Workspace descending" }),
     ).toBeInTheDocument();
     expect(within(getBodyRows()[0]).getByText("Audit")).toBeInTheDocument();
+  });
+
+  it("keeps sorting to one column when shift-clicking another header", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DataTable
+        aria-label="Single-sort workspaces"
+        columns={columns}
+        data={workspaces}
+        getRowId={(row) => row.id}
+      />,
+    );
+
+    const requestsButton = screen.getByRole("button", {
+      name: "Sort Requests ascending",
+    });
+
+    await user.click(requestsButton);
+
+    const requestsHeader = requestsButton.closest("th");
+    const workspaceButton = screen.getByRole("button", {
+      name: "Sort Workspace ascending",
+    });
+    const workspaceHeader = workspaceButton.closest("th");
+
+    fireEvent.click(workspaceButton, { shiftKey: true });
+
+    const sortedHeaders = screen
+      .getAllByRole("columnheader")
+      .filter((header) => header.hasAttribute("aria-sort"));
+
+    expect(sortedHeaders).toHaveLength(1);
+    expect(requestsHeader).not.toHaveAttribute("aria-sort");
+    expect(workspaceHeader).toHaveAttribute("aria-sort", "ascending");
   });
 
   it("can expose sort state without client-side sorting in manual mode", () => {
@@ -224,6 +271,9 @@ describe("DataTable", () => {
     expect(dataTableSortButtonClassNames({ className: "custom" })).toContain(
       "custom",
     );
+    expect(dataTableSortIndicatorClassNames({ className: "custom" })).toContain(
+      "custom",
+    );
     expect(dataTableEmptyClassNames({ className: "custom" })).toContain(
       "custom",
     );
@@ -267,6 +317,17 @@ describe("DataTable", () => {
 
     await user.type(screen.getByLabelText("Filter Owner"), "qa");
 
+    const ownerHeader = screen.getByRole("columnheader", { name: /Owner/ });
+    const ownerFilter = screen
+      .getByLabelText("Filter Owner")
+      .closest('[data-slot="data-table-column-filter"]');
+
+    expect(ownerHeader).toHaveAttribute("data-filterable", "true");
+    expect(ownerHeader).toHaveClass("min-w-40", "align-top");
+    expect(
+      ownerHeader.querySelector('[data-slot="data-table-header-content"]'),
+    ).toBeInTheDocument();
+    expect(ownerFilter).toHaveClass("block", "min-w-0");
     expect(within(getBodyRows()[0]).getByText("Sandbox")).toBeInTheDocument();
     expect(screen.queryByText("ops@example.com")).not.toBeInTheDocument();
   });
@@ -387,6 +448,28 @@ describe("DataTable", () => {
     await user.type(screen.getByLabelText("Search table"), "missing");
 
     expect(within(getBodyRows()[0]).getByText("Production")).toBeInTheDocument();
+  });
+
+  it("counts controlled selected row ids outside the current manual page", () => {
+    render(
+      <DataTable
+        aria-label="Manual selection workspaces"
+        columns={columns}
+        data={workspaces.slice(0, 1)}
+        getRowId={(row) => row.id}
+        manualPagination
+        pageCount={10}
+        rowCount={100}
+        rowSelection={{
+          "workspace-production": true,
+          "workspace-sandbox": true,
+          "workspace-audit": false,
+        }}
+        selectionMode="multiple"
+      />,
+    );
+
+    expect(screen.getByText("2 of 100 rows selected")).toBeInTheDocument();
   });
 
   it("renders loading and error states", () => {

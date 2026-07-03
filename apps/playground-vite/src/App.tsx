@@ -21,6 +21,7 @@ import {
   Combobox,
   ComboboxItem,
   Container,
+  DataTable,
   DateTimePicker,
   DethinkProvider,
   Dialog,
@@ -89,6 +90,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
+  type DataTableColumnDef,
 } from "@dethink/components";
 
 function ArrowRightIcon() {
@@ -111,6 +113,62 @@ function RefreshIcon() {
     </svg>
   );
 }
+
+type PlaygroundInvoice = {
+  id: string;
+  account: string;
+  owner: string;
+  status: string;
+  total: number;
+};
+
+const playgroundInvoices: PlaygroundInvoice[] = [
+  {
+    id: "INV-3001",
+    account: "Acme Operations",
+    owner: "ops@example.com",
+    status: "Paid",
+    total: 12400,
+  },
+  {
+    id: "INV-3002",
+    account: "Dethink Labs",
+    owner: "finance@example.com",
+    status: "Open",
+    total: 8750,
+  },
+  {
+    id: "INV-3003",
+    account: "Northstar Systems",
+    owner: "revops@example.com",
+    status: "Review",
+    total: 3120,
+  },
+];
+
+const playgroundInvoiceColumns: DataTableColumnDef<PlaygroundInvoice>[] = [
+  {
+    accessorKey: "account",
+    header: "Account",
+  },
+  {
+    accessorKey: "owner",
+    header: "Owner",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+  },
+  {
+    accessorKey: "total",
+    header: "Total",
+    cell: ({ getValue }) =>
+      new Intl.NumberFormat("en-US", {
+        currency: "USD",
+        style: "currency",
+      }).format(getValue<number>()),
+  },
+];
 
 export function App() {
   return (
@@ -269,6 +327,35 @@ export function App() {
                   </TableRow>
                 </TableFooter>
               </Table>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>DataTable smoke</CardTitle>
+              <CardDescription>
+                Verifies DataTable sorting, filtering, pagination, selection, and
+                row actions through the package export path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                aria-label="Playground invoices"
+                columns={playgroundInvoiceColumns}
+                data={playgroundInvoices}
+                defaultPagination={{ pageIndex: 0, pageSize: 2 }}
+                density="compact"
+                enableColumnVisibility
+                enableGlobalFilter
+                enablePagination
+                getRowId={(row) => row.id}
+                pageSizeOptions={[2, 3]}
+                renderRowActions={(row) => (
+                  <Button size="sm" variant="outline">
+                    Open {row.original.id}
+                  </Button>
+                )}
+                selectionMode="multiple"
+              />
             </CardContent>
           </Card>
           <Box
