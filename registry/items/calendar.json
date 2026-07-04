@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "calendar",
+  "type": "registry:ui",
+  "title": "Calendar and RangeCalendar",
+  "description": "Accessible React Aria Calendar and RangeCalendar surfaces with Dethink token-backed month navigation, date cells, range states, density, RTL, and theme styling.",
+  "dependencies": ["@internationalized/date", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/calendar/calendar.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/calendar/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

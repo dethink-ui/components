@@ -116,6 +116,9 @@ const stack = await readJson(join(registryRoot, "stack.json"));
 const switchItem = await readJson(join(registryRoot, "switch.json"));
 const table = await readJson(join(registryRoot, "table.json"));
 const dataTable = await readJson(join(registryRoot, "data-table.json"));
+const calendar = await readJson(join(registryRoot, "calendar.json"));
+const datePicker = await readJson(join(registryRoot, "date-picker.json"));
+const dateRangePicker = await readJson(join(registryRoot, "date-range-picker.json"));
 const textarea = await readJson(join(registryRoot, "textarea.json"));
 const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
@@ -149,6 +152,9 @@ const registryItemsByName = new Map(
     switchItem,
     table,
     dataTable,
+    calendar,
+    datePicker,
+    dateRangePicker,
     textarea,
     tooltip,
     dropdownMenu,
@@ -184,6 +190,12 @@ assert(stack.name === "stack", "stack registry item must be named stack.");
 assert(switchItem.name === "switch", "switch registry item must be named switch.");
 assert(table.name === "table", "table registry item must be named table.");
 assert(dataTable.name === "data-table", "data-table registry item must be named data-table.");
+assert(calendar.name === "calendar", "calendar registry item must be named calendar.");
+assert(datePicker.name === "date-picker", "date-picker registry item must be named date-picker.");
+assert(
+  dateRangePicker.name === "date-range-picker",
+  "date-range-picker registry item must be named date-range-picker.",
+);
 assert(textarea.name === "textarea", "textarea registry item must be named textarea.");
 assert(tooltip.name === "tooltip", "tooltip registry item must be named tooltip.");
 assert(dropdownMenu.name === "dropdown-menu", "dropdown-menu registry item must be named dropdown-menu.");
@@ -322,6 +334,26 @@ assert(
   "data-table registry item must depend on input for filtering controls.",
 );
 assert(
+  calendar.registryDependencies?.includes("dethink-base"),
+  "calendar registry item must depend on dethink-base.",
+);
+assert(
+  datePicker.registryDependencies?.includes("dethink-base"),
+  "date-picker registry item must depend on dethink-base.",
+);
+assert(
+  datePicker.registryDependencies?.includes("calendar"),
+  "date-picker registry item must depend on calendar for shared date grid rendering.",
+);
+assert(
+  dateRangePicker.registryDependencies?.includes("dethink-base"),
+  "date-range-picker registry item must depend on dethink-base.",
+);
+assert(
+  dateRangePicker.registryDependencies?.includes("calendar"),
+  "date-range-picker registry item must depend on calendar for shared range grid rendering.",
+);
+assert(
   textarea.registryDependencies?.includes("dethink-base"),
   "textarea registry item must depend on dethink-base.",
 );
@@ -348,6 +380,10 @@ assert(
 assert(
   dateTimePicker.registryDependencies?.includes("dethink-base"),
   "date-time-picker registry item must depend on dethink-base.",
+);
+assert(
+  dateTimePicker.registryDependencies?.includes("calendar"),
+  "date-time-picker registry item must depend on calendar for shared date grid rendering.",
 );
 assert(
   timeline.registryDependencies?.includes("dethink-base"),
@@ -462,6 +498,38 @@ assert(
   "data-table registry item must include @tanstack/react-table.",
 );
 assert(
+  calendar.dependencies?.includes("@internationalized/date"),
+  "calendar registry item must include @internationalized/date.",
+);
+assert(
+  calendar.dependencies?.includes("react-aria-components"),
+  "calendar registry item must include react-aria-components.",
+);
+assert(
+  datePicker.dependencies?.includes("@internationalized/date"),
+  "date-picker registry item must include @internationalized/date.",
+);
+assert(
+  datePicker.dependencies?.includes("react-aria"),
+  "date-picker registry item must include react-aria for portal provider support.",
+);
+assert(
+  datePicker.dependencies?.includes("react-aria-components"),
+  "date-picker registry item must include react-aria-components.",
+);
+assert(
+  dateRangePicker.dependencies?.includes("@internationalized/date"),
+  "date-range-picker registry item must include @internationalized/date.",
+);
+assert(
+  dateRangePicker.dependencies?.includes("react-aria"),
+  "date-range-picker registry item must include react-aria for portal provider support.",
+);
+assert(
+  dateRangePicker.dependencies?.includes("react-aria-components"),
+  "date-range-picker registry item must include react-aria-components.",
+);
+assert(
   Array.isArray(textarea.dependencies) && textarea.dependencies.length === 0,
   "textarea registry item must not add runtime dependencies.",
 );
@@ -494,6 +562,10 @@ assert(
   "date-time-picker registry item must include @internationalized/date.",
 );
 assert(
+  dateTimePicker.dependencies?.includes("react-aria"),
+  "date-time-picker registry item must include react-aria for portal provider support.",
+);
+assert(
   dateTimePicker.dependencies?.includes("react-aria-components"),
   "date-time-picker registry item must include react-aria-components.",
 );
@@ -523,6 +595,9 @@ for (const item of [
   switchItem,
   table,
   dataTable,
+  calendar,
+  datePicker,
+  dateRangePicker,
   textarea,
   tooltip,
   dropdownMenu,
@@ -552,9 +627,13 @@ await assertRegistryRelativeImportsResolve(select, registryItemsByName);
 await assertRegistryRelativeImportsResolve(switchItem, registryItemsByName);
 await assertRegistryRelativeImportsResolve(table, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dataTable, registryItemsByName);
+await assertRegistryRelativeImportsResolve(calendar, registryItemsByName);
+await assertRegistryRelativeImportsResolve(datePicker, registryItemsByName);
+await assertRegistryRelativeImportsResolve(dateRangePicker, registryItemsByName);
 await assertRegistryRelativeImportsResolve(textarea, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
+await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
 
 const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
@@ -638,6 +717,18 @@ const tableSource = await readFile(
 );
 const dataTableSource = await readFile(
   join(root, "packages/components/src/components/data-table/data-table.tsx"),
+  "utf8",
+);
+const calendarSource = await readFile(
+  join(root, "packages/components/src/components/calendar/calendar.tsx"),
+  "utf8",
+);
+const datePickerSource = await readFile(
+  join(root, "packages/components/src/components/date-picker/date-picker.tsx"),
+  "utf8",
+);
+const dateRangePickerSource = await readFile(
+  join(root, "packages/components/src/components/date-range-picker/date-range-picker.tsx"),
   "utf8",
 );
 const tooltipSource = await readFile(
@@ -1500,6 +1591,70 @@ assert(
 assert(!dataTableSource.includes('role="grid"'), "data-table source must not add grid roles.");
 assert(!dataTableSource.includes("@radix-ui"), "data-table source must remain Radix-free.");
 assert(
+  calendarSource.includes("react-aria-components"),
+  "calendar source must use React Aria Components.",
+);
+assert(
+  calendarSource.includes('data-slot="calendar"') &&
+    calendarSource.includes('data-slot="range-calendar"'),
+  "calendar source must expose stable calendar and range-calendar slots.",
+);
+assert(
+  calendarSource.includes('data-slot={`${dataSlotPrefix}-cell`}'),
+  "calendar source must expose stable date cell slots.",
+);
+assert(
+  calendarSource.includes("rangeCalendarCellClassNames") &&
+    calendarSource.includes("calendarCellClassNames"),
+  "calendar source must expose class-name helpers.",
+);
+assert(!calendarSource.includes("@radix-ui"), "calendar source must not use Radix.");
+assert(
+  datePickerSource.includes("react-aria-components"),
+  "date-picker source must use React Aria Components.",
+);
+assert(
+  datePickerSource.includes('data-slot="date-picker"') &&
+    datePickerSource.includes('data-slot="date-picker-field"') &&
+    datePickerSource.includes('data-slot="date-picker-calendar"'),
+  "date-picker source must expose stable root, field, and calendar slots.",
+);
+assert(
+  datePickerSource.includes("serializeDatePickerValue") &&
+    datePickerSource.includes('data-slot="date-picker-form-value"'),
+  "date-picker source must expose form serialization.",
+);
+assert(
+  datePickerSource.includes("DethinkPortalProvider") &&
+    datePickerSource.includes("useProviderPortalRoot") &&
+    datePickerSource.includes('portalSlot: "date-picker-portal-container"'),
+  "date-picker source must render popovers through the provider-aware portal helper.",
+);
+assert(!datePickerSource.includes("@radix-ui"), "date-picker source must not use Radix.");
+assert(
+  dateRangePickerSource.includes("react-aria-components"),
+  "date-range-picker source must use React Aria Components.",
+);
+assert(
+  dateRangePickerSource.includes('data-slot="date-range-picker"') &&
+    dateRangePickerSource.includes('data-slot="date-range-picker-field"') &&
+    dateRangePickerSource.includes('data-slot="date-range-picker-calendar"'),
+  "date-range-picker source must expose stable root, field, and calendar slots.",
+);
+assert(
+  dateRangePickerSource.includes("getDateRangePickerFieldNames") &&
+    dateRangePickerSource.includes('data-slot="date-range-picker-start-form-value"') &&
+    dateRangePickerSource.includes('data-slot="date-range-picker-end-form-value"'),
+  "date-range-picker source must expose start/end form serialization.",
+);
+assert(
+  dateRangePickerSource.includes("DethinkPortalProvider") &&
+    dateRangePickerSource.includes("useProviderPortalRoot") &&
+    dateRangePickerSource.includes('portalSlot: "date-range-picker-portal-container"'),
+  "date-range-picker source must render popovers through the provider-aware portal helper.",
+);
+assert(!dateRangePickerSource.includes("@radix-ui"), "date-range-picker source must not use Radix.");
+assert(
   typographySource.includes('"data-slot": "typography"'),
   "typography source must expose stable typography slot data.",
 );
@@ -1534,6 +1689,17 @@ assert(
 assert(
   dateTimePickerSource.includes('data-slot="date-time-picker-calendar"'),
   "date-time-picker source must expose a stable calendar slot.",
+);
+assert(
+  dateTimePickerSource.includes('data-slot="date-time-picker-time-selector"') &&
+    dateTimePickerSource.includes("getDateTimePickerTimeOptionValue"),
+  "date-time-picker source must expose selectable time controls.",
+);
+assert(
+  dateTimePickerSource.includes("DethinkPortalProvider") &&
+    dateTimePickerSource.includes("useProviderPortalRoot") &&
+    dateTimePickerSource.includes('portalSlot: "date-time-picker-portal-container"'),
+  "date-time-picker source must render popovers through the provider-aware portal helper.",
 );
 assert(
   dateTimePickerSource.includes("border-input"),
