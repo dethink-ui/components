@@ -19,8 +19,8 @@ export default function ComponentsIndexPage() {
         <h1 className="font-heading text-4xl font-bold tracking-tight">Components</h1>
         <p className="max-w-2xl text-base leading-7 text-muted-foreground">
           Every component ships with live examples, copyable usage code, and a
-          complete props reference. Ten are documented so far — the rest of the
-          library is on its way.
+          complete props reference. Thirteen are documented so far — the rest of
+          the library is on its way.
         </p>
       </header>
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

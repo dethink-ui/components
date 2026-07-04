@@ -6,14 +6,21 @@ import {
   Card,
   CardContent,
   CardStack,
+  Checkbox,
   Combobox,
   ComboboxItem,
   DatePicker,
   DateRangePicker,
   DateTimePicker,
+  Field,
+  FieldControl,
+  FieldLabel,
   Input,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectItem,
+  Switch,
 } from "@dethink/components";
 import { CalendarDate, CalendarDateTime } from "@internationalized/date";
 import { ArrowRight } from "lucide-react";
@@ -99,6 +106,65 @@ export function DateRangePickerTeaser() {
           end: new CalendarDate(2026, 7, 17),
         }}
       />
+    </div>
+  );
+}
+
+export function CheckboxTeaser() {
+  return (
+    <div className="space-y-2.5">
+      <Field id="teaser-cb-1" orientation="horizontal">
+        <FieldControl asChild>
+          <Checkbox controlSize="sm" defaultChecked />
+        </FieldControl>
+        <FieldLabel className="text-sm">Unit tests</FieldLabel>
+      </Field>
+      <Field id="teaser-cb-2" orientation="horizontal">
+        <FieldControl asChild>
+          <Checkbox controlSize="sm" checked="indeterminate" readOnly />
+        </FieldControl>
+        <FieldLabel className="text-sm">Visual tests</FieldLabel>
+      </Field>
+    </div>
+  );
+}
+
+export function RadioGroupTeaser() {
+  return (
+    <RadioGroup aria-label="Plan teaser" defaultValue="team" controlSize="sm">
+      <div className="space-y-2.5">
+        <Field id="teaser-rg-1" orientation="horizontal">
+          <FieldControl asChild>
+            <RadioGroupItem value="starter" />
+          </FieldControl>
+          <FieldLabel className="text-sm">Starter</FieldLabel>
+        </Field>
+        <Field id="teaser-rg-2" orientation="horizontal">
+          <FieldControl asChild>
+            <RadioGroupItem value="team" />
+          </FieldControl>
+          <FieldLabel className="text-sm">Team</FieldLabel>
+        </Field>
+      </div>
+    </RadioGroup>
+  );
+}
+
+export function SwitchTeaser() {
+  return (
+    <div className="space-y-2.5">
+      <Field id="teaser-sw-1" orientation="horizontal">
+        <FieldControl asChild>
+          <Switch controlSize="sm" defaultChecked />
+        </FieldControl>
+        <FieldLabel className="text-sm">Autosave</FieldLabel>
+      </Field>
+      <Field id="teaser-sw-2" orientation="horizontal">
+        <FieldControl asChild>
+          <Switch controlSize="sm" />
+        </FieldControl>
+        <FieldLabel className="text-sm">Usage data</FieldLabel>
+      </Field>
     </div>
   );
 }
