@@ -11,10 +11,13 @@ import {
   DatePickerTeaser,
   DateRangePickerTeaser,
   DateTimePickerTeaser,
+  FormFieldTeaser,
   InputTeaser,
+  NumberInputTeaser,
   RadioGroupTeaser,
   SelectTeaser,
   SwitchTeaser,
+  TextareaTeaser,
 } from "@/components/component-teasers";
 import { GithubIcon } from "@/components/icons";
 import { CopyButton } from "@/components/copy-button";
@@ -33,10 +36,13 @@ const teasers: Record<string, ReactNode> = {
   "date-picker": <DatePickerTeaser />,
   "date-range-picker": <DateRangePickerTeaser />,
   "date-time-picker": <DateTimePickerTeaser />,
+  "form-field": <FormFieldTeaser />,
   input: <InputTeaser />,
+  "number-input": <NumberInputTeaser />,
   "radio-group": <RadioGroupTeaser />,
   select: <SelectTeaser />,
   switch: <SwitchTeaser />,
+  textarea: <TextareaTeaser />,
 };
 
 export default function HomePage() {
