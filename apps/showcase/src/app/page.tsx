@@ -6,10 +6,12 @@ import {
   CalendarTeaser,
   CardStackTeaser,
   CardTeaser,
+  ComboboxTeaser,
   DatePickerTeaser,
   DateRangePickerTeaser,
   DateTimePickerTeaser,
   InputTeaser,
+  SelectTeaser,
 } from "@/components/component-teasers";
 import { GithubIcon } from "@/components/icons";
 import { CopyButton } from "@/components/copy-button";
@@ -23,10 +25,12 @@ const teasers: Record<string, ReactNode> = {
   calendar: <CalendarTeaser />,
   card: <CardTeaser />,
   "card-stack": <CardStackTeaser />,
+  combobox: <ComboboxTeaser />,
   "date-picker": <DatePickerTeaser />,
   "date-range-picker": <DateRangePickerTeaser />,
   "date-time-picker": <DateTimePickerTeaser />,
   input: <InputTeaser />,
+  select: <SelectTeaser />,
 };
 
 export default function HomePage() {
