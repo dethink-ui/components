@@ -1,6 +1,6 @@
-import { DethinkThemeScript } from "@dethink/components/foundation";
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { ShowcaseProviders } from "@/components/showcase-providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -46,10 +46,11 @@ export default function RootLayout({
         data-density="default"
         className="flex min-h-svh flex-col bg-background font-sans text-foreground antialiased"
       >
-        <DethinkThemeScript />
-        <SiteHeader />
-        <main className="flex flex-1 flex-col">{children}</main>
-        <SiteFooter />
+        <ShowcaseProviders>
+          <SiteHeader />
+          <main className="flex flex-1 flex-col">{children}</main>
+          <SiteFooter />
+        </ShowcaseProviders>
       </body>
     </html>
   );

@@ -20,22 +20,28 @@ function readStoredMode(): ColorMode {
     : "system";
 }
 
+function applyDocumentMode(next: ColorMode) {
+  const colorScheme = next === "system" ? "light dark" : next;
+  document.documentElement.dataset.theme = next;
+  document.documentElement.style.colorScheme = colorScheme;
+  document
+    .querySelector('meta[name="color-scheme"]')
+    ?.setAttribute("content", colorScheme);
+}
+
 export function ThemeToggle() {
   const [mode, setMode] = useState<ColorMode | null>(null);
 
   useEffect(() => {
-    setMode(readStoredMode());
+    const storedMode = readStoredMode();
+    setMode(storedMode);
+    applyDocumentMode(storedMode);
   }, []);
 
   function applyMode(next: ColorMode) {
     setMode(next);
     window.localStorage.setItem(STORAGE_KEY, next);
-    const colorScheme = next === "system" ? "light dark" : next;
-    document.documentElement.dataset.theme = next;
-    document.documentElement.style.colorScheme = colorScheme;
-    document
-      .querySelector('meta[name="color-scheme"]')
-      ?.setAttribute("content", colorScheme);
+    applyDocumentMode(next);
   }
 
   return (
