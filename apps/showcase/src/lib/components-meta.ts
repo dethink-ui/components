@@ -6,6 +6,12 @@ export interface ComponentMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "box",
+    name: "Box",
+    description:
+      "The base layout primitive: tokenized spacing, surfaces, borders, and radius on any semantic element.",
+  },
+  {
     slug: "button",
     name: "Button",
     description:
@@ -40,6 +46,12 @@ export const componentCatalog: ComponentMeta[] = [
     name: "Combobox",
     description:
       "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
+  },
+  {
+    slug: "container",
+    name: "Container",
+    description:
+      "Center page content at tokenized max widths with responsive gutters.",
   },
   {
     slug: "data-table",
@@ -78,16 +90,40 @@ export const componentCatalog: ComponentMeta[] = [
       "Action menus with sections, icons, shortcuts, descriptions, submenus, and destructive items.",
   },
   {
+    slug: "flex",
+    name: "Flex",
+    description:
+      "Full flexbox control with tokenized gaps and per-item grow, shrink, and basis through FlexItem.",
+  },
+  {
     slug: "form-field",
     name: "FormField",
     description:
       "Give any control accessible field anatomy — label, description, error, and state wiring through one composable Field.",
   },
   {
+    slug: "grid",
+    name: "Grid",
+    description:
+      "Two-dimensional layouts with tokenized tracks and gaps, plus per-cell spans through GridItem.",
+  },
+  {
+    slug: "icon-button",
+    name: "IconButton",
+    description:
+      "Icon-only actions with enforced accessible names, five variants, five sizes, shapes, and a loading state.",
+  },
+  {
     slug: "input",
     name: "Input",
     description:
       "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
+  },
+  {
+    slug: "link",
+    name: "Link",
+    description:
+      "Navigate with tokenized anchor styling, underline control, and asChild composition for framework routers.",
   },
   {
     slug: "number-input",
@@ -112,6 +148,18 @@ export const componentCatalog: ComponentMeta[] = [
     name: "Select",
     description:
       "Pick one option from a popover listbox with typeahead, form states, and native form submission.",
+  },
+  {
+    slug: "separator",
+    name: "Separator",
+    description:
+      "Divide content horizontally or vertically with tone, thickness, spacing, and correct semantics.",
+  },
+  {
+    slug: "stack",
+    name: "Stack",
+    description:
+      "Space children along one axis with tokenized gaps, alignment, and wrapping.",
   },
   {
     slug: "switch",
@@ -143,13 +191,12 @@ export const componentCatalog: ComponentMeta[] = [
     description:
       "Hint at a control's purpose on hover and focus with delay, placement, and arrow options.",
   },
-];
-
-export const upcomingComponents = [
-  "IconButton",
-  "Link",
-  "Typography",
-  "Layout primitives",
+  {
+    slug: "typography",
+    name: "Typography",
+    description:
+      "Set text hierarchy with Heading, Text, and Typography: levels, sizes, tones, weights, truncation, and clamping.",
+  },
 ];
 
 export function getComponentMeta(slug: string): ComponentMeta | undefined {
