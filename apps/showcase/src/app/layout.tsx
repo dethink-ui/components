@@ -33,6 +33,13 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
+/*
+ * Applies the stored brand theme before first paint so a hard reload never
+ * flashes the default teal brand. Must stay in sync with BRAND_STORAGE_KEY
+ * and DEFAULT_BRAND in lib/brand-themes.ts.
+ */
+const brandInitScript = `try{var b=localStorage.getItem("dethink-brand");if(b&&b!=="teal")document.documentElement.setAttribute("data-brand",b);}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -46,6 +53,7 @@ export default function RootLayout({
         data-density="default"
         className="flex min-h-svh flex-col bg-background font-sans text-foreground antialiased"
       >
+        <script dangerouslySetInnerHTML={{ __html: brandInitScript }} />
         <ShowcaseProviders>
           <SiteHeader />
           <main className="flex flex-1 flex-col">{children}</main>
