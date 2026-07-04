@@ -60,6 +60,18 @@ export const componentCatalog: ComponentMeta[] = [
       "Combine date and time selection with granularity, hour-cycle, time-zone, preset, and time-selector options.",
   },
   {
+    slug: "dialog",
+    name: "Dialog",
+    description:
+      "Modal surfaces with focus trapping, size and dismissal control, plus AlertDialog for explicit confirmation.",
+  },
+  {
+    slug: "dropdown-menu",
+    name: "DropdownMenu",
+    description:
+      "Action menus with sections, icons, shortcuts, descriptions, submenus, and destructive items.",
+  },
+  {
     slug: "form-field",
     name: "FormField",
     description:
@@ -76,6 +88,12 @@ export const componentCatalog: ComponentMeta[] = [
     name: "NumberInput",
     description:
       "Capture numeric input with the right mobile keypad, native min/max/step semantics, and form states.",
+  },
+  {
+    slug: "popover",
+    name: "Popover",
+    description:
+      "Anchor rich interactive content to a trigger with placement, arrows, and managed focus.",
   },
   {
     slug: "radio-group",
@@ -101,14 +119,15 @@ export const componentCatalog: ComponentMeta[] = [
     description:
       "Collect multi-line text with tokenized sizes, resize control, and accessible invalid and read-only states.",
   },
+  {
+    slug: "tooltip",
+    name: "Tooltip",
+    description:
+      "Hint at a control's purpose on hover and focus with delay, placement, and arrow options.",
+  },
 ];
 
-export const upcomingComponents = [
-  "Dialog",
-  "Tooltip",
-  "Dropdown Menu",
-  "Data Table",
-];
+export const upcomingComponents = ["Data Table", "Table", "Timeline"];
 
 export function getComponentMeta(slug: string): ComponentMeta | undefined {
   return componentCatalog.find((component) => component.slug === slug);

@@ -12,9 +12,31 @@ import {
   DatePicker,
   DateRangePicker,
   DateTimePicker,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuItemLabel,
+  DropdownMenuSection,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Field,
   FieldControl,
   FieldLabel,
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   Input,
   NumberInput,
   RadioGroup,
@@ -108,6 +130,81 @@ export function DateRangePickerTeaser() {
           end: new CalendarDate(2026, 7, 17),
         }}
       />
+    </div>
+  );
+}
+
+export function DialogTeaser() {
+  return (
+    <div className="flex justify-center">
+      <Dialog>
+        <DialogTrigger size="sm" variant="outline">
+          Workspace settings
+        </DialogTrigger>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Workspace settings</DialogTitle>
+            <DialogDescription>Applies to every dashboard.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose variant="outline">Cancel</DialogClose>
+            <DialogClose>Save</DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export function PopoverTeaser() {
+  return (
+    <div className="flex justify-center">
+      <Popover>
+        <PopoverTrigger size="sm" variant="outline">
+          Share dashboard
+        </PopoverTrigger>
+        <PopoverContent showArrow>
+          <PopoverDescription className="px-[var(--dt-space-4)] py-[var(--dt-space-3)]">
+            Anyone in the workspace can view.
+          </PopoverDescription>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+export function TooltipTeaser() {
+  return (
+    <div className="flex justify-center">
+      <Tooltip delay={0}>
+        <TooltipTrigger size="sm" variant="soft">
+          Hover me
+        </TooltipTrigger>
+        <TooltipContent>Shows on hover and focus</TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}
+
+export function DropdownMenuTeaser() {
+  return (
+    <div className="flex justify-center">
+      <DropdownMenu>
+        <DropdownMenuTrigger size="sm" variant="outline">
+          Actions
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuSection>
+            <DropdownMenuItem>
+              <DropdownMenuItemLabel>Duplicate</DropdownMenuItemLabel>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem destructive>
+              <DropdownMenuItemLabel>Delete</DropdownMenuItemLabel>
+            </DropdownMenuItem>
+          </DropdownMenuSection>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
