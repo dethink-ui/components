@@ -30,6 +30,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Cycle Card children as a layered deck or fanned arc with looping, built-in controls, and a controllable index.",
   },
   {
+    slug: "combobox",
+    name: "Combobox",
+    description:
+      "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
+  },
+  {
     slug: "date-picker",
     name: "DatePicker",
     description:
@@ -53,10 +59,15 @@ export const componentCatalog: ComponentMeta[] = [
     description:
       "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
   },
+  {
+    slug: "select",
+    name: "Select",
+    description:
+      "Pick one option from a popover listbox with typeahead, form states, and native form submission.",
+  },
 ];
 
 export const upcomingComponents = [
-  "Select",
   "Dialog",
   "Tooltip",
   "Dropdown Menu",

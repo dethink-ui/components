@@ -6,10 +6,14 @@ import {
   Card,
   CardContent,
   CardStack,
+  Combobox,
+  ComboboxItem,
   DatePicker,
   DateRangePicker,
   DateTimePicker,
   Input,
+  Select,
+  SelectItem,
 } from "@dethink/components";
 import { CalendarDate, CalendarDateTime } from "@internationalized/date";
 import { ArrowRight } from "lucide-react";
@@ -95,6 +99,33 @@ export function DateRangePickerTeaser() {
           end: new CalendarDate(2026, 7, 17),
         }}
       />
+    </div>
+  );
+}
+
+export function SelectTeaser() {
+  return (
+    <div className="w-full">
+      <Select label="Region" defaultValue="eu-west" controlSize="sm">
+        <SelectItem value="us-east">US East</SelectItem>
+        <SelectItem value="eu-west">EU West</SelectItem>
+        <SelectItem value="ap-south">AP South</SelectItem>
+      </Select>
+    </div>
+  );
+}
+
+export function ComboboxTeaser() {
+  return (
+    <div className="w-full">
+      <Combobox
+        label="Assignee"
+        placeholder="Type to filter"
+        controlSize="sm"
+      >
+        <ComboboxItem value="amara">Amara Okafor</ComboboxItem>
+        <ComboboxItem value="jonas">Jonas Weber</ComboboxItem>
+      </Combobox>
     </div>
   );
 }
