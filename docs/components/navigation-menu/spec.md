@@ -179,6 +179,38 @@ Dialog or future Sidebar patterns for small screens. It should not implement a
 full mobile Sidebar or Dashboard Shell. Responsive examples should preserve
 semantic links, current state, focus visibility, and reduced-motion behavior.
 
+### v1 responsive API decision
+
+No dedicated responsive runtime API ships in v1. Tailwind responsive utilities
+are the public styling contract for this library, so breakpoint behavior is
+composed with existing primitives instead of a bespoke prop surface:
+
+- `size="sm"` plus `variant="quiet"` produce compact topbar density.
+- `orientation="vertical"` provides the stacked layout used in narrow
+  containers and mobile overlays.
+- Responsive utilities (`max-md:hidden`, `md:hidden`, `lg:hidden`,
+  `max-lg:hidden`) on the root, items, or wrapper elements switch between
+  desktop and mobile compositions.
+
+### Documented collapse recipes
+
+- **Mobile Dialog handoff**: render the desktop NavigationMenu with
+  `max-md:hidden` and a `md:hidden` Dialog whose content hosts the same links
+  in a vertical NavigationMenu. The Dialog owns overlay behavior (focus trap,
+  Escape, restore); NavigationMenu stays a navigation primitive and keeps
+  `aria-current`, disabled, and external semantics.
+- **Overflow "More" collapse**: keep primary links inline and collapse
+  secondary destinations into a `NavigationMenuTrigger` + panel item that is
+  `lg:hidden`, mirroring the same links inline with `max-lg:hidden` for wide
+  screens.
+- **Compact wrap**: for small link sets, `NavigationMenuList` accepts
+  `flex-wrap` through `className` to wrap instead of collapsing.
+
+Full Sidebar, Dashboard Shell, auth/account menus, and notification menus
+remain out of scope for NavigationMenu (see Out Of Scope below); the mobile
+recipes intentionally compose Dialog rather than reimplementing drawer
+behavior.
+
 ## Testing Seams
 
 - Rendered behavior tests for simple links, current state, disabled/external

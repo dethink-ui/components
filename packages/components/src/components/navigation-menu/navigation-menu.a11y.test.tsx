@@ -1,7 +1,9 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../dialog";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -166,6 +168,49 @@ describe("NavigationMenu accessibility", () => {
     );
 
     await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for mobile-composed navigation in a dialog", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DethinkProvider theme="light">
+        <header>
+          <Dialog>
+            <DialogTrigger variant="outline">Open navigation</DialogTrigger>
+            <DialogContent>
+              <DialogTitle>Navigate</DialogTitle>
+              <NavigationMenu
+                aria-label="Workspace sections"
+                orientation="vertical"
+                variant="quiet"
+              >
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink current href="/overview">
+                      Overview
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationMenuLink href="/projects">
+                      Projects
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </DialogContent>
+          </Dialog>
+        </header>
+        <main aria-label="NavigationMenu mobile smoke">
+          <p>Workspace content</p>
+        </main>
+      </DethinkProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Open navigation" }));
+    await screen.findByRole("dialog");
+
+    await expect(axe(document.body)).resolves.toHaveNoViolations();
   });
 
   it("has no axe violations for viewport-hosted panels", async () => {

@@ -2,6 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   Button,
   DethinkProvider,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuDescription,
@@ -558,6 +562,153 @@ export const KeyboardUsage: Story = {
         <ProductFlyoutNav />
       </div>
     </DethinkProvider>
+  ),
+};
+
+const responsiveSections = [
+  { href: "/dashboard", label: "Dashboard", current: true },
+  { href: "/deployments", label: "Deployments", current: false },
+  { href: "/monitoring", label: "Monitoring", current: false },
+  { href: "/team", label: "Team", current: false },
+];
+
+function ResponsiveTopbar() {
+  return (
+    <header className="flex items-center justify-between gap-4 rounded-md border border-border bg-muted/30 px-4 py-2">
+      <span className="text-sm font-semibold text-foreground">Acme Cloud</span>
+      <NavigationMenu
+        aria-label="Dashboard"
+        className="max-md:hidden"
+        size="sm"
+        variant="quiet"
+      >
+        <NavigationMenuList>
+          {responsiveSections.map((section) => (
+            <NavigationMenuItem key={section.href}>
+              <NavigationMenuLink current={section.current} href={section.href}>
+                {section.label}
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ))}
+        </NavigationMenuList>
+      </NavigationMenu>
+      <div className="md:hidden">
+        <Dialog>
+          <DialogTrigger size="sm" variant="outline">
+            Menu
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Navigate</DialogTitle>
+            <div className="px-[var(--dt-space-6)] pb-[var(--dt-space-6)]">
+              <NavigationMenu
+                aria-label="Dashboard"
+                orientation="vertical"
+                variant="quiet"
+              >
+                <NavigationMenuList>
+                  {responsiveSections.map((section) => (
+                    <NavigationMenuItem key={section.href}>
+                      <NavigationMenuLink
+                        current={section.current}
+                        href={section.href}
+                      >
+                        {section.label}
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  ))}
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </header>
+  );
+}
+
+export const CompactAppTopbar: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className="rounded-lg border border-border p-4">
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">
+          Resize the viewport: the quiet nav renders inline on wide screens and
+          hands off to a Dialog below the md breakpoint. NavigationMenu stays a
+          navigation primitive — the Dialog owns the mobile overlay.
+        </p>
+        <ResponsiveTopbar />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const OverflowCollapse: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[16rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          Secondary destinations collapse behind a More disclosure below the lg
+          breakpoint and render inline when space allows.
+        </p>
+        <NavigationMenu aria-label="Product">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink current href="/overview">
+                Overview
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/projects">Projects</NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="lg:hidden" value="more">
+              <NavigationMenuTrigger>More</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/reports">Reports</NavigationMenuLink>
+                  <NavigationMenuLink href="/audit">Audit log</NavigationMenuLink>
+                  <NavigationMenuLink href="/settings">
+                    Settings
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="max-lg:hidden">
+              <NavigationMenuLink href="/reports">Reports</NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="max-lg:hidden">
+              <NavigationMenuLink href="/audit">Audit log</NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem className="max-lg:hidden">
+              <NavigationMenuLink href="/settings">Settings</NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const MobileComposedThemes: Story = {
+  render: () => (
+    <div className="grid gap-4 xl:grid-cols-2">
+      <DethinkProvider
+        theme="dark"
+        density="compact"
+        className="rounded-lg border border-border p-4"
+      >
+        <ResponsiveTopbar />
+      </DethinkProvider>
+      <DethinkProvider
+        theme="light"
+        density="comfortable"
+        dir="rtl"
+        className="rounded-lg border border-border p-4"
+      >
+        <ResponsiveTopbar />
+      </DethinkProvider>
+    </div>
   ),
 };
 
