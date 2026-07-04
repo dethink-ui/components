@@ -621,6 +621,24 @@ export {
   type DatePickerValue,
 } from "./components/date-picker";
 export {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuClassNames,
+  navigationMenuItemClassNames,
+  navigationMenuLinkClassNames,
+  navigationMenuListClassNames,
+  type NavigationMenuCurrent,
+  type NavigationMenuItemProps,
+  type NavigationMenuLinkProps,
+  type NavigationMenuListProps,
+  type NavigationMenuOrientation,
+  type NavigationMenuProps,
+  type NavigationMenuSize,
+  type NavigationMenuVariant,
+} from "./components/navigation-menu";
+export {
   DateRangePicker,
   dateRangePickerClassNames,
   getDateRangePickerFieldNames,
