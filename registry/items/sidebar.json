@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sidebar",
+  "type": "registry:ui",
+  "title": "Sidebar",
+  "description": "Composable app sidebar navigation with provider-owned collapsed state, semantic links, icon rail behavior, grouped content, trigger and rail controls, token-backed styling, and CSS-only reduced-motion-aware transitions.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/sidebar/sidebar.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/sidebar/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
