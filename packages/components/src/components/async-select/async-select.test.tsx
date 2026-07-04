@@ -99,6 +99,26 @@ describe("AsyncSelect", () => {
     expect(new FormData(form as HTMLFormElement).get("account")).toBe("acme");
   });
 
+  it("shows the default selected label in single mode", () => {
+    render(
+      <form aria-label="Async default form">
+        <AsyncSelect
+          defaultValue="acme"
+          items={accountItems}
+          label="Account"
+          name="account"
+        />
+      </form>,
+    );
+
+    const form = screen.getByRole("form", { name: "Async default form" });
+
+    expect(screen.getByRole("combobox", { name: /Account/ })).toHaveValue(
+      "Acme Operations",
+    );
+    expect(new FormData(form as HTMLFormElement).get("account")).toBe("acme");
+  });
+
   it("shows loading, empty, min-query, and error states with retry", async () => {
     const user = userEvent.setup();
     const retry = vi.fn();
@@ -170,6 +190,21 @@ describe("AsyncSelect", () => {
     expect(container.querySelector('[data-slot="multi-select-chip"]')).toHaveTextContent(
       "Acme Operations",
     );
+  });
+
+  it("announces multiple-mode async status while closed", () => {
+    render(
+      <AsyncSelect
+        selectionMode="multiple"
+        inputValue="ari"
+        items={[]}
+        label="Owners"
+        loading
+        loadingMessage="Finding owners..."
+      />,
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent("Finding owners...");
   });
 
   it("supports multiple selection form serialization", async () => {

@@ -10,6 +10,7 @@ import { MultiSelectBasic } from "@/examples/multi-select/basic";
 import { MultiSelectControlled } from "@/examples/multi-select/controlled";
 import { MultiSelectRecipeFilterBar } from "@/examples/multi-select/recipe-filter-bar";
 import { MultiSelectStates } from "@/examples/multi-select/states";
+import { MultiSelectThemeAndWrapping } from "@/examples/multi-select/theme-and-wrapping";
 import {
   multiSelectItemProps,
   multiSelectProps,
@@ -53,6 +54,13 @@ export default function MultiSelectPage() {
             description="Invalid, required, disabled option, read-only, and disabled control states."
           >
             <MultiSelectStates />
+          </ExampleBlock>
+          <ExampleBlock
+            file="multi-select/theme-and-wrapping.tsx"
+            title="Theme, RTL, and wrapping"
+            description="Nested provider tokens, compact density, RTL direction, and narrow chip wrapping."
+          >
+            <MultiSelectThemeAndWrapping />
           </ExampleBlock>
         </div>
       </DocsSection>

@@ -232,7 +232,7 @@ function AsyncSelectRoot<
     className,
     clearLabel,
     controlSize = "md",
-    defaultInputValue = "",
+    defaultInputValue,
     defaultValue,
     description,
     disabled = false,
@@ -266,19 +266,27 @@ function AsyncSelectRoot<
   const isMultiple = selectionMode === "multiple";
   const valueControlled = value !== undefined;
   const inputControlled = inputValue !== undefined;
-  const [singleValue, setSingleValue] = useState<AsyncSelectValue | null>(
-    normalizeSingleValue(defaultValue),
-  );
-  const [multipleValue, setMultipleValue] = useState<AsyncSelectValue[]>(
-    normalizeMultipleValue(defaultValue),
-  );
-  const [uncontrolledInputValue, setUncontrolledInputValue] =
-    useState(defaultInputValue);
-  const resolvedInputValue = inputValue ?? uncontrolledInputValue;
+  const initialSingleValue = normalizeSingleValue(value ?? defaultValue);
+  const initialMultipleValue = normalizeMultipleValue(value ?? defaultValue);
   const resolvedItems = useMemo(
     () => uniqueItems(items, selectedItems),
     [items, selectedItems],
   );
+  const initialSingleItem = initialSingleValue
+    ? resolvedItems.find((item) => item.value === initialSingleValue)
+    : undefined;
+  const initialInputValue =
+    defaultInputValue ??
+    (!isMultiple && initialSingleValue
+      ? itemTextValue(initialSingleItem ?? { value: initialSingleValue })
+      : "");
+  const [singleValue, setSingleValue] =
+    useState<AsyncSelectValue | null>(initialSingleValue);
+  const [multipleValue, setMultipleValue] =
+    useState<AsyncSelectValue[]>(initialMultipleValue);
+  const [uncontrolledInputValue, setUncontrolledInputValue] =
+    useState(initialInputValue);
+  const resolvedInputValue = inputValue ?? uncontrolledInputValue;
   const asyncState = getAsyncState({
     error,
     inputValue: resolvedInputValue,
@@ -355,6 +363,7 @@ function AsyncSelectRoot<
             </MultiSelectItem>
           )}
         </MultiSelect>
+        {status}
       </div>
     );
   }

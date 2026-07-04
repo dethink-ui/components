@@ -53,12 +53,14 @@ describe("MultiSelect", () => {
 
     const root = container.querySelector('[data-slot="multi-select"]');
     const control = container.querySelector('[data-slot="multi-select-control"]');
+    const input = screen.getByRole("combobox", { name: /Workspaces/ });
     const trigger = screen.getByRole("button", { name: /Show options/ });
 
     expect(root).toHaveAttribute("data-size", "lg");
     expect(root).toHaveClass("custom-multi-select");
     expect(ref.current).toBe(root);
-    expect(control).toHaveTextContent("Choose workspaces");
+    expect(control).not.toHaveTextContent("Choose workspacesChoose workspaces");
+    expect(input).toHaveAttribute("placeholder", "Choose workspaces");
     expect(multiSelectClassNames({ className: "custom-multi-select" })).toContain(
       "custom-multi-select",
     );

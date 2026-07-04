@@ -132,9 +132,6 @@ const multiSelectControlSizeClasses: Record<MultiSelectControlSize, string> = {
 const multiSelectValueClasses =
   "flex min-w-0 flex-1 flex-wrap items-center gap-[var(--dt-space-1-5)]";
 
-const multiSelectPlaceholderClasses =
-  "truncate text-muted-foreground";
-
 const multiSelectInputClasses =
   "min-w-[7rem] flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60 read-only:text-muted-foreground";
 
@@ -659,14 +656,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
                   </span>
                 );
               })
-            ) : (
-              <span
-                data-slot="multi-select-placeholder"
-                className={multiSelectPlaceholderClasses}
-              >
-                {placeholder}
-              </span>
-            )}
+            ) : null}
             <AriaInput
               aria-invalid={resolvedAriaInvalid}
               data-slot="multi-select-input"

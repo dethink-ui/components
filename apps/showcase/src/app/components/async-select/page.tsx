@@ -10,6 +10,7 @@ import { AsyncSelectBasic } from "@/examples/async-select/basic";
 import { AsyncSelectMultiple } from "@/examples/async-select/multiple";
 import { AsyncSelectRecipeServerFilter } from "@/examples/async-select/recipe-server-filter";
 import { AsyncSelectStates } from "@/examples/async-select/states";
+import { AsyncSelectThemeAndWrapping } from "@/examples/async-select/theme-and-wrapping";
 import { asyncSelectProps } from "@/lib/props/async-select";
 
 export const metadata: Metadata = {
@@ -47,9 +48,16 @@ export default function AsyncSelectPage() {
           <ExampleBlock
             file="async-select/states.tsx"
             title="Async states"
-            description="Loading, empty, and error-with-retry are explicit props, not hidden fetch behavior."
+            description="Loading, empty, error-with-retry, invalid, required, read-only, and disabled are explicit props."
           >
             <AsyncSelectStates />
+          </ExampleBlock>
+          <ExampleBlock
+            file="async-select/theme-and-wrapping.tsx"
+            title="Theme, RTL, and wrapping"
+            description="Multiple async selection using compact dark tokens, RTL direction, and narrow chip wrapping."
+          >
+            <AsyncSelectThemeAndWrapping />
           </ExampleBlock>
         </div>
       </DocsSection>

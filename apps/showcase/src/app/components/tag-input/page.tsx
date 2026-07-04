@@ -10,6 +10,7 @@ import { TagInputBasic } from "@/examples/tag-input/basic";
 import { TagInputControlled } from "@/examples/tag-input/controlled";
 import { TagInputRecipeLabelEditor } from "@/examples/tag-input/recipe-label-editor";
 import { TagInputStates } from "@/examples/tag-input/states";
+import { TagInputThemeAndWrapping } from "@/examples/tag-input/theme-and-wrapping";
 import { TagInputValidation } from "@/examples/tag-input/validation";
 import { tagInputProps } from "@/lib/props/tag-input";
 
@@ -58,6 +59,13 @@ export default function TagInputPage() {
             description="Invalid, required, read-only, and disabled states use the same field styling contract as other inputs."
           >
             <TagInputStates />
+          </ExampleBlock>
+          <ExampleBlock
+            file="tag-input/theme-and-wrapping.tsx"
+            title="Theme, RTL, and wrapping"
+            description="Nested provider tokens, compact density, RTL direction, and narrow chip wrapping."
+          >
+            <TagInputThemeAndWrapping />
           </ExampleBlock>
         </div>
       </DocsSection>
