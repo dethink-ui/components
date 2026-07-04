@@ -1,14 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
+  Button,
   DethinkProvider,
   NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuDescription,
+  NavigationMenuFeaturedItem,
   NavigationMenuItem,
+  NavigationMenuLabel,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuSection,
+  NavigationMenuSeparator,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
   type NavigationMenuSize,
   type NavigationMenuVariant,
 } from "@dethink/components";
-import { forwardRef, type AnchorHTMLAttributes } from "react";
+import { forwardRef, useState, type AnchorHTMLAttributes } from "react";
 
 const meta = {
   title: "Components/NavigationMenu",
@@ -223,6 +232,398 @@ export const RouterComposition: Story = {
         </NavigationMenuList>
       </NavigationMenu>
     </DethinkProvider>
+  ),
+};
+
+function ChartIcon() {
+  return (
+    <svg fill="none" viewBox="0 0 16 16">
+      <path
+        d="M2.5 13.5v-5m4 5v-9m4 9v-6m4 6v-11"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+function BoltIcon() {
+  return (
+    <svg fill="none" viewBox="0 0 16 16">
+      <path
+        d="M8.75 1.5 3.5 9h3.75l-.5 5.5L12 7H8.25l.5-5.5Z"
+        stroke="currentColor"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+function ProductFlyoutNav() {
+  return (
+    <NavigationMenu aria-label="Product">
+      <NavigationMenuList>
+        <NavigationMenuItem value="platform">
+          <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <NavigationMenuFeaturedItem href="/platform">
+              Platform overview
+              <NavigationMenuDescription>
+                Analytics, automation, and reporting in one workspace.
+              </NavigationMenuDescription>
+            </NavigationMenuFeaturedItem>
+            <NavigationMenuSeparator orientation="vertical" />
+            <NavigationMenuSection>
+              <NavigationMenuLabel>Products</NavigationMenuLabel>
+              <NavigationMenuLink href="/analytics" icon={<ChartIcon />}>
+                Analytics
+                <NavigationMenuDescription>
+                  Usage dashboards for every workspace.
+                </NavigationMenuDescription>
+              </NavigationMenuLink>
+              <NavigationMenuLink href="/automation" icon={<BoltIcon />}>
+                Automation
+                <NavigationMenuDescription>
+                  Build workflows that react to events.
+                </NavigationMenuDescription>
+              </NavigationMenuLink>
+              <NavigationMenuLink external href="https://status.example.com">
+                Status ↗
+              </NavigationMenuLink>
+            </NavigationMenuSection>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem value="solutions">
+          <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <NavigationMenuSection>
+              <NavigationMenuLabel>By team</NavigationMenuLabel>
+              <NavigationMenuLink href="/solutions/product">
+                Product teams
+              </NavigationMenuLink>
+              <NavigationMenuLink href="/solutions/data">
+                Data teams
+              </NavigationMenuLink>
+              <NavigationMenuLink disabled href="/solutions/finance">
+                Finance teams
+              </NavigationMenuLink>
+            </NavigationMenuSection>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem value="pricing">
+          <NavigationMenuLink href="/pricing">Pricing</NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+
+export const ProductFlyout: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[22rem] rounded-lg border border-border p-6"
+    >
+      <ProductFlyoutNav />
+    </DethinkProvider>
+  ),
+};
+
+export const DocsFlyout: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[20rem] rounded-lg border border-border p-6"
+    >
+      <NavigationMenu aria-label="Documentation" defaultValue="guides" variant="quiet">
+        <NavigationMenuList>
+          <NavigationMenuItem value="guides">
+            <NavigationMenuTrigger>Guides</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuSection>
+                <NavigationMenuLabel>Getting started</NavigationMenuLabel>
+                <NavigationMenuLink current="location" href="/docs/install">
+                  Installation
+                  <NavigationMenuDescription>
+                    Registry setup and base tokens.
+                  </NavigationMenuDescription>
+                </NavigationMenuLink>
+                <NavigationMenuLink href="/docs/theming">
+                  Theming
+                  <NavigationMenuDescription>
+                    Light, dark, density, and brand palettes.
+                  </NavigationMenuDescription>
+                </NavigationMenuLink>
+              </NavigationMenuSection>
+              <NavigationMenuSeparator orientation="vertical" />
+              <NavigationMenuSection>
+                <NavigationMenuLabel>Recipes</NavigationMenuLabel>
+                <NavigationMenuLink href="/docs/recipes/forms">
+                  Forms
+                </NavigationMenuLink>
+                <NavigationMenuLink href="/docs/recipes/tables">
+                  Tables
+                </NavigationMenuLink>
+                <NavigationMenuLink href="/docs/recipes/navigation">
+                  Navigation
+                </NavigationMenuLink>
+              </NavigationMenuSection>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem value="reference">
+            <NavigationMenuTrigger>Reference</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuSection>
+                <NavigationMenuLink href="/docs/api">
+                  Component API
+                </NavigationMenuLink>
+                <NavigationMenuLink href="/docs/tokens">Tokens</NavigationMenuLink>
+              </NavigationMenuSection>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink href="/changelog">Changelog</NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </DethinkProvider>
+  ),
+};
+
+export const HoverActivation: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[20rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="text-sm text-muted-foreground">
+          Hover a trigger to open its panel after a short intent delay. Click,
+          Enter, and Space still toggle for keyboard and touch users.
+        </p>
+        <NavigationMenu
+          aria-label="Hover navigation"
+          activationMode="hover"
+          delay={150}
+          closeDelay={300}
+        >
+          <NavigationMenuList>
+            <NavigationMenuItem value="products">
+              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/analytics">
+                    Analytics
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/automation">
+                    Automation
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem value="resources">
+              <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/docs">
+                    Documentation
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/blog">Blog</NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+function ControlledFlyoutExample() {
+  const [value, setValue] = useState<string | null>("platform");
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-density-gap">
+        <Button size="sm" variant="outline" onClick={() => setValue("platform")}>
+          Open platform
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setValue("solutions")}>
+          Open solutions
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setValue(null)}>
+          Close
+        </Button>
+        <span className="text-sm text-muted-foreground">
+          value: {value ?? "null"}
+        </span>
+      </div>
+      <NavigationMenu
+        aria-label="Controlled navigation"
+        value={value}
+        onValueChange={setValue}
+      >
+        <NavigationMenuList>
+          <NavigationMenuItem value="platform">
+            <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuSection>
+                <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+                <NavigationMenuLink href="/automation">
+                  Automation
+                </NavigationMenuLink>
+              </NavigationMenuSection>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem value="solutions">
+            <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuSection>
+                <NavigationMenuLink href="/solutions/product">
+                  Product teams
+                </NavigationMenuLink>
+              </NavigationMenuSection>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    </div>
+  );
+}
+
+export const ControlledFlyout: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[20rem] rounded-lg border border-border p-6"
+    >
+      <ControlledFlyoutExample />
+    </DethinkProvider>
+  ),
+};
+
+export const WithViewport: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[22rem] rounded-lg border border-border p-6"
+    >
+      <NavigationMenu aria-label="Viewport navigation" defaultValue="platform">
+        <NavigationMenuList>
+          <NavigationMenuItem value="platform">
+            <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuSection>
+                <NavigationMenuLabel>Products</NavigationMenuLabel>
+                <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+                <NavigationMenuLink href="/automation">
+                  Automation
+                </NavigationMenuLink>
+              </NavigationMenuSection>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+          <NavigationMenuItem value="company">
+            <NavigationMenuTrigger>Company</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <NavigationMenuSection>
+                <NavigationMenuLink href="/about">About</NavigationMenuLink>
+                <NavigationMenuLink href="/careers">Careers</NavigationMenuLink>
+              </NavigationMenuSection>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+        <NavigationMenuViewport />
+      </NavigationMenu>
+    </DethinkProvider>
+  ),
+};
+
+export const KeyboardUsage: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[20rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          Tab moves through links and triggers in document order. Enter and
+          Space toggle a trigger, Tab continues into the open panel, Escape
+          closes the panel and returns focus to its trigger, and moving focus
+          out of the navigation closes any open panel.
+        </p>
+        <ProductFlyoutNav />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const FlyoutThemeDensityAndRtl: Story = {
+  render: () => (
+    <div className="grid gap-4 xl:grid-cols-2">
+      <DethinkProvider
+        theme="dark"
+        density="compact"
+        className="min-h-[20rem] rounded-lg border border-border p-6"
+      >
+        <NavigationMenu
+          aria-label="Dark flyout navigation"
+          defaultValue="products"
+          variant="underline"
+        >
+          <NavigationMenuList>
+            <NavigationMenuItem value="products">
+              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/dark/analytics">
+                    Analytics
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/dark/automation">
+                    Automation
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink current href="/dark/overview">
+                Overview
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </DethinkProvider>
+      <DethinkProvider
+        theme="light"
+        density="comfortable"
+        dir="rtl"
+        className="min-h-[20rem] rounded-lg border border-border p-6"
+      >
+        <NavigationMenu aria-label="RTL flyout navigation" defaultValue="products">
+          <NavigationMenuList>
+            <NavigationMenuItem value="products">
+              <NavigationMenuTrigger>منتجات</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/rtl/analytics">
+                    التحليلات
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/rtl/automation">
+                    الأتمتة
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink current href="/rtl/overview">
+                نظرة عامة
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </DethinkProvider>
+    </div>
   ),
 };
 

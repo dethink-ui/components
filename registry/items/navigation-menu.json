@@ -3,7 +3,7 @@
   "name": "navigation-menu",
   "type": "registry:ui",
   "title": "Navigation Menu",
-  "description": "Link-first site and app navigation bar with current-state, disabled, and external link handling plus token-backed variants, sizes, and orientations.",
+  "description": "Link-first site and app navigation with disclosure flyout panels, rich sections and featured items, controlled or uncontrolled open state, activation modes, current-state handling, and token-backed variants, sizes, and orientations.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],

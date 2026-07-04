@@ -4,9 +4,17 @@ import { describe, expect, it } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
 import {
   NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuDescription,
+  NavigationMenuFeaturedItem,
   NavigationMenuItem,
+  NavigationMenuLabel,
   NavigationMenuLink,
   NavigationMenuList,
+  NavigationMenuSection,
+  NavigationMenuSeparator,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
   type NavigationMenuVariant,
 } from ".";
 
@@ -87,6 +95,100 @@ describe("NavigationMenu accessibility", () => {
           </NavigationMenuList>
         </NavigationMenu>
         <main aria-label="NavigationMenu variant smoke">
+          <p>Workspace content</p>
+        </main>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for an open rich flyout panel", async () => {
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <header>
+          <NavigationMenu aria-label="Product" defaultValue="products">
+            <NavigationMenuList>
+              <NavigationMenuItem value="products">
+                <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <NavigationMenuFeaturedItem href="/platform">
+                    Platform overview
+                    <NavigationMenuDescription>
+                      One place for analytics, automation, and reporting.
+                    </NavigationMenuDescription>
+                  </NavigationMenuFeaturedItem>
+                  <NavigationMenuSeparator orientation="vertical" />
+                  <NavigationMenuSection>
+                    <NavigationMenuLabel>Platform</NavigationMenuLabel>
+                    <NavigationMenuLink
+                      href="/analytics"
+                      icon={<svg viewBox="0 0 16 16" />}
+                    >
+                      Analytics
+                      <NavigationMenuDescription>
+                        Usage dashboards for every workspace.
+                      </NavigationMenuDescription>
+                    </NavigationMenuLink>
+                    <NavigationMenuLink current href="/automation">
+                      Automation
+                    </NavigationMenuLink>
+                    <NavigationMenuLink disabled href="/billing">
+                      Billing
+                    </NavigationMenuLink>
+                    <NavigationMenuLink
+                      external
+                      href="https://status.example.com"
+                    >
+                      Status
+                    </NavigationMenuLink>
+                  </NavigationMenuSection>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem value="resources">
+                <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <NavigationMenuLink href="/docs">
+                    Documentation
+                  </NavigationMenuLink>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink href="/pricing">Pricing</NavigationMenuLink>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
+        </header>
+        <main aria-label="NavigationMenu flyout smoke">
+          <p>Workspace content</p>
+        </main>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for viewport-hosted panels", async () => {
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <header>
+          <NavigationMenu aria-label="Product" defaultValue="products">
+            <NavigationMenuList>
+              <NavigationMenuItem value="products">
+                <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <NavigationMenuSection>
+                    <NavigationMenuLink href="/analytics">
+                      Analytics
+                    </NavigationMenuLink>
+                  </NavigationMenuSection>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+            <NavigationMenuViewport />
+          </NavigationMenu>
+        </header>
+        <main aria-label="NavigationMenu viewport smoke">
           <p>Workspace content</p>
         </main>
       </DethinkProvider>,
