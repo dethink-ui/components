@@ -155,10 +155,7 @@ export default function HomePage() {
         <ul className="grid gap-5 md:grid-cols-3">
           {componentCatalog.map((component) => (
             <li key={component.slug} className="h-full">
-              <Link
-                href={`/components/${component.slug}`}
-                className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-              >
+              <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
                 <div className="sc-preview-surface flex min-h-36 flex-1 items-center justify-center border-b border-border/70 p-6">
                   <div
                     aria-hidden="true"
@@ -171,17 +168,22 @@ export default function HomePage() {
                 </div>
                 <div className="space-y-1.5 p-5">
                   <h3 className="flex items-center justify-between font-heading text-lg font-semibold">
-                    {component.name}
-                    <ArrowRight
-                      aria-hidden="true"
-                      className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
-                    />
+                    <Link
+                      href={`/components/${component.slug}`}
+                      className="inline-flex items-center gap-1.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    >
+                      {component.name}
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+                      />
+                    </Link>
                   </h3>
                   <p className="text-sm leading-6 text-muted-foreground">
                     {component.description}
                   </p>
                 </div>
-              </Link>
+              </article>
             </li>
           ))}
         </ul>
