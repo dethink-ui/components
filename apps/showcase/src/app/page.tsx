@@ -8,6 +8,7 @@ import {
   CardTeaser,
   CheckboxTeaser,
   ComboboxTeaser,
+  DataTableTeaser,
   DatePickerTeaser,
   DateRangePickerTeaser,
   DateTimePickerTeaser,
@@ -20,7 +21,9 @@ import {
   RadioGroupTeaser,
   SelectTeaser,
   SwitchTeaser,
+  TableTeaser,
   TextareaTeaser,
+  TimelineTeaser,
   TooltipTeaser,
 } from "@/components/component-teasers";
 import { GithubIcon } from "@/components/icons";
@@ -37,6 +40,7 @@ const teasers: Record<string, ReactNode> = {
   "card-stack": <CardStackTeaser />,
   checkbox: <CheckboxTeaser />,
   combobox: <ComboboxTeaser />,
+  "data-table": <DataTableTeaser />,
   "date-picker": <DatePickerTeaser />,
   "date-range-picker": <DateRangePickerTeaser />,
   "date-time-picker": <DateTimePickerTeaser />,
@@ -49,7 +53,9 @@ const teasers: Record<string, ReactNode> = {
   "radio-group": <RadioGroupTeaser />,
   select: <SelectTeaser />,
   switch: <SwitchTeaser />,
+  table: <TableTeaser />,
   textarea: <TextareaTeaser />,
+  timeline: <TimelineTeaser />,
   tooltip: <TooltipTeaser />,
 };
 

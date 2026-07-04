@@ -44,7 +44,15 @@ import {
   Select,
   SelectItem,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
+  Timeline,
+  type TimelineItemData,
 } from "@dethink/components";
 import { CalendarDate, CalendarDateTime } from "@internationalized/date";
 import { ArrowRight } from "lucide-react";
@@ -129,6 +137,72 @@ export function DateRangePickerTeaser() {
           start: new CalendarDate(2026, 7, 6),
           end: new CalendarDate(2026, 7, 17),
         }}
+      />
+    </div>
+  );
+}
+
+export function TableTeaser() {
+  return (
+    <Table density="compact">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Version</TableHead>
+          <TableHead align="end">Downloads</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-mono text-xs">1.4.0</TableCell>
+          <TableCell align="end" className="tabular-nums text-xs">12,410</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-mono text-xs">1.3.2</TableCell>
+          <TableCell align="end" className="tabular-nums text-xs">31,876</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+
+export function DataTableTeaser() {
+  return (
+    <Table density="compact">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Service</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow selected>
+          <TableCell className="text-xs">api-gateway</TableCell>
+          <TableCell className="text-xs text-success">success</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="text-xs">billing</TableCell>
+          <TableCell className="text-xs text-destructive">failed</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+
+const teaserTimelineItems: TimelineItemData[] = [
+  { id: "t1", title: "Queued", status: "complete" },
+  { id: "t2", title: "Building", status: "current" },
+  { id: "t3", title: "Live", status: "upcoming" },
+];
+
+export function TimelineTeaser() {
+  return (
+    <div className="w-full origin-center scale-90">
+      <Timeline
+        aria-label="Timeline teaser"
+        mode="progress"
+        layout="stacked"
+        interactive={false}
+        items={teaserTimelineItems}
       />
     </div>
   );

@@ -42,6 +42,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
   },
   {
+    slug: "data-table",
+    name: "DataTable",
+    description:
+      "Sort, filter, select, and paginate row data with column definitions, empty/loading/error states, and server-driven modes.",
+  },
+  {
     slug: "date-picker",
     name: "DatePicker",
     description:
@@ -114,10 +120,22 @@ export const componentCatalog: ComponentMeta[] = [
       "Flip settings on and off with a native-input toggle that announces as a switch.",
   },
   {
+    slug: "table",
+    name: "Table",
+    description:
+      "Present static data with composable, semantic table anatomy: alignment, density, tones, caption, and footer.",
+  },
+  {
     slug: "textarea",
     name: "Textarea",
     description:
       "Collect multi-line text with tokenized sizes, resize control, and accessible invalid and read-only states.",
+  },
+  {
+    slug: "timeline",
+    name: "Timeline",
+    description:
+      "Present event histories and step sequences on an interactive track with statuses, selection, and zoomable viewports.",
   },
   {
     slug: "tooltip",
@@ -127,7 +145,12 @@ export const componentCatalog: ComponentMeta[] = [
   },
 ];
 
-export const upcomingComponents = ["Data Table", "Table", "Timeline"];
+export const upcomingComponents = [
+  "IconButton",
+  "Link",
+  "Typography",
+  "Layout primitives",
+];
 
 export function getComponentMeta(slug: string): ComponentMeta | undefined {
   return componentCatalog.find((component) => component.slug === slug);
