@@ -1,3 +1,4 @@
+import { CalendarDate, parseDateTime } from "@internationalized/date";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,11 +18,14 @@ import {
   CardHeader,
   CardStack,
   CardTitle,
+  Calendar,
   Checkbox,
   Combobox,
   ComboboxItem,
   Container,
   DataTable,
+  DatePicker,
+  DateRangePicker,
   DateTimePicker,
   DethinkProvider,
   Dialog,
@@ -72,6 +76,7 @@ import {
   PopoverTrigger,
   RadioGroup,
   RadioGroupItem,
+  RangeCalendar,
   Select,
   SelectItem,
   Separator,
@@ -377,12 +382,57 @@ export function App() {
           <Text id="smoke-link-target" size="sm" tone="muted">
             Link smoke target reached through native anchor behavior.
           </Text>
-          <DateTimePicker
-            clearable
-            description="Verifies the date/time registry dependency path."
-            label="Smoke date and time"
-            name="smokeDateTime"
-          />
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Date suite smoke</CardTitle>
+              <CardDescription>
+                Verifies Calendar, RangeCalendar, DatePicker, DateRangePicker,
+                and DateTimePicker through the package export path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-5 lg:grid-cols-2">
+                <DatePicker
+                  clearable
+                  defaultValue={new CalendarDate(2026, 7, 14)}
+                  description="Date-only field smoke."
+                  label="Smoke date"
+                  name="smokeDate"
+                />
+                <DateRangePicker
+                  clearable
+                  defaultValue={{
+                    end: new CalendarDate(2026, 7, 18),
+                    start: new CalendarDate(2026, 7, 14),
+                  }}
+                  description="Date range field smoke."
+                  label="Smoke date range"
+                  name="smokeDateRange"
+                />
+                <DateTimePicker
+                  clearable
+                  defaultValue={parseDateTime("2026-07-14T09:30")}
+                  description="Date/time field smoke with selectable slots."
+                  label="Smoke date and time"
+                  name="smokeDateTime"
+                  timeSelector
+                />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Calendar
+                    aria-label="Smoke calendar"
+                    defaultValue={new CalendarDate(2026, 7, 14)}
+                  />
+                  <RangeCalendar
+                    aria-label="Smoke range calendar"
+                    defaultValue={{
+                      end: new CalendarDate(2026, 7, 18),
+                      start: new CalendarDate(2026, 7, 14),
+                    }}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           <Select
             description="Verifies the Select package export and React Aria dependency path."
             label="Smoke workspace"

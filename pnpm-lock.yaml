@@ -20,6 +20,9 @@ importers:
       '@dethink/components':
         specifier: workspace:*
         version: link:../../packages/components
+      '@internationalized/date':
+        specifier: ^3.12.2
+        version: 3.12.2
       react:
         specifier: ^19.2.7
         version: 19.2.7

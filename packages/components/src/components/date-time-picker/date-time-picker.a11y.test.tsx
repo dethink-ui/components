@@ -8,6 +8,16 @@ import { DateTimePicker } from ".";
 
 expect.extend(toHaveNoViolations);
 
+function getDateTimeSegment(container: HTMLElement, type: string) {
+  const segment = container.querySelector<HTMLElement>(
+    `[data-slot="date-time-picker-segment"][data-segment="${type}"]`,
+  );
+
+  expect(segment).toBeTruthy();
+
+  return segment!;
+}
+
 describe("DateTimePicker accessibility", () => {
   it("has no axe violations for labeled field states", async () => {
     const { container } = render(
@@ -46,6 +56,25 @@ describe("DateTimePicker accessibility", () => {
 
     await user.click(screen.getByRole("button", { name: /Open calendar/ }));
 
+    await expect(axe(document.body)).resolves.toHaveNoViolations();
+  });
+
+  it("labels the time selector group when selectable time controls are enabled", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <DateTimePicker
+          defaultValue={parseDateTime("2026-07-02T11:00")}
+          label="Deployment slot"
+          timeOptions={[{ hour: 12, label: "12:00", minute: 0 }]}
+          timeSelector
+        />
+      </DethinkProvider>,
+    );
+
+    await user.click(getDateTimeSegment(container, "hour"));
+
+    expect(screen.getByRole("group", { name: "Time" })).toBeInTheDocument();
     await expect(axe(document.body)).resolves.toHaveNoViolations();
   });
 });

@@ -7,6 +7,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   DateTimePicker,
   DethinkProvider,
+  defineDethinkTheme,
   type DateTimePickerPreset,
 } from "@dethink/components";
 
@@ -18,6 +19,8 @@ const meta = {
     description: "Choose a date and time.",
     clearable: true,
     granularity: "minute",
+    timeSelector: true,
+    timeStep: 30,
   },
   argTypes: {
     granularity: {
@@ -28,12 +31,20 @@ const meta = {
       control: "inline-radio",
       options: [12, 24],
     },
+    timeSelector: {
+      control: "boolean",
+    },
+    timeStep: {
+      control: "inline-radio",
+      options: [5, 10, 15, 30, 60],
+    },
     value: { control: false },
     defaultValue: { control: false },
     minValue: { control: false },
     maxValue: { control: false },
     isDateUnavailable: { control: false },
     presets: { control: false },
+    timeOptions: { control: false },
     onValueChange: { action: "value changed" },
   },
 } satisfies Meta<typeof DateTimePicker>;
@@ -61,6 +72,58 @@ const schedulingPresets: DateTimePickerPreset[] = [
   },
 ];
 
+const dateTimeTheme = defineDethinkTheme({
+  colorSchemes: {
+    light: {
+      background: "oklch(0.985 0.014 285)",
+      foreground: "oklch(0.19 0.045 290)",
+      muted: "oklch(0.92 0.035 285)",
+      mutedForeground: "oklch(0.42 0.055 290)",
+      border: "oklch(0.8 0.045 285)",
+      input: "oklch(0.84 0.04 285)",
+      ring: "oklch(0.58 0.17 300)",
+      primary: "oklch(0.52 0.17 300)",
+      primaryForeground: "oklch(0.99 0.01 290)",
+      destructive: "oklch(0.58 0.21 25)",
+      destructiveForeground: "oklch(0.99 0.01 25)",
+      success: "oklch(0.54 0.15 145)",
+      successForeground: "oklch(0.99 0.01 145)",
+      warning: "oklch(0.76 0.16 85)",
+      warningForeground: "oklch(0.2 0.04 85)",
+      info: "oklch(0.58 0.15 240)",
+      infoForeground: "oklch(0.99 0.01 240)",
+    },
+    dark: {
+      background: "oklch(0.16 0.04 290)",
+      foreground: "oklch(0.96 0.018 285)",
+      muted: "oklch(0.25 0.045 290)",
+      mutedForeground: "oklch(0.74 0.045 285)",
+      border: "oklch(0.34 0.055 290)",
+      input: "oklch(0.31 0.055 290)",
+      ring: "oklch(0.72 0.14 300)",
+      primary: "oklch(0.72 0.14 300)",
+      primaryForeground: "oklch(0.14 0.035 290)",
+      success: "oklch(0.7 0.14 145)",
+      successForeground: "oklch(0.12 0.03 145)",
+      warning: "oklch(0.8 0.15 85)",
+      warningForeground: "oklch(0.14 0.03 85)",
+      info: "oklch(0.74 0.13 240)",
+      infoForeground: "oklch(0.13 0.035 240)",
+    },
+  },
+  density: {
+    comfortable: {
+      control: "3rem",
+      gap: "0.875rem",
+    },
+  },
+  radii: {
+    md: "0.75rem",
+  },
+});
+
+const storyProviderClasses = "w-fit bg-background p-0";
+
 export const SchedulingField: Story = {
   args: {
     defaultValue: parseDateTime("2026-06-30T09:30"),
@@ -69,7 +132,7 @@ export const SchedulingField: Story = {
     name: "maintenanceAt",
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="bg-background p-6">
+    <DethinkProvider theme="light" className={storyProviderClasses}>
       <DateTimePicker {...args} />
     </DethinkProvider>
   ),
@@ -77,7 +140,7 @@ export const SchedulingField: Story = {
 
 export const TimezoneAwareEvent: Story = {
   render: () => (
-    <DethinkProvider theme="dark" className="bg-background p-6">
+    <DethinkProvider theme="dark" className={storyProviderClasses}>
       <DateTimePicker
         clearable
         defaultValue={parseZonedDateTime(
@@ -94,7 +157,7 @@ export const TimezoneAwareEvent: Story = {
 
 export const ConstraintsAndPresets: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="bg-background p-6">
+    <DethinkProvider theme="light" className={storyProviderClasses}>
       <DateTimePicker
         clearable
         defaultValue={parseDateTime("2026-07-02T11:00")}
@@ -111,9 +174,32 @@ export const ConstraintsAndPresets: Story = {
   ),
 };
 
+export const SelectableTimeSlots: Story = {
+  render: () => (
+    <DethinkProvider theme="light" className={storyProviderClasses}>
+      <DateTimePicker
+        clearable
+        defaultValue={parseDateTime("2026-07-15T10:30")}
+        description="Preset slots are available after a calendar date exists."
+        granularity="minute"
+        label="Customer call"
+        name="customerCallAt"
+        timeSelector
+        timeOptions={[
+          { hour: 9, label: "09:00", minute: 0 },
+          { hour: 10, label: "10:30", minute: 30 },
+          { hour: 13, label: "13:00", minute: 0 },
+          { hour: 15, label: "15:30", minute: 30 },
+          { hour: 17, label: "17:00", minute: 0 },
+        ]}
+      />
+    </DethinkProvider>
+  ),
+};
+
 export const RequiredInvalidField: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="bg-background p-6">
+    <DethinkProvider theme="light" className={storyProviderClasses}>
       <DateTimePicker
         clearable
         errorMessage="Select a launch review time before saving."
@@ -127,7 +213,7 @@ export const RequiredInvalidField: Story = {
 
 export const LocaleAndHourCycle: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="bg-background p-6">
+    <DethinkProvider theme="light" className={storyProviderClasses}>
       <div className="grid gap-5 md:grid-cols-2">
         <DateTimePicker
           defaultValue={parseDateTime("2026-08-18T21:15")}
@@ -159,7 +245,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         density="compact"
         theme="dark"
-        className="bg-background p-6"
+        className={storyProviderClasses}
       >
         <DateTimePicker
           clearable
@@ -172,7 +258,7 @@ export const ThemeDensityAndRtl: Story = {
         density="comfortable"
         dir="rtl"
         theme="light"
-        className="bg-background p-6"
+        className={storyProviderClasses}
       >
         <DateTimePicker
           clearable
@@ -184,5 +270,27 @@ export const ThemeDensityAndRtl: Story = {
         />
       </DethinkProvider>
     </div>
+  ),
+};
+
+export const ThemeOverrides: Story = {
+  render: () => (
+    <DethinkProvider
+      density="comfortable"
+      theme="dark"
+      themeConfig={dateTimeTheme}
+      className={storyProviderClasses}
+    >
+      <DateTimePicker
+        clearable
+        defaultValue={parseDateTime("2026-11-12T14:30")}
+        description="The field, calendar, time slots, focus ring, and selected states come from theme tokens."
+        granularity="minute"
+        label="Board review"
+        name="boardReviewAt"
+        timeSelector
+        timeStep={15}
+      />
+    </DethinkProvider>
   ),
 };

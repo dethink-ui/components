@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "date-picker",
+  "type": "registry:ui",
+  "title": "DatePicker",
+  "description": "Accessible date-only picker with segmented entry, calendar popover, constraints, clear action, form serialization, validation states, and provider-themed styling.",
+  "dependencies": ["@internationalized/date", "react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "calendar"],
+  "files": [
+    {
+      "path": "packages/components/src/components/date-picker/date-picker.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/date-picker/date-picker-utils.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/date-picker/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    }
+  ]
+}
