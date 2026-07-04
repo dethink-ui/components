@@ -92,6 +92,7 @@ export interface MultiSelectProps<
   required?: boolean;
   searchLabel?: string;
   searchPlaceholder?: string;
+  selectedItems?: Iterable<T>;
   selectedLabel?: string;
   value?: MultiSelectValue[];
 }
@@ -457,6 +458,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
     required = false,
     searchLabel,
     searchPlaceholder = "Search options",
+    selectedItems,
     selectedLabel,
     value,
     ...props
@@ -474,6 +476,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
     useState(defaultInputValue);
   const resolvedInputValue = inputValue ?? uncontrolledInputValue;
   const dataItems = collectDataItems(items);
+  const selectedDataItems = collectDataItems(selectedItems);
   const staticItems = useMemo(
     () =>
       typeof children === "function"
@@ -481,7 +484,10 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
         : collectStaticItems(children as ReactNode),
     [children],
   );
-  const resolvedItems = dataItems.length > 0 ? dataItems : staticItems;
+  const resolvedItems = [
+    ...(dataItems.length > 0 ? dataItems : staticItems),
+    ...selectedDataItems,
+  ];
   const itemLookup = useMemo(() => {
     const map = new Map<MultiSelectValue, MultiSelectResolvedItem>();
 
