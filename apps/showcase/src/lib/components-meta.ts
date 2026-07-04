@@ -6,6 +6,12 @@ export interface ComponentMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "box",
+    name: "Box",
+    description:
+      "The base layout primitive: tokenized spacing, surfaces, borders, and radius on any semantic element.",
+  },
+  {
     slug: "button",
     name: "Button",
     description:
@@ -42,6 +48,18 @@ export const componentCatalog: ComponentMeta[] = [
       "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
   },
   {
+    slug: "container",
+    name: "Container",
+    description:
+      "Center page content at tokenized max widths with responsive gutters.",
+  },
+  {
+    slug: "data-table",
+    name: "DataTable",
+    description:
+      "Sort, filter, select, and paginate row data with column definitions, empty/loading/error states, and server-driven modes.",
+  },
+  {
     slug: "date-picker",
     name: "DatePicker",
     description:
@@ -60,10 +78,40 @@ export const componentCatalog: ComponentMeta[] = [
       "Combine date and time selection with granularity, hour-cycle, time-zone, preset, and time-selector options.",
   },
   {
+    slug: "dialog",
+    name: "Dialog",
+    description:
+      "Modal surfaces with focus trapping, size and dismissal control, plus AlertDialog for explicit confirmation.",
+  },
+  {
+    slug: "dropdown-menu",
+    name: "DropdownMenu",
+    description:
+      "Action menus with sections, icons, shortcuts, descriptions, submenus, and destructive items.",
+  },
+  {
+    slug: "flex",
+    name: "Flex",
+    description:
+      "Full flexbox control with tokenized gaps and per-item grow, shrink, and basis through FlexItem.",
+  },
+  {
     slug: "form-field",
     name: "FormField",
     description:
       "Give any control accessible field anatomy — label, description, error, and state wiring through one composable Field.",
+  },
+  {
+    slug: "grid",
+    name: "Grid",
+    description:
+      "Two-dimensional layouts with tokenized tracks and gaps, plus per-cell spans through GridItem.",
+  },
+  {
+    slug: "icon-button",
+    name: "IconButton",
+    description:
+      "Icon-only actions with enforced accessible names, five variants, five sizes, shapes, and a loading state.",
   },
   {
     slug: "input",
@@ -72,10 +120,22 @@ export const componentCatalog: ComponentMeta[] = [
       "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
   },
   {
+    slug: "link",
+    name: "Link",
+    description:
+      "Navigate with tokenized anchor styling, underline control, and asChild composition for framework routers.",
+  },
+  {
     slug: "number-input",
     name: "NumberInput",
     description:
       "Capture numeric input with the right mobile keypad, native min/max/step semantics, and form states.",
+  },
+  {
+    slug: "popover",
+    name: "Popover",
+    description:
+      "Anchor rich interactive content to a trigger with placement, arrows, and managed focus.",
   },
   {
     slug: "radio-group",
@@ -90,10 +150,28 @@ export const componentCatalog: ComponentMeta[] = [
       "Pick one option from a popover listbox with typeahead, form states, and native form submission.",
   },
   {
+    slug: "separator",
+    name: "Separator",
+    description:
+      "Divide content horizontally or vertically with tone, thickness, spacing, and correct semantics.",
+  },
+  {
+    slug: "stack",
+    name: "Stack",
+    description:
+      "Space children along one axis with tokenized gaps, alignment, and wrapping.",
+  },
+  {
     slug: "switch",
     name: "Switch",
     description:
       "Flip settings on and off with a native-input toggle that announces as a switch.",
+  },
+  {
+    slug: "table",
+    name: "Table",
+    description:
+      "Present static data with composable, semantic table anatomy: alignment, density, tones, caption, and footer.",
   },
   {
     slug: "textarea",
@@ -101,13 +179,24 @@ export const componentCatalog: ComponentMeta[] = [
     description:
       "Collect multi-line text with tokenized sizes, resize control, and accessible invalid and read-only states.",
   },
-];
-
-export const upcomingComponents = [
-  "Dialog",
-  "Tooltip",
-  "Dropdown Menu",
-  "Data Table",
+  {
+    slug: "timeline",
+    name: "Timeline",
+    description:
+      "Present event histories and step sequences on an interactive track with statuses, selection, and zoomable viewports.",
+  },
+  {
+    slug: "tooltip",
+    name: "Tooltip",
+    description:
+      "Hint at a control's purpose on hover and focus with delay, placement, and arrow options.",
+  },
+  {
+    slug: "typography",
+    name: "Typography",
+    description:
+      "Set text hierarchy with Heading, Text, and Typography: levels, sizes, tones, weights, truncation, and clamping.",
+  },
 ];
 
 export function getComponentMeta(slug: string): ComponentMeta | undefined {

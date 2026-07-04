@@ -1,31 +1,73 @@
 "use client";
 
 import {
+  Box,
   Button,
   Calendar,
   Card,
   CardContent,
   CardStack,
   Checkbox,
+  Container,
   Combobox,
   ComboboxItem,
   DatePicker,
   DateRangePicker,
   DateTimePicker,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuItemLabel,
+  DropdownMenuSection,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Field,
   FieldControl,
   FieldLabel,
+  Flex,
+  FlexItem,
+  Grid,
+  GridItem,
+  Heading,
+  IconButton,
+  Link as DethinkLink,
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
   Input,
   NumberInput,
   RadioGroup,
   RadioGroupItem,
   Select,
   SelectItem,
+  Separator,
+  Stack,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Text,
   Textarea,
+  Timeline,
+  type TimelineItemData,
 } from "@dethink/components";
 import { CalendarDate, CalendarDateTime } from "@internationalized/date";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Bell, Play, Search } from "lucide-react";
 
 export function ButtonTeaser() {
   return (
@@ -108,6 +150,293 @@ export function DateRangePickerTeaser() {
           end: new CalendarDate(2026, 7, 17),
         }}
       />
+    </div>
+  );
+}
+
+export function BoxTeaser() {
+  return (
+    <div className="grid w-full grid-cols-2 gap-2">
+      <Box p="3" radius="md" border="default" surface="background">
+        <Text size="xs">border</Text>
+      </Box>
+      <Box p="3" radius="md" surface="muted">
+        <Text size="xs">muted</Text>
+      </Box>
+      <Box p="3" radius="md" surface="info">
+        <Text size="xs">info</Text>
+      </Box>
+      <Box p="3" radius="md" border="primary">
+        <Text size="xs" tone="primary">
+          primary
+        </Text>
+      </Box>
+    </div>
+  );
+}
+
+export function ContainerTeaser() {
+  return (
+    <div className="w-full space-y-1.5">
+      {(["sm", "md"] as const).map((size) => (
+        <Container key={size} size={size} gutter="none" className="max-w-full">
+          <Box p="1" radius="sm" surface="muted">
+            <Text size="xs" align="center">
+              {size}
+            </Text>
+          </Box>
+        </Container>
+      ))}
+    </div>
+  );
+}
+
+export function StackTeaser() {
+  return (
+    <Stack gap="2" className="w-full">
+      {["one", "two", "three"].map((label) => (
+        <Box key={label} p="1" px="3" radius="sm" surface="muted">
+          <Text size="xs">{label}</Text>
+        </Box>
+      ))}
+    </Stack>
+  );
+}
+
+export function FlexTeaser() {
+  return (
+    <Flex gap="2" className="w-full">
+      <FlexItem>
+        <Box p="2" radius="sm" surface="muted">
+          <Text size="xs">fixed</Text>
+        </Box>
+      </FlexItem>
+      <FlexItem grow="1">
+        <Box p="2" radius="sm" surface="info">
+          <Text size="xs">grow</Text>
+        </Box>
+      </FlexItem>
+    </Flex>
+  );
+}
+
+export function GridTeaser() {
+  return (
+    <Grid columns="3" gap="2" className="w-full">
+      <GridItem colSpan="2">
+        <Box p="2" radius="sm" surface="info">
+          <Text size="xs">2</Text>
+        </Box>
+      </GridItem>
+      <GridItem>
+        <Box p="2" radius="sm" surface="muted">
+          <Text size="xs">1</Text>
+        </Box>
+      </GridItem>
+      <GridItem colSpan="full">
+        <Box p="2" radius="sm" surface="muted">
+          <Text size="xs">full</Text>
+        </Box>
+      </GridItem>
+    </Grid>
+  );
+}
+
+export function SeparatorTeaser() {
+  return (
+    <div className="w-full">
+      <Text size="xs">Above</Text>
+      <Separator spacing="2" />
+      <Stack direction="horizontal" gap="2" align="center">
+        <Text size="xs">Docs</Text>
+        <Separator orientation="vertical" spacing="none" className="h-3" />
+        <Text size="xs">Registry</Text>
+      </Stack>
+    </div>
+  );
+}
+
+export function IconButtonTeaser() {
+  return (
+    <div className="flex items-center justify-center gap-2">
+      <IconButton aria-label="Search" size="sm" variant="outline">
+        <Search />
+      </IconButton>
+      <IconButton aria-label="Play" size="sm" shape="circle">
+        <Play />
+      </IconButton>
+      <IconButton aria-label="Notifications" size="sm" variant="soft">
+        <Bell />
+      </IconButton>
+    </div>
+  );
+}
+
+export function LinkTeaser() {
+  return (
+    <Text size="sm">
+      Read the <DethinkLink href="#">theming guide</DethinkLink> or the{" "}
+      <DethinkLink href="#" variant="muted">
+        changelog
+      </DethinkLink>
+      .
+    </Text>
+  );
+}
+
+export function TypographyTeaser() {
+  return (
+    <div className="w-full">
+      <Heading level={3} visualLevel={4}>
+        Heading
+      </Heading>
+      <Text size="sm" tone="muted">
+        Body text with a muted tone.
+      </Text>
+      <Text size="xs" tone="primary" weight="medium">
+        Caption in primary →
+      </Text>
+    </div>
+  );
+}
+
+export function TableTeaser() {
+  return (
+    <Table density="compact">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Version</TableHead>
+          <TableHead align="end">Downloads</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-mono text-xs">1.4.0</TableCell>
+          <TableCell align="end" className="tabular-nums text-xs">12,410</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-mono text-xs">1.3.2</TableCell>
+          <TableCell align="end" className="tabular-nums text-xs">31,876</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+
+export function DataTableTeaser() {
+  return (
+    <Table density="compact">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Service</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow selected>
+          <TableCell className="text-xs">api-gateway</TableCell>
+          <TableCell className="text-xs text-success">success</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="text-xs">billing</TableCell>
+          <TableCell className="text-xs text-destructive">failed</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+
+const teaserTimelineItems: TimelineItemData[] = [
+  { id: "t1", title: "Queued", status: "complete" },
+  { id: "t2", title: "Building", status: "current" },
+  { id: "t3", title: "Live", status: "upcoming" },
+];
+
+export function TimelineTeaser() {
+  return (
+    <div className="w-full origin-center scale-90">
+      <Timeline
+        aria-label="Timeline teaser"
+        mode="progress"
+        layout="stacked"
+        interactive={false}
+        items={teaserTimelineItems}
+      />
+    </div>
+  );
+}
+
+export function DialogTeaser() {
+  return (
+    <div className="flex justify-center">
+      <Dialog>
+        <DialogTrigger size="sm" variant="outline">
+          Workspace settings
+        </DialogTrigger>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Workspace settings</DialogTitle>
+            <DialogDescription>Applies to every dashboard.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose variant="outline">Cancel</DialogClose>
+            <DialogClose>Save</DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+export function PopoverTeaser() {
+  return (
+    <div className="flex justify-center">
+      <Popover>
+        <PopoverTrigger size="sm" variant="outline">
+          Share dashboard
+        </PopoverTrigger>
+        <PopoverContent showArrow>
+          <PopoverDescription className="px-[var(--dt-space-4)] py-[var(--dt-space-3)]">
+            Anyone in the workspace can view.
+          </PopoverDescription>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+export function TooltipTeaser() {
+  return (
+    <div className="flex justify-center">
+      <Tooltip delay={0}>
+        <TooltipTrigger size="sm" variant="soft">
+          Hover me
+        </TooltipTrigger>
+        <TooltipContent>Shows on hover and focus</TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}
+
+export function DropdownMenuTeaser() {
+  return (
+    <div className="flex justify-center">
+      <DropdownMenu>
+        <DropdownMenuTrigger size="sm" variant="outline">
+          Actions
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuSection>
+            <DropdownMenuItem>
+              <DropdownMenuItemLabel>Duplicate</DropdownMenuItemLabel>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem destructive>
+              <DropdownMenuItemLabel>Delete</DropdownMenuItemLabel>
+            </DropdownMenuItem>
+          </DropdownMenuSection>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }
