@@ -23,7 +23,23 @@ import {
   type NavigationMenuSize,
   type NavigationMenuVariant,
 } from "@dethink/components";
+import { defineDethinkTheme } from "@dethink/components";
 import { forwardRef, useState, type AnchorHTMLAttributes } from "react";
+
+const marketingTheme = defineDethinkTheme({
+  colorSchemes: {
+    light: {
+      background: "oklch(0.99 0.01 95)",
+      foreground: "oklch(0.2 0.05 60)",
+      muted: "oklch(0.94 0.03 90)",
+      mutedForeground: "oklch(0.45 0.06 70)",
+      border: "oklch(0.85 0.04 90)",
+      ring: "oklch(0.6 0.16 55)",
+      primary: "oklch(0.55 0.18 45)",
+      primaryForeground: "oklch(0.99 0.01 95)",
+    },
+  },
+});
 
 const meta = {
   title: "Components/NavigationMenu",
@@ -981,6 +997,45 @@ export const FlyoutThemeDensityAndRtl: Story = {
         </NavigationMenu>
       </DethinkProvider>
     </div>
+  ),
+};
+
+export const CustomThemeOverrides: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      themeConfig={marketingTheme}
+      className="min-h-[18rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          NavigationMenu inherits brand palettes through provider tokens — the
+          underline indicator, hover surfaces, and focus rings all follow the
+          themeConfig override with no component-specific setup.
+        </p>
+        <NavigationMenu aria-label="Marketing" variant="underline" defaultValue="platform">
+          <NavigationMenuList>
+            <NavigationMenuItem value="platform">
+              <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+                  <NavigationMenuLink href="/automation">
+                    Automation
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink current href="/pricing">
+                Pricing
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuIndicator />
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+    </DethinkProvider>
   ),
 };
 
