@@ -174,6 +174,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Divide content horizontally or vertically with tone, thickness, spacing, and correct semantics.",
   },
   {
+    slug: "sidebar",
+    name: "Sidebar",
+    description:
+      "Compose app navigation with desktop collapse, icon rails, mobile drawers, grouped links, and current-route state.",
+  },
+  {
     slug: "stack",
     name: "Stack",
     description:
