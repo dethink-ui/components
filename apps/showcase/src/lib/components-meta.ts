@@ -30,6 +30,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Cycle Card children as a layered deck or fanned arc with looping, built-in controls, and a controllable index.",
   },
   {
+    slug: "checkbox",
+    name: "Checkbox",
+    description:
+      "Toggle independent options with a native-input checkbox supporting indeterminate, invalid, and sized states.",
+  },
+  {
     slug: "combobox",
     name: "Combobox",
     description:
@@ -60,10 +66,22 @@ export const componentCatalog: ComponentMeta[] = [
       "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
   },
   {
+    slug: "radio-group",
+    name: "RadioGroup",
+    description:
+      "Choose exactly one option from a set of native radio inputs with orientation, size, and state control.",
+  },
+  {
     slug: "select",
     name: "Select",
     description:
       "Pick one option from a popover listbox with typeahead, form states, and native form submission.",
+  },
+  {
+    slug: "switch",
+    name: "Switch",
+    description:
+      "Flip settings on and off with a native-input toggle that announces as a switch.",
   },
 ];
 
