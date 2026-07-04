@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tag-input",
+  "type": "registry:ui",
+  "title": "TagInput",
+  "description": "Accessible free-form tag input with React Aria tag semantics, chip removal, paste parsing, duplicate prevention, validation, repeated form values, density, and theme support.",
+  "dependencies": ["react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/tag-input/tag-input.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/tag-input/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

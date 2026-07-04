@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "async-select",
+  "type": "registry:ui",
+  "title": "AsyncSelect",
+  "description": "App-owned async selection wrapper for single and multiple results with loading, empty, min-query, error retry, stable selected labels, and form serialization.",
+  "dependencies": ["react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "combobox", "multi-select"],
+  "files": [
+    {
+      "path": "packages/components/src/components/async-select/async-select.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/async-select/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

@@ -446,6 +446,35 @@ export {
   type ComboboxValue,
 } from "./components/combobox";
 export {
+  MultiSelect,
+  MultiSelectItem,
+  multiSelectClassNames,
+  multiSelectItemClassNames,
+  type MultiSelectControlSize,
+  type MultiSelectItemData,
+  type MultiSelectItemProps,
+  type MultiSelectProps,
+  type MultiSelectValue,
+} from "./components/multi-select";
+export {
+  AsyncSelect,
+  asyncSelectClassNames,
+  type AsyncSelectChangeValue,
+  type AsyncSelectControlSize,
+  type AsyncSelectItemData,
+  type AsyncSelectProps,
+  type AsyncSelectSelectionMode,
+  type AsyncSelectValue,
+} from "./components/async-select";
+export {
+  TagInput,
+  tagInputClassNames,
+  type TagInputControlSize,
+  type TagInputProps,
+  type TagInputValidationResult,
+  type TagInputValue,
+} from "./components/tag-input";
+export {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,

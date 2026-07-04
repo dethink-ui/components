@@ -99,6 +99,9 @@ const card = await readJson(join(registryRoot, "card.json"));
 const cardStack = await readJson(join(registryRoot, "card-stack.json"));
 const checkbox = await readJson(join(registryRoot, "checkbox.json"));
 const combobox = await readJson(join(registryRoot, "combobox.json"));
+const multiSelect = await readJson(join(registryRoot, "multi-select.json"));
+const asyncSelect = await readJson(join(registryRoot, "async-select.json"));
+const tagInput = await readJson(join(registryRoot, "tag-input.json"));
 const container = await readJson(join(registryRoot, "container.json"));
 const dialog = await readJson(join(registryRoot, "dialog.json"));
 const formField = await readJson(join(registryRoot, "form-field.json"));
@@ -135,6 +138,9 @@ const registryItemsByName = new Map(
     cardStack,
     checkbox,
     combobox,
+    multiSelect,
+    asyncSelect,
+    tagInput,
     container,
     dialog,
     formField,
@@ -173,6 +179,9 @@ assert(
 );
 assert(checkbox.name === "checkbox", "checkbox registry item must be named checkbox.");
 assert(combobox.name === "combobox", "combobox registry item must be named combobox.");
+assert(multiSelect.name === "multi-select", "multi-select registry item must be named multi-select.");
+assert(asyncSelect.name === "async-select", "async-select registry item must be named async-select.");
+assert(tagInput.name === "tag-input", "tag-input registry item must be named tag-input.");
 assert(container.name === "container", "container registry item must be named container.");
 assert(dialog.name === "dialog", "dialog registry item must be named dialog.");
 assert(formField.name === "form-field", "form-field registry item must be named form-field.");
@@ -236,6 +245,26 @@ assert(
 assert(
   combobox.registryDependencies?.includes("dethink-base"),
   "combobox registry item must depend on dethink-base.",
+);
+assert(
+  multiSelect.registryDependencies?.includes("dethink-base"),
+  "multi-select registry item must depend on dethink-base.",
+);
+assert(
+  asyncSelect.registryDependencies?.includes("dethink-base"),
+  "async-select registry item must depend on dethink-base.",
+);
+assert(
+  asyncSelect.registryDependencies?.includes("combobox"),
+  "async-select registry item must depend on combobox for single-select rendering.",
+);
+assert(
+  asyncSelect.registryDependencies?.includes("multi-select"),
+  "async-select registry item must depend on multi-select for multi-value rendering.",
+);
+assert(
+  tagInput.registryDependencies?.includes("dethink-base"),
+  "tag-input registry item must depend on dethink-base.",
 );
 assert(
   container.registryDependencies?.includes("dethink-base"),
@@ -418,6 +447,26 @@ assert(
   "combobox registry item must include react-aria for portal provider support.",
 );
 assert(
+  multiSelect.dependencies?.includes("react-aria-components"),
+  "multi-select registry item must include react-aria-components.",
+);
+assert(
+  multiSelect.dependencies?.includes("react-aria"),
+  "multi-select registry item must include react-aria for portal provider support.",
+);
+assert(
+  asyncSelect.dependencies?.includes("react-aria-components"),
+  "async-select registry item must include react-aria-components through its selection primitives.",
+);
+assert(
+  asyncSelect.dependencies?.includes("react-aria"),
+  "async-select registry item must include react-aria through its selection primitives.",
+);
+assert(
+  tagInput.dependencies?.includes("react-aria-components"),
+  "tag-input registry item must include react-aria-components.",
+);
+assert(
   Array.isArray(container.dependencies) && container.dependencies.length === 0,
   "container registry item must not add runtime dependencies.",
 );
@@ -578,6 +627,9 @@ for (const item of [
   cardStack,
   checkbox,
   combobox,
+  multiSelect,
+  asyncSelect,
+  tagInput,
   container,
   dialog,
   formField,
@@ -615,6 +667,9 @@ await assertRegistryRelativeImportsResolve(card, registryItemsByName);
 await assertRegistryRelativeImportsResolve(cardStack, registryItemsByName);
 await assertRegistryRelativeImportsResolve(checkbox, registryItemsByName);
 await assertRegistryRelativeImportsResolve(combobox, registryItemsByName);
+await assertRegistryRelativeImportsResolve(multiSelect, registryItemsByName);
+await assertRegistryRelativeImportsResolve(asyncSelect, registryItemsByName);
+await assertRegistryRelativeImportsResolve(tagInput, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dialog, registryItemsByName);
 await assertRegistryRelativeImportsResolve(formField, registryItemsByName);
 await assertRegistryRelativeImportsResolve(input, registryItemsByName);
@@ -661,6 +716,18 @@ const checkboxSource = await readFile(
 );
 const comboboxSource = await readFile(
   join(root, "packages/components/src/components/combobox/combobox.tsx"),
+  "utf8",
+);
+const multiSelectSource = await readFile(
+  join(root, "packages/components/src/components/multi-select/multi-select.tsx"),
+  "utf8",
+);
+const asyncSelectSource = await readFile(
+  join(root, "packages/components/src/components/async-select/async-select.tsx"),
+  "utf8",
+);
+const tagInputSource = await readFile(
+  join(root, "packages/components/src/components/tag-input/tag-input.tsx"),
   "utf8",
 );
 const containerSource = await readFile(
@@ -1022,6 +1089,71 @@ assert(
   "combobox source must use provider density control utilities.",
 );
 assert(!comboboxSource.includes("@radix-ui"), "combobox source must remain Radix-free.");
+assert(
+  multiSelectSource.includes("react-aria-components"),
+  "multi-select source must use React Aria Components.",
+);
+assert(
+  multiSelectSource.includes('data-slot={dataSlot ?? "multi-select"}'),
+  "multi-select source must expose stable root slot data.",
+);
+assert(
+  multiSelectSource.includes('data-slot="multi-select-control"') &&
+    multiSelectSource.includes('data-slot="multi-select-chip"') &&
+    multiSelectSource.includes('data-slot="multi-select-popover"') &&
+    multiSelectSource.includes('data-slot="multi-select-listbox"'),
+  "multi-select source must expose stable control, chip, popover, and listbox slots.",
+);
+assert(
+  multiSelectSource.includes('portalSlot: "multi-select-portal-container"'),
+  "multi-select source must expose stable provider-aware portal host slot data.",
+);
+assert(
+  multiSelectSource.includes("selectedItems"),
+  "multi-select source must preserve selected labels for async result windows.",
+);
+assert(
+  multiSelectSource.includes("type=\"hidden\""),
+  "multi-select source must serialize repeated native form values.",
+);
+assert(!multiSelectSource.includes("@radix-ui"), "multi-select source must remain Radix-free.");
+assert(
+  asyncSelectSource.includes('data-slot={dataSlot ?? "async-select"}'),
+  "async-select source must expose stable root slot data.",
+);
+assert(
+  asyncSelectSource.includes("selectionMode") &&
+    asyncSelectSource.includes("<Combobox") &&
+    asyncSelectSource.includes("<MultiSelect"),
+  "async-select source must support single and multiple selection rendering.",
+);
+assert(
+  asyncSelectSource.includes('role="status"') &&
+    asyncSelectSource.includes('role="alert"') &&
+    asyncSelectSource.includes("onRetry"),
+  "async-select source must expose loading/status/error retry states.",
+);
+assert(!asyncSelectSource.includes("@radix-ui"), "async-select source must remain Radix-free.");
+assert(
+  tagInputSource.includes("TagGroup") &&
+    tagInputSource.includes("TagList") &&
+    tagInputSource.includes("AriaTag"),
+  "tag-input source must use React Aria tag semantics.",
+);
+assert(
+  tagInputSource.includes('data-slot={dataSlot ?? "tag-input"}') &&
+    tagInputSource.includes('data-slot="tag-input-control"') &&
+    tagInputSource.includes('data-slot="tag-input-tag"') &&
+    tagInputSource.includes('data-slot="tag-input-field"'),
+  "tag-input source must expose stable root, control, tag, and field slots.",
+);
+assert(
+  tagInputSource.includes("onPaste") &&
+    tagInputSource.includes("validateTag") &&
+    tagInputSource.includes("type=\"hidden\""),
+  "tag-input source must support paste parsing, validation, and form serialization.",
+);
+assert(!tagInputSource.includes("@radix-ui"), "tag-input source must remain Radix-free.");
 assert(
   containerSource.includes('"data-slot": "container"'),
   "container source must expose stable slot data.",

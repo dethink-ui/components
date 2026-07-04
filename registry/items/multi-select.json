@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "multi-select",
+  "type": "registry:ui",
+  "title": "MultiSelect",
+  "description": "React Aria backed searchable multi-select with removable chips, repeated form values, disabled items, invalid state, density, dark mode, and provider-aware popover styling.",
+  "dependencies": ["react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/multi-select/multi-select.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/multi-select/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
