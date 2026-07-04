@@ -41,6 +41,18 @@ export type NavigationMenuActivationMode =
   | "focus"
   | "manual";
 
+export type NavigationMenuMotionPreset =
+  | "none"
+  | "subtle"
+  | "standard"
+  | "expressive";
+
+export type NavigationMenuMotionDirection =
+  | "from-start"
+  | "from-end"
+  | "to-start"
+  | "to-end";
+
 export interface NavigationMenuProps
   extends Omit<HTMLAttributes<HTMLElement>, "defaultValue"> {
   variant?: NavigationMenuVariant;
@@ -52,6 +64,7 @@ export interface NavigationMenuProps
   activationMode?: NavigationMenuActivationMode;
   delay?: number;
   closeDelay?: number;
+  motion?: NavigationMenuMotionPreset;
 }
 
 export type NavigationMenuListProps = HTMLAttributes<HTMLUListElement>;
@@ -69,6 +82,8 @@ export interface NavigationMenuTriggerProps
 export type NavigationMenuContentProps = HTMLAttributes<HTMLDivElement>;
 
 export type NavigationMenuViewportProps = HTMLAttributes<HTMLDivElement>;
+
+export type NavigationMenuIndicatorProps = LiHTMLAttributes<HTMLLIElement>;
 
 export type NavigationMenuSectionProps = HTMLAttributes<HTMLDivElement>;
 
@@ -156,11 +171,18 @@ type NavigationMenuLinkSlotProps = Record<string, unknown> & {
   "aria-disabled"?: AnchorHTMLAttributes<HTMLAnchorElement>["aria-disabled"];
 };
 
+type NavigationMenuMotionDirectionState = {
+  enter: NavigationMenuMotionDirection | null;
+  exit: NavigationMenuMotionDirection | null;
+};
+
 type NavigationMenuContextValue = {
   variant: NavigationMenuVariant;
   size: NavigationMenuSize;
   orientation: NavigationMenuOrientation;
   activationMode: NavigationMenuActivationMode;
+  motionPreset: NavigationMenuMotionPreset;
+  motionDirection: NavigationMenuMotionDirectionState;
   openValue: string | null;
   open: (value: string) => void;
   close: () => void;
@@ -170,6 +192,7 @@ type NavigationMenuContextValue = {
   cancelScheduledOpen: () => void;
   cancelScheduledClose: () => void;
   registerTrigger: (value: string, element: HTMLButtonElement | null) => void;
+  registerItem: (value: string) => () => void;
   viewportElement: HTMLDivElement | null;
   setViewportElement: (element: HTMLDivElement | null) => void;
 };
@@ -179,6 +202,8 @@ const defaultNavigationMenuContext: NavigationMenuContextValue = {
   size: "md",
   orientation: "horizontal",
   activationMode: "click",
+  motionPreset: "standard",
+  motionDirection: { enter: null, exit: null },
   openValue: null,
   open: () => undefined,
   close: () => undefined,
@@ -188,6 +213,7 @@ const defaultNavigationMenuContext: NavigationMenuContextValue = {
   cancelScheduledOpen: () => undefined,
   cancelScheduledClose: () => undefined,
   registerTrigger: () => undefined,
+  registerItem: () => () => undefined,
   viewportElement: null,
   setViewportElement: () => undefined,
 };
@@ -222,7 +248,7 @@ const navigationMenuOrientationClasses: Record<
 };
 
 const navigationMenuListBaseClasses =
-  "m-0 flex list-none gap-[var(--dt-space-1)] p-0";
+  "relative m-0 flex list-none gap-[var(--dt-space-1)] p-0";
 
 const navigationMenuListOrientationClasses: Record<
   NavigationMenuOrientation,
@@ -279,7 +305,10 @@ const navigationMenuTriggerChevronClasses =
   "size-3 shrink-0 transition-transform duration-200 group-data-[state=open]/navigation-menu-trigger:rotate-180 motion-reduce:transition-none";
 
 const navigationMenuContentBaseClasses =
-  "flex w-max min-w-48 max-w-[min(var(--dt-navigation-menu-content-max-width,40rem),calc(100vw_-_var(--dt-space-4)))] items-start gap-[var(--dt-space-4)] rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg [--dt-overlay-motion-x:0px] [--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))] motion-safe:animate-overlay-in motion-reduce:animate-none";
+  "flex w-max min-w-48 max-w-[min(var(--dt-navigation-menu-content-max-width,40rem),calc(100vw_-_var(--dt-space-4)))] items-start gap-[var(--dt-space-4)] p-[var(--dt-space-3)] text-foreground";
+
+const navigationMenuContentSurfaceClasses =
+  "rounded-md border border-border bg-background shadow-lg";
 
 const navigationMenuContentInlineClasses: Record<
   NavigationMenuOrientation,
@@ -289,8 +318,37 @@ const navigationMenuContentInlineClasses: Record<
   vertical: "absolute start-full top-0 z-50 ms-[var(--dt-space-2)]",
 };
 
+const navigationMenuContentViewportClasses = "col-start-1 row-start-1";
+
+const navigationMenuContentMotionPresetClasses: Record<
+  NavigationMenuMotionPreset,
+  string
+> = {
+  none: "",
+  subtle:
+    "[--dt-nav-motion-from-x:0px] [--dt-nav-motion-from-y:0px] [--dt-nav-motion-to-x:0px] [--dt-nav-motion-to-y:0px] motion-safe:data-[state=open]:animate-nav-slide-in motion-safe:data-[state=closed]:animate-nav-slide-out motion-reduce:animate-none",
+  standard:
+    "motion-safe:data-[state=open]:animate-nav-slide-in motion-safe:data-[state=closed]:animate-nav-slide-out motion-reduce:animate-none data-[motion=from-start]:[--dt-nav-motion-from-x:calc(var(--dt-space-4)*-1)] data-[motion=from-start]:[--dt-nav-motion-from-y:0px] data-[motion=from-end]:[--dt-nav-motion-from-x:var(--dt-space-4)] data-[motion=from-end]:[--dt-nav-motion-from-y:0px] data-[motion=to-start]:[--dt-nav-motion-to-x:calc(var(--dt-space-4)*-1)] data-[motion=to-start]:[--dt-nav-motion-to-y:0px] data-[motion=to-end]:[--dt-nav-motion-to-x:var(--dt-space-4)] data-[motion=to-end]:[--dt-nav-motion-to-y:0px] rtl:data-[motion=from-start]:[--dt-nav-motion-from-x:var(--dt-space-4)] rtl:data-[motion=from-end]:[--dt-nav-motion-from-x:calc(var(--dt-space-4)*-1)] rtl:data-[motion=to-start]:[--dt-nav-motion-to-x:var(--dt-space-4)] rtl:data-[motion=to-end]:[--dt-nav-motion-to-x:calc(var(--dt-space-4)*-1)]",
+  expressive:
+    "motion-safe:data-[state=open]:animate-nav-slide-in motion-safe:data-[state=closed]:animate-nav-slide-out motion-reduce:animate-none data-[motion=from-start]:[--dt-nav-motion-from-x:calc(var(--dt-space-4)*-1)] data-[motion=from-start]:[--dt-nav-motion-from-y:0px] data-[motion=from-end]:[--dt-nav-motion-from-x:var(--dt-space-4)] data-[motion=from-end]:[--dt-nav-motion-from-y:0px] data-[motion=to-start]:[--dt-nav-motion-to-x:calc(var(--dt-space-4)*-1)] data-[motion=to-start]:[--dt-nav-motion-to-y:0px] data-[motion=to-end]:[--dt-nav-motion-to-x:var(--dt-space-4)] data-[motion=to-end]:[--dt-nav-motion-to-y:0px] rtl:data-[motion=from-start]:[--dt-nav-motion-from-x:var(--dt-space-4)] rtl:data-[motion=from-end]:[--dt-nav-motion-from-x:calc(var(--dt-space-4)*-1)] rtl:data-[motion=to-start]:[--dt-nav-motion-to-x:var(--dt-space-4)] rtl:data-[motion=to-end]:[--dt-nav-motion-to-x:calc(var(--dt-space-4)*-1)]",
+};
+
 const navigationMenuViewportBaseClasses =
-  "absolute inset-x-0 top-full z-50 mt-[var(--dt-space-2)] flex justify-center data-[state=closed]:pointer-events-none";
+  "pointer-events-none absolute inset-x-0 top-full z-50 mt-[var(--dt-space-2)] flex justify-center";
+
+const navigationMenuViewportBodyClasses =
+  "pointer-events-auto relative grid overflow-hidden rounded-md border border-border bg-background shadow-lg transition-[width,height] duration-200 ease-out motion-reduce:transition-none data-[state=closed]:hidden";
+
+const navigationMenuIndicatorBaseClasses =
+  "pointer-events-none absolute z-0 rounded-full bg-primary transition-[transform,width,height,opacity] duration-200 ease-out motion-reduce:transition-none data-[state=hidden]:opacity-0";
+
+const navigationMenuIndicatorOrientationClasses: Record<
+  NavigationMenuOrientation,
+  string
+> = {
+  horizontal: "bottom-0 left-0 h-0.5",
+  vertical: "start-0 top-0 w-0.5",
+};
 
 const navigationMenuSectionBaseClasses =
   "flex min-w-40 flex-col gap-[var(--dt-space-0-5)]";
@@ -392,15 +450,23 @@ export function navigationMenuTriggerClassNames({
 export function navigationMenuContentClassNames({
   orientation = "horizontal",
   inline = true,
+  motionPreset = "standard",
   className,
 }: {
   orientation?: NavigationMenuOrientation;
   inline?: boolean;
+  motionPreset?: NavigationMenuMotionPreset;
   className?: string;
 } = {}) {
   return cn(
     navigationMenuContentBaseClasses,
-    inline && navigationMenuContentInlineClasses[orientation],
+    inline
+      ? cn(
+          navigationMenuContentSurfaceClasses,
+          navigationMenuContentInlineClasses[orientation],
+        )
+      : navigationMenuContentViewportClasses,
+    navigationMenuContentMotionPresetClasses[motionPreset],
     className,
   );
 }
@@ -411,6 +477,28 @@ export function navigationMenuViewportClassNames({
   className?: string;
 } = {}) {
   return cn(navigationMenuViewportBaseClasses, className);
+}
+
+export function navigationMenuViewportBodyClassNames({
+  className,
+}: {
+  className?: string;
+} = {}) {
+  return cn(navigationMenuViewportBodyClasses, className);
+}
+
+export function navigationMenuIndicatorClassNames({
+  orientation = "horizontal",
+  className,
+}: {
+  orientation?: NavigationMenuOrientation;
+  className?: string;
+} = {}) {
+  return cn(
+    navigationMenuIndicatorBaseClasses,
+    navigationMenuIndicatorOrientationClasses[orientation],
+    className,
+  );
 }
 
 export function navigationMenuSectionClassNames({
@@ -570,6 +658,57 @@ function renderLinkContent({
   );
 }
 
+function usePresence(open: boolean) {
+  const [exitPresent, setExitPresent] = useState(open);
+  const nodeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setExitPresent(true);
+      return undefined;
+    }
+
+    const node = nodeRef.current;
+
+    if (!node || typeof window === "undefined") {
+      setExitPresent(false);
+      return undefined;
+    }
+
+    const { animationName } = window.getComputedStyle(node);
+
+    if (!animationName || animationName === "none") {
+      setExitPresent(false);
+      return undefined;
+    }
+
+    let finished = false;
+    const finish = () => {
+      if (!finished) {
+        finished = true;
+        setExitPresent(false);
+      }
+    };
+    const handleAnimationEnd = (event: AnimationEvent) => {
+      if (event.target === node) {
+        finish();
+      }
+    };
+    const fallback = window.setTimeout(finish, 300);
+
+    node.addEventListener("animationend", handleAnimationEnd);
+    node.addEventListener("animationcancel", handleAnimationEnd);
+
+    return () => {
+      window.clearTimeout(fallback);
+      node.removeEventListener("animationend", handleAnimationEnd);
+      node.removeEventListener("animationcancel", handleAnimationEnd);
+    };
+  }, [open]);
+
+  return { present: open || exitPresent, nodeRef };
+}
+
 function TriggerChevron() {
   return (
     <svg
@@ -601,6 +740,7 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
       closeDelay = 300,
       defaultValue = null,
       delay = 150,
+      motion = "standard",
       onBlur,
       onKeyDown,
       onPointerDown,
@@ -621,11 +761,14 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
     const openValueRef = useRef(openValue);
     const rootRef = useRef<HTMLElement | null>(null);
     const triggerElementsRef = useRef(new Map<string, HTMLButtonElement>());
+    const itemOrderRef = useRef<string[]>([]);
     const openTimerRef = useRef<number | null>(null);
     const closeTimerRef = useRef<number | null>(null);
     const pointerDownInsideRef = useRef(false);
     const [viewportElement, setViewportElement] =
       useState<HTMLDivElement | null>(null);
+    const [motionDirection, setMotionDirection] =
+      useState<NavigationMenuMotionDirectionState>({ enter: null, exit: null });
 
     useEffect(() => {
       openValueRef.current = openValue;
@@ -650,10 +793,37 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
         cancelScheduledOpen();
         cancelScheduledClose();
 
-        if (next === openValueRef.current) {
+        const previous = openValueRef.current;
+
+        if (next === previous) {
           return;
         }
 
+        let direction: NavigationMenuMotionDirectionState = {
+          enter: null,
+          exit: null,
+        };
+
+        if (previous !== null && next !== null) {
+          const order = itemOrderRef.current;
+          const previousIndex = order.indexOf(previous);
+          const nextIndex = order.indexOf(next);
+
+          if (
+            previousIndex !== -1 &&
+            nextIndex !== -1 &&
+            previousIndex !== nextIndex
+          ) {
+            const forward = nextIndex > previousIndex;
+
+            direction = {
+              enter: forward ? "from-end" : "from-start",
+              exit: forward ? "to-start" : "to-end",
+            };
+          }
+        }
+
+        setMotionDirection(direction);
         openValueRef.current = next;
 
         if (!isControlled) {
@@ -664,6 +834,16 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
       },
       [cancelScheduledClose, cancelScheduledOpen, isControlled, onValueChange],
     );
+
+    const registerItem = useCallback((itemValue: string) => {
+      itemOrderRef.current.push(itemValue);
+
+      return () => {
+        itemOrderRef.current = itemOrderRef.current.filter(
+          (existing) => existing !== itemValue,
+        );
+      };
+    }, []);
 
     const scheduleOpen = useCallback(
       (nextValue: string) => {
@@ -781,6 +961,8 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
         size,
         orientation,
         activationMode,
+        motionPreset: motion,
+        motionDirection,
         openValue,
         open: (nextValue) => setOpenValue(nextValue),
         close: () => setOpenValue(null),
@@ -791,6 +973,7 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
         cancelScheduledOpen,
         cancelScheduledClose,
         registerTrigger,
+        registerItem,
         viewportElement,
         setViewportElement,
       }),
@@ -798,8 +981,11 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
         activationMode,
         cancelScheduledClose,
         cancelScheduledOpen,
+        motion,
+        motionDirection,
         openValue,
         orientation,
+        registerItem,
         registerTrigger,
         scheduleClose,
         scheduleOpen,
@@ -824,6 +1010,7 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
         data-size={size}
         data-orientation={orientation}
         data-state={openValue !== null ? "open" : "closed"}
+        data-motion-preset={motion}
         className={navigationMenuClassNames({ orientation, className })}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
@@ -867,10 +1054,13 @@ export const NavigationMenuItem = forwardRef<
   const itemValue = value ?? autoValue;
   const contentId = useId();
   const open = context.openValue === itemValue;
+  const { registerItem } = context;
   const itemContextValue = useMemo<NavigationMenuItemContextValue>(
     () => ({ value: itemValue, contentId, open }),
     [contentId, itemValue, open],
   );
+
+  useEffect(() => registerItem(itemValue), [itemValue, registerItem]);
 
   const handlePointerEnter: PointerEventHandler<HTMLLIElement> = (event) => {
     onPointerEnter?.(event);
@@ -1015,6 +1205,8 @@ export const NavigationMenuContent = forwardRef<
 >(({ children, className, ...props }, ref) => {
   const context = useNavigationMenuContext();
   const itemContext = useContext(NavigationMenuItemContext);
+  const open = itemContext?.open ?? false;
+  const { present, nodeRef } = usePresence(open);
 
   if (!itemContext) {
     throw new Error(
@@ -1022,22 +1214,28 @@ export const NavigationMenuContent = forwardRef<
     );
   }
 
-  if (!itemContext.open) {
+  if (!present) {
     return null;
   }
 
   const inline = context.viewportElement === null;
+  const motionAttr = open
+    ? context.motionDirection.enter
+    : context.motionDirection.exit;
   const panel = (
     <div
       {...props}
-      ref={ref}
+      ref={composeRefs(ref, nodeRef)}
       id={itemContext.contentId}
       data-slot="navigation-menu-content"
-      data-state="open"
+      data-state={open ? "open" : "closed"}
       data-orientation={context.orientation}
+      data-motion={motionAttr ?? undefined}
+      data-motion-preset={context.motionPreset}
       className={navigationMenuContentClassNames({
         orientation: context.orientation,
         inline,
+        motionPreset: context.motionPreset,
         className,
       })}
     >
@@ -1059,15 +1257,57 @@ NavigationMenuContent.displayName = "NavigationMenuContent";
 export const NavigationMenuViewport = forwardRef<
   HTMLDivElement,
   NavigationMenuViewportProps
->(({ className, onPointerEnter, onPointerLeave, ...props }, ref) => {
+>(({ className, onPointerEnter, onPointerLeave, style, ...props }, ref) => {
   const context = useNavigationMenuContext();
   const open = context.openValue !== null;
-  const { setViewportElement } = context;
-  const composedRef = useMemo(
-    () =>
-      composeRefs<HTMLDivElement>(ref, (node) => setViewportElement(node)),
-    [ref, setViewportElement],
+  const { openValue, setViewportElement } = context;
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const [size, setSize] = useState<{ width: number; height: number } | null>(
+    null,
   );
+  const composedBodyRef = useMemo(
+    () =>
+      composeRefs<HTMLDivElement>(bodyRef, (node) => setViewportElement(node)),
+    [setViewportElement],
+  );
+
+  useEffect(() => {
+    const body = bodyRef.current;
+
+    if (!body || openValue === null) {
+      setSize(null);
+      return undefined;
+    }
+
+    const measure = () => {
+      const panel = body.querySelector(
+        '[data-slot="navigation-menu-content"][data-state="open"]',
+      );
+
+      if (panel instanceof HTMLElement) {
+        setSize({ width: panel.offsetWidth, height: panel.offsetHeight });
+      }
+    };
+
+    measure();
+
+    if (typeof ResizeObserver === "undefined") {
+      return undefined;
+    }
+
+    const observer = new ResizeObserver(measure);
+    const panel = body.querySelector(
+      '[data-slot="navigation-menu-content"][data-state="open"]',
+    );
+
+    if (panel instanceof HTMLElement) {
+      observer.observe(panel);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [openValue]);
 
   const handlePointerEnter: PointerEventHandler<HTMLDivElement> = (event) => {
     onPointerEnter?.(event);
@@ -1088,17 +1328,136 @@ export const NavigationMenuViewport = forwardRef<
   return (
     <div
       {...props}
-      ref={composedRef}
+      ref={ref}
       data-slot="navigation-menu-viewport"
       data-state={open ? "open" : "closed"}
       className={navigationMenuViewportClassNames({ className })}
+      style={style}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-    />
+    >
+      <div
+        ref={composedBodyRef}
+        data-slot="navigation-menu-viewport-body"
+        data-state={open ? "open" : "closed"}
+        className={navigationMenuViewportBodyClassNames()}
+        style={
+          size && context.motionPreset !== "none"
+            ? { width: size.width, height: size.height }
+            : undefined
+        }
+      />
+    </div>
   );
 });
 
 NavigationMenuViewport.displayName = "NavigationMenuViewport";
+
+export const NavigationMenuIndicator = forwardRef<
+  HTMLLIElement,
+  NavigationMenuIndicatorProps
+>(({ className, style, ...props }, ref) => {
+  const context = useNavigationMenuContext();
+  const { orientation } = context;
+  const localRef = useRef<HTMLLIElement | null>(null);
+  const lastStyleKeyRef = useRef("");
+  const measureRef = useRef(() => {});
+  const [indicatorStyle, setIndicatorStyle] = useState<{
+    transform: string;
+    width?: string;
+    height?: string;
+  } | null>(null);
+
+  const applyIndicatorStyle = (
+    style: { transform: string; width?: string; height?: string } | null,
+  ) => {
+    const key = style
+      ? `${style.transform}|${style.width ?? ""}|${style.height ?? ""}`
+      : "";
+
+    if (key === lastStyleKeyRef.current) {
+      return;
+    }
+
+    lastStyleKeyRef.current = key;
+    setIndicatorStyle(style);
+  };
+
+  const measure = () => {
+    const node = localRef.current;
+    const list = node?.closest('[data-slot="navigation-menu-list"]');
+
+    if (!node || !(list instanceof HTMLElement)) {
+      return;
+    }
+
+    const openTarget = list.querySelector(
+      ':scope > [data-slot="navigation-menu-item"] > [data-slot="navigation-menu-trigger"][data-state="open"]',
+    );
+    const currentTarget = list.querySelector(
+      ':scope > [data-slot="navigation-menu-item"] > [data-slot="navigation-menu-link"][data-current="true"]',
+    );
+    const target = openTarget ?? currentTarget;
+
+    if (!(target instanceof HTMLElement)) {
+      applyIndicatorStyle(null);
+      return;
+    }
+
+    const listRect = list.getBoundingClientRect();
+    const targetRect = target.getBoundingClientRect();
+
+    if (orientation === "vertical") {
+      applyIndicatorStyle({
+        transform: `translateY(${targetRect.top - listRect.top}px)`,
+        height: `${targetRect.height}px`,
+      });
+      return;
+    }
+
+    applyIndicatorStyle({
+      transform: `translateX(${targetRect.left - listRect.left}px)`,
+      width: `${targetRect.width}px`,
+    });
+  };
+
+  useEffect(() => {
+    measureRef.current = measure;
+    measure();
+  });
+
+  useEffect(() => {
+    const node = localRef.current;
+    const list = node?.closest('[data-slot="navigation-menu-list"]');
+
+    if (!(list instanceof HTMLElement) || typeof ResizeObserver === "undefined") {
+      return undefined;
+    }
+
+    const observer = new ResizeObserver(() => measureRef.current());
+
+    observer.observe(list);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <li
+      {...props}
+      ref={composeRefs(ref, localRef)}
+      aria-hidden="true"
+      data-slot="navigation-menu-indicator"
+      data-state={indicatorStyle ? "visible" : "hidden"}
+      data-orientation={orientation}
+      className={navigationMenuIndicatorClassNames({ orientation, className })}
+      style={{ ...style, ...(indicatorStyle ?? {}) }}
+    />
+  );
+});
+
+NavigationMenuIndicator.displayName = "NavigationMenuIndicator";
 
 export const NavigationMenuSection = forwardRef<
   HTMLDivElement,

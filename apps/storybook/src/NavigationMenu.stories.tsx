@@ -6,6 +6,7 @@ import {
   NavigationMenuContent,
   NavigationMenuDescription,
   NavigationMenuFeaturedItem,
+  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLabel,
   NavigationMenuLink,
@@ -14,6 +15,7 @@ import {
   NavigationMenuSeparator,
   NavigationMenuTrigger,
   NavigationMenuViewport,
+  type NavigationMenuMotionPreset,
   type NavigationMenuSize,
   type NavigationMenuVariant,
 } from "@dethink/components";
@@ -552,6 +554,210 @@ export const KeyboardUsage: Story = {
           Space toggle a trigger, Tab continues into the open panel, Escape
           closes the panel and returns focus to its trigger, and moving focus
           out of the navigation closes any open panel.
+        </p>
+        <ProductFlyoutNav />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const AnimatedIndicator: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[20rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          The indicator tracks the open trigger, or the current link when no
+          panel is open, and slides between items with a CSS transform
+          transition. With reduced motion it snaps without animating.
+        </p>
+        <NavigationMenu aria-label="Indicator navigation" variant="quiet">
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink current href="/overview">
+                Overview
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem value="products">
+              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/analytics">
+                    Analytics
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/automation">
+                    Automation
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem value="resources">
+              <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/docs">
+                    Documentation
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuIndicator />
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const ViewportMorph: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[24rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          The shared viewport measures each panel and animates its width and
+          height between differently sized panels.
+        </p>
+        <NavigationMenu aria-label="Morphing navigation" defaultValue="platform">
+          <NavigationMenuList>
+            <NavigationMenuItem value="platform">
+              <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuFeaturedItem href="/platform">
+                  Platform overview
+                  <NavigationMenuDescription>
+                    Analytics, automation, and reporting.
+                  </NavigationMenuDescription>
+                </NavigationMenuFeaturedItem>
+                <NavigationMenuSection>
+                  <NavigationMenuLabel>Products</NavigationMenuLabel>
+                  <NavigationMenuLink href="/analytics" icon={<ChartIcon />}>
+                    Analytics
+                    <NavigationMenuDescription>
+                      Usage dashboards for every workspace.
+                    </NavigationMenuDescription>
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/automation" icon={<BoltIcon />}>
+                    Automation
+                    <NavigationMenuDescription>
+                      Build workflows that react to events.
+                    </NavigationMenuDescription>
+                  </NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem value="company">
+              <NavigationMenuTrigger>Company</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <NavigationMenuSection>
+                  <NavigationMenuLink href="/about">About</NavigationMenuLink>
+                  <NavigationMenuLink href="/careers">Careers</NavigationMenuLink>
+                </NavigationMenuSection>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+          <NavigationMenuViewport />
+        </NavigationMenu>
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const DirectionalTransitions: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[20rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          Switching between open triggers slides the next panel in from the
+          direction of travel using the data-motion attribute. In RTL the
+          directions flip automatically.
+        </p>
+        <ProductFlyoutNav />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+const motionPresets: NavigationMenuMotionPreset[] = [
+  "none",
+  "subtle",
+  "standard",
+  "expressive",
+];
+
+export const MotionPresets: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="rounded-lg border border-border p-6"
+    >
+      <div className="space-y-8">
+        {motionPresets.map((preset) => (
+          <div key={preset} className="space-y-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {preset}
+            </p>
+            <NavigationMenu
+              aria-label={`${preset} navigation`}
+              motion={preset}
+              className="min-h-[3rem]"
+            >
+              <NavigationMenuList>
+                <NavigationMenuItem value="products">
+                  <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <NavigationMenuSection>
+                      <NavigationMenuLink href="/analytics">
+                        Analytics
+                      </NavigationMenuLink>
+                      <NavigationMenuLink href="/automation">
+                        Automation
+                      </NavigationMenuLink>
+                      <NavigationMenuLink href="/reports">
+                        Reports
+                      </NavigationMenuLink>
+                    </NavigationMenuSection>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem value="resources">
+                  <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <NavigationMenuSection>
+                      <NavigationMenuLink href="/docs">
+                        Documentation
+                      </NavigationMenuLink>
+                    </NavigationMenuSection>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+        ))}
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const ReducedMotion: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="min-h-[18rem] rounded-lg border border-border p-6"
+    >
+      <div className="space-y-3">
+        <p className="max-w-xl text-sm text-muted-foreground">
+          All NavigationMenu animation is gated behind motion-safe utilities.
+          With prefers-reduced-motion enabled, panels appear and disappear
+          instantly, the indicator snaps between items, and the viewport
+          resizes without morphing — no state is communicated by animation
+          alone. Enable reduced motion in your OS settings to verify.
         </p>
         <ProductFlyoutNav />
       </div>

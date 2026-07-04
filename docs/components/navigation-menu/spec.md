@@ -104,6 +104,32 @@ Trigger and content props should support:
 - Reduced-motion users must receive the same state information without
   transform-heavy movement.
 
+## Motion Dependency Decision
+
+NavigationMenu v1 ships its premium motion layer without a Motion (Framer
+Motion) dependency. Issue #194 allows Motion only when layout or exit
+choreography cannot be expressed cleanly in CSS; every required behavior maps
+to tokenized CSS with small measurement hooks:
+
+- Active indicator movement uses measured `transform`/size CSS transitions on
+  fixed pixel values.
+- Viewport morphing animates measured width/height values (fixed-dimension CSS
+  transitions, observed through `ResizeObserver`).
+- Directional panel transitions use `data-motion` attributes plus
+  `dt-nav-slide-in`/`dt-nav-slide-out` keyframes with CSS variables, flipped
+  automatically in RTL.
+- Content exit uses a small presence hook that keeps the panel mounted until
+  its exit animation finishes; when no animation applies (reduced motion or
+  `motion="none"`), the panel unmounts immediately.
+- Staggered link reveal is gated behind the `expressive` preset with
+  `nth-child` animation delays.
+
+Motion presets are exposed through the root `motion` prop
+(`none | subtle | standard | expressive`) and the `data-motion-preset`
+attribute. Registry metadata therefore declares no Motion dependency. If a
+future slice needs shared-element or gesture choreography beyond this, the
+Motion decision should be revisited there.
+
 ## Motion Contract
 
 NavigationMenu should stand out through motion, but motion must remain a layer
