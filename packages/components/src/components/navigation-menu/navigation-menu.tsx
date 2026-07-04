@@ -283,7 +283,7 @@ const navigationMenuPanelLinkBaseClasses =
   "relative flex w-full min-w-40 select-none items-start gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm leading-5 font-medium text-foreground no-underline outline-none transition-colors hover:bg-muted active:bg-muted/80 focus-visible:ring-2 focus-visible:ring-ring data-[current=true]:bg-muted data-[current=true]:font-semibold data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50";
 
 const navigationMenuLinkIconClasses =
-  "mt-0.5 flex size-4 shrink-0 items-center justify-center text-muted-foreground [&>svg]:size-4";
+  "flex size-4 shrink-0 items-center justify-center text-muted-foreground [&>svg]:size-4";
 
 const navigationMenuLinkTextClasses =
   "flex min-w-0 flex-col gap-[var(--dt-space-0-5)]";
@@ -639,7 +639,11 @@ function renderLinkContent({
         <span
           aria-hidden="true"
           data-slot="navigation-menu-link-icon"
-          className={navigationMenuLinkIconClasses}
+          className={cn(
+            navigationMenuLinkIconClasses,
+            // Panel links align to the first text line; bar links center.
+            inPanel && "mt-0.5",
+          )}
         >
           {icon}
         </span>
@@ -1218,13 +1222,14 @@ export const NavigationMenuContent = forwardRef<
     return null;
   }
 
+  const { "aria-hidden": ariaHidden, inert, ...contentProps } = props;
   const inline = context.viewportElement === null;
   const motionAttr = open
     ? context.motionDirection.enter
     : context.motionDirection.exit;
   const panel = (
     <div
-      {...props}
+      {...contentProps}
       ref={composeRefs(ref, nodeRef)}
       id={itemContext.contentId}
       data-slot="navigation-menu-content"
@@ -1232,6 +1237,8 @@ export const NavigationMenuContent = forwardRef<
       data-orientation={context.orientation}
       data-motion={motionAttr ?? undefined}
       data-motion-preset={context.motionPreset}
+      aria-hidden={open ? ariaHidden : true}
+      inert={open ? inert : true}
       className={navigationMenuContentClassNames({
         orientation: context.orientation,
         inline,

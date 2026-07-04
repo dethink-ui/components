@@ -161,6 +161,63 @@ describe("NavigationMenuTrigger", () => {
     expect(screen.getByText("Documentation")).toBeInTheDocument();
   });
 
+  it("hides exiting panels from keyboard and assistive technology while animating out", async () => {
+    const user = userEvent.setup();
+    const originalGetComputedStyle = window.getComputedStyle;
+    const getComputedStyle = vi
+      .spyOn(window, "getComputedStyle")
+      .mockImplementation((element) => {
+        const styles = originalGetComputedStyle(element);
+
+        if (
+          element instanceof HTMLElement &&
+          element.getAttribute("data-slot") === "navigation-menu-content" &&
+          element.getAttribute("data-state") === "closed"
+        ) {
+          return Object.create(styles, {
+            animationName: {
+              configurable: true,
+              value: "dt-nav-slide-out",
+            },
+          }) as CSSStyleDeclaration;
+        }
+
+        return styles;
+      });
+
+    try {
+      render(<FlyoutNav />);
+
+      await user.click(screen.getByRole("button", { name: "Products" }));
+
+      const productsPanel = screen
+        .getByText("Analytics")
+        .closest('[data-slot="navigation-menu-content"]');
+
+      await user.click(screen.getByRole("button", { name: "Resources" }));
+
+      expect(productsPanel).toHaveAttribute("data-state", "closed");
+      expect(productsPanel).toHaveAttribute("aria-hidden", "true");
+      expect(productsPanel).toHaveAttribute("inert");
+      expect(screen.queryByRole("link", { name: "Analytics" })).toBeNull();
+
+      const resourcesPanel = screen
+        .getByText("Documentation")
+        .closest('[data-slot="navigation-menu-content"]');
+
+      expect(resourcesPanel).not.toHaveAttribute("aria-hidden");
+      expect(resourcesPanel).not.toHaveAttribute("inert");
+
+      await act(async () => {
+        fireEvent.animationEnd(productsPanel as HTMLElement);
+      });
+
+      expect(screen.queryByText("Analytics")).not.toBeInTheDocument();
+    } finally {
+      getComputedStyle.mockRestore();
+    }
+  });
+
   it("does not use ARIA menu roles for open flyout navigation", async () => {
     const user = userEvent.setup();
 

@@ -8,8 +8,10 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { NavigationMenuAppTopbar } from "@/examples/navigation-menu/app-topbar";
 import { NavigationMenuBasic } from "@/examples/navigation-menu/basic";
+import { NavigationMenuBrandNavbar } from "@/examples/navigation-menu/brand-navbar";
 import { NavigationMenuDashboard } from "@/examples/navigation-menu/dashboard";
 import { NavigationMenuDocsHub } from "@/examples/navigation-menu/docs-hub";
+import { NavigationMenuMobileDrawer } from "@/examples/navigation-menu/mobile-drawer";
 import { NavigationMenuOverflow } from "@/examples/navigation-menu/overflow";
 import { NavigationMenuProductNav } from "@/examples/navigation-menu/product-nav";
 import { navigationMenuProps } from "@/lib/props/navigation-menu";
@@ -49,6 +51,14 @@ export default function NavigationMenuPage() {
       >
         <div className="space-y-10">
           <ExampleBlock
+            wide
+            file="navigation-menu/brand-navbar.tsx"
+            title="Brand navbar"
+            description="A full marketing navbar: brand logo, icon-led menu with rich flyouts and the animated indicator, plus a theme toggle, login, and call-to-action cluster. When the bar gets narrow, the burger expands an integrated panel with accordion submenus — no overlay."
+          >
+            <NavigationMenuBrandNavbar />
+          </ExampleBlock>
+          <ExampleBlock
             file="navigation-menu/product-nav.tsx"
             title="Product navigation"
             description="Rich flyout panels with a featured card, grouped links, icons, descriptions, and the animated indicator."
@@ -61,6 +71,13 @@ export default function NavigationMenuPage() {
             description="A compact quiet nav on desktop; on small screens the same links hand off to a Dialog. Resize the viewport to see the collapse."
           >
             <NavigationMenuAppTopbar />
+          </ExampleBlock>
+          <ExampleBlock
+            file="navigation-menu/mobile-drawer.tsx"
+            title="Mobile navigation drawer"
+            description="A phone-sized in-page drawer: a disclosure button toggles the panel, and the vertical menu restyles its flyout into an accordion — links, icons, current state, and auth actions stay intact."
+          >
+            <NavigationMenuMobileDrawer />
           </ExampleBlock>
           <ExampleBlock
             file="navigation-menu/docs-hub.tsx"

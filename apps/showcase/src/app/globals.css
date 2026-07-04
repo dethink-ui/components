@@ -17,35 +17,44 @@
   --dt-radius-md: 0.5rem;
   --dt-radius-lg: 0.75rem;
 
-  /* Light scheme — teal-tinted neutrals, deep teal primary */
-  --dt-color-background-light: oklch(0.995 0.004 180);
-  --dt-color-foreground-light: oklch(0.22 0.03 220);
-  --dt-color-muted-light: oklch(0.958 0.013 185);
-  --dt-color-muted-foreground-light: oklch(0.47 0.04 210);
-  --dt-color-border-light: oklch(0.9 0.02 185);
-  --dt-color-input-light: oklch(0.89 0.02 185);
+  /* Light scheme — deep teal primary (the default brand) */
   --dt-color-ring-light: oklch(0.6 0.11 185);
   --dt-color-primary-light: oklch(0.51 0.1 185);
   --dt-color-primary-foreground-light: oklch(0.99 0.005 180);
   --dt-color-success-light: oklch(0.56 0.13 158);
   --dt-color-info-light: oklch(0.57 0.11 215);
-  --dt-color-timeline-border-light: oklch(0.84 0.02 185);
-  --dt-color-timeline-rail-light: oklch(0.82 0.02 185);
 
-  /* Dark scheme — deep teal-ink surfaces, luminous aqua primary */
-  --dt-color-background-dark: oklch(0.165 0.02 215);
-  --dt-color-foreground-dark: oklch(0.95 0.012 185);
-  --dt-color-muted-dark: oklch(0.225 0.025 210);
-  --dt-color-muted-foreground-dark: oklch(0.7 0.035 195);
-  --dt-color-border-dark: oklch(0.3 0.03 205);
-  --dt-color-input-dark: oklch(0.34 0.03 205);
+  /* Dark scheme — luminous aqua primary */
   --dt-color-ring-dark: oklch(0.75 0.11 182);
   --dt-color-primary-dark: oklch(0.8 0.12 178);
   --dt-color-primary-foreground-dark: oklch(0.2 0.04 210);
   --dt-color-success-dark: oklch(0.68 0.13 158);
   --dt-color-info-dark: oklch(0.72 0.1 215);
-  --dt-color-timeline-border-dark: oklch(0.42 0.03 205);
-  --dt-color-timeline-rail-dark: oklch(0.46 0.03 205);
+
+  /*
+   * Neutrals are derived from the active brand primary, so hover/selected
+   * fills (muted), borders, inputs, and page surfaces stay hue-matched for
+   * every [data-brand] without repeating them in each brand block. The mix
+   * ratios reproduce the original hand-tuned teal values for the default
+   * brand.
+   */
+  --dt-color-background-light: color-mix(in oklch, var(--dt-color-primary-light) 4%, oklch(1 0 0));
+  --dt-color-foreground-light: color-mix(in oklch, var(--dt-color-primary-light) 8%, oklch(0.2 0 0));
+  --dt-color-muted-light: color-mix(in oklch, var(--dt-color-primary-light) 14%, oklch(1 0 0));
+  --dt-color-muted-foreground-light: color-mix(in oklch, var(--dt-color-primary-light) 14%, oklch(0.46 0 0));
+  --dt-color-border-light: color-mix(in oklch, var(--dt-color-primary-light) 24%, oklch(0.99 0 0));
+  --dt-color-input-light: color-mix(in oklch, var(--dt-color-primary-light) 26%, oklch(0.99 0 0));
+  --dt-color-timeline-border-light: color-mix(in oklch, var(--dt-color-primary-light) 30%, oklch(0.985 0 0));
+  --dt-color-timeline-rail-light: color-mix(in oklch, var(--dt-color-primary-light) 33%, oklch(0.985 0 0));
+
+  --dt-color-background-dark: color-mix(in oklch, var(--dt-color-primary-dark) 17%, oklch(0.04 0 0));
+  --dt-color-foreground-dark: color-mix(in oklch, var(--dt-color-primary-dark) 10%, oklch(0.96 0 0));
+  --dt-color-muted-dark: color-mix(in oklch, var(--dt-color-primary-dark) 20%, oklch(0.11 0 0));
+  --dt-color-muted-foreground-dark: color-mix(in oklch, var(--dt-color-primary-dark) 25%, oklch(0.66 0 0));
+  --dt-color-border-dark: color-mix(in oklch, var(--dt-color-primary-dark) 20%, oklch(0.17 0 0));
+  --dt-color-input-dark: color-mix(in oklch, var(--dt-color-primary-dark) 20%, oklch(0.22 0 0));
+  --dt-color-timeline-border-dark: color-mix(in oklch, var(--dt-color-primary-dark) 25%, oklch(0.3 0 0));
+  --dt-color-timeline-rail-dark: color-mix(in oklch, var(--dt-color-primary-dark) 25%, oklch(0.35 0 0));
 
   /*
    * Showcase-only decorative tokens, derived from the active brand's
@@ -79,8 +88,12 @@
 /*
  * Brand themes — each theme is one small block overriding the documented
  * --dt-* token pairs from the components package. Copy a block into your own
- * app, change the values, and the whole system rebrands. The default (teal)
- * brand is the :root definition above; no attribute means teal.
+ * app, change the values, and the whole system rebrands: the neutral tokens
+ * (muted, border, input, background, foreground) are derived from these
+ * primaries in :root above, so highlights and surfaces re-tint automatically.
+ * The default (teal) brand is the :root definition; no attribute means teal.
+ * These blocks must stay on the root element ([data-brand] is set on <html>)
+ * so the :root color-mix derivations resolve against the overridden primary.
  */
 [data-brand="violet"] {
   --dt-color-primary-light: oklch(0.5 0.19 295);
