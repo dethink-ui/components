@@ -16,11 +16,13 @@ import {
   FieldControl,
   FieldLabel,
   Input,
+  NumberInput,
   RadioGroup,
   RadioGroupItem,
   Select,
   SelectItem,
   Switch,
+  Textarea,
 } from "@dethink/components";
 import { CalendarDate, CalendarDateTime } from "@internationalized/date";
 import { ArrowRight } from "lucide-react";
@@ -106,6 +108,45 @@ export function DateRangePickerTeaser() {
           end: new CalendarDate(2026, 7, 17),
         }}
       />
+    </div>
+  );
+}
+
+export function TextareaTeaser() {
+  return (
+    <Textarea
+      aria-label="Textarea teaser"
+      controlSize="sm"
+      rows={3}
+      resize="none"
+      defaultValue="Shipping the new onboarding flow this week."
+    />
+  );
+}
+
+export function NumberInputTeaser() {
+  return (
+    <div className="w-full space-y-2">
+      <Field id="teaser-ni">
+        <FieldLabel className="text-sm">Seats</FieldLabel>
+        <FieldControl asChild>
+          <NumberInput controlSize="sm" type="number" min={1} defaultValue={12} />
+        </FieldControl>
+      </Field>
+    </div>
+  );
+}
+
+export function FormFieldTeaser() {
+  return (
+    <div className="w-full space-y-2">
+      <Field id="teaser-ff" invalid>
+        <FieldLabel className="text-sm">API key</FieldLabel>
+        <FieldControl asChild>
+          <Input controlSize="sm" defaultValue="sk_live_…" />
+        </FieldControl>
+      </Field>
+      <p className="text-xs text-destructive">This key was revoked.</p>
     </div>
   );
 }

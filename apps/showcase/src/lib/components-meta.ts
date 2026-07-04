@@ -60,10 +60,22 @@ export const componentCatalog: ComponentMeta[] = [
       "Combine date and time selection with granularity, hour-cycle, time-zone, preset, and time-selector options.",
   },
   {
+    slug: "form-field",
+    name: "FormField",
+    description:
+      "Give any control accessible field anatomy — label, description, error, and state wiring through one composable Field.",
+  },
+  {
     slug: "input",
     name: "Input",
     description:
       "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
+  },
+  {
+    slug: "number-input",
+    name: "NumberInput",
+    description:
+      "Capture numeric input with the right mobile keypad, native min/max/step semantics, and form states.",
   },
   {
     slug: "radio-group",
@@ -82,6 +94,12 @@ export const componentCatalog: ComponentMeta[] = [
     name: "Switch",
     description:
       "Flip settings on and off with a native-input toggle that announces as a switch.",
+  },
+  {
+    slug: "textarea",
+    name: "Textarea",
+    description:
+      "Collect multi-line text with tokenized sizes, resize control, and accessible invalid and read-only states.",
   },
 ];
 
