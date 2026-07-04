@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { GithubIcon } from "@/components/icons";
+import { ThemePicker } from "@/components/theme-picker";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 function BrandMark() {
   return (
     <span
       aria-hidden="true"
-      className="grid size-7 shrink-0 place-items-center rounded-lg bg-[linear-gradient(135deg,oklch(0.62_0.12_175),oklch(0.5_0.11_215))] font-heading text-sm font-bold text-white shadow-sm"
+      className="sc-brand-mark grid size-7 shrink-0 place-items-center rounded-lg font-heading text-sm font-bold text-primary-foreground shadow-sm"
     >
       D
     </span>
@@ -42,6 +43,7 @@ export function SiteHeader() {
           >
             <GithubIcon className="size-4" />
           </a>
+          <ThemePicker />
           <ThemeToggle />
         </div>
       </div>
