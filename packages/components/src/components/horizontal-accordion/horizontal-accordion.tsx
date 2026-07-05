@@ -15,6 +15,13 @@ import {
   type HTMLAttributes,
   type ReactNode,
 } from "react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  MotionConfig,
+  motion,
+  type Transition,
+} from "motion/react";
 import { cn } from "../../utils/cn";
 
 declare const process:
@@ -79,9 +86,17 @@ export interface HorizontalAccordionBladeLabelProps
 
 export type HorizontalAccordionPanelProps = HTMLAttributes<HTMLDivElement>;
 
+type AccordionMotionConfig = {
+  activeLayerTransition: Transition;
+  contentEnabled: boolean;
+  contentEnterTransition: Transition;
+  contentExitTransition: Transition;
+};
+
 type AccordionContextValue = {
   activationMode: HorizontalAccordionActivationMode;
   activeValue: HorizontalAccordionValue;
+  motionConfig: AccordionMotionConfig;
   tabStopValue: HorizontalAccordionValue;
   unmountInactivePanels: boolean;
   registerBlade: (value: string, disabled: boolean) => () => void;
@@ -131,7 +146,10 @@ const horizontalAccordionItemClasses =
   "flex h-full min-h-0 min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] motion-safe:transition-[flex-basis,flex-grow,min-width] motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none data-[state=active]:min-w-[min(100%,calc(var(--horizontal-accordion-blade-width)+16rem))] data-[state=active]:shrink data-[state=active]:grow data-[state=active]:basis-0";
 
 const horizontalAccordionBladeClasses =
-  "group/horizontal-accordion-blade relative flex h-full w-[var(--horizontal-accordion-blade-width)] min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] cursor-pointer flex-col items-center justify-between gap-[var(--dt-space-3)] overflow-hidden border-e border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-4)] text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:bg-primary data-[state=active]:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50";
+  "group/horizontal-accordion-blade relative flex h-full w-[var(--horizontal-accordion-blade-width)] min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] cursor-pointer flex-col items-center justify-between gap-[var(--dt-space-3)] overflow-hidden border-e border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-4)] text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:text-primary-foreground motion-reduce:data-[state=active]:bg-primary disabled:cursor-not-allowed disabled:opacity-50 [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:relative [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:z-[2]";
+
+const horizontalAccordionBladeActiveLayerClasses =
+  "pointer-events-none absolute inset-0 z-[1] bg-primary";
 
 const horizontalAccordionBladeIconClasses =
   "pointer-events-none order-1 inline-flex items-center justify-center [&:only-child]:my-auto group-data-[icon-position=end]/horizontal-accordion-blade:order-3";
@@ -297,6 +315,43 @@ function markAccordionPart(component: unknown, partName: AccordionPartName) {
   });
 }
 
+function getMotionEase(easing: string) {
+  return easing.trim().toLowerCase() === "linear"
+    ? ("linear" as const)
+    : ([0.2, 0, 0, 1] as [number, number, number, number]);
+}
+
+function createMotionConfig(
+  animation: Required<HorizontalAccordionAnimation>,
+): AccordionMotionConfig {
+  const ease = getMotionEase(animation.easing);
+  const layoutDuration = Math.max(1, animation.duration);
+  const colorDuration = Math.max(100, Math.round(animation.duration * 0.8));
+
+  return {
+    activeLayerTransition: {
+      layout: {
+        duration: layoutDuration / 1000,
+        ease,
+      },
+      backgroundColor: {
+        duration: colorDuration / 1000,
+        ease,
+      },
+    },
+    contentEnabled: animation.content,
+    contentEnterTransition: {
+      delay: Math.min(Math.round(animation.duration * 0.55), 160) / 1000,
+      duration: Math.max(Math.round(animation.duration * 0.75), 140) / 1000,
+      ease,
+    },
+    contentExitTransition: {
+      duration: Math.max(Math.round(animation.duration * 0.45), 120) / 1000,
+      ease,
+    },
+  };
+}
+
 function renderBladeChildren(children: ReactNode) {
   return Children.map(children, (child) => {
     if (typeof child === "string" || typeof child === "number") {
@@ -342,7 +397,12 @@ const HorizontalAccordionRoot = forwardRef<
     useState<HorizontalAccordionValue>(defaultValue);
   const bladeRegistryRef = useRef(new Map<string, BladeRegistryEntry>());
   const [bladeRegistryVersion, setBladeRegistryVersion] = useState(0);
+  const layoutGroupId = useId();
   const mergedAnimation = { ...DEFAULT_ANIMATION, ...animation };
+  const motionConfig = useMemo(
+    () => createMotionConfig(mergedAnimation),
+    [mergedAnimation.content, mergedAnimation.duration, mergedAnimation.easing],
+  );
   const rootStyle: HorizontalAccordionStyle = {
     "--horizontal-accordion-blade-width": `${bladeWidth}px`,
     "--horizontal-accordion-height": `${height}px`,
@@ -405,6 +465,7 @@ const HorizontalAccordionRoot = forwardRef<
     () => ({
       activationMode,
       activeValue,
+      motionConfig,
       tabStopValue,
       unmountInactivePanels,
       registerBlade,
@@ -414,6 +475,7 @@ const HorizontalAccordionRoot = forwardRef<
     [
       activationMode,
       activeValue,
+      motionConfig,
       registerBlade,
       setActiveValue,
       tabStopValue,
@@ -423,16 +485,21 @@ const HorizontalAccordionRoot = forwardRef<
 
   return (
     <AccordionContext.Provider value={contextValue}>
-      <div
-        role="group"
-        {...rootProps}
-        ref={ref}
-        data-slot="horizontal-accordion"
-        className={horizontalAccordionClassNames({ className })}
-        style={rootStyle}
-      >
-        {children}
-      </div>
+      <MotionConfig reducedMotion="user">
+        <LayoutGroup id={layoutGroupId}>
+          <div
+            role="group"
+            {...rootProps}
+            ref={ref}
+            data-slot="horizontal-accordion"
+            data-content-animation={motionConfig.contentEnabled ? "on" : "off"}
+            className={horizontalAccordionClassNames({ className })}
+            style={rootStyle}
+          >
+            {children}
+          </div>
+        </LayoutGroup>
+      </MotionConfig>
     </AccordionContext.Provider>
   );
 });
@@ -492,6 +559,7 @@ export const HorizontalAccordionBlade = forwardRef<
   ) => {
     const {
       activationMode,
+      motionConfig,
       registerBlade,
       setActiveValue,
       setFocusedValue,
@@ -627,6 +695,15 @@ export const HorizontalAccordionBlade = forwardRef<
           }
         }}
       >
+        {active ? (
+          <motion.span
+            aria-hidden="true"
+            data-slot="horizontal-accordion-blade-active-layer"
+            className={horizontalAccordionBladeActiveLayerClasses}
+            layoutId="horizontal-accordion-active-blade"
+            transition={motionConfig.activeLayerTransition}
+          />
+        ) : null}
         {renderBladeChildren(children)}
       </button>
     );
@@ -684,12 +761,76 @@ export const HorizontalAccordionPanel = forwardRef<
   HTMLDivElement,
   HorizontalAccordionPanelProps
 >(({ className, children, ...props }, ref) => {
-  const { unmountInactivePanels } = useAccordionContext(
+  const { motionConfig, unmountInactivePanels } = useAccordionContext(
     "HorizontalAccordion.Panel",
   );
   const { active, bladeId, panelId } = useItemContext(
     "HorizontalAccordion.Panel",
   );
+  const { contentEnabled, contentEnterTransition, contentExitTransition } =
+    motionConfig;
+  const [contentSettled, setContentSettled] = useState(!active);
+
+  useEffect(() => {
+    if (active) {
+      setContentSettled(false);
+    }
+  }, [active]);
+
+  const hidden = contentEnabled ? !active && contentSettled : !active;
+  let content: ReactNode;
+
+  if (!contentEnabled) {
+    content = active || !unmountInactivePanels ? children : null;
+  } else if (unmountInactivePanels) {
+    content = (
+      <AnimatePresence
+        initial={false}
+        onExitComplete={() => setContentSettled(true)}
+      >
+        {active ? (
+          <motion.div
+            key="content"
+            data-slot="horizontal-accordion-panel-content"
+            className="h-full w-full"
+            initial={{ opacity: 0, x: 12 }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              transition: contentEnterTransition,
+            }}
+            exit={{
+              opacity: 0,
+              x: 12,
+              transition: contentExitTransition,
+            }}
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    );
+  } else {
+    content = (
+      <motion.div
+        data-slot="horizontal-accordion-panel-content"
+        className="h-full w-full"
+        initial={false}
+        animate={
+          active
+            ? { opacity: 1, x: 0, transition: contentEnterTransition }
+            : { opacity: 0, x: 12, transition: contentExitTransition }
+        }
+        onAnimationComplete={() => {
+          if (!active) {
+            setContentSettled(true);
+          }
+        }}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <div
@@ -701,9 +842,9 @@ export const HorizontalAccordionPanel = forwardRef<
       data-slot="horizontal-accordion-panel"
       data-state={active ? "active" : "inactive"}
       className={horizontalAccordionPanelClassNames({ className })}
-      hidden={!active}
+      hidden={hidden}
     >
-      {active || !unmountInactivePanels ? children : null}
+      {content}
     </div>
   );
 });

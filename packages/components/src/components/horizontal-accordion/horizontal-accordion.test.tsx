@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -391,6 +391,100 @@ describe("HorizontalAccordion keyboard", () => {
     await user.keyboard("{ArrowLeft}");
 
     expect(screen.getByRole("button", { name: "Two" })).toHaveFocus();
+  });
+});
+
+function activeLayer(scope: HTMLElement) {
+  return scope.querySelector(
+    '[data-slot="horizontal-accordion-blade-active-layer"]',
+  );
+}
+
+describe("HorizontalAccordion motion", () => {
+  it("renders the active layer only on the active blade", () => {
+    render(<BasicAccordion defaultValue="one" />);
+
+    const bladeOne = screen.getByRole("button", { name: "One" });
+    const bladeTwo = screen.getByRole("button", { name: "Two" });
+
+    expect(activeLayer(bladeOne)).not.toBeNull();
+    expect(activeLayer(bladeOne)).toHaveAttribute("aria-hidden", "true");
+    expect(activeLayer(bladeTwo)).toBeNull();
+  });
+
+  it("moves the active layer to a newly activated blade", async () => {
+    const user = userEvent.setup();
+    render(<BasicAccordion defaultValue="one" />);
+
+    await user.click(screen.getByRole("button", { name: "Two" }));
+
+    expect(activeLayer(screen.getByRole("button", { name: "One" }))).toBeNull();
+    expect(
+      activeLayer(screen.getByRole("button", { name: "Two" })),
+    ).not.toBeNull();
+  });
+
+  it("keeps active layers independent across instances", () => {
+    render(
+      <>
+        <HorizontalAccordion defaultValue="a" data-testid="first">
+          <HorizontalAccordion.Item value="a">
+            <HorizontalAccordion.Blade>A</HorizontalAccordion.Blade>
+            <HorizontalAccordion.Panel>A panel</HorizontalAccordion.Panel>
+          </HorizontalAccordion.Item>
+        </HorizontalAccordion>
+        <HorizontalAccordion defaultValue="b" data-testid="second">
+          <HorizontalAccordion.Item value="b">
+            <HorizontalAccordion.Blade>B</HorizontalAccordion.Blade>
+            <HorizontalAccordion.Panel>B panel</HorizontalAccordion.Panel>
+          </HorizontalAccordion.Item>
+        </HorizontalAccordion>
+      </>,
+    );
+
+    expect(activeLayer(screen.getByTestId("first"))).not.toBeNull();
+    expect(activeLayer(screen.getByTestId("second"))).not.toBeNull();
+  });
+
+  it("disables content choreography with animation.content false", () => {
+    const { container } = render(
+      <BasicAccordion animation={{ content: false }} defaultValue="one" />,
+    );
+
+    const root = container.querySelector('[data-slot="horizontal-accordion"]');
+
+    expect(root).toHaveAttribute("data-content-animation", "off");
+    expect(
+      container.querySelector(
+        '[data-slot="horizontal-accordion-panel-content"]',
+      ),
+    ).toBeNull();
+    expect(screen.getByTestId("panel-two")).not.toBeVisible();
+  });
+
+  it("hides a collapsed panel after the content exit settles", async () => {
+    const user = userEvent.setup();
+    render(<BasicAccordion defaultValue="one" />);
+
+    await user.click(screen.getByRole("button", { name: "One" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("panel-one")).not.toBeVisible();
+    });
+  });
+
+  it("unmounts panel children after the exit animation with unmountInactivePanels", async () => {
+    const user = userEvent.setup();
+    render(<BasicAccordion defaultValue="one" unmountInactivePanels />);
+
+    expect(screen.getByText("One panel")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Two" }));
+
+    await waitFor(() => {
+      expect(screen.queryByText("One panel")).not.toBeInTheDocument();
+    });
+    expect(screen.getByText("Two panel")).toBeInTheDocument();
   });
 });
 
