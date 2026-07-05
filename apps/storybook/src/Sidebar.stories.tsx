@@ -21,6 +21,7 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
+  SidebarSeparator,
   SidebarSkipLink,
   SidebarTrigger,
   Text,
@@ -182,10 +183,14 @@ function SidebarExample({
                   <SidebarMenuButton icon={<WorkflowIcon />}>
                     Refresh data
                   </SidebarMenuButton>
+                  <SidebarMenuAction showOnHover label="Refresh options">
+                    <SettingsIcon className="size-4" />
+                  </SidebarMenuAction>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+          <SidebarSeparator />
           <SidebarGroup collapsible defaultOpen>
             <SidebarGroupTrigger>Administration</SidebarGroupTrigger>
             <SidebarGroupContent>

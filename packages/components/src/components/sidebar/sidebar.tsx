@@ -145,7 +145,10 @@ export interface SidebarMenuButtonProps
 export interface SidebarMenuActionProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   label?: string;
+  showOnHover?: boolean;
 }
+
+export interface SidebarSeparatorProps extends HTMLAttributes<HTMLDivElement> {}
 
 export interface SidebarInsetProps extends HTMLAttributes<HTMLElement> {
   as?: "div" | "main" | "section";
@@ -229,7 +232,7 @@ const sidebarGroupLabelClasses =
   "min-w-0 px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-xs font-semibold uppercase tracking-normal text-muted-foreground group-data-[collapsed=true]:sr-only";
 
 const sidebarGroupTriggerClasses =
-  "group group/sidebar-group-trigger flex min-h-8 w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-start text-xs font-semibold uppercase tracking-normal text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-data-[collapsed=true]:sr-only";
+  "group group/sidebar-group-trigger flex min-h-8 w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-start text-xs font-semibold uppercase tracking-normal text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring group-data-[collapsed=true]:sr-only";
 
 const sidebarGroupTriggerIconClasses =
   "size-4 shrink-0 text-muted-foreground motion-safe:transition-[rotate] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[open=true]:rotate-90 rtl:group-data-[open=false]:rotate-180 [&>svg]:size-4";
@@ -249,10 +252,10 @@ const sidebarMobileCloseClasses = "absolute end-[var(--dt-space-3)] top-[var(--d
 
 const sidebarMenuClasses = "grid min-w-0 list-none gap-[var(--dt-space-1)] p-0";
 
-const sidebarMenuItemClasses = "min-w-0";
+const sidebarMenuItemClasses = "group/sidebar-menu-item relative min-w-0";
 
 const sidebarMenuInteractiveClasses =
-  "group group/sidebar-menu-interactive relative grid min-h-9 w-full min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-2)] text-start text-sm leading-5 text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-muted/80 data-[active=true]:bg-muted data-[active=true]:text-foreground data-[current=true]:bg-primary/10 data-[current=true]:font-medium data-[current=true]:text-foreground data-[current=true]:hover:bg-primary/15 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 group-data-[collapsed=true]:grid-cols-[1rem] group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0";
+  "group group/sidebar-menu-interactive relative grid min-h-9 w-full min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-2)] text-start text-sm leading-5 text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:bg-muted/80 motion-safe:active:scale-[0.985] data-[active=true]:bg-muted data-[active=true]:text-foreground data-[current=true]:bg-primary/10 data-[current=true]:font-medium data-[current=true]:text-foreground data-[current=true]:hover:bg-primary/15 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 group-data-[collapsed=true]:grid-cols-[1rem] group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0";
 
 const sidebarMenuIndicatorClasses =
   "pointer-events-none absolute inset-y-[var(--dt-space-1-5)] start-0 w-0.5 rounded-full bg-primary motion-safe:animate-sidebar-indicator-in motion-reduce:animate-none";
@@ -285,7 +288,13 @@ const sidebarTriggerClasses =
   "inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground active:scale-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0";
 
 const sidebarRailClasses =
-  "absolute inset-y-0 z-10 hidden w-3 -translate-x-1/2 cursor-ew-resize rounded-full outline-none motion-safe:transition-colors motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[side=left]:start-full data-[side=right]:end-full data-[side=right]:translate-x-1/2 md:block";
+  "absolute inset-y-0 z-10 hidden w-3 -translate-x-1/2 rounded-full outline-none before:absolute before:inset-y-0 before:start-1/2 before:w-0.5 before:-translate-x-1/2 before:rounded-full before:bg-ring before:opacity-0 motion-safe:before:transition-opacity motion-safe:before:duration-[var(--sidebar-motion-duration)] motion-reduce:before:transition-none hover:before:opacity-60 focus-visible:before:opacity-100 focus-visible:ring-2 focus-visible:ring-ring rtl:before:translate-x-1/2 data-[side=left]:start-full data-[side=right]:end-full data-[side=right]:translate-x-1/2 data-[collapsed=false]:data-[side=left]:cursor-w-resize data-[collapsed=true]:data-[side=left]:cursor-e-resize data-[collapsed=false]:data-[side=right]:cursor-e-resize data-[collapsed=true]:data-[side=right]:cursor-w-resize rtl:data-[collapsed=false]:data-[side=left]:cursor-e-resize rtl:data-[collapsed=true]:data-[side=left]:cursor-w-resize rtl:data-[collapsed=false]:data-[side=right]:cursor-w-resize rtl:data-[collapsed=true]:data-[side=right]:cursor-e-resize md:block";
+
+const sidebarMenuActionRevealClasses =
+  "absolute end-[var(--dt-space-1)] top-1/2 size-7 -translate-y-1/2 border-0 bg-transparent opacity-0 motion-safe:transition-[opacity,background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] focus-visible:opacity-100 group-focus-within/sidebar-menu-item:opacity-100 group-hover/sidebar-menu-item:opacity-100 group-data-[collapsed=true]:hidden";
+
+const sidebarSeparatorClasses =
+  "mx-[var(--dt-space-2)] my-[var(--dt-space-1)] h-px shrink-0 rounded-full bg-border";
 
 const sidebarInsetClasses =
   "min-w-0 flex-1 bg-background text-foreground";
@@ -667,8 +676,20 @@ export function sidebarMenuBadgeClassNames({
 
 export function sidebarMenuActionClassNames({
   className,
-}: Pick<SidebarMenuActionProps, "className"> = {}) {
-  return cn(sidebarTriggerClasses, "size-7", className);
+  showOnHover = false,
+}: Pick<SidebarMenuActionProps, "className" | "showOnHover"> = {}) {
+  return cn(
+    sidebarTriggerClasses,
+    "size-7",
+    showOnHover && sidebarMenuActionRevealClasses,
+    className,
+  );
+}
+
+export function sidebarSeparatorClassNames({
+  className,
+}: Pick<SidebarSeparatorProps, "className"> = {}) {
+  return cn(sidebarSeparatorClasses, className);
 }
 
 export function sidebarTriggerClassNames({
@@ -1526,20 +1547,35 @@ SidebarMenuBadge.displayName = "SidebarMenuBadge";
 export const SidebarMenuAction = forwardRef<
   HTMLButtonElement,
   SidebarMenuActionProps
->(({ children, className, label, type = "button", ...props }, ref) => (
+>(({ children, className, label, showOnHover = false, type = "button", ...props }, ref) => (
   <button
     {...props}
     ref={ref}
     type={type}
     aria-label={props["aria-label"] ?? label}
+    data-show-on-hover={showOnHover ? "true" : undefined}
     data-slot="sidebar-menu-action"
-    className={sidebarMenuActionClassNames({ className })}
+    className={sidebarMenuActionClassNames({ className, showOnHover })}
   >
     {children}
   </button>
 ));
 
 SidebarMenuAction.displayName = "SidebarMenuAction";
+
+export const SidebarSeparator = forwardRef<HTMLDivElement, SidebarSeparatorProps>(
+  ({ className, ...props }, ref) => (
+    <div
+      {...props}
+      ref={ref}
+      aria-hidden="true"
+      data-slot="sidebar-separator"
+      className={sidebarSeparatorClassNames({ className })}
+    />
+  ),
+);
+
+SidebarSeparator.displayName = "SidebarSeparator";
 
 export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>(
   (

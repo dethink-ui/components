@@ -21,6 +21,7 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
+  SidebarSeparator,
   SidebarSkipLink,
   SidebarTrigger,
   sidebarClassNames,
@@ -846,6 +847,54 @@ describe("Sidebar", () => {
       "data-motion",
       "none",
     );
+  });
+
+  it("renders a decorative sidebar separator", () => {
+    render(<SidebarSeparator data-testid="separator" />);
+
+    const separator = screen.getByTestId("separator");
+
+    expect(separator).toHaveAttribute("data-slot", "sidebar-separator");
+    expect(separator).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("supports hover-revealed menu actions inside menu items", async () => {
+    const user = userEvent.setup();
+    const onAction = vi.fn();
+
+    render(
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuLink href="/projects">Projects</SidebarMenuLink>
+                <SidebarMenuAction
+                  showOnHover
+                  label="Open project actions"
+                  onClick={onAction}
+                >
+                  ⋯
+                </SidebarMenuAction>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const action = screen.getByRole("button", { name: "Open project actions" });
+
+    expect(action).toHaveAttribute("data-show-on-hover", "true");
+
+    await user.tab();
+    await user.tab();
+
+    expect(action).toHaveFocus();
+
+    await user.keyboard("{Enter}");
+
+    expect(onAction).toHaveBeenCalled();
   });
 
   it("renders a skip link targeting main content", () => {
