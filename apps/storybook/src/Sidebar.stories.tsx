@@ -270,6 +270,68 @@ function ControlledSidebarExample() {
   );
 }
 
+function SelectionIndicatorExample() {
+  const [currentHref, setCurrentHref] = useState("/overview");
+
+  return (
+    <SidebarProvider>
+      <Sidebar aria-label="Active route navigation">
+        <SidebarContent>
+          <SidebarMenu>
+            {navItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuLink
+                    current={currentHref === item.href}
+                    href={item.href}
+                    icon={<Icon />}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setCurrentHref(item.href);
+                    }}
+                  >
+                    {item.label}
+                  </SidebarMenuLink>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarInset className="p-6">
+        <Text size="sm" tone="muted">
+          Selecting an item moves the animated selection indicator to the new
+          current route.
+        </Text>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
+
+export const SelectionIndicator: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="h-[24rem] overflow-hidden rounded-lg border border-border"
+    >
+      <SelectionIndicatorExample />
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const analytics = canvas.getByRole("link", { name: "Analytics" });
+
+    await userEvent.click(analytics);
+
+    await expect(analytics).toHaveAttribute("aria-current", "page");
+    await expect(
+      analytics.querySelector('[data-slot="sidebar-menu-indicator"]'),
+    ).not.toBeNull();
+  },
+};
+
 export const Dashboard: Story = {
   render: ({ variant }) => (
     <DethinkProvider theme="light" className="h-[30rem] overflow-hidden rounded-lg border border-border">

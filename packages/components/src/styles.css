@@ -46,6 +46,8 @@
   --spacing-density-gap: var(--dt-density-gap);
   --animate-overlay-in: dt-overlay-in 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-overlay-out: dt-overlay-out 120ms cubic-bezier(0.4, 0, 1, 1) both;
+  --animate-sidebar-indicator-in: dt-sidebar-indicator-in var(--sidebar-motion-duration, 220ms)
+    var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
   --animate-sidebar-menu-open: dt-sidebar-menu-open var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
   --animate-sidebar-overlay-in: dt-sidebar-overlay-in var(--sidebar-motion-duration, 220ms)
@@ -81,6 +83,18 @@
     opacity: 0;
     translate: var(--dt-overlay-motion-x, 0) var(--dt-overlay-motion-y, var(--dt-space-1));
     scale: 0.98;
+  }
+}
+
+@keyframes dt-sidebar-indicator-in {
+  from {
+    opacity: 0;
+    scale: 1 0.4;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1 1;
   }
 }
 

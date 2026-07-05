@@ -138,6 +138,47 @@ describe("Sidebar", () => {
     expect(screen.getByRole("main")).toHaveAttribute("data-slot", "sidebar-inset");
   });
 
+  it("renders a selection indicator only on current menu items", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar aria-label="Indicator navigation">
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuLink current href="/current" icon={<DashboardIcon />}>
+                  Current page
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuLink active href="/active">
+                  Active page
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuLink asChild current>
+                  <RouterLink to="/router-current">Router current</RouterLink>
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const currentLink = screen.getByRole("link", { name: "Current page" });
+    const activeLink = screen.getByRole("link", { name: "Active page" });
+    const routerLink = screen.getByRole("link", { name: "Router current" });
+    const indicatorSelector = '[data-slot="sidebar-menu-indicator"]';
+    const currentIndicator = currentLink.querySelector(indicatorSelector);
+
+    expect(currentIndicator).not.toBeNull();
+    expect(currentIndicator).toHaveAttribute("aria-hidden", "true");
+    expect(routerLink.querySelector(indicatorSelector)).not.toBeNull();
+    expect(activeLink.querySelector(indicatorSelector)).toBeNull();
+    expect(activeLink).toHaveAttribute("data-active", "true");
+    expect(activeLink).not.toHaveAttribute("data-current");
+  });
+
   it("composes consumer classes and forwards refs", () => {
     const providerRef = createRef<HTMLDivElement>();
     const sidebarRef = createRef<HTMLElement>();

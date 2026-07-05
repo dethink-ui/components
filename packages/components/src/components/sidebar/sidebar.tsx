@@ -248,7 +248,10 @@ const sidebarMenuClasses = "grid min-w-0 list-none gap-[var(--dt-space-1)] p-0";
 const sidebarMenuItemClasses = "min-w-0";
 
 const sidebarMenuInteractiveClasses =
-  "group group/sidebar-menu-interactive relative grid min-h-9 w-full min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-2)] text-start text-sm leading-5 text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-muted/80 data-[active=true]:bg-muted data-[active=true]:text-foreground data-[current=true]:bg-primary/10 data-[current=true]:font-medium data-[current=true]:text-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 group-data-[collapsed=true]:grid-cols-[1rem] group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0";
+  "group group/sidebar-menu-interactive relative grid min-h-9 w-full min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-2)] text-start text-sm leading-5 text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-muted/80 data-[active=true]:bg-muted data-[active=true]:text-foreground data-[current=true]:bg-primary/10 data-[current=true]:font-medium data-[current=true]:text-foreground data-[current=true]:hover:bg-primary/15 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 group-data-[collapsed=true]:grid-cols-[1rem] group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0";
+
+const sidebarMenuIndicatorClasses =
+  "pointer-events-none absolute inset-y-[var(--dt-space-1-5)] start-0 w-0.5 rounded-full bg-primary motion-safe:animate-sidebar-indicator-in motion-reduce:animate-none";
 
 const sidebarMenuIconClasses =
   "pointer-events-none flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[active=true]:text-foreground group-data-[current=true]:text-primary [&>svg]:size-4";
@@ -466,6 +469,7 @@ function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
 function renderMenuContent({
   badge,
   children,
+  current = false,
   description,
   icon,
   shortcut,
@@ -474,9 +478,17 @@ function renderMenuContent({
   "badge" | "description" | "icon" | "shortcut"
 > & {
   children: ReactNode;
+  current?: boolean;
 }) {
   return (
     <>
+      {current ? (
+        <span
+          aria-hidden="true"
+          data-slot="sidebar-menu-indicator"
+          className={sidebarMenuIndicatorClasses}
+        />
+      ) : null}
       {icon ? (
         <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses}>
           {icon}
@@ -1293,6 +1305,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         renderMenuContent({
           badge,
           children: child.props.children,
+          current: childIsCurrent,
           description,
           icon,
           shortcut,
@@ -1317,7 +1330,14 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         className={classes}
         onClick={handleClick as MouseEventHandler<HTMLAnchorElement>}
       >
-        {renderMenuContent({ badge, children, description, icon, shortcut })}
+        {renderMenuContent({
+          badge,
+          children,
+          current: isCurrent,
+          description,
+          icon,
+          shortcut,
+        })}
       </a>
     );
   },
