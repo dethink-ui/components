@@ -150,6 +150,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Link-first site and app navigation with disclosure flyouts, rich panels, animated indicator, and responsive collapse recipes.",
   },
   {
+    slug: "navdock",
+    name: "NavDock",
+    description:
+      "Motion-powered icon dock navigation with title modes, current matching, submenus, placements, and responsive collapsed rails.",
+  },
+  {
     slug: "number-input",
     name: "NumberInput",
     description:

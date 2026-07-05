@@ -126,6 +126,7 @@ const textarea = await readJson(join(registryRoot, "textarea.json"));
 const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
 const navigationMenu = await readJson(join(registryRoot, "navigation-menu.json"));
+const navDock = await readJson(join(registryRoot, "navdock.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
 const timeline = await readJson(join(registryRoot, "timeline.json"));
@@ -166,6 +167,7 @@ const registryItemsByName = new Map(
     tooltip,
     dropdownMenu,
     navigationMenu,
+    navDock,
     typography,
     dateTimePicker,
     timeline,
@@ -214,6 +216,7 @@ assert(
   navigationMenu.name === "navigation-menu",
   "navigation-menu registry item must be named navigation-menu.",
 );
+assert(navDock.name === "navdock", "navdock registry item must be named navdock.");
 assert(typography.name === "typography", "typography registry item must be named typography.");
 assert(
   dateTimePicker.name === "date-time-picker",
@@ -405,8 +408,16 @@ assert(
   "navigation-menu registry item must depend on dethink-base.",
 );
 assert(
+  navDock.registryDependencies?.includes("dethink-base"),
+  "navdock registry item must depend on dethink-base.",
+);
+assert(
   (navigationMenu.dependencies ?? []).length === 0,
   "navigation-menu registry item must not declare runtime dependencies (no Motion).",
+);
+assert(
+  navDock.dependencies?.includes("motion"),
+  "navdock registry item must include motion for dock magnification and collapsed rail animation.",
 );
 assert(
   dropdownMenu.registryDependencies?.includes("dethink-base"),
@@ -667,6 +678,8 @@ for (const item of [
   textarea,
   tooltip,
   dropdownMenu,
+  navigationMenu,
+  navDock,
   typography,
   dateTimePicker,
   timeline,
@@ -704,6 +717,7 @@ await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navigationMenu, registryItemsByName);
+await assertRegistryRelativeImportsResolve(navDock, registryItemsByName);
 
 const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
@@ -2092,6 +2106,10 @@ const navigationMenuSource = await readFile(
   join(root, "packages/components/src/components/navigation-menu/navigation-menu.tsx"),
   "utf8",
 );
+const navDockSource = await readFile(
+  join(root, "packages/components/src/components/navdock/navdock.tsx"),
+  "utf8",
+);
 assert(
   navigationMenuSource.includes('data-slot="navigation-menu"') &&
     navigationMenuSource.includes('data-slot="navigation-menu-list"') &&
@@ -2132,5 +2150,55 @@ assert(
   styles.includes("dt-nav-slide-in") && styles.includes("dt-nav-slide-out"),
   "base styles must ship the navigation-menu motion keyframes.",
 );
+assert(
+  navDockSource.includes('data-slot="navdock"') &&
+    navDockSource.includes('data-slot="navdock-list"') &&
+    navDockSource.includes('data-slot="navdock-item"') &&
+    navDockSource.includes('data-slot="navdock-link"') &&
+    navDockSource.includes('data-slot="navdock-button"') &&
+    navDockSource.includes('data-slot="navdock-separator"') &&
+    navDockSource.includes('data-slot="navdock-submenu-trigger"') &&
+    navDockSource.includes('data-slot="navdock-submenu-content"') &&
+    navDockSource.includes('data-slot="navdock-collapse-trigger"'),
+  "navdock source must expose stable dock anatomy slots.",
+);
+assert(
+  navDockSource.includes('from "motion/react"') &&
+    navDockSource.includes("AnimatePresence") &&
+    navDockSource.includes("useSpring") &&
+    navDockSource.includes("useReducedMotion"),
+  "navdock source must use Motion primitives and reduced-motion detection.",
+);
+assert(
+  navDockSource.includes("aria-current") &&
+    navDockSource.includes("aria-expanded") &&
+    navDockSource.includes("aria-controls"),
+  "navdock source must use link-current and disclosure semantics.",
+);
+assert(
+  navDockSource.includes("CollapseDock") &&
+    navDockSource.includes("collapseMode") &&
+    navDockSource.includes("triggerIcon"),
+  "navdock source must ship explicit collapsed dock composition.",
+);
+assert(
+  navDockSource.includes("NavDockSeparator") &&
+    navDockSource.includes("NavDockDivider"),
+  "navdock source must ship separator anatomy and compatibility alias.",
+);
+assert(
+  navDockSource.includes("isItemCurrent") && navDockSource.includes("currentValue"),
+  "navdock source must support route-derived current matching.",
+);
+assert(
+  navDockSource.includes("bg-background") &&
+    navDockSource.includes("focus-visible:ring-ring") &&
+    navDockSource.includes("data-[current=true]:bg-muted") &&
+    navDockSource.includes("motion-safe:transition"),
+  "navdock source must use provider tokens and reduced-motion-aware utility classes.",
+);
+assert(!navDockSource.includes("@radix-ui"), "navdock source must remain Radix-free.");
+assert(!navDockSource.includes("framer-motion"), "navdock source must use motion/react, not framer-motion.");
+assert(!navDockSource.includes("floating-ui"), "navdock source must not add Floating UI.");
 
 console.log("Registry smoke passed.");
