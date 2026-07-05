@@ -35,12 +35,8 @@ import {
   TooltipTeaser,
   TypographyTeaser,
 } from "@/components/component-teasers";
-import { GithubIcon } from "@/components/icons";
-import { CopyButton } from "@/components/copy-button";
-import { LandingDemo } from "@/components/landing-demo";
+import { LandingHero } from "@/components/landing-hero";
 import { componentCatalog } from "@/lib/components-meta";
-
-const INSTALL_COMMAND = "npx shadcn@latest add @dethink/button";
 
 const teasers: Record<string, ReactNode> = {
   box: <BoxTeaser />,
@@ -81,49 +77,8 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <section className="sc-hero-backdrop border-b border-border/70">
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-24 lg:px-8">
-          <div className="space-y-7">
-            <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              Open code · shadcn-compatible registry
-            </p>
-            <h1 className="font-heading text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-              Production React components,
-              <span className="sc-gradient-text"> themed by tokens.</span>
-            </h1>
-            <p className="max-w-xl text-lg leading-8 text-muted-foreground">
-              Dethink Components is an open-code component system for SaaS
-              dashboards, internal tools, and AI-native interfaces. Copy the
-              source into your project, restyle everything through CSS
-              variables — like the teal theme on this very page.
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/components"
-                className="inline-flex h-11 items-center gap-2 rounded-md bg-primary px-5 text-base font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                Browse components
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-              <a
-                href="https://github.com/parveshh/dethink-components"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-11 items-center gap-2 rounded-md border border-border bg-background px-5 text-base font-medium transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                <GithubIcon className="size-4" />
-                GitHub
-              </a>
-            </div>
-            <div className="flex w-full max-w-full items-center gap-3 rounded-lg border border-[var(--sc-code-border)] bg-[var(--sc-code-bg)] py-2 pl-4 pr-2 text-[var(--sc-code-foreground)] sm:w-fit">
-              <code className="overflow-x-auto whitespace-nowrap font-mono text-sm">
-                {INSTALL_COMMAND}
-              </code>
-              <CopyButton text={INSTALL_COMMAND} />
-            </div>
-          </div>
-          <div className="flex justify-center lg:justify-end">
-            <LandingDemo />
-          </div>
+        <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
+          <LandingHero />
         </div>
       </section>
 
