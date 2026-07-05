@@ -5,8 +5,10 @@ import {
   isValidElement,
   useCallback,
   useContext,
+  useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
   type ButtonHTMLAttributes,
   type CSSProperties,
@@ -31,12 +33,15 @@ export type HorizontalAccordionAnimation = {
   content?: boolean;
 };
 
+export type HorizontalAccordionActivationMode = "manual" | "automatic";
+
 export interface HorizontalAccordionProps
   extends HTMLAttributes<HTMLDivElement> {
   value?: HorizontalAccordionValue;
   defaultValue?: HorizontalAccordionValue;
   onValueChange?: (value: HorizontalAccordionValue) => void;
   collapsible?: boolean;
+  activationMode?: HorizontalAccordionActivationMode;
   bladeWidth?: number;
   height?: number;
   animation?: HorizontalAccordionAnimation;
@@ -75,9 +80,17 @@ export interface HorizontalAccordionBladeLabelProps
 export type HorizontalAccordionPanelProps = HTMLAttributes<HTMLDivElement>;
 
 type AccordionContextValue = {
+  activationMode: HorizontalAccordionActivationMode;
   activeValue: HorizontalAccordionValue;
+  tabStopValue: HorizontalAccordionValue;
   unmountInactivePanels: boolean;
+  registerBlade: (value: string, disabled: boolean) => () => void;
   setActiveValue: (value: string) => void;
+  setFocusedValue: (value: string) => void;
+};
+
+type BladeRegistryEntry = {
+  disabled: boolean;
 };
 
 type ItemContextValue = {
@@ -310,6 +323,7 @@ const HorizontalAccordionRoot = forwardRef<
     defaultValue,
     onValueChange,
     collapsible = true,
+    activationMode = "manual",
     bladeWidth = DEFAULT_BLADE_WIDTH,
     height = DEFAULT_HEIGHT,
     animation,
@@ -323,6 +337,11 @@ const HorizontalAccordionRoot = forwardRef<
     useState<HorizontalAccordionValue>(defaultValue);
   const controlled = Object.hasOwn(props, "value");
   const activeValue = controlled ? value : uncontrolledValue;
+  const itemValues = useMemo(() => getDirectItemValues(children), [children]);
+  const [focusedValue, setFocusedValue] =
+    useState<HorizontalAccordionValue>(defaultValue);
+  const bladeRegistryRef = useRef(new Map<string, BladeRegistryEntry>());
+  const [bladeRegistryVersion, setBladeRegistryVersion] = useState(0);
   const mergedAnimation = { ...DEFAULT_ANIMATION, ...animation };
   const rootStyle: HorizontalAccordionStyle = {
     "--horizontal-accordion-blade-width": `${bladeWidth}px`,
@@ -333,6 +352,36 @@ const HorizontalAccordionRoot = forwardRef<
   };
 
   validateRootComposition(children);
+
+  const registerBlade = useCallback((nextValue: string, disabled: boolean) => {
+    const current = bladeRegistryRef.current.get(nextValue);
+
+    if (!current || current.disabled !== disabled) {
+      bladeRegistryRef.current.set(nextValue, { disabled });
+      setBladeRegistryVersion((version) => version + 1);
+    }
+
+    return () => {
+      bladeRegistryRef.current.delete(nextValue);
+      setBladeRegistryVersion((version) => version + 1);
+    };
+  }, []);
+
+  const enabledItemValues = useMemo(
+    () =>
+      itemValues.filter(
+        (itemValue) => !bladeRegistryRef.current.get(itemValue)?.disabled,
+      ),
+    // bladeRegistryVersion invalidates the ref-backed registry
+    [bladeRegistryVersion, itemValues],
+  );
+
+  const tabStopValue =
+    focusedValue && enabledItemValues.includes(focusedValue)
+      ? focusedValue
+      : activeValue && enabledItemValues.includes(activeValue)
+        ? activeValue
+        : enabledItemValues[0];
 
   const setActiveValue = useCallback(
     (nextValue: string) => {
@@ -354,16 +403,28 @@ const HorizontalAccordionRoot = forwardRef<
 
   const contextValue = useMemo<AccordionContextValue>(
     () => ({
+      activationMode,
       activeValue,
+      tabStopValue,
       unmountInactivePanels,
+      registerBlade,
       setActiveValue,
+      setFocusedValue,
     }),
-    [activeValue, setActiveValue, unmountInactivePanels],
+    [
+      activationMode,
+      activeValue,
+      registerBlade,
+      setActiveValue,
+      tabStopValue,
+      unmountInactivePanels,
+    ],
   );
 
   return (
     <AccordionContext.Provider value={contextValue}>
       <div
+        role="group"
         {...rootProps}
         ref={ref}
         data-slot="horizontal-accordion"
@@ -422,15 +483,21 @@ export const HorizontalAccordionBlade = forwardRef<
       disabled = false,
       iconPosition = "start",
       onClick,
+      onFocus,
+      onKeyDown,
       type = "button",
       ...props
     },
     ref,
   ) => {
-    const { setActiveValue } = useAccordionContext(
-      "HorizontalAccordion.Blade",
-    );
-    const { active, bladeId, value } = useItemContext(
+    const {
+      activationMode,
+      registerBlade,
+      setActiveValue,
+      setFocusedValue,
+      tabStopValue,
+    } = useAccordionContext("HorizontalAccordion.Blade");
+    const { active, bladeId, panelId, value } = useItemContext(
       "HorizontalAccordion.Blade",
     );
     const resolvedIconPosition =
@@ -439,22 +506,123 @@ export const HorizontalAccordionBlade = forwardRef<
         : iconPosition === "bottom"
           ? "end"
           : iconPosition;
+    const getBladeButtons = () => {
+      const root = document
+        .getElementById(bladeId)
+        ?.closest('[data-slot="horizontal-accordion"]');
+
+      return Array.from(
+        root?.querySelectorAll<HTMLButtonElement>(
+          'button[data-slot="horizontal-accordion-blade"]:not(:disabled)',
+        ) ?? [],
+      );
+    };
+    const isRtl = () => {
+      const root = document
+        .getElementById(bladeId)
+        ?.closest<HTMLElement>('[data-slot="horizontal-accordion"]');
+      const closestDirection =
+        root?.getAttribute("dir") ??
+        root?.closest<HTMLElement>("[dir]")?.getAttribute("dir");
+
+      return (
+        closestDirection === "rtl" ||
+        (root ? window.getComputedStyle(root).direction === "rtl" : false)
+      );
+    };
+    const focusBladeAtOffset = (offset: number) => {
+      const blades = getBladeButtons();
+      const currentIndex = blades.findIndex((blade) => blade.id === bladeId);
+
+      if (currentIndex === -1 || blades.length === 0) {
+        return;
+      }
+
+      const nextIndex = (currentIndex + offset + blades.length) % blades.length;
+      blades[nextIndex]?.focus();
+    };
+    const focusBladeAtIndex = (index: number) => {
+      const blades = getBladeButtons();
+      const targetIndex = index < 0 ? blades.length + index : index;
+
+      blades[targetIndex]?.focus();
+    };
+
+    useEffect(
+      () => registerBlade(value, disabled),
+      [disabled, registerBlade, value],
+    );
 
     return (
       <button
         {...props}
         ref={ref}
         id={bladeId}
+        aria-controls={panelId}
+        aria-expanded={active}
         data-slot="horizontal-accordion-blade"
         data-state={active ? "active" : "inactive"}
         data-icon-position={resolvedIconPosition}
         className={horizontalAccordionBladeClassNames({ className })}
         disabled={disabled}
+        tabIndex={disabled ? undefined : value === tabStopValue ? 0 : -1}
         type={type}
         onClick={(event) => {
           onClick?.(event);
 
           if (!event.defaultPrevented) {
+            setFocusedValue(value);
+            setActiveValue(value);
+          }
+        }}
+        onFocus={(event) => {
+          onFocus?.(event);
+
+          if (!event.defaultPrevented) {
+            setFocusedValue(value);
+
+            if (activationMode === "automatic" && !active) {
+              setActiveValue(value);
+            }
+          }
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event);
+
+          if (event.defaultPrevented) {
+            return;
+          }
+
+          if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            focusBladeAtOffset(isRtl() ? 1 : -1);
+            return;
+          }
+
+          if (event.key === "ArrowRight") {
+            event.preventDefault();
+            focusBladeAtOffset(isRtl() ? -1 : 1);
+            return;
+          }
+
+          if (event.key === "Home") {
+            event.preventDefault();
+            focusBladeAtIndex(0);
+            return;
+          }
+
+          if (event.key === "End") {
+            event.preventDefault();
+            focusBladeAtIndex(-1);
+            return;
+          }
+
+          if (
+            event.key === "Enter" ||
+            event.key === " " ||
+            event.key === "Spacebar"
+          ) {
+            event.preventDefault();
             setActiveValue(value);
           }
         }}
@@ -528,6 +696,7 @@ export const HorizontalAccordionPanel = forwardRef<
       {...props}
       ref={ref}
       id={panelId}
+      role="region"
       aria-labelledby={bladeId}
       data-slot="horizontal-accordion-panel"
       data-state={active ? "active" : "inactive"}

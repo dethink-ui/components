@@ -218,6 +218,182 @@ describe("HorizontalAccordion composition", () => {
   });
 });
 
+function ThreeItemAccordion(props: Partial<HorizontalAccordionProps>) {
+  return (
+    <HorizontalAccordion {...props}>
+      <HorizontalAccordion.Item value="one" data-testid="item-one">
+        <HorizontalAccordion.Blade>One</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel>One panel</HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+      <HorizontalAccordion.Item value="two" data-testid="item-two">
+        <HorizontalAccordion.Blade>Two</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel>Two panel</HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+      <HorizontalAccordion.Item value="three" data-testid="item-three">
+        <HorizontalAccordion.Blade>Three</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel>Three panel</HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+    </HorizontalAccordion>
+  );
+}
+
+function DisabledMiddleAccordion(props: Partial<HorizontalAccordionProps>) {
+  return (
+    <HorizontalAccordion {...props}>
+      <HorizontalAccordion.Item value="one">
+        <HorizontalAccordion.Blade>One</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel>One panel</HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+      <HorizontalAccordion.Item value="two">
+        <HorizontalAccordion.Blade disabled>Two</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel>Two panel</HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+      <HorizontalAccordion.Item value="three">
+        <HorizontalAccordion.Blade>Three</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel>Three panel</HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+    </HorizontalAccordion>
+  );
+}
+
+describe("HorizontalAccordion disclosure semantics", () => {
+  it("wires blades and panels with the disclosure pattern", () => {
+    render(<BasicAccordion aria-label="Sections" defaultValue="one" />);
+
+    const group = screen.getByRole("group", { name: "Sections" });
+    const activeBlade = screen.getByRole("button", { name: "One" });
+    const panel = screen.getByRole("region", { name: "One" });
+
+    expect(group).toBeInTheDocument();
+    expect(activeBlade).toHaveAttribute("aria-expanded", "true");
+    expect(activeBlade).toHaveAttribute("aria-controls", panel.id);
+    expect(panel).toHaveAttribute("aria-labelledby", activeBlade.id);
+    expect(screen.getByRole("button", { name: "Two" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("keeps exactly one blade in the tab order", () => {
+    render(<ThreeItemAccordion defaultValue="two" />);
+
+    expect(screen.getByRole("button", { name: "Two" })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+    expect(screen.getByRole("button", { name: "One" })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+    expect(screen.getByRole("button", { name: "Three" })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+  });
+
+  it("falls back to the first enabled blade as the tab stop", () => {
+    render(<DisabledMiddleAccordion />);
+
+    expect(screen.getByRole("button", { name: "One" })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+    expect(screen.getByRole("button", { name: "Two" })).not.toHaveAttribute(
+      "tabindex",
+    );
+  });
+});
+
+describe("HorizontalAccordion keyboard", () => {
+  it("moves focus with arrow keys and wraps at the edges", async () => {
+    const user = userEvent.setup();
+    render(<ThreeItemAccordion />);
+
+    await user.tab();
+    expect(screen.getByRole("button", { name: "One" })).toHaveFocus();
+
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("button", { name: "Two" })).toHaveFocus();
+
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    expect(screen.getByRole("button", { name: "One" })).toHaveFocus();
+
+    await user.keyboard("{ArrowLeft}");
+    expect(screen.getByRole("button", { name: "Three" })).toHaveFocus();
+  });
+
+  it("skips disabled blades during arrow navigation", async () => {
+    const user = userEvent.setup();
+    render(<DisabledMiddleAccordion />);
+
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+
+    expect(screen.getByRole("button", { name: "Three" })).toHaveFocus();
+  });
+
+  it("supports Home and End", async () => {
+    const user = userEvent.setup();
+    render(<ThreeItemAccordion defaultValue="two" />);
+
+    await user.tab();
+    await user.keyboard("{End}");
+    expect(screen.getByRole("button", { name: "Three" })).toHaveFocus();
+
+    await user.keyboard("{Home}");
+    expect(screen.getByRole("button", { name: "One" })).toHaveFocus();
+  });
+
+  it("activates the focused blade with Enter and Space", async () => {
+    const user = userEvent.setup();
+    render(<ThreeItemAccordion />);
+
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+    await user.keyboard("{Enter}");
+    expect(itemState("item-two")).toBe("active");
+
+    await user.keyboard("{ArrowRight}");
+    await user.keyboard(" ");
+    expect(itemState("item-three")).toBe("active");
+  });
+
+  it("does not activate on focus in manual activation mode", async () => {
+    const user = userEvent.setup();
+    render(<ThreeItemAccordion />);
+
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+
+    expect(itemState("item-two")).toBe("inactive");
+  });
+
+  it("activates on focus in automatic activation mode", async () => {
+    const user = userEvent.setup();
+    render(<ThreeItemAccordion activationMode="automatic" />);
+
+    await user.tab();
+    expect(itemState("item-one")).toBe("active");
+
+    await user.keyboard("{ArrowRight}");
+    expect(itemState("item-two")).toBe("active");
+  });
+
+  it("flips arrow direction in RTL", async () => {
+    const user = userEvent.setup();
+    render(
+      <div dir="rtl">
+        <ThreeItemAccordion />
+      </div>,
+    );
+
+    await user.tab();
+    await user.keyboard("{ArrowLeft}");
+
+    expect(screen.getByRole("button", { name: "Two" })).toHaveFocus();
+  });
+});
+
 describe("HorizontalAccordion styling contract", () => {
   it("exposes data-slot attributes and geometry custom properties", () => {
     const { container } = render(<BasicAccordion bladeWidth={96} height={320} />);

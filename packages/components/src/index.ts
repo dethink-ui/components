@@ -140,6 +140,7 @@ export {
   horizontalAccordionClassNames,
   horizontalAccordionItemClassNames,
   horizontalAccordionPanelClassNames,
+  type HorizontalAccordionActivationMode,
   type HorizontalAccordionAnimation,
   type HorizontalAccordionBladeIconPosition,
   type HorizontalAccordionBladeIconProps,

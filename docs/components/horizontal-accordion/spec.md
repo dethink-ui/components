@@ -18,8 +18,13 @@ planned vertical Accordion (stacked disclosure) and from Tabs (collapsed
 sections fully hidden): HorizontalAccordion's defining behavior is spatial,
 always-visible section selectors with Motion-powered active-blade choreography.
 
-The component follows the tabs interaction pattern: Blades form a tab list,
-Panels are tab panels, and a single item is active at a time.
+The component follows the disclosure (accordion) semantics pattern with a
+tab-list-style keyboard model: Blades are `aria-expanded` disclosure buttons
+with a single roving tab stop, Panels are labelled regions, and a single item
+is active at a time. Strict `tablist`/`tab`/`tabpanel` roles are intentionally
+not used: each Item interleaves its Panel between Blades, and ARIA forbids
+`tabpanel` children inside a `tablist` (axe `aria-required-children` fails),
+so disclosure semantics are the accessible-by-construction contract.
 
 ## Component Family
 
@@ -111,10 +116,10 @@ part exports a `*ClassNames` recipe helper and its `*Props` type.
 
 ## Semantics And Accessibility
 
-- Root renders `role="tablist"` with `aria-orientation="horizontal"`.
-- Blades render as real `button` elements with `role="tab"`,
-  `aria-controls` to their Panel, and `aria-expanded`/`aria-selected` state.
-- Panels render `role="tabpanel"` with `aria-labelledby` to their Blade and
+- Root renders `role="group"` so it can accept an accessible name.
+- Blades render as real `button` elements with `aria-controls` to their Panel
+  and `aria-expanded` state (disclosure pattern).
+- Panels render `role="region"` with `aria-labelledby` to their Blade and
   `hidden` when inactive.
 - Roving tabindex: exactly one Blade is tabbable — the focused Blade, else the
   active Blade, else the first enabled Blade. Disabled Blades are excluded.
