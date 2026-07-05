@@ -245,11 +245,18 @@
 
   /* Collapsed-rail tooltips: anchor-positioned fixed pseudo-elements escape the
      sidebar overflow clip without a portal. Browsers without CSS anchor
-     positioning simply render no tooltip; accessible names are unaffected. */
+     positioning simply render no tooltip; accessible names are unaffected.
+     The tooltip anchors explicitly to its own item and stays visibility:hidden
+     until shown so it can never paint at an unresolved fallback position. */
   @supports (anchor-name: --dt-sidebar-anchor) {
+    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip] {
+      anchor-name: --dt-sidebar-tooltip-anchor;
+    }
+
     [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
       content: attr(data-sidebar-tooltip);
       position: fixed;
+      position-anchor: --dt-sidebar-tooltip-anchor;
       position-area: inline-end;
       position-try-fallbacks: flip-inline;
       position-visibility: anchors-visible;
@@ -264,9 +271,11 @@
       line-height: 1rem;
       font-weight: 500;
       box-shadow: 0 4px 12px oklch(0 0 0 / 0.15);
+      visibility: hidden;
       opacity: 0;
       scale: 0.96;
       transition:
+        visibility 120ms,
         opacity 120ms ease-out,
         scale 120ms ease-out;
       pointer-events: none;
@@ -275,8 +284,15 @@
     [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]:hover::after,
     [data-slot="sidebar"][data-collapsed="true"]
       [data-sidebar-tooltip]:focus-visible::after {
+      visibility: visible;
       opacity: 1;
       scale: 1;
+      transition-delay: 250ms;
+    }
+
+    [data-slot="sidebar"][data-collapsed="true"]
+      [data-sidebar-tooltip]:focus-visible::after {
+      transition-delay: 0ms;
     }
 
     [data-slot="sidebar"][data-motion="none"] [data-sidebar-tooltip]::after {
@@ -286,7 +302,9 @@
     @media (prefers-reduced-motion: reduce) {
       [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
         scale: 1;
-        transition: opacity 80ms linear;
+        transition:
+          visibility 80ms,
+          opacity 80ms linear;
       }
     }
   }
