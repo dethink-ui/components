@@ -126,6 +126,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Two-dimensional layouts with tokenized tracks and gaps, plus per-cell spans through GridItem.",
   },
   {
+    slug: "horizontal-accordion",
+    name: "HorizontalAccordion",
+    description:
+      "Expand one section at a time in a fixed-height band of always-visible blades with Motion choreography and a compact responsive layout.",
+  },
+  {
     slug: "icon-button",
     name: "IconButton",
     description:
