@@ -13,6 +13,7 @@ import {
   useState,
   type AnchorHTMLAttributes,
   type ButtonHTMLAttributes,
+  type CSSProperties,
   type ForwardedRef,
   type HTMLAttributes,
   type KeyboardEventHandler,
@@ -21,6 +22,7 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type TransitionEventHandler,
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../../utils/cn";
@@ -105,6 +107,7 @@ type SidebarMenuCommonProps = {
   external?: boolean;
   icon?: ReactNode;
   shortcut?: ReactNode;
+  tooltip?: string;
 };
 
 type SidebarMenuLinkBaseProps = SidebarMenuCommonProps & {
@@ -143,7 +146,10 @@ export interface SidebarMenuButtonProps
 export interface SidebarMenuActionProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   label?: string;
+  showOnHover?: boolean;
 }
+
+export interface SidebarSeparatorProps extends HTMLAttributes<HTMLDivElement> {}
 
 export interface SidebarInsetProps extends HTMLAttributes<HTMLElement> {
   as?: "div" | "main" | "section";
@@ -200,10 +206,10 @@ interface SidebarGroupContextValue {
 const SidebarGroupContext = createContext<SidebarGroupContextValue | null>(null);
 
 const sidebarProviderClasses =
-  "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
+  "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width-ease:cubic-bezier(0.2,0,0,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
 
 const sidebarClasses =
-  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-hidden border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow,background-color,border-color] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
+  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-hidden border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-width-ease,var(--sidebar-motion-ease))] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
 
 const sidebarVariantClasses: Record<SidebarVariant, string> = {
   default: "shadow-none",
@@ -227,40 +233,51 @@ const sidebarGroupLabelClasses =
   "min-w-0 px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-xs font-semibold uppercase tracking-normal text-muted-foreground group-data-[collapsed=true]:sr-only";
 
 const sidebarGroupTriggerClasses =
-  "group group/sidebar-group-trigger flex min-h-8 w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-start text-xs font-semibold uppercase tracking-normal text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-data-[collapsed=true]:sr-only";
+  "group group/sidebar-group-trigger flex min-h-8 w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-start text-xs font-semibold uppercase tracking-normal text-muted-foreground outline-none motion-safe:transition-[color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring group-data-[collapsed=true]:sr-only";
 
 const sidebarGroupTriggerIconClasses =
-  "size-4 shrink-0 text-muted-foreground motion-safe:transition-transform motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] group-data-[open=true]:rotate-90 rtl:rotate-180 rtl:group-data-[open=true]:rotate-90 [&>svg]:size-4";
+  "size-4 shrink-0 text-muted-foreground motion-safe:transition-[rotate] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[open=true]:rotate-90 rtl:group-data-[open=false]:rotate-180 [&>svg]:size-4";
 
-const sidebarGroupContentClasses =
-  "grid min-w-0 gap-[var(--dt-space-1)] data-[open=true]:motion-safe:animate-sidebar-menu-open data-[open=true]:motion-reduce:animate-none";
+const sidebarGroupContentClasses = "grid min-w-0 grid-rows-[1fr]";
+
+const sidebarGroupContentInnerClasses =
+  "grid min-h-0 min-w-0 gap-[var(--dt-space-1)] overflow-hidden";
 
 const sidebarMobileOverlayClasses =
-  "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none motion-safe:animate-sidebar-overlay-in motion-reduce:animate-none data-[motion=none]:animate-none";
+  "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none motion-safe:animate-sidebar-overlay-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-overlay-out";
 
 const sidebarMobilePanelClasses =
-  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none motion-safe:animate-sidebar-panel-in motion-reduce:animate-none data-[motion=none]:animate-none data-[side=left]:start-0 data-[side=left]:border-e data-[side=left]:[--dt-sidebar-panel-motion-x:calc(var(--dt-space-3)*-1)] data-[side=right]:end-0 data-[side=right]:border-s data-[side=right]:[--dt-sidebar-panel-motion-x:var(--dt-space-3)]";
+  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none motion-safe:animate-sidebar-panel-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-panel-out data-[side=left]:start-0 data-[side=left]:border-e data-[side=left]:[--dt-sidebar-panel-motion-x:calc(var(--dt-space-3)*-1)] data-[side=right]:end-0 data-[side=right]:border-s data-[side=right]:[--dt-sidebar-panel-motion-x:var(--dt-space-3)]";
 
 const sidebarMobileCloseClasses = "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
 
 const sidebarMenuClasses = "grid min-w-0 list-none gap-[var(--dt-space-1)] p-0";
 
-const sidebarMenuItemClasses = "min-w-0";
+const sidebarMenuItemClasses = "group/sidebar-menu-item relative min-w-0";
 
 const sidebarMenuInteractiveClasses =
-  "group group/sidebar-menu-interactive relative grid min-h-9 w-full min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-2)] text-start text-sm leading-5 text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-muted/80 data-[active=true]:bg-muted data-[active=true]:text-foreground data-[current=true]:bg-primary/10 data-[current=true]:font-medium data-[current=true]:text-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 group-data-[collapsed=true]:grid-cols-[1rem] group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0";
+  "group group/sidebar-menu-interactive relative grid min-h-9 w-full min-w-0 grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-2)] text-start text-sm leading-5 text-muted-foreground outline-none motion-safe:transition-[color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring active:bg-muted motion-safe:active:scale-[0.985] data-[active=true]:bg-muted data-[active=true]:text-foreground data-[current=true]:bg-primary/10 data-[current=true]:font-medium data-[current=true]:text-foreground data-[current=true]:hover:bg-primary/10 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 group-data-[collapsed=true]:grid-cols-[1rem] group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-0";
+
+const sidebarMenuIndicatorClasses =
+  "pointer-events-none absolute inset-y-[var(--dt-space-1-5)] start-0 w-0.5 rounded-full bg-primary motion-safe:animate-sidebar-indicator-in motion-reduce:animate-none";
 
 const sidebarMenuIconClasses =
-  "pointer-events-none flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[active=true]:text-foreground group-data-[current=true]:text-primary [&>svg]:size-4";
+  "pointer-events-none relative flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[active=true]:text-foreground group-data-[current=true]:text-primary [&>svg]:size-4";
+
+const sidebarMenuIconFallbackClasses =
+  "text-[0.625rem] font-semibold uppercase leading-none opacity-0 motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:opacity-100";
+
+const sidebarMenuBadgeDotClasses =
+  "absolute -end-0.5 -top-0.5 size-1.5 rounded-full bg-primary opacity-0 motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:opacity-100";
 
 const sidebarMenuLabelClasses =
-  "min-w-0 truncate group-data-[collapsed=true]:sr-only";
+  "min-w-0 truncate motion-safe:transition-[opacity,translate] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:pointer-events-none group-data-[collapsed=true]:absolute group-data-[collapsed=true]:start-8 group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:-translate-x-2 rtl:group-data-[collapsed=true]:translate-x-2";
 
 const sidebarMenuDescriptionClasses =
-  "col-start-2 min-w-0 truncate text-xs leading-5 text-muted-foreground group-data-[collapsed=true]:sr-only";
+  "col-start-2 min-w-0 truncate text-xs leading-5 text-muted-foreground motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:pointer-events-none group-data-[collapsed=true]:absolute group-data-[collapsed=true]:opacity-0";
 
 const sidebarMenuMetaClasses =
-  "ms-[var(--dt-space-2)] inline-flex shrink-0 items-center gap-[var(--dt-space-1)] justify-self-end group-data-[collapsed=true]:sr-only";
+  "ms-[var(--dt-space-2)] inline-flex shrink-0 items-center gap-[var(--dt-space-1)] justify-self-end motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:pointer-events-none group-data-[collapsed=true]:absolute group-data-[collapsed=true]:end-2 group-data-[collapsed=true]:opacity-0";
 
 const sidebarMenuBadgeClasses =
   "inline-flex min-w-5 items-center justify-center rounded-full bg-muted px-[var(--dt-space-1-5)] py-0.5 text-[0.6875rem] font-medium leading-4 text-muted-foreground";
@@ -272,13 +289,33 @@ const sidebarTriggerClasses =
   "inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground active:scale-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0";
 
 const sidebarRailClasses =
-  "absolute inset-y-0 z-10 hidden w-3 -translate-x-1/2 cursor-ew-resize rounded-full outline-none motion-safe:transition-colors motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted focus-visible:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[side=left]:start-full data-[side=right]:end-full data-[side=right]:translate-x-1/2 md:block";
+  "absolute inset-y-0 z-10 hidden w-3 -translate-x-1/2 rounded-full outline-none before:absolute before:inset-y-0 before:start-1/2 before:w-0.5 before:-translate-x-1/2 before:rounded-full before:bg-ring before:opacity-0 motion-safe:before:transition-opacity motion-safe:before:duration-[var(--sidebar-motion-duration)] motion-reduce:before:transition-none hover:before:opacity-60 focus-visible:before:opacity-100 focus-visible:ring-2 focus-visible:ring-ring rtl:before:translate-x-1/2 data-[side=left]:start-full data-[side=right]:end-full data-[side=right]:translate-x-1/2 data-[collapsed=false]:data-[side=left]:cursor-w-resize data-[collapsed=true]:data-[side=left]:cursor-e-resize data-[collapsed=false]:data-[side=right]:cursor-e-resize data-[collapsed=true]:data-[side=right]:cursor-w-resize rtl:data-[collapsed=false]:data-[side=left]:cursor-e-resize rtl:data-[collapsed=true]:data-[side=left]:cursor-w-resize rtl:data-[collapsed=false]:data-[side=right]:cursor-w-resize rtl:data-[collapsed=true]:data-[side=right]:cursor-e-resize md:block";
+
+const sidebarMenuActionRevealClasses =
+  "absolute end-[var(--dt-space-1)] top-1/2 size-7 -translate-y-1/2 border-0 bg-transparent opacity-0 motion-safe:transition-[opacity,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] focus-visible:opacity-100 group-focus-within/sidebar-menu-item:opacity-100 group-hover/sidebar-menu-item:opacity-100 group-data-[collapsed=true]:hidden";
+
+const sidebarSeparatorClasses =
+  "mx-[var(--dt-space-2)] my-[var(--dt-space-1)] h-px shrink-0 rounded-full bg-border";
 
 const sidebarInsetClasses =
   "min-w-0 flex-1 bg-background text-foreground";
 
 const sidebarSkipLinkClasses =
   "sr-only fixed start-[var(--dt-space-3)] top-[var(--dt-space-3)] z-50 rounded-md bg-background px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium text-foreground shadow-lg ring-2 ring-ring focus:not-sr-only";
+
+const exitFallbackMs = 500;
+
+function canAnimateExit(motion: SidebarMotion) {
+  if (motion === "none") {
+    return false;
+  }
+
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 function useSidebarContext(componentName: string) {
   const context = useContext(SidebarContext);
@@ -416,6 +453,35 @@ function hasCurrentState(
   return ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false";
 }
 
+function resolveMenuTooltip(tooltip: string | undefined, children: ReactNode) {
+  if (tooltip !== undefined) {
+    return tooltip || undefined;
+  }
+
+  return typeof children === "string" && children.trim() ? children : undefined;
+}
+
+function useTooltipAnchorName() {
+  const id = useId();
+
+  return `--dt-sidebar-item-${id.replace(/[^a-zA-Z0-9-]/g, "")}`;
+}
+
+function tooltipAnchorStyle(
+  anchorName: string,
+  tooltip: string | undefined,
+  style: CSSProperties | undefined,
+) {
+  if (!tooltip) {
+    return style;
+  }
+
+  return {
+    ...({ "--dt-sidebar-tooltip-anchor": anchorName } as CSSProperties),
+    ...style,
+  };
+}
+
 function ChevronLeftIcon() {
   return (
     <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
@@ -466,6 +532,7 @@ function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
 function renderMenuContent({
   badge,
   children,
+  current = false,
   description,
   icon,
   shortcut,
@@ -474,16 +541,31 @@ function renderMenuContent({
   "badge" | "description" | "icon" | "shortcut"
 > & {
   children: ReactNode;
+  current?: boolean;
 }) {
   return (
     <>
-      {icon ? (
-        <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses}>
-          {icon}
-        </span>
-      ) : (
-        <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses} />
-      )}
+      {current ? (
+        <span
+          aria-hidden="true"
+          data-slot="sidebar-menu-indicator"
+          className={sidebarMenuIndicatorClasses}
+        />
+      ) : null}
+      <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses}>
+        {icon ??
+          (typeof children === "string" && children.trim() ? (
+            <span
+              data-slot="sidebar-menu-icon-fallback"
+              className={sidebarMenuIconFallbackClasses}
+            >
+              {children.trim().charAt(0)}
+            </span>
+          ) : null)}
+        {badge ? (
+          <span data-slot="sidebar-menu-badge-dot" className={sidebarMenuBadgeDotClasses} />
+        ) : null}
+      </span>
       <span data-slot="sidebar-menu-label" className={sidebarMenuLabelClasses}>
         {children}
       </span>
@@ -616,8 +698,20 @@ export function sidebarMenuBadgeClassNames({
 
 export function sidebarMenuActionClassNames({
   className,
-}: Pick<SidebarMenuActionProps, "className"> = {}) {
-  return cn(sidebarTriggerClasses, "size-7", className);
+  showOnHover = false,
+}: Pick<SidebarMenuActionProps, "className" | "showOnHover"> = {}) {
+  return cn(
+    sidebarTriggerClasses,
+    "size-7",
+    showOnHover && sidebarMenuActionRevealClasses,
+    className,
+  );
+}
+
+export function sidebarSeparatorClassNames({
+  className,
+}: Pick<SidebarSeparatorProps, "className"> = {}) {
+  return cn(sidebarSeparatorClasses, className);
 }
 
 export function sidebarTriggerClassNames({
@@ -879,8 +973,10 @@ SidebarGroupLabel.displayName = "SidebarGroupLabel";
 export const SidebarGroupTrigger = forwardRef<
   HTMLButtonElement,
   SidebarGroupTriggerProps
->(({ children, className, onClick, type = "button", ...props }, ref) => {
+>(({ children, className, onClick, tabIndex, type = "button", ...props }, ref) => {
   const context = useContext(SidebarGroupContext);
+  const surfaceContext = useContext(SidebarSurfaceContext);
+  const surfaceCollapsed = surfaceContext?.collapsed ?? false;
 
   if (!context || !context.collapsible) {
     throw new Error(
@@ -898,6 +994,7 @@ export const SidebarGroupTrigger = forwardRef<
       {...props}
       ref={ref}
       type={type}
+      tabIndex={surfaceCollapsed ? -1 : tabIndex}
       aria-controls={context.contentId}
       aria-expanded={context.open}
       data-open={String(context.open)}
@@ -918,10 +1015,43 @@ SidebarGroupTrigger.displayName = "SidebarGroupTrigger";
 export const SidebarGroupContent = forwardRef<
   HTMLDivElement,
   SidebarGroupContentProps
->(({ className, hidden, id, ...props }, ref) => {
+>(({ children, className, hidden, id, onTransitionEnd, ...props }, ref) => {
   const context = useContext(SidebarGroupContext);
+  const sidebarContext = useContext(SidebarContext);
+  const motion = sidebarContext?.motion ?? "standard";
+  const isOpen = context?.collapsible ? context.open : true;
+  const [present, setPresent] = useState(isOpen);
+
+  useEffect(() => {
+    if (isOpen) {
+      setPresent(true);
+      return undefined;
+    }
+
+    if (!canAnimateExit(motion)) {
+      setPresent(false);
+      return undefined;
+    }
+
+    const fallback = window.setTimeout(() => setPresent(false), exitFallbackMs);
+
+    return () => window.clearTimeout(fallback);
+  }, [isOpen, motion]);
+
+  const handleTransitionEnd: TransitionEventHandler<HTMLDivElement> = (event) => {
+    if (
+      event.target === event.currentTarget &&
+      event.propertyName === "grid-template-rows" &&
+      !isOpen
+    ) {
+      setPresent(false);
+    }
+
+    onTransitionEnd?.(event);
+  };
+
   const isHidden =
-    hidden ?? (context?.collapsible ? !context.open : undefined);
+    hidden ?? (context?.collapsible ? !isOpen && !present : undefined);
 
   return (
     <div
@@ -932,7 +1062,15 @@ export const SidebarGroupContent = forwardRef<
       data-open={context?.collapsible ? String(context.open) : undefined}
       data-slot="sidebar-group-content"
       className={sidebarGroupContentClassNames({ className })}
-    />
+      onTransitionEnd={handleTransitionEnd}
+    >
+      <div
+        data-slot="sidebar-group-content-inner"
+        className={sidebarGroupContentInnerClasses}
+      >
+        {children}
+      </div>
+    </div>
   );
 });
 
@@ -962,10 +1100,47 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
     const titleId = useId();
     const wasOpenRef = useRef(context.mobileOpen);
+    const previousOpenRef = useRef(context.mobileOpen);
+    const [closing, setClosing] = useState(false);
+
+    if (previousOpenRef.current !== context.mobileOpen) {
+      previousOpenRef.current = context.mobileOpen;
+
+      if (!context.mobileOpen && canAnimateExit(context.motion)) {
+        setClosing(true);
+      } else if (context.mobileOpen && closing) {
+        setClosing(false);
+      }
+    }
 
     useEffect(() => {
       setPortalElement(document.body);
     }, []);
+
+    useEffect(() => {
+      if (!closing) {
+        return undefined;
+      }
+
+      const panelElement = panelRef.current;
+      const handleAnimationEnd = (event: globalThis.AnimationEvent) => {
+        if (
+          event.target === panelElement &&
+          event.animationName === "dt-sidebar-panel-out"
+        ) {
+          setClosing(false);
+        }
+      };
+
+      panelElement?.addEventListener("animationend", handleAnimationEnd);
+
+      const fallback = window.setTimeout(() => setClosing(false), exitFallbackMs);
+
+      return () => {
+        panelElement?.removeEventListener("animationend", handleAnimationEnd);
+        window.clearTimeout(fallback);
+      };
+    }, [closing]);
 
     useEffect(() => {
       if (context.mobileOpen) {
@@ -1084,15 +1259,18 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
       onKeyDown?.(event);
     };
 
-    if (!context.mobileOpen) {
+    if (!context.mobileOpen && !closing) {
       return null;
     }
+
+    const state = context.mobileOpen ? "open" : "closing";
 
     const overlay = (
       <div
         ref={overlayRef}
         data-slot="sidebar-mobile-overlay"
         data-motion={context.motion}
+        data-state={state}
         className={sidebarMobileOverlayClassNames({ className: overlayClassName })}
         onClick={handleOverlayClick}
       >
@@ -1106,6 +1284,7 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
           data-motion={context.motion}
           data-side={side}
           data-slot="sidebar-mobile"
+          data-state={state}
           className={sidebarMobileClassNames({ className })}
           onClick={handlePanelClick}
           onKeyDown={handleKeyDown}
@@ -1226,12 +1405,15 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       onClick,
       rel,
       shortcut,
+      style,
       target,
+      tooltip,
       "aria-current": ariaCurrent,
       ...props
     },
     ref,
   ) => {
+    const tooltipAnchorName = useTooltipAnchorName();
     const resolvedTarget = target ?? (external ? "_blank" : undefined);
     const resolvedRel = mergeRelForTarget(rel, resolvedTarget);
     const resolvedAriaCurrent = ariaCurrent ?? (current ? "page" : undefined);
@@ -1260,16 +1442,23 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       const childRel = mergeRelForTarget(child.props.rel ?? resolvedRel, childTarget);
       const childAriaCurrent = child.props["aria-current"] ?? resolvedAriaCurrent;
       const childIsCurrent = current || hasCurrentState(childAriaCurrent);
+      const childTooltip = resolveMenuTooltip(tooltip, child.props.children);
+      const childStyle =
+        style || child.props.style
+          ? { ...style, ...(child.props.style as CSSProperties | undefined) }
+          : undefined;
       const clonedProps: SidebarMenuLinkSlotProps = {
         ...props,
         ...child.props,
         ref: composeRefs(ref as Ref<HTMLElement>, childRef),
+        style: tooltipAnchorStyle(tooltipAnchorName, childTooltip, childStyle),
         "aria-current": childAriaCurrent,
         "aria-disabled": disabled ? true : child.props["aria-disabled"],
         "data-active": active ? "true" : undefined,
         "data-current": childIsCurrent ? "true" : undefined,
         "data-disabled": disabled ? "true" : undefined,
         "data-external": external ? "true" : undefined,
+        "data-sidebar-tooltip": childTooltip,
         "data-slot": "sidebar-menu-link",
         className: cn(classes, child.props.className),
         onClick: composeClickHandlers(handleClick, child.props.onClick),
@@ -1293,6 +1482,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         renderMenuContent({
           badge,
           children: child.props.children,
+          current: childIsCurrent,
           description,
           icon,
           shortcut,
@@ -1300,12 +1490,15 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       );
     }
 
+    const resolvedTooltip = resolveMenuTooltip(tooltip, children);
+
     return (
       <a
         {...props}
         ref={ref as ForwardedRef<HTMLAnchorElement>}
         href={href}
         rel={resolvedRel}
+        style={tooltipAnchorStyle(tooltipAnchorName, resolvedTooltip, style)}
         target={resolvedTarget}
         aria-current={resolvedAriaCurrent}
         aria-disabled={disabled ? true : undefined}
@@ -1313,11 +1506,19 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         data-current={isCurrent ? "true" : undefined}
         data-disabled={disabled ? "true" : undefined}
         data-external={external ? "true" : undefined}
+        data-sidebar-tooltip={resolvedTooltip}
         data-slot="sidebar-menu-link"
         className={classes}
         onClick={handleClick as MouseEventHandler<HTMLAnchorElement>}
       >
-        {renderMenuContent({ badge, children, description, icon, shortcut })}
+        {renderMenuContent({
+          badge,
+          children,
+          current: isCurrent,
+          description,
+          icon,
+          shortcut,
+        })}
       </a>
     );
   },
@@ -1339,24 +1540,33 @@ export const SidebarMenuButton = forwardRef<
       disabled = false,
       icon,
       shortcut,
+      style,
+      tooltip,
       type = "button",
       ...props
     },
     ref,
-  ) => (
-    <button
-      {...props}
-      ref={ref}
-      type={type}
-      disabled={disabled}
-      data-active={active ? "true" : undefined}
-      data-disabled={disabled ? "true" : undefined}
-      data-slot="sidebar-menu-button"
-      className={sidebarMenuButtonClassNames({ className })}
-    >
-      {renderMenuContent({ badge, children, description, icon, shortcut })}
-    </button>
-  ),
+  ) => {
+    const tooltipAnchorName = useTooltipAnchorName();
+    const resolvedTooltip = resolveMenuTooltip(tooltip, children);
+
+    return (
+      <button
+        {...props}
+        ref={ref}
+        type={type}
+        disabled={disabled}
+        style={tooltipAnchorStyle(tooltipAnchorName, resolvedTooltip, style)}
+        data-active={active ? "true" : undefined}
+        data-disabled={disabled ? "true" : undefined}
+        data-sidebar-tooltip={resolvedTooltip}
+        data-slot="sidebar-menu-button"
+        className={sidebarMenuButtonClassNames({ className })}
+      >
+        {renderMenuContent({ badge, children, description, icon, shortcut })}
+      </button>
+    );
+  },
 );
 
 SidebarMenuButton.displayName = "SidebarMenuButton";
@@ -1377,20 +1587,35 @@ SidebarMenuBadge.displayName = "SidebarMenuBadge";
 export const SidebarMenuAction = forwardRef<
   HTMLButtonElement,
   SidebarMenuActionProps
->(({ children, className, label, type = "button", ...props }, ref) => (
+>(({ children, className, label, showOnHover = false, type = "button", ...props }, ref) => (
   <button
     {...props}
     ref={ref}
     type={type}
     aria-label={props["aria-label"] ?? label}
+    data-show-on-hover={showOnHover ? "true" : undefined}
     data-slot="sidebar-menu-action"
-    className={sidebarMenuActionClassNames({ className })}
+    className={sidebarMenuActionClassNames({ className, showOnHover })}
   >
     {children}
   </button>
 ));
 
 SidebarMenuAction.displayName = "SidebarMenuAction";
+
+export const SidebarSeparator = forwardRef<HTMLDivElement, SidebarSeparatorProps>(
+  ({ className, ...props }, ref) => (
+    <div
+      {...props}
+      ref={ref}
+      aria-hidden="true"
+      data-slot="sidebar-separator"
+      className={sidebarSeparatorClassNames({ className })}
+    />
+  ),
+);
+
+SidebarSeparator.displayName = "SidebarSeparator";
 
 export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>(
   (

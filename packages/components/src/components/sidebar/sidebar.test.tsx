@@ -1,5 +1,5 @@
 import { createRef, forwardRef, type AnchorHTMLAttributes } from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { createEvent, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -21,10 +21,38 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
+  SidebarSeparator,
   SidebarSkipLink,
   SidebarTrigger,
   sidebarClassNames,
 } from ".";
+
+function stubMatchMedia() {
+  const original = Object.getOwnPropertyDescriptor(window, "matchMedia");
+
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+
+  return () => {
+    if (original) {
+      Object.defineProperty(window, "matchMedia", original);
+    } else {
+      delete (window as { matchMedia?: unknown }).matchMedia;
+    }
+  };
+}
 
 const RouterLink = forwardRef<
   HTMLAnchorElement,
@@ -136,6 +164,133 @@ describe("Sidebar", () => {
       "sidebar-menu-button",
     );
     expect(screen.getByRole("main")).toHaveAttribute("data-slot", "sidebar-inset");
+  });
+
+  it("renders a selection indicator only on current menu items", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar aria-label="Indicator navigation">
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuLink current href="/current" icon={<DashboardIcon />}>
+                  Current page
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuLink active href="/active">
+                  Active page
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuLink asChild current>
+                  <RouterLink to="/router-current">Router current</RouterLink>
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const currentLink = screen.getByRole("link", { name: "Current page" });
+    const activeLink = screen.getByRole("link", { name: "Active page" });
+    const routerLink = screen.getByRole("link", { name: "Router current" });
+    const indicatorSelector = '[data-slot="sidebar-menu-indicator"]';
+    const currentIndicator = currentLink.querySelector(indicatorSelector);
+
+    expect(currentIndicator).not.toBeNull();
+    expect(currentIndicator).toHaveAttribute("aria-hidden", "true");
+    expect(routerLink.querySelector(indicatorSelector)).not.toBeNull();
+    expect(activeLink.querySelector(indicatorSelector)).toBeNull();
+    expect(activeLink).toHaveAttribute("data-active", "true");
+    expect(activeLink).not.toHaveAttribute("data-current");
+  });
+
+  it("keeps accessible names and exposes tooltip metadata while collapsed", () => {
+    render(
+      <SidebarProvider defaultCollapsed>
+        <Sidebar aria-label="Collapsed navigation">
+          <SidebarContent>
+            <SidebarGroup collapsible defaultOpen>
+              <SidebarGroupTrigger>Admin</SidebarGroupTrigger>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink
+                      badge="8"
+                      current
+                      href="/reports"
+                      icon={<DashboardIcon />}
+                    >
+                      Reports
+                    </SidebarMenuLink>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink href="/billing">Billing</SidebarMenuLink>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink
+                      href="/custom"
+                      icon={<DashboardIcon />}
+                      tooltip="Custom label"
+                    >
+                      <span>Composed content</span>
+                    </SidebarMenuLink>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const reports = screen.getByRole("link", { name: /Reports/ });
+    const billing = screen.getByRole("link", { name: "Billing" });
+
+    expect(reports).toHaveAttribute("data-sidebar-tooltip", "Reports");
+    expect(
+      reports.querySelector('[data-slot="sidebar-menu-badge-dot"]'),
+    ).not.toBeNull();
+    expect(billing.querySelector('[data-slot="sidebar-menu-badge-dot"]')).toBeNull();
+    expect(
+      billing.querySelector('[data-slot="sidebar-menu-icon-fallback"]'),
+    ).toHaveTextContent("B");
+    expect(screen.getByRole("link", { name: "Composed content" })).toHaveAttribute(
+      "data-sidebar-tooltip",
+      "Custom label",
+    );
+    expect(screen.getByRole("button", { name: "Admin" })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+  });
+
+  it("keeps collapsed group triggers focusable when expanded", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar aria-label="Expanded navigation">
+          <SidebarContent>
+            <SidebarGroup collapsible defaultOpen>
+              <SidebarGroupTrigger>Admin</SidebarGroupTrigger>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink href="/reports">Reports</SidebarMenuLink>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Admin" })).not.toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
   });
 
   it("composes consumer classes and forwards refs", () => {
@@ -322,6 +477,97 @@ describe("Sidebar", () => {
 
     expect(onOpenChange).toHaveBeenCalledWith(true);
     expect(screen.queryByRole("link", { name: "Audit" })).toBeNull();
+  });
+
+  it("animates collapsible group close before hiding content", async () => {
+    const restoreMatchMedia = stubMatchMedia();
+    const user = userEvent.setup();
+
+    try {
+      render(
+        <SidebarProvider>
+          <Sidebar>
+            <SidebarContent>
+              <SidebarGroup collapsible defaultOpen>
+                <SidebarGroupTrigger>Admin</SidebarGroupTrigger>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink href="/admin/users">Users</SidebarMenuLink>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        </SidebarProvider>,
+      );
+
+      const content = document.querySelector<HTMLElement>(
+        '[data-slot="sidebar-group-content"]',
+      );
+
+      expect(content).not.toBeNull();
+      expect(
+        content?.querySelector('[data-slot="sidebar-group-content-inner"]'),
+      ).not.toBeNull();
+
+      await user.click(screen.getByRole("button", { name: "Admin" }));
+
+      expect(content).toHaveAttribute("data-open", "false");
+      expect(content).not.toHaveAttribute("hidden");
+
+      const transitionEnd = createEvent.transitionEnd(content as HTMLElement);
+      Object.defineProperty(transitionEnd, "propertyName", {
+        value: "grid-template-rows",
+      });
+      fireEvent(content as HTMLElement, transitionEnd);
+
+      expect(content).toHaveAttribute("hidden");
+    } finally {
+      restoreMatchMedia();
+    }
+  });
+
+  it("animates the mobile drawer out before unmounting", async () => {
+    const restoreMatchMedia = stubMatchMedia();
+    const user = userEvent.setup();
+
+    try {
+      render(
+        <SidebarProvider>
+          <SidebarMobileTrigger />
+          <SidebarMobile label="Animated mobile navigation">
+            <SidebarContent>Drawer content</SidebarContent>
+          </SidebarMobile>
+        </SidebarProvider>,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Open sidebar" }));
+
+      const dialog = screen.getByRole("dialog", {
+        name: "Animated mobile navigation",
+      });
+
+      expect(dialog).toHaveAttribute("data-state", "open");
+
+      await user.keyboard("{Escape}");
+
+      expect(dialog).toHaveAttribute("data-state", "closing");
+      expect(screen.getByRole("button", { name: "Open sidebar" })).toHaveFocus();
+
+      const animationEnd = createEvent.animationEnd(dialog);
+      Object.defineProperty(animationEnd, "animationName", {
+        value: "dt-sidebar-panel-out",
+      });
+      fireEvent(dialog, animationEnd);
+
+      expect(
+        screen.queryByRole("dialog", { name: "Animated mobile navigation" }),
+      ).toBeNull();
+    } finally {
+      restoreMatchMedia();
+    }
   });
 
   it("prevents disabled link activation without removing the accessible item", async () => {
@@ -601,6 +847,54 @@ describe("Sidebar", () => {
       "data-motion",
       "none",
     );
+  });
+
+  it("renders a decorative sidebar separator", () => {
+    render(<SidebarSeparator data-testid="separator" />);
+
+    const separator = screen.getByTestId("separator");
+
+    expect(separator).toHaveAttribute("data-slot", "sidebar-separator");
+    expect(separator).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("supports hover-revealed menu actions inside menu items", async () => {
+    const user = userEvent.setup();
+    const onAction = vi.fn();
+
+    render(
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuLink href="/projects">Projects</SidebarMenuLink>
+                <SidebarMenuAction
+                  showOnHover
+                  label="Open project actions"
+                  onClick={onAction}
+                >
+                  ⋯
+                </SidebarMenuAction>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const action = screen.getByRole("button", { name: "Open project actions" });
+
+    expect(action).toHaveAttribute("data-show-on-hover", "true");
+
+    await user.tab();
+    await user.tab();
+
+    expect(action).toHaveFocus();
+
+    await user.keyboard("{Enter}");
+
+    expect(onAction).toHaveBeenCalled();
   });
 
   it("renders a skip link targeting main content", () => {

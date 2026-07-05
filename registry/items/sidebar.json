@@ -3,7 +3,7 @@
   "name": "sidebar",
   "type": "registry:ui",
   "title": "Sidebar",
-  "description": "Composable app sidebar navigation with provider-owned collapsed state, semantic links, icon rail behavior, grouped content, trigger and rail controls, token-backed styling, and CSS-only reduced-motion-aware transitions.",
+  "description": "Composable app sidebar navigation with provider-owned collapsed state, semantic links, icon rail behavior, grouped content, trigger and rail controls, animated selection indicator, collapse choreography with CSS-only collapsed tooltips and badge dots, group and mobile drawer exit animations, hover-revealed row actions, separator, token-backed styling, and CSS-only reduced-motion-aware transitions.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
