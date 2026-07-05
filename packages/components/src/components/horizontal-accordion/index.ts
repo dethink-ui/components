@@ -20,6 +20,7 @@ export {
   type HorizontalAccordionBladeLabelProps,
   type HorizontalAccordionBladeProps,
   type HorizontalAccordionItemProps,
+  type HorizontalAccordionLayout,
   type HorizontalAccordionPanelProps,
   type HorizontalAccordionProps,
   type HorizontalAccordionValue,

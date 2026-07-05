@@ -1,7 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   HorizontalAccordion,
   HorizontalAccordionBlade,
@@ -485,6 +485,118 @@ describe("HorizontalAccordion motion", () => {
       expect(screen.queryByText("One panel")).not.toBeInTheDocument();
     });
     expect(screen.getByText("Two panel")).toBeInTheDocument();
+  });
+});
+
+function mockResizeObserver() {
+  let callback: ResizeObserverCallback | undefined;
+  const observe = vi.fn();
+  const disconnect = vi.fn();
+
+  class MockResizeObserver {
+    observe = observe;
+    disconnect = disconnect;
+    unobserve = vi.fn();
+
+    constructor(nextCallback: ResizeObserverCallback) {
+      callback = nextCallback;
+    }
+  }
+
+  vi.stubGlobal("ResizeObserver", MockResizeObserver);
+
+  return {
+    disconnect,
+    observe,
+    resize(width: number) {
+      act(() => {
+        callback?.(
+          [
+            {
+              contentRect: { width },
+            } as unknown as ResizeObserverEntry,
+          ],
+          {} as ResizeObserver,
+        );
+      });
+    },
+  };
+}
+
+describe("HorizontalAccordion compact layout", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("switches to compact below the breakpoint and back", () => {
+    const observerControl = mockResizeObserver();
+    const { container } = render(<ThreeItemAccordion defaultValue="one" />);
+    const root = container.querySelector('[data-slot="horizontal-accordion"]');
+
+    expect(root).toHaveAttribute("data-layout", "default");
+    expect(observerControl.observe).toHaveBeenCalled();
+
+    observerControl.resize(480);
+
+    expect(root).toHaveAttribute("data-layout", "compact");
+    expect(screen.getByTestId("item-one")).toHaveAttribute(
+      "data-layout",
+      "compact",
+    );
+    expect(screen.getByRole("button", { name: "One" })).toHaveAttribute(
+      "data-layout",
+      "compact",
+    );
+    expect(
+      container.querySelector('[data-slot="horizontal-accordion-panel"]'),
+    ).toHaveAttribute("data-layout", "compact");
+
+    observerControl.resize(900);
+
+    expect(root).toHaveAttribute("data-layout", "default");
+  });
+
+  it("respects a custom compactBreakpoint", () => {
+    const observerControl = mockResizeObserver();
+    const { container } = render(
+      <ThreeItemAccordion compactBreakpoint={900} />,
+    );
+    const root = container.querySelector('[data-slot="horizontal-accordion"]');
+
+    observerControl.resize(800);
+
+    expect(root).toHaveAttribute("data-layout", "compact");
+  });
+
+  it("keeps keyboard navigation working in compact layout", async () => {
+    const observerControl = mockResizeObserver();
+    const user = userEvent.setup();
+    render(<ThreeItemAccordion />);
+
+    observerControl.resize(480);
+
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("button", { name: "Two" })).toHaveFocus();
+
+    await user.keyboard("{Enter}");
+    expect(itemState("item-two")).toBe("active");
+  });
+
+  it("exposes the item count for the compact blade tray", () => {
+    const { container } = render(<ThreeItemAccordion />);
+    const root = container.querySelector('[data-slot="horizontal-accordion"]');
+
+    expect(root).toHaveStyle({ "--horizontal-accordion-item-count": "3" });
+  });
+
+  it("disconnects the observer on unmount", () => {
+    const observerControl = mockResizeObserver();
+    const { unmount } = render(<ThreeItemAccordion />);
+
+    unmount();
+
+    expect(observerControl.disconnect).toHaveBeenCalled();
   });
 });
 

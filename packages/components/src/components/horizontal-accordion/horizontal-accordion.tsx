@@ -51,9 +51,12 @@ export interface HorizontalAccordionProps
   activationMode?: HorizontalAccordionActivationMode;
   bladeWidth?: number;
   height?: number;
+  compactBreakpoint?: number;
   animation?: HorizontalAccordionAnimation;
   unmountInactivePanels?: boolean;
 }
+
+export type HorizontalAccordionLayout = "default" | "compact";
 
 export interface HorizontalAccordionItemProps
   extends HTMLAttributes<HTMLDivElement> {
@@ -96,6 +99,7 @@ type AccordionMotionConfig = {
 type AccordionContextValue = {
   activationMode: HorizontalAccordionActivationMode;
   activeValue: HorizontalAccordionValue;
+  layout: HorizontalAccordionLayout;
   motionConfig: AccordionMotionConfig;
   tabStopValue: HorizontalAccordionValue;
   unmountInactivePanels: boolean;
@@ -117,6 +121,7 @@ type ItemContextValue = {
 
 const DEFAULT_BLADE_WIDTH = 72;
 const DEFAULT_HEIGHT = 420;
+const DEFAULT_COMPACT_BREAKPOINT = 640;
 const DEFAULT_ANIMATION: Required<HorizontalAccordionAnimation> = {
   duration: 260,
   easing: "cubic-bezier(0.2, 0, 0, 1)",
@@ -135,18 +140,20 @@ type MarkedAccordionPart = {
 type HorizontalAccordionStyle = CSSProperties & {
   "--horizontal-accordion-blade-width"?: string;
   "--horizontal-accordion-height"?: string;
+  "--horizontal-accordion-compact-breakpoint"?: string;
+  "--horizontal-accordion-item-count"?: string;
   "--horizontal-accordion-duration"?: string;
   "--horizontal-accordion-easing"?: string;
 };
 
 const horizontalAccordionRootClasses =
-  "group/horizontal-accordion relative isolate flex h-[var(--horizontal-accordion-height)] min-h-0 w-full overflow-hidden text-foreground";
+  "group/horizontal-accordion relative isolate flex h-[var(--horizontal-accordion-height)] min-h-0 w-full overflow-hidden text-foreground data-[layout=compact]:grid data-[layout=compact]:h-auto data-[layout=compact]:min-h-[var(--horizontal-accordion-height)] data-[layout=compact]:grid-cols-[repeat(var(--horizontal-accordion-item-count),minmax(0,1fr))] data-[layout=compact]:grid-rows-[minmax(0,1fr)_auto]";
 
 const horizontalAccordionItemClasses =
-  "flex h-full min-h-0 min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] motion-safe:transition-[flex-basis,flex-grow,min-width] motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none data-[state=active]:min-w-[min(100%,calc(var(--horizontal-accordion-blade-width)+16rem))] data-[state=active]:shrink data-[state=active]:grow data-[state=active]:basis-0";
+  "flex h-full min-h-0 min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] motion-safe:transition-[flex-basis,flex-grow,min-width] motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none data-[state=active]:min-w-[min(100%,calc(var(--horizontal-accordion-blade-width)+16rem))] data-[state=active]:shrink data-[state=active]:grow data-[state=active]:basis-0 data-[layout=compact]:contents";
 
 const horizontalAccordionBladeClasses =
-  "group/horizontal-accordion-blade relative flex h-full w-[var(--horizontal-accordion-blade-width)] min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] cursor-pointer flex-col items-center justify-between gap-[var(--dt-space-3)] overflow-hidden border-e border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-4)] text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:text-primary-foreground motion-reduce:data-[state=active]:bg-primary disabled:cursor-not-allowed disabled:opacity-50 [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:relative [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:z-[2]";
+  "group/horizontal-accordion-blade relative flex h-full w-[var(--horizontal-accordion-blade-width)] min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] cursor-pointer flex-col items-center justify-between gap-[var(--dt-space-3)] overflow-hidden border-e border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-4)] text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:text-primary-foreground motion-reduce:data-[state=active]:bg-primary disabled:cursor-not-allowed disabled:opacity-50 data-[layout=compact]:row-start-2 data-[layout=compact]:h-auto data-[layout=compact]:w-auto data-[layout=compact]:min-w-0 data-[layout=compact]:min-h-[var(--horizontal-accordion-blade-width)] data-[layout=compact]:basis-auto data-[layout=compact]:border-e-0 data-[layout=compact]:border-t data-[layout=compact]:p-[var(--dt-space-3)] [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:relative [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:z-[2]";
 
 const horizontalAccordionBladeActiveLayerClasses =
   "pointer-events-none absolute inset-0 z-[1] bg-primary";
@@ -155,10 +162,10 @@ const horizontalAccordionBladeIconClasses =
   "pointer-events-none order-1 inline-flex items-center justify-center [&:only-child]:my-auto group-data-[icon-position=end]/horizontal-accordion-blade:order-3";
 
 const horizontalAccordionBladeLabelClasses =
-  "pointer-events-none order-2 inline-flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-sm font-semibold data-[orientation=rotated]:data-[direction=bottom-to-top]:-rotate-90 data-[orientation=rotated]:data-[direction=top-to-bottom]:rotate-90 data-[orientation=vertical]:[writing-mode:vertical-rl] data-[orientation=vertical]:data-[direction=bottom-to-top]:rotate-180";
+  "pointer-events-none order-2 inline-flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-sm font-semibold data-[layout=default]:data-[orientation=rotated]:data-[direction=bottom-to-top]:-rotate-90 data-[layout=default]:data-[orientation=rotated]:data-[direction=top-to-bottom]:rotate-90 data-[layout=default]:data-[orientation=vertical]:[writing-mode:vertical-rl] data-[layout=default]:data-[orientation=vertical]:data-[direction=bottom-to-top]:rotate-180 data-[layout=compact]:whitespace-normal";
 
 const horizontalAccordionPanelClasses =
-  "min-h-0 min-w-0 flex-1 overflow-hidden [contain:paint]";
+  "min-h-0 min-w-0 flex-1 overflow-hidden [contain:paint] data-[layout=compact]:col-span-full data-[layout=compact]:row-start-1";
 
 export function horizontalAccordionClassNames({
   className,
@@ -381,6 +388,7 @@ const HorizontalAccordionRoot = forwardRef<
     activationMode = "manual",
     bladeWidth = DEFAULT_BLADE_WIDTH,
     height = DEFAULT_HEIGHT,
+    compactBreakpoint = DEFAULT_COMPACT_BREAKPOINT,
     animation,
     unmountInactivePanels = false,
     className,
@@ -398,14 +406,65 @@ const HorizontalAccordionRoot = forwardRef<
   const bladeRegistryRef = useRef(new Map<string, BladeRegistryEntry>());
   const [bladeRegistryVersion, setBladeRegistryVersion] = useState(0);
   const layoutGroupId = useId();
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [layout, setLayout] = useState<HorizontalAccordionLayout>("default");
   const mergedAnimation = { ...DEFAULT_ANIMATION, ...animation };
   const motionConfig = useMemo(
     () => createMotionConfig(mergedAnimation),
     [mergedAnimation.content, mergedAnimation.duration, mergedAnimation.easing],
   );
+  const mergedRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      rootRef.current = node;
+
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        ref.current = node;
+      }
+    },
+    [ref],
+  );
+
+  useEffect(() => {
+    const root = rootRef.current;
+
+    if (!root) {
+      return;
+    }
+
+    const updateLayout = (width: number) => {
+      setLayout(width > 0 && width <= compactBreakpoint ? "compact" : "default");
+    };
+    const initialWidth = root.getBoundingClientRect().width;
+
+    if (initialWidth > 0) {
+      updateLayout(initialWidth);
+    }
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const [entry] = entries;
+
+      if (entry) {
+        updateLayout(entry.contentRect.width);
+      }
+    });
+
+    observer.observe(root);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [compactBreakpoint]);
   const rootStyle: HorizontalAccordionStyle = {
     "--horizontal-accordion-blade-width": `${bladeWidth}px`,
     "--horizontal-accordion-height": `${height}px`,
+    "--horizontal-accordion-compact-breakpoint": `${compactBreakpoint}px`,
+    "--horizontal-accordion-item-count": `${Math.max(itemValues.length, 1)}`,
     "--horizontal-accordion-duration": `${mergedAnimation.duration}ms`,
     "--horizontal-accordion-easing": mergedAnimation.easing,
     ...style,
@@ -465,6 +524,7 @@ const HorizontalAccordionRoot = forwardRef<
     () => ({
       activationMode,
       activeValue,
+      layout,
       motionConfig,
       tabStopValue,
       unmountInactivePanels,
@@ -475,6 +535,7 @@ const HorizontalAccordionRoot = forwardRef<
     [
       activationMode,
       activeValue,
+      layout,
       motionConfig,
       registerBlade,
       setActiveValue,
@@ -490,9 +551,10 @@ const HorizontalAccordionRoot = forwardRef<
           <div
             role="group"
             {...rootProps}
-            ref={ref}
+            ref={mergedRef}
             data-slot="horizontal-accordion"
             data-content-animation={motionConfig.contentEnabled ? "on" : "off"}
+            data-layout={layout}
             className={horizontalAccordionClassNames({ className })}
             style={rootStyle}
           >
@@ -510,7 +572,9 @@ export const HorizontalAccordionItem = forwardRef<
   HTMLDivElement,
   HorizontalAccordionItemProps
 >(({ value, className, children, ...props }, ref) => {
-  const { activeValue } = useAccordionContext("HorizontalAccordion.Item");
+  const { activeValue, layout } = useAccordionContext(
+    "HorizontalAccordion.Item",
+  );
   const generatedId = useId();
   const active = activeValue === value;
   const bladeId = `horizontal-accordion-blade-${generatedId}`;
@@ -529,6 +593,7 @@ export const HorizontalAccordionItem = forwardRef<
         ref={ref}
         data-slot="horizontal-accordion-item"
         data-state={active ? "active" : "inactive"}
+        data-layout={layout}
         className={horizontalAccordionItemClassNames({ className })}
       >
         {children}
@@ -559,6 +624,7 @@ export const HorizontalAccordionBlade = forwardRef<
   ) => {
     const {
       activationMode,
+      layout,
       motionConfig,
       registerBlade,
       setActiveValue,
@@ -630,6 +696,7 @@ export const HorizontalAccordionBlade = forwardRef<
         aria-expanded={active}
         data-slot="horizontal-accordion-blade"
         data-state={active ? "active" : "inactive"}
+        data-layout={layout}
         data-icon-position={resolvedIconPosition}
         className={horizontalAccordionBladeClassNames({ className })}
         disabled={disabled}
@@ -716,6 +783,7 @@ export const HorizontalAccordionBladeIcon = forwardRef<
   HTMLSpanElement,
   HorizontalAccordionBladeIconProps
 >(({ className, ...props }, ref) => {
+  const { layout } = useAccordionContext("HorizontalAccordion.BladeIcon");
   const { active } = useItemContext("HorizontalAccordion.BladeIcon");
 
   return (
@@ -724,6 +792,7 @@ export const HorizontalAccordionBladeIcon = forwardRef<
       ref={ref}
       data-slot="horizontal-accordion-blade-icon"
       data-state={active ? "active" : "inactive"}
+      data-layout={layout}
       className={horizontalAccordionBladeIconClassNames({ className })}
     />
   );
@@ -739,6 +808,7 @@ export const HorizontalAccordionBladeLabel = forwardRef<
     { className, orientation = "rotated", direction = "bottom-to-top", ...props },
     ref,
   ) => {
+    const { layout } = useAccordionContext("HorizontalAccordion.BladeLabel");
     const { active } = useItemContext("HorizontalAccordion.BladeLabel");
 
     return (
@@ -747,6 +817,7 @@ export const HorizontalAccordionBladeLabel = forwardRef<
         ref={ref}
         data-slot="horizontal-accordion-blade-label"
         data-state={active ? "active" : "inactive"}
+        data-layout={layout}
         data-orientation={orientation}
         data-direction={direction}
         className={horizontalAccordionBladeLabelClassNames({ className })}
@@ -761,7 +832,7 @@ export const HorizontalAccordionPanel = forwardRef<
   HTMLDivElement,
   HorizontalAccordionPanelProps
 >(({ className, children, ...props }, ref) => {
-  const { motionConfig, unmountInactivePanels } = useAccordionContext(
+  const { layout, motionConfig, unmountInactivePanels } = useAccordionContext(
     "HorizontalAccordion.Panel",
   );
   const { active, bladeId, panelId } = useItemContext(
@@ -841,6 +912,7 @@ export const HorizontalAccordionPanel = forwardRef<
       aria-labelledby={bladeId}
       data-slot="horizontal-accordion-panel"
       data-state={active ? "active" : "inactive"}
+      data-layout={layout}
       className={horizontalAccordionPanelClassNames({ className })}
       hidden={hidden}
     >
