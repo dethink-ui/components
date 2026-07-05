@@ -63,16 +63,17 @@ export function LandingHero() {
     <HorizontalAccordion
       aria-label="Dethink Components highlights"
       className="rounded-xl border border-border bg-background shadow-sm"
+      bladeWidth={84}
       compactBreakpoint={1024}
       defaultValue="overview"
-      height={560}
+      height={640}
     >
       <HorizontalAccordion.Item value="overview">
         <HorizontalAccordion.Blade>
           <HorizontalAccordion.BladeIcon>
-            <Sparkles className="size-[18px]" aria-hidden="true" />
+            <Sparkles className="size-6" aria-hidden="true" />
           </HorizontalAccordion.BladeIcon>
-          <HorizontalAccordion.BladeLabel>
+          <HorizontalAccordion.BladeLabel className="text-base tracking-wide">
             Overview
           </HorizontalAccordion.BladeLabel>
         </HorizontalAccordion.Blade>
@@ -121,9 +122,9 @@ export function LandingHero() {
       <HorizontalAccordion.Item value="components">
         <HorizontalAccordion.Blade>
           <HorizontalAccordion.BladeIcon>
-            <Layers className="size-[18px]" aria-hidden="true" />
+            <Layers className="size-6" aria-hidden="true" />
           </HorizontalAccordion.BladeIcon>
-          <HorizontalAccordion.BladeLabel>
+          <HorizontalAccordion.BladeLabel className="text-base tracking-wide">
             Components
           </HorizontalAccordion.BladeLabel>
         </HorizontalAccordion.Blade>
@@ -168,9 +169,9 @@ export function LandingHero() {
       <HorizontalAccordion.Item value="theming">
         <HorizontalAccordion.Blade>
           <HorizontalAccordion.BladeIcon>
-            <Palette className="size-[18px]" aria-hidden="true" />
+            <Palette className="size-6" aria-hidden="true" />
           </HorizontalAccordion.BladeIcon>
-          <HorizontalAccordion.BladeLabel>
+          <HorizontalAccordion.BladeLabel className="text-base tracking-wide">
             Theming
           </HorizontalAccordion.BladeLabel>
         </HorizontalAccordion.Blade>
@@ -212,9 +213,9 @@ export function LandingHero() {
       <HorizontalAccordion.Item value="quality">
         <HorizontalAccordion.Blade>
           <HorizontalAccordion.BladeIcon>
-            <ShieldCheck className="size-[18px]" aria-hidden="true" />
+            <ShieldCheck className="size-6" aria-hidden="true" />
           </HorizontalAccordion.BladeIcon>
-          <HorizontalAccordion.BladeLabel>
+          <HorizontalAccordion.BladeLabel className="text-base tracking-wide">
             Quality
           </HorizontalAccordion.BladeLabel>
         </HorizontalAccordion.Blade>
