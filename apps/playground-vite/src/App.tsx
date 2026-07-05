@@ -61,6 +61,7 @@ import {
   Grid,
   GridItem,
   Heading,
+  HorizontalAccordion,
   IconButton,
   Input,
   Link,
@@ -289,6 +290,38 @@ export function App() {
               </CardContent>
             </Card>
           </CardStack>
+          <HorizontalAccordion
+            aria-label="Playground horizontal accordion"
+            className="rounded-lg border border-border"
+            defaultValue="overview"
+            height={280}
+          >
+            <HorizontalAccordion.Item value="overview">
+              <HorizontalAccordion.Blade aria-label="Overview">
+                <HorizontalAccordion.BladeLabel>
+                  Overview
+                </HorizontalAccordion.BladeLabel>
+              </HorizontalAccordion.Blade>
+              <HorizontalAccordion.Panel className="p-[var(--dt-space-4)]">
+                <Text size="sm" tone="muted">
+                  HorizontalAccordion smoke: one expanded panel in a fixed-height
+                  band, verified through the package export path.
+                </Text>
+              </HorizontalAccordion.Panel>
+            </HorizontalAccordion.Item>
+            <HorizontalAccordion.Item value="details">
+              <HorizontalAccordion.Blade aria-label="Details">
+                <HorizontalAccordion.BladeLabel>
+                  Details
+                </HorizontalAccordion.BladeLabel>
+              </HorizontalAccordion.Blade>
+              <HorizontalAccordion.Panel className="p-[var(--dt-space-4)]">
+                <Text size="sm" tone="muted">
+                  Inactive panels stay mounted by default.
+                </Text>
+              </HorizontalAccordion.Panel>
+            </HorizontalAccordion.Item>
+          </HorizontalAccordion>
           <Card as="section">
             <CardHeader>
               <CardTitle>Table smoke</CardTitle>
