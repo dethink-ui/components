@@ -7,6 +7,8 @@ interface ExampleBlockProps {
   file: string;
   title: string;
   description?: string;
+  /** Let the preview span the full column for wide compositions like navbars. */
+  wide?: boolean;
   children: ReactNode;
 }
 
@@ -18,6 +20,7 @@ export async function ExampleBlock({
   file,
   title,
   description,
+  wide = false,
   children,
 }: ExampleBlockProps) {
   const source = await getExampleSource(file);
@@ -39,7 +42,7 @@ export async function ExampleBlock({
       </div>
       <div className="overflow-hidden rounded-lg border border-border">
         <div className="sc-preview-surface flex min-h-44 items-center justify-center bg-background p-6 sm:p-10">
-          <div className="w-full max-w-xl">{children}</div>
+          <div className={wide ? "w-full" : "w-full max-w-xl"}>{children}</div>
         </div>
         <CodeBlock code={source} filename={`examples/${file}`} />
       </div>

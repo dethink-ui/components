@@ -52,6 +52,8 @@
     ease-out both;
   --animate-sidebar-panel-in: dt-sidebar-panel-in var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
+  --animate-nav-slide-in: dt-nav-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-nav-slide-out: dt-nav-slide-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
 }
 
 @keyframes dt-overlay-in {
@@ -126,6 +128,82 @@
     opacity: 1;
     translate: 0 0;
     scale: 1;
+  }
+}
+
+@keyframes dt-nav-slide-in {
+  from {
+    opacity: 0;
+    translate: var(--dt-nav-motion-from-x, 0) var(--dt-nav-motion-from-y, var(--dt-space-1));
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes dt-nav-slide-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  to {
+    opacity: 0;
+    translate: var(--dt-nav-motion-to-x, 0) var(--dt-nav-motion-to-y, var(--dt-space-1));
+  }
+}
+
+@keyframes dt-nav-stagger-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--dt-space-1);
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@layer components {
+  [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
+    [data-slot="navigation-menu-section"]
+    > * {
+    animation: dt-nav-stagger-in 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
+    [data-slot="navigation-menu-section"]
+    > *:nth-child(2) {
+    animation-delay: 30ms;
+  }
+
+  [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
+    [data-slot="navigation-menu-section"]
+    > *:nth-child(3) {
+    animation-delay: 60ms;
+  }
+
+  [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
+    [data-slot="navigation-menu-section"]
+    > *:nth-child(4) {
+    animation-delay: 90ms;
+  }
+
+  [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
+    [data-slot="navigation-menu-section"]
+    > *:nth-child(n + 5) {
+    animation-delay: 120ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="navigation-menu-content"]
+      [data-slot="navigation-menu-section"]
+      > * {
+      animation: none;
+    }
   }
 }
 

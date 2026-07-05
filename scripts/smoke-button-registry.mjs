@@ -125,6 +125,7 @@ const dateRangePicker = await readJson(join(registryRoot, "date-range-picker.jso
 const textarea = await readJson(join(registryRoot, "textarea.json"));
 const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
+const navigationMenu = await readJson(join(registryRoot, "navigation-menu.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
 const timeline = await readJson(join(registryRoot, "timeline.json"));
@@ -164,6 +165,7 @@ const registryItemsByName = new Map(
     textarea,
     tooltip,
     dropdownMenu,
+    navigationMenu,
     typography,
     dateTimePicker,
     timeline,
@@ -208,6 +210,10 @@ assert(
 assert(textarea.name === "textarea", "textarea registry item must be named textarea.");
 assert(tooltip.name === "tooltip", "tooltip registry item must be named tooltip.");
 assert(dropdownMenu.name === "dropdown-menu", "dropdown-menu registry item must be named dropdown-menu.");
+assert(
+  navigationMenu.name === "navigation-menu",
+  "navigation-menu registry item must be named navigation-menu.",
+);
 assert(typography.name === "typography", "typography registry item must be named typography.");
 assert(
   dateTimePicker.name === "date-time-picker",
@@ -393,6 +399,14 @@ assert(
 assert(
   tooltip.registryDependencies?.includes("button"),
   "tooltip registry item must depend on button for shared trigger styling.",
+);
+assert(
+  navigationMenu.registryDependencies?.includes("dethink-base"),
+  "navigation-menu registry item must depend on dethink-base.",
+);
+assert(
+  (navigationMenu.dependencies ?? []).length === 0,
+  "navigation-menu registry item must not declare runtime dependencies (no Motion).",
 );
 assert(
   dropdownMenu.registryDependencies?.includes("dethink-base"),
@@ -689,6 +703,7 @@ await assertRegistryRelativeImportsResolve(textarea, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
+await assertRegistryRelativeImportsResolve(navigationMenu, registryItemsByName);
 
 const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
@@ -2072,5 +2087,50 @@ assert(
   "timeline source must use timeline rail token utilities.",
 );
 assert(!timelineSource.includes("@radix-ui"), "timeline source must remain dependency-free.");
+
+const navigationMenuSource = await readFile(
+  join(root, "packages/components/src/components/navigation-menu/navigation-menu.tsx"),
+  "utf8",
+);
+assert(
+  navigationMenuSource.includes('data-slot="navigation-menu"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-list"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-item"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-link"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-trigger"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-content"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-viewport"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-indicator"') &&
+    navigationMenuSource.includes('data-slot="navigation-menu-featured-item"'),
+  "navigation-menu source must expose stable navigation anatomy slots.",
+);
+assert(
+  navigationMenuSource.includes("aria-current") &&
+    navigationMenuSource.includes("aria-expanded") &&
+    navigationMenuSource.includes("aria-controls"),
+  "navigation-menu source must use link and disclosure semantics.",
+);
+assert(
+  !navigationMenuSource.includes('role="menu"') &&
+    !navigationMenuSource.includes('role="menubar"') &&
+    !navigationMenuSource.includes('role="menuitem"'),
+  "navigation-menu source must not use ARIA menu roles for site navigation.",
+);
+assert(
+  navigationMenuSource.includes("bg-muted") &&
+    navigationMenuSource.includes("focus-visible:ring-ring") &&
+    navigationMenuSource.includes("motion-reduce:animate-none") &&
+    navigationMenuSource.includes("motion-reduce:transition-none"),
+  "navigation-menu source must use provider tokens and reduced-motion-aware classes.",
+);
+assert(!navigationMenuSource.includes("@radix-ui"), "navigation-menu source must remain Radix-free.");
+assert(
+  !navigationMenuSource.includes("framer-motion") && !navigationMenuSource.includes('from "motion'),
+  "navigation-menu source must not use Motion.",
+);
+assert(
+  styles.includes("dt-nav-slide-in") && styles.includes("dt-nav-slide-out"),
+  "base styles must ship the navigation-menu motion keyframes.",
+);
 
 console.log("Registry smoke passed.");

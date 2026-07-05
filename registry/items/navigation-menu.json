@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navigation-menu",
+  "type": "registry:ui",
+  "title": "Navigation Menu",
+  "description": "Link-first site and app navigation with disclosure flyout panels, rich sections and featured items, animated indicator and viewport morphing via CSS motion presets, controlled or uncontrolled open state, activation modes, current-state handling, and token-backed variants, sizes, and orientations.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/navigation-menu/navigation-menu.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/navigation-menu/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

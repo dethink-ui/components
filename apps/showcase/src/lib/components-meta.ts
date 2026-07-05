@@ -144,6 +144,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Navigate with tokenized anchor styling, underline control, and asChild composition for framework routers.",
   },
   {
+    slug: "navigation-menu",
+    name: "NavigationMenu",
+    description:
+      "Link-first site and app navigation with disclosure flyouts, rich panels, animated indicator, and responsive collapse recipes.",
+  },
+  {
     slug: "number-input",
     name: "NumberInput",
     description:
