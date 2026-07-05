@@ -200,6 +200,11 @@ function SidebarExample({
                     Audit log
                   </SidebarMenuLink>
                 </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuLink badge="2" href="/billing">
+                    Billing
+                  </SidebarMenuLink>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

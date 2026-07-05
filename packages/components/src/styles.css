@@ -182,6 +182,54 @@
 }
 
 @layer components {
+  /* Collapsed-rail tooltips: anchor-positioned fixed pseudo-elements escape the
+     sidebar overflow clip without a portal. Browsers without CSS anchor
+     positioning simply render no tooltip; accessible names are unaffected. */
+  @supports (anchor-name: --dt-sidebar-anchor) {
+    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+      content: attr(data-sidebar-tooltip);
+      position: fixed;
+      position-area: inline-end;
+      position-try-fallbacks: flip-inline;
+      position-visibility: anchors-visible;
+      z-index: 50;
+      margin-inline-start: var(--dt-space-3);
+      white-space: nowrap;
+      border-radius: var(--dt-radius-md);
+      background: var(--dt-color-foreground);
+      color: var(--dt-color-background);
+      padding: var(--dt-space-1) var(--dt-space-2);
+      font-size: 0.75rem;
+      line-height: 1rem;
+      font-weight: 500;
+      box-shadow: 0 4px 12px oklch(0 0 0 / 0.15);
+      opacity: 0;
+      scale: 0.96;
+      transition:
+        opacity 120ms ease-out,
+        scale 120ms ease-out;
+      pointer-events: none;
+    }
+
+    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]:hover::after,
+    [data-slot="sidebar"][data-collapsed="true"]
+      [data-sidebar-tooltip]:focus-visible::after {
+      opacity: 1;
+      scale: 1;
+    }
+
+    [data-slot="sidebar"][data-motion="none"] [data-sidebar-tooltip]::after {
+      transition: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+        scale: 1;
+        transition: opacity 80ms linear;
+      }
+    }
+  }
+
   [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
     [data-slot="navigation-menu-section"]
     > * {

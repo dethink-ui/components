@@ -105,6 +105,7 @@ type SidebarMenuCommonProps = {
   external?: boolean;
   icon?: ReactNode;
   shortcut?: ReactNode;
+  tooltip?: string;
 };
 
 type SidebarMenuLinkBaseProps = SidebarMenuCommonProps & {
@@ -200,10 +201,10 @@ interface SidebarGroupContextValue {
 const SidebarGroupContext = createContext<SidebarGroupContextValue | null>(null);
 
 const sidebarProviderClasses =
-  "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
+  "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width-ease:cubic-bezier(0.2,0,0,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
 
 const sidebarClasses =
-  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-hidden border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow,background-color,border-color] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
+  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-hidden border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-width-ease,var(--sidebar-motion-ease))] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
 
 const sidebarVariantClasses: Record<SidebarVariant, string> = {
   default: "shadow-none",
@@ -254,16 +255,22 @@ const sidebarMenuIndicatorClasses =
   "pointer-events-none absolute inset-y-[var(--dt-space-1-5)] start-0 w-0.5 rounded-full bg-primary motion-safe:animate-sidebar-indicator-in motion-reduce:animate-none";
 
 const sidebarMenuIconClasses =
-  "pointer-events-none flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[active=true]:text-foreground group-data-[current=true]:text-primary [&>svg]:size-4";
+  "pointer-events-none relative flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[active=true]:text-foreground group-data-[current=true]:text-primary [&>svg]:size-4";
+
+const sidebarMenuIconFallbackClasses =
+  "text-[0.625rem] font-semibold uppercase leading-none opacity-0 motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:opacity-100";
+
+const sidebarMenuBadgeDotClasses =
+  "absolute -end-0.5 -top-0.5 size-1.5 rounded-full bg-primary opacity-0 motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:opacity-100";
 
 const sidebarMenuLabelClasses =
-  "min-w-0 truncate group-data-[collapsed=true]:sr-only";
+  "min-w-0 truncate motion-safe:transition-[opacity,translate] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:pointer-events-none group-data-[collapsed=true]:absolute group-data-[collapsed=true]:start-8 group-data-[collapsed=true]:opacity-0 group-data-[collapsed=true]:-translate-x-2 rtl:group-data-[collapsed=true]:translate-x-2";
 
 const sidebarMenuDescriptionClasses =
-  "col-start-2 min-w-0 truncate text-xs leading-5 text-muted-foreground group-data-[collapsed=true]:sr-only";
+  "col-start-2 min-w-0 truncate text-xs leading-5 text-muted-foreground motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:pointer-events-none group-data-[collapsed=true]:absolute group-data-[collapsed=true]:opacity-0";
 
 const sidebarMenuMetaClasses =
-  "ms-[var(--dt-space-2)] inline-flex shrink-0 items-center gap-[var(--dt-space-1)] justify-self-end group-data-[collapsed=true]:sr-only";
+  "ms-[var(--dt-space-2)] inline-flex shrink-0 items-center gap-[var(--dt-space-1)] justify-self-end motion-safe:transition-opacity motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[collapsed=true]:pointer-events-none group-data-[collapsed=true]:absolute group-data-[collapsed=true]:end-2 group-data-[collapsed=true]:opacity-0";
 
 const sidebarMenuBadgeClasses =
   "inline-flex min-w-5 items-center justify-center rounded-full bg-muted px-[var(--dt-space-1-5)] py-0.5 text-[0.6875rem] font-medium leading-4 text-muted-foreground";
@@ -419,6 +426,14 @@ function hasCurrentState(
   return ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false";
 }
 
+function resolveMenuTooltip(tooltip: string | undefined, children: ReactNode) {
+  if (tooltip !== undefined) {
+    return tooltip || undefined;
+  }
+
+  return typeof children === "string" && children.trim() ? children : undefined;
+}
+
 function ChevronLeftIcon() {
   return (
     <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
@@ -489,13 +504,20 @@ function renderMenuContent({
           className={sidebarMenuIndicatorClasses}
         />
       ) : null}
-      {icon ? (
-        <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses}>
-          {icon}
-        </span>
-      ) : (
-        <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses} />
-      )}
+      <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses}>
+        {icon ??
+          (typeof children === "string" && children.trim() ? (
+            <span
+              data-slot="sidebar-menu-icon-fallback"
+              className={sidebarMenuIconFallbackClasses}
+            >
+              {children.trim().charAt(0)}
+            </span>
+          ) : null)}
+        {badge ? (
+          <span data-slot="sidebar-menu-badge-dot" className={sidebarMenuBadgeDotClasses} />
+        ) : null}
+      </span>
       <span data-slot="sidebar-menu-label" className={sidebarMenuLabelClasses}>
         {children}
       </span>
@@ -891,8 +913,10 @@ SidebarGroupLabel.displayName = "SidebarGroupLabel";
 export const SidebarGroupTrigger = forwardRef<
   HTMLButtonElement,
   SidebarGroupTriggerProps
->(({ children, className, onClick, type = "button", ...props }, ref) => {
+>(({ children, className, onClick, tabIndex, type = "button", ...props }, ref) => {
   const context = useContext(SidebarGroupContext);
+  const surfaceContext = useContext(SidebarSurfaceContext);
+  const surfaceCollapsed = surfaceContext?.collapsed ?? false;
 
   if (!context || !context.collapsible) {
     throw new Error(
@@ -910,6 +934,7 @@ export const SidebarGroupTrigger = forwardRef<
       {...props}
       ref={ref}
       type={type}
+      tabIndex={surfaceCollapsed ? -1 : tabIndex}
       aria-controls={context.contentId}
       aria-expanded={context.open}
       data-open={String(context.open)}
@@ -1239,6 +1264,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       rel,
       shortcut,
       target,
+      tooltip,
       "aria-current": ariaCurrent,
       ...props
     },
@@ -1282,6 +1308,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         "data-current": childIsCurrent ? "true" : undefined,
         "data-disabled": disabled ? "true" : undefined,
         "data-external": external ? "true" : undefined,
+        "data-sidebar-tooltip": resolveMenuTooltip(tooltip, child.props.children),
         "data-slot": "sidebar-menu-link",
         className: cn(classes, child.props.className),
         onClick: composeClickHandlers(handleClick, child.props.onClick),
@@ -1326,6 +1353,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         data-current={isCurrent ? "true" : undefined}
         data-disabled={disabled ? "true" : undefined}
         data-external={external ? "true" : undefined}
+        data-sidebar-tooltip={resolveMenuTooltip(tooltip, children)}
         data-slot="sidebar-menu-link"
         className={classes}
         onClick={handleClick as MouseEventHandler<HTMLAnchorElement>}
@@ -1359,6 +1387,7 @@ export const SidebarMenuButton = forwardRef<
       disabled = false,
       icon,
       shortcut,
+      tooltip,
       type = "button",
       ...props
     },
@@ -1371,6 +1400,7 @@ export const SidebarMenuButton = forwardRef<
       disabled={disabled}
       data-active={active ? "true" : undefined}
       data-disabled={disabled ? "true" : undefined}
+      data-sidebar-tooltip={resolveMenuTooltip(tooltip, children)}
       data-slot="sidebar-menu-button"
       className={sidebarMenuButtonClassNames({ className })}
     >

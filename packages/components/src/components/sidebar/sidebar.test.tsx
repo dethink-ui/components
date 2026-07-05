@@ -179,6 +179,92 @@ describe("Sidebar", () => {
     expect(activeLink).not.toHaveAttribute("data-current");
   });
 
+  it("keeps accessible names and exposes tooltip metadata while collapsed", () => {
+    render(
+      <SidebarProvider defaultCollapsed>
+        <Sidebar aria-label="Collapsed navigation">
+          <SidebarContent>
+            <SidebarGroup collapsible defaultOpen>
+              <SidebarGroupTrigger>Admin</SidebarGroupTrigger>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink
+                      badge="8"
+                      current
+                      href="/reports"
+                      icon={<DashboardIcon />}
+                    >
+                      Reports
+                    </SidebarMenuLink>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink href="/billing">Billing</SidebarMenuLink>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink
+                      href="/custom"
+                      icon={<DashboardIcon />}
+                      tooltip="Custom label"
+                    >
+                      <span>Composed content</span>
+                    </SidebarMenuLink>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const reports = screen.getByRole("link", { name: /Reports/ });
+    const billing = screen.getByRole("link", { name: "Billing" });
+
+    expect(reports).toHaveAttribute("data-sidebar-tooltip", "Reports");
+    expect(
+      reports.querySelector('[data-slot="sidebar-menu-badge-dot"]'),
+    ).not.toBeNull();
+    expect(billing.querySelector('[data-slot="sidebar-menu-badge-dot"]')).toBeNull();
+    expect(
+      billing.querySelector('[data-slot="sidebar-menu-icon-fallback"]'),
+    ).toHaveTextContent("B");
+    expect(screen.getByRole("link", { name: "Composed content" })).toHaveAttribute(
+      "data-sidebar-tooltip",
+      "Custom label",
+    );
+    expect(screen.getByRole("button", { name: "Admin" })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+  });
+
+  it("keeps collapsed group triggers focusable when expanded", () => {
+    render(
+      <SidebarProvider>
+        <Sidebar aria-label="Expanded navigation">
+          <SidebarContent>
+            <SidebarGroup collapsible defaultOpen>
+              <SidebarGroupTrigger>Admin</SidebarGroupTrigger>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuLink href="/reports">Reports</SidebarMenuLink>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Admin" })).not.toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+  });
+
   it("composes consumer classes and forwards refs", () => {
     const providerRef = createRef<HTMLDivElement>();
     const sidebarRef = createRef<HTMLElement>();
