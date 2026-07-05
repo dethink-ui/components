@@ -13,6 +13,7 @@ import {
   useState,
   type AnchorHTMLAttributes,
   type ButtonHTMLAttributes,
+  type CSSProperties,
   type ForwardedRef,
   type HTMLAttributes,
   type KeyboardEventHandler,
@@ -458,6 +459,27 @@ function resolveMenuTooltip(tooltip: string | undefined, children: ReactNode) {
   }
 
   return typeof children === "string" && children.trim() ? children : undefined;
+}
+
+function useTooltipAnchorName() {
+  const id = useId();
+
+  return `--dt-sidebar-item-${id.replace(/[^a-zA-Z0-9-]/g, "")}`;
+}
+
+function tooltipAnchorStyle(
+  anchorName: string,
+  tooltip: string | undefined,
+  style: CSSProperties | undefined,
+) {
+  if (!tooltip) {
+    return style;
+  }
+
+  return {
+    ...({ "--dt-sidebar-tooltip-anchor": anchorName } as CSSProperties),
+    ...style,
+  };
 }
 
 function ChevronLeftIcon() {
@@ -1383,6 +1405,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       onClick,
       rel,
       shortcut,
+      style,
       target,
       tooltip,
       "aria-current": ariaCurrent,
@@ -1390,6 +1413,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
     },
     ref,
   ) => {
+    const tooltipAnchorName = useTooltipAnchorName();
     const resolvedTarget = target ?? (external ? "_blank" : undefined);
     const resolvedRel = mergeRelForTarget(rel, resolvedTarget);
     const resolvedAriaCurrent = ariaCurrent ?? (current ? "page" : undefined);
@@ -1418,17 +1442,23 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       const childRel = mergeRelForTarget(child.props.rel ?? resolvedRel, childTarget);
       const childAriaCurrent = child.props["aria-current"] ?? resolvedAriaCurrent;
       const childIsCurrent = current || hasCurrentState(childAriaCurrent);
+      const childTooltip = resolveMenuTooltip(tooltip, child.props.children);
+      const childStyle =
+        style || child.props.style
+          ? { ...style, ...(child.props.style as CSSProperties | undefined) }
+          : undefined;
       const clonedProps: SidebarMenuLinkSlotProps = {
         ...props,
         ...child.props,
         ref: composeRefs(ref as Ref<HTMLElement>, childRef),
+        style: tooltipAnchorStyle(tooltipAnchorName, childTooltip, childStyle),
         "aria-current": childAriaCurrent,
         "aria-disabled": disabled ? true : child.props["aria-disabled"],
         "data-active": active ? "true" : undefined,
         "data-current": childIsCurrent ? "true" : undefined,
         "data-disabled": disabled ? "true" : undefined,
         "data-external": external ? "true" : undefined,
-        "data-sidebar-tooltip": resolveMenuTooltip(tooltip, child.props.children),
+        "data-sidebar-tooltip": childTooltip,
         "data-slot": "sidebar-menu-link",
         className: cn(classes, child.props.className),
         onClick: composeClickHandlers(handleClick, child.props.onClick),
@@ -1460,12 +1490,15 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
       );
     }
 
+    const resolvedTooltip = resolveMenuTooltip(tooltip, children);
+
     return (
       <a
         {...props}
         ref={ref as ForwardedRef<HTMLAnchorElement>}
         href={href}
         rel={resolvedRel}
+        style={tooltipAnchorStyle(tooltipAnchorName, resolvedTooltip, style)}
         target={resolvedTarget}
         aria-current={resolvedAriaCurrent}
         aria-disabled={disabled ? true : undefined}
@@ -1473,7 +1506,7 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
         data-current={isCurrent ? "true" : undefined}
         data-disabled={disabled ? "true" : undefined}
         data-external={external ? "true" : undefined}
-        data-sidebar-tooltip={resolveMenuTooltip(tooltip, children)}
+        data-sidebar-tooltip={resolvedTooltip}
         data-slot="sidebar-menu-link"
         className={classes}
         onClick={handleClick as MouseEventHandler<HTMLAnchorElement>}
@@ -1507,26 +1540,33 @@ export const SidebarMenuButton = forwardRef<
       disabled = false,
       icon,
       shortcut,
+      style,
       tooltip,
       type = "button",
       ...props
     },
     ref,
-  ) => (
-    <button
-      {...props}
-      ref={ref}
-      type={type}
-      disabled={disabled}
-      data-active={active ? "true" : undefined}
-      data-disabled={disabled ? "true" : undefined}
-      data-sidebar-tooltip={resolveMenuTooltip(tooltip, children)}
-      data-slot="sidebar-menu-button"
-      className={sidebarMenuButtonClassNames({ className })}
-    >
-      {renderMenuContent({ badge, children, description, icon, shortcut })}
-    </button>
-  ),
+  ) => {
+    const tooltipAnchorName = useTooltipAnchorName();
+    const resolvedTooltip = resolveMenuTooltip(tooltip, children);
+
+    return (
+      <button
+        {...props}
+        ref={ref}
+        type={type}
+        disabled={disabled}
+        style={tooltipAnchorStyle(tooltipAnchorName, resolvedTooltip, style)}
+        data-active={active ? "true" : undefined}
+        data-disabled={disabled ? "true" : undefined}
+        data-sidebar-tooltip={resolvedTooltip}
+        data-slot="sidebar-menu-button"
+        className={sidebarMenuButtonClassNames({ className })}
+      >
+        {renderMenuContent({ badge, children, description, icon, shortcut })}
+      </button>
+    );
+  },
 );
 
 SidebarMenuButton.displayName = "SidebarMenuButton";
