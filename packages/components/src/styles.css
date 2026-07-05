@@ -46,12 +46,16 @@
   --spacing-density-gap: var(--dt-density-gap);
   --animate-overlay-in: dt-overlay-in 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-overlay-out: dt-overlay-out 120ms cubic-bezier(0.4, 0, 1, 1) both;
+  --animate-sidebar-indicator-in: dt-sidebar-indicator-in var(--sidebar-motion-duration, 220ms)
+    var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
   --animate-sidebar-menu-open: dt-sidebar-menu-open var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
   --animate-sidebar-overlay-in: dt-sidebar-overlay-in var(--sidebar-motion-duration, 220ms)
     ease-out both;
+  --animate-sidebar-overlay-out: dt-sidebar-overlay-out 150ms cubic-bezier(0.4, 0, 1, 1) both;
   --animate-sidebar-panel-in: dt-sidebar-panel-in var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
+  --animate-sidebar-panel-out: dt-sidebar-panel-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
   --animate-nav-slide-in: dt-nav-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-nav-slide-out: dt-nav-slide-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
 }
@@ -81,6 +85,18 @@
     opacity: 0;
     translate: var(--dt-overlay-motion-x, 0) var(--dt-overlay-motion-y, var(--dt-space-1));
     scale: 0.98;
+  }
+}
+
+@keyframes dt-sidebar-indicator-in {
+  from {
+    opacity: 0;
+    scale: 1 0.4;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1 1;
   }
 }
 
@@ -131,6 +147,30 @@
   }
 }
 
+@keyframes dt-sidebar-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dt-sidebar-panel-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  to {
+    opacity: 0;
+    translate: var(--dt-sidebar-panel-motion-x, calc(var(--dt-space-3) * -1)) 0;
+    scale: 0.985;
+  }
+}
+
 @keyframes dt-nav-slide-in {
   from {
     opacity: 0;
@@ -168,6 +208,141 @@
 }
 
 @layer components {
+  /* Collapsible group open/close: grid-row interpolation drives height, with
+     @starting-style providing the entry frame. The hidden attribute is applied
+     by React after the exit transition completes. */
+  [data-slot="sidebar-group-content"][data-open] {
+    transition:
+      grid-template-rows var(--sidebar-motion-duration, 220ms)
+        var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)),
+      opacity var(--sidebar-motion-duration, 220ms)
+        var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)),
+      translate var(--sidebar-motion-duration, 220ms)
+        var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)),
+      visibility var(--sidebar-motion-duration, 220ms);
+  }
+
+  [data-slot="sidebar-group-content"][data-open="false"] {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    translate: 0 calc(var(--dt-space-1) * -1);
+    visibility: hidden;
+  }
+
+  @starting-style {
+    [data-slot="sidebar-group-content"][data-open="true"] {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      translate: 0 calc(var(--dt-space-1) * -1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="sidebar-group-content"][data-open] {
+      transition: none;
+    }
+  }
+
+  /* Collapsed-rail tooltips: anchor-positioned fixed pseudo-elements escape the
+     sidebar overflow clip without a portal. Browsers without CSS anchor
+     positioning simply render no tooltip; accessible names are unaffected.
+     The tooltip anchors explicitly to its own item and stays visibility:hidden
+     until shown so it can never paint at an unresolved fallback position. */
+  @supports (anchor-name: --dt-sidebar-anchor) {
+    /* Each item carries a UNIQUE anchor name through the inline
+       --dt-sidebar-tooltip-anchor custom property set by the component.
+       A single shared anchor-name cannot work: with position:fixed every
+       same-named anchor in the document "precedes" the tooltip, so the last
+       item would always win; implicit pseudo-element anchors are not
+       implemented by current engines. The anchor() fallbacks park the
+       tooltip off-screen whenever its anchor is not resolved, so no engine
+       can paint it over the item at its static position. No
+       position-visibility: older Chromium builds flicker with it when the
+       anchor lives inside nested clip containers. */
+    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip] {
+      anchor-name: var(--dt-sidebar-tooltip-anchor, none);
+    }
+
+    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+      content: attr(data-sidebar-tooltip);
+      position: fixed;
+      position-anchor: var(--dt-sidebar-tooltip-anchor);
+      top: anchor(center, -100vh);
+      inset-inline-start: anchor(end, 100vi);
+      translate: 0 -50%;
+      z-index: 50;
+      margin-inline-start: var(--dt-space-3);
+      white-space: nowrap;
+      border-radius: var(--dt-radius-md);
+      background: var(--dt-color-foreground);
+      color: var(--dt-color-background);
+      padding: var(--dt-space-1) var(--dt-space-2);
+      font-size: 0.75rem;
+      line-height: 1rem;
+      font-weight: 500;
+      box-shadow: 0 4px 12px oklch(0 0 0 / 0.15);
+      visibility: hidden;
+      transition: visibility 0s linear 0s;
+      pointer-events: none;
+    }
+
+    [data-slot="sidebar"][data-collapsed="true"][data-side="right"]
+      [data-sidebar-tooltip]::after {
+      inset-inline-start: auto;
+      inset-inline-end: anchor(start, 100vi);
+      margin-inline-start: 0;
+      margin-inline-end: var(--dt-space-3);
+    }
+
+    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]:hover::after,
+    [data-slot="sidebar"][data-collapsed="true"]
+      [data-sidebar-tooltip]:focus-visible::after {
+      visibility: visible;
+      transition-delay: 250ms;
+    }
+
+    [data-slot="sidebar"][data-collapsed="true"]
+      [data-sidebar-tooltip]:focus-visible::after {
+      transition-delay: 0ms;
+    }
+
+    /* Opacity fade only on engines with a mature anchor implementation
+       (position-visibility support is the proxy); WebKit keeps a clean
+       binary show/hide until its anchor positioning stabilizes. */
+    @supports (position-visibility: anchors-visible) {
+      [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+        opacity: 0;
+        transition:
+          visibility 0s linear 0s,
+          opacity 120ms ease-out;
+      }
+
+      [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]:hover::after,
+      [data-slot="sidebar"][data-collapsed="true"]
+        [data-sidebar-tooltip]:focus-visible::after {
+        opacity: 1;
+        transition-delay: 250ms;
+      }
+
+      [data-slot="sidebar"][data-collapsed="true"]
+        [data-sidebar-tooltip]:focus-visible::after {
+        transition-delay: 0ms;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+          transition:
+            visibility 0s linear 0s,
+            opacity 80ms linear;
+        }
+      }
+    }
+
+    [data-slot="sidebar"][data-motion="none"] [data-sidebar-tooltip]::after {
+      transition: none;
+    }
+  }
+
   [data-slot="navigation-menu-content"][data-motion-preset="expressive"][data-state="open"]
     [data-slot="navigation-menu-section"]
     > * {

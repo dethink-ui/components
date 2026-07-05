@@ -17,10 +17,23 @@ export const sidebarProps: PropRow[] = [
   },
   {
     prop: "SidebarMenuLink",
-    type: "{ href, current, active, disabled, external, asChild, icon, description, badge, shortcut }",
+    type: "{ href, current, active, disabled, external, asChild, icon, description, badge, shortcut, tooltip }",
     defaultValue: "—",
     description:
-      "Navigation item rendered as a real link by default, with aria-current and data-state hooks for current route styling.",
+      "Navigation item rendered as a real link by default, with aria-current and data-state hooks for current route styling. Current items render an animated selection indicator; collapsed items expose a CSS-only tooltip (string labels are used automatically, or pass tooltip), a badge dot, and an initial fallback when no icon is given.",
+  },
+  {
+    prop: "SidebarMenuAction",
+    type: "{ label, showOnHover }",
+    defaultValue: "showOnHover: false",
+    description:
+      "Icon-sized secondary action. With showOnHover it positions itself at the end of the parent SidebarMenuItem row and reveals on row hover, focus-within, or its own focus.",
+  },
+  {
+    prop: "SidebarSeparator",
+    type: "div attributes",
+    defaultValue: "—",
+    description: "Decorative token-backed rule for dividing sidebar sections.",
   },
   {
     prop: "SidebarGroup",
