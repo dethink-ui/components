@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "navdock",
+  "type": "registry:ui",
+  "title": "NavDock",
+  "description": "Motion-powered dock navigation with icon-first items, hover and focus magnification, title reveal modes, route-current matching, disclosure submenus, placements, positioning, separators, responsive collapsed rails, and token-backed variants.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/navdock/navdock.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/navdock/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

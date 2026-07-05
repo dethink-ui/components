@@ -33,7 +33,7 @@ The PRD positions the library as a shadcn-compatible, open-code React component 
 | Advanced Inputs | MultiSelect, TagInput, AsyncSelect, DatePicker, DateRangePicker, TimePicker, DateTimePicker, IntervalPicker, FileUpload, Dropzone, ColorPicker, QueryBuilder |
 | Feedback | Alert, Callout, Toast, NotificationCenter, Progress, ProgressCircle, Spinner, Skeleton, EmptyState, LoadingOverlay, StatusIndicator |
 | Overlays | Dialog, AlertDialog, Drawer/Sheet, Popover, Tooltip, HoverCard, DropdownMenu, ContextMenu, Menubar, CommandDialog, OverlayManager |
-| Navigation | Breadcrumb, Pagination, NavigationMenu, Sidebar, Steps, Anchor/ScrollSpy, CommandPalette, Tabs as nav |
+| Navigation | Breadcrumb, Pagination, NavigationMenu, NavDock, Sidebar, Steps, Anchor/ScrollSpy, CommandPalette, Tabs as nav |
 | Data Display | Card, Badge, Avatar, AvatarGroup, List, DataList, Table, DataTable, DataGrid, Timeline, Stat/KPI, Chart, Calendar, Carousel, CodeBlock, QRCode |
 | Productivity | RichTextEditor, TreeView, TreeSelect, Scheduler/EventCalendar, KanbanBoard, SortableList, DragDrop, OnboardingTour |
 | AI / Chat | PromptInput, ChatMessage, MessageList, MessageScroller, ConversationList, AttachmentBubble, TypingIndicator, CitationCard, ToolCallCard, ModelPicker |
