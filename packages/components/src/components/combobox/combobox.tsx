@@ -160,7 +160,7 @@ function isAriaInvalid(value: ComboboxProps["aria-invalid"]) {
 }
 
 function toSelectionKey(value: ComboboxValue | null | undefined) {
-  return value === undefined ? undefined : value;
+  return value ?? undefined;
 }
 
 function toDisabledKeys(disabledKeys: Iterable<ComboboxValue> | undefined) {

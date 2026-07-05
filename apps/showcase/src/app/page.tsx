@@ -81,7 +81,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <section className="sc-hero-backdrop border-b border-border/70">
-        <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-24 lg:px-8">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-24 lg:px-8">
           <div className="space-y-7">
             <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               Open code · shadcn-compatible registry
@@ -114,7 +114,7 @@ export default function HomePage() {
                 GitHub
               </a>
             </div>
-            <div className="flex w-fit max-w-full items-center gap-3 rounded-lg border border-[var(--sc-code-border)] bg-[var(--sc-code-bg)] py-2 pl-4 pr-2 text-[var(--sc-code-foreground)]">
+            <div className="flex w-full max-w-full items-center gap-3 rounded-lg border border-[var(--sc-code-border)] bg-[var(--sc-code-bg)] py-2 pl-4 pr-2 text-[var(--sc-code-foreground)] sm:w-fit">
               <code className="overflow-x-auto whitespace-nowrap font-mono text-sm">
                 {INSTALL_COMMAND}
               </code>
