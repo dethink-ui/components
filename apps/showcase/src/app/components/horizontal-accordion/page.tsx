@@ -35,6 +35,7 @@ export default function HorizontalAccordionPage() {
         <div className="space-y-10">
           <ExampleBlock
             file="horizontal-accordion/basic.tsx"
+            wide
             title="Basic"
             description="Uncontrolled with defaultValue. Clicking the active blade collapses it because collapsible defaults to true."
           >
@@ -42,6 +43,7 @@ export default function HorizontalAccordionPage() {
           </ExampleBlock>
           <ExampleBlock
             file="horizontal-accordion/controlled.tsx"
+            wide
             title="Controlled"
             description="Drive the active section from external state with value and onValueChange; pass undefined to collapse everything."
           >
@@ -49,6 +51,7 @@ export default function HorizontalAccordionPage() {
           </ExampleBlock>
           <ExampleBlock
             file="horizontal-accordion/blade-content.tsx"
+            wide
             title="Blade content"
             description="Blades compose freely: rotated or vertical labels, icon-only blades with an aria-label, and icon-plus-label mixes with iconPosition."
           >

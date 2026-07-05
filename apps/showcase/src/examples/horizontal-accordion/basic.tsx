@@ -28,6 +28,7 @@ export function HorizontalAccordionBasic() {
     <HorizontalAccordion
       aria-label="Product sections"
       className="rounded-lg border border-border"
+      compactBreakpoint={480}
       defaultValue="overview"
       height={300}
     >

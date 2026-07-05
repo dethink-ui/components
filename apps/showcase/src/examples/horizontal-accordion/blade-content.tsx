@@ -33,6 +33,7 @@ export function HorizontalAccordionBladeContent() {
     <HorizontalAccordion
       aria-label="Blade content mixes"
       className="rounded-lg border border-border"
+      compactBreakpoint={480}
       defaultValue="rotated"
       height={300}
     >

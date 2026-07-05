@@ -35,6 +35,7 @@ export function HorizontalAccordionControlled() {
       <HorizontalAccordion
         aria-label="Delivery phases"
         className="rounded-lg border border-border"
+        compactBreakpoint={480}
         height={260}
         onValueChange={setValue}
         value={value}
