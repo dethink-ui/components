@@ -21,6 +21,7 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type TransitionEventHandler,
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../../utils/cn";
@@ -231,16 +232,18 @@ const sidebarGroupTriggerClasses =
   "group group/sidebar-group-trigger flex min-h-8 w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-start text-xs font-semibold uppercase tracking-normal text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background group-data-[collapsed=true]:sr-only";
 
 const sidebarGroupTriggerIconClasses =
-  "size-4 shrink-0 text-muted-foreground motion-safe:transition-transform motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] group-data-[open=true]:rotate-90 rtl:rotate-180 rtl:group-data-[open=true]:rotate-90 [&>svg]:size-4";
+  "size-4 shrink-0 text-muted-foreground motion-safe:transition-[rotate] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] motion-reduce:transition-none group-data-[open=true]:rotate-90 rtl:group-data-[open=false]:rotate-180 [&>svg]:size-4";
 
-const sidebarGroupContentClasses =
-  "grid min-w-0 gap-[var(--dt-space-1)] data-[open=true]:motion-safe:animate-sidebar-menu-open data-[open=true]:motion-reduce:animate-none";
+const sidebarGroupContentClasses = "grid min-w-0 grid-rows-[1fr]";
+
+const sidebarGroupContentInnerClasses =
+  "grid min-h-0 min-w-0 gap-[var(--dt-space-1)] overflow-hidden";
 
 const sidebarMobileOverlayClasses =
-  "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none motion-safe:animate-sidebar-overlay-in motion-reduce:animate-none data-[motion=none]:animate-none";
+  "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none motion-safe:animate-sidebar-overlay-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-overlay-out";
 
 const sidebarMobilePanelClasses =
-  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none motion-safe:animate-sidebar-panel-in motion-reduce:animate-none data-[motion=none]:animate-none data-[side=left]:start-0 data-[side=left]:border-e data-[side=left]:[--dt-sidebar-panel-motion-x:calc(var(--dt-space-3)*-1)] data-[side=right]:end-0 data-[side=right]:border-s data-[side=right]:[--dt-sidebar-panel-motion-x:var(--dt-space-3)]";
+  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none motion-safe:animate-sidebar-panel-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-panel-out data-[side=left]:start-0 data-[side=left]:border-e data-[side=left]:[--dt-sidebar-panel-motion-x:calc(var(--dt-space-3)*-1)] data-[side=right]:end-0 data-[side=right]:border-s data-[side=right]:[--dt-sidebar-panel-motion-x:var(--dt-space-3)]";
 
 const sidebarMobileCloseClasses = "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
 
@@ -289,6 +292,20 @@ const sidebarInsetClasses =
 
 const sidebarSkipLinkClasses =
   "sr-only fixed start-[var(--dt-space-3)] top-[var(--dt-space-3)] z-50 rounded-md bg-background px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium text-foreground shadow-lg ring-2 ring-ring focus:not-sr-only";
+
+const exitFallbackMs = 500;
+
+function canAnimateExit(motion: SidebarMotion) {
+  if (motion === "none") {
+    return false;
+  }
+
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return false;
+  }
+
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 function useSidebarContext(componentName: string) {
   const context = useContext(SidebarContext);
@@ -955,10 +972,43 @@ SidebarGroupTrigger.displayName = "SidebarGroupTrigger";
 export const SidebarGroupContent = forwardRef<
   HTMLDivElement,
   SidebarGroupContentProps
->(({ className, hidden, id, ...props }, ref) => {
+>(({ children, className, hidden, id, onTransitionEnd, ...props }, ref) => {
   const context = useContext(SidebarGroupContext);
+  const sidebarContext = useContext(SidebarContext);
+  const motion = sidebarContext?.motion ?? "standard";
+  const isOpen = context?.collapsible ? context.open : true;
+  const [present, setPresent] = useState(isOpen);
+
+  useEffect(() => {
+    if (isOpen) {
+      setPresent(true);
+      return undefined;
+    }
+
+    if (!canAnimateExit(motion)) {
+      setPresent(false);
+      return undefined;
+    }
+
+    const fallback = window.setTimeout(() => setPresent(false), exitFallbackMs);
+
+    return () => window.clearTimeout(fallback);
+  }, [isOpen, motion]);
+
+  const handleTransitionEnd: TransitionEventHandler<HTMLDivElement> = (event) => {
+    if (
+      event.target === event.currentTarget &&
+      event.propertyName === "grid-template-rows" &&
+      !isOpen
+    ) {
+      setPresent(false);
+    }
+
+    onTransitionEnd?.(event);
+  };
+
   const isHidden =
-    hidden ?? (context?.collapsible ? !context.open : undefined);
+    hidden ?? (context?.collapsible ? !isOpen && !present : undefined);
 
   return (
     <div
@@ -969,7 +1019,15 @@ export const SidebarGroupContent = forwardRef<
       data-open={context?.collapsible ? String(context.open) : undefined}
       data-slot="sidebar-group-content"
       className={sidebarGroupContentClassNames({ className })}
-    />
+      onTransitionEnd={handleTransitionEnd}
+    >
+      <div
+        data-slot="sidebar-group-content-inner"
+        className={sidebarGroupContentInnerClasses}
+      >
+        {children}
+      </div>
+    </div>
   );
 });
 
@@ -999,10 +1057,47 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
     const titleId = useId();
     const wasOpenRef = useRef(context.mobileOpen);
+    const previousOpenRef = useRef(context.mobileOpen);
+    const [closing, setClosing] = useState(false);
+
+    if (previousOpenRef.current !== context.mobileOpen) {
+      previousOpenRef.current = context.mobileOpen;
+
+      if (!context.mobileOpen && canAnimateExit(context.motion)) {
+        setClosing(true);
+      } else if (context.mobileOpen && closing) {
+        setClosing(false);
+      }
+    }
 
     useEffect(() => {
       setPortalElement(document.body);
     }, []);
+
+    useEffect(() => {
+      if (!closing) {
+        return undefined;
+      }
+
+      const panelElement = panelRef.current;
+      const handleAnimationEnd = (event: globalThis.AnimationEvent) => {
+        if (
+          event.target === panelElement &&
+          event.animationName === "dt-sidebar-panel-out"
+        ) {
+          setClosing(false);
+        }
+      };
+
+      panelElement?.addEventListener("animationend", handleAnimationEnd);
+
+      const fallback = window.setTimeout(() => setClosing(false), exitFallbackMs);
+
+      return () => {
+        panelElement?.removeEventListener("animationend", handleAnimationEnd);
+        window.clearTimeout(fallback);
+      };
+    }, [closing]);
 
     useEffect(() => {
       if (context.mobileOpen) {
@@ -1121,15 +1216,18 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
       onKeyDown?.(event);
     };
 
-    if (!context.mobileOpen) {
+    if (!context.mobileOpen && !closing) {
       return null;
     }
+
+    const state = context.mobileOpen ? "open" : "closing";
 
     const overlay = (
       <div
         ref={overlayRef}
         data-slot="sidebar-mobile-overlay"
         data-motion={context.motion}
+        data-state={state}
         className={sidebarMobileOverlayClassNames({ className: overlayClassName })}
         onClick={handleOverlayClick}
       >
@@ -1143,6 +1241,7 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
           data-motion={context.motion}
           data-side={side}
           data-slot="sidebar-mobile"
+          data-state={state}
           className={sidebarMobileClassNames({ className })}
           onClick={handlePanelClick}
           onKeyDown={handleKeyDown}

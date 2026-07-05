@@ -1,5 +1,5 @@
 import { createRef, forwardRef, type AnchorHTMLAttributes } from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { createEvent, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -25,6 +25,33 @@ import {
   SidebarTrigger,
   sidebarClassNames,
 } from ".";
+
+function stubMatchMedia() {
+  const original = Object.getOwnPropertyDescriptor(window, "matchMedia");
+
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+
+  return () => {
+    if (original) {
+      Object.defineProperty(window, "matchMedia", original);
+    } else {
+      delete (window as { matchMedia?: unknown }).matchMedia;
+    }
+  };
+}
 
 const RouterLink = forwardRef<
   HTMLAnchorElement,
@@ -449,6 +476,97 @@ describe("Sidebar", () => {
 
     expect(onOpenChange).toHaveBeenCalledWith(true);
     expect(screen.queryByRole("link", { name: "Audit" })).toBeNull();
+  });
+
+  it("animates collapsible group close before hiding content", async () => {
+    const restoreMatchMedia = stubMatchMedia();
+    const user = userEvent.setup();
+
+    try {
+      render(
+        <SidebarProvider>
+          <Sidebar>
+            <SidebarContent>
+              <SidebarGroup collapsible defaultOpen>
+                <SidebarGroupTrigger>Admin</SidebarGroupTrigger>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink href="/admin/users">Users</SidebarMenuLink>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </Sidebar>
+        </SidebarProvider>,
+      );
+
+      const content = document.querySelector<HTMLElement>(
+        '[data-slot="sidebar-group-content"]',
+      );
+
+      expect(content).not.toBeNull();
+      expect(
+        content?.querySelector('[data-slot="sidebar-group-content-inner"]'),
+      ).not.toBeNull();
+
+      await user.click(screen.getByRole("button", { name: "Admin" }));
+
+      expect(content).toHaveAttribute("data-open", "false");
+      expect(content).not.toHaveAttribute("hidden");
+
+      const transitionEnd = createEvent.transitionEnd(content as HTMLElement);
+      Object.defineProperty(transitionEnd, "propertyName", {
+        value: "grid-template-rows",
+      });
+      fireEvent(content as HTMLElement, transitionEnd);
+
+      expect(content).toHaveAttribute("hidden");
+    } finally {
+      restoreMatchMedia();
+    }
+  });
+
+  it("animates the mobile drawer out before unmounting", async () => {
+    const restoreMatchMedia = stubMatchMedia();
+    const user = userEvent.setup();
+
+    try {
+      render(
+        <SidebarProvider>
+          <SidebarMobileTrigger />
+          <SidebarMobile label="Animated mobile navigation">
+            <SidebarContent>Drawer content</SidebarContent>
+          </SidebarMobile>
+        </SidebarProvider>,
+      );
+
+      await user.click(screen.getByRole("button", { name: "Open sidebar" }));
+
+      const dialog = screen.getByRole("dialog", {
+        name: "Animated mobile navigation",
+      });
+
+      expect(dialog).toHaveAttribute("data-state", "open");
+
+      await user.keyboard("{Escape}");
+
+      expect(dialog).toHaveAttribute("data-state", "closing");
+      expect(screen.getByRole("button", { name: "Open sidebar" })).toHaveFocus();
+
+      const animationEnd = createEvent.animationEnd(dialog);
+      Object.defineProperty(animationEnd, "animationName", {
+        value: "dt-sidebar-panel-out",
+      });
+      fireEvent(dialog, animationEnd);
+
+      expect(
+        screen.queryByRole("dialog", { name: "Animated mobile navigation" }),
+      ).toBeNull();
+    } finally {
+      restoreMatchMedia();
+    }
   });
 
   it("prevents disabled link activation without removing the accessible item", async () => {

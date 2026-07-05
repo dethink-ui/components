@@ -52,8 +52,10 @@
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
   --animate-sidebar-overlay-in: dt-sidebar-overlay-in var(--sidebar-motion-duration, 220ms)
     ease-out both;
+  --animate-sidebar-overlay-out: dt-sidebar-overlay-out 150ms cubic-bezier(0.4, 0, 1, 1) both;
   --animate-sidebar-panel-in: dt-sidebar-panel-in var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
+  --animate-sidebar-panel-out: dt-sidebar-panel-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
   --animate-nav-slide-in: dt-nav-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-nav-slide-out: dt-nav-slide-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
 }
@@ -145,6 +147,30 @@
   }
 }
 
+@keyframes dt-sidebar-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dt-sidebar-panel-out {
+  from {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  to {
+    opacity: 0;
+    translate: var(--dt-sidebar-panel-motion-x, calc(var(--dt-space-3) * -1)) 0;
+    scale: 0.985;
+  }
+}
+
 @keyframes dt-nav-slide-in {
   from {
     opacity: 0;
@@ -182,6 +208,41 @@
 }
 
 @layer components {
+  /* Collapsible group open/close: grid-row interpolation drives height, with
+     @starting-style providing the entry frame. The hidden attribute is applied
+     by React after the exit transition completes. */
+  [data-slot="sidebar-group-content"][data-open] {
+    transition:
+      grid-template-rows var(--sidebar-motion-duration, 220ms)
+        var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)),
+      opacity var(--sidebar-motion-duration, 220ms)
+        var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)),
+      translate var(--sidebar-motion-duration, 220ms)
+        var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)),
+      visibility var(--sidebar-motion-duration, 220ms);
+  }
+
+  [data-slot="sidebar-group-content"][data-open="false"] {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    translate: 0 calc(var(--dt-space-1) * -1);
+    visibility: hidden;
+  }
+
+  @starting-style {
+    [data-slot="sidebar-group-content"][data-open="true"] {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      translate: 0 calc(var(--dt-space-1) * -1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="sidebar-group-content"][data-open] {
+      transition: none;
+    }
+  }
+
   /* Collapsed-rail tooltips: anchor-positioned fixed pseudo-elements escape the
      sidebar overflow clip without a portal. Browsers without CSS anchor
      positioning simply render no tooltip; accessible names are unaffected. */
