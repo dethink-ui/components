@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "horizontal-accordion",
+  "type": "registry:ui",
+  "title": "HorizontalAccordion",
+  "description": "Fixed-height horizontal band of always-visible blades where one panel expands at a time, with a Motion-powered gliding active layer, choreographed panel content, roving keyboard navigation, RTL-aware arrows, and a container-driven compact layout.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/horizontal-accordion/horizontal-accordion.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/horizontal-accordion/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
