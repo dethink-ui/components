@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pagination",
+  "type": "registry:ui",
+  "title": "Pagination",
+  "description": "Accessible Pagination primitive with bounded and unbounded modes, deterministic page-window generation, callback and link rendering, current-page semantics, first/previous/next/last controls, compact layout, RTL-safe icons, token-backed styling, and reduced-motion-safe transitions.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/pagination/pagination.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/pagination/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

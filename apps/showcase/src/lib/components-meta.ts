@@ -174,6 +174,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Motion-powered icon dock navigation with title modes, current matching, submenus, placements, and responsive collapsed rails.",
   },
   {
+    slug: "pagination",
+    name: "Pagination",
+    description:
+      "Navigate bounded and unbounded result sets with route-backed links, compact responsive layout, and current-page semantics.",
+  },
+  {
     slug: "number-input",
     name: "NumberInput",
     description:

@@ -32,7 +32,7 @@ The strongest demand clusters are forms, selects and comboboxes, overlays, data 
 | 4 | Table, DataTable | Done | Core internal-tool workflow; includes semantic table plus TanStack-powered sorting, filtering, pagination, selection, column visibility, row actions, loading, empty, and error states. |
 | 5 | Calendar, DatePicker, DateRangePicker | Done | Needed for filters, scheduling, billing, reports, and dashboards. DateTimePicker is also shipped. |
 | 6 | Toast, Alert, Callout, EmptyState, Skeleton, Spinner, Progress | Open | Required for async UX, validation, loading states, CRUD feedback, and polished examples. |
-| 7 | Sidebar, Breadcrumb, Pagination, NavigationMenu, CommandPalette | PRDs published | Builds the app-shell layer and directly supports dashboard/product blocks. |
+| 7 | Sidebar, Breadcrumb, Pagination, NavigationMenu, CommandPalette | Done | Builds the app-shell layer and directly supports dashboard/product blocks. |
 | 8 | Card, Badge, Avatar, List, DataList, Stat/KPI | Partial | Card and CardStack are done. Badge, Avatar, List/DataList, and Stat/KPI remain open. |
 | 9 | Chart | Open | High value for analytics dashboards; should follow a tokenized Recharts composition model rather than over-wrapping charts. |
 | 10 | FileUpload, Dropzone | Open | Practical value for imports, attachments, profile media, onboarding, and AI/chat files; needs strong validation-boundary docs. |
@@ -43,7 +43,7 @@ The strongest demand clusters are forms, selects and comboboxes, overlays, data 
 
 ## Recommended Next Development Order
 
-Status as of 4 July 2026: the package, registry, Storybook, and showcase surfaces include Button, IconButton, Link, Typography, Box, Container, Stack, Flex, Grid, Separator, Card, CardStack, FormField/Form/Field, Input, Textarea, NumberInput, Checkbox, RadioGroup, Switch, Select, Combobox, MultiSelect, AsyncSelect, TagInput, Dialog, AlertDialog, Popover, Tooltip, DropdownMenu, Table, DataTable, Calendar, DatePicker, DateRangePicker, DateTimePicker, and Timeline.
+Status as of 6 July 2026: the package, registry, and Storybook surfaces include Button, IconButton, Link, Typography, Box, Container, Stack, Flex, Grid, Separator, Card, CardStack, FormField/Form/Field, Input, Textarea, NumberInput, Checkbox, RadioGroup, Switch, Select, Combobox, MultiSelect, AsyncSelect, TagInput, Dialog, AlertDialog, Popover, Tooltip, DropdownMenu, Table, DataTable, Calendar, DatePicker, DateRangePicker, DateTimePicker, Timeline, Sidebar, Breadcrumb, NavigationMenu, CommandPalette, and Pagination. The showcase covers most shipped components, with any remaining showcase pages tracked separately from component implementation.
 
 1. Stack — done
 2. Flex — done
@@ -61,16 +61,16 @@ Status as of 4 July 2026: the package, registry, Storybook, and showcase surface
 14. DataTable — done (PRD #135)
 15. Calendar + DatePicker + DateRangePicker + DateTimePicker — done (Date suite PRD #141)
 16. MultiSelect + AsyncSelect + TagInput — done (PRD #167)
-17. Navigation set: Sidebar + Breadcrumb + Pagination + NavigationMenu + CommandPalette — PRDs published (#186, #187, #188, #189, #190)
+17. Navigation set: Sidebar + Breadcrumb + Pagination + NavigationMenu + CommandPalette — done (#186, #187, #188, #189, #190)
 18. Toast + feedback states — open
 19. Badge + Avatar + List/DataList + Stat/KPI — open except Card/CardStack
 20. Chart — open
 21. FileUpload / Dropzone — open
 22. Splitter / Resizable Panels / ScrollArea — open
 
-## Selected Next: Navigation Set
+## Completed Navigation Set
 
-The app-navigation set now has separate GitHub PRDs:
+The app-navigation set now has separate GitHub PRDs and local implementations:
 
 - Breadcrumb: https://github.com/parveshh/dethink-components/issues/186
 - CommandPalette: https://github.com/parveshh/dethink-components/issues/187
