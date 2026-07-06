@@ -128,6 +128,7 @@ const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
 const navigationMenu = await readJson(join(registryRoot, "navigation-menu.json"));
 const navDock = await readJson(join(registryRoot, "navdock.json"));
+const pagination = await readJson(join(registryRoot, "pagination.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
 const timeline = await readJson(join(registryRoot, "timeline.json"));
@@ -170,6 +171,7 @@ const registryItemsByName = new Map(
     dropdownMenu,
     navigationMenu,
     navDock,
+    pagination,
     typography,
     dateTimePicker,
     timeline,
@@ -220,6 +222,7 @@ assert(
   "navigation-menu registry item must be named navigation-menu.",
 );
 assert(navDock.name === "navdock", "navdock registry item must be named navdock.");
+assert(pagination.name === "pagination", "pagination registry item must be named pagination.");
 assert(typography.name === "typography", "typography registry item must be named typography.");
 assert(
   dateTimePicker.name === "date-time-picker",
@@ -425,6 +428,10 @@ assert(
 assert(
   navDock.registryDependencies?.includes("dethink-base"),
   "navdock registry item must depend on dethink-base.",
+);
+assert(
+  pagination.registryDependencies?.includes("dethink-base"),
+  "pagination registry item must depend on dethink-base.",
 );
 assert(
   (navigationMenu.dependencies ?? []).length === 0,
@@ -655,6 +662,10 @@ assert(
   "typography registry item must not add runtime dependencies.",
 );
 assert(
+  Array.isArray(pagination.dependencies) && pagination.dependencies.length === 0,
+  "pagination registry item must not add runtime dependencies.",
+);
+assert(
   Array.isArray(timeline.dependencies) && timeline.dependencies.length === 0,
   "timeline registry item must not add runtime dependencies.",
 );
@@ -708,6 +719,7 @@ for (const item of [
   dropdownMenu,
   navigationMenu,
   navDock,
+  pagination,
   typography,
   dateTimePicker,
   timeline,
@@ -747,6 +759,7 @@ await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navigationMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navDock, registryItemsByName);
+await assertRegistryRelativeImportsResolve(pagination, registryItemsByName);
 
 const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
@@ -900,6 +913,10 @@ const timelineSource = await readFile(
   join(root, "packages/components/src/components/timeline/timeline.tsx"),
   "utf8",
 );
+const paginationSource = await readFile(
+  join(root, "packages/components/src/components/pagination/pagination.tsx"),
+  "utf8",
+);
 
 assert(styles.includes('@import "tailwindcss";'), "base styles must import Tailwind.");
 assert(styles.includes("@source"), "base styles must register component sources.");
@@ -913,6 +930,26 @@ assert(
 assert(
   styles.includes("--color-timeline-rail"),
   "base styles must expose timeline rail token.",
+);
+assert(
+  paginationSource.includes("getPaginationRenderItems"),
+  "pagination source must expose deterministic page-window generation.",
+);
+assert(
+  paginationSource.includes('aria-current={current ? "page" : undefined}'),
+  "pagination source must expose current-page semantics.",
+);
+assert(
+  paginationSource.includes("hrefForPage"),
+  "pagination source must support link mode.",
+);
+assert(
+  paginationSource.includes("hasNextPage"),
+  "pagination source must support unbounded mode.",
+);
+assert(
+  paginationSource.includes("motion-reduce:transition-none"),
+  "pagination source must respect reduced motion for transitions.",
 );
 assert(boxSource.includes('"data-slot": "box"'), "box source must expose stable slot data.");
 assert(boxSource.includes("asChild"), "box source must expose child composition.");
