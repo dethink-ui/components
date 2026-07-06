@@ -71,7 +71,7 @@ minimal provider-aware portal/helper foundation needed to keep
 21. As a registry consumer, I want accurate registry metadata, so that copied dialog source installs cleanly.
 22. As an SSR app developer, I want dialogs to render and hydrate without mismatch warnings.
 23. As a maintainer, I want dialog tests to cover public behavior instead of private implementation details.
-24. As a maintainer, I want Dialog and AlertDialog to stay separate from Drawer, Popover, Tooltip, DropdownMenu, Toast, CommandDialog, and generic OverlayManager scope.
+24. As a maintainer, I want Dialog and AlertDialog to stay separate from Drawer, Popover, Tooltip, DropdownMenu, Toast, CommandPalette dialog mode, and generic OverlayManager scope.
 25. As a motion-sensitive user, I want dialog entry/exit animation to respect `prefers-reduced-motion`, so that modals appear without disorienting motion.
 
 ## Implementation Decisions
@@ -151,7 +151,7 @@ Required token coverage:
 ## Out Of Scope
 
 - Drawer/Sheet, Popover, Tooltip, DropdownMenu, HoverCard, ContextMenu,
-  Menubar, CommandDialog, OverlayManager, Toast, NotificationCenter, generic
+  Menubar, CommandPalette dialog mode, OverlayManager, Toast, NotificationCenter, generic
   Portal, standalone FocusTrap/FocusScope, route-level modals, wizard
   orchestration, async form state, and global dirty-state protection.
 - Non-modal dialog behavior and persistent floating panels.

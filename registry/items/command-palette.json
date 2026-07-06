@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "command-palette",
+  "type": "registry:ui",
+  "title": "CommandPalette",
+  "description": "Inline and dialog keyboard command surface with typed action/link/page commands, nested page stacks, deterministic filtering, async sources, recents, suggestions, loading/error/retry feedback, live announcements, grouped results, shortcuts, disabled reasons, destructive state, tokenized styling, close-on-run behavior, and children composition.",
+  "dependencies": ["motion", "react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button", "dialog"],
+  "files": [
+    {
+      "path": "packages/components/src/components/command-palette/command-palette.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/command-palette/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
