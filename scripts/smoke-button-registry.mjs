@@ -99,6 +99,7 @@ const card = await readJson(join(registryRoot, "card.json"));
 const cardStack = await readJson(join(registryRoot, "card-stack.json"));
 const checkbox = await readJson(join(registryRoot, "checkbox.json"));
 const combobox = await readJson(join(registryRoot, "combobox.json"));
+const commandPalette = await readJson(join(registryRoot, "command-palette.json"));
 const multiSelect = await readJson(join(registryRoot, "multi-select.json"));
 const asyncSelect = await readJson(join(registryRoot, "async-select.json"));
 const tagInput = await readJson(join(registryRoot, "tag-input.json"));
@@ -140,6 +141,7 @@ const registryItemsByName = new Map(
     cardStack,
     checkbox,
     combobox,
+    commandPalette,
     multiSelect,
     asyncSelect,
     tagInput,
@@ -183,6 +185,7 @@ assert(
 );
 assert(checkbox.name === "checkbox", "checkbox registry item must be named checkbox.");
 assert(combobox.name === "combobox", "combobox registry item must be named combobox.");
+assert(commandPalette.name === "command-palette", "command-palette registry item must be named command-palette.");
 assert(multiSelect.name === "multi-select", "multi-select registry item must be named multi-select.");
 assert(asyncSelect.name === "async-select", "async-select registry item must be named async-select.");
 assert(tagInput.name === "tag-input", "tag-input registry item must be named tag-input.");
@@ -254,6 +257,18 @@ assert(
 assert(
   combobox.registryDependencies?.includes("dethink-base"),
   "combobox registry item must depend on dethink-base.",
+);
+assert(
+  commandPalette.registryDependencies?.includes("dethink-base"),
+  "command-palette registry item must depend on dethink-base.",
+);
+assert(
+  commandPalette.registryDependencies?.includes("button"),
+  "command-palette registry item must depend on button for shared trigger styling.",
+);
+assert(
+  commandPalette.registryDependencies?.includes("dialog"),
+  "command-palette registry item must depend on dialog for modal mode.",
 );
 assert(
   multiSelect.registryDependencies?.includes("dethink-base"),
@@ -472,6 +487,18 @@ assert(
   "combobox registry item must include react-aria for portal provider support.",
 );
 assert(
+  commandPalette.dependencies?.includes("motion"),
+  "command-palette registry item must include motion for result and page choreography.",
+);
+assert(
+  commandPalette.dependencies?.includes("react-aria"),
+  "command-palette registry item must include react-aria through dialog mode.",
+);
+assert(
+  commandPalette.dependencies?.includes("react-aria-components"),
+  "command-palette registry item must include react-aria-components through dialog mode.",
+);
+assert(
   multiSelect.dependencies?.includes("react-aria-components"),
   "multi-select registry item must include react-aria-components.",
 );
@@ -652,6 +679,7 @@ for (const item of [
   cardStack,
   checkbox,
   combobox,
+  commandPalette,
   multiSelect,
   asyncSelect,
   tagInput,
@@ -694,6 +722,7 @@ await assertRegistryRelativeImportsResolve(card, registryItemsByName);
 await assertRegistryRelativeImportsResolve(cardStack, registryItemsByName);
 await assertRegistryRelativeImportsResolve(checkbox, registryItemsByName);
 await assertRegistryRelativeImportsResolve(combobox, registryItemsByName);
+await assertRegistryRelativeImportsResolve(commandPalette, registryItemsByName);
 await assertRegistryRelativeImportsResolve(multiSelect, registryItemsByName);
 await assertRegistryRelativeImportsResolve(asyncSelect, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tagInput, registryItemsByName);
@@ -745,6 +774,18 @@ const checkboxSource = await readFile(
 );
 const comboboxSource = await readFile(
   join(root, "packages/components/src/components/combobox/combobox.tsx"),
+  "utf8",
+);
+const commandPaletteSource = await readFile(
+  join(root, "packages/components/src/components/command-palette/command-palette.tsx"),
+  "utf8",
+);
+const commandPaletteIndexSource = await readFile(
+  join(root, "packages/components/src/components/command-palette/index.ts"),
+  "utf8",
+);
+const packageIndexSource = await readFile(
+  join(root, "packages/components/src/index.ts"),
   "utf8",
 );
 const multiSelectSource = await readFile(
@@ -1118,6 +1159,69 @@ assert(
   "combobox source must use provider density control utilities.",
 );
 assert(!comboboxSource.includes("@radix-ui"), "combobox source must remain Radix-free.");
+assert(
+  commandPaletteSource.includes('from "motion/react"') &&
+    commandPaletteSource.includes("MotionConfig") &&
+    commandPaletteSource.includes("AnimatePresence") &&
+    commandPaletteSource.includes("useReducedMotion"),
+  "command-palette source must use Motion primitives and reduced-motion detection.",
+);
+assert(
+  commandPaletteSource.includes('data-slot="command-palette"') &&
+    commandPaletteSource.includes('data-slot="command-palette-input"') &&
+    commandPaletteSource.includes('data-slot="command-palette-list"') &&
+    commandPaletteSource.includes('data-slot="command-palette-group"') &&
+    commandPaletteSource.includes('"data-slot": "command-palette-item"') &&
+    commandPaletteSource.includes('data-slot="command-palette-page-stack"') &&
+    commandPaletteSource.includes('data-slot="command-palette-page"') &&
+    commandPaletteSource.includes('data-slot="command-palette-page-back"') &&
+    commandPaletteSource.includes('data-slot="command-palette-announcer"'),
+  "command-palette source must expose stable command anatomy slots.",
+);
+assert(
+  commandPaletteSource.includes('"data-slot": "command-palette-motion-result"') &&
+    commandPaletteSource.includes('"data-slot": "command-palette-selected-indicator"') &&
+    commandPaletteSource.includes("data-motion-stagger") &&
+    commandPaletteSource.includes("data-reduced-motion"),
+  "command-palette source must expose result, selection, and reduced-motion hooks.",
+);
+assert(
+  commandPaletteSource.includes("defaultCommandPaletteFilter") &&
+    commandPaletteSource.includes("getCommandPaletteFilteredCommands") &&
+    commandPaletteSource.includes("getCommandPaletteSourceCommands"),
+  "command-palette source must export filtering and source-composition helpers.",
+);
+assert(
+  commandPaletteSource.includes("type CommandPaletteCommandType =") &&
+    commandPaletteSource.includes("type CommandPaletteMotionPreset =") &&
+    commandPaletteSource.includes("interface CommandPalettePageDefinition") &&
+    commandPaletteSource.includes("interface CommandPalettePageStackChangeContext"),
+  "command-palette source must publish typed commands, motion presets, and nested page contracts.",
+);
+assert(
+  commandPaletteSource.includes("bg-background") &&
+    commandPaletteSource.includes("border-border") &&
+    commandPaletteSource.includes("focus-visible:ring-ring") &&
+    commandPaletteSource.includes("text-destructive") &&
+    commandPaletteSource.includes("h-density-control"),
+  "command-palette source must use provider tokens for surface, focus, danger, and density states.",
+);
+assert(
+  commandPaletteIndexSource.includes("CommandPalettePageStack") &&
+    commandPaletteIndexSource.includes("commandPalettePageStackClassNames") &&
+    commandPaletteIndexSource.includes("CommandPaletteMotionPreset") &&
+    commandPaletteIndexSource.includes("CommandPalettePageStackProps"),
+  "command-palette package index must export page-stack components, helpers, and types.",
+);
+assert(
+  packageIndexSource.includes("CommandPalettePageStack") &&
+    packageIndexSource.includes("commandPalettePageStackClassNames") &&
+    packageIndexSource.includes("CommandPaletteMotionPreset") &&
+    packageIndexSource.includes("CommandPalettePageStackProps"),
+  "root package index must export command-palette page-stack APIs.",
+);
+assert(!commandPaletteSource.includes("@radix-ui"), "command-palette source must remain Radix-free.");
+assert(!commandPaletteSource.includes("cmdk"), "command-palette source must not wrap cmdk.");
 assert(
   multiSelectSource.includes("react-aria-components"),
   "multi-select source must use React Aria Components.",
@@ -1880,7 +1984,7 @@ assert(
   "dialog source must expose stable root slot data.",
 );
 assert(
-  dialogSource.includes('data-slot="dialog-trigger"'),
+  dialogSource.includes('data-slot={dataSlot ?? "dialog-trigger"}'),
   "dialog source must expose stable trigger slot data.",
 );
 assert(
@@ -2193,7 +2297,7 @@ assert(
 assert(
   navDockSource.includes("bg-background") &&
     navDockSource.includes("focus-visible:ring-ring") &&
-    navDockSource.includes("data-[current=true]:bg-muted") &&
+    navDockSource.includes("data-[current=true]:text-primary") &&
     navDockSource.includes("motion-safe:transition"),
   "navdock source must use provider tokens and reduced-motion-aware utility classes.",
 );

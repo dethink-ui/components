@@ -207,7 +207,7 @@ Additional styling requirements:
 ## Out Of Scope
 
 - Drawer/Sheet, Popover, Tooltip, DropdownMenu, HoverCard, ContextMenu,
-  Menubar, CommandDialog, OverlayManager, Toast, NotificationCenter, generic
+  Menubar, CommandPalette dialog mode, OverlayManager, Toast, NotificationCenter, generic
   Portal, standalone FocusTrap/FocusScope, route-level modals, global dirty
   state protection, and wizard orchestration.
 - Non-modal dialogs and persistent floating panels.

@@ -202,29 +202,28 @@ P1 should fill out daily-use coverage first, then move into differentiators and 
 23. HoverCard
 24. ContextMenu
 25. Menubar
-26. CommandDialog
-27. OverlayManager
-28. NavigationMenu
-29. Steps
-30. CommandPalette
-31. Timeline
-32. Stat / KPI
-33. Chart
-34. CodeBlock
-35. RichTextEditor
-36. TreeView
-37. TreeSelect
-38. ClientOnly
-39. EnvironmentProvider
-40. LocaleProvider
-41. DirectionProvider
-42. CopyButton
-43. useMediaQuery
-44. Auth Screens Block
-45. Dashboard Shell Block
-46. CRUD Page Block
-47. Settings Page Block
-48. Analytics Dashboard Block
+26. OverlayManager
+27. NavigationMenu
+28. Steps
+29. CommandPalette
+30. Timeline
+31. Stat / KPI
+32. Chart
+33. CodeBlock
+34. RichTextEditor
+35. TreeView
+36. TreeSelect
+37. ClientOnly
+38. EnvironmentProvider
+39. LocaleProvider
+40. DirectionProvider
+41. CopyButton
+42. useMediaQuery
+43. Auth Screens Block
+44. Dashboard Shell Block
+45. CRUD Page Block
+46. Settings Page Block
+47. Analytics Dashboard Block
 
 ## P2 / Pro Component Order
 

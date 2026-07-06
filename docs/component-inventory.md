@@ -32,7 +32,7 @@ The PRD positions the library as a shadcn-compatible, open-code React component 
 | Forms | Form, Field, Fieldset, Label, HelpText, ErrorMessage, Input, Textarea, PasswordInput, NumberInput, PinInput, Checkbox, CheckboxGroup, RadioGroup, Switch, Slider, Select, NativeSelect, Combobox, Listbox, SearchInput, Rating |
 | Advanced Inputs | MultiSelect, TagInput, AsyncSelect, DatePicker, DateRangePicker, TimePicker, DateTimePicker, IntervalPicker, FileUpload, Dropzone, ColorPicker, QueryBuilder |
 | Feedback | Alert, Callout, Toast, NotificationCenter, Progress, ProgressCircle, Spinner, Skeleton, EmptyState, LoadingOverlay, StatusIndicator |
-| Overlays | Dialog, AlertDialog, Drawer/Sheet, Popover, Tooltip, HoverCard, DropdownMenu, ContextMenu, Menubar, CommandDialog, OverlayManager |
+| Overlays | Dialog, AlertDialog, Drawer/Sheet, Popover, Tooltip, HoverCard, DropdownMenu, ContextMenu, Menubar, OverlayManager |
 | Navigation | Breadcrumb, Pagination, NavigationMenu, NavDock, Sidebar, Steps, Anchor/ScrollSpy, CommandPalette, Tabs as nav |
 | Data Display | Card, Badge, Avatar, AvatarGroup, List, DataList, Table, DataTable, DataGrid, Timeline, Stat/KPI, Chart, Calendar, Carousel, CodeBlock, QRCode |
 | Productivity | RichTextEditor, TreeView, TreeSelect, Scheduler/EventCalendar, KanbanBoard, SortableList, DragDrop, OnboardingTour |
@@ -47,7 +47,7 @@ Button, IconButton, Link, Typography, Heading, Text, Box, Container, Stack, Flex
 
 ### P1
 
-ButtonGroup, Code, Kbd, Inline, SimpleGrid, Center, Spacer, Splitter/Resizable, SidebarShell, PasswordInput, PinInput, Listbox, SearchInput, TagInput, AsyncSelect, TimePicker, DateTimePicker, IntervalPicker, ColorPicker, NotificationCenter, LoadingOverlay, StatusIndicator, HoverCard, ContextMenu, Menubar, CommandDialog, OverlayManager, NavigationMenu, Steps, CommandPalette, Timeline, Stat/KPI, Chart, CodeBlock, RichTextEditor, TreeView, TreeSelect, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, useMediaQuery, Dashboard block, CRUD block, Auth block, Settings block, Analytics block.
+ButtonGroup, Code, Kbd, Inline, SimpleGrid, Center, Spacer, Splitter/Resizable, SidebarShell, PasswordInput, PinInput, Listbox, SearchInput, TagInput, AsyncSelect, TimePicker, DateTimePicker, IntervalPicker, ColorPicker, NotificationCenter, LoadingOverlay, StatusIndicator, HoverCard, ContextMenu, Menubar, OverlayManager, NavigationMenu, Steps, CommandPalette, Timeline, Stat/KPI, Chart, CodeBlock, RichTextEditor, TreeView, TreeSelect, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, useMediaQuery, Dashboard block, CRUD block, Auth block, Settings block, Analytics block.
 
 ### P2
 

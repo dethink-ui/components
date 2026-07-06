@@ -53,6 +53,7 @@ export interface DialogProps
 
 export interface DialogTriggerProps
   extends Omit<AriaButtonProps, "children" | "className"> {
+  "data-slot"?: string;
   children?: ReactNode;
   className?: string;
   size?: ButtonSize;
@@ -379,6 +380,7 @@ Dialog.displayName = "Dialog";
 export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
   (
     {
+      "data-slot": dataSlot,
       children,
       className,
       size = "md",
@@ -396,7 +398,7 @@ export const DialogTrigger = forwardRef<HTMLButtonElement, DialogTriggerProps>(
       <AriaButton
         {...props}
         ref={composeRefs(ref, setTriggerRef)}
-        data-slot="dialog-trigger"
+        data-slot={dataSlot ?? "dialog-trigger"}
         className={dialogTriggerClassNames({ className, size, variant })}
       >
         {children}

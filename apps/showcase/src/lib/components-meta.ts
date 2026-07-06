@@ -54,6 +54,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
   },
   {
+    slug: "command-palette",
+    name: "CommandPalette",
+    description:
+      "Run typed action, link, and nested page commands with async sources, recents, live announcements, and Motion-aware dialog mode.",
+  },
+  {
     slug: "async-select",
     name: "AsyncSelect",
     description:
