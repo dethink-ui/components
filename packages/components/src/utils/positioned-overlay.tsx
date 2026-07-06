@@ -70,10 +70,10 @@ const positionedOverlaySurfaceBaseClasses =
   "z-50 max-h-[min(var(--dt-overlay-max-height,18rem),calc(100dvh_-_var(--dt-space-4)))] min-w-[var(--dt-overlay-min-width,12rem)] overflow-auto rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [--dt-overlay-motion-x:0px] [--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=bottom]:[--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))] data-[placement=top]:[--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-x:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-y:0px] data-[placement=right]:[--dt-overlay-motion-x:calc(0px_-_var(--dt-space-1))] data-[placement=right]:[--dt-overlay-motion-y:0px] motion-safe:data-[entering]:animate-overlay-in motion-safe:data-[exiting]:animate-overlay-out motion-reduce:animate-none";
 
 const positionedOverlayArrowBaseClasses =
-  "z-50 flex size-3 items-center justify-center text-background drop-shadow-sm data-[placement=bottom]:rotate-180 data-[placement=left]:-rotate-90 data-[placement=right]:rotate-90";
+  "group z-50 flex size-3 items-center justify-center text-background drop-shadow-sm";
 
 const positionedOverlayArrowShapeBaseClasses =
-  "block size-3 fill-background stroke-border [paint-order:stroke] [stroke-width:1.5px]";
+  "block size-3 fill-background stroke-border group-data-[placement=bottom]:rotate-180 group-data-[placement=left]:-rotate-90 group-data-[placement=right]:rotate-90 [paint-order:stroke] [stroke-width:1.5px]";
 
 export function resolvePositionedOverlayPositionProps(
   props: PositionedOverlayPositionProps = {},
@@ -138,7 +138,7 @@ export const PositionedOverlayArrow = forwardRef<
           className: shapeClassName,
         })}
       >
-        <path d="M0 0 L6 6 L12 0" />
+        <path d="M0 0 L6 12 L12 0" />
       </svg>
     </AriaOverlayArrow>
   ),

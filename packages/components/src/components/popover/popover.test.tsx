@@ -300,6 +300,7 @@ describe("Popover", () => {
       "custom-content",
     );
     expect(popoverContentClassNames()).toContain("bg-background");
+    expect(popoverContentClassNames()).toContain("overflow-visible");
     expect(popoverContentClassNames()).toContain("focus-visible:outline-ring");
     expect(popoverContentClassNames()).toContain(
       "motion-safe:data-[entering]:animate-overlay-in",
@@ -310,10 +311,13 @@ describe("Popover", () => {
     expect(popoverPanelClassNames({ className: "custom-panel" })).toContain(
       "custom-panel",
     );
-    expect(popoverPanelClassNames()).toContain("focus-visible:outline-ring");
-    expect(popoverArrowClassNames()).toContain(
-      "data-[placement=bottom]:rotate-180",
+    expect(popoverPanelClassNames()).toContain("overflow-auto");
+    expect(popoverPanelClassNames()).toContain("overscroll-contain");
+    expect(popoverPanelClassNames()).toContain(
+      "max-h-[min(calc(var(--dt-overlay-max-height,18rem)_-_var(--dt-space-6)),calc(100dvh_-_var(--dt-space-10)))]",
     );
+    expect(popoverPanelClassNames()).toContain("focus-visible:outline-ring");
+    expect(popoverArrowClassNames()).toContain("group");
     expect(popoverHeaderClassNames({ className: "custom-header" })).toContain(
       "custom-header",
     );

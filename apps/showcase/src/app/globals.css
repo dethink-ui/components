@@ -67,6 +67,14 @@
   --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 28%, transparent);
   --sc-glow-b: color-mix(in oklch, var(--dt-color-info) 20%, transparent);
   --sc-grid-line: color-mix(in oklch, var(--dt-color-primary) 9%, transparent);
+  --sc-scrollbar-thumb: color-mix(in oklch, var(--dt-color-muted-foreground) 34%, transparent);
+  --sc-scrollbar-track: transparent;
+}
+
+html {
+  scrollbar-color: var(--sc-scrollbar-thumb) var(--sc-scrollbar-track);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
 }
 
 .dark,
@@ -182,6 +190,46 @@
 .sc-preview-surface {
   background-image: radial-gradient(var(--sc-grid-line) 1px, transparent 1px);
   background-size: 1.25rem 1.25rem;
+}
+
+.sc-components-nav-scroll {
+  --sc-components-nav-fade: 2rem;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black calc(100% - var(--sc-components-nav-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black calc(100% - var(--sc-components-nav-fade)),
+    transparent
+  );
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.sc-components-nav-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+@supports not (scrollbar-color: auto) {
+  html::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: var(--sc-scrollbar-thumb);
+    background-clip: content-box;
+    border: 3px solid transparent;
+    border-radius: 999px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: var(--sc-scrollbar-track);
+  }
 }
 
 /*

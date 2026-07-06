@@ -105,19 +105,20 @@ describe("positioned overlay utilities", () => {
     expect(positionedOverlaySurfaceClassNames({ className: "custom-surface" }))
       .toContain("custom-surface");
 
-    expect(positionedOverlayArrowClassNames()).toContain(
-      "data-[placement=bottom]:rotate-180",
-    );
-    expect(positionedOverlayArrowClassNames()).toContain(
-      "data-[placement=right]:rotate-90",
-    );
-    expect(positionedOverlayArrowClassNames()).toContain(
-      "data-[placement=left]:-rotate-90",
-    );
+    expect(positionedOverlayArrowClassNames()).toContain("group");
     expect(positionedOverlayArrowShapeClassNames()).toContain(
       "fill-background",
     );
     expect(positionedOverlayArrowShapeClassNames()).toContain("stroke-border");
+    expect(positionedOverlayArrowShapeClassNames()).toContain(
+      "group-data-[placement=bottom]:rotate-180",
+    );
+    expect(positionedOverlayArrowShapeClassNames()).toContain(
+      "group-data-[placement=right]:rotate-90",
+    );
+    expect(positionedOverlayArrowShapeClassNames()).toContain(
+      "group-data-[placement=left]:-rotate-90",
+    );
     expect(positionedOverlayArrowShapeClassNames({ className: "custom-shape" }))
       .toContain("custom-shape");
   });
@@ -146,5 +147,9 @@ describe("positioned overlay utilities", () => {
     expect(shape).toHaveAttribute("focusable", "false");
     expect(shape?.tagName.toLowerCase()).toBe("svg");
     expect(shape).toHaveClass("custom-shape");
+    expect(shape?.querySelector("path")).toHaveAttribute(
+      "d",
+      "M0 0 L6 12 L12 0",
+    );
   });
 });

@@ -121,10 +121,10 @@ const PopoverRootContext = createContext<PopoverRootContextValue | null>(null);
 const popoverRootClasses = "contents";
 
 const popoverContentClasses =
-  "relative w-[var(--dt-popover-width,20rem)] max-w-[min(var(--dt-popover-max-width,24rem),calc(100vw_-_var(--dt-space-4)))]";
+  "relative w-[var(--dt-popover-width,20rem)] max-w-[min(var(--dt-popover-max-width,24rem),calc(100vw_-_var(--dt-space-4)))] overflow-visible";
 
 const popoverPanelClasses =
-  "grid gap-[var(--dt-space-3)] outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "grid max-h-[min(calc(var(--dt-overlay-max-height,18rem)_-_var(--dt-space-6)),calc(100dvh_-_var(--dt-space-10)))] gap-[var(--dt-space-3)] overflow-auto overscroll-contain outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 const popoverHeaderClasses =
   "grid gap-[var(--dt-space-1)] text-start";
