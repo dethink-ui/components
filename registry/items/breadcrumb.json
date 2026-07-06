@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "breadcrumb",
+  "type": "registry:ui",
+  "title": "Breadcrumb",
+  "description": "Location hierarchy navigation with labelled nav semantics, ordered list anatomy, current-page state, tokenized separators and sizes, router composition, responsive truncation, and optional Popover-backed overflow for hidden ancestors.",
+  "dependencies": ["react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "popover"],
+  "files": [
+    {
+      "path": "packages/components/src/components/breadcrumb/breadcrumb.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/breadcrumb/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

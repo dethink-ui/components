@@ -12,6 +12,12 @@ export const componentCatalog: ComponentMeta[] = [
       "The base layout primitive: tokenized spacing, surfaces, borders, and radius on any semantic element.",
   },
   {
+    slug: "breadcrumb",
+    name: "Breadcrumb",
+    description:
+      "Show page hierarchy with labelled navigation, current-page semantics, responsive truncation, and overflow for hidden ancestors.",
+  },
+  {
     slug: "button",
     name: "Button",
     description:
