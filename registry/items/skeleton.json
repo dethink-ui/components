@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "skeleton",
+  "type": "registry:ui",
+  "title": "Skeleton",
+  "description": "Layout-preserving placeholder primitives for blocks, text, avatars, and buttons with pulse, shimmer, and static animation modes plus reduced-motion-safe behavior.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/skeleton/skeleton.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/skeleton/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

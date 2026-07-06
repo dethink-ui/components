@@ -90,6 +90,12 @@ export const componentCatalog: ComponentMeta[] = [
       "Sort, filter, select, and paginate row data with column definitions, empty/loading/error states, and server-driven modes.",
   },
   {
+    slug: "feedback-states",
+    name: "Feedback States",
+    description:
+      "Centralize announcements, loading, progress, skeletons, alerts, callouts, empty states, and actionable toasts.",
+  },
+  {
     slug: "date-picker",
     name: "DatePicker",
     description:

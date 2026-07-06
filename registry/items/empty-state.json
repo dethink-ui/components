@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "empty-state",
+  "type": "registry:ui",
+  "title": "EmptyState",
+  "description": "Composable empty, no-results, no-access, onboarding, and recovery state primitive with visual, copy, action, footer, compact, card, table, and page layouts.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "alert"],
+  "files": [
+    {
+      "path": "packages/components/src/components/empty-state/empty-state.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/empty-state/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

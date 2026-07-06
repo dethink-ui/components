@@ -132,6 +132,14 @@ const pagination = await readJson(join(registryRoot, "pagination.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
 const timeline = await readJson(join(registryRoot, "timeline.json"));
+const liveRegion = await readJson(join(registryRoot, "live-region.json"));
+const spinner = await readJson(join(registryRoot, "spinner.json"));
+const progress = await readJson(join(registryRoot, "progress.json"));
+const skeleton = await readJson(join(registryRoot, "skeleton.json"));
+const alert = await readJson(join(registryRoot, "alert.json"));
+const emptyState = await readJson(join(registryRoot, "empty-state.json"));
+const toast = await readJson(join(registryRoot, "toast.json"));
+const feedbackStates = await readJson(join(registryRoot, "feedback-states.json"));
 
 const registryItemsByName = new Map(
   [
@@ -175,6 +183,14 @@ const registryItemsByName = new Map(
     typography,
     dateTimePicker,
     timeline,
+    liveRegion,
+    spinner,
+    progress,
+    skeleton,
+    alert,
+    emptyState,
+    toast,
+    feedbackStates,
   ].map((item) => [item.name, item]),
 );
 
@@ -229,6 +245,17 @@ assert(
   "date-time-picker registry item must be named date-time-picker.",
 );
 assert(timeline.name === "timeline", "timeline registry item must be named timeline.");
+assert(liveRegion.name === "live-region", "live-region registry item must be named live-region.");
+assert(spinner.name === "spinner", "spinner registry item must be named spinner.");
+assert(progress.name === "progress", "progress registry item must be named progress.");
+assert(skeleton.name === "skeleton", "skeleton registry item must be named skeleton.");
+assert(alert.name === "alert", "alert registry item must be named alert.");
+assert(emptyState.name === "empty-state", "empty-state registry item must be named empty-state.");
+assert(toast.name === "toast", "toast registry item must be named toast.");
+assert(
+  feedbackStates.name === "feedback-states",
+  "feedback-states registry item must be named feedback-states.",
+);
 assert(
   box.registryDependencies?.includes("dethink-base"),
   "box registry item must depend on dethink-base.",
@@ -466,6 +493,74 @@ assert(
   "timeline registry item must depend on dethink-base.",
 );
 assert(
+  liveRegion.registryDependencies?.includes("dethink-base"),
+  "live-region registry item must depend on dethink-base.",
+);
+assert(
+  spinner.registryDependencies?.includes("dethink-base"),
+  "spinner registry item must depend on dethink-base.",
+);
+assert(
+  progress.registryDependencies?.includes("dethink-base"),
+  "progress registry item must depend on dethink-base.",
+);
+assert(
+  skeleton.registryDependencies?.includes("dethink-base"),
+  "skeleton registry item must depend on dethink-base.",
+);
+assert(
+  alert.registryDependencies?.includes("dethink-base"),
+  "alert registry item must depend on dethink-base.",
+);
+assert(
+  emptyState.registryDependencies?.includes("dethink-base"),
+  "empty-state registry item must depend on dethink-base.",
+);
+assert(
+  emptyState.registryDependencies?.includes("alert"),
+  "empty-state registry item must depend on alert for shared tone types.",
+);
+assert(
+  toast.registryDependencies?.includes("dethink-base"),
+  "toast registry item must depend on dethink-base.",
+);
+assert(
+  toast.registryDependencies?.includes("live-region"),
+  "toast registry item must depend on live-region for announcements.",
+);
+assert(
+  toast.registryDependencies?.includes("alert"),
+  "toast registry item must depend on alert for shared tone types.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("live-region"),
+  "feedback-states registry item must depend on live-region.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("spinner"),
+  "feedback-states registry item must depend on spinner.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("progress"),
+  "feedback-states registry item must depend on progress.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("skeleton"),
+  "feedback-states registry item must depend on skeleton.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("alert"),
+  "feedback-states registry item must depend on alert.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("empty-state"),
+  "feedback-states registry item must depend on empty-state.",
+);
+assert(
+  feedbackStates.registryDependencies?.includes("toast"),
+  "feedback-states registry item must depend on toast.",
+);
+assert(
   Array.isArray(box.dependencies) && box.dependencies.length === 0,
   "box registry item must not add runtime dependencies.",
 );
@@ -681,6 +776,38 @@ assert(
   dateTimePicker.dependencies?.includes("react-aria-components"),
   "date-time-picker registry item must include react-aria-components.",
 );
+assert(
+  Array.isArray(liveRegion.dependencies) && liveRegion.dependencies.length === 0,
+  "live-region registry item must not add runtime dependencies.",
+);
+assert(
+  Array.isArray(spinner.dependencies) && spinner.dependencies.length === 0,
+  "spinner registry item must not add runtime dependencies.",
+);
+assert(
+  Array.isArray(progress.dependencies) && progress.dependencies.length === 0,
+  "progress registry item must not add runtime dependencies.",
+);
+assert(
+  Array.isArray(skeleton.dependencies) && skeleton.dependencies.length === 0,
+  "skeleton registry item must not add runtime dependencies.",
+);
+assert(
+  Array.isArray(alert.dependencies) && alert.dependencies.length === 0,
+  "alert registry item must not add runtime dependencies.",
+);
+assert(
+  Array.isArray(emptyState.dependencies) && emptyState.dependencies.length === 0,
+  "empty-state registry item must not add runtime dependencies.",
+);
+assert(
+  toast.dependencies?.includes("motion"),
+  "toast registry item must include motion for stack presence and layout compaction.",
+);
+assert(
+  Array.isArray(feedbackStates.dependencies) && feedbackStates.dependencies.length === 0,
+  "feedback-states registry item should receive runtime dependencies through its child items.",
+);
 
 for (const item of [
   base,
@@ -723,6 +850,14 @@ for (const item of [
   typography,
   dateTimePicker,
   timeline,
+  liveRegion,
+  spinner,
+  progress,
+  skeleton,
+  alert,
+  emptyState,
+  toast,
+  feedbackStates,
 ]) {
   for (const file of item.files ?? []) {
     await assertFileExists(join(root, file.path));
@@ -760,6 +895,14 @@ await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navigationMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navDock, registryItemsByName);
 await assertRegistryRelativeImportsResolve(pagination, registryItemsByName);
+await assertRegistryRelativeImportsResolve(liveRegion, registryItemsByName);
+await assertRegistryRelativeImportsResolve(spinner, registryItemsByName);
+await assertRegistryRelativeImportsResolve(progress, registryItemsByName);
+await assertRegistryRelativeImportsResolve(skeleton, registryItemsByName);
+await assertRegistryRelativeImportsResolve(alert, registryItemsByName);
+await assertRegistryRelativeImportsResolve(emptyState, registryItemsByName);
+await assertRegistryRelativeImportsResolve(toast, registryItemsByName);
+await assertRegistryRelativeImportsResolve(feedbackStates, registryItemsByName);
 
 const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
@@ -931,6 +1074,20 @@ assert(
   styles.includes("--color-timeline-rail"),
   "base styles must expose timeline rail token.",
 );
+assert(
+  styles.includes("dt-progress-indeterminate"),
+  "base styles must include feedback progress indeterminate keyframes.",
+);
+assert(
+  styles.includes("dt-skeleton-shimmer"),
+  "base styles must include feedback skeleton shimmer keyframes.",
+);
+assert(
+  packageIndexSource.includes("LiveRegionProvider"),
+  "package index must export LiveRegionProvider.",
+);
+assert(packageIndexSource.includes("ProgressCircle"), "package index must export ProgressCircle.");
+assert(packageIndexSource.includes("ToastProvider"), "package index must export ToastProvider.");
 assert(
   paginationSource.includes("getPaginationRenderItems"),
   "pagination source must expose deterministic page-window generation.",
