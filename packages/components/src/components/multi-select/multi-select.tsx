@@ -578,7 +578,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
         isRequired={required}
         isInvalid={resolvedInvalid}
         aria-invalid={resolvedAriaInvalid}
-        menuTrigger="manual"
+        menuTrigger="input"
         allowsEmptyCollection
         validationBehavior="aria"
         data-slot={dataSlot ?? "multi-select"}

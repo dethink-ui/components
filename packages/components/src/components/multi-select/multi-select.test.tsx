@@ -195,6 +195,26 @@ describe("MultiSelect", () => {
     expect(within(listbox).queryByRole("option", { name: "Production" })).not.toBeInTheDocument();
   });
 
+  it("opens and filters options when typing into a closed search field", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <MultiSelect label="Teams">
+        <MultiSelectItem value="operations">Operations</MultiSelectItem>
+        <MultiSelectItem value="finance">Finance</MultiSelectItem>
+        <MultiSelectItem value="revops">RevOps</MultiSelectItem>
+      </MultiSelect>,
+    );
+
+    await user.click(screen.getByRole("combobox", { name: /Teams/ }));
+    await user.type(screen.getByRole("combobox", { name: /Teams/ }), "fin");
+
+    const listbox = await screen.findByRole("listbox");
+
+    expect(within(listbox).getByRole("option", { name: "Finance" })).toBeInTheDocument();
+    expect(within(listbox).queryByRole("option", { name: "Operations" })).not.toBeInTheDocument();
+  });
+
   it("renders an empty state when search has no matching items", async () => {
     const user = userEvent.setup();
 
