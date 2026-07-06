@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "progress",
+  "type": "registry:ui",
+  "title": "Progress and ProgressCircle",
+  "description": "Determinate and indeterminate progress primitives with value clamping, custom value labels, status text, linear and circular visuals, token-backed tones and sizes, and reduced-motion-safe transitions.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/progress/progress.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/progress/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spinner",
+  "type": "registry:ui",
+  "title": "Spinner",
+  "description": "Compact loading indicator with decorative-by-default semantics, labelled status mode, ring and dots variants, token-backed tones and sizes, and reduced-motion-safe animation.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/spinner/spinner.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/spinner/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

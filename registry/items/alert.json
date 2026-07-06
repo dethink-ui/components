@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert",
+  "type": "registry:ui",
+  "title": "Alert and Callout",
+  "description": "Inline status and contextual guidance surfaces with urgency-aware roles, tone and variant options, icon/action/dismiss slots, token-backed styling, and reduced-motion-safe interactions.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/alert/alert.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/alert/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "feedback-states",
+  "type": "registry:ui",
+  "title": "Feedback States",
+  "description": "Aggregate feedback workflow layer that installs LiveRegion, Spinner, Progress, Skeleton, Alert, Callout, EmptyState, and Toast primitives with their shared registry dependencies.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [
+    "live-region",
+    "spinner",
+    "progress",
+    "skeleton",
+    "alert",
+    "empty-state",
+    "toast"
+  ],
+  "files": []
+}

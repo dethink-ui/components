@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toast",
+  "type": "registry:ui",
+  "title": "Toast",
+  "description": "Open-code toast workflow with provider state, viewport placement, stack layout, live-region announcements, actions, dismiss controls, auto-dismiss timers, pause-on-hover/focus, keyboard dismissal, and Motion-powered reduced-motion-safe presence.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "live-region", "alert"],
+  "files": [
+    {
+      "path": "packages/components/src/components/toast/toast.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/toast/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
