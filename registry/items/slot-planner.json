@@ -1,0 +1,80 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "slot-planner",
+  "type": "registry:ui",
+  "title": "SlotPlanner",
+  "description": "Bookable time-slot inventory family: manage-mode week/day planner with editor dialog, recurrence and per-occurrence overrides, declarative constraints with cap meters, copy-day/copy-week/clear-day batch operations, per-surface custom renderers, a headless useSlotPlanner hook, configurable taxonomy wording, Motion choreography with reduced-motion collapse, and a book-mode SlotPicker that projects occurrences into the viewer's time zone.",
+  "dependencies": ["motion", "@internationalized/date"],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "button",
+    "checkbox",
+    "dialog",
+    "form-field",
+    "input",
+    "number-input",
+    "radio-group",
+    "select",
+    "tag-input",
+    "textarea"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-picker.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-editor.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-motion.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-dom-shared.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-renderers.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/use-slot-planner.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-utils.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-crud.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-constraints.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-contract.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/slot-planner-fixtures.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slot-planner/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

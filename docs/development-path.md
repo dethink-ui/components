@@ -177,6 +177,8 @@ The static P0/P1/P2 lists remain the full inventory order. The current high-impa
 
 P1 should fill out daily-use coverage first, then move into differentiators and product blocks.
 
+SlotPlanner (PRD #242, issues #243-#250) is complete: manage-mode planner, book-mode SlotPicker, headless hook, registry item, Storybook coverage, and docs shipped. It manages a bookable time-slot inventory with lifecycle states, caps, buffers, recurrence, and configurable taxonomy; it is distinct from the P2 Scheduler/EventCalendar, which renders arbitrary events on a time grid.
+
 1. ButtonGroup
 2. Code
 3. Kbd
@@ -207,23 +209,24 @@ P1 should fill out daily-use coverage first, then move into differentiators and 
 28. Steps
 29. CommandPalette
 30. Timeline
-31. Stat / KPI
-32. Chart
-33. CodeBlock
-34. RichTextEditor
-35. TreeView
-36. TreeSelect
-37. ClientOnly
-38. EnvironmentProvider
-39. LocaleProvider
-40. DirectionProvider
-41. CopyButton
-42. useMediaQuery
-43. Auth Screens Block
-44. Dashboard Shell Block
-45. CRUD Page Block
-46. Settings Page Block
-47. Analytics Dashboard Block
+31. SlotPlanner
+32. Stat / KPI
+33. Chart
+34. CodeBlock
+35. RichTextEditor
+36. TreeView
+37. TreeSelect
+38. ClientOnly
+39. EnvironmentProvider
+40. LocaleProvider
+41. DirectionProvider
+42. CopyButton
+43. useMediaQuery
+44. Auth Screens Block
+45. Dashboard Shell Block
+46. CRUD Page Block
+47. Settings Page Block
+48. Analytics Dashboard Block
 
 ## P2 / Pro Component Order
 

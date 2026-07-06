@@ -81,6 +81,8 @@ import {
   Select,
   SelectItem,
   Separator,
+  SlotPicker,
+  SlotPlanner,
   Stack,
   Switch,
   Table,
@@ -97,6 +99,7 @@ import {
   TooltipContent,
   TooltipTrigger,
   type DataTableColumnDef,
+  type SlotPlannerSlotData,
 } from "@dethink/components";
 
 function ArrowRightIcon() {
@@ -173,6 +176,31 @@ const playgroundInvoiceColumns: DataTableColumnDef<PlaygroundInvoice>[] = [
         currency: "USD",
         style: "currency",
       }).format(getValue<number>()),
+  },
+];
+
+// Deterministic slot data and "now" keep the SlotPlanner smoke stable.
+const playgroundSlots: SlotPlannerSlotData[] = [
+  {
+    id: "smoke-architecture-review",
+    date: "2026-07-06",
+    startTime: "14:15",
+    durationMinutes: 60,
+    timeZone: "Europe/London",
+    state: "requestable",
+    recurrence: { frequency: "weekly" },
+    data: { tags: ["Architecture Review"] },
+  },
+  {
+    id: "smoke-pairing",
+    date: "2026-07-07",
+    startTime: "09:30",
+    durationMinutes: 45,
+    timeZone: "Europe/London",
+    state: "requestable",
+    capacity: 2,
+    bookedCount: 1,
+    data: { tags: ["Pair Programming"], note: "Bring a draft." },
   },
 ];
 
@@ -464,6 +492,43 @@ export function App() {
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>SlotPlanner smoke</CardTitle>
+              <CardDescription>
+                Verifies the manage-mode planner, editor dialog dependencies,
+                constraints, and Motion path through the package export.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SlotPlanner
+                title="Availability"
+                defaultSlots={playgroundSlots}
+                defaultFocusedDate="2026-07-06"
+                now="2026-07-06T00:30:00"
+                constraints={{ dailyRequestableCap: 3 }}
+              />
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>SlotPicker smoke</CardTitle>
+              <CardDescription>
+                Verifies the book-mode picker and viewer-zone projection
+                through the package export.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SlotPicker
+                title="Book a session"
+                slots={playgroundSlots}
+                viewerTimeZone="America/New_York"
+                defaultFocusedDate="2026-07-06"
+                now="2026-07-06T04:30:00Z"
+                onBookRequest={() => undefined}
+              />
             </CardContent>
           </Card>
           <Select

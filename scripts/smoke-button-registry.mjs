@@ -132,6 +132,7 @@ const pagination = await readJson(join(registryRoot, "pagination.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
 const timeline = await readJson(join(registryRoot, "timeline.json"));
+const slotPlanner = await readJson(join(registryRoot, "slot-planner.json"));
 const liveRegion = await readJson(join(registryRoot, "live-region.json"));
 const spinner = await readJson(join(registryRoot, "spinner.json"));
 const progress = await readJson(join(registryRoot, "progress.json"));
@@ -183,6 +184,7 @@ const registryItemsByName = new Map(
     typography,
     dateTimePicker,
     timeline,
+    slotPlanner,
     liveRegion,
     spinner,
     progress,
@@ -255,6 +257,10 @@ assert(toast.name === "toast", "toast registry item must be named toast.");
 assert(
   feedbackStates.name === "feedback-states",
   "feedback-states registry item must be named feedback-states.",
+);
+assert(
+  slotPlanner.name === "slot-planner",
+  "slot-planner registry item must be named slot-planner.",
 );
 assert(
   box.registryDependencies?.includes("dethink-base"),
@@ -492,6 +498,27 @@ assert(
   timeline.registryDependencies?.includes("dethink-base"),
   "timeline registry item must depend on dethink-base.",
 );
+assert(
+  slotPlanner.registryDependencies?.includes("dethink-base"),
+  "slot-planner registry item must depend on dethink-base.",
+);
+for (const dependencyName of [
+  "button",
+  "checkbox",
+  "dialog",
+  "form-field",
+  "input",
+  "number-input",
+  "radio-group",
+  "select",
+  "tag-input",
+  "textarea",
+]) {
+  assert(
+    slotPlanner.registryDependencies?.includes(dependencyName),
+    `slot-planner registry item must depend on ${dependencyName} for the editor and confirm dialogs.`,
+  );
+}
 assert(
   liveRegion.registryDependencies?.includes("dethink-base"),
   "live-region registry item must depend on dethink-base.",
@@ -765,6 +792,20 @@ assert(
   "timeline registry item must not add runtime dependencies.",
 );
 assert(
+  slotPlanner.dependencies?.includes("motion"),
+  "slot-planner registry item must include motion for week, selection, and slot choreography.",
+);
+assert(
+  slotPlanner.dependencies?.includes("@internationalized/date"),
+  "slot-planner registry item must include @internationalized/date for zone-aware date math.",
+);
+assert(
+  slotPlanner.files?.some((file) =>
+    file.path.endsWith("slot-planner/slot-planner-fixtures.ts"),
+  ),
+  "slot-planner registry item must copy the canonical fixtures module so demos work after install.",
+);
+assert(
   dateTimePicker.dependencies?.includes("@internationalized/date"),
   "date-time-picker registry item must include @internationalized/date.",
 );
@@ -850,6 +891,7 @@ for (const item of [
   typography,
   dateTimePicker,
   timeline,
+  slotPlanner,
   liveRegion,
   spinner,
   progress,
@@ -894,6 +936,7 @@ await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navigationMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navDock, registryItemsByName);
+await assertRegistryRelativeImportsResolve(slotPlanner, registryItemsByName);
 await assertRegistryRelativeImportsResolve(pagination, registryItemsByName);
 await assertRegistryRelativeImportsResolve(liveRegion, registryItemsByName);
 await assertRegistryRelativeImportsResolve(spinner, registryItemsByName);
@@ -1054,6 +1097,18 @@ const positionedOverlaySource = await readFile(
 );
 const timelineSource = await readFile(
   join(root, "packages/components/src/components/timeline/timeline.tsx"),
+  "utf8",
+);
+const slotPlannerSource = await readFile(
+  join(root, "packages/components/src/components/slot-planner/slot-planner.tsx"),
+  "utf8",
+);
+const slotPickerSource = await readFile(
+  join(root, "packages/components/src/components/slot-planner/slot-picker.tsx"),
+  "utf8",
+);
+const slotPlannerIndexSource = await readFile(
+  join(root, "packages/components/src/components/slot-planner/index.ts"),
   "utf8",
 );
 const paginationSource = await readFile(
@@ -2399,6 +2454,68 @@ assert(
   "timeline source must use timeline rail token utilities.",
 );
 assert(!timelineSource.includes("@radix-ui"), "timeline source must remain dependency-free.");
+assert(
+  slotPlannerSource.includes('from "motion/react"') &&
+    slotPlannerSource.includes("MotionConfig") &&
+    slotPlannerSource.includes("AnimatePresence") &&
+    slotPlannerSource.includes("useReducedMotion"),
+  "slot-planner source must use Motion primitives and reduced-motion detection.",
+);
+assert(
+  slotPlannerSource.includes('data-slot="slot-planner"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-day-rail"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-day-tab"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-day-panel"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-slot-list"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-add-slot"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-cap-meter"') &&
+    slotPlannerSource.includes('data-slot="slot-planner-live-region"'),
+  "slot-planner source must expose stable planner anatomy slots.",
+);
+assert(
+  slotPlannerSource.includes('role="tablist"') &&
+    slotPlannerSource.includes('role="tab"') &&
+    slotPlannerSource.includes('"tabpanel"') &&
+    slotPlannerSource.includes('aria-live="polite"') &&
+    slotPlannerSource.includes("data-reduced-motion"),
+  "slot-planner source must keep day-rail tab semantics, the live region, and reduced-motion hooks.",
+);
+assert(
+  slotPickerSource.includes('data-slot="slot-picker"') &&
+    slotPickerSource.includes('data-slot="slot-picker-slot-card"') &&
+    slotPickerSource.includes('data-slot="slot-picker-request"') &&
+    slotPickerSource.includes('data-slot="slot-picker-provider-time"') &&
+    slotPickerSource.includes('data-slot="slot-picker-live-region"') &&
+    slotPickerSource.includes("data-viewer-time-zone"),
+  "slot-picker source must expose stable book-mode anatomy and viewer-zone hooks.",
+);
+assert(
+  slotPlannerSource.includes("bg-background") &&
+    slotPlannerSource.includes("focus-visible:ring-ring") &&
+    slotPlannerSource.includes("text-destructive") &&
+    slotPlannerSource.includes("text-muted-foreground"),
+  "slot-planner source must use provider tokens for surface, focus, danger, and muted states.",
+);
+assert(
+  slotPlannerIndexSource.includes("useSlotPlanner") &&
+    slotPlannerIndexSource.includes("validateSlotPlannerSlots") &&
+    slotPlannerIndexSource.includes("SlotPlannerRenderers") &&
+    slotPlannerIndexSource.includes("SlotPicker"),
+  "slot-planner index must export the component family, headless hook, constraints utility, and renderer types.",
+);
+assert(
+  packageIndexSource.includes("SlotPlanner") &&
+    packageIndexSource.includes("SlotPicker") &&
+    packageIndexSource.includes("useSlotPlanner") &&
+    packageIndexSource.includes("defaultSlotPlannerTaxonomy"),
+  "root package index must export slot-planner family APIs.",
+);
+assert(
+  !packageIndexSource.includes("slotPlannerSampleSlots"),
+  "root package index must not export slot-planner fixtures; they ship through the registry item only.",
+);
+assert(!slotPlannerSource.includes("@radix-ui"), "slot-planner source must remain Radix-free.");
+assert(!slotPickerSource.includes("@radix-ui"), "slot-picker source must remain Radix-free.");
 
 const navigationMenuSource = await readFile(
   join(root, "packages/components/src/components/navigation-menu/navigation-menu.tsx"),

@@ -35,7 +35,7 @@ The PRD positions the library as a shadcn-compatible, open-code React component 
 | Overlays | Dialog, AlertDialog, Drawer/Sheet, Popover, Tooltip, HoverCard, DropdownMenu, ContextMenu, Menubar, OverlayManager |
 | Navigation | Breadcrumb, Pagination, NavigationMenu, NavDock, Sidebar, Steps, Anchor/ScrollSpy, CommandPalette, Tabs as nav |
 | Data Display | Card, Badge, Avatar, AvatarGroup, List, DataList, Table, DataTable, DataGrid, Timeline, Stat/KPI, Chart, Calendar, Carousel, CodeBlock, QRCode |
-| Productivity | RichTextEditor, TreeView, TreeSelect, Scheduler/EventCalendar, KanbanBoard, SortableList, DragDrop, OnboardingTour |
+| Productivity | RichTextEditor, TreeView, TreeSelect, SlotPlanner, Scheduler/EventCalendar, KanbanBoard, SortableList, DragDrop, OnboardingTour |
 | AI / Chat | PromptInput, ChatMessage, MessageList, MessageScroller, ConversationList, AttachmentBubble, TypingIndicator, CitationCard, ToolCallCard, ModelPicker |
 | Utilities | Portal, VisuallyHidden, FocusTrap, FocusScope, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, Hotkeys, useControllableState, useMediaQuery |
 
@@ -47,7 +47,7 @@ Button, IconButton, Link, Typography, Heading, Text, Box, Container, Stack, Flex
 
 ### P1
 
-ButtonGroup, Code, Kbd, Inline, SimpleGrid, Center, Spacer, Splitter/Resizable, SidebarShell, PasswordInput, PinInput, Listbox, SearchInput, TagInput, AsyncSelect, TimePicker, DateTimePicker, IntervalPicker, ColorPicker, NotificationCenter, LoadingOverlay, StatusIndicator, HoverCard, ContextMenu, Menubar, OverlayManager, NavigationMenu, Steps, CommandPalette, Timeline, Stat/KPI, Chart, CodeBlock, RichTextEditor, TreeView, TreeSelect, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, useMediaQuery, Dashboard block, CRUD block, Auth block, Settings block, Analytics block.
+ButtonGroup, Code, Kbd, Inline, SimpleGrid, Center, Spacer, Splitter/Resizable, SidebarShell, PasswordInput, PinInput, Listbox, SearchInput, TagInput, AsyncSelect, TimePicker, DateTimePicker, IntervalPicker, ColorPicker, NotificationCenter, LoadingOverlay, StatusIndicator, HoverCard, ContextMenu, Menubar, OverlayManager, NavigationMenu, Steps, CommandPalette, Timeline, SlotPlanner, Stat/KPI, Chart, CodeBlock, RichTextEditor, TreeView, TreeSelect, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, useMediaQuery, Dashboard block, CRUD block, Auth block, Settings block, Analytics block.
 
 ### P2
 
