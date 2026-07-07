@@ -59,11 +59,12 @@ Drawer supports `direction` (`top`, `bottom`, `left`, `right`), `modal`
 (default `true`) versus non-modal "push" layout for persistent panels,
 snap points with a draggable handle, and a documented nested-drawer policy
 where a drawer opened from inside another drawer automatically recedes its
-parent. Every gesture-driven feature degrades cleanly: with Motion disabled
-or `prefers-reduced-motion` set, Drawer still opens, closes, and dismisses
-correctly through plain tokenized CSS transitions and non-drag controls
-(trigger, close button, outside click, Escape) — motion is additive polish,
-never the only way to operate the component.
+parent. Every gesture-driven feature degrades cleanly: with `reducedMotion`,
+`motionPreset="none"`, or `prefers-reduced-motion` set, Drawer still opens,
+closes, and dismisses correctly through plain tokenized CSS transitions and
+non-drag controls (trigger, close button, `dismissible` outside click, Escape
+where allowed). Motion is a required runtime dependency, but motion is never
+the only way to operate the component.
 
 ## Developer Value Compared With shadcn/ui Sheet And Drawer (vaul)
 
@@ -98,12 +99,11 @@ never the only way to operate the component.
   table row, card, or FAB) can visually morph into the drawer panel, reusing
   the `layoutId` shared-layout pattern already established by SlotPlanner's
   day-tab indicator.
-- Every polish feature (drag, snap, background scale, morph) is optional and
-  collapses to a plain instant/CSS-fade show-hide under reduced motion or
-  with Motion stripped from the registry install, consistent with this
-  repository's "keep Motion out of components that don't need it" rule —
-  Drawer is the component in this family that does need it, and the rest of
-  the library stays Motion-free.
+- Every polish feature (drag, snap, background scale, morph) can be dialed
+  down to a plain instant/CSS-fade show-hide under reduced motion or
+  `motionPreset="none"`. Drawer is the component in this family that requires
+  Motion; the rest of the library stays Motion-free unless a component has a
+  similarly explicit interaction reason.
 
 ## User Stories
 
@@ -122,7 +122,7 @@ never the only way to operate the component.
 13. As a mobile user, I want a fast flick to dismiss the drawer even before crossing the full close distance, so that quick gestures feel natural.
 14. As a product engineer, I want `closeThreshold` and `velocityThreshold` props, so that I can tune how easily a drawer dismisses for my product's content.
 15. As a product engineer, I want drag initiation restricted to the handle/header region by default (`dragHandleOnly`), so that interactive content inside the drawer (buttons, sliders, scrollable lists) is not hijacked by drag gestures.
-16. As a keyboard user, I want drag-to-close to have a non-drag equivalent (close button, Escape, outside click), so that dismissal never depends on pointer gestures alone.
+16. As a keyboard user, I want drag-to-close to have a non-drag equivalent (close button, Escape, `dismissible` outside click), so that dismissal never depends on pointer gestures alone.
 17. As a mobile user, I want an iOS-style background push/scale effect while a modal drawer is open, so that the drawer feels spatially anchored to the page behind it.
 18. As a product engineer, I want an opt-in `edgeSwipeToOpen` gesture, so that users can pull a drawer open from the screen edge where that pattern fits the product.
 19. As a product engineer, I want `edgeSwipeToOpen` off by default, so that it never silently conflicts with page scrolling or the browser's native back-swipe gesture.
@@ -141,7 +141,7 @@ never the only way to operate the component.
 32. As a design-system lead, I want modal drawer portals to inherit `DethinkProvider` theme, density, direction, and custom `themeConfig` context through the same shared portal helper Dialog uses.
 33. As a package consumer, I want stable refs, className composition, and `data-slot` attributes on every public part, consistent with Dialog's contract.
 34. As a registry consumer, I want registry metadata to accurately declare the Motion (`motion/react`) runtime dependency, so that copied Drawer source installs cleanly.
-35. As a registry consumer, I want the base open/close path to still function if Motion is stripped from an install, so that Drawer degrades to a working, if less polished, component.
+35. As a registry consumer, I want reduced-motion and `motionPreset="none"` paths to preserve the base open/close/dismiss behavior, so that Drawer remains operable when drag and spring polish are disabled.
 36. As an SSR app developer, I want Drawer to render and hydrate without mismatch warnings in Next.js and Vite SSR contexts.
 37. As a maintainer, I want Drawer tests to cover public behavior — direction, modal/push mode, dismissal, snap points, drag thresholds, and motion presets — rather than Motion or React Aria implementation details.
 38. As a maintainer, I want Drawer to stay distinct from Dialog/AlertDialog (centered modal content), Sidebar (persistent primary navigation), and CommandPalette (command/action surface) so each component's scope stays clear.
@@ -175,7 +175,8 @@ never the only way to operate the component.
   `AnimatePresence` for enter/exit choreography. Keep base enter/exit on
   tokenized `motion-safe:` Tailwind transitions keyed off
   `data-entering`/`data-exiting`, matching Dialog's convention, so the
-  primitive still animates predictably if Motion is disabled or stripped.
+  primitive still animates predictably when drag and spring polish are disabled
+  by reduced motion or `motionPreset="none"`.
 - Snap points: `snapPoints` (array of fractions in `(0, 1]` of the drawer's
   open size along its drag axis; `0`/closed is always an implicit stop and
   the largest configured value is the maximum reachable open position, not
@@ -253,7 +254,7 @@ Required token coverage:
   velocity dismiss-decision logic, and nested-drawer stack bookkeeping.
 - Rendered tests should cover every `direction`, modal versus non-modal
   push mode, controlled/uncontrolled open state, dismissal (`dismissible`,
-  `keyboardDismissDisabled`, Escape, outside click), snap-point state
+  `keyboardDismissDisabled`, Escape, `dismissible` outside click), snap-point state
   changes, `DrawerHandle` interaction, refs, className composition, and
   data-slot/data-state attributes.
 - Keyboard/focus tests should cover modal focus containment and return-to-
@@ -273,8 +274,8 @@ Required token coverage:
   behavior, background scale, edge-swipe-to-open, nested drawers, motion
   presets, reduced motion, dark mode, density, and RTL.
 - Registry smoke should verify the Motion (`motion/react`) dependency is
-  declared accurately, that the base open/close path still functions with
-  Motion stripped, copied-source portability, and provider-token reliance.
+  declared accurately, reduced-motion and `motionPreset="none"` behavior,
+  copied-source portability, and provider-token reliance.
 - Prior art: Dialog's focus/portal/dismissal tests, CommandPalette's motion-
   preset and reduced-motion test pattern, and SlotPlanner's
   `motion/react` drag/spring/`layoutId` usage.

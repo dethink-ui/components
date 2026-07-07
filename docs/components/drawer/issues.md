@@ -114,7 +114,7 @@ documentation examples needed to clarify the contract.
 - [x] The docs define `closeThreshold`, `velocityThreshold`, and `dragHandleOnly` (default `true`) and explain why drag defaults to the handle/header region.
 - [x] The docs define the `backgroundScale` wrapper convention and its reduced-motion dim-only fallback, and the opt-in `edgeSwipeToOpen` gesture with its default-off rationale and RTL/back-swipe conflict notes.
 - [x] The docs define the nested-drawer policy (parent auto-recede, recommended max stack depth) and the `layoutId` shared-element passthrough.
-- [x] The docs define motion presets (`none`, `subtle`, `standard`, `expressive`) and reduced-motion behavior per preset, and confirm the base open/close path works with Motion disabled or stripped.
+- [x] The docs define motion presets (`none`, `subtle`, `standard`, `expressive`) and reduced-motion behavior per preset, and confirm the base open/close path works when drag and spring polish are disabled.
 - [x] The docs list unit, render, keyboard/focus, motion/reduced-motion, accessibility, SSR, Storybook, showcase, registry, and package-export testing seams, reusing existing Dialog and CommandPalette test seams with no new test infrastructure.
 - [x] The branch stack and child issue dependency order are documented locally, including the #275/#276 sibling split and the #277 merge-of-both requirement.
 
@@ -148,7 +148,7 @@ opens, closes, and dismisses correctly with no drag gesture involved.
 - [x] Base enter/exit animation uses tokenized `motion-safe:` Tailwind transitions keyed off `data-entering`/`data-exiting`, matching Dialog's convention.
 - [x] Every public part exposes stable `data-slot` attributes plus `data-direction` and `data-modal` state attributes, and forwards refs and composes `className` via `cn`.
 - [x] Modal-mode portals inherit `DethinkProvider` theme, density, direction, and custom `themeConfig` context through the shared portal helper.
-- [x] Registry metadata for this slice declares no Motion dependency yet (Motion lands in a later issue) and documents that the base path is fully functional without it.
+- [x] This base slice originally deferred Motion to #274; the final Drawer registry declares Motion as a required runtime dependency once drag/spring behavior lands.
 - [x] Render, focus/keyboard, accessibility (axe), SSR, Storybook, and registry smoke tests cover every direction and both modal and push mode for the base path.
 
 ## Blocked by
@@ -165,8 +165,8 @@ draggable `DrawerHandle`, and snap points with spring interpolation between
 stops. Drag initiation should default to the handle/header region so
 interactive content in the drawer body is never hijacked. Every behavior
 added here must have a working non-drag equivalent (trigger, close button,
-outside click, Escape) and must fall back cleanly to the core primitive's
-CSS-only behavior under reduced motion.
+`dismissible` outside click, Escape where allowed) and must fall back cleanly
+to the core primitive's CSS-only behavior under reduced motion.
 
 ## Acceptance criteria
 
@@ -175,7 +175,7 @@ CSS-only behavior under reduced motion.
 - [x] Drag-to-dismiss combines distance and velocity: a fast flick dismisses before crossing the full `closeThreshold` distance.
 - [x] `closeThreshold` and `velocityThreshold` are configurable props with documented defaults.
 - [x] `dragHandleOnly` defaults to `true`, restricting drag initiation to the handle/header region; the opt-out for whole-panel dragging is documented along with guidance for keeping nested scrollable regions usable.
-- [x] `prefers-reduced-motion` (or an explicit `reducedMotion` prop override, matching CommandPalette's contract) disables drag entirely; the drawer remains fully operable via trigger, close button, outside click, and Escape.
+- [x] `prefers-reduced-motion` (or an explicit `reducedMotion` prop override, matching CommandPalette's contract) disables drag entirely; the drawer remains fully operable via trigger, close button, `dismissible` outside click, and Escape where allowed.
 - [x] Registry metadata now declares the Motion (`motion/react`) runtime dependency accurately for this slice.
 - [x] Unit tests cover snap-point resolution/clamping and the distance+velocity dismiss-decision logic.
 - [~] Storybook interaction tests cover handle drag between snap points and drag-to-dismiss at both low and high velocity. Stories exist (`BottomSheetWithSnapPoints`, `DragToDismiss`) but this repo has no `test-storybook`/Vitest-addon runner configured, so the play functions are unverified beyond a successful `storybook:build` compile; a real pointer-drag gesture needs an actual browser to execute meaningfully. Documented as a specific blocker rather than claimed as passing.
@@ -252,7 +252,7 @@ smoke, and final verification for the whole component.
 - [x] Storybook interaction tests cover open/close per direction, modal versus push mode, snap points with handle drag, drag-to-dismiss, background scale, edge-swipe-to-open, nested drawers, `layoutId` morph, motion presets, and reduced motion. Present across `Drawer.stories.tsx`'s play functions (compiled and exercised via `storybook:build`; see #274/#275/#276's documented `test-storybook` limitation below).
 - [x] Accessibility tests with axe cover labelled modal Drawer, labelled push-mode Drawer, every direction, and reduced-motion state. `drawer.a11y.test.tsx` now includes a parametrized every-direction sweep and modal/push reduced-motion cases (11 tests total).
 - [x] SSR tests cover Drawer render/hydration without mismatch warnings for both modal and push mode. Pre-existing `drawer.ssr.test.tsx` from #273 already covers this; still passing.
-- [x] Registry validation and registry smoke verify copied-source portability, dependency metadata (including the Motion dependency and the Motion-stripped base path), aliases, CSS variable reliance, package exports, and provider-aware portal behavior. `scripts/smoke-button-registry.mjs` now includes a `drawer` block (name, registryDependencies, dependencies, relative-import resolution, and ~30 source-content assertions covering every public slot, the backgroundScale/edgeSwipeToOpen/motionPreset/layoutId/nested-recede wiring, Motion isolation to `drawer-motion.tsx`, and tokenized styling).
+- [x] Registry validation and registry smoke verify copied-source portability, dependency metadata (including the required Motion dependency), aliases, CSS variable reliance, package exports, reduced-motion/`motionPreset="none"` behavior, and provider-aware portal behavior. `scripts/smoke-button-registry.mjs` now includes a `drawer` block (name, registryDependencies, dependencies, relative-import resolution, and ~30 source-content assertions covering every public slot, the backgroundScale/edgeSwipeToOpen/motionPreset/layoutId/nested-recede wiring, Motion isolation to `drawer-motion.tsx`, and tokenized styling).
 - [x] Playground smoke coverage exercises Drawer through package exports and the provider theme path. `apps/playground-vite/src/App.tsx` "Drawer smoke" card, following Dialog's card pattern.
 - [x] Final verification commands pass or are documented with specific blockers. See the amendment below.
 
@@ -307,8 +307,9 @@ Additional refinements made while implementing #274:
   #276).
 - `DrawerHandle` is `aria-hidden="true"` and not independently keyboard-
   operable; it is an additive pointer-drag affordance, not a required
-  control. The non-drag equivalents (trigger, close, outside click,
-  Escape) satisfy every keyboard/no-Motion acceptance path on their own
+  control. The non-drag equivalents (trigger, close, `dismissible` outside
+  click, Escape where allowed) satisfy every keyboard/reduced-motion
+  acceptance path on their own
   (affects #271's user story 11, and #274).
 
 ## Post-Implementation Amendments (2026-07-07, continued — #275)

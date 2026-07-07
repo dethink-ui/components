@@ -31,6 +31,8 @@ describe("Drawer (modal mode)", () => {
           <DrawerContent
             ref={contentRef}
             className="custom-content"
+            data-testid="cart-drawer-content"
+            id="cart-drawer-content"
             overlayClassName="custom-overlay"
             size="sm"
           >
@@ -72,7 +74,7 @@ describe("Drawer (modal mode)", () => {
     await user.click(trigger);
 
     const dialog = await screen.findByRole("dialog", { name: "Your cart" });
-    const content = dialog.closest<HTMLElement>('[data-slot="drawer-content"]');
+    const content = screen.getByTestId("cart-drawer-content");
     const overlay = dialog.closest<HTMLElement>('[data-slot="drawer-overlay"]');
     const footer = dialog.querySelector<HTMLElement>('[data-slot="drawer-footer"]');
 
@@ -82,8 +84,10 @@ describe("Drawer (modal mode)", () => {
 
     expect(dialog).toHaveAccessibleDescription("Review items before checkout.");
     expect(contentRef.current).toBe(content);
+    expect(content).toHaveAttribute("id", "cart-drawer-content");
     expect(content).toHaveAttribute("data-direction", "right");
     expect(content).toHaveAttribute("data-modal", "true");
+    expect(content).toHaveAttribute("data-slot", "drawer-content");
     expect(content).toHaveClass("custom-content");
     expect(content).toHaveClass("inset-y-0");
     expect(content).toHaveClass("right-0");
@@ -317,13 +321,27 @@ describe("Drawer (push mode)", () => {
     ).toBeNull();
     expect(content).toHaveAttribute("data-state", "closed");
     expect(content).toHaveClass("w-0");
+    expect(content).toHaveAttribute("inert");
+    expect(
+      screen.getByRole("button", { hidden: true, name: "Panel action" }),
+    ).toHaveAttribute("tabindex", "-1");
     expect(screen.getByText("Outside content")).toBeInTheDocument();
+
+    await user.tab();
+    expect(trigger).toHaveFocus();
+
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Outside content" })).toHaveFocus();
 
     await user.click(trigger);
 
     content = document.querySelector('[data-slot="drawer-content"]');
     expect(content).toHaveAttribute("data-state", "open");
+    expect(content).not.toHaveAttribute("inert");
     expect(content).toHaveClass("w-96");
+    expect(screen.getByRole("button", { name: "Panel action" })).not.toHaveAttribute(
+      "tabindex",
+    );
 
     const panel = screen.getByRole("dialog", { name: "Inspector" });
 

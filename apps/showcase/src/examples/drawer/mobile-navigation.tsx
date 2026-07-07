@@ -22,7 +22,7 @@ export function DrawerMobileNavigation() {
     <div className="flex justify-center">
       <Drawer direction="left" edgeSwipeToOpen>
         <DrawerTrigger variant="outline">Open menu</DrawerTrigger>
-        <DrawerContent size="sm">
+        <DrawerContent closeButtonLabel="Close navigation menu" showCloseButton size="sm">
           <DrawerHeader>
             <DrawerTitle>Acme Dashboards</DrawerTitle>
             <DrawerDescription>

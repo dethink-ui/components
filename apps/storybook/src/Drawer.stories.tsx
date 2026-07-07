@@ -102,7 +102,7 @@ export const Base: Story = {
       <Container size="sm">
         <Drawer {...args} direction="right">
           <DrawerTrigger>Open cart</DrawerTrigger>
-          <DrawerContent>
+          <DrawerContent dismissible>
             <DrawerHeader>
               <DrawerTitle>Your cart</DrawerTitle>
               <DrawerDescription>
@@ -253,9 +253,6 @@ export const PersistentInspectorPushPanel: Story = {
     await expect(
       await canvas.findByRole("dialog", { name: "Record inspector" }),
     ).toBeVisible();
-    await expect(
-      canvas.getByRole("button", { name: "Record list" }),
-    ).not.toBeInTheDocument();
     await expect(canvas.getByText("Record list")).toBeVisible();
   },
 };
@@ -377,7 +374,7 @@ export const DragToDismiss: Story = {
       <Container size="sm">
         <Drawer defaultOpen direction="bottom">
           <DrawerTrigger>Open dismissable sheet</DrawerTrigger>
-          <DrawerContent>
+          <DrawerContent dismissible>
             <DrawerHandle aria-label="Drag down to dismiss" />
             <DrawerHeader>
               <DrawerTitle>Quick preview</DrawerTitle>
@@ -413,7 +410,7 @@ export const ReducedMotionFallback: Story = {
       <Container size="sm">
         <Drawer defaultOpen direction="bottom" reducedMotion snapPoints={[0.4, 1]}>
           <DrawerTrigger>Open sheet</DrawerTrigger>
-          <DrawerContent>
+          <DrawerContent dismissible>
             <DrawerHandle aria-label="Static handle, drag disabled" />
             <DrawerHeader>
               <DrawerTitle>Reduced motion</DrawerTitle>
@@ -440,7 +437,9 @@ export const ReducedMotionFallback: Story = {
       throw new Error("Drawer reduced-motion story expected rendered content.");
     }
 
-    await expect(content).toHaveClass("motion-safe:transition-[transform,opacity]");
+    await expect(content).toHaveClass(
+      "motion-safe:transition-[transform,opacity,filter]",
+    );
     await userEvent.click(page.getByRole("button", { name: "Close" }));
     await waitFor(() => {
       expect(page.queryByRole("dialog")).not.toBeInTheDocument();

@@ -124,11 +124,12 @@ modal mode:
   modal and push mode; every other prop (direction, snap points, drag,
   motion presets) behaves identically in both modes.
 - Snap points, drag-to-dismiss, background scale, edge-swipe, nested
-  drawers, and shared-element morph are all optional Motion-driven polish.
-  Every one of them has a working non-drag/non-gesture equivalent (trigger,
-  close button, outside click, Escape) and collapses cleanly to the CSS-only
-  core primitive under `prefers-reduced-motion` or with Motion stripped
-  from the registry install.
+  drawers, and shared-element morph are all Motion-driven polish on top of
+  a required `motion/react` runtime dependency. Every one of them has a
+  working non-drag/non-gesture equivalent (trigger, close button,
+  `dismissible` outside click, Escape where allowed) and collapses cleanly to
+  the CSS-only core primitive under `prefers-reduced-motion`,
+  `reducedMotion`, or `motionPreset="none"`.
 - A drawer opened from inside another drawer automatically recedes its
   parent (`DrawerNestedRoot`-equivalent context), reusing the same spring
   primitives as the base drag layer. The recommended maximum nested-drawer
@@ -207,8 +208,9 @@ modal mode:
 - Escape closes a modal drawer where allowed. If keyboard dismiss is
   disabled, there must be an obvious visible close path.
 - Drag-to-dismiss must never be the only way to close a drawer: trigger,
-  close button, outside click (modal), and Escape (modal) must all work
-  regardless of `dragHandleOnly`, drag state, or Motion availability.
+  close button, `dismissible` outside click (modal), and Escape (modal) must
+  all work regardless of `dragHandleOnly`, drag state, reduced-motion state,
+  or `motionPreset`.
 - Entry/exit, drag, snap interpolation, background scale, and shared-element
   morph must all respect `prefers-reduced-motion` through motion-safe
   utilities and the `motionEnabled`/preset gate in `drawer-motion.tsx`.
@@ -293,7 +295,7 @@ Additional styling requirements:
 
 - Rendered component tests for every `direction`, modal versus push mode,
   controlled/uncontrolled open state, dismissal (`dismissible`,
-  `keyboardDismissDisabled`, Escape, outside click), refs, className
+  `keyboardDismissDisabled`, Escape, `dismissible` outside click), refs, className
   composition, and data-slot/data-state attributes.
 - Unit tests for snap-point resolution/clamping, drag distance/velocity
   dismiss-decision logic, and nested-drawer stack bookkeeping.
@@ -315,9 +317,10 @@ Additional styling requirements:
   drawers, `layoutId` morph, motion presets, reduced motion, dark mode,
   density, and RTL.
 - Registry validation and registry smoke tests for dependency metadata
-  (Motion declared accurately from issue #274 onward; base path functional
-  with Motion stripped), copied-source portability, aliases, CSS variable
-  reliance, package exports, and provider-aware portal behavior.
+  (Motion declared as a required runtime dependency from issue #274 onward,
+  with reduced-motion and `motionPreset="none"` covering the CSS-only
+  behavior), copied-source portability, aliases, CSS variable reliance,
+  package exports, and provider-aware portal behavior.
 
 ## Research Sources
 

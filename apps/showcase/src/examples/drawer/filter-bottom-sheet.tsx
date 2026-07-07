@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Checkbox,
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -56,6 +57,7 @@ export function DrawerFilterBottomSheet() {
             <span className="text-sm text-muted-foreground">
               Snap point: {activeSnapPoint}
             </span>
+            <DrawerClose>Apply filters</DrawerClose>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

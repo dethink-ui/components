@@ -14,6 +14,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
   type Ref,
+  type RefObject,
   useContext,
   useEffect,
   useId,
@@ -299,6 +300,22 @@ const drawerCloseIconClasses = "pointer-events-none size-4 shrink-0";
 const drawerCloseButtonClasses =
   "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
 
+const drawerFocusableSelector = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  "summary",
+  "[contenteditable='true']",
+  "audio[controls]",
+  "video[controls]",
+  "[tabindex]:not([tabindex='-1'])",
+].join(",");
+
+const drawerPreviousTabIndexAttribute = "data-drawer-previous-tab-index";
+
 function joinIds(...ids: Array<string | undefined>) {
   return ids.filter(Boolean).join(" ") || undefined;
 }
@@ -317,6 +334,58 @@ function composeRefs<T>(...refs: Array<Ref<T> | undefined>) {
       assignRef(ref, node);
     }
   };
+}
+
+function syncClosedDrawerDescendantTabOrder(
+  element: HTMLElement | null,
+  closed: boolean,
+) {
+  if (!element) {
+    return;
+  }
+
+  const focusableElements = element.querySelectorAll<HTMLElement>(
+    `${drawerFocusableSelector}, [${drawerPreviousTabIndexAttribute}]`,
+  );
+
+  for (const focusableElement of focusableElements) {
+    if (closed) {
+      if (!focusableElement.hasAttribute(drawerPreviousTabIndexAttribute)) {
+        focusableElement.setAttribute(
+          drawerPreviousTabIndexAttribute,
+          focusableElement.getAttribute("tabindex") ?? "",
+        );
+      }
+
+      focusableElement.setAttribute("tabindex", "-1");
+      continue;
+    }
+
+    if (!focusableElement.hasAttribute(drawerPreviousTabIndexAttribute)) {
+      continue;
+    }
+
+    const previousTabIndex = focusableElement.getAttribute(
+      drawerPreviousTabIndexAttribute,
+    );
+
+    if (previousTabIndex) {
+      focusableElement.setAttribute("tabindex", previousTabIndex);
+    } else {
+      focusableElement.removeAttribute("tabindex");
+    }
+
+    focusableElement.removeAttribute(drawerPreviousTabIndexAttribute);
+  }
+}
+
+function useClosedDrawerDescendantTabOrder(
+  ref: RefObject<HTMLElement | null>,
+  closed: boolean,
+) {
+  useIsomorphicLayoutEffect(() => {
+    syncClosedDrawerDescendantTabOrder(ref.current, closed);
+  });
 }
 
 function renderDrawerChildren(
@@ -680,6 +749,7 @@ function DrawerPushContent(
   const open = rootContext?.open ?? false;
   const motionPreset = rootContext?.motionPreset ?? "standard";
   const outerRef = useRef<HTMLDivElement | null>(null);
+  useClosedDrawerDescendantTabOrder(outerRef, !open);
   const prefersReducedMotion = useDrawerReducedMotion();
   const resolvedReducedMotion = rootContext?.reducedMotion ?? prefersReducedMotion;
   const motionEnabled = shouldEnableDrawerMotion({
@@ -809,6 +879,7 @@ function DrawerPushContent(
         data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
         data-slot="drawer-content"
         data-state={open ? "open" : "closed"}
+        inert={!open ? true : undefined}
         className={contentClassName}
       >
         {panel}
@@ -832,6 +903,7 @@ function DrawerPushContent(
       data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
       data-slot="drawer-content"
       data-state={open ? "open" : "closed"}
+      inert={!open ? true : undefined}
       className={contentClassName}
     >
       {panel}
@@ -958,7 +1030,6 @@ function DrawerModalContent(
 
   return (
     <ModalOverlay
-      {...props}
       isDismissable={dismissible}
       isKeyboardDismissDisabled={keyboardDismissDisabled}
       isOpen={open}
@@ -970,6 +1041,7 @@ function DrawerModalContent(
     >
       {motionEnabled ? (
         <MotionModal
+          {...props}
           {...getMotionProps(rootContext?.dragHandleOnly ?? true)}
           layoutId={layoutId}
           ref={composeRefs(ref, outerRef)}
@@ -986,6 +1058,7 @@ function DrawerModalContent(
         </MotionModal>
       ) : (
         <Modal
+          {...props}
           ref={composeRefs(ref, outerRef)}
           data-direction={direction}
           data-drawer-receded={receded ? "true" : undefined}

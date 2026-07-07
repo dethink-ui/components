@@ -26,7 +26,7 @@ export const drawerProps: PropRow[] = [
     type: "boolean / boolean",
     defaultValue: "false / false",
     description:
-      "Outside-click and Escape dismissal in modal mode. Requires a visible close affordance when keyboard dismiss is disabled.",
+      "Outside-click dismissal when dismissible is true, plus Escape dismissal in modal mode. Requires a visible close affordance when keyboard dismiss is disabled.",
   },
   {
     prop: "snapPoints / activeSnapPoint / defaultSnapPoint / onActiveSnapPointChange",
@@ -87,7 +87,7 @@ export const drawerProps: PropRow[] = [
     type: "draggable affordance",
     defaultValue: "—",
     description:
-      "aria-hidden, additive pointer-drag handle. Trigger, close, outside click, and Escape work without it.",
+      "aria-hidden, additive pointer-drag handle. Trigger, close, dismissible outside click, and Escape work without it.",
   },
   {
     prop: "Nested drawers",

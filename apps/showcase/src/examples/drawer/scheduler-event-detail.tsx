@@ -24,7 +24,7 @@ export function DrawerSchedulerEventDetail() {
     >
       <Drawer backgroundScale direction="right">
         <DrawerTrigger>Open event</DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent dismissible>
           <DrawerHandle aria-label="Drag to dismiss" />
           <DrawerHeader>
             <DrawerTitle>Quarterly planning review</DrawerTitle>
