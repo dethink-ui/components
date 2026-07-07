@@ -76,7 +76,12 @@ describe("Drawer (modal mode)", () => {
     const dialog = await screen.findByRole("dialog", { name: "Your cart" });
     const content = screen.getByTestId("cart-drawer-content");
     const overlay = dialog.closest<HTMLElement>('[data-slot="drawer-overlay"]');
+    const header = dialog.querySelector<HTMLElement>('[data-slot="drawer-header"]');
     const footer = dialog.querySelector<HTMLElement>('[data-slot="drawer-footer"]');
+
+    if (!header) {
+      throw new Error("Expected DrawerHeader to render.");
+    }
 
     if (!footer) {
       throw new Error("Expected DrawerFooter to render.");
@@ -92,7 +97,13 @@ describe("Drawer (modal mode)", () => {
     expect(content).toHaveClass("inset-y-0");
     expect(content).toHaveClass("right-0");
     expect(content).toHaveClass("w-80");
+    expect(content).toHaveClass("origin-right");
+    expect(content).toHaveClass("bg-background/95");
+    expect(content).toHaveClass("backdrop-blur");
     expect(overlay).toHaveClass("custom-overlay");
+    expect(overlay).toHaveClass("backdrop-blur-[2px]");
+    expect(header).toHaveClass("border-b", "bg-background/95");
+    expect(footer).toHaveClass("border-t", "bg-background/95");
     expect(screen.getByText("Drawer body")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Done" }));
@@ -198,6 +209,62 @@ describe("Drawer (modal mode)", () => {
     ).toHaveClass("left-0", "inset-y-0");
 
     await user.keyboard("{Escape}");
+  });
+
+  it("supports root-level fullSize and custom direction-aware dimensions", () => {
+    const { rerender } = render(
+      <Drawer defaultOpen direction="right" fullSize>
+        <DrawerTrigger>Open full drawer</DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Full drawer</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    expect(
+      screen
+        .getByRole("dialog", { name: "Full drawer" })
+        .closest('[data-slot="drawer-content"]'),
+    ).toHaveClass(
+      "w-[calc(100vw-(env(safe-area-inset-left)+env(safe-area-inset-right)))]",
+    );
+
+    rerender(
+      <Drawer key="custom-bottom" defaultOpen direction="bottom" dimension="70dvh">
+        <DrawerTrigger>Open custom drawer</DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Custom drawer</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    const customContent = screen
+      .getByRole("dialog", { name: "Custom drawer" })
+      .closest<HTMLElement>('[data-slot="drawer-content"]');
+
+    expect(customContent).toHaveClass("h-[var(--drawer-size)]");
+    expect(customContent?.style.getPropertyValue("--drawer-size")).toBe("70dvh");
+
+    rerender(
+      <Drawer
+        key="content-custom-left"
+        defaultOpen
+        dimension="44rem"
+        direction="left"
+      >
+        <DrawerTrigger>Open content custom drawer</DrawerTrigger>
+        <DrawerContent dimension={360}>
+          <DrawerTitle>Content custom drawer</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    const contentOverride = screen
+      .getByRole("dialog", { name: "Content custom drawer" })
+      .closest<HTMLElement>('[data-slot="drawer-content"]');
+
+    expect(contentOverride).toHaveClass("w-[var(--drawer-size)]");
+    expect(contentOverride?.style.getPropertyValue("--drawer-size")).toBe("360px");
   });
 
   it("supports uncontrolled open state, Escape close, and keyboard dismiss prevention", async () => {

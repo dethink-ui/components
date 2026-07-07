@@ -170,13 +170,14 @@ the only way to operate the component.
   layer, isolated into a dedicated `drawer-motion.tsx` module (mirroring
   SlotPlanner's "only the motion module imports Motion" convention): `drag`
   with `dragElastic`/`dragMomentum`, velocity-aware `onDragEnd` dismiss
-  decisions, spring interpolation between snap points, `layoutId`-driven
+  decisions, spring interpolation between snap points, spring-driven
+  open/close translation from the drawer's closed edge, `layoutId`-driven
   background push/scale and optional shared-element entrance, and
-  `AnimatePresence` for enter/exit choreography. Keep base enter/exit on
-  tokenized `motion-safe:` Tailwind transitions keyed off
-  `data-entering`/`data-exiting`, matching Dialog's convention, so the
-  primitive still animates predictably when drag and spring polish are disabled
-  by reduced motion or `motionPreset="none"`.
+  `AnimatePresence` for exit choreography where needed. React Aria
+  `data-entering`/`data-exiting` classes with tokenized `motion-safe:`
+  Tailwind transitions remain the reduced-motion and `motionPreset="none"`
+  fallback path, so the primitive stays operable when drag and spring polish
+  are disabled.
 - Snap points: `snapPoints` (array of fractions in `(0, 1]` of the drawer's
   open size along its drag axis; `0`/closed is always an implicit stop and
   the largest configured value is the maximum reachable open position, not
@@ -213,9 +214,12 @@ the only way to operate the component.
 - Expose a `layoutId` passthrough prop on `DrawerContent` for optional
   shared-element entrance from a trigger element, reusing the `layoutId`
   shared-layout pattern already established by SlotPlanner.
-- Reuse Dialog's size and scroll-behavior conventions: dynamic viewport
-  units (`dvh`) and safe-area insets for full-size directions, and
-  `overscroll-behavior: contain` for inside-scroll bodies.
+- Reuse Dialog's size and scroll-behavior conventions while adding Drawer-
+  specific direction-aware sizing: `size` named scales, `fullSize` for a
+  full-height top/bottom sheet or full-width left/right rail, and
+  `dimension` for custom CSS lengths/numeric px values. Dynamic viewport
+  units (`dvh`) and safe-area insets still apply for full-size directions,
+  and `overscroll-behavior: contain` applies for inside-scroll bodies.
 - Do not add a component-level `theme` prop; use provider-level tokens only,
   consistent with Dialog and the rest of the library.
 

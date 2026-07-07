@@ -16,6 +16,13 @@ export const drawerProps: PropRow[] = [
       "false renders a non-modal inline push panel that shifts sibling layout instead of overlaying it.",
   },
   {
+    prop: "size / fullSize / dimension",
+    type: '"sm" | "md" | "lg" | "xl" | "full" / boolean / string | number',
+    defaultValue: '"md" / false / —',
+    description:
+      "Direction-aware drawer sizing. For top/bottom drawers this controls height; for left/right drawers this controls width. dimension accepts custom CSS lengths, with numbers treated as px.",
+  },
+  {
     prop: "open / defaultOpen / onOpenChange",
     type: "boolean / boolean / (open) => void",
     defaultValue: "—",

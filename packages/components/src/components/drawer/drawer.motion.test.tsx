@@ -39,6 +39,7 @@ describe("Drawer motion (enabled)", () => {
     expect(handle).toHaveAttribute("data-slot", "drawer-handle");
     expect(handle).toHaveAttribute("aria-hidden", "true");
     expect(handle).toHaveAttribute("data-direction", "bottom");
+    expect(handle).toHaveClass("h-8", "w-full", "cursor-grab", "after:w-12");
 
     expect(() => {
       fireEvent.pointerDown(handle, { pointerId: 1 });
@@ -156,6 +157,7 @@ describe("Drawer motion (reduced motion override)", () => {
 
     expect(handle).toHaveAttribute("data-slot", "drawer-handle");
     expect(handle).toHaveAttribute("aria-hidden", "true");
+    expect(handle).toHaveClass("h-8", "w-full", "after:w-12");
 
     expect(() => {
       fireEvent.pointerDown(handle, { pointerId: 1 });

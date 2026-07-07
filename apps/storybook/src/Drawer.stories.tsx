@@ -69,6 +69,9 @@ const meta = {
     defaultOpen: {
       control: "boolean",
     },
+    dimension: {
+      control: "text",
+    },
     direction: {
       control: "select",
       options: ["top", "bottom", "left", "right"],
@@ -88,6 +91,13 @@ const meta = {
     },
     reducedMotion: {
       control: "boolean",
+    },
+    fullSize: {
+      control: "boolean",
+    },
+    size: {
+      control: "select",
+      options: ["sm", "md", "lg", "xl", "full"],
     },
   },
 } satisfies Meta<typeof Drawer>;
@@ -162,6 +172,48 @@ export const Directions: Story = {
                 </DrawerContent>
               </Drawer>
             ))}
+          </Stack>
+        </Container>
+      </DethinkProvider>
+    );
+  },
+};
+
+export const Sizing: Story = {
+  render: function SizingStory() {
+    return (
+      <DethinkProvider theme="light" className="p-6">
+        <Container size="md">
+          <Stack direction="horizontal" gap="3" wrap="wrap">
+            <Drawer direction="right" fullSize>
+              <DrawerTrigger variant="outline">Full-height rail</DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>Full-height rail</DrawerTitle>
+                  <DrawerDescription>
+                    `fullSize` maps to width for side drawers.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <DrawerFooter>
+                  <DrawerClose>Close</DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
+            <Drawer direction="bottom" dimension="72dvh">
+              <DrawerTrigger variant="outline">Custom sheet height</DrawerTrigger>
+              <DrawerContent>
+                <DrawerHandle aria-label="Drag custom-height sheet" />
+                <DrawerHeader>
+                  <DrawerTitle>Custom sheet height</DrawerTitle>
+                  <DrawerDescription>
+                    `dimension=&quot;72dvh&quot;` maps to height for top/bottom drawers.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <DrawerFooter>
+                  <DrawerClose>Close</DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </Stack>
         </Container>
       </DethinkProvider>

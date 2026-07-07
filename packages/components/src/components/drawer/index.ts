@@ -21,6 +21,7 @@ export {
   type DrawerCloseRenderProps,
   type DrawerContentProps,
   type DrawerDescriptionProps,
+  type DrawerDimension,
   type DrawerDirection,
   type DrawerFooterProps,
   type DrawerHandleProps,
