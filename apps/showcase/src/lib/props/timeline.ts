@@ -10,10 +10,10 @@ export const timelineProps: PropRow[] = [
   },
   {
     prop: "mode",
-    type: '"events" | "progress"',
+    type: '"events" | "progress" | "story"',
     defaultValue: '"events"',
     description:
-      "Dated event history, or an undated step sequence for pipelines and wizards.",
+      "Dated event history, undated progress sequence, or static editorial story timeline.",
   },
   {
     prop: "status (per item)",

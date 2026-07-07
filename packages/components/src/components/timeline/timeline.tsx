@@ -95,6 +95,7 @@ export interface TimelineItemProps<
 >
   extends Omit<HTMLAttributes<HTMLLIElement>, "onSelect"> {
   item: NormalizedTimelineItem<TPayload>;
+  mode?: TimelineMode;
   orientation?: TimelineOrientation;
   layout?: TimelineLayout;
   interactive?: boolean;
@@ -142,16 +143,53 @@ const timelineViewportContentClasses =
 const timelineListClasses =
   "absolute left-0 top-0 m-[var(--dt-space-0)] list-none p-[var(--dt-space-0)]";
 
+const timelineStoryViewportClasses =
+  "relative w-full min-w-0 overflow-hidden rounded-md bg-transparent [container-type:inline-size] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
+const timelineStoryListClasses =
+  "relative m-[var(--dt-space-0)] list-none p-[var(--dt-space-0)] before:absolute before:bottom-[var(--dt-space-2)] before:left-7 before:top-[var(--dt-space-2)] before:w-px before:rounded-full before:bg-timeline-rail before:content-[''] forced-colors:before:bg-[CanvasText]";
+
+const timelineStoryListLayoutClasses: Record<"default" | "alternating", string> = {
+  default: "sm:before:left-9",
+  alternating: "sm:before:left-1/2 sm:before:-translate-x-1/2",
+};
+
 const timelineRailClasses =
   "absolute rounded-full bg-timeline-rail forced-colors:bg-[CanvasText]";
 
 const timelineItemClasses = "absolute left-0 top-0";
 
+const timelineStoryItemClasses =
+  "relative grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)] pb-20 last:pb-0 sm:pb-16";
+
+const timelineStoryItemLayoutClasses: Record<"default" | "alternating", string> = {
+  default: "sm:grid-cols-[4.5rem_minmax(0,29rem)]",
+  alternating: "sm:grid-cols-[minmax(0,1fr)_4.5rem_minmax(0,1fr)]",
+};
+
 const timelineCardBaseClasses =
-  "absolute w-80 rounded-md border border-timeline-border bg-background p-[var(--dt-space-4)] text-left text-foreground shadow-sm motion-safe:transition-[border-color,background-color,box-shadow] motion-safe:duration-200 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background data-[disabled=true]:opacity-55 data-[interactive=true]:cursor-pointer data-[interactive=true]:hover:shadow-md data-[selected=true]:border-ring data-[selected=true]:bg-muted/40 data-[selected=true]:shadow-md data-[selected=true]:ring-1 data-[selected=true]:ring-ring/35";
+  "text-left text-foreground motion-safe:transition-[border-color,background-color,box-shadow] motion-safe:duration-200 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background data-[disabled=true]:opacity-55 data-[interactive=true]:cursor-pointer";
+
+const timelineViewportCardClasses =
+  "absolute w-80 rounded-md border border-timeline-border bg-background p-[var(--dt-space-4)] shadow-sm data-[interactive=true]:hover:shadow-md data-[selected=true]:border-ring data-[selected=true]:bg-muted/40 data-[selected=true]:shadow-md data-[selected=true]:ring-1 data-[selected=true]:ring-ring/35";
+
+const timelineStoryCardClasses =
+  "relative col-start-2 row-start-1 min-w-0 max-w-full border-0 bg-transparent p-[var(--dt-space-0)] shadow-none";
+
+const timelineStoryCardAlternatingClasses: Record<"start" | "end", string> = {
+  start: "sm:col-start-1 sm:justify-self-end sm:text-right",
+  end: "sm:col-start-3 sm:justify-self-start sm:text-left",
+};
 
 const timelineMarkerBaseClasses =
-  "absolute z-10 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 text-xs font-medium shadow-sm motion-safe:transition-[border-color,background-color,box-shadow,transform] motion-safe:duration-200 data-[selected=true]:scale-110 data-[selected=true]:shadow-md data-[selected=true]:ring-4 data-[selected=true]:ring-ring/20";
+  "z-10 flex size-8 items-center justify-center rounded-full border-2 text-xs font-medium shadow-sm motion-safe:transition-[border-color,background-color,box-shadow,transform] motion-safe:duration-200 data-[selected=true]:scale-110 data-[selected=true]:shadow-md data-[selected=true]:ring-4 data-[selected=true]:ring-ring/20";
+
+const timelineViewportMarkerClasses = "absolute -translate-x-1/2 -translate-y-1/2";
+
+const timelineStoryMarkerClasses =
+  "relative col-start-1 row-start-1 mt-[var(--dt-space-1)] size-7 justify-self-center border-background bg-background text-primary ring-1 ring-border";
+
+const timelineStoryMarkerAlternatingClasses = "sm:col-start-2";
 
 const timelineMarkerStatusClasses: Record<TimelineStatus, string> = {
   neutral: "border-timeline-border bg-background text-muted-foreground",
@@ -161,6 +199,15 @@ const timelineMarkerStatusClasses: Record<TimelineStatus, string> = {
   upcoming: "border-timeline-border bg-muted text-muted-foreground",
   warning: "border-warning bg-warning text-warning-foreground",
   error: "border-destructive bg-destructive text-destructive-foreground",
+};
+
+const timelineStoryMarkerStatusClasses: Record<TimelineStatus, string> = {
+  neutral: "text-muted-foreground",
+  complete: "text-primary",
+  current: "text-primary ring-primary/30",
+  upcoming: "text-muted-foreground",
+  warning: "text-warning",
+  error: "text-destructive",
 };
 
 const timelineStatusLabel: Record<TimelineStatus, string> = {
@@ -223,6 +270,10 @@ function getCardPositionClasses({
   orientation: TimelineOrientation;
   layout: TimelineLayout;
 }) {
+  if (layout === "story") {
+    return "";
+  }
+
   const alternatingBefore = index % 2 === 0;
 
   if (orientation === "horizontal") {
@@ -240,38 +291,111 @@ function getCardPositionClasses({
   return "left-14 top-1/2 -translate-y-1/2";
 }
 
-function renderItemDate(item: NormalizedTimelineItem) {
+function renderItemDate(
+  item: NormalizedTimelineItem,
+  layout: TimelineLayout = "rail",
+) {
   const label = getTimelineDateLabel(item);
 
   if (!label) {
     return null;
   }
 
+  const className =
+    layout === "story"
+      ? "block font-mono text-xl font-semibold leading-none tracking-[0.08em] text-primary"
+      : "text-xs font-medium text-muted-foreground";
+
   if (item.datetimeAttribute) {
     return (
       <time
         dateTime={item.datetimeAttribute}
-        className="text-xs font-medium text-muted-foreground"
+        className={className}
       >
         {label}
       </time>
     );
   }
 
-  return <span className="text-xs font-medium text-muted-foreground">{label}</span>;
+  return <span className={className}>{label}</span>;
 }
 
-function renderItemDescription(description: ReactNode) {
+function renderItemDescription(
+  description: ReactNode,
+  layout: TimelineLayout = "rail",
+) {
   if (description === undefined || description === null) {
     return null;
   }
 
+  const className =
+    layout === "story"
+      ? "text-lg leading-8 text-muted-foreground sm:text-xl sm:leading-9"
+      : "text-sm leading-6 text-muted-foreground";
+
   if (typeof description === "string" || typeof description === "number") {
-    return <p className="text-sm leading-6 text-muted-foreground">{description}</p>;
+    return <p className={className}>{description}</p>;
   }
 
   return (
-    <div className="text-sm leading-6 text-muted-foreground">{description}</div>
+    <div className={className}>{description}</div>
+  );
+}
+
+function renderDefaultItemContent(
+  item: NormalizedTimelineItem,
+  titleId: string,
+  layout: TimelineLayout,
+) {
+  const itemTitle = item.title ?? item.id;
+
+  if (layout === "story") {
+    return (
+      <div className="space-y-[var(--dt-space-4)]">
+        {renderItemDate(item, layout)}
+        <div className="space-y-[var(--dt-space-4)]">
+          <h3
+            id={titleId}
+            className="font-heading text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl"
+          >
+            {itemTitle}
+          </h3>
+          {item.image ? (
+            <img
+              src={item.image.src}
+              alt={item.image.alt}
+              width={item.image.width}
+              height={item.image.height}
+              loading="lazy"
+              className="aspect-video w-full rounded-sm border border-timeline-border object-cover"
+            />
+          ) : null}
+          {renderItemDescription(item.description, layout)}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-[var(--dt-space-3)]">
+      <div className="space-y-[var(--dt-space-1)]">
+        {renderItemDate(item, layout)}
+        <h3 id={titleId} className="text-sm font-semibold leading-6 text-foreground">
+          {itemTitle}
+        </h3>
+      </div>
+      {item.image ? (
+        <img
+          src={item.image.src}
+          alt={item.image.alt}
+          width={item.image.width}
+          height={item.image.height}
+          loading="lazy"
+          className="aspect-video w-full rounded-sm border border-timeline-border object-cover"
+        />
+      ) : null}
+      {renderItemDescription(item.description, layout)}
+    </div>
   );
 }
 
@@ -400,6 +524,7 @@ function TimelineItemInner<
   {
     className,
     item,
+    mode,
     orientation = "horizontal",
     layout = "rail",
     interactive = true,
@@ -427,30 +552,16 @@ function TimelineItemInner<
     event.preventDefault();
     onSelect?.(item.id);
   };
-  const itemTitle = item.title ?? item.id;
-  const cardContent = renderItem ? (
-    renderItem(item)
-  ) : (
-    <div className="space-y-[var(--dt-space-3)]">
-      <div className="space-y-[var(--dt-space-1)]">
-        {renderItemDate(item)}
-        <h3 id={titleId} className="text-sm font-semibold leading-6 text-foreground">
-          {itemTitle}
-        </h3>
-      </div>
-      {item.image ? (
-        <img
-          src={item.image.src}
-          alt={item.image.alt}
-          width={item.image.width}
-          height={item.image.height}
-          loading="lazy"
-          className="aspect-video w-full rounded-sm border border-timeline-border object-cover"
-        />
-      ) : null}
-      {renderItemDescription(item.description)}
-    </div>
-  );
+  const isStoryRenderer = mode === "story" || layout === "story";
+  const isAlternatingStoryLayout = isStoryRenderer && layout === "alternating";
+  const alternatingSide = item.index % 2 === 0 ? "end" : "start";
+  const contentLayout = isStoryRenderer ? "story" : layout;
+  const cardContent = renderItem
+    ? renderItem(item)
+    : renderDefaultItemContent(item, titleId, contentLayout);
+  const itemStyle = isStoryRenderer
+    ? style
+    : { left: item.point.x, top: item.point.y, ...style };
 
   return (
     <li
@@ -460,8 +571,18 @@ function TimelineItemInner<
       data-status={item.status}
       data-selected={selected ? "true" : undefined}
       data-disabled={item.disabled ? "true" : undefined}
-      className={cn(timelineItemClasses, className)}
-      style={{ left: item.point.x, top: item.point.y, ...style }}
+      className={cn(
+        isStoryRenderer
+          ? cn(
+              timelineStoryItemClasses,
+              timelineStoryItemLayoutClasses[
+                isAlternatingStoryLayout ? "alternating" : "default"
+              ],
+            )
+          : timelineItemClasses,
+        className,
+      )}
+      style={itemStyle}
     >
       <span
         aria-hidden="true"
@@ -469,10 +590,21 @@ function TimelineItemInner<
         data-selected={selected ? "true" : undefined}
         className={cn(
           timelineMarkerBaseClasses,
-          timelineMarkerStatusClasses[item.status],
+          isStoryRenderer ? timelineStoryMarkerClasses : timelineViewportMarkerClasses,
+          isAlternatingStoryLayout && timelineStoryMarkerAlternatingClasses,
+          isStoryRenderer
+            ? timelineStoryMarkerStatusClasses[item.status]
+            : timelineMarkerStatusClasses[item.status],
         )}
       >
-        {item.marker ?? <span className="size-2 rounded-full bg-current" />}
+        {item.marker ?? (
+          <span
+            className={cn(
+              "rounded-full bg-current",
+              isStoryRenderer ? "size-3.5" : "size-2",
+            )}
+          />
+        )}
       </span>
       <article
         aria-labelledby={renderItem ? undefined : titleId}
@@ -483,7 +615,11 @@ function TimelineItemInner<
         data-interactive={isInteractive ? "true" : undefined}
         className={cn(
           timelineCardBaseClasses,
-          getCardPositionClasses({ index: item.index, orientation, layout }),
+          isStoryRenderer ? timelineStoryCardClasses : timelineViewportCardClasses,
+          isAlternatingStoryLayout &&
+            timelineStoryCardAlternatingClasses[alternatingSide],
+          !isStoryRenderer &&
+            getCardPositionClasses({ index: item.index, orientation, layout }),
         )}
       >
         <span className="sr-only">Status: {timelineStatusLabel[item.status]}</span>
@@ -497,7 +633,12 @@ function TimelineItemInner<
           data-slot="timeline-card-action"
           role={isInteractive ? "button" : undefined}
           tabIndex={isInteractive ? 0 : undefined}
-          className="block rounded-sm motion-safe:transition-transform motion-safe:duration-200 motion-safe:data-[interactive=true]:hover:scale-[1.01] motion-safe:data-[interactive=true]:active:scale-[0.99] motion-reduce:transition-none focus-visible:outline-none"
+          className={cn(
+            "block motion-reduce:transition-none focus-visible:outline-none",
+            isStoryRenderer
+              ? "rounded-none"
+              : "rounded-sm motion-safe:transition-transform motion-safe:duration-200 motion-safe:data-[interactive=true]:hover:scale-[1.01] motion-safe:data-[interactive=true]:active:scale-[0.99]",
+          )}
           onClick={handleSelect}
           onKeyDown={handleKeyDown}
         >
@@ -940,6 +1081,70 @@ export const TimelineViewport = forwardRef<HTMLDivElement, TimelineViewportProps
 
 TimelineViewport.displayName = "TimelineViewport";
 
+interface TimelineStoryViewportProps
+  extends Omit<TimelineViewportProps, "contentSize" | "selectedPoint"> {}
+
+function TimelineStoryViewport({
+  children,
+  className,
+  interactive = false,
+  orientation = "vertical",
+  layout = "story",
+  viewport,
+  onNavigate,
+  getPreviousId,
+  getNextId,
+  getFirstId,
+  getLastId,
+  onKeyDown,
+  ...props
+}: TimelineStoryViewportProps) {
+  const options = normalizeViewportOptions(viewport);
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+
+    if (event.defaultPrevented || !interactive) {
+      return;
+    }
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      onNavigate?.(getNextId?.() ?? null);
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      onNavigate?.(getPreviousId?.() ?? null);
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      onNavigate?.(getFirstId?.() ?? null);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      onNavigate?.(getLastId?.() ?? null);
+    }
+  };
+
+  return (
+    <div
+      {...props}
+      role="region"
+      aria-label={props["aria-label"] ?? "Timeline viewport"}
+      tabIndex={interactive ? 0 : undefined}
+      data-slot="timeline-viewport"
+      data-interactive={interactive ? "true" : "false"}
+      data-orientation={orientation}
+      data-layout={layout}
+      data-chrome={options.chrome}
+      className={cn(
+        timelineStoryViewportClasses,
+        timelineViewportChromeClasses[options.chrome],
+        className,
+      )}
+      onKeyDown={handleKeyDown}
+    >
+      {children}
+    </div>
+  );
+}
+
 function TimelineInner<
   TPayload extends TimelineItemPayload = TimelineItemPayload,
 >(
@@ -947,11 +1152,11 @@ function TimelineInner<
     className,
     items,
     mode = "events",
-    orientation = "horizontal",
-    layout = "rail",
-    scale = "auto",
+    orientation,
+    layout,
+    scale,
     order = "asc",
-    interactive = true,
+    interactive,
     viewport,
     selectedId,
     defaultSelectedId = null,
@@ -961,6 +1166,16 @@ function TimelineInner<
   }: TimelineProps<TPayload>,
   ref: ForwardedRef<HTMLElement>,
 ) {
+  const isStoryMode = mode === "story";
+  const resolvedOrientation = orientation ?? (isStoryMode ? "vertical" : "horizontal");
+  const resolvedLayout = layout ?? (isStoryMode ? "story" : "rail");
+  const usesStoryRenderer = isStoryMode || resolvedLayout === "story";
+  const resolvedScale = scale ?? (isStoryMode ? "sequence" : "auto");
+  const resolvedInteractive = interactive ?? !usesStoryRenderer;
+  const resolvedViewport = usesStoryRenderer
+    ? { controls: false, wheelZoom: false as const, ...viewport }
+    : viewport;
+  const storyListLayout = resolvedLayout === "alternating" ? "alternating" : "default";
   const rootLabel = props["aria-label"];
   const viewportLabel =
     typeof rootLabel === "string" && rootLabel.length > 0
@@ -970,26 +1185,26 @@ function TimelineInner<
     () =>
       normalizeTimelineItems(items, {
         mode,
-        orientation,
-        layout,
-        scale,
+        orientation: resolvedOrientation,
+        layout: resolvedLayout,
+        scale: resolvedScale,
         order,
       }),
-    [items, layout, mode, order, orientation, scale],
+    [items, mode, order, resolvedLayout, resolvedOrientation, resolvedScale],
   );
-  const resolvedScale = useMemo(
+  const dataScale = useMemo(
     () =>
       normalizedItems.length > 0 &&
       normalizedItems.every((item) => item.dateValue !== undefined)
-        ? scale === "sequence"
+        ? resolvedScale === "sequence"
           ? "sequence"
           : "time"
         : "sequence",
-    [normalizedItems, scale],
+    [normalizedItems, resolvedScale],
   );
   const contentSize = useMemo(
-    () => getTimelineContentSize(normalizedItems, orientation, layout),
-    [layout, normalizedItems, orientation],
+    () => getTimelineContentSize(normalizedItems, resolvedOrientation, resolvedLayout),
+    [normalizedItems, resolvedLayout, resolvedOrientation],
   );
   const [internalSelectedId, setInternalSelectedId] = useState<string | null>(
     defaultSelectedId,
@@ -1039,46 +1254,84 @@ function TimelineInner<
       ref={ref}
       data-slot="timeline"
       data-mode={mode}
-      data-orientation={orientation}
-      data-layout={layout}
-      data-scale={resolvedScale}
-      data-interactive={interactive ? "true" : "false"}
+      data-orientation={resolvedOrientation}
+      data-layout={resolvedLayout}
+      data-scale={dataScale}
+      data-interactive={resolvedInteractive ? "true" : "false"}
       className={cn(timelineRootClasses, className)}
     >
-      <TimelineViewport
-        aria-label={viewportLabel}
-        contentSize={contentSize}
-        interactive={interactive}
-        orientation={orientation}
-        layout={layout}
-        viewport={viewport}
-        selectedPoint={selectedPoint}
-        onNavigate={setSelectedId}
-        getPreviousId={getPreviousId}
-        getNextId={getNextId}
-        getFirstId={getFirstId}
-        getLastId={getLastId}
-      >
-        <TimelineRail items={normalizedItems} orientation={orientation} />
-        <ol
-          data-slot="timeline-list"
-          className={timelineListClasses}
-          style={{ width: contentSize.width, height: contentSize.height }}
+      {usesStoryRenderer ? (
+        <TimelineStoryViewport
+          aria-label={viewportLabel}
+          interactive={resolvedInteractive}
+          orientation={resolvedOrientation}
+          layout={resolvedLayout}
+          viewport={resolvedViewport}
+          onNavigate={setSelectedId}
+          getPreviousId={getPreviousId}
+          getNextId={getNextId}
+          getFirstId={getFirstId}
+          getLastId={getLastId}
         >
-          {normalizedItems.map((item) => (
-            <TimelineItem
-              key={item.id}
-              item={item}
-              orientation={orientation}
-              layout={layout}
-              interactive={interactive}
-              selected={item.id === currentSelectedId}
-              renderItem={renderItem}
-              onSelect={setSelectedId}
-            />
-          ))}
-        </ol>
-      </TimelineViewport>
+          <ol
+            data-slot="timeline-list"
+            className={cn(
+              timelineStoryListClasses,
+              timelineStoryListLayoutClasses[storyListLayout],
+            )}
+          >
+            {normalizedItems.map((item) => (
+              <TimelineItem
+                key={item.id}
+                item={item}
+                mode={mode}
+                orientation={resolvedOrientation}
+                layout={resolvedLayout}
+                interactive={resolvedInteractive}
+                selected={item.id === currentSelectedId}
+                renderItem={renderItem}
+                onSelect={setSelectedId}
+              />
+            ))}
+          </ol>
+        </TimelineStoryViewport>
+      ) : (
+        <TimelineViewport
+          aria-label={viewportLabel}
+          contentSize={contentSize}
+          interactive={resolvedInteractive}
+          orientation={resolvedOrientation}
+          layout={resolvedLayout}
+          viewport={resolvedViewport}
+          selectedPoint={selectedPoint}
+          onNavigate={setSelectedId}
+          getPreviousId={getPreviousId}
+          getNextId={getNextId}
+          getFirstId={getFirstId}
+          getLastId={getLastId}
+        >
+          <TimelineRail items={normalizedItems} orientation={resolvedOrientation} />
+          <ol
+            data-slot="timeline-list"
+            className={timelineListClasses}
+            style={{ width: contentSize.width, height: contentSize.height }}
+          >
+            {normalizedItems.map((item) => (
+              <TimelineItem
+                key={item.id}
+                item={item}
+                mode={mode}
+                orientation={resolvedOrientation}
+                layout={resolvedLayout}
+                interactive={resolvedInteractive}
+                selected={item.id === currentSelectedId}
+                renderItem={renderItem}
+                onSelect={setSelectedId}
+              />
+            ))}
+          </ol>
+        </TimelineViewport>
+      )}
     </section>
   );
 }

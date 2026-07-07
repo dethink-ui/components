@@ -15,9 +15,12 @@ const meta = {
     interactive: true,
   },
   argTypes: {
-    mode: { control: "inline-radio", options: ["events", "progress"] },
+    mode: { control: "inline-radio", options: ["events", "progress", "story"] },
     orientation: { control: "inline-radio", options: ["horizontal", "vertical"] },
-    layout: { control: "inline-radio", options: ["rail", "alternating", "stacked"] },
+    layout: {
+      control: "inline-radio",
+      options: ["rail", "alternating", "stacked", "story"],
+    },
     scale: { control: "inline-radio", options: ["auto", "time", "sequence"] },
     order: { control: "inline-radio", options: ["asc", "desc"] },
   },
@@ -132,6 +135,49 @@ const progressItems: TimelineItemData[] = [
     description: "Disabled milestones remain visible but are skipped by selection.",
     status: "error",
     disabled: true,
+  },
+];
+
+const storyItems: TimelineItemData[] = [
+  {
+    id: "transformer",
+    title: "Attention changes the map",
+    description:
+      "The Transformer made attention the core primitive, giving language models a cleaner way to learn context at scale.",
+    datetime: "2017-01-01T00:00:00Z",
+    dateLabel: "2017",
+    status: "complete",
+    marker: <span className="font-mono text-[10px] font-bold">T</span>,
+  },
+  {
+    id: "scale",
+    title: "Scale becomes the story",
+    description:
+      "Large pretrained models showed that more data, compute, and parameters could unlock useful few-shot behavior.",
+    datetime: "2020-01-01T00:00:00Z",
+    dateLabel: "2020",
+    status: "complete",
+    marker: <span className="font-mono text-[10px] font-bold">S</span>,
+  },
+  {
+    id: "chat",
+    title: "Chat becomes the interface",
+    description:
+      "Conversational assistants made LLMs feel less like research demos and more like everyday software.",
+    datetime: "2022-01-01T00:00:00Z",
+    dateLabel: "2022",
+    status: "complete",
+    marker: <span className="font-mono text-[10px] font-bold">C</span>,
+  },
+  {
+    id: "agents",
+    title: "Models become teammates",
+    description:
+      "LLMs now read, write, see, call tools, and coordinate multi-step work across product workflows.",
+    datetime: "2026-01-01T00:00:00Z",
+    dateLabel: "2026",
+    status: "current",
+    marker: <span className="font-mono text-[10px] font-bold">A</span>,
   },
 ];
 
@@ -499,6 +545,22 @@ export const Progress: Story = {
         items={progressItems}
         defaultSelectedId="building"
       />
+    </DethinkProvider>
+  ),
+};
+
+export const StoryMode: Story = {
+  args: {
+    mode: "story",
+    orientation: "vertical",
+    scale: "sequence",
+    layout: "alternating",
+    interactive: false,
+  },
+
+  render: (args) => (
+    <DethinkProvider theme="light" className="p-6">
+      <Timeline {...args} items={storyItems} />
     </DethinkProvider>
   ),
 };

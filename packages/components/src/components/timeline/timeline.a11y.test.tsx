@@ -46,6 +46,28 @@ describe("Timeline accessibility", () => {
               { id: "next", title: "Next", status: "upcoming" },
             ]}
           />
+          <Timeline
+            aria-label="Company story"
+            mode="story"
+            items={[
+              {
+                id: "founded",
+                title: "Two people, one repo",
+                description: "Started as a side project.",
+                datetime: "2018-01-01T00:00:00Z",
+                dateLabel: "2018",
+                status: "complete",
+              },
+              {
+                id: "platform",
+                title: "A platform, not a package",
+                description: "Teams ship with blocks and templates.",
+                datetime: "2026-01-01T00:00:00Z",
+                dateLabel: "2026",
+                status: "current",
+              },
+            ]}
+          />
         </main>
       </DethinkProvider>,
     );

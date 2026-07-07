@@ -9,6 +9,7 @@ import { PropsTable } from "@/components/props-table";
 import { TimelineBasic } from "@/examples/timeline/basic";
 import { TimelineProgress } from "@/examples/timeline/progress";
 import { TimelineRecipeDeployHistory } from "@/examples/timeline/recipe-deploy-history";
+import { TimelineRecipeOriginStory } from "@/examples/timeline/recipe-origin-story";
 import { timelineProps } from "@/lib/props/timeline";
 
 export const metadata: Metadata = {
@@ -51,13 +52,22 @@ export default function TimelinePage() {
         title="Recipes"
         description="Production-shaped compositions that go beyond exercising props."
       >
-        <ExampleBlock
-          file="timeline/recipe-deploy-history.tsx"
-          title="Deployment history"
-          description="Statuses carry rollout health — including a rollback marked error — and controlled selection drives a details panel showing each deployment's commit and author from its typed payload."
-        >
-          <TimelineRecipeDeployHistory />
-        </ExampleBlock>
+        <div className="space-y-10">
+          <ExampleBlock
+            file="timeline/recipe-origin-story.tsx"
+            title="LLM story"
+            description="A publication-style vertical history showing how LLMs moved from research architecture to everyday product workflows."
+          >
+            <TimelineRecipeOriginStory />
+          </ExampleBlock>
+          <ExampleBlock
+            file="timeline/recipe-deploy-history.tsx"
+            title="Deployment history"
+            description="Statuses carry rollout health — including a rollback marked error — and controlled selection drives a details panel showing each deployment's commit and author from its typed payload."
+          >
+            <TimelineRecipeDeployHistory />
+          </ExampleBlock>
+        </div>
       </DocsSection>
 
       <InstallationSection

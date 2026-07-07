@@ -88,6 +88,102 @@ describe("Timeline", () => {
     );
   });
 
+  it("supports story mode as a static vertical editorial timeline", () => {
+    render(
+      <Timeline
+        data-testid="timeline-root"
+        mode="story"
+        items={[
+          {
+            id: "founded",
+            title: "Two people, one repo",
+            description: "Started as a side project.",
+            datetime: "2018-01-01T00:00:00Z",
+            dateLabel: "2018",
+            status: "complete",
+            marker: <span data-testid="story-marker">AI</span>,
+          },
+          {
+            id: "platform",
+            title: "A platform, not a package",
+            description: "Teams ship with blocks and templates.",
+            datetime: "2026-01-01T00:00:00Z",
+            dateLabel: "2026",
+            status: "current",
+          },
+        ]}
+      />,
+    );
+
+    const root = screen.getByTestId("timeline-root");
+    const viewport = screen.getByRole("region", {
+      name: "Timeline viewport",
+    });
+    const list = screen.getByRole("list");
+    const storyCard = document.querySelector('[data-slot="timeline-card"]');
+    const controls = document.querySelector('[data-slot="timeline-controls"]');
+
+    expect(root).toHaveAttribute("data-mode", "story");
+    expect(root).toHaveAttribute("data-orientation", "vertical");
+    expect(root).toHaveAttribute("data-layout", "story");
+    expect(root).toHaveAttribute("data-scale", "sequence");
+    expect(root).toHaveAttribute("data-interactive", "false");
+    expect(viewport).not.toHaveAttribute("tabindex");
+    expect(list).toHaveClass("before:bg-timeline-rail");
+    expect(storyCard).toHaveClass("border-0", "bg-transparent", "shadow-none");
+    expect(controls).toBeNull();
+    expect(screen.getByTestId("story-marker")).toHaveTextContent("AI");
+    expect(screen.getByText("2018").closest("time")).toHaveAttribute(
+      "datetime",
+      "2018-01-01T00:00:00Z",
+    );
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Two people, one repo" }),
+    ).toHaveClass("font-heading");
+  });
+
+  it("supports alternating layout in story mode without switching to the pan viewport", () => {
+    render(
+      <Timeline
+        data-testid="timeline-root"
+        mode="story"
+        layout="alternating"
+        items={[
+          {
+            id: "first",
+            title: "First story point",
+            description: "The first point sits on the end side.",
+          },
+          {
+            id: "second",
+            title: "Second story point",
+            description: "The second point sits on the start side.",
+          },
+        ]}
+      />,
+    );
+
+    const root = screen.getByTestId("timeline-root");
+    const list = screen.getByRole("list");
+    const items = document.querySelectorAll('[data-slot="timeline-item"]');
+    const cards = document.querySelectorAll('[data-slot="timeline-card"]');
+    const markers = document.querySelectorAll('[data-slot="timeline-marker"]');
+
+    expect(root).toHaveAttribute("data-mode", "story");
+    expect(root).toHaveAttribute("data-layout", "alternating");
+    expect(root).toHaveAttribute("data-interactive", "false");
+    expect(list).toHaveClass("sm:before:left-1/2");
+    expect(items[0]).toHaveClass(
+      "sm:grid-cols-[minmax(0,1fr)_4.5rem_minmax(0,1fr)]",
+    );
+    expect(cards[0]).toHaveClass("sm:col-start-3");
+    expect(cards[1]).toHaveClass("sm:col-start-1", "sm:text-right");
+    expect(markers[0]).toHaveClass("sm:col-start-2");
+    expect(
+      document.querySelector('[data-slot="timeline-viewport-content"]'),
+    ).toBeNull();
+  });
+
   it("supports layout, orientation, custom markers, and custom item rendering", () => {
     render(
       <Timeline

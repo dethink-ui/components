@@ -8,9 +8,9 @@ export type TimelineStatus =
   | "warning"
   | "error";
 
-export type TimelineMode = "events" | "progress";
+export type TimelineMode = "events" | "progress" | "story";
 export type TimelineOrientation = "horizontal" | "vertical";
-export type TimelineLayout = "rail" | "alternating" | "stacked";
+export type TimelineLayout = "rail" | "alternating" | "stacked" | "story";
 export type TimelineScale = "auto" | "time" | "sequence";
 export type TimelineResolvedScale = "time" | "sequence";
 export type TimelineOrder = "asc" | "desc";
@@ -185,13 +185,19 @@ export function resolveTimelineScale<
 }
 
 function shouldSortByDate(mode: TimelineMode, scale: TimelineResolvedScale) {
-  return mode === "events" && scale === "time";
+  return (mode === "events" || mode === "story") && scale === "time";
 }
 
 function getTimelineCrossAxisPosition(
   orientation: TimelineOrientation,
   layout: TimelineLayout,
 ) {
+  if (layout === "story") {
+    return orientation === "horizontal"
+      ? timelineGeometry.horizontalRailY
+      : timelineGeometry.verticalRailX;
+  }
+
   if (orientation === "horizontal") {
     return layout === "alternating"
       ? timelineGeometry.horizontalAlternatingRailY

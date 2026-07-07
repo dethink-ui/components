@@ -6,7 +6,7 @@ Package target: `@dethink/components`.
 
 ## Summary
 
-Timeline is a P1 data-display component moved forward from the normal build order. It shows ordered events or progress milestones with heading, description, optional image, date/time, status marker, selection, and an optional pannable/zoomable DOM viewport.
+Timeline is a P1 data-display component moved forward from the normal build order. It shows ordered events, editorial stories, or progress milestones with heading, description, optional image, date/time, status marker, selection, and an optional pannable/zoomable DOM viewport.
 
 The v1 "canvas" is a semantic DOM viewport, not a literal `<canvas>`. Timeline content remains selectable, readable by assistive technology, responsive, themeable, and compatible with shadcn-style registry installation.
 
@@ -61,9 +61,9 @@ export type TimelineProps<
   TPayload extends TimelineItemPayload = TimelineItemPayload,
 > = {
   items: TimelineItemData<TPayload>[];
-  mode?: "events" | "progress";
+  mode?: "events" | "progress" | "story";
   orientation?: "horizontal" | "vertical";
-  layout?: "rail" | "alternating" | "stacked";
+  layout?: "rail" | "alternating" | "stacked" | "story";
   scale?: "auto" | "time" | "sequence";
   order?: "asc" | "desc";
   interactive?: boolean;
@@ -89,13 +89,15 @@ Timeline keeps structural fields at the top level and reserves `data` for produc
 
 - `mode="events"` renders date/time content with a machine-readable `<time datetime="...">` when `datetime` is available.
 - `mode="progress"` allows items without dates and relies on `status` to communicate milestone state.
+- `mode="story"` renders a static, vertical, publication-style ordered list with an unframed content column, tokenized rail, custom `marker?: React.ReactNode` support, and larger default date/title/description typography. It defaults to `orientation="vertical"`, `layout="story"`, `scale="sequence"`, and `interactive={false}`.
+- Story mode also supports `layout="alternating"` as a normal component layout. It keeps a single-column document flow on narrow viewports and alternates content around the centered rail at larger breakpoints.
 - `data` is preserved through normalization and passed to `renderItem` without interpretation by Timeline.
 - If no `renderItem` is provided and `title` is missing, the default renderer falls back to the item `id` for its heading and accessible name.
 - `scale="auto"` uses time-based spacing when every item has a valid `datetime`; otherwise it uses sequence spacing.
 - `order="asc"` is chronological for valid event timelines and input order for progress timelines; `order="desc"` reverses the resolved order.
 - Disabled items remain visible but are not selectable through pointer or keyboard navigation.
 - Selection can be uncontrolled with `defaultSelectedId` or controlled with `selectedId` and `onSelectedIdChange`.
-- `viewport.chrome` controls whether the pannable viewport is borderless, subtly tinted, or framed as a panel.
+- `viewport.chrome` controls whether the viewport is borderless, subtly tinted, or framed as a panel. Pan, zoom, and controls apply to the event/progress viewport renderer, while story mode uses normal document flow.
 - `viewport.controlsVisibility="hover"` keeps controls visually hidden until the viewport is hovered or receives keyboard focus.
 - V1 is read-only. Drag editing, creation, removal, range resizing, grouping lanes, virtualization, and scheduler behavior are intentionally out of scope.
 
@@ -106,7 +108,7 @@ Timeline keeps structural fields at the top level and reserves `data` for produc
 - Cards use headings, descriptive text, real `<img>` elements with required `alt`, and `<time>` when dates are present.
 - Interactive items are keyboard-focusable and activatable with Enter or Space.
 - Arrow keys move selection to previous/next enabled item; Home/End move to first/last enabled item.
-- Zoom controls are native buttons with accessible labels.
+- Zoom controls are native buttons with accessible labels when the pannable viewport is used.
 - Visual status is not color-only: status is exposed with text for assistive technology and `aria-current` for the current milestone.
 
 ## Styling And Theming
