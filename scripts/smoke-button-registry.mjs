@@ -105,6 +105,7 @@ const asyncSelect = await readJson(join(registryRoot, "async-select.json"));
 const tagInput = await readJson(join(registryRoot, "tag-input.json"));
 const container = await readJson(join(registryRoot, "container.json"));
 const dialog = await readJson(join(registryRoot, "dialog.json"));
+const drawer = await readJson(join(registryRoot, "drawer.json"));
 const formField = await readJson(join(registryRoot, "form-field.json"));
 const input = await readJson(join(registryRoot, "input.json"));
 const iconButton = await readJson(join(registryRoot, "icon-button.json"));
@@ -157,6 +158,7 @@ const registryItemsByName = new Map(
     tagInput,
     container,
     dialog,
+    drawer,
     formField,
     input,
     iconButton,
@@ -211,6 +213,7 @@ assert(asyncSelect.name === "async-select", "async-select registry item must be 
 assert(tagInput.name === "tag-input", "tag-input registry item must be named tag-input.");
 assert(container.name === "container", "container registry item must be named container.");
 assert(dialog.name === "dialog", "dialog registry item must be named dialog.");
+assert(drawer.name === "drawer", "drawer registry item must be named drawer.");
 assert(formField.name === "form-field", "form-field registry item must be named form-field.");
 assert(input.name === "input", "input registry item must be named input.");
 assert(iconButton.name === "icon-button", "icon-button registry item must be named icon-button.");
@@ -337,6 +340,14 @@ assert(
 assert(
   dialog.registryDependencies?.includes("button"),
   "dialog registry item must depend on button for shared trigger and close styling.",
+);
+assert(
+  drawer.registryDependencies?.includes("dethink-base"),
+  "drawer registry item must depend on dethink-base.",
+);
+assert(
+  drawer.registryDependencies?.includes("button"),
+  "drawer registry item must depend on button for shared trigger and close styling.",
 );
 assert(
   formField.registryDependencies?.includes("dethink-base"),
@@ -660,6 +671,18 @@ assert(
   "dialog registry item must include react-aria-components.",
 );
 assert(
+  drawer.dependencies?.includes("motion"),
+  "drawer registry item must include motion for drag/spring, background scale, edge-swipe, nested-recede, and shared-element behavior.",
+);
+assert(
+  drawer.dependencies?.includes("react-aria"),
+  "drawer registry item must include react-aria through its modal-mode substrate.",
+);
+assert(
+  drawer.dependencies?.includes("react-aria-components"),
+  "drawer registry item must include react-aria-components through its modal-mode substrate.",
+);
+assert(
   Array.isArray(formField.dependencies) && formField.dependencies.length === 0,
   "form-field registry item must not add runtime dependencies.",
 );
@@ -916,6 +939,7 @@ await assertRegistryRelativeImportsResolve(multiSelect, registryItemsByName);
 await assertRegistryRelativeImportsResolve(asyncSelect, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tagInput, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dialog, registryItemsByName);
+await assertRegistryRelativeImportsResolve(drawer, registryItemsByName);
 await assertRegistryRelativeImportsResolve(formField, registryItemsByName);
 await assertRegistryRelativeImportsResolve(input, registryItemsByName);
 await assertRegistryRelativeImportsResolve(grid, registryItemsByName);
@@ -1085,6 +1109,18 @@ const dateTimePickerSource = await readFile(
 );
 const dialogSource = await readFile(
   join(root, "packages/components/src/components/dialog/dialog.tsx"),
+  "utf8",
+);
+const drawerSource = await readFile(
+  join(root, "packages/components/src/components/drawer/drawer.tsx"),
+  "utf8",
+);
+const drawerMotionSource = await readFile(
+  join(root, "packages/components/src/components/drawer/drawer-motion.tsx"),
+  "utf8",
+);
+const drawerBackgroundScaleSource = await readFile(
+  join(root, "packages/components/src/components/drawer/drawer-background-scale.ts"),
   "utf8",
 );
 const providerPortalSource = await readFile(
@@ -2343,6 +2379,136 @@ assert(
   "provider portal helper must resync provider attribute changes.",
 );
 assert(!dialogSource.includes("@radix-ui"), "dialog source must remain Radix-free.");
+assert(
+  drawerSource.includes("react-aria-components"),
+  "drawer source must use React Aria Components.",
+);
+assert(
+  !drawerSource.includes('from "motion/react"'),
+  "drawer source must isolate Motion to drawer-motion.tsx, not import it directly.",
+);
+assert(
+  drawerSource.includes('data-slot={dataSlot ?? "drawer"}'),
+  "drawer source must expose stable root slot data.",
+);
+assert(
+  drawerSource.includes('data-slot={dataSlot ?? "drawer-trigger"}'),
+  "drawer source must expose stable trigger slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-overlay"'),
+  "drawer source must expose stable overlay slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-content"'),
+  "drawer source must expose stable content slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-panel"'),
+  "drawer source must expose stable panel slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-header"'),
+  "drawer source must expose stable header slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-footer"'),
+  "drawer source must expose stable footer slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-title"'),
+  "drawer source must expose stable title slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-description"'),
+  "drawer source must expose stable description slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-close"'),
+  "drawer source must expose stable close slot data.",
+);
+assert(
+  drawerSource.includes('data-slot="drawer-handle"'),
+  "drawer source must expose stable handle slot data.",
+);
+assert(
+  drawerSource.includes('portalSlot: "drawer-portal-container"'),
+  "drawer source must create an explicit provider-aware portal container.",
+);
+assert(
+  drawerSource.includes("isDismissable={dismissible}"),
+  "drawer source must expose outside-dismiss behavior in modal mode.",
+);
+assert(
+  drawerSource.includes("isKeyboardDismissDisabled={keyboardDismissDisabled}"),
+  "drawer source must expose keyboard-dismiss control in modal mode.",
+);
+assert(
+  drawerSource.includes("shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}"),
+  "drawer source must expose custom outside-interaction close guards in modal mode.",
+);
+assert(
+  drawerSource.includes("triggerElementRef.current?.focus()"),
+  "drawer source must restore focus to the trigger on close.",
+);
+assert(
+  drawerSource.includes("direction?: DrawerDirection") ||
+    drawerSource.includes("direction: DrawerDirection"),
+  "drawer source must expose the direction prop.",
+);
+assert(
+  drawerSource.includes("backgroundScale") && drawerSource.includes("useDrawerBackgroundScale"),
+  "drawer source must wire the backgroundScale prop to the background-scale hook.",
+);
+assert(
+  drawerSource.includes("edgeSwipeToOpen") && drawerSource.includes("DrawerEdgeSwipeZone"),
+  "drawer source must wire edgeSwipeToOpen to the edge-swipe hit-region.",
+);
+assert(
+  drawerSource.includes("motionPreset") && drawerSource.includes("shouldEnableDrawerMotion"),
+  "drawer source must gate Motion-driven behavior through motionPreset.",
+);
+assert(
+  drawerSource.includes("layoutId"),
+  "drawer source must expose the layoutId shared-element passthrough.",
+);
+assert(
+  drawerSource.includes("DrawerNestedContext") && drawerSource.includes("registerChildOpen"),
+  "drawer source must expose nested-drawer parent-recede bookkeeping.",
+);
+assert(
+  drawerSource.includes("bg-background"),
+  "drawer source must use tokenized background utilities.",
+);
+assert(
+  drawerSource.includes("border-border"),
+  "drawer source must use tokenized border utilities.",
+);
+assert(
+  drawerSource.includes("motion-safe:transition"),
+  "drawer source must use reduced-motion-aware transitions for its CSS-only fallback path.",
+);
+assert(
+  drawerSource.includes("dvh") && drawerSource.includes("env(safe-area-inset-top)"),
+  "drawer source must constrain full-size directions with dynamic viewport and safe-area units.",
+);
+assert(!drawerSource.includes("@radix-ui"), "drawer source must remain Radix-free.");
+assert(!drawerSource.includes("vaul"), "drawer source must not wrap vaul.");
+assert(
+  drawerMotionSource.includes('from "motion/react"') &&
+    drawerMotionSource.includes("useDragControls") &&
+    drawerMotionSource.includes("useReducedMotion"),
+  "drawer-motion source must be the sole Motion-importing module for drag/spring/gesture behavior.",
+);
+assert(
+  drawerMotionSource.includes('data-slot="drawer-edge-swipe-zone"'),
+  "drawer-motion source must expose stable edge-swipe-zone slot data.",
+);
+assert(
+  drawerBackgroundScaleSource.includes("DRAWER_BACKGROUND_WRAPPER_ATTRIBUTE") &&
+    drawerBackgroundScaleSource.includes("DRAWER_BACKGROUND_SCALE_ATTRIBUTE"),
+  "drawer-background-scale source must expose the wrapper and state attribute constants.",
+);
 assert(
   positionedOverlaySource.includes("positionedOverlayPopoverDefaults") &&
     positionedOverlaySource.includes("positionedOverlayTooltipDefaults") &&
