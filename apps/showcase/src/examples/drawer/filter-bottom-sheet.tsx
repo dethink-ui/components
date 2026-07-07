@@ -31,7 +31,7 @@ export function DrawerFilterBottomSheet() {
         snapPoints={[0.35, 0.65, 1]}
       >
         <DrawerTrigger>Filter issues</DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent dismissible showCloseButton closeButtonLabel="Close filters">
           <DrawerHandle aria-label="Drag to resize filters" />
           <DrawerHeader>
             <DrawerTitle>Filters</DrawerTitle>
