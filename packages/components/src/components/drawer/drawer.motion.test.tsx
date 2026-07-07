@@ -42,10 +42,12 @@ function readTranslateValue(value: TestMotionValue | null): number {
 
 function DrawerDragProbe({
   direction,
+  fallbackContentSize,
   onTranslateValue,
   open,
 }: {
   direction: DrawerDirection;
+  fallbackContentSize?: number;
   onTranslateValue: (value: TestMotionValue) => void;
   open: boolean;
 }) {
@@ -54,6 +56,7 @@ function DrawerDragProbe({
     closeThreshold: 0.25,
     contentRef,
     direction,
+    fallbackContentSize,
     motionPreset: "standard",
     onOpenChange: vi.fn(),
     open,
@@ -67,6 +70,36 @@ function DrawerDragProbe({
 }
 
 describe("Drawer motion (enabled)", () => {
+  it("seeds first open from the configured drawer size instead of the viewport", () => {
+    let translateValue: TestMotionValue | null = null;
+    const captureTranslateValue = (value: TestMotionValue) => {
+      translateValue = value;
+    };
+
+    const { rerender } = render(
+      <DrawerDragProbe
+        direction="right"
+        fallbackContentSize={384}
+        onTranslateValue={captureTranslateValue}
+        open={false}
+      />,
+    );
+
+    expect(readTranslateValue(translateValue)).toBe(384);
+    expect(readTranslateValue(translateValue)).toBeLessThan(window.innerWidth);
+
+    rerender(
+      <DrawerDragProbe
+        direction="right"
+        fallbackContentSize={384}
+        onTranslateValue={captureTranslateValue}
+        open
+      />,
+    );
+
+    expect(readTranslateValue(translateValue)).toBe(384);
+  });
+
   it("starts a first open from the current direction after changing direction while closed", () => {
     let translateValue: TestMotionValue | null = null;
     const captureTranslateValue = (value: TestMotionValue) => {

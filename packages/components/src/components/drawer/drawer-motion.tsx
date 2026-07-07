@@ -125,6 +125,7 @@ export interface UseDrawerDragOptions {
   contentRef: RefObject<HTMLElement | null>;
   defaultSnapPoint?: number;
   direction: DrawerDirection;
+  fallbackContentSize?: number;
   motionPreset: DrawerMotionPreset;
   onActiveSnapPointChange?: (snapPoint: number) => void;
   onOpenChange: (open: boolean) => void;
@@ -155,15 +156,16 @@ export interface UseDrawerDragResult {
 function measureContentSize(
   contentRef: RefObject<HTMLElement | null>,
   axis: "x" | "y",
+  fallbackContentSize?: number,
 ): number {
   const rect = contentRef.current?.getBoundingClientRect();
 
   if (!rect) {
-    return typeof window === "undefined"
+    return fallbackContentSize ?? (typeof window === "undefined"
       ? 0
       : axis === "x"
         ? window.innerWidth
-        : window.innerHeight;
+        : window.innerHeight);
   }
 
   const measuredSize = axis === "x" ? rect.width : rect.height;
@@ -172,7 +174,7 @@ function measureContentSize(
     return measuredSize;
   }
 
-  return axis === "x" ? window.innerWidth : window.innerHeight;
+  return fallbackContentSize ?? (axis === "x" ? window.innerWidth : window.innerHeight);
 }
 
 /**
@@ -189,6 +191,7 @@ export function useDrawerDrag({
   contentRef,
   defaultSnapPoint,
   direction,
+  fallbackContentSize,
   motionPreset,
   onActiveSnapPointChange,
   onOpenChange,
@@ -224,7 +227,7 @@ export function useDrawerDrag({
     wasOpenRef.current = open;
     startSnapPointRef.current = resolvedSnapPoint;
 
-    const contentSize = measureContentSize(contentRef, axis);
+    const contentSize = measureContentSize(contentRef, axis, fallbackContentSize);
     if (contentSize <= 0) {
       return undefined;
     }
@@ -251,7 +254,7 @@ export function useDrawerDrag({
 
     return () => controls.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, resolvedSnapPoint, axis, closingSign, springTransition]);
+  }, [open, resolvedSnapPoint, axis, closingSign, fallbackContentSize, springTransition]);
 
   useEffect(() => {
     const controls = animate(
@@ -272,7 +275,7 @@ export function useDrawerDrag({
     onActiveSnapPointChange?.(nextSnapPoint);
 
     if (nextSnapPoint === resolvedSnapPoint) {
-      const contentSize = measureContentSize(contentRef, axis);
+      const contentSize = measureContentSize(contentRef, axis, fallbackContentSize);
       const target = (1 - nextSnapPoint) * contentSize * closingSign;
 
       animate(translateMotionValue, target, springTransition);

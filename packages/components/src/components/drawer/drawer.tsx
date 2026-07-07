@@ -426,6 +426,91 @@ function resolveDrawerContentSizing({
   };
 }
 
+const drawerHorizontalFallbackSizePx: Record<Exclude<DrawerSize, "full">, number> = {
+  lg: 512,
+  md: 384,
+  sm: 320,
+  xl: 640,
+};
+
+const drawerVerticalFallbackSizeRatio: Record<DrawerSize, number> = {
+  full: 1,
+  lg: 0.75,
+  md: 0.5,
+  sm: 0.35,
+  xl: 0.9,
+};
+
+function parseDrawerDimensionFallback(dimension: DrawerDimension | undefined) {
+  if (dimension === undefined || typeof window === "undefined") {
+    return undefined;
+  }
+
+  if (typeof dimension === "number") {
+    return dimension;
+  }
+
+  const match = dimension
+    .trim()
+    .toLowerCase()
+    .match(/^(-?\d*\.?\d+)\s*(px|rem|vw|vh|dvh|svh|lvh)$/);
+
+  if (!match) {
+    return undefined;
+  }
+
+  const value = Number.parseFloat(match[1]);
+  const unit = match[2];
+
+  if (unit === "px") {
+    return value;
+  }
+
+  if (unit === "rem") {
+    const rootFontSize = Number.parseFloat(
+      window.getComputedStyle(document.documentElement).fontSize,
+    );
+
+    return value * (Number.isFinite(rootFontSize) ? rootFontSize : 16);
+  }
+
+  if (unit === "vw") {
+    return (value / 100) * window.innerWidth;
+  }
+
+  if (unit === "vh" || unit === "dvh" || unit === "svh" || unit === "lvh") {
+    return (value / 100) * window.innerHeight;
+  }
+
+  return undefined;
+}
+
+function resolveDrawerContentFallbackSize({
+  direction,
+  sizing,
+}: {
+  direction: DrawerDirection;
+  sizing: ReturnType<typeof resolveDrawerContentSizing>;
+}) {
+  const dimensionFallback = parseDrawerDimensionFallback(sizing.dimension);
+
+  if (dimensionFallback !== undefined) {
+    return dimensionFallback;
+  }
+
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
+  if (drawerDirectionAxis[direction] === "horizontal") {
+    return sizing.fullSize || sizing.size === "full"
+      ? window.innerWidth
+      : drawerHorizontalFallbackSizePx[sizing.size];
+  }
+
+  return window.innerHeight * drawerVerticalFallbackSizeRatio[sizing.size];
+}
+
 function syncClosedDrawerDescendantTabOrder(
   element: HTMLElement | null,
   closed: boolean,
@@ -875,12 +960,23 @@ function DrawerPushContent(
     }),
     [rootContext?.portalContainer],
   );
+  const sizing = resolveDrawerContentSizing({
+    dimension,
+    fullSize,
+    rootContext,
+    size,
+  });
+  const fallbackContentSize = resolveDrawerContentFallbackSize({
+    direction,
+    sizing,
+  });
   const { dragControls, getMotionProps } = useDrawerDrag({
     activeSnapPoint: rootContext?.activeSnapPoint,
     closeThreshold: rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
     contentRef: outerRef,
     defaultSnapPoint: rootContext?.defaultSnapPoint,
     direction,
+    fallbackContentSize,
     motionPreset,
     onActiveSnapPointChange: rootContext?.onActiveSnapPointChange,
     onOpenChange: (nextOpen) => rootContext?.onOpenChange(nextOpen),
@@ -934,12 +1030,6 @@ function DrawerPushContent(
   const close = () => {
     rootContext?.onOpenChange(false);
   };
-  const sizing = resolveDrawerContentSizing({
-    dimension,
-    fullSize,
-    rootContext,
-    size,
-  });
   const contentStyle = drawerContentStyle({
     dimension: sizing.dimension,
     style,
@@ -1085,12 +1175,23 @@ function DrawerModalContent(
     }),
     [rootContext?.portalContainer],
   );
+  const sizing = resolveDrawerContentSizing({
+    dimension,
+    fullSize,
+    rootContext,
+    size,
+  });
+  const fallbackContentSize = resolveDrawerContentFallbackSize({
+    direction,
+    sizing,
+  });
   const { dragControls, getMotionProps } = useDrawerDrag({
     activeSnapPoint: rootContext?.activeSnapPoint,
     closeThreshold: rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
     contentRef: outerRef,
     defaultSnapPoint: rootContext?.defaultSnapPoint,
     direction,
+    fallbackContentSize,
     motionPreset,
     onActiveSnapPointChange: rootContext?.onActiveSnapPointChange,
     onOpenChange: (nextOpen) => rootContext?.onOpenChange(nextOpen),
@@ -1120,12 +1221,6 @@ function DrawerModalContent(
   useDrawerBackgroundScale({
     active: Boolean(rootContext?.backgroundScale) && open,
     reducedMotion: !motionEnabled,
-  });
-  const sizing = resolveDrawerContentSizing({
-    dimension,
-    fullSize,
-    rootContext,
-    size,
   });
   const contentStyle = drawerContentStyle({
     dimension: sizing.dimension,
