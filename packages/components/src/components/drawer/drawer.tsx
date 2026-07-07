@@ -10,6 +10,7 @@ import {
 import {
   createContext,
   forwardRef,
+  type CSSProperties,
   type HTMLAttributes,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
@@ -56,6 +57,7 @@ import type { DrawerDirection, DrawerMotionPreset } from "./drawer-types";
 
 export type { DrawerDirection, DrawerMotionPreset } from "./drawer-types";
 export type { DrawerSnapPoint } from "./drawer-snap";
+export type DrawerDimension = number | string;
 export type DrawerSize = "sm" | "md" | "lg" | "xl" | "full";
 export type DrawerScrollBehavior = "inside" | "outside";
 
@@ -72,16 +74,19 @@ export interface DrawerProps {
   closeThreshold?: number;
   defaultOpen?: boolean;
   defaultSnapPoint?: number;
+  dimension?: DrawerDimension;
   direction?: DrawerDirection;
   dragHandleOnly?: boolean;
   edgeSwipeHitRegionSize?: number;
   edgeSwipeToOpen?: boolean;
+  fullSize?: boolean;
   modal?: boolean;
   motionPreset?: DrawerMotionPreset;
   onActiveSnapPointChange?: (snapPoint: number) => void;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
   reducedMotion?: boolean;
+  size?: DrawerSize;
   snapPoints?: DrawerSnapPoint[];
   velocityThreshold?: number;
 }
@@ -123,6 +128,8 @@ export interface DrawerContentProps
   closeButtonClassName?: string;
   closeButtonLabel?: string;
   dismissible?: boolean;
+  dimension?: DrawerDimension;
+  fullSize?: boolean;
   keyboardDismissDisabled?: boolean;
   layoutId?: string;
   overlayClassName?: string;
@@ -155,8 +162,10 @@ interface DrawerRootContextValue {
   backgroundScale: boolean;
   closeThreshold: number;
   defaultSnapPoint?: number;
+  dimension?: DrawerDimension;
   direction: DrawerDirection;
   dragHandleOnly: boolean;
+  fullSize: boolean;
   modal: boolean;
   motionPreset: DrawerMotionPreset;
   onActiveSnapPointChange?: (snapPoint: number) => void;
@@ -165,6 +174,7 @@ interface DrawerRootContextValue {
   portalContainer: HTMLElement | null;
   reducedMotion?: boolean;
   setTriggerElement: (element: HTMLButtonElement | null) => void;
+  size: DrawerSize;
   snapPoints?: DrawerSnapPoint[];
   velocityThreshold: number;
 }
@@ -223,10 +233,10 @@ const drawerDirectionAxis: Record<DrawerDirection, "horizontal" | "vertical"> = 
 const drawerRootClasses = "contents";
 
 const drawerOverlayBaseClasses =
-  "fixed inset-0 z-50 bg-foreground/35 outline-none motion-safe:transition-opacity data-[entering]:opacity-100 data-[exiting]:opacity-0";
+  "fixed inset-0 z-50 bg-foreground/30 outline-none backdrop-blur-[2px] motion-safe:transition-[opacity,backdrop-filter] data-[entering]:opacity-100 data-[exiting]:opacity-0 data-[exiting]:backdrop-blur-0";
 
 const drawerContentBaseClasses =
-  "fixed z-50 flex flex-col border-border bg-background text-foreground shadow-xl outline-none motion-safe:transition-[transform,opacity,filter] motion-safe:ease-out";
+  "fixed z-50 flex flex-col border-border/80 bg-background/95 text-foreground shadow-[0_28px_90px_-44px_rgb(0_0_0/0.55),0_12px_36px_-24px_rgb(0_0_0/0.35)] outline-none backdrop-blur will-change-transform motion-safe:transition-[transform,opacity,filter] motion-safe:ease-out";
 
 /**
  * Dims a receded (auto-parented-back) drawer. Always present in the class
@@ -239,15 +249,15 @@ const drawerContentRecedeClasses = "data-[drawer-receded=true]:brightness-90";
 
 const drawerContentPositionClasses: Record<DrawerDirection, string> = {
   bottom:
-    "inset-x-0 bottom-0 rounded-t-lg border-t data-[entering]:translate-y-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0",
-  left: "inset-y-0 left-0 rounded-r-lg border-r data-[entering]:translate-x-0 data-[exiting]:-translate-x-full data-[exiting]:opacity-0",
+    "inset-x-0 bottom-0 origin-bottom rounded-t-lg border-t data-[entering]:translate-y-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0",
+  left: "inset-y-0 left-0 origin-left rounded-r-lg border-r data-[entering]:translate-x-0 data-[exiting]:-translate-x-full data-[exiting]:opacity-0",
   right:
-    "inset-y-0 right-0 rounded-l-lg border-l data-[entering]:translate-x-0 data-[exiting]:translate-x-full data-[exiting]:opacity-0",
-  top: "inset-x-0 top-0 rounded-b-lg border-b data-[entering]:translate-y-0 data-[exiting]:-translate-y-full data-[exiting]:opacity-0",
+    "inset-y-0 right-0 origin-right rounded-l-lg border-l data-[entering]:translate-x-0 data-[exiting]:translate-x-full data-[exiting]:opacity-0",
+  top: "inset-x-0 top-0 origin-top rounded-b-lg border-b data-[entering]:translate-y-0 data-[exiting]:-translate-y-full data-[exiting]:opacity-0",
 };
 
 const drawerPushContainerBaseClasses =
-  "relative flex shrink-0 border-border bg-background text-foreground motion-safe:transition-[width,height,opacity,filter] motion-safe:ease-out";
+  "relative flex shrink-0 border-border/80 bg-background/95 text-foreground shadow-[0_18px_48px_-32px_rgb(0_0_0/0.4)] backdrop-blur motion-safe:transition-[width,height,opacity,filter] motion-safe:ease-out";
 
 const drawerPushBorderClasses: Record<DrawerDirection, string> = {
   bottom: "border-t",
@@ -272,6 +282,11 @@ const drawerHorizontalSizeClasses: Record<DrawerSize, string> = {
   xl: "w-[40rem]",
 };
 
+const drawerCustomSizeClasses: Record<"horizontal" | "vertical", string> = {
+  horizontal: "w-[var(--drawer-size)]",
+  vertical: "h-[var(--drawer-size)]",
+};
+
 const drawerContentScrollBehaviorClasses: Record<DrawerScrollBehavior, string> = {
   inside: "overflow-y-auto overscroll-contain",
   outside: "overflow-visible",
@@ -280,13 +295,13 @@ const drawerContentScrollBehaviorClasses: Record<DrawerScrollBehavior, string> =
 const drawerPanelClasses = "contents";
 
 const drawerHeaderClasses =
-  "grid gap-[var(--dt-space-1-5)] p-[var(--dt-space-6)] pb-[var(--dt-space-3)] text-start";
+  "grid shrink-0 gap-[var(--dt-space-1-5)] border-b border-border/60 bg-background/95 p-[var(--dt-space-6)] pb-[var(--dt-space-3)] text-start backdrop-blur";
 
 const drawerHeaderWithCloseButtonClasses =
   "pe-[calc(var(--dt-space-6)+var(--dt-space-8))]";
 
 const drawerFooterClasses =
-  "flex flex-col-reverse gap-density-gap p-[var(--dt-space-6)] pt-[var(--dt-space-3)] sm:flex-row sm:justify-end";
+  "flex shrink-0 flex-col-reverse gap-density-gap border-t border-border/60 bg-background/95 p-[var(--dt-space-6)] pt-[var(--dt-space-3)] backdrop-blur sm:flex-row sm:justify-end";
 
 const drawerTitleClasses =
   "text-lg font-semibold leading-7 tracking-normal text-foreground";
@@ -298,7 +313,7 @@ const visuallyHiddenClasses = "sr-only";
 const drawerCloseIconClasses = "pointer-events-none size-4 shrink-0";
 
 const drawerCloseButtonClasses =
-  "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
+  "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10 bg-background/80 shadow-sm backdrop-blur";
 
 const drawerFocusableSelector = [
   "a[href]",
@@ -315,6 +330,10 @@ const drawerFocusableSelector = [
 ].join(",");
 
 const drawerPreviousTabIndexAttribute = "data-drawer-previous-tab-index";
+
+type DrawerContentStyle = CSSProperties & {
+  "--drawer-size"?: string;
+};
 
 function joinIds(...ids: Array<string | undefined>) {
   return ids.filter(Boolean).join(" ") || undefined;
@@ -333,6 +352,77 @@ function composeRefs<T>(...refs: Array<Ref<T> | undefined>) {
     for (const ref of refs) {
       assignRef(ref, node);
     }
+  };
+}
+
+function formatDrawerDimension(dimension: DrawerDimension | undefined) {
+  if (dimension === undefined) {
+    return undefined;
+  }
+
+  return typeof dimension === "number" ? `${dimension}px` : dimension;
+}
+
+function drawerContentStyle({
+  dimension,
+  style,
+}: {
+  dimension?: DrawerDimension;
+  style?: CSSProperties;
+}) {
+  const formattedDimension = formatDrawerDimension(dimension);
+
+  if (!formattedDimension) {
+    return style;
+  }
+
+  return {
+    ...style,
+    "--drawer-size": formattedDimension,
+  } satisfies DrawerContentStyle;
+}
+
+function resolveDrawerContentSizing({
+  dimension,
+  fullSize,
+  rootContext,
+  size,
+}: {
+  dimension?: DrawerDimension;
+  fullSize?: boolean;
+  rootContext: DrawerRootContextValue | null;
+  size?: DrawerSize;
+}) {
+  const resolvedSize = size ?? rootContext?.size ?? "md";
+
+  if (dimension !== undefined) {
+    return {
+      dimension,
+      fullSize: false,
+      size: resolvedSize,
+    };
+  }
+
+  if (fullSize !== undefined) {
+    return {
+      dimension: fullSize ? undefined : rootContext?.dimension,
+      fullSize,
+      size: resolvedSize,
+    };
+  }
+
+  if (rootContext?.dimension !== undefined) {
+    return {
+      dimension: rootContext.dimension,
+      fullSize: false,
+      size: resolvedSize,
+    };
+  }
+
+  return {
+    dimension: undefined,
+    fullSize: rootContext?.fullSize ?? false,
+    size: resolvedSize,
   };
 }
 
@@ -443,7 +533,9 @@ export function drawerOverlayClassNames({
 
 export function drawerContentClassNames({
   className,
+  dimension,
   direction = "bottom",
+  fullSize = false,
   modal = true,
   motionPreset = "standard",
   open = false,
@@ -451,7 +543,9 @@ export function drawerContentClassNames({
   size = "md",
 }: {
   className?: string;
+  dimension?: DrawerDimension;
   direction?: DrawerDirection;
+  fullSize?: boolean;
   modal?: boolean;
   motionPreset?: DrawerMotionPreset;
   open?: boolean;
@@ -459,10 +553,13 @@ export function drawerContentClassNames({
   size?: DrawerSize;
 } = {}) {
   const axis = drawerDirectionAxis[direction];
+  const resolvedSize = fullSize ? "full" : size;
   const openSizeClass =
-    axis === "vertical"
-      ? drawerVerticalSizeClasses[size]
-      : drawerHorizontalSizeClasses[size];
+    dimension !== undefined
+      ? drawerCustomSizeClasses[axis]
+      : axis === "vertical"
+        ? drawerVerticalSizeClasses[resolvedSize]
+        : drawerHorizontalSizeClasses[resolvedSize];
   const durationClass = getDrawerMotionPresetSettings(motionPreset).contentDurationClass;
 
   if (!modal) {
@@ -543,16 +640,19 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
       closeThreshold = DRAWER_DEFAULT_CLOSE_THRESHOLD,
       defaultOpen,
       defaultSnapPoint,
+      dimension,
       direction = "bottom",
       dragHandleOnly = true,
       edgeSwipeHitRegionSize = DRAWER_DEFAULT_EDGE_SWIPE_HIT_REGION_SIZE,
       edgeSwipeToOpen = false,
+      fullSize = false,
       modal = true,
       motionPreset = "standard",
       onActiveSnapPointChange,
       onOpenChange,
       open,
       reducedMotion,
+      size = "md",
       snapPoints,
       velocityThreshold = DRAWER_DEFAULT_VELOCITY_THRESHOLD,
       ...props
@@ -618,8 +718,10 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
         backgroundScale,
         closeThreshold,
         defaultSnapPoint,
+        dimension,
         direction,
         dragHandleOnly,
+        fullSize,
         modal,
         motionPreset,
         onActiveSnapPointChange,
@@ -630,6 +732,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
         setTriggerElement: (element) => {
           triggerElementRef.current = element;
         },
+        size,
         snapPoints,
         velocityThreshold,
       }),
@@ -639,13 +742,16 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
         backgroundScale,
         closeThreshold,
         defaultSnapPoint,
+        dimension,
         direction,
         dragHandleOnly,
+        fullSize,
         modal,
         motionPreset,
         onActiveSnapPointChange,
         portalContainer,
         reducedMotion,
+        size,
         resolvedOpen,
         isControlled,
         snapPoints,
@@ -735,11 +841,14 @@ function DrawerPushContent(
     className,
     closeButtonClassName,
     closeButtonLabel,
+    dimension,
+    fullSize,
     keyboardDismissDisabled,
     layoutId,
     scrollBehavior = "inside",
     showCloseButton,
-    size = "md",
+    size,
+    style,
     ...props
   }: DrawerContentProps,
   ref: Ref<HTMLDivElement>,
@@ -825,15 +934,27 @@ function DrawerPushContent(
   const close = () => {
     rootContext?.onOpenChange(false);
   };
+  const sizing = resolveDrawerContentSizing({
+    dimension,
+    fullSize,
+    rootContext,
+    size,
+  });
+  const contentStyle = drawerContentStyle({
+    dimension: sizing.dimension,
+    style,
+  });
 
   const contentClassName = drawerContentClassNames({
     className,
+    dimension: sizing.dimension,
     direction,
+    fullSize: sizing.fullSize,
     modal: false,
     motionPreset,
     open,
     scrollBehavior,
-    size,
+    size: sizing.size,
   });
 
   const panel = (
@@ -880,6 +1001,7 @@ function DrawerPushContent(
         data-slot="drawer-content"
         data-state={open ? "open" : "closed"}
         inert={!open ? true : undefined}
+        style={contentStyle}
         className={contentClassName}
       >
         {panel}
@@ -888,6 +1010,10 @@ function DrawerPushContent(
   }
 
   const motionProps = getMotionProps(rootContext?.dragHandleOnly ?? true);
+  const motionStyle = {
+    ...contentStyle,
+    ...motionProps.style,
+  };
 
   return (
     <MotionDiv
@@ -904,6 +1030,7 @@ function DrawerPushContent(
       data-slot="drawer-content"
       data-state={open ? "open" : "closed"}
       inert={!open ? true : undefined}
+      style={motionStyle}
       className={contentClassName}
     >
       {panel}
@@ -922,14 +1049,17 @@ function DrawerModalContent(
     className,
     closeButtonClassName,
     closeButtonLabel,
+    dimension,
     dismissible = false,
+    fullSize,
     keyboardDismissDisabled = false,
     layoutId,
     overlayClassName,
     scrollBehavior = "inside",
     shouldCloseOnInteractOutside,
     showCloseButton,
-    size = "md",
+    size,
+    style,
     ...props
   }: DrawerContentProps,
   ref: Ref<HTMLDivElement>,
@@ -991,14 +1121,26 @@ function DrawerModalContent(
     active: Boolean(rootContext?.backgroundScale) && open,
     reducedMotion: !motionEnabled,
   });
+  const sizing = resolveDrawerContentSizing({
+    dimension,
+    fullSize,
+    rootContext,
+    size,
+  });
+  const contentStyle = drawerContentStyle({
+    dimension: sizing.dimension,
+    style,
+  });
 
   const contentClassName = drawerContentClassNames({
     className,
+    dimension: sizing.dimension,
     direction,
+    fullSize: sizing.fullSize,
     modal: true,
     motionPreset,
     scrollBehavior,
-    size,
+    size: sizing.size,
   });
 
   const panel = (
@@ -1040,22 +1182,33 @@ function DrawerModalContent(
       className={drawerOverlayClassNames({ className: overlayClassName, motionPreset })}
     >
       {motionEnabled ? (
-        <MotionModal
-          {...props}
-          {...getMotionProps(rootContext?.dragHandleOnly ?? true)}
-          layoutId={layoutId}
-          ref={composeRefs(ref, outerRef)}
-          data-direction={direction}
-          data-drawer-receded={receded ? "true" : undefined}
-          data-modal="true"
-          data-motion={motionPreset}
-          data-motion-direction={direction}
-          data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
-          data-slot="drawer-content"
-          className={contentClassName}
-        >
-          {panel}
-        </MotionModal>
+        (() => {
+          const motionProps = getMotionProps(rootContext?.dragHandleOnly ?? true);
+          const motionStyle = {
+            ...contentStyle,
+            ...motionProps.style,
+          };
+
+          return (
+            <MotionModal
+              {...props}
+              {...motionProps}
+              layoutId={layoutId}
+              ref={composeRefs(ref, outerRef)}
+              data-direction={direction}
+              data-drawer-receded={receded ? "true" : undefined}
+              data-modal="true"
+              data-motion={motionPreset}
+              data-motion-direction={direction}
+              data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
+              data-slot="drawer-content"
+              style={motionStyle}
+              className={contentClassName}
+            >
+              {panel}
+            </MotionModal>
+          );
+        })()
       ) : (
         <Modal
           {...props}
@@ -1067,6 +1220,7 @@ function DrawerModalContent(
           data-motion-direction={direction}
           data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
           data-slot="drawer-content"
+          style={contentStyle}
           className={contentClassName}
         >
           {panel}

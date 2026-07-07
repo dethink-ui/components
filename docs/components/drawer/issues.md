@@ -478,6 +478,20 @@ Refinements made while implementing #277:
   explicitly lists it as required, unlike CommandPalette's own finishing
   issue.
 
+### Post-merge polish amendment (PR #281)
+
+- Drawer entry/exit translation is now Motion-driven when the spring layer
+  is enabled: `useDrawerDrag` initializes the content at the physical closed
+  edge and animates it to the active snap point using the same
+  `springTransition` table already used by drag, snap, and nested recede.
+  The React Aria `data-entering`/`data-exiting` Tailwind path remains the
+  reduced-motion and `motionPreset="none"` fallback.
+- Direction-aware sizing is explicit on the public API. `size` remains the
+  named scale, `fullSize` maps to full height for top/bottom drawers or full
+  width for left/right drawers, and `dimension` accepts custom CSS lengths
+  or numeric pixel values. These can be set on `Drawer` as defaults or on
+  `DrawerContent` as overrides.
+
 ### Final verification (2026-07-07)
 
 Commands run from the workspace root after the #275 merge and all #277

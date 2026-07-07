@@ -77,6 +77,9 @@ modal mode:
 | --- | --- |
 | `direction` | Anchor edge: `top`, `bottom`, `left`, or `right`. |
 | `modal` | Defaults to `true`. `false` renders non-modal "push" layout. |
+| `size` | Named direction-aware size: `sm`, `md`, `lg`, `xl`, or `full`. In `top`/`bottom` drawers it maps to height; in `left`/`right` drawers it maps to width. |
+| `fullSize` | Explicit full-edge shortcut. Equivalent to `size="full"` unless `dimension` is supplied. |
+| `dimension` | Custom direction-aware size. Accepts CSS lengths/expressions or a number (treated as px). In `top`/`bottom` drawers it maps to height; in `left`/`right` drawers it maps to width. |
 | `open` | Controlled open state. Maps to React Aria `isOpen` in modal mode. |
 | `defaultOpen` | Uncontrolled initial open state. |
 | `onOpenChange` | Called when the drawer opens or closes. |
@@ -253,13 +256,16 @@ across every `direction` and both modal and push mode.
 
 Additional styling requirements:
 
-- Motion (CSS fallback): entry/exit styling keys off React Aria
-  `data-entering`/`data-exiting` attributes with tokenized `motion-safe:`
-  Tailwind transitions, matching Dialog/Select/Combobox convention.
-- Motion (Motion-driven polish): drag, snap interpolation, background
-  scale, and shared-element morph use Motion spring configuration constants
-  documented alongside the component, gated by `motionPreset` and
-  `prefers-reduced-motion`.
+- Motion entry/exit: when Motion is enabled, the same spring translation
+  primitive used for drag and snap drives the drawer from its closed edge to
+  the active snap point on open, and back toward the closed edge on close.
+  React Aria `data-entering`/`data-exiting` classes with tokenized
+  `motion-safe:` Tailwind transitions remain the reduced-motion and
+  `motionPreset="none"` fallback path.
+- Motion (Motion-driven polish): drag, snap interpolation, entry/exit
+  translation, background scale, and shared-element morph use Motion spring
+  configuration constants documented alongside the component, gated by
+  `motionPreset` and `prefers-reduced-motion`.
 - Mobile viewports: full-size directions use dynamic viewport units
   (`dvh`) and respect safe-area insets, matching Dialog's `full` size.
 - Scroll: inside-scroll bodies use `overscroll-behavior: contain`.

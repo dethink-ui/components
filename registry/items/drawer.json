@@ -3,7 +3,7 @@
   "name": "drawer",
   "type": "registry:ui",
   "title": "Drawer",
-  "description": "React Aria backed modal and non-modal push drawer/sheet primitive covering all four edge directions, with provider-aware portals, token-backed overlay/content styling, controlled open state, dismissal controls, spring-driven drag-to-dismiss, snap points, a draggable handle, an iOS-style backgroundScale page wrapper, opt-in edge-swipe-to-open, nested/stacked drawer auto-recede, a layoutId shared-element passthrough, none/subtle/standard/expressive motion presets, and reduced-motion fallbacks. Motion is a required runtime dependency; the core open/close/dismiss path stays fully functional when drag and spring polish are disabled by reduced motion or motionPreset=\"none\".",
+  "description": "React Aria backed modal and non-modal push drawer/sheet primitive covering all four edge directions, with direction-aware size/fullSize/dimension sizing, provider-aware portals, token-backed overlay/content styling, controlled open state, dismissal controls, spring-driven open/close translation, drag-to-dismiss, snap points, a draggable handle, an iOS-style backgroundScale page wrapper, opt-in edge-swipe-to-open, nested/stacked drawer auto-recede, a layoutId shared-element passthrough, none/subtle/standard/expressive motion presets, and reduced-motion fallbacks. Motion is a required runtime dependency; the core open/close/dismiss path stays fully functional when drag and spring polish are disabled by reduced motion or motionPreset=\"none\".",
   "dependencies": ["motion", "react-aria", "react-aria-components"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "button"],

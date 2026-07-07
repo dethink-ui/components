@@ -12,6 +12,7 @@ import {
 import {
   forwardRef,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -74,22 +75,22 @@ const drawerMotionPresetSettings: Record<DrawerMotionPreset, DrawerMotionPresetS
     springTransition: { duration: 0 },
   },
   subtle: {
-    contentDurationClass: "motion-safe:duration-150",
+    contentDurationClass: "motion-safe:duration-[180ms]",
     overlayDurationClass: "motion-safe:duration-150",
     recedeScale: 0.98,
-    springTransition: { damping: 34, mass: 0.8, stiffness: 300, type: "spring" },
+    springTransition: { damping: 36, mass: 0.82, stiffness: 310, type: "spring" },
   },
   standard: {
-    contentDurationClass: "motion-safe:duration-200",
+    contentDurationClass: "motion-safe:duration-[240ms]",
     overlayDurationClass: "motion-safe:duration-150",
     recedeScale: 0.96,
-    springTransition: { damping: 32, mass: 0.9, stiffness: 340, type: "spring" },
+    springTransition: { damping: 30, mass: 0.92, stiffness: 360, type: "spring" },
   },
   expressive: {
-    contentDurationClass: "motion-safe:duration-300",
+    contentDurationClass: "motion-safe:duration-[320ms]",
     overlayDurationClass: "motion-safe:duration-200",
     recedeScale: 0.92,
-    springTransition: { damping: 22, mass: 1, stiffness: 380, type: "spring" },
+    springTransition: { damping: 23, mass: 0.96, stiffness: 420, type: "spring" },
   },
 };
 
@@ -110,6 +111,9 @@ export function shouldEnableDrawerMotion({
 }
 
 const DRAWER_DRAG_ELASTIC = 0.12;
+
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export function useDrawerReducedMotion(): boolean {
   return useReducedMotion() === true;
@@ -158,7 +162,13 @@ function measureContentSize(
     return 0;
   }
 
-  return axis === "x" ? rect.width : rect.height;
+  const measuredSize = axis === "x" ? rect.width : rect.height;
+
+  if (measuredSize > 0 || typeof window === "undefined") {
+    return measuredSize;
+  }
+
+  return axis === "x" ? window.innerWidth : window.innerHeight;
 }
 
 /**
@@ -203,23 +213,32 @@ export function useDrawerDrag({
   const startSnapPointRef = useRef(resolvedSnapPoint);
   const hasMountedRef = useRef(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     startSnapPointRef.current = resolvedSnapPoint;
 
     const contentSize = measureContentSize(contentRef, axis);
-    const target = (1 - resolvedSnapPoint) * contentSize * closingSign;
+    if (contentSize <= 0) {
+      return undefined;
+    }
+
+    const openTarget = (1 - resolvedSnapPoint) * contentSize * closingSign;
+    const closedTarget = contentSize * closingSign;
+    const target = open ? openTarget : closedTarget;
 
     if (!hasMountedRef.current) {
       hasMountedRef.current = true;
-      translateMotionValue.set(target);
-      return undefined;
+      translateMotionValue.set(open ? closedTarget : target);
+
+      if (!open) {
+        return undefined;
+      }
     }
 
     const controls = animate(translateMotionValue, target, springTransition);
 
     return () => controls.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedSnapPoint, axis, closingSign]);
+  }, [open, resolvedSnapPoint, axis, closingSign, springTransition]);
 
   useEffect(() => {
     const controls = animate(
@@ -309,7 +328,7 @@ export function useDrawerDrag({
 }
 
 const drawerHandleBaseClasses =
-  "mx-auto my-[var(--dt-space-2)] h-1.5 w-12 shrink-0 touch-none rounded-full bg-muted-foreground/40 data-[direction=left]:mx-[var(--dt-space-2)] data-[direction=left]:my-auto data-[direction=left]:h-12 data-[direction=left]:w-1.5 data-[direction=right]:mx-[var(--dt-space-2)] data-[direction=right]:my-auto data-[direction=right]:h-12 data-[direction=right]:w-1.5";
+  "relative mx-auto flex h-8 w-full shrink-0 touch-none cursor-grab items-center justify-center data-[direction=left]:mx-0 data-[direction=left]:my-auto data-[direction=left]:h-full data-[direction=left]:w-8 data-[direction=right]:mx-0 data-[direction=right]:my-auto data-[direction=right]:h-full data-[direction=right]:w-8 active:cursor-grabbing after:block after:h-1.5 after:w-12 after:rounded-full after:bg-muted-foreground/40 after:shadow-sm after:transition-[width,height,background-color,opacity] hover:after:bg-muted-foreground/55 active:after:w-14 data-[direction=left]:after:h-12 data-[direction=left]:after:w-1.5 data-[direction=left]:active:after:h-14 data-[direction=left]:active:after:w-1.5 data-[direction=right]:after:h-12 data-[direction=right]:after:w-1.5 data-[direction=right]:active:after:h-14 data-[direction=right]:active:after:w-1.5 motion-reduce:after:transition-none";
 
 export function drawerHandleClassNames({ className }: { className?: string } = {}) {
   return drawerHandleBaseClasses + (className ? ` ${className}` : "");
@@ -326,7 +345,7 @@ export const DrawerMotionHandle = forwardRef<
   HTMLDivElement,
   DrawerMotionHandleProps
 >(({ className, direction, dragControls, ...props }, ref) => (
-  <div
+  <motion.div
     {...props}
     ref={ref}
     aria-hidden="true"
@@ -336,6 +355,9 @@ export const DrawerMotionHandle = forwardRef<
     onPointerDown={(event) => {
       dragControls.start(event);
     }}
+    transition={{ duration: 0.16, ease: "easeOut" }}
+    whileHover={{ scale: 1.01 }}
+    whileTap={{ scale: 0.985 }}
   />
 ));
 
