@@ -34,11 +34,39 @@ export function SlotPlannerBookMode() {
 
   const handleBookRequest = (payload: SlotPlannerBookRequestPayload) => {
     setSlots((previous) =>
-      previous.map((slot) =>
-        slot.id === payload.slotId
-          ? { ...slot, requestedCount: (slot.requestedCount ?? 0) + 1 }
-          : slot,
-      ),
+      previous.map((slot) => {
+        if (slot.id !== payload.slotId) {
+          return slot;
+        }
+
+        if (!slot.recurrence || payload.occurrenceDate === slot.date) {
+          return { ...slot, requestedCount: (slot.requestedCount ?? 0) + 1 };
+        }
+
+        const overrides = slot.recurrence.overrides ?? [];
+        const existing = overrides.find(
+          (override) => override.occurrenceDate === payload.occurrenceDate,
+        );
+        const nextOverride = {
+          ...existing,
+          occurrenceDate: payload.occurrenceDate,
+          requestedCount: (existing?.requestedCount ?? 0) + 1,
+        };
+
+        return {
+          ...slot,
+          recurrence: {
+            ...slot.recurrence,
+            overrides: existing
+              ? overrides.map((override) =>
+                  override.occurrenceDate === payload.occurrenceDate
+                    ? nextOverride
+                    : override,
+                )
+              : [...overrides, nextOverride],
+          },
+        };
+      }),
     );
   };
 

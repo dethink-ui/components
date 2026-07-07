@@ -1,3 +1,4 @@
+import { parseDate } from "@internationalized/date";
 import {
   Fragment,
   forwardRef,
@@ -16,6 +17,8 @@ import {
 } from "react";
 import { AnimatePresence, MotionConfig, useReducedMotion } from "motion/react";
 import { cn } from "../../utils/cn";
+import { Button, buttonClassNames } from "../button";
+import { IconButton } from "../icon-button";
 import {
   slotPlannerOccurrenceStatuses,
   type SlotPlannerBatchChangePayload,
@@ -36,9 +39,13 @@ import type {
   SlotPlannerEditorSeriesValues,
 } from "./slot-planner-crud";
 import {
+  CalendarIcon,
   ChevronIcon,
+  CopyIcon,
+  EditIcon,
   getConventionalSlotData,
   getSlotPlannerDirection,
+  PlusIcon,
   slotPlannerChipClasses,
   slotPlannerDayPanelClasses,
   slotPlannerDayRailClasses,
@@ -54,6 +61,7 @@ import {
   slotPlannerToolbarButtonClasses,
   slotPlannerToolbarClasses,
   slotPlannerWeekPanelContentClasses,
+  TrashIcon,
   toUtcDate,
 } from "./slot-planner-dom-shared";
 import {
@@ -117,9 +125,17 @@ export interface SlotPlannerProps<
   /** Ids for slots created through the editor. Defaults to crypto.randomUUID. */
   generateSlotId?: () => string;
   taxonomy?: SlotPlannerTaxonomyInput;
+  /** Controlled view projection. Pair with `onViewChange` for the default switcher. */
   view?: SlotPlannerView;
+  /** Initial view for uncontrolled usage. */
+  defaultView?: SlotPlannerView;
+  onViewChange?: (view: SlotPlannerView) => void;
   /** ISO date-time treated as "now"; injectable for deterministic renders. */
   now?: string;
+  /** IANA zone used for manage-mode "today", past-day state, and new slots. */
+  timeZone?: string;
+  loading?: boolean;
+  error?: ReactNode;
   title?: ReactNode;
   locale?: string;
   /**
@@ -139,10 +155,13 @@ export interface SlotPlannerProps<
 }
 
 const slotPlannerAddSlotButtonClasses =
-  "inline-flex h-8 items-center justify-center self-start rounded-md border border-dashed border-border bg-background px-[var(--dt-space-3)] text-sm font-medium text-foreground shadow-sm motion-safe:transition-colors motion-safe:duration-150 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
+  buttonClassNames({
+    className: "self-stretch shadow-sm sm:self-start",
+    size: "sm",
+    variant: "solid",
+  });
 
 const lockedOccurrenceStatuses = new Set<SlotPlannerOccurrenceStatus>([
-  "requested",
   "booked",
   "blocked",
   "expired",
@@ -166,6 +185,7 @@ function getSeriesEditorValues(
   return {
     startTime: slot.startTime,
     durationMinutes: slot.durationMinutes,
+    capacity: slot.capacity ?? 1,
     bufferBeforeMinutes: slot.bufferBeforeMinutes ?? 0,
     bufferAfterMinutes: slot.bufferAfterMinutes ?? 0,
     timeZone: slot.timeZone,
@@ -176,16 +196,14 @@ function getSeriesEditorValues(
   };
 }
 
-// Editor defaults for a new slot; the time zone falls back to the viewer's
-// zone since the planner has no zone of its own. Client-only (create opens
-// from a pointer/keyboard event), so resolvedOptions never runs during SSR.
-function getCreateEditorValues(): SlotPlannerEditorSeriesValues {
+function getCreateEditorValues(timeZone: string): SlotPlannerEditorSeriesValues {
   return {
     startTime: "09:00",
     durationMinutes: 60,
+    capacity: 1,
     bufferBeforeMinutes: 0,
     bufferAfterMinutes: 0,
-    timeZone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timeZone,
     tags: [],
     note: "",
     recurrence: "none",
@@ -228,11 +246,13 @@ function SlotPlannerSlotCardContent<
       : taxonomy.recurringBiweekly
     : null;
   const bufferBeforeMinutes = occurrence.slot.bufferBeforeMinutes ?? 0;
-  // The taxonomy has no duration/buffer templates yet, so these two lines
-  // follow the slice's prescribed "{n} min" formats verbatim.
   const metaLine =
     bufferBeforeMinutes > 0
-      ? `${bufferBeforeMinutes} min buffer · ${occurrence.timeZone}`
+      ? `${formatSlotPlannerCountTemplate(
+          taxonomy.bufferSummary,
+          bufferBeforeMinutes,
+          {},
+        )} · ${occurrence.timeZone}`
       : occurrence.timeZone;
   const renderTagChip = (tag: string) => (
     <span data-slot="slot-planner-tag-chip" className={slotPlannerChipClasses}>
@@ -269,7 +289,10 @@ function SlotPlannerSlotCardContent<
       </div>
       <div className="flex flex-wrap items-center gap-[var(--dt-space-1)]">
         <span data-slot="slot-planner-duration-chip" className={slotPlannerChipClasses}>
-          {`${occurrence.durationMinutes} min`}
+          {formatSlotPlannerCountTemplate(
+            taxonomy.durationSummary,
+            occurrence.durationMinutes,
+          )}
         </span>
         {recurrenceLabel ? (
           <span
@@ -320,6 +343,9 @@ function SlotPlannerSlotCardContent<
               disabled={pending}
               onClick={onEdit}
             >
+              <span aria-hidden="true">
+                <EditIcon />
+              </span>
               {taxonomy.editSlot}
             </button>
           ) : null}
@@ -331,6 +357,9 @@ function SlotPlannerSlotCardContent<
               disabled={pending}
               onClick={onDelete}
             >
+              <span aria-hidden="true">
+                <TrashIcon />
+              </span>
               {taxonomy.deleteSlot}
             </button>
           ) : null}
@@ -382,8 +411,13 @@ function SlotPlannerInner<
     onBatchChange,
     generateSlotId,
     taxonomy,
-    view = "week",
+    view: controlledView,
+    defaultView = "week",
+    onViewChange,
     now,
+    timeZone,
+    loading = false,
+    error,
     title,
     locale = "en",
     reducedMotion,
@@ -397,6 +431,24 @@ function SlotPlannerInner<
   const prefersReducedMotion = useReducedMotion();
   const resolvedReducedMotion = reducedMotion ?? prefersReducedMotion === true;
   const motionEnabled = !resolvedReducedMotion;
+  const [environmentTimeZone] = useState(
+    () => new Intl.DateTimeFormat().resolvedOptions().timeZone,
+  );
+  const resolvedPlannerTimeZone = timeZone ?? environmentTimeZone;
+  const [internalView, setInternalView] = useState(defaultView);
+  const currentView = controlledView ?? internalView;
+  const setView = useCallback(
+    (nextView: SlotPlannerView) => {
+      if (controlledView === undefined) {
+        setInternalView(nextView);
+      }
+
+      if (nextView !== currentView) {
+        onViewChange?.(nextView);
+      }
+    },
+    [controlledView, currentView, onViewChange],
+  );
 
   // Mutations recorded at dispatch time (create/edit) or from batch payloads
   // (copy day/week), keyed `slotId::occurrenceDate`. Once the mutation has
@@ -459,7 +511,8 @@ function SlotPlannerInner<
     onUpdateSlot,
     slots,
     taxonomy,
-    view,
+    timeZone: resolvedPlannerTimeZone,
+    view: currentView,
   });
   const {
     announcement,
@@ -488,6 +541,7 @@ function SlotPlannerInner<
     todayIso,
     updateSlot,
     weekDays,
+    weeklyCap,
   } = planner;
   const nounTemplateTokens = {
     slot: resolvedTaxonomy.slot,
@@ -834,7 +888,7 @@ function SlotPlannerInner<
     </h3>
   );
 
-  const capText = dailyCap
+  const dailyCapText = dailyCap
     ? formatSlotPlannerCountTemplate(
         resolvedTaxonomy.dailyCapSummary,
         dailyCap.cap,
@@ -848,7 +902,21 @@ function SlotPlannerInner<
         locale,
       )
     : "";
-  const capReachedMessage = dailyCap?.reached
+  const weeklyCapText = weeklyCap
+    ? formatSlotPlannerCountTemplate(
+        resolvedTaxonomy.weeklyCapSummary,
+        weeklyCap.cap,
+        {
+          cap: weeklyCap.cap,
+          requestableLabel: resolvedTaxonomy.statusLabels.requestable,
+          slot: resolvedTaxonomy.slot,
+          slotPlural: resolvedTaxonomy.slotPlural,
+          used: weeklyCap.used,
+        },
+        locale,
+      )
+    : "";
+  const dailyCapReachedMessage = dailyCap?.reached
     ? formatSlotPlannerTemplate(
         resolvedTaxonomy.violationMessages["daily-cap"],
         {
@@ -859,40 +927,79 @@ function SlotPlannerInner<
         },
       )
     : undefined;
-  const capRatio = dailyCap
-    ? dailyCap.cap > 0
-      ? dailyCap.used / dailyCap.cap
-      : 1
-    : 0;
-  const defaultCapMeter = dailyCap ? (
+  const weeklyCapReachedMessage = weeklyCap?.reached
+    ? formatSlotPlannerTemplate(
+        resolvedTaxonomy.violationMessages["weekly-cap"],
+        {
+          cap: weeklyCap.cap,
+          slot: resolvedTaxonomy.slot,
+          slotPlural: resolvedTaxonomy.slotPlural,
+          weekStart,
+        },
+      )
+    : undefined;
+  const capEntries = [
+    dailyCap
+      ? {
+          cap: dailyCap.cap,
+          key: "daily",
+          reached: dailyCap.reached,
+          reachedMessage: dailyCapReachedMessage,
+          text: dailyCapText,
+          used: dailyCap.used,
+        }
+      : undefined,
+    weeklyCap
+      ? {
+          cap: weeklyCap.cap,
+          key: "weekly",
+          reached: weeklyCap.reached,
+          reachedMessage: weeklyCapReachedMessage,
+          text: weeklyCapText,
+          used: weeklyCap.used,
+        }
+      : undefined,
+  ].filter((entry) => entry !== undefined);
+  const primaryCap = capEntries[0];
+  const defaultCapMeter = capEntries.length > 0 ? (
     <div
       data-slot="slot-planner-cap-meter"
-      data-cap-reached={dailyCap.reached ? "true" : undefined}
+      data-cap-reached={
+        capEntries.some((entry) => entry.reached) ? "true" : undefined
+      }
       className="flex flex-col gap-[var(--dt-space-1)] text-xs text-muted-foreground"
     >
-      <p className="flex flex-wrap items-center gap-x-[var(--dt-space-2)]">
-        <span>{capText}</span>
-        {capReachedMessage ? (
-          // Cap-reached is stated in text, never by color alone.
-          <span
-            data-slot="slot-planner-cap-meter-message"
-            className="font-medium text-destructive"
+      {capEntries.map((entry) => (
+        <div
+          key={entry.key}
+          data-slot={`slot-planner-${entry.key}-cap`}
+          className="flex flex-col gap-[var(--dt-space-1)]"
+        >
+          <p className="flex flex-wrap items-center gap-x-[var(--dt-space-2)]">
+            <span>{entry.text}</span>
+            {entry.reachedMessage ? (
+              // Cap-reached is stated in text, never by color alone.
+              <span
+                data-slot="slot-planner-cap-meter-message"
+                className="font-medium text-destructive"
+              >
+                {entry.reachedMessage}
+              </span>
+            ) : null}
+          </p>
+          {/* Decorative fill bar; the text above stays canonical. */}
+          <div
+            aria-hidden="true"
+            data-slot="slot-planner-cap-meter-track"
+            className="h-1 w-full overflow-hidden rounded-full bg-muted"
           >
-            {capReachedMessage}
-          </span>
-        ) : null}
-      </p>
-      {/* Decorative fill bar; the text above stays canonical. */}
-      <div
-        aria-hidden="true"
-        data-slot="slot-planner-cap-meter-track"
-        className="h-1 w-full overflow-hidden rounded-full bg-muted"
-      >
-        <SlotPlannerCapMeterFill
-          motionEnabled={motionEnabled}
-          ratio={capRatio}
-        />
-      </div>
+            <SlotPlannerCapMeterFill
+              motionEnabled={motionEnabled}
+              ratio={entry.cap > 0 ? entry.used / entry.cap : 1}
+            />
+          </div>
+        </div>
+      ))}
     </div>
   ) : null;
 
@@ -904,16 +1011,42 @@ function SlotPlannerInner<
       {resolvedTaxonomy.emptyDay}
     </p>
   );
+  const hasExternalError =
+    error !== undefined && error !== null && error !== false;
+  const externalErrorContent =
+    typeof error === "boolean" ? resolvedTaxonomy.error : error;
+  const defaultLoading = (
+    <p
+      role="status"
+      data-slot="slot-planner-loading"
+      className="text-sm text-muted-foreground"
+    >
+      {resolvedTaxonomy.loading}
+    </p>
+  );
+  const defaultError = (
+    <div
+      role="alert"
+      data-slot="slot-planner-error"
+      className={slotPlannerSaveErrorClasses}
+    >
+      {externalErrorContent ?? resolvedTaxonomy.error}
+    </div>
+  );
 
   const dayPanel = (
     <div
       ref={panelRef}
-      role={view === "week" ? "tabpanel" : undefined}
-      id={view === "week" ? panelId : undefined}
-      aria-labelledby={view === "week" ? getTabId(currentFocusedDate) : undefined}
-      tabIndex={view === "week" ? 0 : -1}
+      role={currentView === "week" ? "tabpanel" : undefined}
+      id={currentView === "week" ? panelId : undefined}
+      aria-labelledby={
+        currentView === "week" ? getTabId(currentFocusedDate) : undefined
+      }
+      tabIndex={currentView === "week" ? 0 : -1}
       data-slot="slot-planner-day-panel"
       data-past={isPastDay ? "true" : undefined}
+      data-loading={loading ? "true" : undefined}
+      data-error={hasExternalError ? "true" : undefined}
       className={slotPlannerDayPanelClasses}
     >
       <SlotPlannerWeekSlide
@@ -933,23 +1066,49 @@ function SlotPlannerInner<
             taxonomy: resolvedTaxonomy,
           })
         : defaultDayHeader}
-      {dailyCap
+      {primaryCap
         ? renderers?.capMeter
           ? renderers.capMeter({
-              cap: dailyCap.cap,
+              cap: primaryCap.cap,
               date: currentFocusedDate,
-              reached: dailyCap.reached,
-              ...(capReachedMessage !== undefined
-                ? { reachedMessage: capReachedMessage }
+              ...(dailyCap
+                ? {
+                    daily: {
+                      cap: dailyCap.cap,
+                      reached: dailyCap.reached,
+                      ...(dailyCapReachedMessage !== undefined
+                        ? { reachedMessage: dailyCapReachedMessage }
+                        : {}),
+                      text: dailyCapText,
+                      used: dailyCap.used,
+                    },
+                  }
+                : {}),
+              reached: primaryCap.reached,
+              ...(primaryCap.reachedMessage !== undefined
+                ? { reachedMessage: primaryCap.reachedMessage }
                 : {}),
               renderDefault: () => defaultCapMeter,
               taxonomy: resolvedTaxonomy,
-              text: capText,
-              used: dailyCap.used,
+              text: primaryCap.text,
+              used: primaryCap.used,
+              ...(weeklyCap
+                ? {
+                    weekly: {
+                      cap: weeklyCap.cap,
+                      reached: weeklyCap.reached,
+                      ...(weeklyCapReachedMessage !== undefined
+                        ? { reachedMessage: weeklyCapReachedMessage }
+                        : {}),
+                      text: weeklyCapText,
+                      used: weeklyCap.used,
+                    },
+                  }
+                : {}),
             })
           : defaultCapMeter
         : null}
-      {!isPastDay ? (
+      {!isPastDay && !loading && !hasExternalError ? (
         <div
           data-slot="slot-planner-day-actions"
           data-pending={batchPending ? "true" : undefined}
@@ -963,6 +1122,9 @@ function SlotPlannerInner<
             disabled={batchPending}
             onClick={openCopyDay}
           >
+            <span aria-hidden="true">
+              <CopyIcon />
+            </span>
             {resolvedTaxonomy.copyDay}
           </button>
           <button
@@ -972,6 +1134,9 @@ function SlotPlannerInner<
             disabled={batchPending}
             onClick={openCopyWeek}
           >
+            <span aria-hidden="true">
+              <CopyIcon />
+            </span>
             {resolvedTaxonomy.copyWeek}
           </button>
           <button
@@ -981,6 +1146,9 @@ function SlotPlannerInner<
             disabled={batchPending}
             onClick={openClearDay}
           >
+            <span aria-hidden="true">
+              <TrashIcon />
+            </span>
             {resolvedTaxonomy.clearDay}
           </button>
           {batchPending ? (
@@ -1017,7 +1185,11 @@ function SlotPlannerInner<
           {resolvedTaxonomy.pastDay}
         </p>
       ) : null}
-      {selectedOccurrences.length === 0 ? (
+      {loading ? (
+        defaultLoading
+      ) : hasExternalError ? (
+        defaultError
+      ) : selectedOccurrences.length === 0 ? (
         renderers?.emptyDay ? (
           renderers.emptyDay({
             date: currentFocusedDate,
@@ -1095,6 +1267,7 @@ function SlotPlannerInner<
                 }}
                 motionEnabled={motionEnabled}
                 entrance={recentEntry !== undefined}
+                layoutDependency={selectedOccurrences.length}
                 staggerIndex={recentEntry?.staggerIndex ?? 0}
                 highlightNonce={highlightNonces.get(key) ?? 0}
                 onHighlightComplete={() => clearHighlight(key)}
@@ -1124,7 +1297,7 @@ function SlotPlannerInner<
           </AnimatePresence>
         </ul>
       )}
-      {!isPastDay ? (
+      {!isPastDay && !loading && !hasExternalError ? (
         <>
           <button
             ref={addSlotButtonRef}
@@ -1140,6 +1313,9 @@ function SlotPlannerInner<
               setEditorState({ mode: "create", date: currentFocusedDate });
             }}
           >
+            <span aria-hidden="true">
+              <PlusIcon />
+            </span>
             {resolvedTaxonomy.addSlot}
           </button>
           {createPending ? (
@@ -1172,38 +1348,86 @@ function SlotPlannerInner<
     </div>
   );
 
+  const returnToCurrentLabel =
+    currentView === "day" ? resolvedTaxonomy.today : resolvedTaxonomy.thisWeek;
+  const returnToCurrentDisabled =
+    currentView === "day" && currentFocusedDate === todayIso;
+  const moveDay = (days: number) => {
+    setFocusedDate(parseDate(currentFocusedDate).add({ days }).toString());
+  };
+  const goToPreviousPeriod =
+    currentView === "day" ? () => moveDay(-1) : goToPreviousWeek;
+  const goToNextPeriod =
+    currentView === "day" ? () => moveDay(1) : goToNextWeek;
+  const previousPeriodLabel =
+    currentView === "day"
+      ? resolvedTaxonomy.previousDay
+      : resolvedTaxonomy.previousWeek;
+  const nextPeriodLabel =
+    currentView === "day"
+      ? resolvedTaxonomy.nextDay
+      : resolvedTaxonomy.nextWeek;
+
   const defaultToolbar = (
     <>
       <div
         data-slot="slot-planner-title"
-        className="text-lg font-semibold"
+        className="min-w-0 truncate text-base font-semibold sm:text-lg"
       >
         {title}
       </div>
-      <div className="flex items-center gap-[var(--dt-space-1)]">
-        <button
-          type="button"
-          aria-label={resolvedTaxonomy.previousWeek}
-          className={slotPlannerToolbarButtonClasses}
-          onClick={goToPreviousWeek}
+      <div className="col-span-2 row-start-2 flex min-w-0 items-center justify-start gap-[var(--dt-space-1)] sm:col-span-1 sm:col-start-auto sm:row-auto sm:justify-center">
+        <IconButton
+          aria-label={previousPeriodLabel}
+          size="sm"
+          variant="outline"
+          onClick={goToPreviousPeriod}
         >
           <ChevronIcon direction="backward" />
-        </button>
-        <button
-          type="button"
-          className={slotPlannerToolbarButtonClasses}
+        </IconButton>
+        <Button
+          size="sm"
+          variant="outline"
+          leftIcon={<CalendarIcon />}
+          className="shadow-sm"
+          disabled={returnToCurrentDisabled}
           onClick={goToThisWeek}
         >
-          {resolvedTaxonomy.thisWeek}
-        </button>
-        <button
-          type="button"
-          aria-label={resolvedTaxonomy.nextWeek}
-          className={slotPlannerToolbarButtonClasses}
-          onClick={goToNextWeek}
+          {returnToCurrentLabel}
+        </Button>
+        <IconButton
+          aria-label={nextPeriodLabel}
+          size="sm"
+          variant="outline"
+          onClick={goToNextPeriod}
         >
           <ChevronIcon direction="forward" />
-        </button>
+        </IconButton>
+      </div>
+      <div
+        role="group"
+        aria-label={resolvedTaxonomy.viewSwitcherLabel}
+        data-slot="slot-planner-view-switch"
+        className="col-start-2 row-start-1 flex items-center gap-[var(--dt-space-1)] justify-self-end rounded-md border border-border bg-background p-0.5 sm:col-auto sm:row-auto"
+      >
+        {(["week", "day"] as const).map((option) => (
+          <button
+            key={option}
+            type="button"
+            aria-pressed={currentView === option}
+            data-slot="slot-planner-view-switch-option"
+            data-view={option}
+            className={cn(
+              "inline-flex h-7 items-center rounded px-[var(--dt-space-2)] text-xs font-medium text-muted-foreground motion-safe:transition-colors motion-safe:duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              currentView === option && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+            )}
+            onClick={() => setView(option)}
+          >
+            {option === "week"
+              ? resolvedTaxonomy.weekView
+              : resolvedTaxonomy.dayView}
+          </button>
+        ))}
       </div>
     </>
   );
@@ -1217,7 +1441,7 @@ function SlotPlannerInner<
       {...props}
       ref={mergedRef}
       data-slot="slot-planner"
-      data-view={view}
+      data-view={currentView}
       data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
       data-week-direction={
         weekDirection === 1
@@ -1228,27 +1452,32 @@ function SlotPlannerInner<
       }
       className={cn(slotPlannerRootClasses, className)}
     >
-      {view === "week" ? (
-        <>
-          <div data-slot="slot-planner-toolbar" className={slotPlannerToolbarClasses}>
-            {renderers?.toolbar
-              ? renderers.toolbar({
-                  clearDay: openClearDay,
-                  copyDay: openCopyDay,
-                  copyWeek: openCopyWeek,
-                  focusedDate: currentFocusedDate,
-                  goToNextWeek,
-                  goToPreviousWeek,
-                  goToThisWeek,
-                  renderDefault: () => defaultToolbar,
-                  setFocusedDate,
-                  taxonomy: resolvedTaxonomy,
-                  title,
-                  todayIso,
-                  weekDays,
-                })
-              : defaultToolbar}
-          </div>
+      <div data-slot="slot-planner-toolbar" className={slotPlannerToolbarClasses}>
+        {renderers?.toolbar
+          ? renderers.toolbar({
+              clearDay: openClearDay,
+              copyDay: openCopyDay,
+              copyWeek: openCopyWeek,
+              focusedDate: currentFocusedDate,
+              goToNextWeek,
+              goToPreviousWeek,
+              goToThisWeek,
+              renderDefault: () => defaultToolbar,
+              setFocusedDate,
+              setView,
+              taxonomy: resolvedTaxonomy,
+              title,
+              todayIso,
+              view: currentView,
+              weekDays,
+            })
+          : defaultToolbar}
+      </div>
+      {currentView === "week" ? (
+        <div
+          data-slot="slot-planner-week-layout"
+          className="grid min-w-0 gap-[var(--dt-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
+        >
           <div
             role="tablist"
             aria-label={formatSlotPlannerTemplate(
@@ -1272,28 +1501,38 @@ function SlotPlannerInner<
                   </span>
                   {slotPlannerOccurrenceStatuses
                     .filter((status) => summary[status] > 0)
-                    .map((status) => (
-                      <span
-                        key={status}
-                        data-slot="slot-planner-day-summary"
-                        data-status={status}
-                        className="flex items-center gap-[var(--dt-space-1)] text-xs text-muted-foreground"
-                      >
+                    .map((status) => {
+                      const summaryText = formatSlotPlannerCountTemplate(
+                        resolvedTaxonomy.statusCountSummary,
+                        summary[status],
+                        { statusLabel: resolvedTaxonomy.statusLabels[status] },
+                        locale,
+                      );
+
+                      return (
                         <span
-                          aria-hidden="true"
-                          className={cn(
-                            "size-1.5 rounded-full",
-                            slotPlannerStatusDotClasses[status],
-                          )}
-                        />
-                        {formatSlotPlannerCountTemplate(
-                          resolvedTaxonomy.statusCountSummary,
-                          summary[status],
-                          { statusLabel: resolvedTaxonomy.statusLabels[status] },
-                          locale,
-                        )}
-                      </span>
-                    ))}
+                          key={status}
+                          title={summaryText}
+                          data-slot="slot-planner-day-summary"
+                          data-status={status}
+                          className="flex w-full min-w-0 items-center gap-[var(--dt-space-1)] overflow-hidden whitespace-nowrap text-xs text-muted-foreground"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={cn(
+                              "size-1.5 shrink-0 rounded-full",
+                              slotPlannerStatusDotClasses[status],
+                            )}
+                          />
+                          <span
+                            data-slot="slot-planner-day-summary-text"
+                            className="min-w-0 truncate"
+                          >
+                            {summaryText}
+                          </span>
+                        </span>
+                      );
+                    })}
                 </>
               );
 
@@ -1353,9 +1592,11 @@ function SlotPlannerInner<
               );
             })}
           </div>
-        </>
-      ) : null}
-      {dayPanel}
+          {dayPanel}
+        </div>
+      ) : (
+        dayPanel
+      )}
       {editorState ? (
         <SlotPlannerEditorDialog
           mode={editorState.mode}
@@ -1369,7 +1610,7 @@ function SlotPlannerInner<
           }
           seriesValues={
             editorState.mode === "create"
-              ? getCreateEditorValues()
+              ? getCreateEditorValues(resolvedPlannerTimeZone)
               : getSeriesEditorValues(editorState.occurrence.slot)
           }
           occurrenceValues={

@@ -251,6 +251,9 @@ export type SlotPlannerTaxonomy = {
   copyDay: string;
   copyWeek: string;
   clearDay: string;
+  viewSwitcherLabel: string;
+  weekView: string;
+  dayView: string;
   /** Legend for the copy-day target-date checkbox group. */
   copyDayTargetsLegend: string;
   copyWeekConfirmTitle: string;
@@ -263,7 +266,10 @@ export type SlotPlannerTaxonomy = {
   apply: string;
   previousWeek: string;
   nextWeek: string;
+  previousDay: string;
+  nextDay: string;
   thisWeek: string;
+  today: string;
   /**
    * Day-card summary for one status count, e.g. "2 requestable". Tokens:
    * `{count}`, `{statusLabel}`. Plural category keyed on `{count}`.
@@ -278,8 +284,14 @@ export type SlotPlannerTaxonomy = {
   weeklyCapSummary: SlotPlannerCountTemplate;
   /** Book-mode remaining seats. Tokens: `{remaining}`. */
   remainingSeats: SlotPlannerCountTemplate;
+  /** Duration chip text. Tokens: `{count}`. */
+  durationSummary: SlotPlannerCountTemplate;
+  /** Buffer metadata text. Tokens: `{count}`. */
+  bufferSummary: SlotPlannerCountTemplate;
   emptyDay: string;
   pastDay: string;
+  loading: string;
+  error: string;
   /** Book-mode request action label. Tokens: `{slot}`. */
   requestSlot: string;
   /** Book-mode label for an occurrence with no seats left. */
@@ -316,6 +328,7 @@ export type SlotPlannerTaxonomy = {
   fieldDate: string;
   fieldStartTime: string;
   fieldDurationMinutes: string;
+  fieldCapacity: string;
   fieldTimeZone: string;
   fieldBufferBeforeMinutes: string;
   fieldBufferAfterMinutes: string;
@@ -397,6 +410,9 @@ export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
   copyDay: "Copy day",
   copyWeek: "Copy week",
   clearDay: "Clear day",
+  viewSwitcherLabel: "Planner view",
+  weekView: "Week",
+  dayView: "Day",
   copyDayTargetsLegend: "Copy to",
   copyWeekConfirmTitle: "Copy this week forward?",
   copyWeekConfirmBody: "Copies every {slot} from this week to next week.",
@@ -406,7 +422,10 @@ export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
   apply: "Apply",
   previousWeek: "Previous week",
   nextWeek: "Next week",
+  previousDay: "Previous day",
+  nextDay: "Next day",
   thisWeek: "This week",
+  today: "Today",
   statusCountSummary: {
     other: "{count} {statusLabel}",
   },
@@ -422,8 +441,18 @@ export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
     one: "{remaining} seat left",
     other: "{remaining} seats left",
   },
+  durationSummary: {
+    one: "{count} min",
+    other: "{count} min",
+  },
+  bufferSummary: {
+    one: "{count} min buffer",
+    other: "{count} min buffer",
+  },
   emptyDay: "No slots on this day",
   pastDay: "This day is in the past",
+  loading: "Loading slots",
+  error: "Unable to load slots",
   requestSlot: "Request {slot}",
   slotFull: "Full",
   providerTimeContext: "{time} {timeZone}",
@@ -441,6 +470,7 @@ export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
   fieldDate: "Date",
   fieldStartTime: "Start time",
   fieldDurationMinutes: "Duration (minutes)",
+  fieldCapacity: "Capacity",
   fieldTimeZone: "Time zone",
   fieldBufferBeforeMinutes: "Buffer before (minutes)",
   fieldBufferAfterMinutes: "Buffer after (minutes)",

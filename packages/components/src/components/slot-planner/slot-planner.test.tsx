@@ -19,10 +19,10 @@ import {
 } from ".";
 import { slotPlannerSampleSlots } from "./slot-planner-fixtures";
 
-// Local wall-clock "now" (no zone suffix) keeps the derived "today" at
-// 2026-07-06 in any test-runner time zone, and 00:30 keeps every fixture in
-// the rendered week un-expired for offsets from UTC-12 to UTC+14.
-const NOW = "2026-07-06T00:30:00";
+// Instant-anchored "now" (Z suffix): the planner-zone "today" and every
+// derived status resolve from the epoch instant, so the tests are
+// deterministic in any test-runner time zone.
+const NOW = "2026-07-06T00:30:00Z";
 
 function renderPlanner(props: Partial<SlotPlannerProps> = {}) {
   return render(
@@ -30,6 +30,7 @@ function renderPlanner(props: Partial<SlotPlannerProps> = {}) {
       slots={slotPlannerSampleSlots}
       defaultFocusedDate="2026-07-06"
       now={NOW}
+      timeZone="Europe/London"
       title="Availability"
       {...props}
     />,
@@ -38,10 +39,16 @@ function renderPlanner(props: Partial<SlotPlannerProps> = {}) {
 
 describe("SlotPlanner week view", () => {
   it("renders a Monday-start day rail with roving tabindex and today marked", () => {
-    renderPlanner();
+    const { container } = renderPlanner();
 
     const tabs = screen.getAllByRole("tab");
+    const weekLayout = container.querySelector(
+      '[data-slot="slot-planner-week-layout"]',
+    );
 
+    expect(weekLayout).toBeInTheDocument();
+    expect(weekLayout).toContainElement(screen.getByRole("tablist"));
+    expect(weekLayout).toContainElement(screen.getByRole("tabpanel"));
     expect(tabs).toHaveLength(7);
     expect(tabs[0]).toHaveTextContent("Mon");
     expect(tabs[6]).toHaveTextContent("Sun");
@@ -66,6 +73,12 @@ describe("SlotPlanner week view", () => {
     expect(within(tabs[1]!).getByText("1 requested")).toBeInTheDocument();
     expect(within(tabs[3]!).getByText("1 booked")).toBeInTheDocument();
     expect(within(tabs[4]!).getByText("1 blocked")).toBeInTheDocument();
+    expect(
+      tabs[0]!.querySelector('[data-slot="slot-planner-day-summary"]'),
+    ).toHaveAttribute("title", "2 requestable");
+    expect(
+      tabs[0]!.querySelector('[data-slot="slot-planner-day-summary-text"]'),
+    ).toHaveClass("truncate");
     expect(
       within(tabs[6]!).queryByText(/requestable|booked/),
     ).not.toBeInTheDocument();
@@ -143,6 +156,39 @@ describe("SlotPlanner week view", () => {
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 
+  it("renders external loading and error states without mutation affordances", () => {
+    const loadingRender = renderPlanner({ loading: true });
+
+    expect(screen.getByRole("status")).toHaveTextContent("Loading slots");
+    expect(
+      loadingRender.container.querySelector(
+        '[data-slot="slot-planner-day-panel"]',
+      ),
+    ).toHaveAttribute("data-loading", "true");
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Add slot to this day" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Copy day" }),
+    ).not.toBeInTheDocument();
+    loadingRender.unmount();
+
+    const errorRender = renderPlanner({ error: "Could not load slots" });
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Could not load slots");
+    expect(
+      errorRender.container.querySelector('[data-slot="slot-planner-day-panel"]'),
+    ).toHaveAttribute("data-error", "true");
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Add slot to this day" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Copy day" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("marks past days and renders expired occurrences", () => {
     const { container } = renderPlanner({ focusedDate: "2026-06-29" });
 
@@ -189,6 +235,7 @@ describe("SlotPlanner week view", () => {
           slots={slotPlannerSampleSlots}
           defaultFocusedDate="2026-07-06"
           now={NOW}
+          timeZone="Europe/London"
         />
       </div>,
     );
@@ -205,12 +252,15 @@ describe("SlotPlanner week view", () => {
   it("navigates weeks with previous, next, and this-week controls", async () => {
     const user = userEvent.setup();
 
-    renderPlanner();
+    const { container } = renderPlanner();
 
     await user.click(screen.getByRole("button", { name: "Next week" }));
     expect(
       screen.getByRole("heading", { level: 3, name: "Monday, July 13, 2026" }),
     ).toBeInTheDocument();
+    expect(getLiveRegion(container)).toHaveTextContent(
+      "Showing week of 2026-07-13",
+    );
 
     await user.click(screen.getByRole("button", { name: "Previous week" }));
     await user.click(screen.getByRole("button", { name: "Previous week" }));
@@ -288,6 +338,7 @@ function renderCrudPlanner(props: Partial<SlotPlannerProps> = {}) {
       defaultSlots={slotPlannerSampleSlots}
       defaultFocusedDate="2026-07-06"
       now={NOW}
+      timeZone="Europe/London"
       title="Availability"
       {...props}
     />,
@@ -838,7 +889,22 @@ describe("SlotPlanner slot CRUD", () => {
     expect(screen.queryByText("Save failed")).not.toBeInTheDocument();
   });
 
-  it("renders no edit or delete actions on locked occurrences", () => {
+  it("keeps requested occurrences editable but locks booked and blocked occurrences", () => {
+    const requestedRender = renderCrudPlanner({
+      defaultFocusedDate: "2026-07-07",
+    });
+    const requestedCard = screen.getByRole("listitem");
+
+    expect(requestedCard).toHaveAttribute("data-status", "requested");
+    expect(requestedCard).not.toHaveAttribute("data-locked");
+    expect(
+      within(requestedCard).getByRole("button", { name: "Edit slot" }),
+    ).toBeEnabled();
+    expect(
+      within(requestedCard).getByRole("button", { name: "Delete slot" }),
+    ).toBeEnabled();
+    requestedRender.unmount();
+
     renderCrudPlanner({ defaultFocusedDate: "2026-07-09" });
 
     // booked
@@ -849,8 +915,8 @@ describe("SlotPlanner slot CRUD", () => {
       screen.queryByRole("button", { name: "Delete slot" }),
     ).not.toBeInTheDocument();
 
-    // requested and blocked
-    for (const focusedDate of ["2026-07-07", "2026-07-10"]) {
+    // blocked
+    for (const focusedDate of ["2026-07-10"]) {
       const { unmount } = renderCrudPlanner({
         defaultFocusedDate: focusedDate,
       });
@@ -924,9 +990,9 @@ const copySource: SlotPlannerSlotData = {
   data: { tags: ["Pairing"] },
 };
 
-// requestedCount > 0 derives "requested": locked, never copied or cleared.
-const lockedSource: SlotPlannerSlotData = {
-  id: "locked-source",
+// requestedCount > 0 derives "requested"; copying drops requested counts.
+const requestedSource: SlotPlannerSlotData = {
+  id: "requested-source",
   date: "2026-07-06",
   startTime: "12:00",
   durationMinutes: 60,
@@ -977,6 +1043,23 @@ describe("SlotPlanner constraints", () => {
       .toBeInTheDocument();
   });
 
+  it("renders the weekly cap meter through the weeklyCapSummary template", () => {
+    const { container } = renderPlanner({
+      constraints: { weeklyRequestableCap: 5 },
+    });
+
+    const meter = container.querySelector(
+      '[data-slot="slot-planner-cap-meter"]',
+    );
+
+    expect(meter).toHaveAttribute("data-cap-reached", "true");
+    expect(
+      container.querySelector('[data-slot="slot-planner-weekly-cap"]'),
+    ).toHaveTextContent("Weekly cap: 5 / 5 requestable slots");
+    expect(within(meter as HTMLElement).getByText("Weekly cap reached"))
+      .toBeInTheDocument();
+  });
+
   it("announces the daily cap when a mutation makes it reached", async () => {
     const user = userEvent.setup();
     const { container } = renderCrudPlanner({
@@ -998,6 +1081,28 @@ describe("SlotPlanner constraints", () => {
     expect(screen.getByText("09:00 – 10:00")).toBeInTheDocument();
     expect(getLiveRegion(container)).toHaveTextContent("slot added");
     expect(getLiveRegion(container)).toHaveTextContent("Daily cap reached");
+  });
+
+  it("announces the weekly cap when a mutation makes it reached", async () => {
+    const user = userEvent.setup();
+    const { container } = renderCrudPlanner({
+      defaultSlots: [],
+      constraints: { weeklyRequestableCap: 1 },
+    });
+
+    await user.click(
+      screen.getByRole("button", { name: "Add slot to this day" }),
+    );
+    await user.click(
+      within(await screen.findByRole("dialog", { name: "Add slot" })).getByRole(
+        "button",
+        { name: "Save" },
+      ),
+    );
+
+    expect(screen.getByText("09:00 – 10:00")).toBeInTheDocument();
+    expect(getLiveRegion(container)).toHaveTextContent("slot added");
+    expect(getLiveRegion(container)).toHaveTextContent("Weekly cap reached");
   });
 
   it("blocks a violating editor save and phrases violations via taxonomy", async () => {
@@ -1060,7 +1165,7 @@ describe("SlotPlanner batch operations", () => {
     const user = userEvent.setup();
     const onBatchChange = vi.fn();
     const { container } = renderCrudPlanner({
-      defaultSlots: [copySource, lockedSource, wedExisting],
+      defaultSlots: [copySource, requestedSource, wedExisting],
       onBatchChange,
       generateSlotId: sequentialIds(),
     });
@@ -1079,9 +1184,10 @@ describe("SlotPlanner batch operations", () => {
     );
     await user.click(within(dialog).getByRole("button", { name: "Apply" }));
 
-    // One payload: the Tuesday copy is accepted, the Wednesday copy overlaps
-    // wed-existing and is rejected — reported, never silently dropped. The
-    // copies drop recurrence and booked/requested counts.
+    // One payload: Tuesday copies are accepted, the Wednesday 09:00 copy
+    // overlaps wed-existing and is rejected — reported, never silently
+    // dropped. Copies preserve capacity and drop recurrence/booked/requested
+    // counts.
     expect(onBatchChange).toHaveBeenCalledTimes(1);
     expect(onBatchChange.mock.calls[0]![0]).toEqual({
       createdSlots: [
@@ -1092,14 +1198,31 @@ describe("SlotPlanner batch operations", () => {
           durationMinutes: 60,
           timeZone: "Europe/London",
           state: "requestable",
+          capacity: 4,
           bufferBeforeMinutes: 10,
           bufferAfterMinutes: 5,
           data: { tags: ["Pairing"] },
         },
+        {
+          id: "gen-2",
+          date: "2026-07-07",
+          startTime: "12:00",
+          durationMinutes: 60,
+          timeZone: "Europe/London",
+          state: "requestable",
+        },
+        {
+          id: "gen-4",
+          date: "2026-07-08",
+          startTime: "12:00",
+          durationMinutes: 60,
+          timeZone: "Europe/London",
+          state: "requestable",
+        },
       ],
       deletedSlotIds: [],
       violations: {
-        "gen-2": [
+        "gen-3": [
           {
             code: "overlap",
             params: { date: "2026-07-08", otherSlotId: "wed-existing" },
@@ -1108,7 +1231,7 @@ describe("SlotPlanner batch operations", () => {
       },
     });
     expect(getLiveRegion(container)).toHaveTextContent(
-      "1 slot added. 1 slot rejected",
+      "3 slots added. 1 slot rejected",
     );
 
     // Uncontrolled: the accepted copy renders on Tuesday.
@@ -1352,6 +1475,7 @@ describe("SlotPlanner custom renderers", () => {
         slots={slotPlannerSampleSlots}
         defaultFocusedDate="2026-07-06"
         now={NOW}
+        timeZone="Europe/London"
         title="Availability"
         constraints={{ dailyRequestableCap: 2 }}
         renderers={{
@@ -1537,6 +1661,7 @@ describe("SlotPlanner custom renderers", () => {
                   values: {
                     startTime: "10:00",
                     durationMinutes: 45,
+                    capacity: 1,
                     bufferBeforeMinutes: 0,
                     bufferAfterMinutes: 0,
                     timeZone: "Europe/London",
@@ -1634,6 +1759,7 @@ describe("SlotPlanner custom renderers", () => {
                   values: {
                     startTime: "10:00",
                     durationMinutes: 45,
+                    capacity: 1,
                     bufferBeforeMinutes: 0,
                     bufferAfterMinutes: 0,
                     timeZone: "Europe/London",
@@ -1749,7 +1875,9 @@ describe("SlotPlanner custom renderers", () => {
 });
 
 describe("SlotPlanner day view", () => {
-  it("renders the day panel standalone without tab semantics", () => {
+  it("renders the day panel standalone without tab semantics", async () => {
+    const user = userEvent.setup();
+
     renderPlanner({ view: "day" });
 
     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
@@ -1762,5 +1890,43 @@ describe("SlotPlanner day view", () => {
     expect(
       screen.queryByRole("button", { name: "Next week" }),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Previous day" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Next day" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "This week" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Week" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Day" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Previous day" }));
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Sunday, July 5, 2026" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: "Today" }));
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Monday, July 6, 2026" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Next day" }));
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Tuesday, July 7, 2026" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeEnabled();
   });
 });

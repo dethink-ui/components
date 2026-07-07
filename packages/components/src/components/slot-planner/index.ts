@@ -80,6 +80,7 @@ export {
 export {
   useSlotPlanner,
   type SlotPlannerDailyCapInfo,
+  type SlotPlannerWeeklyCapInfo,
   type SlotPlannerView,
   type UseSlotPlannerActionOptions,
   type UseSlotPlannerOptions,

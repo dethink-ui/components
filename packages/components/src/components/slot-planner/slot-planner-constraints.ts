@@ -9,6 +9,7 @@ import type {
 } from "./slot-planner-contract";
 import {
   expandSlotOccurrences,
+  getSlotPlannerIsoDateInZone,
   getSlotPlannerWeekDays,
   type SlotPlannerOccurrence,
 } from "./slot-planner-utils";
@@ -40,15 +41,6 @@ const MS_PER_DAY = 86_400_000;
 
 /** Longest expansion window, in days, for open-ended recurring candidates. */
 const MAX_VALIDATION_WINDOW_DAYS = 366;
-
-/** Local calendar date (`YYYY-MM-DD`) of an ISO date-time string. */
-function getLocalIsoDate(nowIso: string): string {
-  const dateTime = new Date(nowIso);
-  const month = String(dateTime.getMonth() + 1).padStart(2, "0");
-  const day = String(dateTime.getDate()).padStart(2, "0");
-
-  return `${dateTime.getFullYear()}-${month}-${day}`;
-}
 
 /** ISO weekday number (1 = Monday … 7 = Sunday) of an ISO date. */
 function getIsoWeekday(dateIso: string): number {
@@ -115,7 +107,9 @@ function getCandidateOccurrences<TData extends SlotPlannerSlotPayload>(
     );
   }
 
-  const today = parseDate(getLocalIsoDate(nowIso));
+  const today = parseDate(
+    getSlotPlannerIsoDateInZone(Date.parse(nowIso), candidate.timeZone),
+  );
   const seriesStart = parseDate(candidate.date);
   const windowStart = seriesStart.compare(today) > 0 ? seriesStart : today;
   let windowEnd = today.add({ days: MAX_VALIDATION_WINDOW_DAYS });
@@ -190,10 +184,9 @@ export function countSlotPlannerPublishedOccurrences<
  * `invalid-wall-clock-time` — always run; the rest run only when their
  * constraint field is set.
  *
- * DST note: only non-existent wall-clock times (spring-forward gaps) violate
- * `invalid-wall-clock-time`. Ambiguous times (fall-back, the wall clock
- * occurs twice) are not violations — `@internationalized/date` resolves them
- * deterministically to the earlier offset.
+ * DST note: non-existent wall-clock times (spring-forward gaps) and ambiguous
+ * times (fall-back repeated hours) violate `invalid-wall-clock-time`; the UI
+ * should surface them rather than silently accepting a resolved instant.
  */
 export function validateSlotPlannerSlot<
   TData extends SlotPlannerSlotPayload = SlotPlannerSlotPayload,
@@ -271,19 +264,15 @@ export function validateSlotPlannerSlot<
       }
     }
 
-    // DST-gap detection: a wall-clock time that does not exist on this date
-    // in the slot's zone cannot round-trip through toZoned unchanged (the
-    // library shifts it out of the gap). Ambiguous times round-trip exactly
-    // and are resolved deterministically, so they never violate.
-    const zoned = toZoned(
-      parseDateTime(`${date}T${occurrence.startTime}`),
-      occurrence.timeZone,
-    );
-    const [requestedHour = 0, requestedMinute = 0] = occurrence.startTime
-      .split(":")
-      .map(Number);
-
-    if (zoned.hour !== requestedHour || zoned.minute !== requestedMinute) {
+    // `reject` catches both skipped and repeated wall-clock times around DST
+    // transitions, matching the PRD's "surface, don't silently shift" rule.
+    try {
+      toZoned(
+        parseDateTime(`${date}T${occurrence.startTime}`),
+        occurrence.timeZone,
+        "reject",
+      );
+    } catch {
       addViolation("invalid-wall-clock-time", {
         date,
         startTime: occurrence.startTime,

@@ -16,10 +16,18 @@ export const slotPlannerProps: PropRow[] = [
       "Controls the focused ISO date (`YYYY-MM-DD`) driving the visible week and selected day.",
   },
   {
-    prop: "view",
-    type: '"week" | "day"',
-    defaultValue: '"week"',
-    description: "Renders the full week rail or a single focused day panel.",
+    prop: "view / defaultView / onViewChange",
+    type: '"week" | "day" / "week" | "day" / (view) => void',
+    defaultValue: "uncontrolled / \"week\" / undefined",
+    description:
+      "Controls the visible projection. Day view hides the rail while keeping toolbar navigation and the view switcher.",
+  },
+  {
+    prop: "timeZone",
+    type: "string",
+    defaultValue: "environment zone",
+    description:
+      "IANA zone used to derive planner today and default editor values. Pass explicitly for deterministic renders and SSR.",
   },
   {
     prop: "constraints",
@@ -62,6 +70,13 @@ export const slotPlannerProps: PropRow[] = [
     defaultValue: "current time / environment locale",
     description:
       "Injectable \"now\" instant and locale for deterministic renders, including SSR.",
+  },
+  {
+    prop: "loading / error",
+    type: "boolean / ReactNode",
+    defaultValue: "false / undefined",
+    description:
+      "External async states for app-owned fetching. The day panel shows status text and hides mutation affordances while active.",
   },
   {
     prop: "title",
@@ -114,10 +129,11 @@ export const slotPickerProps: PropRow[] = [
     description: "Same vocabulary override as SlotPlanner, phrased for book mode.",
   },
   {
-    prop: "view",
-    type: '"week" | "day"',
-    defaultValue: '"week"',
-    description: "Renders the full week rail or a single focused day panel.",
+    prop: "view / defaultView / onViewChange",
+    type: '"week" | "day" / "week" | "day" / (view) => void',
+    defaultValue: "uncontrolled / \"week\" / undefined",
+    description:
+      "Controls the visible projection. Day view hides the rail while keeping toolbar navigation and the view switcher.",
   },
   {
     prop: "focusedDate / defaultFocusedDate / onFocusedDateChange",
@@ -131,6 +147,13 @@ export const slotPickerProps: PropRow[] = [
     type: "string / string",
     defaultValue: "current time / environment locale",
     description: "Injectable \"now\" instant and locale for deterministic renders.",
+  },
+  {
+    prop: "loading / error",
+    type: "boolean / ReactNode",
+    defaultValue: "false / undefined",
+    description:
+      "External async states for app-owned fetching. The day panel shows status text and hides the slot list while active.",
   },
   {
     prop: "title",

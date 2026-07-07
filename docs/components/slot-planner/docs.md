@@ -72,20 +72,22 @@ Manage mode (`data-slot` attributes are the stable styling contract):
 
 ```
 slot-planner                      root; data-view, data-reduced-motion, data-week-direction
-├── slot-planner-toolbar          title + previous/this/next week controls
-├── slot-planner-day-rail         role="tablist" with 7 role="tab" buttons
-│   └── slot-planner-day-tab      data-selected, data-today, data-past
-│       └── slot-planner-day-summary  per-status count chips
-├── slot-planner-day-panel        role="tabpanel"; data-past
-│   ├── slot-planner-day-heading
-│   ├── slot-planner-cap-meter    data-cap-reached; text + decorative fill bar
-│   ├── slot-planner-day-actions  copy-day / copy-week / clear-day buttons
-│   ├── slot-planner-slot-list    role="list"
-│   │   └── slot-planner-slot-card  <li>; data-status, data-locked, data-pending, data-error
-│   │       ├── slot-planner-slot-time / status-badge / duration-chip / recurrence-chip / tag-chip
-│   │       ├── slot-planner-slot-note / slot-meta
-│   │       └── slot-planner-slot-actions  edit / delete buttons
-│   └── slot-planner-add-slot
+├── slot-planner-toolbar          title + period controls + Week/Day switcher
+├── slot-planner-week-layout      week view only; desktop split inspector, mobile stacked strip
+│   ├── slot-planner-day-rail     role="tablist"; horizontal strip on mobile, side list on desktop
+│   │   └── slot-planner-day-tab  data-selected, data-today, data-past
+│   │       └── slot-planner-day-summary  per-status count chips
+│   └── slot-planner-day-panel    role="tabpanel" in week view; data-past, data-loading, data-error
+│       ├── slot-planner-day-heading
+│       ├── slot-planner-cap-meter    daily/weekly entries; data-cap-reached; text + decorative fill bar
+│       ├── slot-planner-day-actions  copy-day / copy-week / clear-day buttons
+│       ├── slot-planner-slot-list    role="list"
+│       │   └── slot-planner-slot-card  <li>; data-status, data-locked, data-pending, data-error
+│       │       ├── slot-planner-slot-time / status-badge / duration-chip / recurrence-chip / tag-chip
+│       │       ├── slot-planner-slot-note / slot-meta
+│       │       └── slot-planner-slot-actions  edit / delete buttons
+│       └── slot-planner-add-slot
+├── slot-planner-day-panel        day view only; focused-day inspector without the day rail
 ├── editor / delete / batch dialogs (structural, via Dialog)
 └── slot-planner-live-region      aria-live="polite"
 ```
@@ -102,6 +104,7 @@ Manage mode (uncontrolled collection, constraints, custom vocabulary):
 <SlotPlanner
   title="Mentoring availability"
   defaultSlots={initialSlots}
+  timeZone="Europe/London"
   constraints={{ dailyRequestableCap: 3, minNoticeMinutes: 720 }}
   taxonomy={{ slot: "session", slotPlural: "sessions" }}
   onCreateSlot={async ({ slot }) => api.createSlot(slot)}
@@ -150,7 +153,8 @@ Headless hook (no shipped DOM, no Motion):
 ```tsx
 const planner = useSlotPlanner({ defaultSlots, constraints });
 // planner.weekDays, planner.selectedOccurrences, planner.summarizeDay(date),
-// planner.dailyCap, planner.createSlot(values), planner.deleteOccurrence(...),
+// planner.dailyCap, planner.weeklyCap, planner.createSlot(values),
+// planner.deleteOccurrence(...),
 // planner.copyDay(dates), planner.announcement, ...
 ```
 
@@ -161,15 +165,17 @@ viewer-zone comparison, dark/density/RTL, and reduced motion.
 ## API Summary
 
 - `SlotPlanner` (`SlotPlannerProps<TData>`): `slots`/`defaultSlots`,
-  `focusedDate`/`defaultFocusedDate`/`onFocusedDateChange`, `view`
-  (`"week" | "day"`), `constraints`, `taxonomy`, `now`, `locale`, `title`,
-  `reducedMotion`, `renderers`, `generateSlotId`, and the mutation
-  callbacks `onCreateSlot`, `onUpdateSlot`, `onDeleteOccurrence`,
-  `onDeleteSeries`, `onBatchChange`. Callbacks may return promises to drive
-  per-key pending/error/retry affordances.
+  `focusedDate`/`defaultFocusedDate`/`onFocusedDateChange`,
+  `view`/`defaultView`/`onViewChange` (`"week" | "day"`), `timeZone`,
+  `constraints`, `taxonomy`, `now`, `locale`, `title`, `loading`, `error`,
+  `reducedMotion`, `renderers`, `generateSlotId`, and the mutation callbacks
+  `onCreateSlot`, `onUpdateSlot`, `onDeleteOccurrence`, `onDeleteSeries`,
+  `onBatchChange`. Callbacks may return promises to drive per-key
+  pending/error/retry affordances.
 - `SlotPicker` (`SlotPickerProps<TData>`): read-only `slots`,
   `viewerTimeZone`, `onBookRequest`, plus the shared focus/view/taxonomy/
-  motion props. Draft and cancelled occurrences never surface in book mode.
+  async-state/motion props. Draft and cancelled occurrences never surface in
+  book mode.
 - `useSlotPlanner` (`UseSlotPlannerOptions` → `UseSlotPlannerReturn`): the
   non-visual subset of `SlotPlannerProps` in; resolved state, expansion,
   validation, CRUD/batch dispatchers, pending/retry maps, and the
@@ -271,16 +277,16 @@ Light/dark, density (`compact`/`comfortable`), and RTL are driven by
 
 ## Migration And Limitations
 
-- Ambiguous or skipped wall-clock times around DST transitions resolve
-  deterministically via `@internationalized/date` disambiguation; a series
-  keeps its wall-clock time across transitions while the UTC offset
-  changes. Times that do not exist on a date report the
-  `invalid-wall-clock-time` violation.
+- Ambiguous or skipped wall-clock times around DST transitions report the
+  `invalid-wall-clock-time` violation; valid series occurrences keep their
+  wall-clock time across transitions while the UTC offset changes.
 - Enforcement authority stays with the app: constraints gate SlotPlanner's
   own affordances and editor saves, but nothing prevents an app from
   persisting an invalid slot. Re-validate on the server.
-- Capacity, booked, and requested counts are data-driven inputs; SlotPicker
-  never mutates them. Concurrent-booking races are the app's concern.
+- Capacity, booked, and requested counts are data-driven inputs; requested
+  multi-seat occurrences remain requestable while unclaimed seats remain.
+  SlotPicker never mutates counts. Concurrent-booking races are the app's
+  concern.
 - Book-request payloads identify occurrences by provider-zone
   `occurrenceDate`; viewer-zone dates are presentation only.
 - Recurrence supports weekly and biweekly frequencies with `until` and

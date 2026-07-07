@@ -115,6 +115,8 @@ describe("default taxonomy", () => {
       dailyCapSummary,
       weeklyCapSummary,
       remainingSeats,
+      durationSummary,
+      bufferSummary,
       announceBatchApplied,
       announceBatchRejected,
       ...labels
@@ -134,6 +136,8 @@ describe("default taxonomy", () => {
       dailyCapSummary,
       weeklyCapSummary,
       remainingSeats,
+      durationSummary,
+      bufferSummary,
       announceBatchApplied,
       announceBatchRejected,
     ]) {

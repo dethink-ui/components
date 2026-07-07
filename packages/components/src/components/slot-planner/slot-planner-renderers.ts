@@ -6,6 +6,9 @@ import type {
   SlotPlannerViolation,
 } from "./slot-planner-contract";
 import type {
+  SlotPlannerView,
+} from "./use-slot-planner";
+import type {
   SlotPlannerEditorResult,
   SlotPlannerEditorSeriesValues,
 } from "./slot-planner-crud";
@@ -120,6 +123,9 @@ export type SlotPlannerToolbarRenderContext = {
   focusedDate: string;
   /** The focused week's 7 ISO dates, Monday first. */
   weekDays: string[];
+  /** Current projection of the same slot collection. */
+  view: SlotPlannerView;
+  setView: (view: SlotPlannerView) => void;
   setFocusedDate: (dateIso: string) => void;
   goToPreviousWeek: () => void;
   goToNextWeek: () => void;
@@ -158,14 +164,30 @@ export type SlotPlannerCapMeterRenderContext = {
   taxonomy: SlotPlannerTaxonomy;
   /** ISO date (`YYYY-MM-DD`) of the focused day. */
   date: string;
-  /** Published (requestable/requested/booked) occurrences on the day. */
+  /** Published (requestable/requested/booked) occurrences for the primary cap. */
   used: number;
   cap: number;
   reached: boolean;
-  /** The formatted `dailyCapSummary` text, e.g. "Daily cap: 2 / 3 …". */
+  /** The formatted primary cap text, e.g. "Daily cap: 2 / 3 …". */
   text: string;
-  /** The formatted cap-reached violation message; set only when reached. */
+  /** The formatted primary cap-reached violation message; set only when reached. */
   reachedMessage?: string;
+  /** Focused-day cap info, present when `dailyRequestableCap` is configured. */
+  daily?: {
+    used: number;
+    cap: number;
+    reached: boolean;
+    text: string;
+    reachedMessage?: string;
+  };
+  /** Focused-week cap info, present when `weeklyRequestableCap` is configured. */
+  weekly?: {
+    used: number;
+    cap: number;
+    reached: boolean;
+    text: string;
+    reachedMessage?: string;
+  };
 };
 
 /**

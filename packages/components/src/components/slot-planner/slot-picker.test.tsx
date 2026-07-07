@@ -54,15 +54,27 @@ const eveningNewYorkSlot: SlotPlannerSlotData = {
 
 describe("SlotPicker week view", () => {
   it("renders a Monday-start day rail and requestable cards with request buttons", () => {
-    renderPicker();
+    const { container } = renderPicker();
 
     const tabs = screen.getAllByRole("tab");
+    const weekLayout = container.querySelector(
+      '[data-slot="slot-picker-week-layout"]',
+    );
 
+    expect(weekLayout).toBeInTheDocument();
+    expect(weekLayout).toContainElement(screen.getByRole("tablist"));
+    expect(weekLayout).toContainElement(screen.getByRole("tabpanel"));
     expect(tabs).toHaveLength(7);
     expect(tabs[0]).toHaveTextContent("Mon");
     expect(tabs[0]).toHaveAttribute("aria-selected", "true");
     expect(tabs[0]).toHaveAttribute("aria-current", "date");
     expect(within(tabs[0]!).getByText("2 requestable")).toBeInTheDocument();
+    expect(
+      tabs[0]!.querySelector('[data-slot="slot-picker-day-summary"]'),
+    ).toHaveAttribute("title", "2 requestable");
+    expect(
+      tabs[0]!.querySelector('[data-slot="slot-picker-day-summary-text"]'),
+    ).toHaveClass("truncate");
 
     const cards = within(screen.getByRole("list")).getAllByRole("listitem");
 
@@ -182,6 +194,47 @@ describe("SlotPicker week view", () => {
     expect(within(fullCard).queryByRole("button")).not.toBeInTheDocument();
   });
 
+  it("keeps requested multi-seat occurrences available while seats remain", async () => {
+    const user = userEvent.setup();
+    const onBookRequest = vi.fn();
+    const requestedGroupSlot: SlotPlannerSlotData = {
+      id: "requested-group",
+      date: "2026-07-07",
+      startTime: "10:00",
+      durationMinutes: 60,
+      timeZone: "Europe/London",
+      state: "requestable",
+      capacity: 4,
+      requestedCount: 1,
+    };
+
+    renderPicker({
+      slots: [requestedGroupSlot],
+      focusedDate: "2026-07-07",
+      onBookRequest,
+    });
+
+    const card = screen.getByRole("listitem");
+
+    expect(card).toHaveAttribute("data-status", "requested");
+    expect(card).toHaveAttribute("data-available", "true");
+    expect(within(card).getByText("3 seats left")).toBeInTheDocument();
+    expect(
+      screen.queryByText("No slots available on this day"),
+    ).not.toBeInTheDocument();
+
+    await user.click(
+      within(card).getByRole("button", { name: "Request slot" }),
+    );
+
+    expect(onBookRequest).toHaveBeenCalledWith({
+      slotId: "requested-group",
+      occurrenceDate: "2026-07-07",
+      seats: 1,
+      viewerTimeZone: "Europe/London",
+    });
+  });
+
   it("navigates weeks with the toolbar and reports focus changes", async () => {
     const user = userEvent.setup();
     const onFocusedDateChange = vi.fn();
@@ -198,12 +251,64 @@ describe("SlotPicker week view", () => {
     expect(onFocusedDateChange).toHaveBeenLastCalledWith("2026-07-06");
   });
 
-  it("renders the day view without a tablist", () => {
+  it("renders the day view without a tablist and returns to today", async () => {
+    const user = userEvent.setup();
+
     renderPicker({ view: "day" });
 
     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     expect(screen.queryByRole("tabpanel")).not.toBeInTheDocument();
-    expect(screen.getByText("14:15 – 15:15")).toBeInTheDocument();
+    expect(screen.getAllByText("14:15 – 15:15").length).toBeGreaterThan(0);
+    expect(
+      screen.queryByRole("button", { name: "This week" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Next week" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Previous day" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Next day" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Previous day" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", {
+          level: 3,
+          name: "Sunday, July 5, 2026",
+        }),
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "Today" })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: "Today" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", {
+          level: 3,
+          name: "Monday, July 6, 2026",
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Today" })).toBeDisabled();
+    });
+    expect(screen.getAllByText("14:15 – 15:15").length).toBeGreaterThan(0);
+
+    await user.click(screen.getByRole("button", { name: "Next day" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", {
+          level: 3,
+          name: "Tuesday, July 7, 2026",
+        }),
+      ).toBeInTheDocument();
+    });
+    expect(screen.getByRole("button", { name: "Today" })).toBeEnabled();
   });
 });
 

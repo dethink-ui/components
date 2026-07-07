@@ -216,13 +216,14 @@ surface-specific data:
   and the day's `occurrences`. Renders inside the structural `role="tab"`
   button.
 - `dayHeader`: `date`, `formattedDate`, `isToday`, `isPast`, `occurrences`.
-- `toolbar` (week view only): `title`, `todayIso`, `focusedDate`,
+- `toolbar`: `title`, `view`, `setView`, `todayIso`, `focusedDate`,
   `weekDays`, `setFocusedDate`, week navigation, and the batch dispatchers
   `copyDay()` / `copyWeek()` / `clearDay()`, which open the structural
   confirm dialogs.
 - `emptyDay`: `date`, `isPast`.
-- `capMeter` (only when `constraints.dailyRequestableCap` is set): `date`,
-  `used`, `cap`, `reached`, the formatted `text`, and `reachedMessage?`.
+- `capMeter` (only when daily or weekly cap constraints are set): `date`,
+  primary `used`, `cap`, `reached`, formatted `text`, `reachedMessage?`, and
+  optional `daily` / `weekly` entries.
 - `tag`: one conventional `data.tags` chip — `tag` and its `occurrence`.
 - `slotEditor`: the editor dialog content only — `mode`, `date`,
   `isRecurring`, `seriesValues`, `occurrenceValues`, `violations`, and
@@ -345,12 +346,14 @@ const clinicTaxonomy: SlotPlannerTaxonomyInput = {
 
 - Manage mode: week view with a day-card rail (per-day requestable/booked
   summaries, arrow-key selection, today marked) and a selected-day panel
-  (header, daily-cap meter, slot cards, add-slot affordance). Day view is
-  the panel standalone. Week navigation: previous, next, this-week,
-  controlled focused date.
+  (header, daily/weekly cap meter, slot cards, add-slot affordance). Day
+  view is the panel without the rail/tablist but keeps the toolbar and view
+  switcher. Week navigation: previous, next, this-week, controlled focused
+  date.
 - Slot CRUD through a Dialog editor with occurrence-versus-series semantics
-  and per-occurrence overrides. Booked/locked slots expose no destructive
-  actions. Copy day, copy week, and clear day emit one
+  and per-occurrence overrides. Booked/blocked/expired/cancelled occurrences
+  expose no destructive actions; requested occurrences stay mutable. Copy
+  day, copy week, and clear day emit one
   `SlotPlannerBatchChangePayload` each: accepted copies in `createdSlots`,
   removed single slots in `deletedSlotIds`, recurring occurrences cleared
   via `cancelled: true` override upserts in the optional `updatedSlots`, and

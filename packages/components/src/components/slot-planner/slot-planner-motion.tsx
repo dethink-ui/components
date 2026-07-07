@@ -106,19 +106,24 @@ const slotPlannerSlotItemVariants: Variants = {
   },
 };
 
-function SlotPlannerWeekSlideItem({
-  children,
-  className,
-  slideFactor,
-}: {
+type SlotPlannerWeekSlideItemProps = {
   children: ReactNode;
   className: string;
   slideFactor: number;
-}) {
+};
+
+const SlotPlannerWeekSlideItem = forwardRef<
+  HTMLDivElement,
+  SlotPlannerWeekSlideItemProps
+>(function SlotPlannerWeekSlideItem(
+  { children, className, slideFactor },
+  ref,
+) {
   const isPresent = useIsPresent();
 
   return (
     <motion.div
+      ref={ref}
       // Exiting week content is decorative while it fades out.
       aria-hidden={isPresent ? undefined : true}
       data-slot="slot-planner-week-panel"
@@ -134,7 +139,7 @@ function SlotPlannerWeekSlideItem({
       {children}
     </motion.div>
   );
-}
+});
 
 /**
  * Direction-aware slide of the day-panel content, keyed by the focused week
@@ -164,15 +169,22 @@ export function SlotPlannerWeekSlide({
   }
 
   return (
-    <AnimatePresence custom={slideFactor} initial={false} mode="popLayout">
-      <SlotPlannerWeekSlideItem
-        key={weekKey}
-        className={className}
-        slideFactor={slideFactor}
-      >
-        {children}
-      </SlotPlannerWeekSlideItem>
-    </AnimatePresence>
+    <motion.div
+      data-slot="slot-planner-week-viewport"
+      className="relative min-w-0 overflow-hidden"
+      layout="size"
+      transition={{ layout: slotPlannerLayoutTransition }}
+    >
+      <AnimatePresence custom={slideFactor} initial={false} mode="popLayout">
+        <SlotPlannerWeekSlideItem
+          key={weekKey}
+          className={className}
+          slideFactor={slideFactor}
+        >
+          {children}
+        </SlotPlannerWeekSlideItem>
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -276,6 +288,8 @@ export interface SlotPlannerSlotListItemProps {
   entrance: boolean;
   /** Non-zero mounts a highlight pulse; bump it to pulse again. */
   highlightNonce: number;
+  /** State that should trigger position-settling layout animation. */
+  layoutDependency: number;
   motionEnabled: boolean;
   onHighlightComplete: () => void;
   /** Entrance delay index within one copy batch. */
@@ -290,8 +304,10 @@ export interface SlotPlannerSlotListItemProps {
 /**
  * The structural slot-card `<li>` wrapper, animated. Enter/exit run under
  * the parent `AnimatePresence` with the stable `slotId::occurrenceDate` key;
- * `layout="position"` settles the remaining cards after a deletion. Exiting
- * cards turn `aria-hidden` so assistive tech ignores the fade-out.
+ * `layout="position"` settles the remaining cards after a deletion. The
+ * dependency scopes layout measurement to list-count changes so switching
+ * week/day views does not animate cards from their old rail-offset position.
+ * Exiting cards turn `aria-hidden` so assistive tech ignores the fade-out.
  */
 export const SlotPlannerSlotListItem = forwardRef<
   HTMLLIElement,
@@ -303,6 +319,7 @@ export const SlotPlannerSlotListItem = forwardRef<
       className,
       entrance,
       highlightNonce,
+      layoutDependency,
       motionEnabled,
       onHighlightComplete,
       staggerIndex,
@@ -342,6 +359,7 @@ export const SlotPlannerSlotListItem = forwardRef<
         }
         className={className}
         layout="position"
+        layoutDependency={layoutDependency}
         custom={mountStaggerIndex}
         variants={slotPlannerSlotItemVariants}
         initial={mountEntrance ? "enter" : false}

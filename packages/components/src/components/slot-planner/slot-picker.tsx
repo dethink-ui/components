@@ -16,6 +16,8 @@ import {
 } from "react";
 import { MotionConfig, useReducedMotion } from "motion/react";
 import { cn } from "../../utils/cn";
+import { Button } from "../button";
+import { IconButton } from "../icon-button";
 import {
   slotPlannerOccurrenceStatuses,
   type SlotPlannerBookRequestPayload,
@@ -25,6 +27,7 @@ import {
   type SlotPlannerTaxonomyInput,
 } from "./slot-planner-contract";
 import {
+  CalendarIcon,
   ChevronIcon,
   getConventionalSlotData,
   getSlotPlannerDirection,
@@ -40,7 +43,6 @@ import {
   slotPlannerSlotCardClasses,
   slotPlannerStatusBadgeClasses,
   slotPlannerStatusDotClasses,
-  slotPlannerToolbarButtonClasses,
   slotPlannerToolbarClasses,
   slotPlannerWeekPanelContentClasses,
   toUtcDate,
@@ -130,7 +132,11 @@ export interface SlotPickerProps<
     payload: SlotPlannerBookRequestPayload,
   ) => void | Promise<void>;
   taxonomy?: SlotPlannerTaxonomyInput;
+  /** Controlled view projection. Pair with `onViewChange` for the default switcher. */
   view?: SlotPlannerView;
+  /** Initial view for uncontrolled usage. */
+  defaultView?: SlotPlannerView;
+  onViewChange?: (view: SlotPlannerView) => void;
   /** Controlled focused VIEWER-zone ISO date (`YYYY-MM-DD`). */
   focusedDate?: string;
   /**
@@ -143,6 +149,8 @@ export interface SlotPickerProps<
   now?: string;
   locale?: string;
   title?: ReactNode;
+  loading?: boolean;
+  error?: ReactNode;
   /**
    * Forces the reduced-motion rendering path. Defaults to the viewer's
    * `prefers-reduced-motion` preference.
@@ -158,6 +166,21 @@ const slotPickerVisibleStatuses = slotPlannerOccurrenceStatuses.filter(
 
 function getSlotPickerOccurrenceKey(slotId: string, occurrenceDate: string) {
   return `${slotId}::${occurrenceDate}`;
+}
+
+function getSlotPickerRemainingSeats(occurrence: SlotPickerOccurrence) {
+  return Math.max(
+    0,
+    occurrence.capacity - occurrence.bookedCount - occurrence.requestedCount,
+  );
+}
+
+function isSlotPickerOccurrenceAvailable(occurrence: SlotPickerOccurrence) {
+  return (
+    occurrence.status === "requestable" ||
+    (occurrence.status === "requested" &&
+      getSlotPickerRemainingSeats(occurrence) > 0)
+  );
 }
 
 /**
@@ -186,7 +209,7 @@ function SlotPickerSlotCardContent<
 }) {
   const { note, tags } = getConventionalSlotData(occurrence.slot.data);
   const showProviderContext = occurrence.timeZone !== occurrence.viewerTimeZone;
-  const remainingSeats = occurrence.capacity - occurrence.bookedCount;
+  const remainingSeats = getSlotPickerRemainingSeats(occurrence);
 
   return (
     <>
@@ -244,7 +267,7 @@ function SlotPickerSlotCardContent<
           {note}
         </p>
       ) : null}
-      {occurrence.status === "requestable" && occurrence.capacity > 1 ? (
+      {onRequest && occurrence.capacity > 1 ? (
         <p
           data-slot="slot-picker-remaining-seats"
           className="text-xs text-muted-foreground"
@@ -316,13 +339,17 @@ function SlotPickerInner<
     viewerTimeZone,
     onBookRequest,
     taxonomy,
-    view = "week",
+    view: controlledView,
+    defaultView = "week",
+    onViewChange,
     focusedDate,
     defaultFocusedDate,
     onFocusedDateChange,
     now,
     locale = "en",
     title,
+    loading = false,
+    error,
     reducedMotion,
     renderers,
     ...props
@@ -334,6 +361,20 @@ function SlotPickerInner<
   const prefersReducedMotion = useReducedMotion();
   const resolvedReducedMotion = reducedMotion ?? prefersReducedMotion === true;
   const motionEnabled = !resolvedReducedMotion;
+  const [internalView, setInternalView] = useState(defaultView);
+  const currentView = controlledView ?? internalView;
+  const setView = useCallback(
+    (nextView: SlotPlannerView) => {
+      if (controlledView === undefined) {
+        setInternalView(nextView);
+      }
+
+      if (nextView !== currentView) {
+        onViewChange?.(nextView);
+      }
+    },
+    [controlledView, currentView, onViewChange],
+  );
 
   // Both fallbacks are captured once so an unmounted-and-remounted render
   // stays internally consistent; pass the props for deterministic renders.
@@ -378,8 +419,9 @@ function SlotPickerInner<
     () => getSlotPlannerWeekDays(currentFocusedDate),
     [currentFocusedDate],
   );
-  const rangeStart = view === "week" ? weekDays[0]! : currentFocusedDate;
-  const rangeEnd = view === "week" ? weekDays[6]! : currentFocusedDate;
+  const rangeStart =
+    currentView === "week" ? weekDays[0]! : currentFocusedDate;
+  const rangeEnd = currentView === "week" ? weekDays[6]! : currentFocusedDate;
   // Occurrences are expanded in the provider zone and bucketed by the
   // VIEWER-zone date of their start instant; draft/cancelled never surface.
   const occurrencesByViewerDate = useMemo(
@@ -564,21 +606,64 @@ function SlotPickerInner<
       {resolvedTaxonomy.emptyDay}
     </p>
   );
+  const hasExternalError =
+    error !== undefined && error !== null && error !== false;
+  const externalErrorContent =
+    typeof error === "boolean" ? resolvedTaxonomy.error : error;
+  const defaultLoading = (
+    <p
+      role="status"
+      data-slot="slot-picker-loading"
+      className="text-sm text-muted-foreground"
+    >
+      {resolvedTaxonomy.loading}
+    </p>
+  );
+  const defaultError = (
+    <div
+      role="alert"
+      data-slot="slot-picker-error"
+      className={slotPlannerSaveErrorClasses}
+    >
+      {externalErrorContent ?? resolvedTaxonomy.error}
+    </div>
+  );
+  const returnToCurrentLabel =
+    currentView === "day" ? resolvedTaxonomy.today : resolvedTaxonomy.thisWeek;
+  const returnToCurrentDisabled =
+    currentView === "day" && currentFocusedDate === todayIso;
+  const moveDay = (days: number) => {
+    setFocusedDate(parseDate(currentFocusedDate).add({ days }).toString());
+  };
+  const goToPreviousPeriod =
+    currentView === "day" ? () => moveDay(-1) : goToPreviousWeek;
+  const goToNextPeriod =
+    currentView === "day" ? () => moveDay(1) : goToNextWeek;
+  const previousPeriodLabel =
+    currentView === "day"
+      ? resolvedTaxonomy.previousDay
+      : resolvedTaxonomy.previousWeek;
+  const nextPeriodLabel =
+    currentView === "day"
+      ? resolvedTaxonomy.nextDay
+      : resolvedTaxonomy.nextWeek;
 
   const availableCount = selectedOccurrences.filter(
-    (occurrence) => occurrence.status === "requestable",
+    (occurrence) => isSlotPickerOccurrenceAvailable(occurrence),
   ).length;
 
   const dayPanel = (
     <div
-      role={view === "week" ? "tabpanel" : undefined}
-      id={view === "week" ? panelId : undefined}
+      role={currentView === "week" ? "tabpanel" : undefined}
+      id={currentView === "week" ? panelId : undefined}
       aria-labelledby={
-        view === "week" ? getTabId(currentFocusedDate) : undefined
+        currentView === "week" ? getTabId(currentFocusedDate) : undefined
       }
-      tabIndex={view === "week" ? 0 : -1}
+      tabIndex={currentView === "week" ? 0 : -1}
       data-slot="slot-picker-day-panel"
       data-past={isPastDay ? "true" : undefined}
+      data-loading={loading ? "true" : undefined}
+      data-error={hasExternalError ? "true" : undefined}
       className={slotPlannerDayPanelClasses}
     >
       <SlotPlannerWeekSlide
@@ -601,7 +686,11 @@ function SlotPickerInner<
             {resolvedTaxonomy.pastDay}
           </p>
         ) : null}
-        {selectedOccurrences.length === 0 ? (
+        {loading ? (
+          defaultLoading
+        ) : hasExternalError ? (
+          defaultError
+        ) : selectedOccurrences.length === 0 ? (
           renderers?.emptyDay ? (
             renderers.emptyDay({
               date: currentFocusedDate,
@@ -635,7 +724,7 @@ function SlotPickerInner<
                   occurrence.slotId,
                   occurrence.occurrenceDate,
                 );
-                const available = occurrence.status === "requestable";
+                const available = isSlotPickerOccurrenceAvailable(occurrence);
                 const pending = pendingKeys.has(key);
                 const storedRetry = retryByKey.get(key);
                 const retry = storedRetry
@@ -707,7 +796,7 @@ function SlotPickerInner<
         {...props}
         ref={mergedRef}
         data-slot="slot-picker"
-        data-view={view}
+        data-view={currentView}
         data-viewer-time-zone={resolvedViewerTimeZone}
         data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
         data-week-direction={
@@ -719,41 +808,76 @@ function SlotPickerInner<
         }
         className={cn(slotPlannerRootClasses, className)}
       >
-        {view === "week" ? (
-          <>
-            <div
-              data-slot="slot-picker-toolbar"
-              className={slotPlannerToolbarClasses}
+        <div
+          data-slot="slot-picker-toolbar"
+          className={slotPlannerToolbarClasses}
+        >
+          <div
+            data-slot="slot-picker-title"
+            className="min-w-0 truncate text-base font-semibold sm:text-lg"
+          >
+            {title}
+          </div>
+          <div className="col-span-2 row-start-2 flex min-w-0 items-center justify-start gap-[var(--dt-space-1)] sm:col-span-1 sm:col-start-auto sm:row-auto sm:justify-center">
+            <IconButton
+              aria-label={previousPeriodLabel}
+              size="sm"
+              variant="outline"
+              onClick={goToPreviousPeriod}
             >
-              <div data-slot="slot-picker-title" className="text-lg font-semibold">
-                {title}
-              </div>
-              <div className="flex items-center gap-[var(--dt-space-1)]">
-                <button
-                  type="button"
-                  aria-label={resolvedTaxonomy.previousWeek}
-                  className={slotPlannerToolbarButtonClasses}
-                  onClick={goToPreviousWeek}
-                >
-                  <ChevronIcon direction="backward" />
-                </button>
-                <button
-                  type="button"
-                  className={slotPlannerToolbarButtonClasses}
-                  onClick={goToThisWeek}
-                >
-                  {resolvedTaxonomy.thisWeek}
-                </button>
-                <button
-                  type="button"
-                  aria-label={resolvedTaxonomy.nextWeek}
-                  className={slotPlannerToolbarButtonClasses}
-                  onClick={goToNextWeek}
-                >
-                  <ChevronIcon direction="forward" />
-                </button>
-              </div>
-            </div>
+              <ChevronIcon direction="backward" />
+            </IconButton>
+            <Button
+              size="sm"
+              variant="outline"
+              leftIcon={<CalendarIcon />}
+              className="shadow-sm"
+              disabled={returnToCurrentDisabled}
+              onClick={goToThisWeek}
+            >
+              {returnToCurrentLabel}
+            </Button>
+            <IconButton
+              aria-label={nextPeriodLabel}
+              size="sm"
+              variant="outline"
+              onClick={goToNextPeriod}
+            >
+              <ChevronIcon direction="forward" />
+            </IconButton>
+          </div>
+          <div
+            role="group"
+            aria-label={resolvedTaxonomy.viewSwitcherLabel}
+            data-slot="slot-picker-view-switch"
+            className="col-start-2 row-start-1 flex items-center gap-[var(--dt-space-1)] justify-self-end rounded-md border border-border bg-background p-0.5 sm:col-auto sm:row-auto"
+          >
+            {(["week", "day"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={currentView === option}
+                data-slot="slot-picker-view-switch-option"
+                data-view={option}
+                className={cn(
+                  "inline-flex h-7 items-center rounded px-[var(--dt-space-2)] text-xs font-medium text-muted-foreground motion-safe:transition-colors motion-safe:duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  currentView === option &&
+                    "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                )}
+                onClick={() => setView(option)}
+              >
+                {option === "week"
+                  ? resolvedTaxonomy.weekView
+                  : resolvedTaxonomy.dayView}
+              </button>
+            ))}
+          </div>
+        </div>
+        {currentView === "week" ? (
+          <div
+            data-slot="slot-picker-week-layout"
+            className="grid min-w-0 gap-[var(--dt-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
+          >
             <div
               role="tablist"
               aria-label={formatSlotPlannerTemplate(
@@ -813,39 +937,51 @@ function SlotPickerInner<
                       </span>
                       {slotPickerVisibleStatuses
                         .filter((status) => summary[status] > 0)
-                        .map((status) => (
-                          <span
-                            key={status}
-                            data-slot="slot-picker-day-summary"
-                            data-status={status}
-                            className="flex items-center gap-[var(--dt-space-1)] text-xs text-muted-foreground"
-                          >
+                        .map((status) => {
+                          const summaryText = formatSlotPlannerCountTemplate(
+                            resolvedTaxonomy.statusCountSummary,
+                            summary[status],
+                            {
+                              statusLabel:
+                                resolvedTaxonomy.statusLabels[status],
+                            },
+                            locale,
+                          );
+
+                          return (
                             <span
-                              aria-hidden="true"
-                              className={cn(
-                                "size-1.5 rounded-full",
-                                slotPlannerStatusDotClasses[status],
-                              )}
-                            />
-                            {formatSlotPlannerCountTemplate(
-                              resolvedTaxonomy.statusCountSummary,
-                              summary[status],
-                              {
-                                statusLabel:
-                                  resolvedTaxonomy.statusLabels[status],
-                              },
-                              locale,
-                            )}
-                          </span>
-                        ))}
+                              key={status}
+                              title={summaryText}
+                              data-slot="slot-picker-day-summary"
+                              data-status={status}
+                              className="flex w-full min-w-0 items-center gap-[var(--dt-space-1)] overflow-hidden whitespace-nowrap text-xs text-muted-foreground"
+                            >
+                              <span
+                                aria-hidden="true"
+                                className={cn(
+                                  "size-1.5 shrink-0 rounded-full",
+                                  slotPlannerStatusDotClasses[status],
+                                )}
+                              />
+                              <span
+                                data-slot="slot-picker-day-summary-text"
+                                className="min-w-0 truncate"
+                              >
+                                {summaryText}
+                              </span>
+                            </span>
+                          );
+                        })}
                     </SlotPlannerDayTabContent>
                   </button>
                 );
               })}
             </div>
-          </>
-        ) : null}
-        {dayPanel}
+            {dayPanel}
+          </div>
+        ) : (
+          dayPanel
+        )}
         <div
           aria-live="polite"
           data-slot="slot-picker-live-region"

@@ -34,6 +34,7 @@ export type SlotPlannerEditorRecurrence =
 export type SlotPlannerEditorSeriesValues = {
   startTime: string;
   durationMinutes: number;
+  capacity: number;
   bufferBeforeMinutes: number;
   bufferAfterMinutes: number;
   timeZone: string;
@@ -210,6 +211,7 @@ export function createSlotFromEditorValues<
     timeZone: values.timeZone,
     state: "requestable",
     ...(recurrence ? { recurrence } : {}),
+    ...(values.capacity > 1 ? { capacity: values.capacity } : {}),
     ...(values.bufferBeforeMinutes > 0
       ? { bufferBeforeMinutes: values.bufferBeforeMinutes }
       : {}),
@@ -248,6 +250,12 @@ export function updateSlotFromEditorValues<
     };
   } else {
     delete next.recurrence;
+  }
+
+  if (values.capacity > 1) {
+    next.capacity = values.capacity;
+  } else {
+    delete next.capacity;
   }
 
   if (values.bufferBeforeMinutes > 0) {

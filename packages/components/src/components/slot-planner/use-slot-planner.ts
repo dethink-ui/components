@@ -34,6 +34,7 @@ import {
   expandSlotsForRange,
   formatSlotPlannerCountTemplate,
   formatSlotPlannerTemplate,
+  getSlotPlannerIsoDateInZone,
   getSlotPlannerWeekDays,
   resolveSlotPlannerTaxonomy,
   summarizeSlotPlannerDay,
@@ -138,11 +139,8 @@ export function useSlotPlannerCrud() {
   return { clearError, pendingKeys, retryByKey, run };
 }
 
-function getLocalIsoDate(dateTime: Date) {
-  const month = String(dateTime.getMonth() + 1).padStart(2, "0");
-  const day = String(dateTime.getDate()).padStart(2, "0");
-
-  return `${dateTime.getFullYear()}-${month}-${day}`;
+function getEnvironmentTimeZone() {
+  return new Intl.DateTimeFormat().resolvedOptions().timeZone;
 }
 
 function getSlotPlannerOccurrenceKey(slotId: string, occurrenceDate: string) {
@@ -177,6 +175,7 @@ function buildCopiedSlot<TData extends SlotPlannerSlotPayload>(
     durationMinutes: occurrence.durationMinutes,
     timeZone: source.timeZone,
     state: "requestable",
+    ...(source.capacity !== undefined ? { capacity: source.capacity } : {}),
     ...(source.bufferBeforeMinutes !== undefined
       ? { bufferBeforeMinutes: source.bufferBeforeMinutes }
       : {}),
@@ -191,8 +190,12 @@ function defaultGenerateSlotId() {
   return crypto.randomUUID();
 }
 
-function isCopyableStatus(status: SlotPlannerOccurrenceStatus) {
-  return status === "draft" || status === "requestable";
+function isMutableAvailabilityStatus(status: SlotPlannerOccurrenceStatus) {
+  return (
+    status === "draft" ||
+    status === "requestable" ||
+    status === "requested"
+  );
 }
 
 /**
@@ -237,6 +240,8 @@ export interface UseSlotPlannerOptions<
   view?: SlotPlannerView;
   /** ISO date-time treated as "now"; injectable for deterministic renders. */
   now?: string;
+  /** IANA zone used for manage-mode "today" and past-day state. */
+  timeZone?: string;
   locale?: string;
 }
 
@@ -252,6 +257,14 @@ export interface UseSlotPlannerActionOptions {
 /** Focused-day daily-cap meter data. */
 export type SlotPlannerDailyCapInfo = {
   /** Published (requestable/requested/booked) occurrences on the day. */
+  used: number;
+  cap: number;
+  reached: boolean;
+};
+
+/** Focused-week weekly-cap meter data. */
+export type SlotPlannerWeeklyCapInfo = {
+  /** Published (requestable/requested/booked) occurrences in the focused week. */
   used: number;
   cap: number;
   reached: boolean;
@@ -292,6 +305,8 @@ export interface UseSlotPlannerReturn<
   ) => Record<SlotPlannerOccurrenceStatus, number>;
   /** Focused-day cap info; undefined without a `dailyRequestableCap`. */
   dailyCap: SlotPlannerDailyCapInfo | undefined;
+  /** Focused-week cap info; undefined without a `weeklyRequestableCap`. */
+  weeklyCap: SlotPlannerWeeklyCapInfo | undefined;
   /** Validates a candidate against the current collection and "now". */
   validate: (candidate: SlotPlannerSlotData<TData>) => SlotPlannerViolation[];
   /**
@@ -366,12 +381,18 @@ export function useSlotPlanner<
     onUpdateSlot,
     slots,
     taxonomy,
+    timeZone,
     view = "week",
   } = options;
 
   const [fallbackNow] = useState(() => new Date().toISOString());
+  const [fallbackTimeZone] = useState(getEnvironmentTimeZone);
+  const resolvedTimeZone = timeZone ?? fallbackTimeZone;
   const resolvedNow = now ?? fallbackNow;
-  const todayIso = getLocalIsoDate(new Date(resolvedNow));
+  const todayIso = getSlotPlannerIsoDateInZone(
+    Date.parse(resolvedNow),
+    resolvedTimeZone,
+  );
   const resolvedTaxonomy = useMemo(
     () => resolveSlotPlannerTaxonomy(taxonomy),
     [taxonomy],
@@ -455,34 +476,97 @@ export function useSlotPlanner<
     capLimit === undefined
       ? undefined
       : { cap: capLimit, reached: dailyCapReached, used: dailyCapUsed };
-  // Announces the daily cap only when a mutation flips the focused day from
-  // under-cap to at-cap; navigating onto an already-full day stays silent.
-  const capStateRef = useRef<{ date: string; reached: boolean } | null>(null);
+  const weeklyCapLimit = constraints?.weeklyRequestableCap;
+  const weeklyCapUsed = useMemo(
+    () =>
+      weeklyCapLimit === undefined
+        ? 0
+        : weekDays.reduce(
+            (total, date) =>
+              total +
+              countSlotPlannerPublishedOccurrences(
+                resolvedSlots,
+                date,
+                resolvedNow,
+              ),
+            0,
+          ),
+    [resolvedNow, resolvedSlots, weekDays, weeklyCapLimit],
+  );
+  const weeklyCapReached =
+    weeklyCapLimit !== undefined && weeklyCapUsed >= weeklyCapLimit;
+  const weeklyCap: SlotPlannerWeeklyCapInfo | undefined =
+    weeklyCapLimit === undefined
+      ? undefined
+      : { cap: weeklyCapLimit, reached: weeklyCapReached, used: weeklyCapUsed };
+  // Announces caps only when a mutation flips the same focused range from
+  // under-cap to at-cap; navigating onto an already-full range stays silent.
+  const capStateRef = useRef<{
+    date: string;
+    dailyReached: boolean;
+    weekStart: string;
+    weeklyReached: boolean;
+  } | null>(null);
 
   useEffect(() => {
     const previous = capStateRef.current;
+    const weekStart = weekDays[0]!;
 
-    capStateRef.current = { date: currentFocusedDate, reached: dailyCapReached };
+    capStateRef.current = {
+      dailyReached: dailyCapReached,
+      date: currentFocusedDate,
+      weeklyReached: weeklyCapReached,
+      weekStart,
+    };
+
+    if (!previous) {
+      return;
+    }
+
+    const messages: string[] = [];
+    const nounTokens = {
+      slot: resolvedTaxonomy.slot,
+      slotPlural: resolvedTaxonomy.slotPlural,
+    };
 
     if (
-      previous &&
       previous.date === currentFocusedDate &&
-      !previous.reached &&
+      !previous.dailyReached &&
       dailyCapReached
     ) {
-      const capMessage = formatSlotPlannerTemplate(
-        resolvedTaxonomy.announceDailyCapReached,
-        {
-          slot: resolvedTaxonomy.slot,
-          slotPlural: resolvedTaxonomy.slotPlural,
-        },
-      );
-
-      setAnnouncement((current) =>
-        current ? `${current}. ${capMessage}` : capMessage,
+      messages.push(
+        formatSlotPlannerTemplate(
+          resolvedTaxonomy.announceDailyCapReached,
+          nounTokens,
+        ),
       );
     }
-  }, [currentFocusedDate, dailyCapReached, resolvedTaxonomy]);
+
+    if (
+      previous.weekStart === weekStart &&
+      !previous.weeklyReached &&
+      weeklyCapReached
+    ) {
+      messages.push(
+        formatSlotPlannerTemplate(
+          resolvedTaxonomy.announceWeeklyCapReached,
+          nounTokens,
+        ),
+      );
+    }
+
+    if (messages.length > 0) {
+      setAnnouncement((current) =>
+        current ? `${current}. ${messages.join(". ")}` : messages.join(". "),
+      );
+    }
+  }, [
+    currentFocusedDate,
+    dailyCapReached,
+    resolvedTaxonomy,
+    weekDays,
+    weeklyCapReached,
+  ]);
 
   const summarizeDay = useCallback(
     (dateIso: string) => summarizeSlotPlannerDay(occurrencesByDate[dateIso] ?? []),
@@ -492,6 +576,25 @@ export function useSlotPlanner<
   const moveWeek = (weeks: number) => {
     setFocusedDate(parseDate(currentFocusedDate).add({ weeks }).toString());
   };
+
+  const announcedWeekStartRef = useRef(weekDays[0]!);
+
+  useEffect(() => {
+    const weekStart = weekDays[0]!;
+
+    if (announcedWeekStartRef.current === weekStart) {
+      return;
+    }
+
+    announcedWeekStartRef.current = weekStart;
+    setAnnouncement(
+      formatSlotPlannerTemplate(resolvedTaxonomy.announceWeekChanged, {
+        slot: resolvedTaxonomy.slot,
+        slotPlural: resolvedTaxonomy.slotPlural,
+        weekStart,
+      }),
+    );
+  }, [resolvedTaxonomy, weekDays]);
 
   const generateId = generateSlotId ?? defaultGenerateSlotId;
 
@@ -682,7 +785,7 @@ export function useSlotPlanner<
 
   const copyDay = (targetDates: string[]) => {
     const sources = selectedOccurrences.filter((occurrence) =>
-      isCopyableStatus(occurrence.status),
+      isMutableAvailabilityStatus(occurrence.status),
     );
     const candidates = [...targetDates]
       .sort()
@@ -706,7 +809,7 @@ export function useSlotPlanner<
     );
     const candidates = weekDays.flatMap((day) =>
       (weekOccurrences[day] ?? [])
-        .filter((occurrence) => isCopyableStatus(occurrence.status))
+        .filter((occurrence) => isMutableAvailabilityStatus(occurrence.status))
         .map((occurrence) =>
           buildCopiedSlot(
             occurrence,
@@ -724,9 +827,9 @@ export function useSlotPlanner<
     const updatedSlots: SlotPlannerSlotData<TData>[] = [];
 
     for (const occurrence of selectedOccurrences) {
-      // Locked statuses (requested, booked, blocked, expired, cancelled)
-      // are skipped and kept.
-      if (!isCopyableStatus(occurrence.status)) {
+      // Locked statuses (booked, blocked, expired, cancelled) are skipped
+      // and kept.
+      if (!isMutableAvailabilityStatus(occurrence.status)) {
         continue;
       }
 
@@ -787,5 +890,6 @@ export function useSlotPlanner<
     updateSlot,
     validate,
     weekDays,
+    weeklyCap,
   };
 }

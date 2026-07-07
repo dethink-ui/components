@@ -10,13 +10,14 @@ import {
 } from ".";
 import { slotPlannerSampleSlots } from "./slot-planner-fixtures";
 
-// Same deterministic "now" as the component tests: today is 2026-07-06 in
-// any test-runner time zone.
-const NOW = "2026-07-06T00:30:00";
+// Same deterministic "now" as the component tests: the planner-zone
+// "today" resolves from this instant.
+const NOW = "2026-07-06T00:30:00Z";
 
 const baseEditorValues: SlotPlannerEditorSeriesValues = {
   startTime: "10:00",
   durationMinutes: 45,
+  capacity: 1,
   bufferBeforeMinutes: 0,
   bufferAfterMinutes: 0,
   timeZone: "Europe/London",
@@ -31,6 +32,7 @@ function renderPlannerHook(options: UseSlotPlannerOptions = {}) {
     useSlotPlanner({
       defaultFocusedDate: "2026-07-06",
       now: NOW,
+      timeZone: "Europe/London",
       ...options,
     }),
   );
@@ -40,7 +42,7 @@ describe("useSlotPlanner", () => {
   it("resolves taxonomy, week days, occurrences, summaries, and cap info", () => {
     const { result } = renderPlannerHook({
       slots: slotPlannerSampleSlots,
-      constraints: { dailyRequestableCap: 3 },
+      constraints: { dailyRequestableCap: 3, weeklyRequestableCap: 6 },
     });
 
     expect(result.current.taxonomy.slot).toBe("slot");
@@ -63,13 +65,14 @@ describe("useSlotPlanner", () => {
     expect(result.current.summarizeDay("2026-07-06").requestable).toBe(2);
     expect(result.current.summarizeDay("2026-07-09").booked).toBe(1);
     expect(result.current.dailyCap).toEqual({ cap: 3, reached: false, used: 2 });
+    expect(result.current.weeklyCap).toEqual({ cap: 6, reached: false, used: 5 });
     expect(result.current.slots).toBe(slotPlannerSampleSlots);
   });
 
-  it("reports the cap as reached and omits it without a constraint", () => {
+  it("reports caps as reached and omits them without constraints", () => {
     const capped = renderPlannerHook({
       slots: slotPlannerSampleSlots,
-      constraints: { dailyRequestableCap: 2 },
+      constraints: { dailyRequestableCap: 2, weeklyRequestableCap: 5 },
     });
 
     expect(capped.result.current.dailyCap).toEqual({
@@ -77,10 +80,34 @@ describe("useSlotPlanner", () => {
       reached: true,
       used: 2,
     });
+    expect(capped.result.current.weeklyCap).toEqual({
+      cap: 5,
+      reached: true,
+      used: 5,
+    });
 
     const uncapped = renderPlannerHook({ slots: slotPlannerSampleSlots });
 
     expect(uncapped.result.current.dailyCap).toBeUndefined();
+    expect(uncapped.result.current.weeklyCap).toBeUndefined();
+  });
+
+  it("derives today from the configured planner time zone", () => {
+    const london = renderPlannerHook({
+      defaultFocusedDate: undefined,
+      now: "2026-07-06T23:30:00Z",
+      timeZone: "Europe/London",
+    });
+    const losAngeles = renderPlannerHook({
+      defaultFocusedDate: undefined,
+      now: "2026-07-06T23:30:00Z",
+      timeZone: "America/Los_Angeles",
+    });
+
+    expect(london.result.current.todayIso).toBe("2026-07-07");
+    expect(london.result.current.focusedDate).toBe("2026-07-07");
+    expect(losAngeles.result.current.todayIso).toBe("2026-07-06");
+    expect(losAngeles.result.current.focusedDate).toBe("2026-07-06");
   });
 
   it("navigates weeks and reports focused-date changes", () => {
@@ -315,6 +342,7 @@ describe("useSlotPlanner", () => {
       durationMinutes: 60,
       timeZone: "Europe/London",
       state: "requestable",
+      capacity: 4,
     };
     const wedExisting: SlotPlannerSlotData = {
       id: "wed-existing",
@@ -338,6 +366,7 @@ describe("useSlotPlanner", () => {
 
     expect(payload.createdSlots.map((slot: SlotPlannerSlotData) => slot.date))
       .toEqual(["2026-07-07"]);
+    expect(payload.createdSlots[0]).toMatchObject({ capacity: 4 });
     expect(Object.keys(payload.violations)).toEqual(["gen-2"]);
     expect(result.current.occurrencesByDate["2026-07-07"]).toHaveLength(1);
     expect(result.current.announcement).toBe("1 slot added. 1 slot rejected");
@@ -391,6 +420,7 @@ function HeadlessWeek(props: UseSlotPlannerOptions) {
   const planner = useSlotPlanner({
     defaultFocusedDate: "2026-07-06",
     now: NOW,
+    timeZone: "Europe/London",
     ...props,
   });
 

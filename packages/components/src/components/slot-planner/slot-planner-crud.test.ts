@@ -29,6 +29,7 @@ const snapshot = <T>(value: T) => roundTrip(value);
 const baseEditorValues: SlotPlannerEditorSeriesValues = {
   startTime: "10:30",
   durationMinutes: 45,
+  capacity: 1,
   bufferBeforeMinutes: 0,
   bufferAfterMinutes: 0,
   timeZone: "Europe/London",

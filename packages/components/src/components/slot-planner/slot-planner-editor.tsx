@@ -164,6 +164,7 @@ export function SlotPlannerEditorDialog({
   const [durationText, setDurationText] = useState(
     String(scopedInitial.durationMinutes),
   );
+  const [capacityText, setCapacityText] = useState(String(seriesValues.capacity));
   const [bufferBeforeText, setBufferBeforeText] = useState(
     String(seriesValues.bufferBeforeMinutes),
   );
@@ -231,6 +232,7 @@ export function SlotPlannerEditorDialog({
           seriesValues.durationMinutes,
           1,
         ),
+        capacity: parseMinutes(capacityText, seriesValues.capacity, 1),
         bufferBeforeMinutes: parseMinutes(bufferBeforeText, 0, 0),
         bufferAfterMinutes: parseMinutes(bufferAfterText, 0, 0),
         timeZone,
@@ -329,6 +331,18 @@ export function SlotPlannerEditorDialog({
         </div>
         {scope === "series" ? (
           <>
+            <Field>
+              <FieldLabel>{taxonomy.fieldCapacity}</FieldLabel>
+              <FieldControl asChild>
+                <NumberInput
+                  type="number"
+                  numberMode="numeric"
+                  min={1}
+                  value={capacityText}
+                  onChange={(event) => setCapacityText(event.target.value)}
+                />
+              </FieldControl>
+            </Field>
             <div className={editorFieldRowClasses}>
               <Field>
                 <FieldLabel>{taxonomy.fieldBufferBeforeMinutes}</FieldLabel>

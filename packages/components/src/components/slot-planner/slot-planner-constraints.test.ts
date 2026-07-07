@@ -10,10 +10,9 @@ import {
   type SlotPlannerViolationCode,
 } from ".";
 
-// Local wall-clock "now" (no zone suffix) keeps the derived "today" at
-// 2026-07-06 in any test-runner time zone. Epoch-sensitive scenarios below
-// keep multi-hour margins so they hold for offsets from UTC-12 to UTC+14.
-const NOW = "2026-07-06T00:30:00";
+// Instant-anchored "now" (Z suffix): validation derives "today" in the
+// candidate slot zone, so tests are deterministic in any runner time zone.
+const NOW = "2026-07-06T00:30:00Z";
 
 const roundTrip = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 
@@ -386,15 +385,21 @@ describe("DST wall-clock times", () => {
     });
   });
 
-  it("accepts ambiguous fall-back times (they resolve deterministically)", () => {
-    // Europe/London leaves DST on 2026-10-25; 01:30 occurs twice and is
-    // resolved deterministically by the library, so it is not a violation.
+  it("violates invalid-wall-clock-time for an ambiguous fall-back time", () => {
+    // Europe/London leaves DST on 2026-10-25; 01:30 occurs twice.
+    const violations = validateSlotPlannerSlot(
+      makeSlot({ id: "ambiguous", date: "2026-10-25", startTime: "01:30" }),
+      makeContext(),
+    );
+
+    expect(codesOf(violations)).toEqual(["invalid-wall-clock-time"]);
     expect(
-      validateSlotPlannerSlot(
-        makeSlot({ id: "ambiguous", date: "2026-10-25", startTime: "01:30" }),
-        makeContext(),
-      ),
-    ).toEqual([]);
+      findViolation(violations, "invalid-wall-clock-time")?.params,
+    ).toMatchObject({
+      date: "2026-10-25",
+      startTime: "01:30",
+      timeZone: "Europe/London",
+    });
   });
 });
 
