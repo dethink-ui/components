@@ -139,17 +139,18 @@ describe("Drawer motion (enabled)", () => {
       </Drawer>,
     );
 
-    expect(screen.getByTestId("side-handle")).toHaveAttribute(
-      "data-direction",
-      "right",
-    );
-    expect(screen.getByTestId("side-handle")).toHaveClass(
+    const rightHandle = screen.getByTestId("side-handle");
+
+    expect(rightHandle).toHaveAttribute("data-direction", "right");
+    expect(rightHandle).toHaveClass(
       "data-[direction=right]:absolute",
       "data-[direction=right]:inset-y-0",
       "data-[direction=right]:left-0",
       "data-[direction=right]:h-full",
       "data-[direction=right]:w-8",
     );
+    fireEvent.pointerEnter(rightHandle);
+    expect(rightHandle.style.transform).not.toContain("scale");
 
     rerender(
       <Drawer defaultOpen direction="left">

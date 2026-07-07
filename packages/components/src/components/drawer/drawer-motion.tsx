@@ -368,9 +368,6 @@ export const DrawerMotionHandle = forwardRef<
     onPointerDown={(event) => {
       dragControls.start(event);
     }}
-    transition={{ duration: 0.16, ease: "easeOut" }}
-    whileHover={{ scale: 1.01 }}
-    whileTap={{ scale: 0.985 }}
   />
 ));
 
