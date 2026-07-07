@@ -159,7 +159,11 @@ function measureContentSize(
   const rect = contentRef.current?.getBoundingClientRect();
 
   if (!rect) {
-    return 0;
+    return typeof window === "undefined"
+      ? 0
+      : axis === "x"
+        ? window.innerWidth
+        : window.innerHeight;
   }
 
   const measuredSize = axis === "x" ? rect.width : rect.height;
@@ -212,8 +216,12 @@ export function useDrawerDrag({
   const dragControls = useDragControls();
   const startSnapPointRef = useRef(resolvedSnapPoint);
   const hasMountedRef = useRef(false);
+  const wasOpenRef = useRef(open);
 
   useIsomorphicLayoutEffect(() => {
+    const wasOpen = wasOpenRef.current;
+
+    wasOpenRef.current = open;
     startSnapPointRef.current = resolvedSnapPoint;
 
     const contentSize = measureContentSize(contentRef, axis);
@@ -232,6 +240,11 @@ export function useDrawerDrag({
       if (!open) {
         return undefined;
       }
+    } else if (open && !wasOpen) {
+      translateMotionValue.set(closedTarget);
+    } else if (!open && !wasOpen) {
+      translateMotionValue.set(closedTarget);
+      return undefined;
     }
 
     const controls = animate(translateMotionValue, target, springTransition);
