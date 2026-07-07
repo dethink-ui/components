@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Box as BoxIcon,
   Calendar as CalendarIcon,
+  CalendarClock,
   CalendarDays,
   CalendarRange,
   ChartGantt,
@@ -80,6 +81,7 @@ const componentIcons: Record<string, LucideIcon> = {
   select: ListFilter,
   separator: Minus,
   sidebar: PanelLeft,
+  "slot-planner": CalendarClock,
   stack: Rows3,
   switch: ToggleRight,
   table: Table2,

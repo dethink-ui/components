@@ -315,6 +315,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "slot-planner",
+    name: "SlotPlanner",
+    description:
+      "Manage a bookable time-slot inventory with week/day views, recurrence, and constraints, and project the same slots into a viewer's time zone for booking.",
+    type: "data-display",
+  },
+  {
     slug: "table",
     name: "Table",
     description:
