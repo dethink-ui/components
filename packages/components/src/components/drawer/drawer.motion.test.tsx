@@ -52,6 +52,52 @@ describe("Drawer motion (enabled)", () => {
     });
   });
 
+  it("overlays side handles without reserving drawer height", () => {
+    const { rerender } = render(
+      <Drawer defaultOpen direction="right">
+        <DrawerTrigger>Open event</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHandle data-testid="side-handle" />
+          <DrawerTitle>Event detail</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    expect(screen.getByTestId("side-handle")).toHaveAttribute(
+      "data-direction",
+      "right",
+    );
+    expect(screen.getByTestId("side-handle")).toHaveClass(
+      "data-[direction=right]:absolute",
+      "data-[direction=right]:inset-y-0",
+      "data-[direction=right]:left-0",
+      "data-[direction=right]:h-full",
+      "data-[direction=right]:w-8",
+    );
+
+    rerender(
+      <Drawer defaultOpen direction="left">
+        <DrawerTrigger>Open event</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHandle data-testid="side-handle" />
+          <DrawerTitle>Event detail</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    expect(screen.getByTestId("side-handle")).toHaveAttribute(
+      "data-direction",
+      "left",
+    );
+    expect(screen.getByTestId("side-handle")).toHaveClass(
+      "data-[direction=left]:absolute",
+      "data-[direction=left]:inset-y-0",
+      "data-[direction=left]:right-0",
+      "data-[direction=left]:h-full",
+      "data-[direction=left]:w-8",
+    );
+  });
+
   it("applies data-direction and data-modal attributes to motion-driven content", () => {
     render(
       <Drawer defaultOpen direction="left">
