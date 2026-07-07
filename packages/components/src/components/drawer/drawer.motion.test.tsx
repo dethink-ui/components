@@ -1,4 +1,4 @@
-import { createRef } from "react";
+import { createRef, useRef } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MotionConfig } from "motion/react";
@@ -15,9 +15,85 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  type DrawerDirection,
 } from ".";
+import {
+  useDrawerDrag,
+  type DrawerDragMotionProps,
+} from "./drawer-motion";
+
+interface TestMotionValue {
+  get: () => number;
+}
+
+function getTranslateMotionValue(
+  style: DrawerDragMotionProps["style"],
+): TestMotionValue {
+  return ("x" in style ? style.x : style.y) as unknown as TestMotionValue;
+}
+
+function readTranslateValue(value: TestMotionValue | null): number {
+  if (!value) {
+    throw new Error("Expected drawer drag probe to capture a translate value.");
+  }
+
+  return value.get();
+}
+
+function DrawerDragProbe({
+  direction,
+  onTranslateValue,
+  open,
+}: {
+  direction: DrawerDirection;
+  onTranslateValue: (value: TestMotionValue) => void;
+  open: boolean;
+}) {
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const { getMotionProps } = useDrawerDrag({
+    closeThreshold: 0.25,
+    contentRef,
+    direction,
+    motionPreset: "standard",
+    onOpenChange: vi.fn(),
+    open,
+    velocityThreshold: 500,
+  });
+  const motionProps = getMotionProps(true);
+
+  onTranslateValue(getTranslateMotionValue(motionProps.style));
+
+  return <div ref={contentRef} />;
+}
 
 describe("Drawer motion (enabled)", () => {
+  it("starts a first open from the current direction after changing direction while closed", () => {
+    let translateValue: TestMotionValue | null = null;
+    const captureTranslateValue = (value: TestMotionValue) => {
+      translateValue = value;
+    };
+
+    const { rerender } = render(
+      <DrawerDragProbe
+        direction="right"
+        onTranslateValue={captureTranslateValue}
+        open={false}
+      />,
+    );
+
+    expect(readTranslateValue(translateValue)).toBeGreaterThan(0);
+
+    rerender(
+      <DrawerDragProbe
+        direction="top"
+        onTranslateValue={captureTranslateValue}
+        open
+      />,
+    );
+
+    expect(readTranslateValue(translateValue)).toBeLessThan(0);
+  });
+
   it("renders a draggable handle and does not error on pointer-down drag initiation", async () => {
     const user = userEvent.setup();
 
@@ -50,6 +126,52 @@ describe("Drawer motion (enabled)", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     });
+  });
+
+  it("overlays side handles without reserving drawer height", () => {
+    const { rerender } = render(
+      <Drawer defaultOpen direction="right">
+        <DrawerTrigger>Open event</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHandle data-testid="side-handle" />
+          <DrawerTitle>Event detail</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    expect(screen.getByTestId("side-handle")).toHaveAttribute(
+      "data-direction",
+      "right",
+    );
+    expect(screen.getByTestId("side-handle")).toHaveClass(
+      "data-[direction=right]:absolute",
+      "data-[direction=right]:inset-y-0",
+      "data-[direction=right]:left-0",
+      "data-[direction=right]:h-full",
+      "data-[direction=right]:w-8",
+    );
+
+    rerender(
+      <Drawer defaultOpen direction="left">
+        <DrawerTrigger>Open event</DrawerTrigger>
+        <DrawerContent>
+          <DrawerHandle data-testid="side-handle" />
+          <DrawerTitle>Event detail</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+
+    expect(screen.getByTestId("side-handle")).toHaveAttribute(
+      "data-direction",
+      "left",
+    );
+    expect(screen.getByTestId("side-handle")).toHaveClass(
+      "data-[direction=left]:absolute",
+      "data-[direction=left]:inset-y-0",
+      "data-[direction=left]:right-0",
+      "data-[direction=left]:h-full",
+      "data-[direction=left]:w-8",
+    );
   });
 
   it("applies data-direction and data-modal attributes to motion-driven content", () => {

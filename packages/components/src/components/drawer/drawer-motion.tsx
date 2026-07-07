@@ -159,7 +159,11 @@ function measureContentSize(
   const rect = contentRef.current?.getBoundingClientRect();
 
   if (!rect) {
-    return 0;
+    return typeof window === "undefined"
+      ? 0
+      : axis === "x"
+        ? window.innerWidth
+        : window.innerHeight;
   }
 
   const measuredSize = axis === "x" ? rect.width : rect.height;
@@ -212,8 +216,12 @@ export function useDrawerDrag({
   const dragControls = useDragControls();
   const startSnapPointRef = useRef(resolvedSnapPoint);
   const hasMountedRef = useRef(false);
+  const wasOpenRef = useRef(open);
 
   useIsomorphicLayoutEffect(() => {
+    const wasOpen = wasOpenRef.current;
+
+    wasOpenRef.current = open;
     startSnapPointRef.current = resolvedSnapPoint;
 
     const contentSize = measureContentSize(contentRef, axis);
@@ -232,6 +240,11 @@ export function useDrawerDrag({
       if (!open) {
         return undefined;
       }
+    } else if (open && !wasOpen) {
+      translateMotionValue.set(closedTarget);
+    } else if (!open && !wasOpen) {
+      translateMotionValue.set(closedTarget);
+      return undefined;
     }
 
     const controls = animate(translateMotionValue, target, springTransition);
@@ -328,7 +341,7 @@ export function useDrawerDrag({
 }
 
 const drawerHandleBaseClasses =
-  "relative mx-auto flex h-8 w-full shrink-0 touch-none cursor-grab items-center justify-center data-[direction=left]:mx-0 data-[direction=left]:my-auto data-[direction=left]:h-full data-[direction=left]:w-8 data-[direction=right]:mx-0 data-[direction=right]:my-auto data-[direction=right]:h-full data-[direction=right]:w-8 active:cursor-grabbing after:block after:h-1.5 after:w-12 after:rounded-full after:bg-muted-foreground/40 after:shadow-sm after:transition-[width,height,background-color,opacity] hover:after:bg-muted-foreground/55 active:after:w-14 data-[direction=left]:after:h-12 data-[direction=left]:after:w-1.5 data-[direction=left]:active:after:h-14 data-[direction=left]:active:after:w-1.5 data-[direction=right]:after:h-12 data-[direction=right]:after:w-1.5 data-[direction=right]:active:after:h-14 data-[direction=right]:active:after:w-1.5 motion-reduce:after:transition-none";
+  "relative mx-auto flex h-8 w-full shrink-0 touch-none cursor-grab items-center justify-center data-[direction=left]:absolute data-[direction=left]:inset-y-0 data-[direction=left]:right-0 data-[direction=left]:z-10 data-[direction=left]:mx-0 data-[direction=left]:my-auto data-[direction=left]:h-full data-[direction=left]:w-8 data-[direction=right]:absolute data-[direction=right]:inset-y-0 data-[direction=right]:left-0 data-[direction=right]:z-10 data-[direction=right]:mx-0 data-[direction=right]:my-auto data-[direction=right]:h-full data-[direction=right]:w-8 active:cursor-grabbing after:block after:h-1.5 after:w-12 after:rounded-full after:bg-muted-foreground/40 after:shadow-sm after:transition-[width,height,background-color,opacity] hover:after:bg-muted-foreground/55 active:after:w-14 data-[direction=left]:after:h-12 data-[direction=left]:after:w-1.5 data-[direction=left]:active:after:h-14 data-[direction=left]:active:after:w-1.5 data-[direction=right]:after:h-12 data-[direction=right]:after:w-1.5 data-[direction=right]:active:after:h-14 data-[direction=right]:active:after:w-1.5 motion-reduce:after:transition-none";
 
 export function drawerHandleClassNames({ className }: { className?: string } = {}) {
   return drawerHandleBaseClasses + (className ? ` ${className}` : "");

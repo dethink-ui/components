@@ -6,6 +6,7 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { DrawerAndroidBottomSheet } from "@/examples/drawer/android-bottom-sheet";
 import { DrawerBasic } from "@/examples/drawer/basic";
 import { DrawerDirectionalSizing } from "@/examples/drawer/directional-sizing";
 import { DrawerFilterBottomSheet } from "@/examples/drawer/filter-bottom-sheet";
@@ -69,6 +70,13 @@ export default function DrawerPage() {
             description="Snap points (35%, 65%, fully open) with a draggable handle and controlled active snap point."
           >
             <DrawerFilterBottomSheet />
+          </ExampleBlock>
+          <ExampleBlock
+            file="drawer/android-bottom-sheet.tsx"
+            title="Compact Android bottom sheet"
+            description="A centered 450px-wide bottom sheet with icon-led quick links and light-dismiss."
+          >
+            <DrawerAndroidBottomSheet />
           </ExampleBlock>
           <ExampleBlock
             file="drawer/inspector-rail.tsx"

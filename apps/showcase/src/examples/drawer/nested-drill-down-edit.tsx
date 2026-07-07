@@ -16,7 +16,7 @@ export function DrawerNestedDrillDownEdit() {
     <div className="flex justify-center">
       <Drawer direction="right">
         <DrawerTrigger>Open record</DrawerTrigger>
-        <DrawerContent>
+        <DrawerContent dismissible showCloseButton closeButtonLabel="Close record">
           <DrawerHeader>
             <DrawerTitle>Record</DrawerTitle>
             <DrawerDescription>
@@ -32,7 +32,11 @@ export function DrawerNestedDrillDownEdit() {
             <DrawerTrigger className="ms-[var(--dt-space-6)]" variant="outline">
               Edit status
             </DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent
+              dismissible
+              showCloseButton
+              closeButtonLabel="Close status editor"
+            >
               <DrawerHeader>
                 <DrawerTitle>Edit status</DrawerTitle>
                 <DrawerDescription>
