@@ -245,6 +245,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "overlays",
   },
   {
+    slug: "drawer",
+    name: "Drawer",
+    description:
+      "Edge-anchored modal and push panels with spring drag-to-dismiss, snap points, background scale, edge-swipe-to-open, and nested-drawer recede.",
+    type: "overlays",
+  },
+  {
     slug: "breadcrumb",
     name: "Breadcrumb",
     description:

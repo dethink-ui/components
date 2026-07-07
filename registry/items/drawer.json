@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "drawer",
+  "type": "registry:ui",
+  "title": "Drawer",
+  "description": "React Aria backed modal and non-modal push drawer/sheet primitive covering all four edge directions, with provider-aware portals, token-backed overlay/content styling, controlled open state, dismissal controls, spring-driven drag-to-dismiss, snap points, a draggable handle, an iOS-style backgroundScale page wrapper, opt-in edge-swipe-to-open, nested/stacked drawer auto-recede, a layoutId shared-element passthrough, none/subtle/standard/expressive motion presets, and reduced-motion fallbacks. Motion is a required runtime dependency; the core open/close/dismiss path stays fully functional when drag and spring polish are disabled by reduced motion or motionPreset=\"none\".",
+  "dependencies": ["motion", "react-aria", "react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/drawer/drawer.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/drawer/drawer-motion.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/drawer/drawer-background-scale.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/drawer/drawer-snap.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/drawer/drawer-types.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/drawer/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

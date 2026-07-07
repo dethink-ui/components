@@ -36,6 +36,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -684,6 +692,39 @@ export function App() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
+              <CardTitle>Drawer smoke</CardTitle>
+              <CardDescription>
+                Verifies the package export, spring drag-to-dismiss, and the
+                provider-aware portal path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Drawer direction="right">
+                <DrawerTrigger>Open drawer</DrawerTrigger>
+                <DrawerContent showCloseButton closeButtonLabel="Close drawer smoke">
+                  <DrawerHeader>
+                    <DrawerTitle>Deploy workspace changes</DrawerTitle>
+                    <DrawerDescription>
+                      Drawer content renders through the provider portal while
+                      preserving tokens and drag/dismiss behavior.
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)]">
+                    <Text size="sm" tone="muted">
+                      This smoke path exercises the package entrypoint and copied
+                      registry files in a consumer app.
+                    </Text>
+                  </div>
+                  <DrawerFooter>
+                    <DrawerClose variant="outline">Cancel</DrawerClose>
+                    <DrawerClose>Confirm</DrawerClose>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
             </CardContent>
           </Card>
           <Card as="section">
