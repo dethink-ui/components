@@ -7,6 +7,7 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { DrawerBasic } from "@/examples/drawer/basic";
+import { DrawerDirectionalSizing } from "@/examples/drawer/directional-sizing";
 import { DrawerFilterBottomSheet } from "@/examples/drawer/filter-bottom-sheet";
 import { DrawerInspectorRail } from "@/examples/drawer/inspector-rail";
 import { DrawerMobileNavigation } from "@/examples/drawer/mobile-navigation";
@@ -38,6 +39,13 @@ export default function DrawerPage() {
             description="Trigger, sized content, header anatomy, and footer with DrawerClose buttons."
           >
             <DrawerBasic />
+          </ExampleBlock>
+          <ExampleBlock
+            file="drawer/directional-sizing.tsx"
+            title="Direction-aware sizing"
+            description="One recipe exercises all four edges plus preset, full-axis, and custom dimension sizing."
+          >
+            <DrawerDirectionalSizing />
           </ExampleBlock>
         </div>
       </DocsSection>
