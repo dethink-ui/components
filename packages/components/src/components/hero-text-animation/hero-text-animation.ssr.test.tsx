@@ -100,6 +100,23 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders blur focus final text on the server without blur or hidden motion styles", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="blur-focus"
+        text="Bring launch copy into focus."
+      />,
+    );
+
+    expect(html).toContain('data-animation="blur-focus"');
+    expect(html).toContain("Bring launch copy into focus.");
+    expect(html).toContain('data-blur-final="0px"');
+    expect(html).not.toContain("blur(6px)");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates scramble decrypt output without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -240,6 +257,37 @@ describe("HeroTextAnimation SSR", () => {
         <HeroTextAnimation
           animation="gradient-highlight"
           text="Hydrate highlighted hero text."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates blur focus output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="blur-focus"
+        text="Hydrate focused hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="blur-focus"
+          text="Hydrate focused hero text."
         />,
       );
     });

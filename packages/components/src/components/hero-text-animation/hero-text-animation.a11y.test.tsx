@@ -46,6 +46,11 @@ describe("HeroTextAnimation accessibility", () => {
               as="h2"
               text="Highlight the most important launch promise."
             />
+            <HeroTextAnimation
+              animation="blur-focus"
+              as="h2"
+              text="Bring the launch promise into focus."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,
@@ -62,6 +67,23 @@ describe("HeroTextAnimation accessibility", () => {
             <HeroTextAnimation
               animation="gradient-highlight"
               text="Keep highlighted hero copy readable in dark mode."
+            />
+          </main>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for blur focus in dark theme", async () => {
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <HeroTextAnimationProvider>
+          <main aria-label="Blur focus dark accessibility smoke">
+            <HeroTextAnimation
+              animation="blur-focus"
+              text="Keep focused hero copy readable in dark mode."
             />
           </main>
         </HeroTextAnimationProvider>
