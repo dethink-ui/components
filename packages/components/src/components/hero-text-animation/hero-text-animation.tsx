@@ -30,7 +30,8 @@ export type HeroTextAnimationKind =
   | "scramble-decrypt"
   | "rotating-keyword"
   | "gradient-highlight"
-  | "blur-focus";
+  | "blur-focus"
+  | "kinetic-emphasis-pop";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -48,6 +49,8 @@ export interface HeroTextAnimationProps extends Omit<
   as?: HeroTextAnimationElement;
   delay?: number;
   duration?: number;
+  emphasisWordIndices?: readonly number[];
+  emphasisWords?: readonly string[];
   once?: boolean;
   reducedMotionStrategy?: HeroTextAnimationReducedMotionStrategy;
   repeat?: boolean;
@@ -103,6 +106,7 @@ export const heroTextAnimationMotionTokens = {
     rotatingKeyword: 0.34,
     gradientHighlight: 0.9,
     blurFocus: 0.42,
+    kineticEmphasisPop: 0.42,
   },
   stagger: {
     word: 0.045,
@@ -170,6 +174,10 @@ const heroTextAnimationGradientHighlightClasses =
   "inline whitespace-pre-wrap bg-[linear-gradient(105deg,var(--hero-text-animation-highlight-base)_0%,var(--hero-text-animation-highlight-base)_34%,var(--hero-text-animation-highlight-accent)_44%,var(--hero-text-animation-highlight-sheen)_50%,var(--hero-text-animation-highlight-accent)_56%,var(--hero-text-animation-highlight-base)_66%,var(--hero-text-animation-highlight-base)_100%)] bg-[length:220%_100%] bg-clip-text text-transparent underline decoration-(--hero-text-animation-highlight-underline) decoration-[0.08em] underline-offset-[0.14em] will-change-[background-position] [text-decoration-skip-ink:auto] forced-colors:bg-none forced-colors:text-[CanvasText] forced-colors:decoration-[CanvasText] data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationBlurFocusClasses =
   "inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline will-change-[filter,opacity,transform] data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationKineticEmphasisMotionClasses =
+  "inline min-w-0 max-w-full";
+const heroTextAnimationKineticEmphasisWordClasses =
+  "inline-block whitespace-pre align-baseline [transform-origin:center_70%] data-[emphasized=true]:text-primary data-[emphasized=true]:font-semibold data-[emphasized=true]:underline data-[emphasized=true]:decoration-current data-[emphasized=true]:decoration-[0.08em] data-[emphasized=true]:underline-offset-[0.14em] data-[emphasized=true]:[text-decoration-skip-ink:auto] data-[emphasized=true]:forced-colors:text-[CanvasText] data-[emphasized=true]:forced-colors:decoration-[CanvasText] data-[emphasized=true]:will-change-transform data-[reduced-motion=true]:will-change-auto";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
@@ -185,6 +193,8 @@ const rotatingKeywordMinimumIntervalMs = 400;
 const rotatingKeywordMaximumAutoRotateMs = 5000;
 const blurFocusInitialBlur = "6px";
 const blurFocusFinalBlur = "0px";
+const kineticEmphasisMaximumWordCount = 2;
+const kineticEmphasisScale = 1.045;
 const defaultRepeatDelay = 1.8;
 const gradientHighlightStyle = {
   "--hero-text-animation-highlight-base": "var(--dt-color-foreground)",
@@ -228,6 +238,82 @@ export function heroTextAnimationClassNames({
   className,
 }: Pick<HeroTextAnimationProps, "className"> = {}) {
   return cn(heroTextAnimationRootClasses, className);
+}
+
+function normalizeEmphasisWord(word: string) {
+  return word
+    .trim()
+    .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "")
+    .toLocaleLowerCase();
+}
+
+function resolveKineticEmphasisWordIndices({
+  emphasisWordIndices,
+  emphasisWords,
+  segments,
+}: {
+  emphasisWordIndices?: readonly number[];
+  emphasisWords?: readonly string[];
+  segments: HeroTextAnimationSegment[];
+}) {
+  const wordSegments = segments.filter((segment) => segment.kind === "text");
+  const resolvedIndices: number[] = [];
+
+  for (const configuredIndex of emphasisWordIndices ?? []) {
+    if (!Number.isFinite(configuredIndex)) {
+      continue;
+    }
+
+    const normalizedIndex = Math.trunc(configuredIndex);
+
+    if (
+      normalizedIndex >= 0 &&
+      normalizedIndex < wordSegments.length &&
+      !resolvedIndices.includes(normalizedIndex)
+    ) {
+      resolvedIndices.push(normalizedIndex);
+    }
+
+    if (resolvedIndices.length >= kineticEmphasisMaximumWordCount) {
+      return resolvedIndices;
+    }
+  }
+
+  const normalizedWords = (emphasisWords ?? [])
+    .map((word) => normalizeEmphasisWord(word))
+    .filter((word) => word.length > 0);
+
+  for (const configuredWord of normalizedWords) {
+    const matchedIndex = wordSegments.findIndex(
+      (segment, wordIndex) =>
+        !resolvedIndices.includes(wordIndex) &&
+        normalizeEmphasisWord(segment.text) === configuredWord,
+    );
+
+    if (matchedIndex >= 0) {
+      resolvedIndices.push(matchedIndex);
+    }
+
+    if (resolvedIndices.length >= kineticEmphasisMaximumWordCount) {
+      return resolvedIndices;
+    }
+  }
+
+  return resolvedIndices;
+}
+
+function getSegmentWordIndices(segments: readonly HeroTextAnimationSegment[]) {
+  let nextWordIndex = -1;
+
+  return segments.map((segment) => {
+    if (segment.kind === "space") {
+      return -1;
+    }
+
+    nextWordIndex += 1;
+
+    return nextWordIndex;
+  });
 }
 
 function useHasHydrated() {
@@ -354,6 +440,215 @@ function renderStaticSegments({
       </span>
     );
   });
+}
+
+function renderStaticKineticEmphasis({
+  emphasisIndices,
+  segments,
+}: {
+  emphasisIndices: readonly number[];
+  segments: HeroTextAnimationSegment[];
+}) {
+  const segmentWordIndices = getSegmentWordIndices(segments);
+
+  return (
+    <span
+      aria-hidden="true"
+      data-emphasis-count={emphasisIndices.length}
+      data-kinetic-emphasis="pop"
+      data-reduced-motion="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="word"
+      className={heroTextAnimationKineticEmphasisMotionClasses}
+    >
+      {segments.map((segment, index) => {
+        if (segment.kind === "space") {
+          return segment.text;
+        }
+
+        const wordIndex = segmentWordIndices[index] ?? -1;
+        const emphasisOrder = emphasisIndices.indexOf(wordIndex);
+        const emphasized = emphasisOrder >= 0;
+
+        return (
+          <span
+            key={`${index}-${segment.text}`}
+            data-emphasized={emphasized ? "true" : undefined}
+            data-emphasis-order={emphasized ? emphasisOrder : undefined}
+            data-emphasis-word-index={emphasized ? wordIndex : undefined}
+            data-reduced-motion="true"
+            data-slot="hero-text-animation-segment"
+            data-segment="word"
+            className={heroTextAnimationKineticEmphasisWordClasses}
+          >
+            {segment.text}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+function getKineticEmphasisContainerVariants({
+  delay,
+  duration,
+}: {
+  delay: number;
+  duration: number;
+}): Variants {
+  return {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delay,
+        duration: Math.min(
+          duration,
+          heroTextAnimationMotionTokens.duration.fast,
+        ),
+        ease: "linear",
+      },
+    },
+  };
+}
+
+function getKineticEmphasisWordVariants({
+  delay,
+  duration,
+  order,
+}: {
+  delay: number;
+  duration: number;
+  order: number;
+}): Variants {
+  return {
+    hidden: {
+      opacity: 1,
+      scale: 1,
+    },
+    visible: {
+      opacity: [1, 1, 1],
+      scale: [1, kineticEmphasisScale, 1],
+      transition: {
+        delay:
+          delay +
+          Math.min(duration, heroTextAnimationMotionTokens.duration.fast) +
+          order * heroTextAnimationMotionTokens.stagger.word,
+        duration,
+        ease: heroTextAnimationMotionTokens.easing.standard,
+        times: [0, 0.42, 1],
+      },
+    },
+  };
+}
+
+function KineticEmphasisSegments({
+  active,
+  delay,
+  duration,
+  emphasisIndices,
+  once,
+  reducedMotion,
+  segments,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  emphasisIndices: readonly number[];
+  once: boolean;
+  reducedMotion: boolean;
+  segments: HeroTextAnimationSegment[];
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const containerVariants = getKineticEmphasisContainerVariants({
+    delay,
+    duration,
+  });
+  const triggerProps =
+    trigger === "in-view"
+      ? {
+          whileInView: "visible",
+          viewport: { amount: 0.6, once },
+        }
+      : {
+          animate: trigger === "manual" && !active ? "hidden" : "visible",
+        };
+  const lastEmphasisOrder = emphasisIndices.length - 1;
+  const segmentWordIndices = getSegmentWordIndices(segments);
+
+  return (
+    <motionElement.span
+      aria-hidden="true"
+      data-emphasis-count={emphasisIndices.length}
+      data-kinetic-emphasis="pop"
+      data-reduced-motion={reducedMotion ? "true" : undefined}
+      data-slot="hero-text-animation-motion"
+      data-split-by="word"
+      className={heroTextAnimationKineticEmphasisMotionClasses}
+      variants={containerVariants}
+      initial="hidden"
+      onAnimationComplete={
+        emphasisIndices.length === 0 && !reducedMotion
+          ? onAnimationComplete
+          : undefined
+      }
+      onAnimationStart={reducedMotion ? undefined : onAnimationStart}
+      {...triggerProps}
+    >
+      {segments.map((segment, index) => {
+        if (segment.kind === "space") {
+          return segment.text;
+        }
+
+        const wordIndex = segmentWordIndices[index] ?? -1;
+        const emphasisOrder = emphasisIndices.indexOf(wordIndex);
+        const emphasized = emphasisOrder >= 0;
+        const sharedProps = {
+          "data-emphasized": emphasized ? "true" : undefined,
+          "data-emphasis-order": emphasized ? emphasisOrder : undefined,
+          "data-emphasis-scale":
+            emphasized && !reducedMotion ? kineticEmphasisScale : undefined,
+          "data-emphasis-word-index": emphasized ? wordIndex : undefined,
+          "data-reduced-motion": reducedMotion ? "true" : undefined,
+          "data-segment": "word",
+          "data-slot": "hero-text-animation-segment",
+          className: heroTextAnimationKineticEmphasisWordClasses,
+        };
+
+        if (!emphasized || reducedMotion) {
+          return (
+            <span key={`${index}-${segment.text}`} {...sharedProps}>
+              {segment.text}
+            </span>
+          );
+        }
+
+        return (
+          <motionElement.span
+            key={`${index}-${segment.text}`}
+            {...sharedProps}
+            variants={getKineticEmphasisWordVariants({
+              delay,
+              duration,
+              order: emphasisOrder,
+            })}
+            onAnimationComplete={
+              emphasisOrder === lastEmphasisOrder
+                ? onAnimationComplete
+                : undefined
+            }
+          >
+            {segment.text}
+          </motionElement.span>
+        );
+      })}
+    </motionElement.span>
+  );
 }
 
 function StaggeredSegments({
@@ -1484,6 +1779,8 @@ export const HeroTextAnimation = forwardRef<
       className,
       delay = 0.05,
       duration,
+      emphasisWordIndices,
+      emphasisWords,
       once = true,
       reducedMotionStrategy = "opacity-only",
       repeat = false,
@@ -1529,9 +1826,11 @@ export const HeroTextAnimation = forwardRef<
             ? heroTextAnimationMotionTokens.duration.gradientHighlight
             : animation === "blur-focus"
               ? heroTextAnimationMotionTokens.duration.blurFocus
-              : animation === "typewriter"
-                ? heroTextAnimationMotionTokens.duration.typewriter
-                : heroTextAnimationMotionTokens.duration.base);
+              : animation === "kinetic-emphasis-pop"
+                ? heroTextAnimationMotionTokens.duration.kineticEmphasisPop
+                : animation === "typewriter"
+                  ? heroTextAnimationMotionTokens.duration.typewriter
+                  : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
     const canRepeat =
@@ -1544,7 +1843,12 @@ export const HeroTextAnimation = forwardRef<
     const repeatDelayMs = Math.max(0, Math.round(repeatDelay * 1000));
     const repeatTimeoutRef = useRef<number | undefined>(undefined);
     const [repeatIteration, setRepeatIteration] = useState(0);
-    const resolvedSplitBy = animation === "masked-curtain" ? "line" : splitBy;
+    const resolvedSplitBy =
+      animation === "masked-curtain"
+        ? "line"
+        : animation === "kinetic-emphasis-pop"
+          ? "word"
+          : splitBy;
     const resolvedStagger =
       stagger ??
       (resolvedSplitBy === "line"
@@ -1553,6 +1857,15 @@ export const HeroTextAnimation = forwardRef<
     const segments = useMemo(
       () => splitHeroText(text, resolvedSplitBy),
       [resolvedSplitBy, text],
+    );
+    const kineticEmphasisIndices = useMemo(
+      () =>
+        resolveKineticEmphasisWordIndices({
+          emphasisWordIndices,
+          emphasisWords,
+          segments,
+        }),
+      [emphasisWordIndices, emphasisWords, segments],
     );
     const rotatingKeywords = useMemo(
       () =>
@@ -1604,6 +1917,7 @@ export const HeroTextAnimation = forwardRef<
       resolvedSplitBy,
       resolvedStagger,
       resolvedDuration,
+      kineticEmphasisIndices.join(","),
     ].join(":");
 
     const handleRotatingKeywordIndexChange = useCallback(
@@ -1645,6 +1959,7 @@ export const HeroTextAnimation = forwardRef<
       showCaret,
       text,
       trigger,
+      kineticEmphasisIndices,
     ]);
 
     const handleAnimationComplete = useCallback(() => {
@@ -1679,6 +1994,10 @@ export const HeroTextAnimation = forwardRef<
           animation === "rotating-keyword"
             ? selectedRotatingKeywordIndex
             : undefined,
+        "data-emphasis-count":
+          animation === "kinetic-emphasis-pop"
+            ? kineticEmphasisIndices.length
+            : undefined,
         "data-segment-count": animatedSegmentCount,
         "data-slot": "hero-text-animation",
         "data-split-by": visualSplitBy,
@@ -1708,6 +2027,11 @@ export const HeroTextAnimation = forwardRef<
           renderStaticGradientHighlight(text)
         ) : renderStatic && animation === "blur-focus" ? (
           renderStaticBlurFocus(text)
+        ) : renderStatic && animation === "kinetic-emphasis-pop" ? (
+          renderStaticKineticEmphasis({
+            emphasisIndices: kineticEmphasisIndices,
+            segments,
+          })
         ) : renderStatic ? (
           renderStaticSegments({ segments, splitBy: resolvedSplitBy })
         ) : animation === "masked-curtain" ? (
@@ -1773,6 +2097,20 @@ export const HeroTextAnimation = forwardRef<
             once={once}
             reducedMotion={reducedMotion}
             text={text}
+            trigger={trigger}
+            onAnimationComplete={handleAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "kinetic-emphasis-pop" ? (
+          <KineticEmphasisSegments
+            key={visualKey}
+            active={active}
+            delay={delay}
+            duration={resolvedDuration}
+            emphasisIndices={kineticEmphasisIndices}
+            once={once}
+            reducedMotion={reducedMotion}
+            segments={segments}
             trigger={trigger}
             onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}

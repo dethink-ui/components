@@ -35,6 +35,7 @@ const meta = {
         "rotating-keyword",
         "gradient-highlight",
         "blur-focus",
+        "kinetic-emphasis-pop",
       ],
     },
     as: {
@@ -93,6 +94,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "rotating-keyword",
   "gradient-highlight",
   "blur-focus",
+  "kinetic-emphasis-pop",
 ];
 
 export const Base: Story = {};
@@ -377,6 +379,51 @@ export const BlurFocusReveal: Story = {
   ),
 };
 
+export const KineticEmphasisPop: Story = {
+  render: () => (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              configured words
+            </p>
+            <HeroTextAnimation
+              animation="kinetic-emphasis-pop"
+              duration={0.42}
+              emphasisWords={["revenue", "risk"]}
+              text="Make revenue risk impossible to miss."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+      <DethinkProvider
+        theme="dark"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              indexed words
+            </p>
+            <HeroTextAnimation
+              animation="kinetic-emphasis-pop"
+              duration={0.38}
+              emphasisWordIndices={[1, 4]}
+              text="Turn launch friction into clear decisions."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+    </div>
+  ),
+};
+
 export const RepeatPreview: Story = {
   render: () => (
     <DethinkProvider
@@ -539,6 +586,24 @@ export const BlurFocusReducedMotionFallback: Story = {
   ),
 };
 
+export const KineticEmphasisReducedMotionFallback: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="kinetic-emphasis-pop"
+          emphasisWords={["static", "emphasis"]}
+          text="Reduced motion keeps static emphasis without scale."
+          className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
 export const MaskedCurtainReducedMotionFallbacks: Story = {
   render: () => (
     <DethinkProvider
@@ -681,5 +746,42 @@ export const BlurFocusMobilePerformanceFixture: Story = {
     await expect(heading).toHaveAttribute("data-split-by", "phrase");
     await expect(motion).toHaveAttribute("data-blur-initial", "6px");
     await expect(motion).toHaveAttribute("data-blur-final", "0px");
+  },
+};
+
+export const KineticEmphasisInteraction: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <HeroTextAnimation
+          animation="kinetic-emphasis-pop"
+          emphasisWords={["revenue", "handoffs"]}
+          text="Make revenue handoffs impossible to miss."
+          className="text-foreground text-4xl leading-tight font-semibold tracking-normal"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const heading = canvas.getByRole("heading", {
+      name: "Make revenue handoffs impossible to miss.",
+    });
+    const emphasizedWords = heading.querySelectorAll(
+      '[data-slot="hero-text-animation-segment"][data-emphasized="true"]',
+    );
+
+    await expect(heading).toHaveAttribute(
+      "data-animation",
+      "kinetic-emphasis-pop",
+    );
+    await expect(heading).toHaveAttribute("data-emphasis-count", "2");
+    await expect(emphasizedWords[0]).toHaveAttribute(
+      "data-emphasis-scale",
+      "1.045",
+    );
   },
 };

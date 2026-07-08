@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus"',
+    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus" | "kinetic-emphasis-pop"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, or blur-focus for short cinematic hero headings that resolve quickly into crisp readable text.",
+      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, blur-focus for short cinematic hero headings that resolve quickly into crisp readable text, or kinetic-emphasis-pop for one or two statically emphasized words with a subtle one-shot scale accent.",
   },
   {
     prop: "as",
@@ -100,12 +100,26 @@ export const heroTextAnimationProps: PropRow[] = [
       "Opt-in keyword auto rotation. Timers are bounded and stop within five seconds; reduced-motion rendering never schedules them.",
   },
   {
+    prop: "emphasisWords",
+    type: "readonly string[]",
+    defaultValue: "[]",
+    description:
+      "Word terms to emphasize for kinetic-emphasis-pop. Matching is case-insensitive and ignores surrounding punctuation. The component uses the first two resolved words.",
+  },
+  {
+    prop: "emphasisWordIndices",
+    type: "readonly number[]",
+    defaultValue: "[]",
+    description:
+      "Zero-based word indices to emphasize for kinetic-emphasis-pop. Indices resolve before emphasisWords so precise targeting can override repeated terms.",
+  },
+  {
     prop: "delay / duration / stagger",
     type: "number",
     defaultValue:
-      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42",
+      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42",
     description:
-      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, and blur-focus use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight and blur-focus run once by default and use the shared repeat mechanism only when repeat is enabled.",
+      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, blur-focus, and kinetic-emphasis-pop use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight, blur-focus, and kinetic-emphasis-pop run once by default and use the shared repeat mechanism only when repeat is enabled.",
   },
   {
     prop: "blur-focus content guidance",
@@ -113,6 +127,13 @@ export const heroTextAnimationProps: PropRow[] = [
     defaultValue: "—",
     description:
       "Limit blur-focus to short cinematic headings, ideally one line or under eight words. Do not combine the same heading with scale, parallax, or rotation; the component uses only small blur, opacity, and vertical translation, then finishes at blur(0px).",
+  },
+  {
+    prop: "kinetic-emphasis-pop content guidance",
+    type: "one or two important words",
+    defaultValue: "—",
+    description:
+      "Use kinetic emphasis for one or two words whose importance is also clear from static styling. Reduced motion removes scale animation and keeps the color, weight, and underline emphasis.",
   },
   {
     prop: "HeroTextAnimationProvider",

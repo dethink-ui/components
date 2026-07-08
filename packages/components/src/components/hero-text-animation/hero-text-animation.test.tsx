@@ -884,6 +884,117 @@ describe("HeroTextAnimation", () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 
+  it("renders kinetic emphasis pop with configured static emphasis words", () => {
+    const handleComplete = vi.fn();
+
+    render(
+      <HeroTextAnimation
+        animation="kinetic-emphasis-pop"
+        duration={0.42}
+        emphasisWords={["revenue", "handoffs"]}
+        text="Make revenue handoffs impossible to miss."
+        onAnimationComplete={handleComplete}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Make revenue handoffs impossible to miss.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-kinetic-emphasis="pop"]',
+    );
+    const emphasizedWords = heading.querySelectorAll(
+      '[data-slot="hero-text-animation-segment"][data-emphasized="true"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "kinetic-emphasis-pop");
+    expect(heading).toHaveAttribute("data-split-by", "word");
+    expect(heading).toHaveAttribute("data-emphasis-count", "2");
+    expect(motion).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute("data-emphasis-count", "2");
+    expect(emphasizedWords).toHaveLength(2);
+    expect(emphasizedWords[0]).toHaveTextContent("revenue");
+    expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-word-index", "1");
+    expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-scale", "1.045");
+    expect(emphasizedWords[0]).toHaveClass(
+      "data-[emphasized=true]:text-primary",
+      "data-[emphasized=true]:underline",
+    );
+    expect(emphasizedWords[1]).toHaveTextContent("handoffs");
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Make revenue handoffs impossible to miss.");
+  });
+
+  it("uses zero-based emphasis word indices before matching emphasis words", () => {
+    render(
+      <HeroTextAnimation
+        animation="kinetic-emphasis-pop"
+        emphasisWordIndices={[5]}
+        emphasisWords={["ship"]}
+        text="Ship cleaner launch reviews with less risk."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Ship cleaner launch reviews with less risk.",
+    });
+    const emphasizedWords = heading.querySelectorAll(
+      '[data-slot="hero-text-animation-segment"][data-emphasized="true"]',
+    );
+
+    expect(emphasizedWords).toHaveLength(2);
+    expect(emphasizedWords[0]).toHaveTextContent("Ship");
+    expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-word-index", "0");
+    expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-order", "1");
+    expect(emphasizedWords[1]).toHaveTextContent("less");
+    expect(emphasizedWords[1]).toHaveAttribute("data-emphasis-word-index", "5");
+    expect(emphasizedWords[1]).toHaveAttribute("data-emphasis-order", "0");
+  });
+
+  it("removes kinetic emphasis scale animation in reduced motion but keeps static emphasis", () => {
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+    const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="kinetic-emphasis-pop"
+          emphasisWords={["quality", "speed"]}
+          repeat
+          repeatDelay={0.1}
+          text="Balance quality with speed."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Balance quality with speed.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-kinetic-emphasis="pop"]',
+    );
+    const emphasizedWords = heading.querySelectorAll(
+      '[data-slot="hero-text-animation-segment"][data-emphasized="true"]',
+    );
+
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(heading).toHaveAttribute("data-repeat", "true");
+    expect(motion).toHaveAttribute("data-reduced-motion", "true");
+    expect(emphasizedWords).toHaveLength(2);
+    expect(emphasizedWords[0]).toHaveTextContent("quality");
+    expect(emphasizedWords[0]).toHaveAttribute("data-reduced-motion", "true");
+    expect(emphasizedWords[0]).not.toHaveAttribute("data-emphasis-scale");
+    expect(emphasizedWords[0]).toHaveClass(
+      "data-[emphasized=true]:text-primary",
+      "data-[emphasized=true]:underline",
+    );
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
   it("cleans typewriter timers on text changes and unmount", async () => {
     vi.useFakeTimers();
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");
