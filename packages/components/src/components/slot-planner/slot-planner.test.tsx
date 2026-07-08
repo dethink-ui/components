@@ -400,7 +400,7 @@ describe("SlotPlanner slot CRUD", () => {
         date: "2026-07-06",
         startTime: "09:30",
         durationMinutes: 45,
-        timeZone: new Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timeZone: "Europe/London",
         state: "requestable",
       },
     });
