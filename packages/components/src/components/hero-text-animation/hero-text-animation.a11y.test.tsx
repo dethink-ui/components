@@ -51,6 +51,12 @@ describe("HeroTextAnimation accessibility", () => {
               as="h2"
               text="Bring the launch promise into focus."
             />
+            <HeroTextAnimation
+              animation="kinetic-emphasis-pop"
+              as="h2"
+              emphasisWords={["handoffs", "risk"]}
+              text="Make handoffs and risk impossible to miss."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,
@@ -84,6 +90,24 @@ describe("HeroTextAnimation accessibility", () => {
             <HeroTextAnimation
               animation="blur-focus"
               text="Keep focused hero copy readable in dark mode."
+            />
+          </main>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for kinetic emphasis pop in dark theme", async () => {
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <HeroTextAnimationProvider>
+          <main aria-label="Kinetic emphasis dark accessibility smoke">
+            <HeroTextAnimation
+              animation="kinetic-emphasis-pop"
+              emphasisWords={["quality", "speed"]}
+              text="Balance quality with speed."
             />
           </main>
         </HeroTextAnimationProvider>

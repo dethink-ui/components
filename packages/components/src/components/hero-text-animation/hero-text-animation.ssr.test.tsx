@@ -117,6 +117,26 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders kinetic emphasis final text on the server without transform styles", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="kinetic-emphasis-pop"
+        emphasisWords={["quality", "speed"]}
+        text="Balance quality with speed."
+      />,
+    );
+
+    expect(html).toContain('data-animation="kinetic-emphasis-pop"');
+    expect(html).toContain("Balance quality with speed.");
+    expect(html).toContain('data-kinetic-emphasis="pop"');
+    expect(html).toContain('data-emphasis-count="2"');
+    expect(html).toContain("data-[emphasized=true]:underline");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("scale(");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates scramble decrypt output without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -288,6 +308,39 @@ describe("HeroTextAnimation SSR", () => {
         <HeroTextAnimation
           animation="blur-focus"
           text="Hydrate focused hero text."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates kinetic emphasis output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="kinetic-emphasis-pop"
+        emphasisWords={["quality", "speed"]}
+        text="Hydrate quality speed emphasis."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="kinetic-emphasis-pop"
+          emphasisWords={["quality", "speed"]}
+          text="Hydrate quality speed emphasis."
         />,
       );
     });

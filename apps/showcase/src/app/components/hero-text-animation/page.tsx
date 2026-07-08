@@ -8,6 +8,7 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { HeroTextAnimationBlurFocusHero } from "@/examples/hero-text-animation/blur-focus-hero";
 import { HeroTextAnimationGradientHighlightHero } from "@/examples/hero-text-animation/gradient-highlight-hero";
+import { HeroTextAnimationKineticEmphasisPopHero } from "@/examples/hero-text-animation/kinetic-emphasis-pop-hero";
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
 import { HeroTextAnimationRotatingKeywordHero } from "@/examples/hero-text-animation/rotating-keyword-hero";
@@ -102,6 +103,16 @@ export default function HeroTextAnimationPage() {
             wide
           >
             <HeroTextAnimationBlurFocusHero />
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/kinetic-emphasis-pop-hero.tsx"
+            title="Kinetic emphasis pop hero section"
+            description="A separate production hero recipe for one-shot word emphasis with static color, weight, and underline styling, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationKineticEmphasisPopHero />
           </ExampleBlock>
         </div>
       </DocsSection>
