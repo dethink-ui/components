@@ -109,6 +109,7 @@ const drawer = await readJson(join(registryRoot, "drawer.json"));
 const formField = await readJson(join(registryRoot, "form-field.json"));
 const input = await readJson(join(registryRoot, "input.json"));
 const iconButton = await readJson(join(registryRoot, "icon-button.json"));
+const revealButton = await readJson(join(registryRoot, "reveal-button.json"));
 const flex = await readJson(join(registryRoot, "flex.json"));
 const grid = await readJson(join(registryRoot, "grid.json"));
 const link = await readJson(join(registryRoot, "link.json"));
@@ -162,6 +163,7 @@ const registryItemsByName = new Map(
     formField,
     input,
     iconButton,
+    revealButton,
     flex,
     grid,
     link,
@@ -217,6 +219,7 @@ assert(drawer.name === "drawer", "drawer registry item must be named drawer.");
 assert(formField.name === "form-field", "form-field registry item must be named form-field.");
 assert(input.name === "input", "input registry item must be named input.");
 assert(iconButton.name === "icon-button", "icon-button registry item must be named icon-button.");
+assert(revealButton.name === "reveal-button", "reveal-button registry item must be named reveal-button.");
 assert(flex.name === "flex", "flex registry item must be named flex.");
 assert(grid.name === "grid", "grid registry item must be named grid.");
 assert(link.name === "link", "link registry item must be named link.");
@@ -364,6 +367,14 @@ assert(
 assert(
   iconButton.registryDependencies?.includes("button"),
   "icon-button registry item must depend on button for shared variant types.",
+);
+assert(
+  revealButton.registryDependencies?.includes("dethink-base"),
+  "reveal-button registry item must depend on dethink-base.",
+);
+assert(
+  revealButton.registryDependencies?.includes("button"),
+  "reveal-button registry item must depend on button for shared variant types.",
 );
 assert(
   flex.registryDependencies?.includes("dethink-base"),
@@ -695,6 +706,10 @@ assert(
   "icon-button registry item must not add runtime dependencies.",
 );
 assert(
+  revealButton.dependencies?.includes("motion"),
+  "reveal-button registry item must include motion for hover, focus, and press choreography.",
+);
+assert(
   Array.isArray(flex.dependencies) && flex.dependencies.length === 0,
   "flex registry item must not add runtime dependencies.",
 );
@@ -890,6 +905,7 @@ for (const item of [
   formField,
   input,
   iconButton,
+  revealButton,
   flex,
   grid,
   link,
@@ -942,6 +958,7 @@ await assertRegistryRelativeImportsResolve(dialog, registryItemsByName);
 await assertRegistryRelativeImportsResolve(drawer, registryItemsByName);
 await assertRegistryRelativeImportsResolve(formField, registryItemsByName);
 await assertRegistryRelativeImportsResolve(input, registryItemsByName);
+await assertRegistryRelativeImportsResolve(revealButton, registryItemsByName);
 await assertRegistryRelativeImportsResolve(grid, registryItemsByName);
 await assertRegistryRelativeImportsResolve(numberInput, registryItemsByName);
 await assertRegistryRelativeImportsResolve(popover, registryItemsByName);
@@ -1033,6 +1050,10 @@ const formFieldSource = await readFile(
 );
 const iconButtonSource = await readFile(
   join(root, "packages/components/src/components/icon-button/icon-button.tsx"),
+  "utf8",
+);
+const revealButtonSource = await readFile(
+  join(root, "packages/components/src/components/reveal-button/reveal-button.tsx"),
   "utf8",
 );
 const flexSource = await readFile(
@@ -1221,6 +1242,30 @@ assert(buttonSource.includes("asChild"), "button source must expose asChild.");
 assert(buttonSource.includes("data-slot=\"button\""), "button source must expose stable slot data.");
 assert(buttonSource.includes("bg-primary"), "button source must use tokenized primary utilities.");
 assert(!buttonSource.includes("@radix-ui"), "button source must remain dependency-free.");
+assert(
+  revealButtonSource.includes('data-slot="reveal-button"'),
+  "reveal-button source must expose stable root slot data.",
+);
+assert(
+  revealButtonSource.includes("whileHover"),
+  "reveal-button source must use Motion hover gestures.",
+);
+assert(
+  revealButtonSource.includes("whileFocus"),
+  "reveal-button source must use Motion focus gestures.",
+);
+assert(
+  revealButtonSource.includes("whileTap"),
+  "reveal-button source must use Motion press feedback.",
+);
+assert(
+  revealButtonSource.includes("useReducedMotion"),
+  "reveal-button source must respect reduced-motion preferences.",
+);
+assert(
+  packageIndexSource.includes("RevealButton"),
+  "package index must export RevealButton.",
+);
 assert(cardSource.includes('"data-slot": "card"'), "card source must expose stable root slot data.");
 assert(
   cardSource.includes('"data-slot": "card-header"'),

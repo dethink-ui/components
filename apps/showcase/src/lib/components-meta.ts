@@ -42,6 +42,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "general",
   },
   {
+    slug: "reveal-button",
+    name: "RevealButton",
+    description:
+      "Icon-first actions that reveal their label on hover and focus with reduced-motion-safe Motion feedback.",
+    type: "general",
+  },
+  {
     slug: "link",
     name: "Link",
     description:

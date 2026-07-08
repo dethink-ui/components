@@ -276,6 +276,15 @@ export {
   type IconButtonVariant,
 } from "./components/icon-button";
 export {
+  RevealButton,
+  revealButtonClassNames,
+  type RevealButtonLabelVisibility,
+  type RevealButtonMotion,
+  type RevealButtonProps,
+  type RevealButtonSize,
+  type RevealButtonVariant,
+} from "./components/reveal-button";
+export {
   CardStack,
   cardStackClassNames,
   type CardStackCardElement,
