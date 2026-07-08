@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words"',
+    type: '"stagger-words" | "masked-curtain"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. This first slice ships the production default staggered word and line reveal.",
+      "Animation style. Use staggered words for the safest default or masked curtain for line-by-line hero reveals.",
   },
   {
     prop: "as",

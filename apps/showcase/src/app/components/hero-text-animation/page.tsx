@@ -6,6 +6,7 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
 
@@ -28,11 +29,19 @@ export default function HeroTextAnimationPage() {
       >
         <ExampleBlock
           file="hero-text-animation/production-hero.tsx"
-          title="Production hero section"
-          description="A focused hero recipe with animated semantic copy, navbar composition, CTAs, and icon-led proof points."
+          title="Staggered production hero section"
+          description="A focused staggered reveal recipe with animated semantic copy, navbar composition, CTAs, and icon-led proof points."
           wide
         >
           <HeroTextAnimationProductionHero />
+        </ExampleBlock>
+        <ExampleBlock
+          file="hero-text-animation/masked-curtain-hero.tsx"
+          title="Masked curtain hero section"
+          description="A separate production hero recipe for the masked curtain reveal with the same navbar, action, and proof-point expectations."
+          wide
+        >
+          <HeroTextAnimationMaskedCurtainHero />
         </ExampleBlock>
       </DocsSection>
 

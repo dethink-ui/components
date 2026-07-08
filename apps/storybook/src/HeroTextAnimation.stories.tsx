@@ -4,6 +4,7 @@ import {
   DethinkProvider,
   HeroTextAnimation,
   HeroTextAnimationProvider,
+  type HeroTextAnimationKind,
   type HeroTextAnimationReducedMotionStrategy,
   type HeroTextAnimationSplitBy,
   type HeroTextAnimationTrigger,
@@ -21,6 +22,10 @@ const meta = {
     trigger: "mount",
   },
   argTypes: {
+    animation: {
+      control: "inline-radio",
+      options: ["stagger-words", "masked-curtain"],
+    },
     as: {
       control: "inline-radio",
       options: ["h1", "h2", "p", "span"],
@@ -63,6 +68,10 @@ const reducedMotionStrategies: HeroTextAnimationReducedMotionStrategy[] = [
   "opacity-only",
 ];
 const triggers: HeroTextAnimationTrigger[] = ["mount", "manual", "in-view"];
+const animationKinds: HeroTextAnimationKind[] = [
+  "stagger-words",
+  "masked-curtain",
+];
 
 export const Base: Story = {};
 
@@ -93,6 +102,32 @@ export const WordAndLineReveal: Story = {
   ),
 };
 
+export const MaskedCurtainReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <div className="grid gap-8 lg:grid-cols-2">
+          {animationKinds.map((animation) => (
+            <section key={animation} className="min-w-0">
+              <p className="text-muted-foreground mb-3 text-sm font-medium">
+                {animation}
+              </p>
+              <HeroTextAnimation
+                animation={animation}
+                text={"Launch pages with motion.\nKeep every line readable."}
+                className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+              />
+            </section>
+          ))}
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
 export const ReducedMotionFallbacks: Story = {
   render: () => (
     <DethinkProvider
@@ -106,6 +141,29 @@ export const ReducedMotionFallbacks: Story = {
               key={strategy}
               reducedMotionStrategy={strategy}
               text={`${strategy} reduced motion keeps the headline readable.`}
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
+            />
+          ))}
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const MaskedCurtainReducedMotionFallbacks: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <div className="grid gap-8 lg:grid-cols-2">
+          {reducedMotionStrategies.map((strategy) => (
+            <HeroTextAnimation
+              key={strategy}
+              animation="masked-curtain"
+              reducedMotionStrategy={strategy}
+              text={`${strategy} reduced motion.\nCurtain reveal stays readable.`}
               className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
             />
           ))}

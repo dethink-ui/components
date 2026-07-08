@@ -18,6 +18,11 @@ describe("HeroTextAnimation accessibility", () => {
               splitBy="line"
               text={"Launch faster.\nLearn from every release."}
             />
+            <HeroTextAnimation
+              animation="masked-curtain"
+              as="h2"
+              text={"Reveal clearly.\nStay readable."}
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,
