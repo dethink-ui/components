@@ -1,10 +1,13 @@
 # Identity And Labeling Primitives Spec
 
-Status: Draft local spec for GitHub issue #314.
+Status: Implemented contract for GitHub issues #314 through #320.
 
 Parent PRD: https://github.com/parveshh/dethink-components/issues/313.
 
 Issue breakdown: `docs/components/identity-labeling/issues.md`.
+
+Post-implementation recipes and verification notes:
+`docs/components/identity-labeling/recipes.md`.
 
 Package target: `@dethink/components`.
 
