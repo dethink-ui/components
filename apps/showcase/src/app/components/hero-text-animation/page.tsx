@@ -6,6 +6,7 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { HeroTextAnimationBlurFocusHero } from "@/examples/hero-text-animation/blur-focus-hero";
 import { HeroTextAnimationGradientHighlightHero } from "@/examples/hero-text-animation/gradient-highlight-hero";
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
@@ -92,6 +93,16 @@ export default function HeroTextAnimationPage() {
           >
             <HeroTextAnimationGradientHighlightHero />
           </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/blur-focus-hero.tsx"
+            title="Blur focus hero section"
+            description="A separate production hero recipe for a short cinematic blur-to-focus heading that resolves quickly to crisp text, avoids scale/parallax/rotation, and includes reduced-motion-safe final copy."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationBlurFocusHero />
+          </ExampleBlock>
         </div>
       </DocsSection>
 
@@ -119,7 +130,9 @@ export function Example() {
         <p className="text-muted-foreground mb-6 max-w-3xl text-sm leading-6">
           Avoid scramble and decrypt effects for legal, medical, pricing, or
           compliance-critical wording. Use static text for copy where every
-          character must be immediately reviewable.
+          character must be immediately reviewable. Limit blur focus to short
+          cinematic hero headings that can finish resolving before users need to
+          read the copy.
         </p>
         <PropsTable
           caption="HeroTextAnimation props"

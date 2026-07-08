@@ -29,7 +29,8 @@ export type HeroTextAnimationKind =
   | "typewriter"
   | "scramble-decrypt"
   | "rotating-keyword"
-  | "gradient-highlight";
+  | "gradient-highlight"
+  | "blur-focus";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -101,6 +102,7 @@ export const heroTextAnimationMotionTokens = {
     scramble: 1.2,
     rotatingKeyword: 0.34,
     gradientHighlight: 0.9,
+    blurFocus: 0.42,
   },
   stagger: {
     word: 0.045,
@@ -111,6 +113,7 @@ export const heroTextAnimationMotionTokens = {
     wordY: "0.6em",
     lineY: "0.6em",
     curtainY: "0.85em",
+    blurFocusY: "0.16em",
     scrollY: -32,
   },
   spring: {
@@ -165,6 +168,8 @@ const heroTextAnimationRotatingKeywordClasses =
   "col-start-1 row-start-1 whitespace-pre will-change-transform data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationGradientHighlightClasses =
   "inline whitespace-pre-wrap bg-[linear-gradient(105deg,var(--hero-text-animation-highlight-base)_0%,var(--hero-text-animation-highlight-base)_34%,var(--hero-text-animation-highlight-accent)_44%,var(--hero-text-animation-highlight-sheen)_50%,var(--hero-text-animation-highlight-accent)_56%,var(--hero-text-animation-highlight-base)_66%,var(--hero-text-animation-highlight-base)_100%)] bg-[length:220%_100%] bg-clip-text text-transparent underline decoration-(--hero-text-animation-highlight-underline) decoration-[0.08em] underline-offset-[0.14em] will-change-[background-position] [text-decoration-skip-ink:auto] forced-colors:bg-none forced-colors:text-[CanvasText] forced-colors:decoration-[CanvasText] data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationBlurFocusClasses =
+  "inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline will-change-[filter,opacity,transform] data-[reduced-motion=true]:will-change-auto";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
@@ -178,6 +183,8 @@ const scrambleGlyphs = ["-", "+", "=", "~", "*", ":", ".", "_"] as const;
 const rotatingKeywordDefaultIntervalMs = 1600;
 const rotatingKeywordMinimumIntervalMs = 400;
 const rotatingKeywordMaximumAutoRotateMs = 5000;
+const blurFocusInitialBlur = "6px";
+const blurFocusFinalBlur = "0px";
 const defaultRepeatDelay = 1.8;
 const gradientHighlightStyle = {
   "--hero-text-animation-highlight-base": "var(--dt-color-foreground)",
@@ -1359,6 +1366,104 @@ function renderStaticGradientHighlight(text: string) {
   );
 }
 
+function BlurFocusSegments({
+  active,
+  delay,
+  duration,
+  once,
+  reducedMotion,
+  text,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  reducedMotion: boolean;
+  text: string;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const shouldStart =
+    trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
+  const hiddenState = reducedMotion
+    ? { opacity: 0 }
+    : {
+        filter: `blur(${blurFocusInitialBlur})`,
+        opacity: 0,
+        y: heroTextAnimationMotionTokens.distance.blurFocusY,
+      };
+  const visibleState = reducedMotion
+    ? { opacity: 1 }
+    : {
+        filter: `blur(${blurFocusFinalBlur})`,
+        opacity: 1,
+        y: "0em",
+      };
+
+  return (
+    <motionElement.span
+      ref={inViewRef}
+      aria-hidden="true"
+      data-blur-final={blurFocusFinalBlur}
+      data-blur-initial={
+        reducedMotion ? blurFocusFinalBlur : blurFocusInitialBlur
+      }
+      data-focus-reveal="blur-focus"
+      data-reduced-motion={reducedMotion ? "true" : undefined}
+      data-slot="hero-text-animation-motion"
+      data-split-by="phrase"
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationBlurFocusClasses,
+      )}
+      initial={shouldStart ? hiddenState : { opacity: 0 }}
+      animate={shouldStart ? visibleState : { opacity: 0 }}
+      transition={
+        reducedMotion
+          ? { delay, duration: 0.18, ease: "linear" }
+          : {
+              delay,
+              duration,
+              ease: heroTextAnimationMotionTokens.easing.soft,
+            }
+      }
+      onAnimationComplete={
+        shouldStart && !reducedMotion ? onAnimationComplete : undefined
+      }
+      onAnimationStart={
+        shouldStart && !reducedMotion ? onAnimationStart : undefined
+      }
+    >
+      {text}
+    </motionElement.span>
+  );
+}
+
+function renderStaticBlurFocus(text: string) {
+  return (
+    <span
+      aria-hidden="true"
+      data-blur-final={blurFocusFinalBlur}
+      data-blur-initial={blurFocusFinalBlur}
+      data-focus-reveal="blur-focus"
+      data-reduced-motion="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="phrase"
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationBlurFocusClasses,
+      )}
+    >
+      {text}
+    </span>
+  );
+}
+
 function getSegmentTransition(duration: number): Transition {
   return {
     duration,
@@ -1422,9 +1527,11 @@ export const HeroTextAnimation = forwardRef<
           ? heroTextAnimationMotionTokens.duration.scramble
           : animation === "gradient-highlight"
             ? heroTextAnimationMotionTokens.duration.gradientHighlight
-            : animation === "typewriter"
-              ? heroTextAnimationMotionTokens.duration.typewriter
-              : heroTextAnimationMotionTokens.duration.base);
+            : animation === "blur-focus"
+              ? heroTextAnimationMotionTokens.duration.blurFocus
+              : animation === "typewriter"
+                ? heroTextAnimationMotionTokens.duration.typewriter
+                : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
     const canRepeat =
@@ -1476,7 +1583,7 @@ export const HeroTextAnimation = forwardRef<
     const animatedSegmentCount =
       animation === "rotating-keyword"
         ? keywordCount
-        : animation === "gradient-highlight"
+        : animation === "gradient-highlight" || animation === "blur-focus"
           ? 1
           : animation === "typewriter" || animation === "scramble-decrypt"
             ? splitTypewriterCharacters(text).length
@@ -1484,7 +1591,7 @@ export const HeroTextAnimation = forwardRef<
     const visualSplitBy =
       animation === "rotating-keyword"
         ? "keyword"
-        : animation === "gradient-highlight"
+        : animation === "gradient-highlight" || animation === "blur-focus"
           ? "phrase"
           : animation === "typewriter" || animation === "scramble-decrypt"
             ? "character"
@@ -1599,6 +1706,8 @@ export const HeroTextAnimation = forwardRef<
           })
         ) : renderStatic && animation === "gradient-highlight" ? (
           renderStaticGradientHighlight(text)
+        ) : renderStatic && animation === "blur-focus" ? (
+          renderStaticBlurFocus(text)
         ) : renderStatic ? (
           renderStaticSegments({ segments, splitBy: resolvedSplitBy })
         ) : animation === "masked-curtain" ? (
@@ -1644,6 +1753,19 @@ export const HeroTextAnimation = forwardRef<
           />
         ) : animation === "gradient-highlight" ? (
           <GradientHighlightSegments
+            key={visualKey}
+            active={active}
+            delay={delay}
+            duration={resolvedDuration}
+            once={once}
+            reducedMotion={reducedMotion}
+            text={text}
+            trigger={trigger}
+            onAnimationComplete={handleAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "blur-focus" ? (
+          <BlurFocusSegments
             key={visualKey}
             active={active}
             delay={delay}

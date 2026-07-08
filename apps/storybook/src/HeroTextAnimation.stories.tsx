@@ -34,6 +34,7 @@ const meta = {
         "scramble-decrypt",
         "rotating-keyword",
         "gradient-highlight",
+        "blur-focus",
       ],
     },
     as: {
@@ -91,6 +92,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "scramble-decrypt",
   "rotating-keyword",
   "gradient-highlight",
+  "blur-focus",
 ];
 
 export const Base: Story = {};
@@ -332,6 +334,49 @@ export const GradientHighlightSweep: Story = {
   ),
 };
 
+export const BlurFocusReveal: Story = {
+  render: () => (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              short heading
+            </p>
+            <HeroTextAnimation
+              animation="blur-focus"
+              duration={0.42}
+              text="Bring the launch promise into focus."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+      <DethinkProvider
+        theme="dark"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              crisp finish
+            </p>
+            <HeroTextAnimation
+              animation="blur-focus"
+              duration={0.38}
+              text="Focus the product story fast."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+    </div>
+  ),
+};
+
 export const RepeatPreview: Story = {
   render: () => (
     <DethinkProvider
@@ -471,6 +516,29 @@ export const GradientHighlightReducedMotionFallback: Story = {
   ),
 };
 
+export const BlurFocusReducedMotionFallback: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <div className="grid gap-8 lg:grid-cols-2">
+          {reducedMotionStrategies.map((strategy) => (
+            <HeroTextAnimation
+              key={strategy}
+              animation="blur-focus"
+              reducedMotionStrategy={strategy}
+              text={`${strategy} reduced motion keeps the heading focused.`}
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
+            />
+          ))}
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
 export const MaskedCurtainReducedMotionFallbacks: Story = {
   render: () => (
     <DethinkProvider
@@ -571,5 +639,47 @@ export const Interaction: Story = {
 
     await expect(heading).toHaveAttribute("data-animation", "stagger-words");
     await expect(heading).toHaveAttribute("data-reduced-motion", "false");
+  },
+};
+
+export const BlurFocusMobilePerformanceFixture: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border w-[390px] max-w-full rounded-lg border p-5"
+    >
+      <HeroTextAnimationProvider>
+        <section className="min-w-0 space-y-4">
+          <p className="text-muted-foreground text-sm font-medium">
+            mobile performance fixture
+          </p>
+          <HeroTextAnimation
+            animation="blur-focus"
+            delay={0}
+            duration={0.42}
+            text="Focus the hero message quickly."
+            className="text-foreground text-4xl leading-tight font-semibold tracking-normal"
+          />
+          <p className="text-muted-foreground text-sm leading-6">
+            Single phrase layer, small blur radius, no scale, parallax,
+            rotation, or animated background work.
+          </p>
+        </section>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const heading = canvas.getByRole("heading", {
+      name: "Focus the hero message quickly.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-focus-reveal="blur-focus"]',
+    );
+
+    await expect(heading).toHaveAttribute("data-animation", "blur-focus");
+    await expect(heading).toHaveAttribute("data-split-by", "phrase");
+    await expect(motion).toHaveAttribute("data-blur-initial", "6px");
+    await expect(motion).toHaveAttribute("data-blur-final", "0px");
   },
 };

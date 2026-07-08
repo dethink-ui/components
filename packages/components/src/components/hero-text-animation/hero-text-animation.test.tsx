@@ -816,6 +816,74 @@ describe("HeroTextAnimation", () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 
+  it("renders blur focus as a short phrase reveal with a crisp final target", () => {
+    const handleComplete = vi.fn();
+
+    render(
+      <HeroTextAnimation
+        animation="blur-focus"
+        duration={0.42}
+        text="Bring the launch promise into focus."
+        onAnimationComplete={handleComplete}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Bring the launch promise into focus.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-focus-reveal="blur-focus"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "blur-focus");
+    expect(heading).toHaveAttribute("data-split-by", "phrase");
+    expect(heading).toHaveAttribute("data-segment-count", "1");
+    expect(motion).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute("data-blur-initial", "6px");
+    expect(motion).toHaveAttribute("data-blur-final", "0px");
+    expect(motion).toHaveTextContent("Bring the launch promise into focus.");
+    expect(motion).toHaveClass("will-change-[filter,opacity,transform]");
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Bring the launch promise into focus.");
+  });
+
+  it("removes blur and vertical transform from blur focus in reduced motion", () => {
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+    const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="blur-focus"
+          repeat
+          repeatDelay={0.1}
+          text="Reduced motion keeps the focused heading readable."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Reduced motion keeps the focused heading readable.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-focus-reveal="blur-focus"]',
+    );
+
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(heading).toHaveAttribute("data-repeat", "true");
+    expect(motion).toHaveAttribute("data-reduced-motion", "true");
+    expect(motion).toHaveAttribute("data-blur-initial", "0px");
+    expect(motion).toHaveAttribute("data-blur-final", "0px");
+    expect(motion).toHaveTextContent(
+      "Reduced motion keeps the focused heading readable.",
+    );
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
   it("cleans typewriter timers on text changes and unmount", async () => {
     vi.useFakeTimers();
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");

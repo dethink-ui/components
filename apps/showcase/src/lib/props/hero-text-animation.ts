@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight"',
+    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, or gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase.",
+      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, or blur-focus for short cinematic hero headings that resolve quickly into crisp readable text.",
   },
   {
     prop: "as",
@@ -103,9 +103,16 @@ export const heroTextAnimationProps: PropRow[] = [
     prop: "delay / duration / stagger",
     type: "number",
     defaultValue:
-      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9",
+      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42",
     description:
-      "Timing controls in seconds. Typewriter, scramble-decrypt, and gradient-highlight use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight runs once by default and uses the shared repeat mechanism only when repeat is enabled.",
+      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, and blur-focus use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight and blur-focus run once by default and use the shared repeat mechanism only when repeat is enabled.",
+  },
+  {
+    prop: "blur-focus content guidance",
+    type: "short hero heading",
+    defaultValue: "—",
+    description:
+      "Limit blur-focus to short cinematic headings, ideally one line or under eight words. Do not combine the same heading with scale, parallax, or rotation; the component uses only small blur, opacity, and vertical translation, then finishes at blur(0px).",
   },
   {
     prop: "HeroTextAnimationProvider",
