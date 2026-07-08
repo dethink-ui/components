@@ -63,6 +63,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "general",
   },
   {
+    slug: "hero-text-animation",
+    name: "HeroTextAnimation",
+    description:
+      "Animate hero headlines with accessible, SSR-safe staggered word and line reveals plus reduced-motion fallbacks.",
+    type: "general",
+  },
+  {
     slug: "box",
     name: "Box",
     description:
