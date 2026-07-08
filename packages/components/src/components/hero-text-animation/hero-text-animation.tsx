@@ -33,6 +33,7 @@ export type HeroTextAnimationKind =
   | "gradient-highlight"
   | "blur-focus"
   | "kinetic-emphasis-pop"
+  | "svg-stroke-draw"
   | "scroll-responsive";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
@@ -40,6 +41,11 @@ export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
 export type HeroTextAnimationReducedMotionStrategy = "static" | "opacity-only";
 export type HeroTextAnimationProviderReducedMotion =
   "user" | "always" | "never";
+
+export interface HeroTextAnimationSvgPath {
+  d: string;
+  strokeWidth?: number;
+}
 
 export interface HeroTextAnimationProps extends Omit<
   HTMLAttributes<HTMLElement>,
@@ -67,6 +73,10 @@ export interface HeroTextAnimationProps extends Omit<
   showCaret?: boolean;
   splitBy?: HeroTextAnimationSplitBy;
   stagger?: number;
+  svgAccessibleTitle?: string;
+  svgPathData?:
+    string | readonly string[] | readonly HeroTextAnimationSvgPath[];
+  svgViewBox?: string;
   text: string;
   trigger?: HeroTextAnimationTrigger;
   "data-testid"?: string;
@@ -109,6 +119,7 @@ export const heroTextAnimationMotionTokens = {
     gradientHighlight: 0.9,
     blurFocus: 0.42,
     kineticEmphasisPop: 0.42,
+    svgStrokeDraw: 1.15,
     scrollResponsive: 0,
   },
   stagger: {
@@ -183,6 +194,14 @@ const heroTextAnimationKineticEmphasisWordClasses =
   "inline-block whitespace-pre align-baseline [transform-origin:center_70%] data-[emphasized=true]:text-primary data-[emphasized=true]:font-semibold data-[emphasized=true]:underline data-[emphasized=true]:decoration-current data-[emphasized=true]:decoration-[0.08em] data-[emphasized=true]:underline-offset-[0.14em] data-[emphasized=true]:[text-decoration-skip-ink:auto] data-[emphasized=true]:forced-colors:text-[CanvasText] data-[emphasized=true]:forced-colors:decoration-[CanvasText] data-[emphasized=true]:will-change-transform data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationScrollResponsiveClasses =
   "inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline will-change-transform [transform-origin:center_top] data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationSvgStrokeDrawClasses =
+  "relative inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline";
+const heroTextAnimationSvgStrokeDrawTextClasses =
+  "relative z-10 whitespace-pre-wrap";
+const heroTextAnimationSvgStrokeDrawSvgClasses =
+  "pointer-events-none absolute inset-x-0 -bottom-[0.16em] z-0 h-[0.48em] w-full overflow-visible text-primary";
+const heroTextAnimationSvgStrokeDrawPathClasses =
+  "will-change-[stroke-dashoffset,stroke-dasharray,opacity] data-[reduced-motion=true]:will-change-auto";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
@@ -202,6 +221,13 @@ const kineticEmphasisMaximumWordCount = 2;
 const kineticEmphasisScale = 1.045;
 const scrollResponsiveRangePx = 220;
 const scrollResponsiveMinimumOpacity = 0.92;
+const defaultSvgStrokeDrawViewBox = "0 0 600 96";
+const defaultSvgStrokeDrawPaths = [
+  {
+    d: "M18 56 C128 82 252 78 356 58 C444 41 526 40 582 56 L580 76 C484 60 404 63 326 76 C214 95 102 86 20 70 Z",
+    strokeWidth: 5,
+  },
+] as const satisfies readonly HeroTextAnimationSvgPath[];
 const defaultRepeatDelay = 1.8;
 const gradientHighlightStyle = {
   "--hero-text-animation-highlight-base": "var(--dt-color-foreground)",
@@ -211,6 +237,12 @@ const gradientHighlightStyle = {
     "color-mix(in oklab, var(--dt-color-foreground) 58%, var(--dt-color-background) 42%)",
   "--hero-text-animation-highlight-underline":
     "color-mix(in oklab, var(--dt-color-primary) 72%, var(--dt-color-foreground) 28%)",
+} as CSSProperties;
+const svgStrokeDrawStyle = {
+  "--hero-text-animation-svg-stroke":
+    "color-mix(in oklab, var(--dt-color-foreground) 78%, var(--dt-color-primary) 22%)",
+  "--hero-text-animation-svg-fill":
+    "color-mix(in oklab, var(--dt-color-primary) 22%, transparent)",
 } as CSSProperties;
 
 const HeroTextAnimationReducedMotionContext =
@@ -321,6 +353,56 @@ function getSegmentWordIndices(segments: readonly HeroTextAnimationSegment[]) {
 
     return nextWordIndex;
   });
+}
+
+function isValidSvgPathData(pathData: string) {
+  const trimmedPathData = pathData.trim();
+
+  return (
+    trimmedPathData.length > 0 &&
+    /^[MmZzLlHhVvCcSsQqTtAa]/.test(trimmedPathData) &&
+    /^[MmZzLlHhVvCcSsQqTtAaEe0-9,.\s+-]+$/.test(trimmedPathData)
+  );
+}
+
+function normalizeSvgStrokeDrawPaths(
+  svgPathData: HeroTextAnimationProps["svgPathData"],
+) {
+  const sourcePaths = svgPathData ?? defaultSvgStrokeDrawPaths;
+  const pathItems =
+    typeof sourcePaths === "string" ? [sourcePaths] : sourcePaths;
+
+  return pathItems.reduce<HeroTextAnimationSvgPath[]>((paths, pathItem) => {
+    const path =
+      typeof pathItem === "string" ? { d: pathItem } : { ...pathItem };
+    const strokeWidth =
+      path.strokeWidth === undefined || !Number.isFinite(path.strokeWidth)
+        ? undefined
+        : Math.max(0.5, path.strokeWidth);
+
+    if (isValidSvgPathData(path.d)) {
+      paths.push({
+        d: path.d.trim(),
+        strokeWidth,
+      });
+    }
+
+    return paths;
+  }, []);
+}
+
+function isValidSvgViewBox(viewBox: string) {
+  const values = viewBox
+    .trim()
+    .split(/[\s,]+/)
+    .map((value) => Number(value));
+
+  return (
+    values.length === 4 &&
+    values.every((value) => Number.isFinite(value)) &&
+    values[2] > 0 &&
+    values[3] > 0
+  );
 }
 
 function useHasHydrated() {
@@ -1668,6 +1750,235 @@ function renderStaticGradientHighlight(text: string) {
   );
 }
 
+function SvgStrokeDrawGraphic({
+  accessibleTitle,
+  paths,
+  reducedMotion,
+  shouldExposeSvg,
+  viewBox,
+}: {
+  accessibleTitle?: string;
+  paths: readonly HeroTextAnimationSvgPath[];
+  reducedMotion: boolean;
+  shouldExposeSvg: boolean;
+  viewBox: string;
+}) {
+  if (paths.length === 0) {
+    return null;
+  }
+
+  return (
+    <svg
+      aria-hidden={shouldExposeSvg ? undefined : "true"}
+      aria-label={shouldExposeSvg ? accessibleTitle : undefined}
+      data-slot="hero-text-animation-svg"
+      fill="none"
+      focusable="false"
+      role={shouldExposeSvg ? "img" : undefined}
+      viewBox={viewBox}
+      className={heroTextAnimationSvgStrokeDrawSvgClasses}
+    >
+      {shouldExposeSvg && accessibleTitle ? (
+        <title>{accessibleTitle}</title>
+      ) : null}
+      {paths.map((path, index) => (
+        <path
+          key={`${index}-${path.d}`}
+          aria-hidden="true"
+          data-reduced-motion={reducedMotion ? "true" : undefined}
+          data-slot="hero-text-animation-svg-path"
+          d={path.d}
+          fill="var(--hero-text-animation-svg-fill)"
+          fillOpacity={1}
+          pathLength={1}
+          stroke="var(--hero-text-animation-svg-stroke)"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={path.strokeWidth ?? 5}
+          className={heroTextAnimationSvgStrokeDrawPathClasses}
+        />
+      ))}
+    </svg>
+  );
+}
+
+function renderStaticSvgStrokeDraw({
+  accessibleTitle,
+  pathDataValid,
+  paths,
+  text,
+  viewBox,
+  viewBoxValid,
+}: {
+  accessibleTitle?: string;
+  pathDataValid: boolean;
+  paths: readonly HeroTextAnimationSvgPath[];
+  text: string;
+  viewBox: string;
+  viewBoxValid: boolean;
+}) {
+  const shouldExposeSvg =
+    accessibleTitle !== undefined && accessibleTitle.length > 0;
+
+  return (
+    <span
+      aria-hidden={shouldExposeSvg ? undefined : "true"}
+      data-reduced-motion="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="path"
+      data-svg-path-count={paths.length}
+      data-svg-path-valid={pathDataValid ? "true" : "false"}
+      data-svg-stroke-draw="true"
+      data-svg-view-box-valid={viewBoxValid ? "true" : "false"}
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationSvgStrokeDrawClasses,
+      )}
+      style={svgStrokeDrawStyle}
+    >
+      <span
+        aria-hidden={shouldExposeSvg ? "true" : undefined}
+        data-slot="hero-text-animation-svg-text"
+        className={heroTextAnimationSvgStrokeDrawTextClasses}
+      >
+        {text}
+      </span>
+      <SvgStrokeDrawGraphic
+        accessibleTitle={accessibleTitle}
+        paths={paths}
+        reducedMotion
+        shouldExposeSvg={shouldExposeSvg}
+        viewBox={viewBox}
+      />
+    </span>
+  );
+}
+
+function SvgStrokeDrawSegments({
+  accessibleTitle,
+  active,
+  delay,
+  duration,
+  once,
+  pathDataValid,
+  paths,
+  text,
+  trigger,
+  viewBox,
+  viewBoxValid,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  accessibleTitle?: string;
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  pathDataValid: boolean;
+  paths: readonly HeroTextAnimationSvgPath[];
+  text: string;
+  trigger: HeroTextAnimationTrigger;
+  viewBox: string;
+  viewBoxValid: boolean;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const shouldStart =
+    trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
+  const shouldExposeSvg =
+    accessibleTitle !== undefined && accessibleTitle.length > 0;
+  const lastPathIndex = paths.length - 1;
+
+  return (
+    <span
+      ref={inViewRef}
+      aria-hidden={shouldExposeSvg ? undefined : "true"}
+      data-slot="hero-text-animation-motion"
+      data-split-by="path"
+      data-svg-path-count={paths.length}
+      data-svg-path-valid={pathDataValid ? "true" : "false"}
+      data-svg-stroke-draw="true"
+      data-svg-view-box-valid={viewBoxValid ? "true" : "false"}
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationSvgStrokeDrawClasses,
+      )}
+      style={svgStrokeDrawStyle}
+    >
+      <span
+        aria-hidden={shouldExposeSvg ? "true" : undefined}
+        data-slot="hero-text-animation-svg-text"
+        className={heroTextAnimationSvgStrokeDrawTextClasses}
+      >
+        {text}
+      </span>
+      {paths.length > 0 ? (
+        <svg
+          aria-hidden={shouldExposeSvg ? undefined : "true"}
+          aria-label={shouldExposeSvg ? accessibleTitle : undefined}
+          data-slot="hero-text-animation-svg"
+          fill="none"
+          focusable="false"
+          role={shouldExposeSvg ? "img" : undefined}
+          viewBox={viewBox}
+          className={heroTextAnimationSvgStrokeDrawSvgClasses}
+        >
+          {shouldExposeSvg && accessibleTitle ? (
+            <title>{accessibleTitle}</title>
+          ) : null}
+          {paths.map((path, index) => {
+            const pathDelay =
+              delay + index * heroTextAnimationMotionTokens.stagger.line;
+
+            return (
+              <motionElement.path
+                key={`${index}-${path.d}`}
+                aria-hidden="true"
+                data-reduced-motion={undefined}
+                data-slot="hero-text-animation-svg-path"
+                d={path.d}
+                fill="var(--hero-text-animation-svg-fill)"
+                initial={{ fillOpacity: 0, pathLength: 0 }}
+                animate={
+                  shouldStart
+                    ? { fillOpacity: 1, pathLength: 1 }
+                    : { fillOpacity: 0, pathLength: 0 }
+                }
+                stroke="var(--hero-text-animation-svg-stroke)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={path.strokeWidth ?? 5}
+                className={heroTextAnimationSvgStrokeDrawPathClasses}
+                transition={{
+                  fillOpacity: {
+                    delay: pathDelay + duration * 0.72,
+                    duration: Math.min(0.28, duration * 0.32),
+                    ease: "linear",
+                  },
+                  pathLength: {
+                    delay: pathDelay,
+                    duration,
+                    ease: heroTextAnimationMotionTokens.easing.soft,
+                  },
+                }}
+                onAnimationComplete={
+                  shouldStart && index === lastPathIndex
+                    ? onAnimationComplete
+                    : undefined
+                }
+                onAnimationStart={
+                  shouldStart && index === 0 ? onAnimationStart : undefined
+                }
+              />
+            );
+          })}
+        </svg>
+      ) : null}
+    </span>
+  );
+}
+
 function BlurFocusSegments({
   active,
   delay,
@@ -1915,6 +2226,9 @@ export const HeroTextAnimation = forwardRef<
       showCaret = true,
       splitBy = "word",
       stagger,
+      svgAccessibleTitle,
+      svgPathData,
+      svgViewBox = defaultSvgStrokeDrawViewBox,
       text,
       trigger = "mount",
       "data-testid": dataTestId = "hero-text-animation",
@@ -1948,13 +2262,18 @@ export const HeroTextAnimation = forwardRef<
               ? heroTextAnimationMotionTokens.duration.blurFocus
               : animation === "kinetic-emphasis-pop"
                 ? heroTextAnimationMotionTokens.duration.kineticEmphasisPop
-                : animation === "scroll-responsive"
-                  ? heroTextAnimationMotionTokens.duration.scrollResponsive
-                  : animation === "typewriter"
-                    ? heroTextAnimationMotionTokens.duration.typewriter
-                    : heroTextAnimationMotionTokens.duration.base);
+                : animation === "svg-stroke-draw"
+                  ? heroTextAnimationMotionTokens.duration.svgStrokeDraw
+                  : animation === "scroll-responsive"
+                    ? heroTextAnimationMotionTokens.duration.scrollResponsive
+                    : animation === "typewriter"
+                      ? heroTextAnimationMotionTokens.duration.typewriter
+                      : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
-      !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
+      !hasHydrated ||
+      (reducedMotion &&
+        (reducedMotionStrategy === "static" ||
+          animation === "svg-stroke-draw"));
     const canRepeat =
       hasHydrated &&
       repeat &&
@@ -1998,6 +2317,20 @@ export const HeroTextAnimation = forwardRef<
         }),
       [rotatingKeywordOptions, text],
     );
+    const svgStrokeDrawPaths = useMemo(
+      () => normalizeSvgStrokeDrawPaths(svgPathData),
+      [svgPathData],
+    );
+    const svgPathDataValid =
+      svgPathData === undefined || svgStrokeDrawPaths.length > 0;
+    const svgViewBoxValid = isValidSvgViewBox(svgViewBox);
+    const resolvedSvgViewBox = svgViewBoxValid
+      ? svgViewBox.trim()
+      : defaultSvgStrokeDrawViewBox;
+    const exposesSvgAlternative =
+      animation === "svg-stroke-draw" &&
+      svgAccessibleTitle !== undefined &&
+      svgAccessibleTitle.length > 0;
     const keywordCount = rotatingKeywords.length;
     const isRotatingKeywordControlled = rotatingKeywordIndex !== undefined;
     const [
@@ -2023,9 +2356,11 @@ export const HeroTextAnimation = forwardRef<
             animation === "blur-focus" ||
             animation === "scroll-responsive"
           ? 1
-          : animation === "typewriter" || animation === "scramble-decrypt"
-            ? splitTypewriterCharacters(text).length
-            : segments.filter((segment) => segment.kind === "text").length;
+          : animation === "svg-stroke-draw"
+            ? svgStrokeDrawPaths.length
+            : animation === "typewriter" || animation === "scramble-decrypt"
+              ? splitTypewriterCharacters(text).length
+              : segments.filter((segment) => segment.kind === "text").length;
     const visualSplitBy =
       animation === "rotating-keyword"
         ? "keyword"
@@ -2033,9 +2368,11 @@ export const HeroTextAnimation = forwardRef<
             animation === "blur-focus" ||
             animation === "scroll-responsive"
           ? "phrase"
-          : animation === "typewriter" || animation === "scramble-decrypt"
-            ? "character"
-            : resolvedSplitBy;
+          : animation === "svg-stroke-draw"
+            ? "path"
+            : animation === "typewriter" || animation === "scramble-decrypt"
+              ? "character"
+              : resolvedSplitBy;
     const visualKey = [
       animation,
       repeatIteration,
@@ -2045,6 +2382,8 @@ export const HeroTextAnimation = forwardRef<
       resolvedStagger,
       resolvedDuration,
       kineticEmphasisIndices.join(","),
+      svgStrokeDrawPaths.map((path) => path.d).join("|"),
+      resolvedSvgViewBox,
     ].join(":");
 
     const handleRotatingKeywordIndexChange = useCallback(
@@ -2084,6 +2423,8 @@ export const HeroTextAnimation = forwardRef<
       resolvedSplitBy,
       resolvedStagger,
       showCaret,
+      svgPathData,
+      svgViewBox,
       text,
       trigger,
       kineticEmphasisIndices,
@@ -2138,7 +2479,7 @@ export const HeroTextAnimation = forwardRef<
         {accessibleLabel}
       </span>,
       <span
-        aria-hidden="true"
+        aria-hidden={exposesSvgAlternative ? undefined : "true"}
         data-slot="hero-text-animation-visual"
         className={heroTextAnimationVisualClasses}
       >
@@ -2160,6 +2501,15 @@ export const HeroTextAnimation = forwardRef<
           renderStaticKineticEmphasis({
             emphasisIndices: kineticEmphasisIndices,
             segments,
+          })
+        ) : renderStatic && animation === "svg-stroke-draw" ? (
+          renderStaticSvgStrokeDraw({
+            accessibleTitle: svgAccessibleTitle,
+            pathDataValid: svgPathDataValid,
+            paths: svgStrokeDrawPaths,
+            text,
+            viewBox: resolvedSvgViewBox,
+            viewBoxValid: svgViewBoxValid,
           })
         ) : renderStatic ? (
           renderStaticSegments({ segments, splitBy: resolvedSplitBy })
@@ -2227,6 +2577,23 @@ export const HeroTextAnimation = forwardRef<
             reducedMotion={reducedMotion}
             text={text}
             trigger={trigger}
+            onAnimationComplete={handleAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "svg-stroke-draw" ? (
+          <SvgStrokeDrawSegments
+            key={visualKey}
+            accessibleTitle={svgAccessibleTitle}
+            active={active}
+            delay={delay}
+            duration={resolvedDuration}
+            once={once}
+            pathDataValid={svgPathDataValid}
+            paths={svgStrokeDrawPaths}
+            text={text}
+            trigger={trigger}
+            viewBox={resolvedSvgViewBox}
+            viewBoxValid={svgViewBoxValid}
             onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}
           />

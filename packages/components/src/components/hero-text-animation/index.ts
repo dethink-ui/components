@@ -12,5 +12,6 @@ export {
   type HeroTextAnimationReducedMotionStrategy,
   type HeroTextAnimationSegment,
   type HeroTextAnimationSplitBy,
+  type HeroTextAnimationSvgPath,
   type HeroTextAnimationTrigger,
 } from "./hero-text-animation";

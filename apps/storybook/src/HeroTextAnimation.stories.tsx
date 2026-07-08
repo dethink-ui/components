@@ -36,6 +36,7 @@ const meta = {
         "gradient-highlight",
         "blur-focus",
         "kinetic-emphasis-pop",
+        "svg-stroke-draw",
         "scroll-responsive",
       ],
     },
@@ -96,6 +97,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "gradient-highlight",
   "blur-focus",
   "kinetic-emphasis-pop",
+  "svg-stroke-draw",
   "scroll-responsive",
 ];
 
@@ -426,6 +428,53 @@ export const KineticEmphasisPop: Story = {
   ),
 };
 
+export const SvgStrokeDrawReveal: Story = {
+  render: () => (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              decorative path draw
+            </p>
+            <HeroTextAnimation
+              animation="svg-stroke-draw"
+              duration={1.15}
+              repeat
+              repeatDelay={1.5}
+              text="Draw a clear path under the launch promise."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+      <DethinkProvider
+        theme="dark"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              custom viewBox path
+            </p>
+            <HeroTextAnimation
+              animation="svg-stroke-draw"
+              duration={1}
+              svgPathData="M14 52 C104 72 218 70 306 54 C384 40 462 40 546 56 L544 74 C430 58 348 62 270 74 C174 88 82 80 16 68 Z"
+              svgViewBox="0 0 560 96"
+              text="Keep the real headline in HTML."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+    </div>
+  ),
+};
+
 export const ScrollResponsiveText: Story = {
   render: () => (
     <DethinkProvider
@@ -625,6 +674,24 @@ export const KineticEmphasisReducedMotionFallback: Story = {
           animation="kinetic-emphasis-pop"
           emphasisWords={["static", "emphasis"]}
           text="Reduced motion keeps static emphasis without scale."
+          className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const SvgStrokeDrawReducedMotionFallback: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="svg-stroke-draw"
+          repeat
+          text="Reduced motion keeps the drawn path settled."
           className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
         />
       </HeroTextAnimationProvider>
@@ -862,5 +929,40 @@ export const ScrollResponsiveInteraction: Story = {
     await expect(heading).toHaveAttribute("data-split-by", "phrase");
     await expect(motion).toHaveAttribute("data-scroll-range-px", "220");
     await expect(motion).toHaveAttribute("data-scroll-y-min", "-32");
+  },
+};
+
+export const SvgStrokeDrawInteraction: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <HeroTextAnimation
+          animation="svg-stroke-draw"
+          svgPathData="M10 48 C116 72 252 70 390 48"
+          svgViewBox="0 0 400 96"
+          text="Stroke draw headings keep real text."
+          className="text-foreground text-4xl leading-tight font-semibold tracking-normal"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const heading = canvas.getByRole("heading", {
+      name: "Stroke draw headings keep real text.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
+    );
+    const svg = heading.querySelector('[data-slot="hero-text-animation-svg"]');
+
+    await expect(heading).toHaveAttribute("data-animation", "svg-stroke-draw");
+    await expect(heading).toHaveAttribute("data-split-by", "path");
+    await expect(motion).toHaveAttribute("data-svg-path-valid", "true");
+    await expect(motion).toHaveAttribute("data-svg-view-box-valid", "true");
+    await expect(svg).toHaveAttribute("aria-hidden", "true");
   },
 };
