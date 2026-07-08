@@ -6,11 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  Combobox,
-  ComboboxItem,
-  type ComboboxControlSize,
-} from "../combobox";
+import { Combobox, ComboboxItem, type ComboboxControlSize } from "../combobox";
 import {
   MultiSelect,
   MultiSelectItem,
@@ -20,7 +16,8 @@ import { cn } from "../../utils/cn";
 
 export type AsyncSelectValue = string;
 export type AsyncSelectSelectionMode = "single" | "multiple";
-export type AsyncSelectControlSize = ComboboxControlSize & MultiSelectControlSize;
+export type AsyncSelectControlSize = ComboboxControlSize &
+  MultiSelectControlSize;
 
 export type AsyncSelectItemData = {
   label?: ReactNode;
@@ -70,8 +67,7 @@ export interface AsyncSelectProps<
   value?: AsyncSelectChangeValue<M>;
 }
 
-const asyncSelectRootClasses =
-  "grid w-full min-w-0 gap-[var(--dt-space-2)]";
+const asyncSelectRootClasses = "grid w-full min-w-0 gap-[var(--dt-space-2)]";
 
 const asyncSelectStatusClasses =
   "rounded-md border border-border bg-muted/40 px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm leading-5 text-muted-foreground";
@@ -280,8 +276,9 @@ function AsyncSelectRoot<
     (!isMultiple && initialSingleValue
       ? itemTextValue(initialSingleItem ?? { value: initialSingleValue })
       : "");
-  const [singleValue, setSingleValue] =
-    useState<AsyncSelectValue | null>(initialSingleValue);
+  const [singleValue, setSingleValue] = useState<AsyncSelectValue | null>(
+    initialSingleValue,
+  );
   const [multipleValue, setMultipleValue] =
     useState<AsyncSelectValue[]>(initialMultipleValue);
   const [uncontrolledInputValue, setUncontrolledInputValue] =
@@ -368,7 +365,9 @@ function AsyncSelectRoot<
     );
   }
 
-  const resolvedValue = valueControlled ? normalizeSingleValue(value) : singleValue;
+  const resolvedValue = valueControlled
+    ? normalizeSingleValue(value)
+    : singleValue;
   const handleValueChange = (nextValue: AsyncSelectValue | null) => {
     if (!valueControlled) {
       setSingleValue(nextValue);

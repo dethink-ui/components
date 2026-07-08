@@ -95,9 +95,7 @@ describe("SlotPlanner week view", () => {
     expect(within(cards[0]!).getByText("14:15 – 15:15")).toBeInTheDocument();
     expect(within(cards[1]!).getByText("18:00 – 19:00")).toBeInTheDocument();
     expect(within(cards[0]!).getByText("60 min")).toBeInTheDocument();
-    expect(
-      within(cards[0]!).getByText("Recurring weekly"),
-    ).toBeInTheDocument();
+    expect(within(cards[0]!).getByText("Recurring weekly")).toBeInTheDocument();
     expect(within(cards[0]!).getByText("Playwright")).toBeInTheDocument();
     expect(
       within(cards[1]!).getByText("Runs until the autumn cohort ends."),
@@ -178,7 +176,9 @@ describe("SlotPlanner week view", () => {
 
     expect(screen.getByRole("alert")).toHaveTextContent("Could not load slots");
     expect(
-      errorRender.container.querySelector('[data-slot="slot-planner-day-panel"]'),
+      errorRender.container.querySelector(
+        '[data-slot="slot-planner-day-panel"]',
+      ),
     ).toHaveAttribute("data-error", "true");
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
     expect(
@@ -486,8 +486,7 @@ describe("SlotPlanner slot CRUD", () => {
     });
     await user.click(within(dialog).getByRole("button", { name: "Save" }));
 
-    const payload: SlotPlannerUpdatePayload =
-      onUpdateSlot.mock.calls[0]![0];
+    const payload: SlotPlannerUpdatePayload = onUpdateSlot.mock.calls[0]![0];
 
     expect(payload.slot.id).toBe("mon-morning-architecture");
     expect(payload.slot.startTime).toBe("15:00");
@@ -588,9 +587,7 @@ describe("SlotPlanner slot CRUD", () => {
       occurrenceDate: "2026-07-13",
     });
     // The deleted card animates out before unmounting.
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText("08:00 – 08:30"),
-    );
+    await waitForElementToBeRemoved(() => screen.queryByText("08:00 – 08:30"));
 
     const nextCard = within(screen.getByRole("list")).getAllByRole(
       "listitem",
@@ -661,9 +658,7 @@ describe("SlotPlanner slot CRUD", () => {
       occurrenceDate: "2026-07-06",
     });
     // The deleted card animates out before unmounting.
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText("14:15 – 15:15"),
-    );
+    await waitForElementToBeRemoved(() => screen.queryByText("14:15 – 15:15"));
     expect(getLiveRegion(container)).toHaveTextContent("slot deleted");
 
     await user.click(screen.getByRole("button", { name: "Next week" }));
@@ -708,9 +703,7 @@ describe("SlotPlanner slot CRUD", () => {
       slotId: "mon-morning-architecture",
     });
     // The deleted card animates out before unmounting.
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText("14:15 – 15:15"),
-    );
+    await waitForElementToBeRemoved(() => screen.queryByText("14:15 – 15:15"));
     expect(getLiveRegion(container)).toHaveTextContent("slot series deleted");
 
     await user.click(screen.getByRole("button", { name: "Next week" }));
@@ -874,9 +867,7 @@ describe("SlotPlanner slot CRUD", () => {
     // The occurrence still renders the previous definition.
     expect(screen.getByText("14:15 – 15:15")).toBeInTheDocument();
 
-    await user.click(
-      within(firstCard).getByRole("button", { name: "Retry" }),
-    );
+    await user.click(within(firstCard).getByRole("button", { name: "Retry" }));
 
     await waitFor(() => {
       expect(screen.getByText("16:30 – 17:30")).toBeInTheDocument();
@@ -1039,8 +1030,9 @@ describe("SlotPlanner constraints", () => {
     expect(meter).toHaveAttribute("data-cap-reached", "true");
     expect(meter).toHaveTextContent("Daily cap: 2 / 2 requestable slots");
     // The daily-cap violation message renders alongside the summary.
-    expect(within(meter as HTMLElement).getByText("Daily cap reached"))
-      .toBeInTheDocument();
+    expect(
+      within(meter as HTMLElement).getByText("Daily cap reached"),
+    ).toBeInTheDocument();
   });
 
   it("renders the weekly cap meter through the weeklyCapSummary template", () => {
@@ -1056,8 +1048,9 @@ describe("SlotPlanner constraints", () => {
     expect(
       container.querySelector('[data-slot="slot-planner-weekly-cap"]'),
     ).toHaveTextContent("Weekly cap: 5 / 5 requestable slots");
-    expect(within(meter as HTMLElement).getByText("Weekly cap reached"))
-      .toBeInTheDocument();
+    expect(
+      within(meter as HTMLElement).getByText("Weekly cap reached"),
+    ).toBeInTheDocument();
   });
 
   it("announces the daily cap when a mutation makes it reached", async () => {
@@ -1155,9 +1148,7 @@ describe("SlotPlanner batch operations", () => {
     renderCrudPlanner({ defaultFocusedDate: "2026-06-29" });
 
     for (const name of ["Copy day", "Copy week", "Clear day"]) {
-      expect(
-        screen.queryByRole("button", { name }),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name })).not.toBeInTheDocument();
     }
   });
 
@@ -1354,9 +1345,7 @@ describe("SlotPlanner batch operations", () => {
 
     // Only the locked (booked) card remains today; the cleared cards
     // animate out before unmounting.
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText("08:00 – 08:30"),
-    );
+    await waitForElementToBeRemoved(() => screen.queryByText("08:00 – 08:30"));
     await waitFor(() => {
       expect(screen.queryByText("10:00 – 11:00")).not.toBeInTheDocument();
     });
@@ -1410,8 +1399,9 @@ describe("SlotPlanner custom renderers", () => {
       },
     });
 
-    expect(screen.getAllByTestId("custom-card").map((n) => n.textContent))
-      .toEqual(["custom 14:15", "custom 18:00"]);
+    expect(
+      screen.getAllByTestId("custom-card").map((n) => n.textContent),
+    ).toEqual(["custom 14:15", "custom 18:00"]);
     // The default card content is fully replaced.
     expect(
       screen.queryByRole("button", { name: "Edit slot" }),
@@ -1617,7 +1607,10 @@ describe("SlotPlanner custom renderers", () => {
   });
 
   it("passes unknown data keys to the custom renderer untouched", () => {
-    const receivedBysSlotId = new Map<string, SlotPlannerSlotPayload | undefined>();
+    const receivedBysSlotId = new Map<
+      string,
+      SlotPlannerSlotPayload | undefined
+    >();
 
     renderPlanner({
       focusedDate: "2026-07-08",
@@ -1715,9 +1708,10 @@ describe("SlotPlanner custom renderers", () => {
       screen.getByRole("button", { name: "Add slot to this day" }),
     );
     await user.click(
-      within(
-        await screen.findByRole("dialog", { name: "Add slot" }),
-      ).getByRole("button", { name: "save custom" }),
+      within(await screen.findByRole("dialog", { name: "Add slot" })).getByRole(
+        "button",
+        { name: "save custom" },
+      ),
     );
 
     expect(onCreateSlot).toHaveBeenCalledWith({
@@ -1900,9 +1894,7 @@ describe("SlotPlanner day view", () => {
       screen.queryByRole("button", { name: "This week" }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Today" })).toBeDisabled();
-    expect(
-      screen.getByRole("button", { name: "Week" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Week" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Day" })).toHaveAttribute(
       "aria-pressed",
       "true",

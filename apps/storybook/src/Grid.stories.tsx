@@ -90,11 +90,27 @@ const meta = {
     },
     alignContent: {
       control: "inline-radio",
-      options: ["start", "center", "end", "between", "around", "evenly", "stretch"],
+      options: [
+        "start",
+        "center",
+        "end",
+        "between",
+        "around",
+        "evenly",
+        "stretch",
+      ],
     },
     justifyContent: {
       control: "inline-radio",
-      options: ["start", "center", "end", "between", "around", "evenly", "stretch"],
+      options: [
+        "start",
+        "center",
+        "end",
+        "between",
+        "around",
+        "evenly",
+        "stretch",
+      ],
     },
   },
 } satisfies Meta<typeof Grid>;
@@ -135,8 +151,20 @@ const contents: GridContent[] = [
   "stretch",
 ];
 const itemSpans: GridItemSpan[] = ["1", "2", "3", "4", "full"];
-const itemAligns: GridItemAlign[] = ["auto", "stretch", "start", "center", "end"];
-const itemJustifies: GridItemJustify[] = ["auto", "stretch", "start", "center", "end"];
+const itemAligns: GridItemAlign[] = [
+  "auto",
+  "stretch",
+  "start",
+  "center",
+  "end",
+];
+const itemJustifies: GridItemJustify[] = [
+  "auto",
+  "stretch",
+  "start",
+  "center",
+  "end",
+];
 
 const RouterAnchor = forwardRef<
   HTMLAnchorElement,
@@ -204,7 +232,10 @@ export const Base: Story = {};
 
 export const FixedColumns: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         {columns.map((column) => (
           <Stack key={column} gap="2">
@@ -212,8 +243,16 @@ export const FixedColumns: Story = {
               {column} columns
             </Text>
             <Grid columns={column} gap="2">
-              {Array.from({ length: column === "12" ? 12 : Number(column) }).map((_, index) => (
-                <Box key={index} border="default" p="3" radius="md" surface="muted">
+              {Array.from({
+                length: column === "12" ? 12 : Number(column),
+              }).map((_, index) => (
+                <Box
+                  key={index}
+                  border="default"
+                  p="3"
+                  radius="md"
+                  surface="muted"
+                >
                   <Text size="sm">{index + 1}</Text>
                 </Box>
               ))}
@@ -227,7 +266,10 @@ export const FixedColumns: Story = {
 
 export const AutoFitResourceGrid: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         {autoFitColumns.map((column) => (
           <Stack key={column} gap="2">
@@ -255,11 +297,20 @@ export const AutoFitResourceGrid: Story = {
 
 export const RowsAndAxisGaps: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         <Grid columns="4" rows="2" gap="3" rowGap="5" columnGap="2">
           {Array.from({ length: 8 }).map((_, index) => (
-            <Box key={index} border="default" p="3" radius="md" surface="background">
+            <Box
+              key={index}
+              border="default"
+              p="3"
+              radius="md"
+              surface="background"
+            >
               <Text size="sm">Cell {index + 1}</Text>
             </Box>
           ))}
@@ -275,7 +326,13 @@ export const RowsAndAxisGaps: Story = {
         </Grid>
         <Grid columns="auto-fit-xs" gap="2">
           {gaps.map((gap) => (
-            <Box key={gap} border="default" p="3" radius="md" surface="background">
+            <Box
+              key={gap}
+              border="default"
+              p="3"
+              radius="md"
+              surface="background"
+            >
               <Text size="sm">gap {gap}</Text>
             </Box>
           ))}
@@ -287,11 +344,20 @@ export const RowsAndAxisGaps: Story = {
 
 export const AlignmentAndDistribution: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         <Grid columns="4" gap="3">
           {aligns.map((align) => (
-            <Grid key={align} align={align} columns="2" gap="2" className="min-h-24 rounded-md border border-border p-2">
+            <Grid
+              key={align}
+              align={align}
+              columns="2"
+              gap="2"
+              className="border-border min-h-24 rounded-md border p-2"
+            >
               <Text size="sm" tone="muted">
                 align {align}
               </Text>
@@ -303,7 +369,13 @@ export const AlignmentAndDistribution: Story = {
         </Grid>
         <Grid columns="4" gap="3">
           {justifies.map((justify) => (
-            <Grid key={justify} justify={justify} columns="2" gap="2" className="rounded-md border border-border p-2">
+            <Grid
+              key={justify}
+              justify={justify}
+              columns="2"
+              gap="2"
+              className="border-border rounded-md border p-2"
+            >
               <Text size="sm" tone="muted">
                 justify {justify}
               </Text>
@@ -315,7 +387,14 @@ export const AlignmentAndDistribution: Story = {
         </Grid>
         <Grid columns="auto-fit-xs" gap="3">
           {contents.map((content) => (
-            <Grid key={content} alignContent={content} justifyContent={content} columns="1" gap="2" className="min-h-28 rounded-md border border-border p-2">
+            <Grid
+              key={content}
+              alignContent={content}
+              justifyContent={content}
+              columns="1"
+              gap="2"
+              className="border-border min-h-28 rounded-md border p-2"
+            >
               <Text size="sm" tone="muted">
                 content {content}
               </Text>
@@ -332,13 +411,22 @@ export const AlignmentAndDistribution: Story = {
 
 export const ItemSpansAndLongContent: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Grid columns="6" gap="3">
         <GridItem colSpan="full">
           <MetricTile label="Workspace health" value="97.4%" tone="default" />
         </GridItem>
         <GridItem colSpan="3" rowSpan="2" minInlineSize="0">
-          <Box border="default" p="4" radius="md" surface="background" className="h-full">
+          <Box
+            border="default"
+            p="4"
+            radius="md"
+            surface="background"
+            className="h-full"
+          >
             <Stack gap="3">
               <Heading level={2} visualLevel={4}>
                 Long resource identifier
@@ -351,8 +439,15 @@ export const ItemSpansAndLongContent: Story = {
           </Box>
         </GridItem>
         {itemSpans.map((span) => (
-          <GridItem key={span} colSpan={span === "full" ? "3" : span} minInlineSize="0">
-            <MetricTile label={`Span ${span}`} value={span === "full" ? "All" : `${span}x`} />
+          <GridItem
+            key={span}
+            colSpan={span === "full" ? "3" : span}
+            minInlineSize="0"
+          >
+            <MetricTile
+              label={`Span ${span}`}
+              value={span === "full" ? "All" : `${span}x`}
+            />
           </GridItem>
         ))}
       </Grid>
@@ -362,15 +457,26 @@ export const ItemSpansAndLongContent: Story = {
 
 export const ItemSelfAlignment: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Grid columns="auto-fit-xs" gap="3">
         {itemAligns.map((align) => (
-          <GridItem key={align} align={align} className="min-h-28 rounded-md border border-border p-3">
+          <GridItem
+            key={align}
+            align={align}
+            className="border-border min-h-28 rounded-md border p-3"
+          >
             <Text size="sm">align {align}</Text>
           </GridItem>
         ))}
         {itemJustifies.map((justify) => (
-          <GridItem key={justify} justify={justify} className="min-h-28 rounded-md border border-border p-3">
+          <GridItem
+            key={justify}
+            justify={justify}
+            className="border-border min-h-28 rounded-md border p-3"
+          >
             <Text size="sm">justify {justify}</Text>
           </GridItem>
         ))}
@@ -384,7 +490,13 @@ export const DashboardComposition: Story = {
     <DethinkProvider theme="light" className="bg-background py-8">
       <Container size="2xl">
         <Stack gap="6">
-          <Flex as="header" align="center" justify="between" gap="4" wrap="wrap">
+          <Flex
+            as="header"
+            align="center"
+            justify="between"
+            gap="4"
+            wrap="wrap"
+          >
             <Stack gap="1">
               <Heading level={1} visualLevel={3}>
                 Operations
@@ -423,12 +535,20 @@ export const DashboardComposition: Story = {
               </Box>
             </GridItem>
             <GridItem minInlineSize="0">
-              <Box border="default" p="5" radius="md" surface="muted" className="h-full">
+              <Box
+                border="default"
+                p="5"
+                radius="md"
+                surface="muted"
+                className="h-full"
+              >
                 <Stack gap="3">
                   <Heading level={2} visualLevel={4}>
                     Handoff
                   </Heading>
-                  <Text tone="muted">Three owners are available for reassignment.</Text>
+                  <Text tone="muted">
+                    Three owners are available for reassignment.
+                  </Text>
                   <Button variant="outline">Assign owner</Button>
                 </Stack>
               </Box>
@@ -442,7 +562,10 @@ export const DashboardComposition: Story = {
 
 export const SettingsAndComparison: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Grid columns="auto-fit-md" gap="4">
         <Box border="default" p="5" radius="md" surface="background">
           <Stack gap="4">
@@ -464,7 +587,13 @@ export const SettingsAndComparison: Story = {
             </Heading>
             <Grid columns="3" gap="2">
               {["Starter", "Business", "Enterprise"].map((label) => (
-                <Box key={label} border="default" p="3" radius="md" surface="background">
+                <Box
+                  key={label}
+                  border="default"
+                  p="3"
+                  radius="md"
+                  surface="background"
+                >
                   <Text size="sm" weight="medium">
                     {label}
                   </Text>
@@ -480,7 +609,10 @@ export const SettingsAndComparison: Story = {
 
 export const SemanticElementsAndAsChild: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         <Grid as="ul" columns="auto-fit-xs" gap="3">
           {elements.slice(0, 6).map((element) => (
@@ -492,12 +624,18 @@ export const SemanticElementsAndAsChild: Story = {
           ))}
         </Grid>
         <Grid asChild columns="2" gap="3">
-          <section aria-labelledby="grid-as-child-title" className="rounded-md border border-border p-4">
+          <section
+            aria-labelledby="grid-as-child-title"
+            className="border-border rounded-md border p-4"
+          >
             <Heading id="grid-as-child-title" level={2} visualLevel={4}>
               Composed section
             </Heading>
             <GridItem asChild colSpan="2">
-              <RouterAnchor to="#grid-as-child-link" className="rounded-md border border-border p-3 text-primary">
+              <RouterAnchor
+                to="#grid-as-child-link"
+                className="border-border text-primary rounded-md border p-3"
+              >
                 Router-style grid item
               </RouterAnchor>
             </GridItem>
@@ -510,7 +648,10 @@ export const SemanticElementsAndAsChild: Story = {
 
 export const ResponsiveClassNameComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Grid columns="1" gap="3" className="sm:grid-cols-2 lg:grid-cols-4">
         {["Backlog", "In review", "Blocked", "Released"].map((label) => (
           <GridItem key={label} minInlineSize="0">
@@ -525,14 +666,22 @@ export const ResponsiveClassNameComposition: Story = {
 export const ThemeDensityAndRTL: Story = {
   render: () => (
     <Grid columns="1" gap="4">
-      <DethinkProvider theme="dark" density="compact" className="rounded-lg border border-border bg-background p-6">
+      <DethinkProvider
+        theme="dark"
+        density="compact"
+        className="border-border bg-background rounded-lg border p-6"
+      >
         <Grid columns="auto-fit-xs" gap="3" dir="rtl">
           <ResourceCard label="RTL queue" status="Ready" />
           <ResourceCard label="Compact density" status="Active" />
           <ResourceCard label="Dark theme" status="Stable" />
         </Grid>
       </DethinkProvider>
-      <DethinkProvider theme="light" density="comfortable" className="rounded-lg border border-border bg-background p-6">
+      <DethinkProvider
+        theme="light"
+        density="comfortable"
+        className="border-border bg-background rounded-lg border p-6"
+      >
         <Grid columns="auto-fit-xs" gap="4">
           <ResourceCard label="Comfortable spacing" status="Ready" />
           <ResourceCard label="Token surfaces" status="Active" />

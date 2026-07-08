@@ -45,11 +45,11 @@ describe("Timeline", () => {
     const items = within(list).getAllByRole("listitem");
 
     expect(items).toHaveLength(3);
-    expect(screen.getAllByRole("heading", { level: 3 }).map((item) => item.textContent)).toEqual([
-      "Kickoff",
-      "Beta",
-      "Launch",
-    ]);
+    expect(
+      screen
+        .getAllByRole("heading", { level: 3 })
+        .map((item) => item.textContent),
+    ).toEqual(["Kickoff", "Beta", "Launch"]);
     expect(screen.getByText("Project work starts.")).toBeInTheDocument();
     expect(screen.getByAltText("Team kickoff board")).toHaveAttribute(
       "loading",
@@ -274,10 +274,9 @@ describe("Timeline", () => {
       />,
     );
 
-    expect(screen.getByRole("region", { name: "Timeline viewport" })).toHaveAttribute(
-      "data-chrome",
-      "panel",
-    );
+    expect(
+      screen.getByRole("region", { name: "Timeline viewport" }),
+    ).toHaveAttribute("data-chrome", "panel");
     expect(
       document.querySelector('[data-slot="timeline-controls"]'),
     ).toHaveAttribute("data-visibility", "always");
@@ -389,7 +388,9 @@ describe("Timeline", () => {
       "--timeline-transform: translate3d(0px, 0px, 0) scale(1.2)",
     );
 
-    await user.click(screen.getByRole("button", { name: "Reset timeline view" }));
+    await user.click(
+      screen.getByRole("button", { name: "Reset timeline view" }),
+    );
     expect(content.getAttribute("style")).toContain(
       "--timeline-transform: translate3d(0px, 0px, 0) scale(1)",
     );
@@ -410,7 +411,9 @@ describe("Timeline", () => {
     });
     fireEvent.pointerUp(viewport, { pointerId: 1 });
 
-    expect(content.getAttribute("style")).toContain("translate3d(20px, 25px, 0)");
+    expect(content.getAttribute("style")).toContain(
+      "translate3d(20px, 25px, 0)",
+    );
   });
 
   it("requires the configured modifier for wheel zoom by default", () => {

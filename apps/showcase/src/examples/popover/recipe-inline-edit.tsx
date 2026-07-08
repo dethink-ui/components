@@ -26,10 +26,10 @@ export function PopoverRecipeInlineEdit() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="mx-auto flex max-w-sm items-center justify-between rounded-lg border border-border px-4 py-3">
+    <div className="border-border mx-auto flex max-w-sm items-center justify-between rounded-lg border px-4 py-3">
       <div>
         <p className="text-sm font-medium">Monthly spend limit</p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Alerts fire at 80% of the limit.
         </p>
       </div>

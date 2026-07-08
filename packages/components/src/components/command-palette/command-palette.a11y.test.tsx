@@ -46,7 +46,9 @@ describe("CommandPalette accessibility", () => {
               <CommandPaletteItem value="invite">
                 <span aria-hidden="true" />
                 <span>
-                  <CommandPaletteItemLabel>Invite teammate</CommandPaletteItemLabel>
+                  <CommandPaletteItemLabel>
+                    Invite teammate
+                  </CommandPaletteItemLabel>
                   <CommandPaletteItemDescription>
                     Send a workspace invitation
                   </CommandPaletteItemDescription>
@@ -99,7 +101,11 @@ describe("CommandPalette accessibility", () => {
             <CommandPalette
               label="Command menu"
               commands={[
-                { key: "create", label: "Create project", action: () => undefined },
+                {
+                  key: "create",
+                  label: "Create project",
+                  action: () => undefined,
+                },
                 { key: "settings", label: "Open settings", href: "/settings" },
               ]}
             />
@@ -122,7 +128,11 @@ describe("CommandPalette accessibility", () => {
             <CommandPalette
               label="Dialog commands"
               commands={[
-                { key: "create", label: "Create project", action: () => undefined },
+                {
+                  key: "create",
+                  label: "Create project",
+                  action: () => undefined,
+                },
                 { key: "settings", label: "Open settings", href: "/settings" },
               ]}
             />

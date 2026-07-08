@@ -30,7 +30,9 @@ describe("DropdownMenu accessibility", () => {
             <DropdownMenuSection>
               <DropdownMenuLabel>Report</DropdownMenuLabel>
               <DropdownMenuItem>
-                <DropdownMenuItemIcon aria-hidden="true">R</DropdownMenuItemIcon>
+                <DropdownMenuItemIcon aria-hidden="true">
+                  R
+                </DropdownMenuItemIcon>
                 <DropdownMenuItemLabel>Refresh report</DropdownMenuItemLabel>
                 <DropdownMenuItemDescription>
                   Pull the latest dashboard data.
@@ -48,8 +50,9 @@ describe("DropdownMenu accessibility", () => {
     await user.click(screen.getByRole("button", { name: "Report actions" }));
 
     expect(await screen.findByRole("menu")).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: "Refresh report" }))
-      .toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Refresh report" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("⌘R")).toHaveAttribute(
       "data-slot",
       "dropdown-menu-item-shortcut",

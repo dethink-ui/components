@@ -44,10 +44,16 @@ export function SelectRecipeDensity() {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="space-y-1.5">
-              <label htmlFor="density-invite-email" className="text-sm font-medium">
+              <label
+                htmlFor="density-invite-email"
+                className="text-sm font-medium"
+              >
                 Email
               </label>
-              <Input id="density-invite-email" placeholder="teammate@company.com" />
+              <Input
+                id="density-invite-email"
+                placeholder="teammate@company.com"
+              />
             </div>
           </CardContent>
           <CardFooter justify="end">

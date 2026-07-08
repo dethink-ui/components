@@ -25,11 +25,10 @@ import {
 } from "../../utils/positioned-overlay";
 import { cn } from "../../utils/cn";
 
-export interface TooltipProps
-  extends Omit<
-    AriaTooltipTriggerProps,
-    "children" | "isDisabled" | "isOpen" | "onOpenChange"
-  > {
+export interface TooltipProps extends Omit<
+  AriaTooltipTriggerProps,
+  "children" | "isDisabled" | "isOpen" | "onOpenChange"
+> {
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -38,11 +37,10 @@ export interface TooltipProps
   open?: boolean;
 }
 
-export interface TooltipTriggerProps
-  extends Omit<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    "className" | "disabled" | "size"
-  > {
+export interface TooltipTriggerProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "className" | "disabled" | "size"
+> {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -50,16 +48,15 @@ export interface TooltipTriggerProps
   variant?: ButtonVariant;
 }
 
-export interface TooltipContentProps
-  extends Omit<
-    AriaTooltipProps,
-    | "children"
-    | "className"
-    | "defaultOpen"
-    | "isOpen"
-    | "onOpenChange"
-    | "UNSTABLE_portalContainer"
-  > {
+export interface TooltipContentProps extends Omit<
+  AriaTooltipProps,
+  | "children"
+  | "className"
+  | "defaultOpen"
+  | "isOpen"
+  | "onOpenChange"
+  | "UNSTABLE_portalContainer"
+> {
   arrowClassName?: string;
   arrowShapeClassName?: string;
   children?: ReactNode;
@@ -127,10 +124,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     },
     ref,
   ) => {
-    const {
-      portalContainer,
-      rootRef,
-    } = useProviderPortalRoot<HTMLDivElement>({
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "tooltip-portal-container",
     });

@@ -42,11 +42,10 @@ import {
 } from "../../utils/positioned-overlay";
 import { cn } from "../../utils/cn";
 
-export interface PopoverProps
-  extends Omit<
-    AriaDialogTriggerProps,
-    "children" | "isOpen" | "onOpenChange"
-  > {
+export interface PopoverProps extends Omit<
+  AriaDialogTriggerProps,
+  "children" | "isOpen" | "onOpenChange"
+> {
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -54,8 +53,10 @@ export interface PopoverProps
   open?: boolean;
 }
 
-export interface PopoverTriggerProps
-  extends Omit<AriaButtonProps, "children" | "className" | "isDisabled"> {
+export interface PopoverTriggerProps extends Omit<
+  AriaButtonProps,
+  "children" | "className" | "isDisabled"
+> {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -63,17 +64,16 @@ export interface PopoverTriggerProps
   variant?: ButtonVariant;
 }
 
-export interface PopoverContentProps
-  extends Omit<
-    AriaPopoverProps,
-    | "children"
-    | "className"
-    | "defaultOpen"
-    | "isKeyboardDismissDisabled"
-    | "isOpen"
-    | "onOpenChange"
-    | "UNSTABLE_portalContainer"
-  > {
+export interface PopoverContentProps extends Omit<
+  AriaPopoverProps,
+  | "children"
+  | "className"
+  | "defaultOpen"
+  | "isKeyboardDismissDisabled"
+  | "isOpen"
+  | "onOpenChange"
+  | "UNSTABLE_portalContainer"
+> {
   "aria-describedby"?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -92,14 +92,12 @@ export interface PopoverHeaderProps extends HTMLAttributes<HTMLDivElement> {}
 
 export interface PopoverFooterProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface PopoverTitleProps
-  extends Omit<AriaHeadingProps, "className"> {
+export interface PopoverTitleProps extends Omit<AriaHeadingProps, "className"> {
   className?: string;
   visuallyHidden?: boolean;
 }
 
-export interface PopoverDescriptionProps
-  extends HTMLAttributes<HTMLParagraphElement> {}
+export interface PopoverDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 export interface PopoverCloseProps extends PopoverTriggerProps {}
 
@@ -109,8 +107,9 @@ interface PopoverContentContextValue {
   setTitleId: (id: string | null) => void;
 }
 
-const PopoverContentContext =
-  createContext<PopoverContentContextValue | null>(null);
+const PopoverContentContext = createContext<PopoverContentContextValue | null>(
+  null,
+);
 
 interface PopoverRootContextValue {
   setTriggerElement: (element: HTMLButtonElement | null) => void;
@@ -126,8 +125,7 @@ const popoverContentClasses =
 const popoverPanelClasses =
   "grid max-h-[min(calc(var(--dt-overlay-max-height,18rem)_-_var(--dt-space-6)),calc(100dvh_-_var(--dt-space-10)))] gap-[var(--dt-space-3)] overflow-auto overscroll-contain outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-const popoverHeaderClasses =
-  "grid gap-[var(--dt-space-1)] text-start";
+const popoverHeaderClasses = "grid gap-[var(--dt-space-1)] text-start";
 
 const popoverFooterClasses =
   "flex flex-col-reverse gap-density-gap sm:flex-row sm:justify-end";
@@ -135,13 +133,11 @@ const popoverFooterClasses =
 const popoverTitleClasses =
   "text-sm font-semibold leading-6 tracking-normal text-foreground";
 
-const popoverDescriptionClasses =
-  "text-sm leading-6 text-muted-foreground";
+const popoverDescriptionClasses = "text-sm leading-6 text-muted-foreground";
 
 const visuallyHiddenClasses = "sr-only";
 
-const popoverCloseIconClasses =
-  "pointer-events-none size-4 shrink-0";
+const popoverCloseIconClasses = "pointer-events-none size-4 shrink-0";
 
 function renderPopoverChildren(
   children: PopoverContentProps["children"],
@@ -238,7 +234,11 @@ export function popoverTitleClassNames({
   className,
   visuallyHidden = false,
 }: Pick<PopoverTitleProps, "className" | "visuallyHidden"> = {}) {
-  return cn(popoverTitleClasses, visuallyHidden && visuallyHiddenClasses, className);
+  return cn(
+    popoverTitleClasses,
+    visuallyHidden && visuallyHiddenClasses,
+    className,
+  );
 }
 
 export function popoverDescriptionClassNames({
@@ -268,15 +268,14 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(
+      defaultOpen ?? false,
+    );
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
     const previousOpenRef = useRef(resolvedOpen);
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
-    const {
-      portalContainer,
-      rootRef,
-    } = useProviderPortalRoot<HTMLDivElement>({
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "popover-portal-container",
     });
@@ -375,10 +374,7 @@ export const PopoverTrigger = forwardRef<
 
 PopoverTrigger.displayName = "PopoverTrigger";
 
-export const PopoverContent = forwardRef<
-  HTMLElement,
-  PopoverContentProps
->(
+export const PopoverContent = forwardRef<HTMLElement, PopoverContentProps>(
   (
     {
       "aria-describedby": ariaDescribedBy,
@@ -404,8 +400,8 @@ export const PopoverContent = forwardRef<
     const defaultTitleId = useId();
     const [titleId, setTitleId] = useState<string | null>(null);
     const [descriptionId, setDescriptionId] = useState<string | null>(null);
-    const labelledBy = ariaLabelledBy ??
-      (ariaLabel ? undefined : titleId ?? undefined);
+    const labelledBy =
+      ariaLabelledBy ?? (ariaLabel ? undefined : (titleId ?? undefined));
     const describedBy = ariaDescribedBy ?? descriptionId ?? undefined;
     const positionProps = resolvePositionedOverlayPositionProps(
       {
@@ -582,7 +578,9 @@ export const PopoverClose = forwardRef<HTMLButtonElement, PopoverCloseProps>(
       <AriaButton
         {...props}
         ref={ref}
-        aria-label={ariaLabel ?? (hasVisibleChildren ? undefined : "Close popover")}
+        aria-label={
+          ariaLabel ?? (hasVisibleChildren ? undefined : "Close popover")
+        }
         isDisabled={disabled}
         slot="close"
         data-slot="popover-close"

@@ -35,19 +35,19 @@ export function NavigationMenuMobileDrawer() {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="mx-auto w-full max-w-[22rem] overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
+    <div className="border-border bg-background mx-auto w-full max-w-[22rem] overflow-hidden rounded-2xl border shadow-sm">
       <div className="flex h-14 items-center justify-between px-4">
         <a
           href="#home"
-          className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="focus-visible:ring-ring focus-visible:ring-offset-background flex items-center gap-2 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           <span
             aria-hidden="true"
-            className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 text-primary-foreground"
+            className="from-primary to-primary/60 text-primary-foreground flex size-7 items-center justify-center rounded-lg bg-gradient-to-br"
           >
             <Sparkles className="size-3.5" />
           </span>
-          <span className="text-sm font-semibold tracking-tight text-foreground">
+          <span className="text-foreground text-sm font-semibold tracking-tight">
             Dethink
           </span>
         </a>
@@ -63,7 +63,11 @@ export function NavigationMenuMobileDrawer() {
         </IconButton>
       </div>
 
-      <div id="mobile-drawer-panel" hidden={!open} className="border-t border-border">
+      <div
+        id="mobile-drawer-panel"
+        hidden={!open}
+        className="border-border border-t"
+      >
         <div className="space-y-4 px-3 py-4">
           <NavigationMenu
             aria-label="Main"
@@ -147,7 +151,7 @@ export function NavigationMenuMobileDrawer() {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="space-y-2 border-t border-border pt-4">
+          <div className="border-border space-y-2 border-t pt-4">
             <Button variant="outline" size="sm" className="w-full">
               Log in
             </Button>

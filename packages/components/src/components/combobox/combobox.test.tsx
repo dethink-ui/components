@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -233,9 +230,9 @@ describe("Combobox", () => {
       </Combobox>,
     );
 
-    expect(screen.getByRole("combobox", { name: /Default workspace/ })).toHaveValue(
-      "Sandbox",
-    );
+    expect(
+      screen.getByRole("combobox", { name: /Default workspace/ }),
+    ).toHaveValue("Sandbox");
 
     await user.click(screen.getByRole("button", { name: /Show options/ }));
     await user.click(screen.getByRole("option", { name: "Production" }));
@@ -275,8 +272,9 @@ describe("Combobox", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /Show options/ }));
 
-    const popover = (await screen.findByRole("listbox"))
-      .closest<HTMLElement>('[data-slot="combobox-popover"]');
+    const popover = (await screen.findByRole("listbox")).closest<HTMLElement>(
+      '[data-slot="combobox-popover"]',
+    );
     const portalHost = popover?.closest<HTMLElement>(
       '[data-slot="combobox-portal-container"]',
     );
@@ -307,7 +305,9 @@ describe("Combobox", () => {
 
       const root = container.querySelector('[data-slot="combobox"]');
       const control = container.querySelector('[data-slot="combobox-control"]');
-      const input = screen.getByRole("combobox", { name: /Reviewed workspace/ });
+      const input = screen.getByRole("combobox", {
+        name: /Reviewed workspace/,
+      });
 
       expect(root).toHaveAttribute("data-invalid", "true");
       expect(control).toHaveAttribute("data-invalid", "true");

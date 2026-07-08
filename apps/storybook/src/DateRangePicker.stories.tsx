@@ -93,7 +93,7 @@ function StoryShell({
 }) {
   return (
     <DethinkProvider
-      className="min-h-[28rem] bg-background p-6 text-foreground"
+      className="bg-background text-foreground min-h-[28rem] p-6"
       density={density}
       dir={dir}
       theme={theme}
@@ -152,7 +152,9 @@ export const Base: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open calendar" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open calendar" }),
+    );
     await expect(await page.findByRole("grid")).toBeVisible();
   },
 };

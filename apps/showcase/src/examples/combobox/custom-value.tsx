@@ -22,7 +22,7 @@ export function ComboboxCustomValue() {
         <ComboboxItem value="documentation">documentation</ComboboxItem>
         <ComboboxItem value="good-first-issue">good first issue</ComboboxItem>
       </Combobox>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Will apply: {label ?? "nothing"}
       </p>
     </div>

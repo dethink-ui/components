@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  MultiSelect,
-  MultiSelectItem,
-  Stack,
-} from "@dethink/components";
+import { MultiSelect, MultiSelectItem, Stack } from "@dethink/components";
 
 export function MultiSelectStates() {
   return (

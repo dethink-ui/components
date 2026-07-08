@@ -9,10 +9,7 @@ import {
   FieldError,
   FieldLabel,
 } from "../form-field";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from ".";
+import { RadioGroup, RadioGroupItem } from ".";
 
 describe("RadioGroup SSR", () => {
   it("renders native radio markup on the server", () => {
@@ -35,7 +32,9 @@ describe("RadioGroup SSR", () => {
     expect(markup).toContain('name="serverRadio"');
     expect(markup).toContain('value="yes"');
     expect(markup).toContain('checked=""');
-    expect(markup).toContain('aria-describedby="server-radio-yes-description server-radio-yes-error"');
+    expect(markup).toContain(
+      'aria-describedby="server-radio-yes-description server-radio-yes-error"',
+    );
     expect(markup).toContain('aria-errormessage="server-radio-yes-error"');
     expect(markup).toContain('aria-invalid="true"');
   });

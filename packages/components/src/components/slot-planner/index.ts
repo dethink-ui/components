@@ -63,10 +63,7 @@ export type {
   SlotPlannerTagRenderContext,
   SlotPlannerToolbarRenderContext,
 } from "./slot-planner-renderers";
-export {
-  SlotPlanner,
-  type SlotPlannerProps,
-} from "./slot-planner";
+export { SlotPlanner, type SlotPlannerProps } from "./slot-planner";
 // Book mode: the consumer-facing picker over the same slot collection model,
 // projecting occurrences into the viewer's time zone.
 export {

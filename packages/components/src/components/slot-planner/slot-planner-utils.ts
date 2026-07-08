@@ -175,7 +175,9 @@ export function expandSlotOccurrences<
   const occurrenceDates: string[] = [];
 
   if (recurrence) {
-    const seriesEnd = recurrence.until ? parseDate(recurrence.until) : undefined;
+    const seriesEnd = recurrence.until
+      ? parseDate(recurrence.until)
+      : undefined;
     const lastDate =
       seriesEnd && seriesEnd.compare(rangeEnd) < 0 ? seriesEnd : rangeEnd;
     const stepDays = recurrence.frequency === "weekly" ? 7 : 14;
@@ -443,7 +445,8 @@ export function expandSlotsForRange<
   for (const occurrences of Object.values(byDate)) {
     occurrences.sort(
       (a, b) =>
-        a.startTime.localeCompare(b.startTime) || a.slotId.localeCompare(b.slotId),
+        a.startTime.localeCompare(b.startTime) ||
+        a.slotId.localeCompare(b.slotId),
     );
   }
 

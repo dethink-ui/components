@@ -10,7 +10,8 @@
   /* Typography (variables provided by next/font in the root layout) */
   --dt-font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --dt-font-heading: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
-  --dt-font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --dt-font-mono:
+    var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Softer, modern radii */
   --dt-radius-sm: 0.375rem;
@@ -38,23 +39,87 @@
    * ratios reproduce the original hand-tuned teal values for the default
    * brand.
    */
-  --dt-color-background-light: color-mix(in oklch, var(--dt-color-primary-light) 4%, oklch(1 0 0));
-  --dt-color-foreground-light: color-mix(in oklch, var(--dt-color-primary-light) 8%, oklch(0.2 0 0));
-  --dt-color-muted-light: color-mix(in oklch, var(--dt-color-primary-light) 14%, oklch(1 0 0));
-  --dt-color-muted-foreground-light: color-mix(in oklch, var(--dt-color-primary-light) 14%, oklch(0.46 0 0));
-  --dt-color-border-light: color-mix(in oklch, var(--dt-color-primary-light) 24%, oklch(0.99 0 0));
-  --dt-color-input-light: color-mix(in oklch, var(--dt-color-primary-light) 26%, oklch(0.99 0 0));
-  --dt-color-timeline-border-light: color-mix(in oklch, var(--dt-color-primary-light) 30%, oklch(0.985 0 0));
-  --dt-color-timeline-rail-light: color-mix(in oklch, var(--dt-color-primary-light) 33%, oklch(0.985 0 0));
+  --dt-color-background-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 4%,
+    oklch(1 0 0)
+  );
+  --dt-color-foreground-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 8%,
+    oklch(0.2 0 0)
+  );
+  --dt-color-muted-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 14%,
+    oklch(1 0 0)
+  );
+  --dt-color-muted-foreground-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 14%,
+    oklch(0.46 0 0)
+  );
+  --dt-color-border-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 24%,
+    oklch(0.99 0 0)
+  );
+  --dt-color-input-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 26%,
+    oklch(0.99 0 0)
+  );
+  --dt-color-timeline-border-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 30%,
+    oklch(0.985 0 0)
+  );
+  --dt-color-timeline-rail-light: color-mix(
+    in oklch,
+    var(--dt-color-primary-light) 33%,
+    oklch(0.985 0 0)
+  );
 
-  --dt-color-background-dark: color-mix(in oklch, var(--dt-color-primary-dark) 17%, oklch(0.04 0 0));
-  --dt-color-foreground-dark: color-mix(in oklch, var(--dt-color-primary-dark) 10%, oklch(0.96 0 0));
-  --dt-color-muted-dark: color-mix(in oklch, var(--dt-color-primary-dark) 20%, oklch(0.11 0 0));
-  --dt-color-muted-foreground-dark: color-mix(in oklch, var(--dt-color-primary-dark) 25%, oklch(0.66 0 0));
-  --dt-color-border-dark: color-mix(in oklch, var(--dt-color-primary-dark) 20%, oklch(0.17 0 0));
-  --dt-color-input-dark: color-mix(in oklch, var(--dt-color-primary-dark) 20%, oklch(0.22 0 0));
-  --dt-color-timeline-border-dark: color-mix(in oklch, var(--dt-color-primary-dark) 25%, oklch(0.3 0 0));
-  --dt-color-timeline-rail-dark: color-mix(in oklch, var(--dt-color-primary-dark) 25%, oklch(0.35 0 0));
+  --dt-color-background-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 17%,
+    oklch(0.04 0 0)
+  );
+  --dt-color-foreground-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 10%,
+    oklch(0.96 0 0)
+  );
+  --dt-color-muted-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 20%,
+    oklch(0.11 0 0)
+  );
+  --dt-color-muted-foreground-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 25%,
+    oklch(0.66 0 0)
+  );
+  --dt-color-border-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 20%,
+    oklch(0.17 0 0)
+  );
+  --dt-color-input-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 20%,
+    oklch(0.22 0 0)
+  );
+  --dt-color-timeline-border-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 25%,
+    oklch(0.3 0 0)
+  );
+  --dt-color-timeline-rail-dark: color-mix(
+    in oklch,
+    var(--dt-color-primary-dark) 25%,
+    oklch(0.35 0 0)
+  );
 
   /*
    * Showcase-only decorative tokens, derived from the active brand's
@@ -67,7 +132,11 @@
   --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 28%, transparent);
   --sc-glow-b: color-mix(in oklch, var(--dt-color-info) 20%, transparent);
   --sc-grid-line: color-mix(in oklch, var(--dt-color-primary) 9%, transparent);
-  --sc-scrollbar-thumb: color-mix(in oklch, var(--dt-color-muted-foreground) 34%, transparent);
+  --sc-scrollbar-thumb: color-mix(
+    in oklch,
+    var(--dt-color-muted-foreground) 34%,
+    transparent
+  );
   --sc-scrollbar-track: transparent;
 }
 
@@ -89,7 +158,11 @@ html {
   [data-theme="system"] {
     --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 16%, transparent);
     --sc-glow-b: color-mix(in oklch, var(--dt-color-info) 14%, transparent);
-    --sc-grid-line: color-mix(in oklch, var(--dt-color-primary) 7%, transparent);
+    --sc-grid-line: color-mix(
+      in oklch,
+      var(--dt-color-primary) 7%,
+      transparent
+    );
   }
 }
 

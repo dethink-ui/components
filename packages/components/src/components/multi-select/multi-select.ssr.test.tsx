@@ -2,10 +2,7 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import {
-  MultiSelect,
-  MultiSelectItem,
-} from ".";
+import { MultiSelect, MultiSelectItem } from ".";
 
 describe("MultiSelect SSR", () => {
   it("renders multiselect markup on the server", () => {

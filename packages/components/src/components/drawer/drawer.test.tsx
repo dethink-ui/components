@@ -38,7 +38,9 @@ describe("Drawer (modal mode)", () => {
           >
             <DrawerHeader>
               <DrawerTitle>Your cart</DrawerTitle>
-              <DrawerDescription>Review items before checkout.</DrawerDescription>
+              <DrawerDescription>
+                Review items before checkout.
+              </DrawerDescription>
             </DrawerHeader>
             <div>Drawer body</div>
             <DrawerFooter>
@@ -60,7 +62,9 @@ describe("Drawer (modal mode)", () => {
     expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(trigger).toHaveClass("custom-trigger");
-    expect(drawerClassNames({ className: "custom-root" })).toContain("custom-root");
+    expect(drawerClassNames({ className: "custom-root" })).toContain(
+      "custom-root",
+    );
     expect(drawerTriggerClassNames({ className: "custom-trigger" })).toContain(
       "custom-trigger",
     );
@@ -76,8 +80,12 @@ describe("Drawer (modal mode)", () => {
     const dialog = await screen.findByRole("dialog", { name: "Your cart" });
     const content = screen.getByTestId("cart-drawer-content");
     const overlay = dialog.closest<HTMLElement>('[data-slot="drawer-overlay"]');
-    const header = dialog.querySelector<HTMLElement>('[data-slot="drawer-header"]');
-    const footer = dialog.querySelector<HTMLElement>('[data-slot="drawer-footer"]');
+    const header = dialog.querySelector<HTMLElement>(
+      '[data-slot="drawer-header"]',
+    );
+    const footer = dialog.querySelector<HTMLElement>(
+      '[data-slot="drawer-footer"]',
+    );
 
     if (!header) {
       throw new Error("Expected DrawerHeader to render.");
@@ -129,7 +137,9 @@ describe("Drawer (modal mode)", () => {
                 <>
                   <DrawerHeader>
                     <DrawerTitle>Controlled drawer</DrawerTitle>
-                    <DrawerDescription>Controlled by external state.</DrawerDescription>
+                    <DrawerDescription>
+                      Controlled by external state.
+                    </DrawerDescription>
                   </DrawerHeader>
                   <button type="button" onClick={close}>
                     Close from render prop
@@ -145,14 +155,18 @@ describe("Drawer (modal mode)", () => {
 
     render(<ControlledDrawer />);
 
-    await user.click(screen.getByRole("button", { name: "Open controlled drawer" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open controlled drawer" }),
+    );
 
     expect(
       screen.getByRole("dialog", { name: "Controlled drawer" }),
     ).toBeInTheDocument();
     expect(screen.getByText("open")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Close from render prop" }));
+    await user.click(
+      screen.getByRole("button", { name: "Close from render prop" }),
+    );
 
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -230,7 +244,12 @@ describe("Drawer (modal mode)", () => {
     );
 
     rerender(
-      <Drawer key="custom-bottom" defaultOpen direction="bottom" dimension="70dvh">
+      <Drawer
+        key="custom-bottom"
+        defaultOpen
+        direction="bottom"
+        dimension="70dvh"
+      >
         <DrawerTrigger>Open custom drawer</DrawerTrigger>
         <DrawerContent>
           <DrawerTitle>Custom drawer</DrawerTitle>
@@ -243,7 +262,9 @@ describe("Drawer (modal mode)", () => {
       .closest<HTMLElement>('[data-slot="drawer-content"]');
 
     expect(customContent).toHaveClass("h-[var(--drawer-size)]");
-    expect(customContent?.style.getPropertyValue("--drawer-size")).toBe("70dvh");
+    expect(customContent?.style.getPropertyValue("--drawer-size")).toBe(
+      "70dvh",
+    );
 
     rerender(
       <Drawer
@@ -264,7 +285,9 @@ describe("Drawer (modal mode)", () => {
       .closest<HTMLElement>('[data-slot="drawer-content"]');
 
     expect(contentOverride).toHaveClass("w-[var(--drawer-size)]");
-    expect(contentOverride?.style.getPropertyValue("--drawer-size")).toBe("360px");
+    expect(contentOverride?.style.getPropertyValue("--drawer-size")).toBe(
+      "360px",
+    );
   });
 
   it("supports uncontrolled open state, Escape close, and keyboard dismiss prevention", async () => {
@@ -311,7 +334,9 @@ describe("Drawer (modal mode)", () => {
     lockedDrawer.focus();
     await user.keyboard("{Escape}");
 
-    expect(screen.getByRole("dialog", { name: "Locked notice" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Locked notice" }),
+    ).toBeInTheDocument();
   });
 
   it("mirrors provider context onto the body portal host", () => {
@@ -328,7 +353,9 @@ describe("Drawer (modal mode)", () => {
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>Themed drawer</DrawerTitle>
-              <DrawerDescription>Provider attributes cross the portal.</DrawerDescription>
+              <DrawerDescription>
+                Provider attributes cross the portal.
+              </DrawerDescription>
             </DrawerHeader>
           </DrawerContent>
         </Drawer>
@@ -342,7 +369,9 @@ describe("Drawer (modal mode)", () => {
     const provider = screen.getByTestId("drawer-provider");
 
     if (!portalHost) {
-      throw new Error("Drawer should render inside a provider-aware portal host.");
+      throw new Error(
+        "Drawer should render inside a provider-aware portal host.",
+      );
     }
 
     expect(document.body).toContainElement(portalHost);
@@ -398,7 +427,9 @@ describe("Drawer (push mode)", () => {
     expect(trigger).toHaveFocus();
 
     await user.tab();
-    expect(screen.getByRole("button", { name: "Outside content" })).toHaveFocus();
+    expect(
+      screen.getByRole("button", { name: "Outside content" }),
+    ).toHaveFocus();
 
     await user.click(trigger);
 
@@ -406,9 +437,9 @@ describe("Drawer (push mode)", () => {
     expect(content).toHaveAttribute("data-state", "open");
     expect(content).not.toHaveAttribute("inert");
     expect(content).toHaveClass("w-96");
-    expect(screen.getByRole("button", { name: "Panel action" })).not.toHaveAttribute(
-      "tabindex",
-    );
+    expect(
+      screen.getByRole("button", { name: "Panel action" }),
+    ).not.toHaveAttribute("tabindex");
 
     const panel = screen.getByRole("dialog", { name: "Inspector" });
 
@@ -430,6 +461,8 @@ describe("Drawer (push mode)", () => {
     });
 
     await user.click(screen.getByRole("button", { name: "Outside content" }));
-    expect(screen.getByRole("button", { name: "Outside content" })).toHaveFocus();
+    expect(
+      screen.getByRole("button", { name: "Outside content" }),
+    ).toHaveFocus();
   });
 });

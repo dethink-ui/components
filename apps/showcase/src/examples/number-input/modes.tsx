@@ -19,7 +19,11 @@ export function NumberInputModes() {
       <Field id="ni-code">
         <FieldLabel>Verification code (numeric keypad)</FieldLabel>
         <FieldControl asChild>
-          <NumberInput numberMode="numeric" placeholder="123456" maxLength={6} />
+          <NumberInput
+            numberMode="numeric"
+            placeholder="123456"
+            maxLength={6}
+          />
         </FieldControl>
       </Field>
       <Field id="ni-disabled" disabled>

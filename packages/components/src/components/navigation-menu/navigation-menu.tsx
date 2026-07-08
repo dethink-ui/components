@@ -36,25 +36,18 @@ export type NavigationMenuOrientation = "horizontal" | "vertical";
 export type NavigationMenuCurrent = boolean | "page" | "location";
 
 export type NavigationMenuActivationMode =
-  | "click"
-  | "hover"
-  | "focus"
-  | "manual";
+  "click" | "hover" | "focus" | "manual";
 
 export type NavigationMenuMotionPreset =
-  | "none"
-  | "subtle"
-  | "standard"
-  | "expressive";
+  "none" | "subtle" | "standard" | "expressive";
 
 export type NavigationMenuMotionDirection =
-  | "from-start"
-  | "from-end"
-  | "to-start"
-  | "to-end";
+  "from-start" | "from-end" | "to-start" | "to-end";
 
-export interface NavigationMenuProps
-  extends Omit<HTMLAttributes<HTMLElement>, "defaultValue"> {
+export interface NavigationMenuProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "defaultValue"
+> {
   variant?: NavigationMenuVariant;
   size?: NavigationMenuSize;
   orientation?: NavigationMenuOrientation;
@@ -69,13 +62,11 @@ export interface NavigationMenuProps
 
 export type NavigationMenuListProps = HTMLAttributes<HTMLUListElement>;
 
-export interface NavigationMenuItemProps
-  extends LiHTMLAttributes<HTMLLIElement> {
+export interface NavigationMenuItemProps extends LiHTMLAttributes<HTMLLIElement> {
   value?: string;
 }
 
-export interface NavigationMenuTriggerProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface NavigationMenuTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   showChevron?: boolean;
 }
 
@@ -92,8 +83,7 @@ export type NavigationMenuLabelProps = HTMLAttributes<HTMLDivElement>;
 export type NavigationMenuDescriptionProps =
   HTMLAttributes<HTMLParagraphElement>;
 
-export interface NavigationMenuSeparatorProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface NavigationMenuSeparatorProps extends HTMLAttributes<HTMLDivElement> {
   orientation?: NavigationMenuOrientation;
 }
 
@@ -126,8 +116,7 @@ type ChildNavigationMenuLinkProps = Omit<
   };
 
 export type NavigationMenuLinkProps =
-  | NativeNavigationMenuLinkProps
-  | ChildNavigationMenuLinkProps;
+  NativeNavigationMenuLinkProps | ChildNavigationMenuLinkProps;
 
 type NavigationMenuFeaturedItemBaseProps = {
   asChild?: boolean;
@@ -156,8 +145,7 @@ type ChildNavigationMenuFeaturedItemProps = Omit<
   };
 
 export type NavigationMenuFeaturedItemProps =
-  | NativeNavigationMenuFeaturedItemProps
-  | ChildNavigationMenuFeaturedItemProps;
+  NativeNavigationMenuFeaturedItemProps | ChildNavigationMenuFeaturedItemProps;
 
 type NavigationMenuLinkSlotProps = Record<string, unknown> & {
   children?: ReactNode;
@@ -616,7 +604,9 @@ function hasCurrentState(
   ariaCurrent: AnchorHTMLAttributes<HTMLAnchorElement>["aria-current"],
 ) {
   return (
-    ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false"
+    ariaCurrent !== undefined &&
+    ariaCurrent !== false &&
+    ariaCurrent !== "false"
   );
 }
 
@@ -1052,57 +1042,62 @@ NavigationMenuList.displayName = "NavigationMenuList";
 export const NavigationMenuItem = forwardRef<
   HTMLLIElement,
   NavigationMenuItemProps
->(({ children, className, onPointerEnter, onPointerLeave, value, ...props }, ref) => {
-  const context = useNavigationMenuContext();
-  const autoValue = useId();
-  const itemValue = value ?? autoValue;
-  const contentId = useId();
-  const open = context.openValue === itemValue;
-  const { registerItem } = context;
-  const itemContextValue = useMemo<NavigationMenuItemContextValue>(
-    () => ({ value: itemValue, contentId, open }),
-    [contentId, itemValue, open],
-  );
+>(
+  (
+    { children, className, onPointerEnter, onPointerLeave, value, ...props },
+    ref,
+  ) => {
+    const context = useNavigationMenuContext();
+    const autoValue = useId();
+    const itemValue = value ?? autoValue;
+    const contentId = useId();
+    const open = context.openValue === itemValue;
+    const { registerItem } = context;
+    const itemContextValue = useMemo<NavigationMenuItemContextValue>(
+      () => ({ value: itemValue, contentId, open }),
+      [contentId, itemValue, open],
+    );
 
-  useEffect(() => registerItem(itemValue), [itemValue, registerItem]);
+    useEffect(() => registerItem(itemValue), [itemValue, registerItem]);
 
-  const handlePointerEnter: PointerEventHandler<HTMLLIElement> = (event) => {
-    onPointerEnter?.(event);
+    const handlePointerEnter: PointerEventHandler<HTMLLIElement> = (event) => {
+      onPointerEnter?.(event);
 
-    if (context.activationMode === "hover") {
-      context.cancelScheduledClose();
-    }
-  };
-
-  const handlePointerLeave: PointerEventHandler<HTMLLIElement> = (event) => {
-    onPointerLeave?.(event);
-
-    if (context.activationMode === "hover") {
-      context.cancelScheduledOpen();
-
-      if (open) {
-        context.scheduleClose();
+      if (context.activationMode === "hover") {
+        context.cancelScheduledClose();
       }
-    }
-  };
+    };
 
-  return (
-    <li
-      {...props}
-      ref={ref}
-      data-slot="navigation-menu-item"
-      data-value={value}
-      data-state={open ? "open" : "closed"}
-      className={navigationMenuItemClassNames({ className })}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-    >
-      <NavigationMenuItemContext.Provider value={itemContextValue}>
-        {children}
-      </NavigationMenuItemContext.Provider>
-    </li>
-  );
-});
+    const handlePointerLeave: PointerEventHandler<HTMLLIElement> = (event) => {
+      onPointerLeave?.(event);
+
+      if (context.activationMode === "hover") {
+        context.cancelScheduledOpen();
+
+        if (open) {
+          context.scheduleClose();
+        }
+      }
+    };
+
+    return (
+      <li
+        {...props}
+        ref={ref}
+        data-slot="navigation-menu-item"
+        data-value={value}
+        data-state={open ? "open" : "closed"}
+        className={navigationMenuItemClassNames({ className })}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+      >
+        <NavigationMenuItemContext.Provider value={itemContextValue}>
+          {children}
+        </NavigationMenuItemContext.Provider>
+      </li>
+    );
+  },
+);
 
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
@@ -1437,7 +1432,10 @@ export const NavigationMenuIndicator = forwardRef<
     const node = localRef.current;
     const list = node?.closest('[data-slot="navigation-menu-list"]');
 
-    if (!(list instanceof HTMLElement) || typeof ResizeObserver === "undefined") {
+    if (
+      !(list instanceof HTMLElement) ||
+      typeof ResizeObserver === "undefined"
+    ) {
       return undefined;
     }
 

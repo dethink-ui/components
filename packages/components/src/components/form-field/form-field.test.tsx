@@ -34,16 +34,18 @@ describe("Field", () => {
       </Form>,
     );
 
-    const form = screen.getByRole("button", { name: "Save settings" }).closest("form");
+    const form = screen
+      .getByRole("button", { name: "Save settings" })
+      .closest("form");
 
     expect(form).toHaveAttribute("data-slot", "form");
     expect(form).toHaveAttribute("data-spacing", "lg");
     expect(form).toHaveAttribute("action", "/settings");
     expect(form).toHaveAttribute("method", "post");
     expect(form).toHaveClass("custom-form");
-    expect(formClassNames({ spacing: "lg", className: "custom-form" })).toContain(
-      "custom-form",
-    );
+    expect(
+      formClassNames({ spacing: "lg", className: "custom-form" }),
+    ).toContain("custom-form");
     expect(ref.current).toBe(form);
   });
 
@@ -57,7 +59,9 @@ describe("Field", () => {
       </Field>,
     );
 
-    const field = screen.getByText("Workspace name").closest('[data-slot="field"]');
+    const field = screen
+      .getByText("Workspace name")
+      .closest('[data-slot="field"]');
     const input = screen.getByLabelText("Workspace name");
 
     expect(field).toHaveAttribute("data-slot", "field");
@@ -119,7 +123,9 @@ describe("Field", () => {
         <FieldControl asChild>
           <input type="email" aria-describedby="existing-help" />
         </FieldControl>
-        <FieldDescription id="email-help">Use your work email.</FieldDescription>
+        <FieldDescription id="email-help">
+          Use your work email.
+        </FieldDescription>
         <FieldError id="email-error">Enter a valid email address.</FieldError>
       </Field>,
     );
@@ -152,7 +158,9 @@ describe("Field", () => {
         <FieldControl asChild>
           <input />
         </FieldControl>
-        <FieldDescription id="project-help">Pick an active project.</FieldDescription>
+        <FieldDescription id="project-help">
+          Pick an active project.
+        </FieldDescription>
         <FieldError id="project-error">Project is required.</FieldError>
       </Field>,
     );
@@ -178,7 +186,9 @@ describe("Field", () => {
       </Field>,
     );
 
-    const field = screen.getByText("Review note").closest('[data-slot="field"]');
+    const field = screen
+      .getByText("Review note")
+      .closest('[data-slot="field"]');
     const input = screen.getByLabelText(/Review note/);
 
     expect(field).toHaveAttribute("data-disabled", "true");
@@ -241,12 +251,10 @@ describe("Field", () => {
     const invalidChild = "Text" as never;
 
     expect(() =>
-      render(
-        <FieldControl asChild>
-          {invalidChild}
-        </FieldControl>,
-      ),
-    ).toThrow("FieldControl with asChild expects a single React element child.");
+      render(<FieldControl asChild>{invalidChild}</FieldControl>),
+    ).toThrow(
+      "FieldControl with asChild expects a single React element child.",
+    );
   });
 
   it("renders field groups, fieldsets, and legends with native semantics", () => {
@@ -299,7 +307,9 @@ describe("Field", () => {
       <Field id="sync" orientation="horizontal">
         <FieldContent>
           <FieldTitle>Sync reports</FieldTitle>
-          <FieldDescription>Keep reports refreshed in the background.</FieldDescription>
+          <FieldDescription>
+            Keep reports refreshed in the background.
+          </FieldDescription>
         </FieldContent>
         <FieldControl asChild>
           <input type="checkbox" />
@@ -307,8 +317,12 @@ describe("Field", () => {
       </Field>,
     );
 
-    const field = screen.getByText("Sync reports").closest('[data-slot="field"]');
-    const content = screen.getByText("Sync reports").closest('[data-slot="field-content"]');
+    const field = screen
+      .getByText("Sync reports")
+      .closest('[data-slot="field"]');
+    const content = screen
+      .getByText("Sync reports")
+      .closest('[data-slot="field-content"]');
     const title = screen.getByText("Sync reports");
 
     expect(field).toHaveAttribute("data-orientation", "horizontal");

@@ -47,9 +47,13 @@ describe("Dialog accessibility", () => {
       </DethinkProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open billing dialog" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open billing dialog" }),
+    );
 
-    await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
   });
 
   it("has no axe violations when the visible title is hidden accessibly", async () => {
@@ -71,9 +75,13 @@ describe("Dialog accessibility", () => {
       </DethinkProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open compact dialog" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open compact dialog" }),
+    );
 
-    expect(screen.getByRole("dialog", { name: "Compact dialog" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Compact dialog" }),
+    ).toBeInTheDocument();
     await expect(axe(document.body)).resolves.toHaveNoViolations();
   });
 });
@@ -94,19 +102,25 @@ describe("AlertDialog accessibility", () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="destructive">Delete rule</AlertDialogAction>
+              <AlertDialogAction variant="destructive">
+                Delete rule
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </DethinkProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Delete billing rule" }));
+    await user.click(
+      screen.getByRole("button", { name: "Delete billing rule" }),
+    );
 
     expect(
       screen.getByRole("alertdialog", { name: "Delete billing rule" }),
     ).toBeInTheDocument();
-    await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
   });
 
   it("has no axe violations when an alert title is visually hidden", async () => {
@@ -131,9 +145,13 @@ describe("AlertDialog accessibility", () => {
       </DethinkProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open compact alert" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open compact alert" }),
+    );
 
-    expect(screen.getByRole("alertdialog", { name: "Compact alert" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("alertdialog", { name: "Compact alert" }),
+    ).toBeInTheDocument();
     await expect(axe(document.body)).resolves.toHaveNoViolations();
   });
 });

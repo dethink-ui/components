@@ -25,8 +25,10 @@ export interface PositionedOverlayArrowClassNameOptions {
   className?: string;
 }
 
-export interface PositionedOverlayArrowProps
-  extends Omit<AriaOverlayArrowProps, "children" | "className"> {
+export interface PositionedOverlayArrowProps extends Omit<
+  AriaOverlayArrowProps,
+  "children" | "className"
+> {
   "data-slot"?: string;
   className?: string;
   shapeDataSlot?: string;
@@ -77,8 +79,7 @@ const positionedOverlayArrowShapeBaseClasses =
 
 export function resolvePositionedOverlayPositionProps(
   props: PositionedOverlayPositionProps = {},
-  defaults: Required<PositionedOverlayPositionProps> =
-    positionedOverlayPositionDefaults,
+  defaults: Required<PositionedOverlayPositionProps> = positionedOverlayPositionDefaults,
 ): Required<PositionedOverlayPositionProps> {
   return {
     arrowBoundaryOffset:

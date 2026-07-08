@@ -59,7 +59,7 @@ export function CommandPaletteGlobalLauncher() {
         </CommandPaletteContent>
       </CommandPaletteDialog>
 
-      <output className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+      <output className="border-border bg-muted/40 text-muted-foreground rounded-md border px-3 py-2 text-sm">
         {lastRun}
       </output>
     </div>

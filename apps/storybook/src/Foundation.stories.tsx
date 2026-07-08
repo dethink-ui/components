@@ -90,13 +90,15 @@ function ProviderSample({ title }: { title: string }) {
   return (
     <div className="grid gap-[var(--dt-space-4)]">
       <div>
-        <h2 className="font-heading text-xl font-semibold leading-tight">{title}</h2>
-        <p className="mt-[var(--dt-space-1)] text-sm text-muted-foreground">
-          Semantic tokens cascade through component color, typography, spacing, radius,
-          and density.
+        <h2 className="font-heading text-xl leading-tight font-semibold">
+          {title}
+        </h2>
+        <p className="text-muted-foreground mt-[var(--dt-space-1)] text-sm">
+          Semantic tokens cascade through component color, typography, spacing,
+          radius, and density.
         </p>
       </div>
-      <div className="flex flex-wrap items-center gap-density-gap">
+      <div className="gap-density-gap flex flex-wrap items-center">
         <Button>Primary action</Button>
         <Button variant="outline">Secondary</Button>
       </div>
@@ -105,14 +107,14 @@ function ProviderSample({ title }: { title: string }) {
           <CardTitle>Pipeline health</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-[var(--dt-space-2)] text-sm text-muted-foreground">
+          <div className="text-muted-foreground grid gap-[var(--dt-space-2)] text-sm">
             <div className="flex items-center justify-between gap-[var(--dt-space-4)]">
               <span>Escalations</span>
-              <span className="font-mono text-foreground">12</span>
+              <span className="text-foreground font-mono">12</span>
             </div>
             <div className="flex items-center justify-between gap-[var(--dt-space-4)]">
               <span>Automation coverage</span>
-              <span className="font-mono text-success">84%</span>
+              <span className="text-success font-mono">84%</span>
             </div>
           </div>
         </CardContent>
@@ -153,16 +155,19 @@ export const BaseTheme: Story = {
   render: (args) => (
     <DethinkProvider
       {...args}
-      className="min-h-48 rounded-lg border border-border p-[var(--dt-space-6)]"
+      className="border-border min-h-48 rounded-lg border p-[var(--dt-space-6)]"
     >
       <div className="space-y-density-gap">
-        <h2 className="font-heading text-xl font-semibold">Dethink foundation</h2>
+        <h2 className="font-heading text-xl font-semibold">
+          Dethink foundation
+        </h2>
         <p className="text-muted-foreground">
-          Token-backed Tailwind utilities drive theme, density, and focus styles.
+          Token-backed Tailwind utilities drive theme, density, and focus
+          styles.
         </p>
         <button
           type="button"
-          className="h-density-control rounded-md bg-primary px-[var(--dt-space-4)] text-primary-foreground"
+          className="h-density-control bg-primary text-primary-foreground rounded-md px-[var(--dt-space-4)]"
         >
           Token smoke target
         </button>
@@ -176,7 +181,7 @@ export const CustomBrandTheme: Story = {
     <DethinkProvider
       theme="light"
       themeConfig={brandTheme}
-      className="rounded-lg border border-border bg-background p-[var(--dt-space-6)]"
+      className="border-border bg-background rounded-lg border p-[var(--dt-space-6)]"
     >
       <ProviderSample title="Custom brand tokens" />
     </DethinkProvider>
@@ -188,12 +193,13 @@ export const CustomSpacingAndRadius: Story = {
     <DethinkProvider
       theme="light"
       themeConfig={brandTheme}
-      className="rounded-lg border border-border bg-background p-[var(--dt-space-6)]"
+      className="border-border bg-background rounded-lg border p-[var(--dt-space-6)]"
     >
       <div className="grid gap-[var(--dt-space-6)]">
         <ProviderSample title="Expanded spacing scale" />
-        <div className="rounded-lg border border-border bg-muted p-[var(--dt-space-4)] text-sm text-muted-foreground">
-          This panel uses provider radius and spacing variables through Tailwind tokens.
+        <div className="border-border bg-muted text-muted-foreground rounded-lg border p-[var(--dt-space-4)] text-sm">
+          This panel uses provider radius and spacing variables through Tailwind
+          tokens.
         </div>
       </div>
     </DethinkProvider>
@@ -205,13 +211,13 @@ export const NestedThemes: Story = {
     <DethinkProvider
       theme="light"
       themeConfig={brandTheme}
-      className="grid gap-[var(--dt-space-6)] rounded-lg border border-border bg-background p-[var(--dt-space-6)]"
+      className="border-border bg-background grid gap-[var(--dt-space-6)] rounded-lg border p-[var(--dt-space-6)]"
     >
       <ProviderSample title="Outer theme" />
       <DethinkProvider
         theme="dark"
         themeConfig={nestedTheme}
-        className="rounded-lg border border-border bg-background p-[var(--dt-space-6)]"
+        className="border-border bg-background rounded-lg border p-[var(--dt-space-6)]"
       >
         <ProviderSample title="Nested dark theme" />
       </DethinkProvider>
@@ -228,7 +234,7 @@ export const DensityModes: Story = {
           density={density}
           theme="light"
           themeConfig={brandTheme}
-          className="rounded-lg border border-border bg-background p-[var(--dt-space-6)]"
+          className="border-border bg-background rounded-lg border p-[var(--dt-space-6)]"
         >
           <ProviderSample title={density} />
         </DethinkProvider>
@@ -242,7 +248,7 @@ export const SystemMode: Story = {
     <DethinkProvider
       theme="system"
       themeConfig={brandTheme}
-      className="rounded-lg border border-border bg-background p-[var(--dt-space-6)]"
+      className="border-border bg-background rounded-lg border p-[var(--dt-space-6)]"
     >
       <ProviderSample title="System color mode" />
     </DethinkProvider>

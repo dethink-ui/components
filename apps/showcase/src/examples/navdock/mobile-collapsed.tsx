@@ -1,7 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CollapseDock, NavDock, type NavDockItemData } from "@dethink/components";
+import {
+  CollapseDock,
+  NavDock,
+  type NavDockItemData,
+} from "@dethink/components";
 import {
   Bell,
   LayoutGrid,
@@ -65,8 +69,8 @@ export function NavDockMobileCollapsed() {
   );
 
   return (
-    <div className="mx-auto grid min-h-[32rem] max-w-sm overflow-hidden rounded-[2rem] border border-border bg-background p-5 shadow-sm">
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-border bg-muted/25 p-5">
+    <div className="border-border bg-background mx-auto grid min-h-[32rem] max-w-sm overflow-hidden rounded-[2rem] border p-5 shadow-sm">
+      <div className="border-border bg-muted/25 relative overflow-hidden rounded-[1.5rem] border p-5">
         <NavDock
           aria-label="Mobile workspace dock"
           currentValue={currentPanel}
@@ -87,11 +91,11 @@ export function NavDockMobileCollapsed() {
         </NavDock>
 
         <div className="grid min-h-[24rem] content-start">
-          <div className="rounded-lg border border-border bg-background/90 p-4">
-            <div className="text-sm font-semibold text-foreground">
+          <div className="border-border bg-background/90 rounded-lg border p-4">
+            <div className="text-foreground text-sm font-semibold">
               Current panel
             </div>
-            <p className="mt-1 text-sm capitalize text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm capitalize">
               {currentPanel}
             </p>
           </div>

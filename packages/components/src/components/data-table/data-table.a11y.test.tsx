@@ -68,7 +68,10 @@ describe("DataTable accessibility", () => {
     expect(table).toHaveAttribute("data-slot", "table");
     expect(table).not.toHaveAttribute("role", "grid");
     expect(container.querySelector('[role="grid"]')).toBeNull();
-    expect(customerSort.closest("th")).toHaveAttribute("aria-sort", "ascending");
+    expect(customerSort.closest("th")).toHaveAttribute(
+      "aria-sort",
+      "ascending",
+    );
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

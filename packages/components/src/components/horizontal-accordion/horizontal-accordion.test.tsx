@@ -212,7 +212,9 @@ describe("HorizontalAccordion composition", () => {
 
     expect(() =>
       render(<HorizontalAccordionPanel>Loose panel</HorizontalAccordionPanel>),
-    ).toThrow("HorizontalAccordion.Panel must be used within HorizontalAccordion.");
+    ).toThrow(
+      "HorizontalAccordion.Panel must be used within HorizontalAccordion.",
+    );
 
     consoleError.mockRestore();
   });
@@ -602,7 +604,9 @@ describe("HorizontalAccordion compact layout", () => {
 
 describe("HorizontalAccordion styling contract", () => {
   it("exposes data-slot attributes and geometry custom properties", () => {
-    const { container } = render(<BasicAccordion bladeWidth={96} height={320} />);
+    const { container } = render(
+      <BasicAccordion bladeWidth={96} height={320} />,
+    );
     const root = container.querySelector('[data-slot="horizontal-accordion"]');
 
     expect(root).not.toBeNull();

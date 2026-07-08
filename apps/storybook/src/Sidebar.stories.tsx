@@ -148,10 +148,10 @@ function SidebarExample({
         <SidebarHeader>
           <div className="flex min-w-0 items-center justify-between gap-2">
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold text-foreground">
+              <div className="text-foreground truncate text-sm font-semibold">
                 Dethink Ops
               </div>
-              <div className="truncate text-xs text-muted-foreground">
+              <div className="text-muted-foreground truncate text-xs">
                 Production workspace
               </div>
             </div>
@@ -217,10 +217,10 @@ function SidebarExample({
         <SidebarFooter>
           <div className="flex min-w-0 items-center gap-2">
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium text-foreground">
+              <div className="text-foreground truncate text-sm font-medium">
                 Platform team
               </div>
-              <div className="truncate text-xs text-muted-foreground">
+              <div className="text-muted-foreground truncate text-xs">
                 4 online
               </div>
             </div>
@@ -232,7 +232,7 @@ function SidebarExample({
         <SidebarRail />
       </Sidebar>
       <SidebarInset id="storybook-sidebar-content" className="p-6">
-        <div className="rounded-lg border border-border bg-muted/30 p-5">
+        <div className="border-border bg-muted/30 rounded-lg border p-5">
           <Text size="sm" tone="muted">
             SidebarInset gives app content a stable companion surface without
             turning the primitive into a full dashboard shell.
@@ -255,7 +255,11 @@ function ControlledSidebarExample() {
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuLink current href="/controlled" icon={<OverviewIcon />}>
+              <SidebarMenuLink
+                current
+                href="/controlled"
+                icon={<OverviewIcon />}
+              >
                 Controlled state
               </SidebarMenuLink>
             </SidebarMenuItem>
@@ -269,7 +273,7 @@ function ControlledSidebarExample() {
       </Sidebar>
       <SidebarInset className="p-6">
         <button
-          className="rounded-md border border-border px-3 py-2 text-sm text-foreground"
+          className="border-border text-foreground rounded-md border px-3 py-2 text-sm"
           type="button"
           onClick={() => setCollapsed((value) => !value)}
         >
@@ -324,7 +328,7 @@ export const SelectionIndicator: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="h-[24rem] overflow-hidden rounded-lg border border-border"
+      className="border-border h-[24rem] overflow-hidden rounded-lg border"
     >
       <SelectionIndicatorExample />
     </DethinkProvider>
@@ -344,7 +348,10 @@ export const SelectionIndicator: Story = {
 
 export const Dashboard: Story = {
   render: ({ variant }) => (
-    <DethinkProvider theme="light" className="h-[30rem] overflow-hidden rounded-lg border border-border">
+    <DethinkProvider
+      theme="light"
+      className="border-border h-[30rem] overflow-hidden rounded-lg border"
+    >
       <SidebarExample variant={variant} />
     </DethinkProvider>
   ),
@@ -362,7 +369,10 @@ export const Dashboard: Story = {
 
 export const CollapsedRail: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="h-[30rem] overflow-hidden rounded-lg border border-border">
+    <DethinkProvider
+      theme="light"
+      className="border-border h-[30rem] overflow-hidden rounded-lg border"
+    >
       <SidebarExample defaultCollapsed />
     </DethinkProvider>
   ),
@@ -370,7 +380,10 @@ export const CollapsedRail: Story = {
 
 export const ControlledState: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="h-[24rem] overflow-hidden rounded-lg border border-border">
+    <DethinkProvider
+      theme="light"
+      className="border-border h-[24rem] overflow-hidden rounded-lg border"
+    >
       <ControlledSidebarExample />
     </DethinkProvider>
   ),
@@ -378,12 +391,17 @@ export const ControlledState: Story = {
 
 export const MobileDrawer: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SidebarProvider>
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <div className="text-sm font-semibold text-foreground">Mobile app shell</div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-foreground text-sm font-semibold">
+              Mobile app shell
+            </div>
+            <div className="text-muted-foreground text-xs">
               Trigger opens a dismissible navigation drawer.
             </div>
           </div>
@@ -391,7 +409,7 @@ export const MobileDrawer: Story = {
         </div>
         <SidebarMobile label="Mobile workspace navigation">
           <SidebarHeader>
-            <div className="pe-10 text-sm font-semibold text-foreground">
+            <div className="text-foreground pe-10 text-sm font-semibold">
               Dethink Ops
             </div>
           </SidebarHeader>
@@ -431,32 +449,34 @@ export const MobileDrawer: Story = {
 export const MotionPresets: Story = {
   render: () => (
     <div className="grid gap-4 lg:grid-cols-2">
-      {([
-        { animate: true, label: "none", motion: "none", slug: "none" },
-        { animate: true, label: "subtle", motion: "subtle", slug: "subtle" },
-        {
-          animate: true,
-          label: "standard",
-          motion: "standard",
-          slug: "standard",
-        },
-        {
-          animate: true,
-          label: "expressive",
-          motion: "expressive",
-          slug: "expressive",
-        },
-        {
-          animate: false,
-          label: "animate false",
-          motion: "expressive",
-          slug: "animate-false",
-        },
-      ] as const).map(({ animate, label, motion, slug }) => (
+      {(
+        [
+          { animate: true, label: "none", motion: "none", slug: "none" },
+          { animate: true, label: "subtle", motion: "subtle", slug: "subtle" },
+          {
+            animate: true,
+            label: "standard",
+            motion: "standard",
+            slug: "standard",
+          },
+          {
+            animate: true,
+            label: "expressive",
+            motion: "expressive",
+            slug: "expressive",
+          },
+          {
+            animate: false,
+            label: "animate false",
+            motion: "expressive",
+            slug: "animate-false",
+          },
+        ] as const
+      ).map(({ animate, label, motion, slug }) => (
         <DethinkProvider
           key={label}
           theme="light"
-          className="h-64 overflow-hidden rounded-lg border border-border"
+          className="border-border h-64 overflow-hidden rounded-lg border"
         >
           <SidebarProvider
             animate={animate}
@@ -473,7 +493,11 @@ export const MotionPresets: Story = {
                   <SidebarGroupContent>
                     <SidebarMenu>
                       <SidebarMenuItem>
-                        <SidebarMenuLink current href={`/${slug}`} icon={<OverviewIcon />}>
+                        <SidebarMenuLink
+                          current
+                          href={`/${slug}`}
+                          icon={<OverviewIcon />}
+                        >
                           Motion preset
                         </SidebarMenuLink>
                       </SidebarMenuItem>
@@ -503,7 +527,7 @@ export const Variants: Story = {
           <DethinkProvider
             key={variant}
             theme="light"
-            className="h-64 overflow-hidden rounded-lg border border-border"
+            className="border-border h-64 overflow-hidden rounded-lg border"
           >
             <SidebarExample variant={variant} />
           </DethinkProvider>
@@ -519,7 +543,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="h-[28rem] overflow-hidden rounded-lg border border-border"
+        className="border-border h-[28rem] overflow-hidden rounded-lg border"
       >
         <SidebarExample />
       </DethinkProvider>
@@ -527,7 +551,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="h-[28rem] overflow-hidden rounded-lg border border-border"
+        className="border-border h-[28rem] overflow-hidden rounded-lg border"
       >
         <SidebarProvider side="right" variant="bordered">
           <Sidebar aria-label="RTL navigation">
@@ -537,7 +561,11 @@ export const ThemeDensityAndRtl: Story = {
             <SidebarContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuLink current href="/rtl/overview" icon={<OverviewIcon />}>
+                  <SidebarMenuLink
+                    current
+                    href="/rtl/overview"
+                    icon={<OverviewIcon />}
+                  >
                     Overview
                   </SidebarMenuLink>
                 </SidebarMenuItem>

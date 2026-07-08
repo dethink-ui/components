@@ -52,7 +52,10 @@ export const ManageWeek: Story = {
     constraints: slotPlannerSampleConstraints,
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPlanner {...args} />
     </DethinkProvider>
   ),
@@ -83,7 +86,10 @@ export const DayView: Story = {
     view: "day",
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="max-w-md rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-md rounded-lg border p-6"
+    >
       <SlotPlanner {...args} />
     </DethinkProvider>
   ),
@@ -99,7 +105,10 @@ export const DayView: Story = {
 
 export const CreateSlotFlow: Story = {
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPlanner {...args} />
     </DethinkProvider>
   ),
@@ -127,7 +136,10 @@ export const EditorConstraintViolations: Story = {
     constraints: slotPlannerSampleConstraints,
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPlanner {...args} />
     </DethinkProvider>
   ),
@@ -160,7 +172,10 @@ export const CapReached: Story = {
     },
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPlanner {...args} />
     </DethinkProvider>
   ),
@@ -169,7 +184,9 @@ export const CapReached: Story = {
 
     // Monday holds two published slots, so a cap of two is reached; the
     // state is stated in text, never by color alone.
-    await expect(canvas.getByText("Daily cap: 2 / 2 requestable slots")).toBeVisible();
+    await expect(
+      canvas.getByText("Daily cap: 2 / 2 requestable slots"),
+    ).toBeVisible();
     await expect(canvas.getByText("Daily cap reached")).toBeVisible();
   },
 };
@@ -177,14 +194,20 @@ export const CapReached: Story = {
 export const TaxonomyVariants: Story = {
   render: (args) => (
     <div className="grid gap-4 xl:grid-cols-2">
-      <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-6"
+      >
         <SlotPlanner
           {...args}
           title="Mentoring availability"
           taxonomy={slotPlannerMentoringTaxonomy}
         />
       </DethinkProvider>
-      <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-6"
+      >
         <SlotPlanner
           {...args}
           title="Clinic appointments"
@@ -212,7 +235,10 @@ export const CustomRendererDecoration: Story = {
     title: "Group sessions",
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPlanner
         {...args}
         renderers={{
@@ -224,7 +250,7 @@ export const CustomRendererDecoration: Story = {
               {typeof occurrence.slot.data?.priceUsd === "number" ? (
                 <p
                   data-slot="story-price-line"
-                  className="text-xs font-semibold text-primary"
+                  className="text-primary text-xs font-semibold"
                 >
                   {`$${occurrence.slot.data.priceUsd} per seat`}
                 </p>
@@ -232,7 +258,7 @@ export const CustomRendererDecoration: Story = {
             </div>
           ),
           tag: ({ tag }) => (
-            <span className="inline-flex items-center rounded-full bg-primary/10 px-[var(--dt-space-2)] py-0.5 text-xs font-medium text-primary">
+            <span className="bg-primary/10 text-primary inline-flex items-center rounded-full px-[var(--dt-space-2)] py-0.5 text-xs font-medium">
               {tag}
             </span>
           ),
@@ -245,7 +271,9 @@ export const CustomRendererDecoration: Story = {
 
     await expect(canvas.getByText("$40 per seat")).toBeVisible();
     // The decorated default keeps the shipped edit affordance.
-    await expect(canvas.getByRole("button", { name: "Edit slot" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Edit slot" }),
+    ).toBeVisible();
   },
 };
 
@@ -269,14 +297,14 @@ function HeadlessAgendaExample() {
         <div className="flex gap-[var(--dt-space-1)]">
           <button
             type="button"
-            className="rounded-md border border-border px-2 py-1 text-xs"
+            className="border-border rounded-md border px-2 py-1 text-xs"
             onClick={planner.goToPreviousWeek}
           >
             {planner.taxonomy.previousWeek}
           </button>
           <button
             type="button"
-            className="rounded-md border border-border px-2 py-1 text-xs"
+            className="border-border rounded-md border px-2 py-1 text-xs"
             onClick={planner.goToNextWeek}
           >
             {planner.taxonomy.nextWeek}
@@ -289,7 +317,7 @@ function HeadlessAgendaExample() {
             key={date}
             type="button"
             aria-pressed={date === planner.focusedDate}
-            className="rounded-md border border-border px-2 py-1 text-xs aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+            className="border-border aria-pressed:bg-primary aria-pressed:text-primary-foreground rounded-md border px-2 py-1 text-xs"
             onClick={() => planner.setFocusedDate(date)}
           >
             {weekdayFormatter.format(new Date(`${date}T00:00:00Z`))}
@@ -297,7 +325,7 @@ function HeadlessAgendaExample() {
         ))}
       </div>
       {planner.dailyCap ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {`${planner.dailyCap.used} / ${planner.dailyCap.cap} used`}
         </p>
       ) : null}
@@ -308,10 +336,10 @@ function HeadlessAgendaExample() {
           planner.selectedOccurrences.map((occurrence) => (
             <li
               key={`${occurrence.slotId}::${occurrence.occurrenceDate}`}
-              className="flex items-center justify-between rounded-md border border-border px-[var(--dt-space-3)] py-[var(--dt-space-2)]"
+              className="border-border flex items-center justify-between rounded-md border px-[var(--dt-space-3)] py-[var(--dt-space-2)]"
             >
               <span>{occurrence.startTime}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {planner.taxonomy.statusLabels[occurrence.status]}
               </span>
             </li>
@@ -324,7 +352,10 @@ function HeadlessAgendaExample() {
 
 export const HeadlessHookRecipe: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <HeadlessAgendaExample />
     </DethinkProvider>
   ),
@@ -341,7 +372,10 @@ function BookModeExample() {
   const [slots, setSlots] = useState(slotPlannerSampleSlots);
 
   return (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPicker
         title="Book a session"
         slots={slots}
@@ -371,7 +405,10 @@ function BookModeExample() {
                 recurrence: slot.recurrence
                   ? {
                       ...slot.recurrence,
-                      overrides: [...overrides, { occurrenceDate, requestedCount: 1 }],
+                      overrides: [
+                        ...overrides,
+                        { occurrenceDate, requestedCount: 1 },
+                      ],
                     }
                   : slot.recurrence,
               } satisfies SlotPlannerSlotData;
@@ -405,7 +442,10 @@ export const BookMode: Story = {
 export const BookModeViewerZones: Story = {
   render: () => (
     <div className="grid gap-4 xl:grid-cols-2">
-      <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-6"
+      >
         <SlotPicker
           title="London viewer"
           slots={slotPlannerSampleSlots}
@@ -415,7 +455,10 @@ export const BookModeViewerZones: Story = {
           taxonomy={slotPlannerMentoringTaxonomy}
         />
       </DethinkProvider>
-      <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-6"
+      >
         <SlotPicker
           title="Kolkata viewer"
           slots={slotPlannerSampleSlots}
@@ -445,7 +488,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <SlotPlanner {...args} title="Compact dark" />
       </DethinkProvider>
@@ -453,7 +496,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <SlotPlanner {...args} title="RTL comfortable" />
       </DethinkProvider>
@@ -467,7 +510,10 @@ export const ReducedMotion: Story = {
     reducedMotion: true,
   },
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <SlotPlanner {...args} />
     </DethinkProvider>
   ),

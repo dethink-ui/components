@@ -35,18 +35,22 @@ export function DrawerBasic() {
           <ShoppingCart aria-hidden="true" className="size-4" />
           Review cart
         </DrawerTrigger>
-        <DrawerContent dismissible showCloseButton closeButtonLabel="Close cart">
+        <DrawerContent
+          dismissible
+          showCloseButton
+          closeButtonLabel="Close cart"
+        >
           <DrawerHeader>
             <DrawerTitle>Your cart</DrawerTitle>
             <DrawerDescription>
               Review the workspace changes before checkout.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-4)] text-sm text-foreground">
+          <div className="text-foreground grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-4)] text-sm">
             <div className="grid gap-[var(--dt-space-3)]">
               {items.map((item) => (
                 <div
-                  className="grid gap-[var(--dt-space-2)] rounded-md border border-border/70 bg-muted/30 p-[var(--dt-space-3)]"
+                  className="border-border/70 bg-muted/30 grid gap-[var(--dt-space-2)] rounded-md border p-[var(--dt-space-3)]"
                   key={item.name}
                 >
                   <div className="flex items-start justify-between gap-[var(--dt-space-3)]">
@@ -56,13 +60,13 @@ export function DrawerBasic() {
                     </div>
                     <p className="font-semibold">{item.price}</p>
                   </div>
-                  <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground">
+                  <p className="text-muted-foreground text-xs tracking-[0.12em] uppercase">
                     Qty {item.quantity}
                   </p>
                 </div>
               ))}
             </div>
-            <dl className="grid gap-[var(--dt-space-2)] border-t border-border/70 pt-[var(--dt-space-4)]">
+            <dl className="border-border/70 grid gap-[var(--dt-space-2)] border-t pt-[var(--dt-space-4)]">
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Subtotal</dt>
                 <dd className="font-medium">$67</dd>

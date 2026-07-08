@@ -18,7 +18,10 @@ describe("HorizontalAccordion accessibility", () => {
   it("has no axe violations with mixed blade content", async () => {
     const { container } = render(
       <DethinkProvider theme="light">
-        <HorizontalAccordion aria-label="Product sections" defaultValue="overview">
+        <HorizontalAccordion
+          aria-label="Product sections"
+          defaultValue="overview"
+        >
           <HorizontalAccordion.Item value="overview">
             <HorizontalAccordion.Blade>
               <HorizontalAccordion.BladeLabel>

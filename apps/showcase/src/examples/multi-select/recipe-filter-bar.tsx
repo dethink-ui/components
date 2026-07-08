@@ -12,7 +12,7 @@ const teamItems = [
 export function MultiSelectRecipeFilterBar() {
   return (
     <Form action="/invoices" method="get" className="mx-auto max-w-xl">
-      <div className="rounded-lg border border-border bg-muted/20 p-4">
+      <div className="border-border bg-muted/20 rounded-lg border p-4">
         <Stack gap="4">
           <MultiSelect
             defaultValue={["finance"]}

@@ -75,7 +75,10 @@ import { CalendarDate } from "@internationalized/date";`}
         title="Props"
         description="DateRangePicker owns its field anatomy — pass a label instead of wrapping it in an external one."
       >
-        <PropsTable caption="DateRangePicker props" rows={dateRangePickerProps} />
+        <PropsTable
+          caption="DateRangePicker props"
+          rows={dateRangePickerProps}
+        />
       </DocsSection>
     </DocsPage>
   );

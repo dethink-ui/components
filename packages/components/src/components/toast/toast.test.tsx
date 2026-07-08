@@ -1,12 +1,7 @@
 import { act } from "react";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import {
-  ToastProvider,
-  ToastViewport,
-  toastClassNames,
-  useToast,
-} from ".";
+import { ToastProvider, ToastViewport, toastClassNames, useToast } from ".";
 
 function ToastControls() {
   const { toast } = useToast();
@@ -122,9 +117,9 @@ describe("Toast", () => {
     }
 
     expect(toast).toHaveAttribute("data-tone", "success");
-    expect(document.querySelector('[data-slot="live-region-polite"]')).toHaveTextContent(
-      "Saved. Workspace settings were saved.",
-    );
+    expect(
+      document.querySelector('[data-slot="live-region-polite"]'),
+    ).toHaveTextContent("Saved. Workspace settings were saved.");
 
     fireEvent.pointerEnter(toast);
 
@@ -170,13 +165,17 @@ describe("Toast", () => {
     fireEvent.click(screen.getByRole("button", { name: "Show custom node" }));
 
     expect(screen.getByText("Custom import")).toBeInTheDocument();
-    expect(screen.getByText("12 rows matched with warnings.")).toBeInTheDocument();
-    expect(document.querySelector('[data-slot="live-region-polite"]')).toHaveTextContent(
-      "Custom import finished",
-    );
+    expect(
+      screen.getByText("12 rows matched with warnings."),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector('[data-slot="live-region-polite"]'),
+    ).toHaveTextContent("Custom import finished");
 
     fireEvent.click(screen.getByRole("button", { name: "Show custom render" }));
-    fireEvent.click(screen.getByRole("button", { name: "Resolve custom toast" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Resolve custom toast" }),
+    );
 
     expect(screen.queryByText("Custom action")).not.toBeInTheDocument();
   });
@@ -232,9 +231,13 @@ describe("Toast", () => {
 
     expect(screen.getByText("Request failed")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Dismiss notification" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Dismiss notification" }),
+    );
 
     expect(screen.queryByText("Request failed")).not.toBeInTheDocument();
-    expect(toastClassNames({ className: "custom", tone: "info" })).toContain("custom");
+    expect(toastClassNames({ className: "custom", tone: "info" })).toContain(
+      "custom",
+    );
   });
 });

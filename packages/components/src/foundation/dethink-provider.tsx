@@ -173,21 +173,32 @@ export const defaultDethinkTheme: DethinkThemeConfig = {
   },
 };
 
-export function defineDethinkTheme(config: DethinkThemeConfig): DethinkThemeConfig {
+export function defineDethinkTheme(
+  config: DethinkThemeConfig,
+): DethinkThemeConfig {
   return config;
 }
 
 function toKebabCase(value: string) {
-  return value.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/\./g, "-").toLowerCase();
+  return value
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/\./g, "-")
+    .toLowerCase();
 }
 
-function setStyleVariable(style: DethinkThemeStyle, name: string, value: string | undefined) {
+function setStyleVariable(
+  style: DethinkThemeStyle,
+  name: string,
+  value: string | undefined,
+) {
   if (value !== undefined) {
     style[`--dt-${name}`] = value;
   }
 }
 
-export function createDethinkThemeStyle(themeConfig?: DethinkThemeConfig): DethinkThemeStyle {
+export function createDethinkThemeStyle(
+  themeConfig?: DethinkThemeConfig,
+): DethinkThemeStyle {
   const style: DethinkThemeStyle = {};
 
   for (const colorMode of ["light", "dark"] as const) {
@@ -195,7 +206,11 @@ export function createDethinkThemeStyle(themeConfig?: DethinkThemeConfig): Dethi
 
     if (colors) {
       for (const [token, value] of Object.entries(colors)) {
-        setStyleVariable(style, `color-${toKebabCase(token)}-${colorMode}`, value);
+        setStyleVariable(
+          style,
+          `color-${toKebabCase(token)}-${colorMode}`,
+          value,
+        );
       }
     }
   }
@@ -221,7 +236,11 @@ export function createDethinkThemeStyle(themeConfig?: DethinkThemeConfig): Dethi
   if (themeConfig?.density) {
     for (const [density, values] of Object.entries(themeConfig.density)) {
       for (const [token, value] of Object.entries(values ?? {})) {
-        setStyleVariable(style, `density-${toKebabCase(token)}-${toKebabCase(density)}`, value);
+        setStyleVariable(
+          style,
+          `density-${toKebabCase(token)}-${toKebabCase(density)}`,
+          value,
+        );
       }
     }
   }
@@ -294,7 +313,7 @@ export function DethinkProvider({
       data-theme={theme}
       data-density={density}
       dir={dir}
-      className={cn("bg-background font-sans text-foreground", className)}
+      className={cn("bg-background text-foreground font-sans", className)}
       style={mergedStyle}
       {...props}
     >

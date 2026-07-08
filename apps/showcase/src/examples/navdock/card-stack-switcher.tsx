@@ -76,7 +76,7 @@ export function NavDockCardStackSwitcher() {
               <CardTitle>{panel.heading}</CardTitle>
               <CardDescription>{panel.detail}</CardDescription>
             </CardHeader>
-            <CardContent className="text-sm leading-6 text-muted-foreground">
+            <CardContent className="text-muted-foreground text-sm leading-6">
               {panel.body}
             </CardContent>
           </Card>

@@ -56,6 +56,6 @@ export const radioGroupItemProps: PropRow[] = [
     prop: "…native input props",
     type: "InputHTMLAttributes",
     defaultValue: "—",
-    description: "Renders a real <input type=\"radio\">.",
+    description: 'Renders a real <input type="radio">.',
   },
 ];

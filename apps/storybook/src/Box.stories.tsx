@@ -45,7 +45,15 @@ const meta = {
     },
     display: {
       control: "inline-radio",
-      options: ["block", "inline", "inline-block", "contents", "flex", "inline-flex", "grid"],
+      options: [
+        "block",
+        "inline",
+        "inline-block",
+        "contents",
+        "flex",
+        "inline-flex",
+        "grid",
+      ],
     },
     p: {
       control: "select",
@@ -114,7 +122,18 @@ const displays: BoxDisplay[] = [
   "inline-flex",
   "grid",
 ];
-const spacings: BoxSpacing[] = ["none", "1", "2", "3", "4", "5", "6", "8", "10", "12"];
+const spacings: BoxSpacing[] = [
+  "none",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "8",
+  "10",
+  "12",
+];
 const surfaces: BoxSurface[] = [
   "background",
   "muted",
@@ -147,7 +166,10 @@ export const Base: Story = {};
 
 export const SemanticElements: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="3" className="sm:grid-cols-2 lg:grid-cols-3">
         {elements.map((element) => (
           <Box
@@ -157,7 +179,9 @@ export const SemanticElements: Story = {
             p="3"
             radius="md"
             surface="background"
-            {...(element === "nav" ? { "aria-label": "Box story navigation" } : {})}
+            {...(element === "nav"
+              ? { "aria-label": "Box story navigation" }
+              : {})}
           >
             {element === "ul" || element === "ol" ? (
               <Box as="li">
@@ -187,7 +211,10 @@ export const SemanticElements: Story = {
 
 export const SpacingTokens: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="3" className="sm:grid-cols-2 lg:grid-cols-5">
         {spacings.map((spacing) => (
           <Box
@@ -216,10 +243,17 @@ export const LogicalSpacingRtl: Story = {
       theme="light"
       density="comfortable"
       dir="rtl"
-      className="rounded-lg border border-border p-6"
+      className="border-border rounded-lg border p-6"
     >
       <Box display="grid" gap="4" className="lg:grid-cols-2">
-        <Box border="default" p="4" pe="8" ps="3" radius="md" surface="background">
+        <Box
+          border="default"
+          p="4"
+          pe="8"
+          ps="3"
+          radius="md"
+          surface="background"
+        >
           <Text size="sm" tone="muted" weight="medium">
             RTL logical padding
           </Text>
@@ -241,7 +275,10 @@ export const LogicalSpacingRtl: Story = {
 
 export const SurfacesAndBorders: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="4" className="lg:grid-cols-2">
         <Box display="grid" gap="3">
           {surfaces.map((surface) => (
@@ -254,7 +291,13 @@ export const SurfacesAndBorders: Story = {
         </Box>
         <Box display="grid" gap="3">
           {borders.map((border) => (
-            <Box key={border} border={border} p="4" radius="md" surface="background">
+            <Box
+              key={border}
+              border={border}
+              p="4"
+              radius="md"
+              surface="background"
+            >
               <Text size="sm" weight="semibold">
                 {border} border
               </Text>
@@ -268,11 +311,20 @@ export const SurfacesAndBorders: Story = {
 
 export const RadiusAndOverflow: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="4" className="lg:grid-cols-2">
         <Box display="grid" gap="3" className="sm:grid-cols-2">
           {radii.map((radius) => (
-            <Box key={radius} border="default" p="4" radius={radius} surface="muted">
+            <Box
+              key={radius}
+              border="default"
+              p="4"
+              radius={radius}
+              surface="muted"
+            >
               <Text size="sm" weight="medium">
                 radius={radius}
               </Text>
@@ -294,7 +346,8 @@ export const RadiusAndOverflow: Story = {
                 overflow={overflow}
               </Text>
               <Text className="mt-2 w-48" size="sm" tone="muted">
-                Long operational content demonstrates clipping and scroll behavior.
+                Long operational content demonstrates clipping and scroll
+                behavior.
               </Text>
             </Box>
           ))}
@@ -306,7 +359,10 @@ export const RadiusAndOverflow: Story = {
 
 export const DisplayModes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="3" className="lg:grid-cols-3">
         {displays.map((display) => {
           const hasChildGap = display.includes("flex") || display === "grid";
@@ -364,7 +420,10 @@ export const DisplayModes: Story = {
 
 export const AsChildComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="flex" gap="3" className="flex-wrap items-center">
         <Box
           asChild
@@ -372,9 +431,11 @@ export const AsChildComposition: Story = {
           p="3"
           radius="md"
           surface="background"
-          className="text-sm font-medium text-primary transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="text-primary hover:bg-muted focus-visible:ring-ring text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
-          <RouterAnchor to="/dashboard">Router link composed with Box</RouterAnchor>
+          <RouterAnchor to="/dashboard">
+            Router link composed with Box
+          </RouterAnchor>
         </Box>
         <Box
           asChild
@@ -382,7 +443,7 @@ export const AsChildComposition: Story = {
           p="3"
           radius="full"
           surface="muted"
-          className="text-sm font-medium transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="hover:bg-background focus-visible:ring-ring text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <button type="button">Native button child</button>
         </Box>
@@ -393,9 +454,22 @@ export const AsChildComposition: Story = {
 
 export const DashboardSection: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <Box as="section" aria-labelledby="box-dashboard-title" display="grid" gap="4">
-        <Box as="header" display="flex" gap="4" className="items-start justify-between">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <Box
+        as="section"
+        aria-labelledby="box-dashboard-title"
+        display="grid"
+        gap="4"
+      >
+        <Box
+          as="header"
+          display="flex"
+          gap="4"
+          className="items-start justify-between"
+        >
           <Box>
             <Heading id="box-dashboard-title" level={2} visualLevel={3}>
               Usage summary
@@ -416,7 +490,13 @@ export const DashboardSection: Story = {
             ["Latency", "142 ms", "Down 8%"],
             ["Errors", "0.03%", "Stable"],
           ].map(([label, value, detail]) => (
-            <Box key={label} border="default" p="4" radius="md" surface="background">
+            <Box
+              key={label}
+              border="default"
+              p="4"
+              radius="md"
+              surface="background"
+            >
               <Text size="sm" tone="muted" weight="medium">
                 {label}
               </Text>
@@ -440,7 +520,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Box display="grid" gap="3">
           <Box border="default" p="4" radius="md" surface="background">
@@ -462,15 +542,23 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Box display="grid" gap="3">
-          <Box border="default" p="4" pe="8" ps="3" radius="md" surface="background">
+          <Box
+            border="default"
+            p="4"
+            pe="8"
+            ps="3"
+            radius="md"
+            surface="background"
+          >
             <Heading align="start" level={2} visualLevel={4}>
               RTL Box layout
             </Heading>
             <Text align="start" className="mt-2" tone="muted">
-              Logical spacing props keep layout portable across writing directions.
+              Logical spacing props keep layout portable across writing
+              directions.
             </Text>
           </Box>
           <Box border="warning" p="3" radius="md" surface="warning">

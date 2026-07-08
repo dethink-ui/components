@@ -12,7 +12,11 @@ import {
   type KeyboardEventHandler,
   type ReactNode,
 } from "react";
-import { AnimatePresence, motion as motionElement, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  motion as motionElement,
+  useReducedMotion,
+} from "motion/react";
 import { cn } from "../../utils/cn";
 import {
   LiveRegionProvider,
@@ -42,7 +46,8 @@ export interface ToastRenderContext {
   dismiss: () => void;
 }
 
-export type ToastRender = ReactNode | ((context: ToastRenderContext) => ReactNode);
+export type ToastRender =
+  ReactNode | ((context: ToastRenderContext) => ReactNode);
 
 export interface ToastRecord {
   id: string;
@@ -104,9 +109,12 @@ const toastViewportBaseClasses =
   "pointer-events-none fixed z-50 m-0 flex max-h-dvh w-[min(calc(100vw-var(--dt-space-4)*2),24rem)] list-none flex-col gap-[var(--dt-space-2)] p-0 [--toast-safe-area-top:env(safe-area-inset-top)] [--toast-safe-area-bottom:env(safe-area-inset-bottom)]";
 
 const toastPlacementClasses: Record<ToastPlacement, string> = {
-  "top-start": "start-[var(--dt-space-4)] top-[calc(var(--dt-space-4)+var(--toast-safe-area-top))]",
-  "top-center": "left-1/2 top-[calc(var(--dt-space-4)+var(--toast-safe-area-top))] -translate-x-1/2",
-  "top-end": "end-[var(--dt-space-4)] top-[calc(var(--dt-space-4)+var(--toast-safe-area-top))]",
+  "top-start":
+    "start-[var(--dt-space-4)] top-[calc(var(--dt-space-4)+var(--toast-safe-area-top))]",
+  "top-center":
+    "left-1/2 top-[calc(var(--dt-space-4)+var(--toast-safe-area-top))] -translate-x-1/2",
+  "top-end":
+    "end-[var(--dt-space-4)] top-[calc(var(--dt-space-4)+var(--toast-safe-area-top))]",
   "bottom-start":
     "bottom-[calc(var(--dt-space-4)+var(--toast-safe-area-bottom))] start-[var(--dt-space-4)] flex-col-reverse",
   "bottom-center":
@@ -154,7 +162,9 @@ function getToastAnnouncement(toast: ToastRecord) {
   }
 
   return [toast.title, toast.description]
-    .filter((part): part is string => typeof part === "string" && part.length > 0)
+    .filter(
+      (part): part is string => typeof part === "string" && part.length > 0,
+    )
     .join(". ");
 }
 
@@ -179,7 +189,10 @@ function useControlledToasts({
   maxToasts,
   onToastsChange,
   toasts,
-}: Pick<ToastProviderProps, "defaultToasts" | "maxToasts" | "onToastsChange" | "toasts">) {
+}: Pick<
+  ToastProviderProps,
+  "defaultToasts" | "maxToasts" | "onToastsChange" | "toasts"
+>) {
   const [uncontrolledToasts, setUncontrolledToasts] = useState(defaultToasts);
   const controlled = toasts !== undefined;
   const resolvedToasts = controlled ? toasts : uncontrolledToasts;
@@ -256,20 +269,26 @@ function ToastProviderInner({
 
   const addToast = useCallback(
     (toast: ToastInput) => {
-      const id = toast.id ?? createToastId(idPrefix.current, ++idCountRef.current);
+      const id =
+        toast.id ?? createToastId(idPrefix.current, ++idCountRef.current);
       const record: ToastRecord = {
         ...toast,
         id,
       };
 
-      setToasts((current) => [...current.filter((item) => item.id !== id), record]);
+      setToasts((current) => [
+        ...current.filter((item) => item.id !== id),
+        record,
+      ]);
 
       if (record.announce !== false) {
         const announcement = getToastAnnouncement(record);
 
         if (announcement) {
           announcer.announce(announcement, {
-            politeness: record.politeness ?? (record.tone === "destructive" ? "assertive" : "polite"),
+            politeness:
+              record.politeness ??
+              (record.tone === "destructive" ? "assertive" : "polite"),
           });
         }
       }
@@ -282,7 +301,9 @@ function ToastProviderInner({
   const updateToast = useCallback(
     (id: string, toast: Partial<ToastInput>) => {
       setToasts((current) =>
-        current.map((item) => (item.id === id ? { ...item, ...toast, id } : item)),
+        current.map((item) =>
+          item.id === id ? { ...item, ...toast, id } : item,
+        ),
       );
     },
     [setToasts],
@@ -316,7 +337,9 @@ function ToastProviderInner({
     ],
   );
 
-  return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>;
+  return (
+    <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
+  );
 }
 
 export function ToastProvider(props: ToastProviderProps) {
@@ -341,7 +364,11 @@ export function toastViewportClassNames({
   className,
   placement = "bottom-end",
 }: Pick<ToastViewportProps, "className" | "placement"> = {}) {
-  return cn(toastViewportBaseClasses, toastPlacementClasses[placement], className);
+  return cn(
+    toastViewportBaseClasses,
+    toastPlacementClasses[placement],
+    className,
+  );
 }
 
 export function toastClassNames({
@@ -351,7 +378,10 @@ export function toastClassNames({
   return cn(toastBaseClasses, toastToneClasses[tone], className);
 }
 
-function renderToastCustomContent(render: ToastRender, context: ToastRenderContext) {
+function renderToastCustomContent(
+  render: ToastRender,
+  context: ToastRenderContext,
+) {
   return typeof render === "function" ? render(context) : render;
 }
 
@@ -450,17 +480,26 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(
         ) : null}
         {hasCustomRender ? (
           <div data-slot="toast-render" className={toastRenderClasses}>
-            {renderToastCustomContent(toast.render as ToastRender, { dismiss, toast })}
+            {renderToastCustomContent(toast.render as ToastRender, {
+              dismiss,
+              toast,
+            })}
           </div>
         ) : (
-          <div data-slot="toast-content" className="grid min-w-0 gap-[var(--dt-space-1)]">
+          <div
+            data-slot="toast-content"
+            className="grid min-w-0 gap-[var(--dt-space-1)]"
+          >
             {toast.title ? (
               <div data-slot="toast-title" className={toastTitleClasses}>
                 {toast.title}
               </div>
             ) : null}
             {toast.description ? (
-              <div data-slot="toast-description" className={toastDescriptionClasses}>
+              <div
+                data-slot="toast-description"
+                className={toastDescriptionClasses}
+              >
                 {toast.description}
               </div>
             ) : null}
@@ -544,7 +583,10 @@ function ToastMotionItem({
 }
 
 export const ToastViewport = forwardRef<HTMLOListElement, ToastViewportProps>(
-  ({ className, motion: motionProp, placement: placementProp, ...props }, ref) => {
+  (
+    { className, motion: motionProp, placement: placementProp, ...props },
+    ref,
+  ) => {
     const context = useToast();
     const placement = placementProp ?? context.placement;
     const motion = motionProp ?? context.motion;

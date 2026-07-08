@@ -126,8 +126,10 @@ const invoiceColumns: DataTableColumnDef<Invoice>[] = [
     header: "Account",
     cell: ({ row }) => (
       <div className="grid gap-0.5">
-        <span className="font-medium text-foreground">{row.original.account}</span>
-        <span className="text-xs text-muted-foreground">{row.original.id}</span>
+        <span className="text-foreground font-medium">
+          {row.original.account}
+        </span>
+        <span className="text-muted-foreground text-xs">{row.original.id}</span>
       </div>
     ),
   },
@@ -196,7 +198,7 @@ function StoryShell({
 }) {
   return (
     <DethinkProvider
-      className="min-h-[32rem] bg-background p-6 text-foreground"
+      className="bg-background text-foreground min-h-[32rem] p-6"
       density={density}
       dir={dir}
       theme={theme}

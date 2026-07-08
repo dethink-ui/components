@@ -29,7 +29,12 @@ describe("Grid accessibility", () => {
             <GridItem as="li">List semantics remain native.</GridItem>
             <GridItem as="li">No ARIA role is added by default.</GridItem>
           </Grid>
-          <Grid as="form" aria-label="Example grid settings form" columns="2" gap="3">
+          <Grid
+            as="form"
+            aria-label="Example grid settings form"
+            columns="2"
+            gap="3"
+          >
             <GridItem>
               <label htmlFor="grid-filter">Filter</label>
             </GridItem>
@@ -45,7 +50,9 @@ describe("Grid accessibility", () => {
     const section = screen.getByRole("region", { name: "Workspace overview" });
     const list = screen.getByRole("list");
     const listItems = within(list).getAllByRole("listitem");
-    const form = screen.getByRole("form", { name: "Example grid settings form" });
+    const form = screen.getByRole("form", {
+      name: "Example grid settings form",
+    });
 
     expect(main.tagName).toBe("MAIN");
     expect(section.tagName).toBe("SECTION");

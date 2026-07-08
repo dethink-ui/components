@@ -18,7 +18,9 @@ describe("Separator accessibility", () => {
             <Heading id="separator-heading" level={1} visualLevel={3}>
               Workspace sections
             </Heading>
-            <Text tone="muted">Native thematic breaks keep their separator semantics.</Text>
+            <Text tone="muted">
+              Native thematic breaks keep their separator semantics.
+            </Text>
             <Separator />
             <Flex align="center" gap="3">
               <Button variant="outline">Export</Button>
@@ -32,7 +34,9 @@ describe("Separator accessibility", () => {
     );
 
     const separators = screen.getAllByRole("separator");
-    const decorativeDivider = container.querySelector('[data-decorative="true"]');
+    const decorativeDivider = container.querySelector(
+      '[data-decorative="true"]',
+    );
 
     expect(separators).toHaveLength(2);
     expect(separators[0]?.tagName).toBe("HR");

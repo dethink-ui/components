@@ -34,16 +34,21 @@ export type FlexElement =
 export type FlexDisplay = "flex" | "inline-flex";
 export type FlexDirection = "row" | "column";
 export type FlexWrap = "nowrap" | "wrap";
-export type FlexGap = "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
+export type FlexGap =
+  "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
 export type FlexAlign = "stretch" | "start" | "center" | "end" | "baseline";
-export type FlexJustify = "start" | "center" | "end" | "between" | "around" | "evenly";
-export type FlexContent = "start" | "center" | "end" | "between" | "around" | "evenly" | "stretch";
+export type FlexJustify =
+  "start" | "center" | "end" | "between" | "around" | "evenly";
+export type FlexContent =
+  "start" | "center" | "end" | "between" | "around" | "evenly" | "stretch";
 
-export type FlexItemElement = "div" | "span" | "li" | "section" | "article" | "aside";
+export type FlexItemElement =
+  "div" | "span" | "li" | "section" | "article" | "aside";
 export type FlexItemGrow = "0" | "1";
 export type FlexItemShrink = "0" | "1";
 export type FlexItemBasis = "auto" | "0" | "full" | "xs" | "sm" | "md" | "lg";
-export type FlexItemAlign = "auto" | "stretch" | "start" | "center" | "end" | "baseline";
+export type FlexItemAlign =
+  "auto" | "stretch" | "start" | "center" | "end" | "baseline";
 export type FlexItemMinInlineSize = "auto" | "0";
 
 type FlexBaseProps = {
@@ -72,7 +77,14 @@ type FlexItemBaseProps = {
 
 type FlexFormAttributes = Pick<
   FormHTMLAttributes<HTMLFormElement>,
-  "acceptCharset" | "action" | "autoComplete" | "encType" | "method" | "name" | "noValidate" | "target"
+  | "acceptCharset"
+  | "action"
+  | "autoComplete"
+  | "encType"
+  | "method"
+  | "name"
+  | "noValidate"
+  | "target"
 >;
 
 type FlexFieldsetAttributes = Pick<
@@ -235,7 +247,10 @@ const flexItemAlignClasses: Record<FlexItemAlign, string> = {
   baseline: "self-baseline",
 };
 
-const flexItemMinInlineSizeClasses: Record<FlexItemMinInlineSize, string | undefined> = {
+const flexItemMinInlineSizeClasses: Record<
+  FlexItemMinInlineSize,
+  string | undefined
+> = {
   auto: undefined,
   0: "min-w-0",
 };
@@ -325,14 +340,18 @@ function getChildRef(child: ReactElement<FlexSlotProps>) {
     return child.props.ref;
   }
 
-  return reactVersion.startsWith("18.") ? (child as FlexElementWithRef).ref : undefined;
+  return reactVersion.startsWith("18.")
+    ? (child as FlexElementWithRef).ref
+    : undefined;
 }
 
 function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -366,7 +385,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -490,7 +512,9 @@ export const Flex = forwardRef<HTMLElement, FlexProps>(
       const child = Children.only(children);
 
       if (!isValidElement<FlexSlotProps>(child)) {
-        throw new Error("Flex with asChild expects a single React element child.");
+        throw new Error(
+          "Flex with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);
@@ -557,7 +581,9 @@ export const FlexItem = forwardRef<HTMLElement, FlexItemProps>(
       const child = Children.only(children);
 
       if (!isValidElement<FlexSlotProps>(child)) {
-        throw new Error("FlexItem with asChild expects a single React element child.");
+        throw new Error(
+          "FlexItem with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

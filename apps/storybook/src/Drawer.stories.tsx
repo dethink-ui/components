@@ -1,11 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import {
-  expect,
-  userEvent,
-  waitFor,
-  within,
-} from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   Container,
   DethinkProvider,
@@ -119,7 +114,7 @@ export const Base: Story = {
                 Review items before checkout.
               </DrawerDescription>
             </DrawerHeader>
-            <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+            <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
               Two dashboard seats and one report export credit.
             </div>
             <DrawerFooter>
@@ -200,13 +195,16 @@ export const Sizing: Story = {
               </DrawerContent>
             </Drawer>
             <Drawer direction="bottom" dimension="72dvh">
-              <DrawerTrigger variant="outline">Custom sheet height</DrawerTrigger>
+              <DrawerTrigger variant="outline">
+                Custom sheet height
+              </DrawerTrigger>
               <DrawerContent>
                 <DrawerHandle aria-label="Drag custom-height sheet" />
                 <DrawerHeader>
                   <DrawerTitle>Custom sheet height</DrawerTitle>
                   <DrawerDescription>
-                    `dimension=&quot;72dvh&quot;` maps to height for top/bottom drawers.
+                    `dimension=&quot;72dvh&quot;` maps to height for top/bottom
+                    drawers.
                   </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter>
@@ -242,7 +240,7 @@ export const Controlled: Story = {
                     </DrawerHeader>
                     <DrawerFooter>
                       <button
-                        className="text-sm text-muted-foreground"
+                        className="text-muted-foreground text-sm"
                         type="button"
                         onClick={close}
                       >
@@ -253,7 +251,9 @@ export const Controlled: Story = {
                 )}
               </DrawerContent>
             </Drawer>
-            <FieldDescription>Drawer state: {open ? "open" : "closed"}</FieldDescription>
+            <FieldDescription>
+              Drawer state: {open ? "open" : "closed"}
+            </FieldDescription>
           </Stack>
         </Container>
       </DethinkProvider>
@@ -266,16 +266,16 @@ export const PersistentInspectorPushPanel: Story = {
     return (
       <DethinkProvider theme="light" className="p-6">
         <Container size="lg">
-          <div className="flex min-h-[24rem] overflow-hidden rounded-lg border border-border">
-            <main className="flex-1 p-[var(--dt-space-6)] text-sm text-foreground">
+          <div className="border-border flex min-h-[24rem] overflow-hidden rounded-lg border">
+            <main className="text-foreground flex-1 p-[var(--dt-space-6)] text-sm">
               <p className="font-medium">Record list</p>
-              <p className="mt-[var(--dt-space-2)] text-muted-foreground">
+              <p className="text-muted-foreground mt-[var(--dt-space-2)]">
                 Selecting a row opens a persistent, non-modal inspector rail
                 alongside this content instead of overlaying it.
               </p>
             </main>
             <Drawer direction="right" modal={false}>
-              <DrawerTrigger className="self-start rounded-none border-b border-border">
+              <DrawerTrigger className="border-border self-start rounded-none border-b">
                 Toggle inspector
               </DrawerTrigger>
               <DrawerContent>
@@ -285,7 +285,7 @@ export const PersistentInspectorPushPanel: Story = {
                     Push-mode drawers shift layout instead of overlaying it.
                   </DrawerDescription>
                 </DrawerHeader>
-                <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+                <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
                   <button className="text-primary" type="button">
                     Edit record
                   </button>
@@ -319,7 +319,8 @@ export const NonDismissable: Story = {
             <DrawerHeader>
               <DrawerTitle>Explicit close required</DrawerTitle>
               <DrawerDescription>
-                Keyboard dismissal is disabled, so a visible close action remains.
+                Keyboard dismissal is disabled, so a visible close action
+                remains.
               </DrawerDescription>
             </DrawerHeader>
             <DrawerFooter>
@@ -356,7 +357,9 @@ export const ThemeDensityAndRTL: Story = {
   ),
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const dialog = await page.findByRole("dialog", { name: "Workspace direction" });
+    const dialog = await page.findByRole("dialog", {
+      name: "Workspace direction",
+    });
     const portalHost = dialog.closest<HTMLElement>(
       '[data-slot="drawer-portal-container"]',
     );
@@ -395,7 +398,7 @@ export const BottomSheetWithSnapPoints: Story = {
                     down fast to dismiss before reaching the lowest stop.
                   </DrawerDescription>
                 </DrawerHeader>
-                <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+                <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
                   Status, owner, and last-updated filters live here.
                 </div>
               </DrawerContent>
@@ -412,11 +415,15 @@ export const BottomSheetWithSnapPoints: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open filters sheet" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open filters sheet" }),
+    );
     await expect(
       await page.findByRole("dialog", { name: "Filters" }),
     ).toBeVisible();
-    await expect(page.getByLabelText("Drag to resize filters sheet")).toBeVisible();
+    await expect(
+      page.getByLabelText("Drag to resize filters sheet"),
+    ).toBeVisible();
   },
 };
 
@@ -460,7 +467,12 @@ export const ReducedMotionFallback: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Container size="sm">
-        <Drawer defaultOpen direction="bottom" reducedMotion snapPoints={[0.4, 1]}>
+        <Drawer
+          defaultOpen
+          direction="bottom"
+          reducedMotion
+          snapPoints={[0.4, 1]}
+        >
           <DrawerTrigger>Open sheet</DrawerTrigger>
           <DrawerContent dismissible>
             <DrawerHandle aria-label="Static handle, drag disabled" />
@@ -504,17 +516,22 @@ export const PersistentInspectorWithHandle: Story = {
     return (
       <DethinkProvider theme="light" className="p-6">
         <Container size="lg">
-          <div className="flex min-h-[24rem] overflow-hidden rounded-lg border border-border">
-            <main className="flex-1 p-[var(--dt-space-6)] text-sm text-foreground">
+          <div className="border-border flex min-h-[24rem] overflow-hidden rounded-lg border">
+            <main className="text-foreground flex-1 p-[var(--dt-space-6)] text-sm">
               <p className="font-medium">Record list</p>
-              <p className="mt-[var(--dt-space-2)] text-muted-foreground">
+              <p className="text-muted-foreground mt-[var(--dt-space-2)]">
                 The inspector rail supports the same handle and snap points as
                 an overlay drawer, without trapping focus or dimming this
                 content.
               </p>
             </main>
-            <Drawer defaultOpen direction="right" modal={false} snapPoints={[0.5, 1]}>
-              <DrawerTrigger className="self-start rounded-none border-b border-border">
+            <Drawer
+              defaultOpen
+              direction="right"
+              modal={false}
+              snapPoints={[0.5, 1]}
+            >
+              <DrawerTrigger className="border-border self-start rounded-none border-b">
                 Toggle inspector
               </DrawerTrigger>
               <DrawerContent>
@@ -545,16 +562,18 @@ export const NestedDrillDownEdit: Story = {
               <DrawerHeader>
                 <DrawerTitle>Record</DrawerTitle>
                 <DrawerDescription>
-                  Opening the nested edit drawer recedes this one — same
-                  spring primitives as drag-to-dismiss, not a separate
-                  animation path.
+                  Opening the nested edit drawer recedes this one — same spring
+                  primitives as drag-to-dismiss, not a separate animation path.
                 </DrawerDescription>
               </DrawerHeader>
-              <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+              <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
                 Status: <span className="font-medium">In review</span>
               </div>
               <Drawer direction="right">
-                <DrawerTrigger className="ms-[var(--dt-space-6)]" variant="outline">
+                <DrawerTrigger
+                  className="ms-[var(--dt-space-6)]"
+                  variant="outline"
+                >
                   Edit status
                 </DrawerTrigger>
                 <DrawerContent>
@@ -587,7 +606,10 @@ export const NestedDrillDownEdit: Story = {
       throw new Error("Expected the parent drawer's content element.");
     }
 
-    await expect(parentContent).not.toHaveAttribute("data-drawer-receded", "true");
+    await expect(parentContent).not.toHaveAttribute(
+      "data-drawer-receded",
+      "true",
+    );
 
     await userEvent.click(canvas.getByRole("button", { name: "Edit status" }));
     await page.findByRole("dialog", { name: "Edit status" });
@@ -599,7 +621,9 @@ export const NestedDrillDownEdit: Story = {
     await userEvent.click(page.getByRole("button", { name: "Done" }));
 
     await waitFor(() => {
-      expect(page.queryByRole("dialog", { name: "Edit status" })).not.toBeInTheDocument();
+      expect(
+        page.queryByRole("dialog", { name: "Edit status" }),
+      ).not.toBeInTheDocument();
     });
     await waitFor(() => {
       expect(parentContent).not.toHaveAttribute("data-drawer-receded", "true");
@@ -626,7 +650,8 @@ export const SharedElementEntrance: Story = {
                 <DrawerHeader>
                   <DrawerTitle>Shared card</DrawerTitle>
                   <DrawerDescription>
-                    This content carries `layoutId=&quot;drawer-shared-card-1&quot;`.
+                    This content carries
+                    `layoutId=&quot;drawer-shared-card-1&quot;`.
                   </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter>
@@ -659,16 +684,20 @@ export const MotionPresets: Story = {
         <Container size="md">
           <Stack direction="horizontal" gap="3" wrap="wrap">
             {presets.map((motionPreset) => (
-              <Drawer direction="bottom" key={motionPreset} motionPreset={motionPreset}>
+              <Drawer
+                direction="bottom"
+                key={motionPreset}
+                motionPreset={motionPreset}
+              >
                 <DrawerTrigger variant="outline">{motionPreset}</DrawerTrigger>
                 <DrawerContent>
                   <DrawerHandle aria-label={`Drag handle (${motionPreset})`} />
                   <DrawerHeader>
                     <DrawerTitle>{`${motionPreset} preset`}</DrawerTitle>
                     <DrawerDescription>
-                      Duration, spring stiffness, and recede/drag feel all
-                      come from this preset. `none` always falls back to
-                      the CSS-only path.
+                      Duration, spring stiffness, and recede/drag feel all come
+                      from this preset. `none` always falls back to the CSS-only
+                      path.
                     </DrawerDescription>
                   </DrawerHeader>
                   <DrawerFooter>
@@ -689,8 +718,12 @@ export const MotionPresets: Story = {
     for (const motionPreset of ["none", "subtle", "standard", "expressive"]) {
       await userEvent.click(canvas.getByRole("button", { name: motionPreset }));
 
-      const dialog = await page.findByRole("dialog", { name: `${motionPreset} preset` });
-      const content = dialog.closest<HTMLElement>('[data-slot="drawer-content"]');
+      const dialog = await page.findByRole("dialog", {
+        name: `${motionPreset} preset`,
+      });
+      const content = dialog.closest<HTMLElement>(
+        '[data-slot="drawer-content"]',
+      );
 
       await expect(content).toHaveAttribute("data-motion", motionPreset);
 
@@ -708,11 +741,12 @@ export const BackgroundScale: Story = {
         <div
           data-drawer-background-wrapper=""
           className={drawerBackgroundWrapperClassNames({
-            className: "rounded-lg border border-border bg-background p-[var(--dt-space-6)]",
+            className:
+              "border-border bg-background rounded-lg border p-[var(--dt-space-6)]",
           })}
         >
-          <p className="text-sm font-medium text-foreground">Dashboard</p>
-          <p className="mt-[var(--dt-space-2)] text-sm text-muted-foreground">
+          <p className="text-foreground text-sm font-medium">Dashboard</p>
+          <p className="text-muted-foreground mt-[var(--dt-space-2)] text-sm">
             The element carrying `data-drawer-background-wrapper` scales down
             and dims while a `backgroundScale` modal Drawer is open, the
             iOS-style effect vaul calls `shouldScaleBackground`.
@@ -774,11 +808,12 @@ export const BackgroundScaleReducedMotion: Story = {
         <div
           data-drawer-background-wrapper=""
           className={drawerBackgroundWrapperClassNames({
-            className: "rounded-lg border border-border bg-background p-[var(--dt-space-6)]",
+            className:
+              "border-border bg-background rounded-lg border p-[var(--dt-space-6)]",
           })}
         >
-          <p className="text-sm font-medium text-foreground">Dashboard</p>
-          <p className="mt-[var(--dt-space-2)] text-sm text-muted-foreground">
+          <p className="text-foreground text-sm font-medium">Dashboard</p>
+          <p className="text-muted-foreground mt-[var(--dt-space-2)] text-sm">
             Under reduced motion the wrapper only dims. It never scales,
             regardless of `backgroundScale`.
           </p>
@@ -832,8 +867,8 @@ export const EdgeSwipeToOpen: Story = {
         <Container size="sm">
           <Stack gap="3">
             <FieldDescription>
-              Swipe from the left edge of this frame toward the center, or
-              use the trigger below.
+              Swipe from the left edge of this frame toward the center, or use
+              the trigger below.
             </FieldDescription>
             <Drawer direction="left" edgeSwipeToOpen>
               <DrawerTrigger variant="outline">Open navigation</DrawerTrigger>
@@ -856,12 +891,16 @@ export const EdgeSwipeToOpen: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const zone = canvasElement.querySelector('[data-slot="drawer-edge-swipe-zone"]');
+    const zone = canvasElement.querySelector(
+      '[data-slot="drawer-edge-swipe-zone"]',
+    );
 
     await expect(zone).toHaveAttribute("data-direction", "left");
     await expect(zone).toHaveAttribute("aria-hidden", "true");
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open navigation" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open navigation" }),
+    );
     await expect(
       await within(canvasElement.ownerDocument.body).findByRole("dialog", {
         name: "Navigation",
@@ -882,8 +921,8 @@ export const EdgeSwipeToOpenRTL: Story = {
             <FieldDescription>
               In an RTL provider, pick `direction="right"` for a
               reading-direction-conventional navigation drawer — the edge
-              hit-region follows the drawer's own physical `direction` and
-              does not auto-flip.
+              hit-region follows the drawer's own physical `direction` and does
+              not auto-flip.
             </FieldDescription>
             <Drawer direction="right" edgeSwipeToOpen>
               <DrawerTrigger variant="outline">فتح التنقل</DrawerTrigger>
@@ -905,7 +944,9 @@ export const EdgeSwipeToOpenRTL: Story = {
     );
   },
   play: async ({ canvasElement }) => {
-    const zone = canvasElement.querySelector('[data-slot="drawer-edge-swipe-zone"]');
+    const zone = canvasElement.querySelector(
+      '[data-slot="drawer-edge-swipe-zone"]',
+    );
 
     await expect(zone).toHaveAttribute("data-direction", "right");
   },
@@ -959,13 +1000,13 @@ function DrawerThemeMatrixSet({ label }: { label: string }) {
           </Drawer>
         ))}
       </Stack>
-      <div className="flex min-h-[8rem] overflow-hidden rounded-md border border-border">
-        <main className="flex-1 p-[var(--dt-space-3)] text-xs text-muted-foreground">
+      <div className="border-border flex min-h-[8rem] overflow-hidden rounded-md border">
+        <main className="text-muted-foreground flex-1 p-[var(--dt-space-3)] text-xs">
           Push-mode sibling content
         </main>
         <Drawer defaultOpen direction="right" modal={false}>
           <DrawerTrigger
-            className="self-start rounded-none border-b border-border"
+            className="border-border self-start rounded-none border-b"
             variant="ghost"
           >
             {`${label} push`}
@@ -1032,7 +1073,7 @@ export const NestedProviderPortalScope: Story = {
             density="compact"
             dir="rtl"
             themeConfig={drawerTheme}
-            className="rounded-md border border-border p-3"
+            className="border-border rounded-md border p-3"
           >
             <Stack gap="3">
               <Drawer defaultOpen direction="right">
@@ -1046,13 +1087,13 @@ export const NestedProviderPortalScope: Story = {
                   </DrawerFooter>
                 </DrawerContent>
               </Drawer>
-              <div className="flex min-h-[6rem] overflow-hidden rounded-md border border-border">
-                <main className="flex-1 p-[var(--dt-space-2)] text-xs text-muted-foreground">
+              <div className="border-border flex min-h-[6rem] overflow-hidden rounded-md border">
+                <main className="text-muted-foreground flex-1 p-[var(--dt-space-2)] text-xs">
                   Sibling content
                 </main>
                 <Drawer defaultOpen direction="right" modal={false}>
                   <DrawerTrigger
-                    className="self-start rounded-none border-b border-border"
+                    className="border-border self-start rounded-none border-b"
                     variant="ghost"
                   >
                     Nested push drawer
@@ -1072,13 +1113,17 @@ export const NestedProviderPortalScope: Story = {
   ),
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const modalDialog = await page.findByRole("dialog", { name: "Nested modal" });
+    const modalDialog = await page.findByRole("dialog", {
+      name: "Nested modal",
+    });
     const modalPortal = modalDialog.closest<HTMLElement>(
       '[data-slot="drawer-portal-container"]',
     );
 
     if (!modalPortal) {
-      throw new Error("Expected a provider-aware portal host for the modal drawer.");
+      throw new Error(
+        "Expected a provider-aware portal host for the modal drawer.",
+      );
     }
 
     await expect(modalPortal).toHaveAttribute("data-theme", "dark");
@@ -1086,7 +1131,9 @@ export const NestedProviderPortalScope: Story = {
     await expect(modalPortal).toHaveAttribute("dir", "rtl");
 
     const pushDialog = await page.findByRole("dialog", { name: "Nested push" });
-    const pushContent = pushDialog.closest<HTMLElement>('[data-slot="drawer-content"]');
+    const pushContent = pushDialog.closest<HTMLElement>(
+      '[data-slot="drawer-content"]',
+    );
 
     await expect(pushContent).toBeVisible();
   },
@@ -1111,11 +1158,11 @@ export const ThemeOverrides: Story = {
                 drawer portal.
               </DrawerDescription>
             </DrawerHeader>
-            <div className="grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
-              <div className="rounded-md border border-border bg-muted p-[var(--dt-space-4)]">
+            <div className="text-foreground grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
+              <div className="border-border bg-muted rounded-md border p-[var(--dt-space-4)]">
                 Theme tokens active
               </div>
-              <span className="w-fit rounded-sm bg-primary px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-primary-foreground">
+              <span className="bg-primary text-primary-foreground w-fit rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium">
                 Primary
               </span>
             </div>
@@ -1130,7 +1177,9 @@ export const ThemeOverrides: Story = {
   ),
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const dialog = await page.findByRole("dialog", { name: "Operations review" });
+    const dialog = await page.findByRole("dialog", {
+      name: "Operations review",
+    });
     const portalHost = dialog.closest<HTMLElement>(
       '[data-slot="drawer-portal-container"]',
     );

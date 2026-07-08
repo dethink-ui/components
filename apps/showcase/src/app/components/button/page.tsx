@@ -41,7 +41,7 @@ export default function ButtonPage() {
           <ExampleBlock
             file="button/sizes.tsx"
             title="Sizes"
-            description='From xs to xl, plus a square icon size. The md height follows the active density token, so buttons tighten automatically in compact layouts.'
+            description="From xs to xl, plus a square icon size. The md height follows the active density token, so buttons tighten automatically in compact layouts."
           >
             <ButtonSizes />
           </ExampleBlock>

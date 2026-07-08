@@ -31,7 +31,9 @@ export function NavigationMenuOverflow() {
               <NavigationMenuSection>
                 <NavigationMenuLink href="#reports">Reports</NavigationMenuLink>
                 <NavigationMenuLink href="#audit">Audit log</NavigationMenuLink>
-                <NavigationMenuLink href="#settings">Settings</NavigationMenuLink>
+                <NavigationMenuLink href="#settings">
+                  Settings
+                </NavigationMenuLink>
               </NavigationMenuSection>
             </NavigationMenuContent>
           </NavigationMenuItem>

@@ -59,7 +59,9 @@ export const Base: Story = {
     const page = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(canvas.getByRole("button", { name: /Show options/ }));
-    await userEvent.click(await page.findByRole("option", { name: "Operations" }));
+    await userEvent.click(
+      await page.findByRole("option", { name: "Operations" }),
+    );
 
     await expect(canvas.getByText("Operations")).toBeVisible();
   },
@@ -119,10 +121,17 @@ export const FilteringAndForm: Story = {
     const page = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(canvas.getByRole("button", { name: /Show options/ }));
-    await userEvent.type(canvas.getByRole("combobox", { name: /Teams/ }), "rev");
+    await userEvent.type(
+      canvas.getByRole("combobox", { name: /Teams/ }),
+      "rev",
+    );
 
-    await expect(await page.findByRole("option", { name: "RevOps" })).toBeVisible();
-    await expect(page.queryByRole("option", { name: "Finance" })).not.toBeInTheDocument();
+    await expect(
+      await page.findByRole("option", { name: "RevOps" }),
+    ).toBeVisible();
+    await expect(
+      page.queryByRole("option", { name: "Finance" }),
+    ).not.toBeInTheDocument();
   },
 };
 
@@ -179,12 +188,7 @@ export const ResponsiveChips: Story = {
     <DethinkProvider theme="light" className="p-6">
       <div className="max-w-72">
         <MultiSelect
-          defaultValue={[
-            "operations",
-            "finance",
-            "revops",
-            "customer-success",
-          ]}
+          defaultValue={["operations", "finance", "revops", "customer-success"]}
           items={teamItems}
           label="Wrapped recipients"
           name="wrappedRecipients"

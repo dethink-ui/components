@@ -18,13 +18,18 @@ export function DrawerSchedulerEventDetail() {
   return (
     <div
       className={drawerBackgroundWrapperClassNames({
-        className: "flex justify-center rounded-lg border border-border bg-background p-6",
+        className:
+          "border-border bg-background flex justify-center rounded-lg border p-6",
       })}
       data-drawer-background-wrapper=""
     >
       <Drawer backgroundScale direction="right">
         <DrawerTrigger>Open event</DrawerTrigger>
-        <DrawerContent dismissible showCloseButton closeButtonLabel="Close event">
+        <DrawerContent
+          dismissible
+          showCloseButton
+          closeButtonLabel="Close event"
+        >
           <DrawerHandle aria-label="Drag to dismiss" />
           <DrawerHeader>
             <DrawerTitle>Quarterly planning review</DrawerTitle>
@@ -33,17 +38,26 @@ export function DrawerSchedulerEventDetail() {
               Escape/outside click, to dismiss.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-2)] text-sm text-foreground">
+          <div className="text-foreground grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-2)] text-sm">
             <div className="flex items-center gap-[var(--dt-space-2)]">
-              <Clock aria-hidden="true" className="size-4 text-muted-foreground" />
+              <Clock
+                aria-hidden="true"
+                className="text-muted-foreground size-4"
+              />
               Tue, Mar 10 · 10:00–11:00 AM
             </div>
             <div className="flex items-center gap-[var(--dt-space-2)]">
-              <MapPin aria-hidden="true" className="size-4 text-muted-foreground" />
+              <MapPin
+                aria-hidden="true"
+                className="text-muted-foreground size-4"
+              />
               Conference room B / video link
             </div>
             <div className="flex items-center gap-[var(--dt-space-2)]">
-              <Users aria-hidden="true" className="size-4 text-muted-foreground" />
+              <Users
+                aria-hidden="true"
+                className="text-muted-foreground size-4"
+              />
               6 attendees
             </div>
           </div>

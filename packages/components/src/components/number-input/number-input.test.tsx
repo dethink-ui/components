@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -12,10 +9,7 @@ import {
   FieldError,
   FieldLabel,
 } from "../form-field";
-import {
-  NumberInput,
-  numberInputClassNames,
-} from ".";
+import { NumberInput, numberInputClassNames } from ".";
 
 describe("NumberInput", () => {
   it("defaults to text input semantics with decimal input mode", () => {
@@ -50,16 +44,20 @@ describe("NumberInput", () => {
     expect(input).toHaveAttribute("pattern", "[0-9]*");
     expect(input).toHaveValue("001.50");
     expect(input).toHaveClass("custom-number-input");
-    expect(numberInputClassNames({ className: "custom-number-input" })).toContain(
-      "custom-number-input",
-    );
+    expect(
+      numberInputClassNames({ className: "custom-number-input" }),
+    ).toContain("custom-number-input");
     expect(ref.current).toBe(input);
   });
 
   it("supports numeric keyboard mode and explicit native number type", () => {
     render(
       <>
-        <NumberInput aria-label="Seats" numberMode="numeric" defaultValue="12" />
+        <NumberInput
+          aria-label="Seats"
+          numberMode="numeric"
+          defaultValue="12"
+        />
         <NumberInput
           aria-label="Native quantity"
           type="number"
@@ -71,9 +69,15 @@ describe("NumberInput", () => {
       </>,
     );
 
-    expect(screen.getByLabelText("Seats")).toHaveAttribute("inputmode", "numeric");
+    expect(screen.getByLabelText("Seats")).toHaveAttribute(
+      "inputmode",
+      "numeric",
+    );
     expect(screen.getByLabelText("Seats")).toHaveAttribute("type", "text");
-    expect(screen.getByLabelText("Native quantity")).toHaveAttribute("type", "number");
+    expect(screen.getByLabelText("Native quantity")).toHaveAttribute(
+      "type",
+      "number",
+    );
   });
 
   it("preserves controlled string value behavior", async () => {

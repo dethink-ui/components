@@ -49,21 +49,14 @@ import { cn } from "../../utils/cn";
 
 export type CommandPaletteValue = string;
 export type CommandPaletteControlSize = "sm" | "md" | "lg";
-export type CommandPaletteCommandType = "action" | "link" | "page" | "separator";
+export type CommandPaletteCommandType =
+  "action" | "link" | "page" | "separator";
 export type CommandPaletteMotionPreset =
-  | "none"
-  | "subtle"
-  | "standard"
-  | "expressive";
+  "none" | "subtle" | "standard" | "expressive";
 export type CommandPalettePageDirection = "back" | "forward" | "none";
 export type CommandPalettePageStackChangeReason = "back" | "push" | "reset";
 export type CommandPaletteCommandSource =
-  | "base"
-  | "recent"
-  | "suggested"
-  | "async"
-  | "page"
-  | (string & {});
+  "base" | "recent" | "suggested" | "async" | "page" | (string & {});
 
 export interface CommandPaletteCommandRunContext {
   close?: () => void;
@@ -144,8 +137,10 @@ export interface CommandPalettePageStackChangeContext {
   reason: CommandPalettePageStackChangeReason;
 }
 
-export interface CommandPaletteProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children" | "onSelect"> {
+export interface CommandPaletteProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children" | "onSelect"
+> {
   announcements?: boolean;
   asyncCommands?: CommandPaletteCommand[];
   children?: ReactNode | ((command: CommandPaletteCommand) => ReactNode);
@@ -194,13 +189,17 @@ export interface CommandPaletteProps
   suggestedCommands?: CommandPaletteCommand[];
 }
 
-export interface CommandPaletteInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface CommandPaletteInputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   controlSize?: CommandPaletteControlSize;
 }
 
-export interface CommandPaletteDialogProps
-  extends Omit<DialogProps, "children"> {
+export interface CommandPaletteDialogProps extends Omit<
+  DialogProps,
+  "children"
+> {
   children?: ReactNode;
   closeOnRun?: boolean;
   motionPreset?: CommandPaletteMotionPreset;
@@ -209,8 +208,10 @@ export interface CommandPaletteDialogProps
 
 export interface CommandPaletteTriggerProps extends DialogTriggerProps {}
 
-export interface CommandPaletteContentProps
-  extends Omit<DialogContentProps, "children"> {
+export interface CommandPaletteContentProps extends Omit<
+  DialogContentProps,
+  "children"
+> {
   children?: DialogContentProps["children"];
   closeOnRun?: boolean;
   description?: ReactNode;
@@ -220,11 +221,12 @@ export interface CommandPaletteContentProps
   titleVisuallyHidden?: boolean;
 }
 
-export interface CommandPaletteListProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteListProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPaletteGroupProps
-  extends Omit<HTMLAttributes<HTMLElement>, "title"> {
+export interface CommandPaletteGroupProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "title"
+> {
   heading?: ReactNode;
 }
 
@@ -253,58 +255,43 @@ type CommandPaletteItemBaseProps = Omit<
 
 export type CommandPaletteItemProps = CommandPaletteItemBaseProps;
 
-export interface CommandPaletteItemIconProps
-  extends HTMLAttributes<HTMLSpanElement> {}
+export interface CommandPaletteItemIconProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export interface CommandPaletteItemLabelProps
-  extends HTMLAttributes<HTMLSpanElement> {}
+export interface CommandPaletteItemLabelProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export interface CommandPaletteItemDescriptionProps
-  extends HTMLAttributes<HTMLSpanElement> {}
+export interface CommandPaletteItemDescriptionProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export interface CommandPaletteItemShortcutProps
-  extends HTMLAttributes<HTMLElement> {}
+export interface CommandPaletteItemShortcutProps extends HTMLAttributes<HTMLElement> {}
 
-export interface CommandPaletteSeparatorProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteSeparatorProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPaletteEmptyProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteEmptyProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPaletteStatusProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteStatusProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPaletteLoadingProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteLoadingProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPaletteErrorProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteErrorProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPaletteRetryProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {}
+export interface CommandPaletteRetryProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
-export interface CommandPaletteAnnouncerProps
-  extends HTMLAttributes<HTMLDivElement> {}
+export interface CommandPaletteAnnouncerProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface CommandPalettePageStackProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface CommandPalettePageStackProps extends HTMLAttributes<HTMLDivElement> {
   "data-page"?: CommandPaletteValue;
   "data-page-depth"?: number | string;
   "data-page-direction"?: CommandPalettePageDirection;
 }
 
-export interface CommandPalettePageProps
-  extends HTMLAttributes<HTMLElement> {
+export interface CommandPalettePageProps extends HTMLAttributes<HTMLElement> {
   "data-page"?: CommandPaletteValue;
   "data-page-depth"?: number | string;
   "data-page-direction"?: CommandPalettePageDirection;
 }
 
-export interface CommandPalettePageHeaderProps
-  extends HTMLAttributes<HTMLElement> {}
+export interface CommandPalettePageHeaderProps extends HTMLAttributes<HTMLElement> {}
 
-export interface CommandPalettePageBackProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {}
+export interface CommandPalettePageBackProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 type CommandPaletteItemSlotProps = Record<string, unknown> & {
   "aria-disabled"?: boolean | "false" | "true";
@@ -378,8 +365,9 @@ interface CommandPalettePageFrameProps {
   "data-state"?: string;
 }
 
-const CommandPaletteContext =
-  createContext<CommandPaletteContextValue | null>(null);
+const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(
+  null,
+);
 
 const CommandPaletteDialogConfigContext =
   createContext<CommandPaletteDialogConfigContextValue | null>(null);
@@ -412,7 +400,10 @@ const commandPaletteDescriptionClasses =
 const commandPaletteInputClasses =
   "w-full min-w-0 border-0 bg-transparent text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60";
 
-const commandPaletteInputSizeClasses: Record<CommandPaletteControlSize, string> = {
+const commandPaletteInputSizeClasses: Record<
+  CommandPaletteControlSize,
+  string
+> = {
   sm: "h-8 text-base sm:text-sm",
   md: "h-density-control text-base sm:text-sm",
   lg: "h-11 text-base",
@@ -421,8 +412,7 @@ const commandPaletteInputSizeClasses: Record<CommandPaletteControlSize, string> 
 const commandPaletteListClasses =
   "grid max-h-[min(24rem,calc(100dvh_-_var(--dt-space-8)))] gap-[var(--dt-space-1)] overflow-auto p-[var(--dt-space-2)]";
 
-const commandPaletteGroupClasses =
-  "grid min-w-0 gap-[var(--dt-space-1)]";
+const commandPaletteGroupClasses = "grid min-w-0 gap-[var(--dt-space-1)]";
 
 const commandPaletteGroupHeadingClasses =
   "px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-xs font-medium uppercase tracking-normal text-muted-foreground";
@@ -430,11 +420,12 @@ const commandPaletteGroupHeadingClasses =
 const commandPaletteItemClasses =
   "relative isolate grid w-full min-w-0 cursor-default grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] overflow-hidden rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-start text-sm leading-5 text-foreground no-underline outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-150 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-55 data-[selected=true]:bg-muted data-[destructive=true]:text-destructive data-[destructive=true]:hover:bg-destructive/10 data-[destructive=true]:data-[selected=true]:bg-destructive/10 [&>:not([data-slot=command-palette-selected-indicator])]:relative [&>:not([data-slot=command-palette-selected-indicator])]:z-[1]";
 
-const commandPaletteItemSizeClasses: Record<CommandPaletteControlSize, string> = {
-  sm: "min-h-8",
-  md: "min-h-10",
-  lg: "min-h-11",
-};
+const commandPaletteItemSizeClasses: Record<CommandPaletteControlSize, string> =
+  {
+    sm: "min-h-8",
+    md: "min-h-10",
+    lg: "min-h-11",
+  };
 
 const commandPaletteItemIconClasses =
   "flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[destructive=true]/command-palette-item:text-destructive [&>svg]:size-4";
@@ -453,8 +444,7 @@ const commandPaletteItemShortcutClasses =
 const commandPaletteSelectedIndicatorClasses =
   "pointer-events-none absolute inset-0 z-0 rounded-md bg-muted group-data-[destructive=true]/command-palette-item:bg-destructive/10";
 
-const commandPaletteSeparatorClasses =
-  "my-[var(--dt-space-1)] h-px bg-border";
+const commandPaletteSeparatorClasses = "my-[var(--dt-space-1)] h-px bg-border";
 
 const commandPaletteEmptyClasses =
   "px-[var(--dt-space-3)] py-[var(--dt-space-8)] text-center text-sm text-muted-foreground";
@@ -579,12 +569,7 @@ const commandPalettePageMotionVariants: Variants = {
     offset: number;
   }) => ({
     opacity: 0,
-    x:
-      direction === "forward"
-        ? offset
-        : direction === "back"
-          ? -offset
-          : 0,
+    x: direction === "forward" ? offset : direction === "back" ? -offset : 0,
   }),
   exit: ({
     direction,
@@ -594,12 +579,7 @@ const commandPalettePageMotionVariants: Variants = {
     offset: number;
   }) => ({
     opacity: 0,
-    x:
-      direction === "forward"
-        ? -offset
-        : direction === "back"
-          ? offset
-          : 0,
+    x: direction === "forward" ? -offset : direction === "back" ? offset : 0,
   }),
 };
 
@@ -642,7 +622,10 @@ export function commandPaletteContentClassNames({
   className,
   scrollBehavior = "inside",
   size = "lg",
-}: Pick<CommandPaletteContentProps, "className" | "scrollBehavior" | "size"> = {}) {
+}: Pick<
+  CommandPaletteContentProps,
+  "className" | "scrollBehavior" | "size"
+> = {}) {
   return dialogContentClassNames({
     className: cn(commandPaletteDialogContentClasses, className),
     scrollBehavior,
@@ -828,11 +811,13 @@ function getNodeText(node: ReactNode): string | undefined {
   }
 
   if (Array.isArray(node)) {
-    return node
-      .map((child) => getNodeText(child))
-      .filter(Boolean)
-      .join(" ")
-      .trim() || undefined;
+    return (
+      node
+        .map((child) => getNodeText(child))
+        .filter(Boolean)
+        .join(" ")
+        .trim() || undefined
+    );
   }
 
   if (isValidElement<{ children?: ReactNode }>(node)) {
@@ -873,7 +858,9 @@ function removeBoundarySeparators(commands: CommandPaletteCommand[]) {
     normalizedCommands.push(command);
   }
 
-  while (normalizedCommands[normalizedCommands.length - 1]?.type === "separator") {
+  while (
+    normalizedCommands[normalizedCommands.length - 1]?.type === "separator"
+  ) {
     normalizedCommands.pop();
   }
 
@@ -988,7 +975,9 @@ function withCommandSource(
     ...command,
     group:
       command.group ??
-      (source === "base" ? undefined : commandPaletteDefaultSourceGroups[source]),
+      (source === "base"
+        ? undefined
+        : commandPaletteDefaultSourceGroups[source]),
     source: resolvedSource,
   };
 }
@@ -1035,7 +1024,12 @@ export function getCommandPaletteSourceCommands({
 
   if (canShowDiscoveryCommands) {
     appendSourceCommands(sourceCommands, seenKeys, recentCommands, "recent");
-    appendSourceCommands(sourceCommands, seenKeys, suggestedCommands, "suggested");
+    appendSourceCommands(
+      sourceCommands,
+      seenKeys,
+      suggestedCommands,
+      "suggested",
+    );
   }
 
   if (canShowAsyncCommands) {
@@ -1064,7 +1058,9 @@ export function getCommandPaletteFilteredCommands(
   } = {},
 ) {
   const filtered = shouldFilter
-    ? commands.filter((command) => command.type === "separator" || filter(command, query))
+    ? commands.filter(
+        (command) => command.type === "separator" || filter(command, query),
+      )
     : [...commands];
   const sorter = sort ?? defaultSort;
   const sorted = filtered
@@ -1098,7 +1094,9 @@ export function getCommandPaletteFilteredCommands(
   );
 }
 
-function groupCommands(commands: CommandPaletteCommand[]): CommandPaletteRenderGroup[] {
+function groupCommands(
+  commands: CommandPaletteCommand[],
+): CommandPaletteRenderGroup[] {
   const groups: CommandPaletteRenderGroup[] = [];
   const indexes = new Map<string, number>();
 
@@ -1144,7 +1142,9 @@ function renderDefaultCommandContent(command: CommandPaletteCommand) {
         ) : null}
       </span>
       {command.shortcut ? (
-        <CommandPaletteItemShortcut>{command.shortcut}</CommandPaletteItemShortcut>
+        <CommandPaletteItemShortcut>
+          {command.shortcut}
+        </CommandPaletteItemShortcut>
       ) : null}
     </>
   );
@@ -1353,7 +1353,9 @@ function commandFromItemProps({
     rel: rel ?? command?.rel,
     shortcut: shortcut ?? command?.shortcut,
     target: target ?? command?.target,
-    type: command?.type ?? (resolvedPage ? "page" : resolvedHref ? "link" : "action"),
+    type:
+      command?.type ??
+      (resolvedPage ? "page" : resolvedHref ? "link" : "action"),
   };
 
   if (command?.action) {
@@ -1521,7 +1523,8 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
       motionPreset: resolvedMotionPreset,
       reducedMotion: resolvedReducedMotion,
     });
-    const motionSettings = getCommandPaletteMotionSettings(resolvedMotionPreset);
+    const motionSettings =
+      getCommandPaletteMotionSettings(resolvedMotionPreset);
     const itemRefs = useRef(new Map<CommandPaletteValue, HTMLElement>());
     const pagesById = useMemo(
       () =>
@@ -1567,38 +1570,43 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
 
     const baseCommands =
       activePageId !== undefined
-        ? activePage?.commands ?? emptyCommands
-        : commandsProp ?? emptyCommands;
+        ? (activePage?.commands ?? emptyCommands)
+        : (commandsProp ?? emptyCommands);
     const resolvedAsyncCommands =
       activePageId !== undefined ? activePage?.asyncCommands : asyncCommands;
     const resolvedRecentCommands =
       activePageId !== undefined ? activePage?.recentCommands : recentCommands;
     const resolvedSuggestedCommands =
-      activePageId !== undefined ? activePage?.suggestedCommands : suggestedCommands;
+      activePageId !== undefined
+        ? activePage?.suggestedCommands
+        : suggestedCommands;
     const resolvedLoading =
       activePageId !== undefined ? activePage?.loading === true : loading;
-    const resolvedError = activePageId !== undefined ? activePage?.error : error;
+    const resolvedError =
+      activePageId !== undefined ? activePage?.error : error;
     const resolvedOnRetry =
       activePageId !== undefined ? activePage?.onRetry : onRetry;
     const resolvedRetryLabel =
-      activePageId !== undefined ? activePage?.retryLabel ?? retryLabel : retryLabel;
+      activePageId !== undefined
+        ? (activePage?.retryLabel ?? retryLabel)
+        : retryLabel;
     const resolvedEmptyMessage =
       activePageId !== undefined
-        ? activePage?.emptyMessage ?? emptyMessage
+        ? (activePage?.emptyMessage ?? emptyMessage)
         : emptyMessage;
     const resolvedLoadingMessage =
       activePageId !== undefined
-        ? activePage?.loadingMessage ?? loadingMessage
+        ? (activePage?.loadingMessage ?? loadingMessage)
         : loadingMessage;
     const resolvedStale =
       activePageId !== undefined ? activePage?.stale === true : stale;
     const resolvedStaleMessage =
       activePageId !== undefined
-        ? activePage?.staleMessage ?? staleMessage
+        ? (activePage?.staleMessage ?? staleMessage)
         : staleMessage;
     const resolvedMinimumQueryLength =
       activePageId !== undefined
-        ? activePage?.minimumQueryLength ?? 0
+        ? (activePage?.minimumQueryLength ?? 0)
         : minimumQueryLength;
     const resolvedMinimumQueryMessageProp =
       activePageId !== undefined
@@ -1704,55 +1712,54 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
     const [pageAnnouncement, setPageAnnouncement] = useState("");
     const compoundChildren =
       !hasDataCommands && typeof children !== "function" && children != null;
-    const renderedChildren =
-      hasDataCommands
-        ? groups.map((group, index) => (
-            <CommandPaletteMotionGroup
-              key={group.key}
-              index={index}
-              source={
-                group.commands.find((command) => command.type !== "separator")
-                  ?.source
-              }
-            >
-              {index > 0 ? <CommandPaletteSeparator /> : null}
-              <CommandPaletteGroup heading={group.heading}>
-                <AnimatePresence initial={false}>
-                  {group.commands.map((command, commandIndex) =>
-                    command.type === "separator" ? (
-                      <CommandPaletteSeparator key={command.key} />
-                    ) : (
-                      <CommandPaletteMotionResult
-                        key={command.key}
-                        index={commandIndex}
-                        source={command.source}
+    const renderedChildren = hasDataCommands
+      ? groups.map((group, index) => (
+          <CommandPaletteMotionGroup
+            key={group.key}
+            index={index}
+            source={
+              group.commands.find((command) => command.type !== "separator")
+                ?.source
+            }
+          >
+            {index > 0 ? <CommandPaletteSeparator /> : null}
+            <CommandPaletteGroup heading={group.heading}>
+              <AnimatePresence initial={false}>
+                {group.commands.map((command, commandIndex) =>
+                  command.type === "separator" ? (
+                    <CommandPaletteSeparator key={command.key} />
+                  ) : (
+                    <CommandPaletteMotionResult
+                      key={command.key}
+                      index={commandIndex}
+                      source={command.source}
+                    >
+                      <CommandPaletteItem
+                        command={command}
+                        destructive={command.destructive}
+                        disabled={command.disabled}
+                        disabledReason={command.disabledReason}
+                        href={command.href}
+                        page={command.page}
+                        rel={command.rel}
+                        shortcut={command.shortcut}
+                        target={command.target}
+                        value={command.key}
                       >
-                        <CommandPaletteItem
-                          command={command}
-                          destructive={command.destructive}
-                          disabled={command.disabled}
-                          disabledReason={command.disabledReason}
-                          href={command.href}
-                          page={command.page}
-                          rel={command.rel}
-                          shortcut={command.shortcut}
-                          target={command.target}
-                          value={command.key}
-                        >
-                          {typeof children === "function"
-                            ? children(command)
-                            : renderDefaultCommandContent(command)}
-                        </CommandPaletteItem>
-                      </CommandPaletteMotionResult>
-                    ),
-                  )}
-                </AnimatePresence>
-              </CommandPaletteGroup>
-            </CommandPaletteMotionGroup>
-          ))
-        : typeof children === "function"
-          ? null
-          : children;
+                        {typeof children === "function"
+                          ? children(command)
+                          : renderDefaultCommandContent(command)}
+                      </CommandPaletteItem>
+                    </CommandPaletteMotionResult>
+                  ),
+                )}
+              </AnimatePresence>
+            </CommandPaletteGroup>
+          </CommandPaletteMotionGroup>
+        ))
+      : typeof children === "function"
+        ? null
+        : children;
 
     const clearTransientAnnouncements = useCallback(() => {
       setPageAnnouncement("");
@@ -1924,8 +1931,8 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
           clearTransientAnnouncements();
           setResolvedSelectedKey(
             offset >= 0
-              ? navigationKeys[0] ?? null
-              : navigationKeys[navigationKeys.length - 1] ?? null,
+              ? (navigationKeys[0] ?? null)
+              : (navigationKeys[navigationKeys.length - 1] ?? null),
           );
           return;
         }
@@ -1945,7 +1952,9 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
       ],
     );
 
-    const handleInputKeyDown = useCallback<KeyboardEventHandler<HTMLInputElement>>(
+    const handleInputKeyDown = useCallback<
+      KeyboardEventHandler<HTMLInputElement>
+    >(
       (event) => {
         const navigationKeys = getNavigationKeys();
 
@@ -2026,7 +2035,12 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
       if (!resolvedSelectedKey || !enabledKeys.includes(resolvedSelectedKey)) {
         setResolvedSelectedKey(enabledKeys[0] ?? null);
       }
-    }, [enabledKeys, hasDataCommands, resolvedSelectedKey, setResolvedSelectedKey]);
+    }, [
+      enabledKeys,
+      hasDataCommands,
+      resolvedSelectedKey,
+      setResolvedSelectedKey,
+    ]);
 
     const resolvedAriaLabel =
       ariaLabel ?? (label || ariaLabelledBy ? undefined : "Command palette");
@@ -2191,7 +2205,9 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
               ) : null}
             </CommandPaletteError>
           ) : resolvedLoading && resultCommands.length === 0 ? (
-            <CommandPaletteLoading>{resolvedLoadingMessage}</CommandPaletteLoading>
+            <CommandPaletteLoading>
+              {resolvedLoadingMessage}
+            </CommandPaletteLoading>
           ) : resolvedLoading ? (
             <CommandPaletteLoading data-state="stale">
               {resolvedStaleMessage}
@@ -2432,7 +2448,9 @@ export const CommandPaletteContent = forwardRef<
             typeof children === "function" ? children(opts) : children;
 
           return (
-            <CommandPaletteDialogActionContext.Provider value={actionContextValue}>
+            <CommandPaletteDialogActionContext.Provider
+              value={actionContextValue}
+            >
               <div
                 data-motion={resolvedMotionPreset}
                 data-reduced-motion={resolvedReducedMotion ? "true" : undefined}
@@ -2502,7 +2520,9 @@ export const CommandPaletteInput = forwardRef<
         id={props.id ?? context?.inputId}
         aria-label={
           props["aria-label"] ??
-          (ariaLabelledBy ?? context?.labelId ? undefined : context?.inputAriaLabel)
+          ((ariaLabelledBy ?? context?.labelId)
+            ? undefined
+            : context?.inputAriaLabel)
         }
         aria-labelledby={ariaLabelledBy ?? context?.labelId}
         data-slot="command-palette-input"
@@ -2910,19 +2930,19 @@ export const CommandPalettePageStack = forwardRef<
     },
     ref,
   ) => {
-  const context = useContext(CommandPaletteContext);
+    const context = useContext(CommandPaletteContext);
 
-  return (
-    <div
-      {...props}
-      ref={ref}
-      data-page={dataPage ?? context?.page ?? "root"}
-      data-page-depth={dataPageDepth ?? context?.pageStack.length ?? 0}
-      data-page-direction={dataPageDirection ?? context?.pageDirection}
-      data-slot="command-palette-page-stack"
-      className={commandPalettePageStackClassNames({ className })}
-    />
-  );
+    return (
+      <div
+        {...props}
+        ref={ref}
+        data-page={dataPage ?? context?.page ?? "root"}
+        data-page-depth={dataPageDepth ?? context?.pageStack.length ?? 0}
+        data-page-direction={dataPageDirection ?? context?.pageDirection}
+        data-slot="command-palette-page-stack"
+        className={commandPalettePageStackClassNames({ className })}
+      />
+    );
   },
 );
 
@@ -2942,19 +2962,19 @@ export const CommandPalettePage = forwardRef<
     },
     ref,
   ) => {
-  const context = useContext(CommandPaletteContext);
+    const context = useContext(CommandPaletteContext);
 
-  return (
-    <section
-      {...props}
-      ref={ref}
-      data-page={dataPage ?? context?.page ?? "root"}
-      data-page-depth={dataPageDepth ?? context?.pageStack.length ?? 0}
-      data-page-direction={dataPageDirection ?? context?.pageDirection}
-      data-slot="command-palette-page"
-      className={commandPalettePageClassNames({ className })}
-    />
-  );
+    return (
+      <section
+        {...props}
+        ref={ref}
+        data-page={dataPage ?? context?.page ?? "root"}
+        data-page-depth={dataPageDepth ?? context?.pageStack.length ?? 0}
+        data-page-direction={dataPageDirection ?? context?.pageDirection}
+        data-slot="command-palette-page"
+        className={commandPalettePageClassNames({ className })}
+      />
+    );
   },
 );
 

@@ -28,15 +28,15 @@ import {
 export function SidebarRecipeAiWorkspace() {
   return (
     <SidebarProvider variant="floating" motion="expressive">
-      <div className="flex h-[28rem] overflow-hidden rounded-lg border border-border bg-muted/30">
+      <div className="border-border bg-muted/30 flex h-[28rem] overflow-hidden rounded-lg border">
         <Sidebar aria-label="AI workspace navigation">
           <SidebarHeader>
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="min-w-0">
-                <div className="truncate text-sm font-semibold text-foreground">
+                <div className="text-foreground truncate text-sm font-semibold">
                   Assist Studio
                 </div>
-                <div className="truncate text-xs text-muted-foreground">
+                <div className="text-muted-foreground truncate text-xs">
                   Model operations
                 </div>
               </div>
@@ -84,7 +84,7 @@ export function SidebarRecipeAiWorkspace() {
           </SidebarContent>
           <SidebarFooter>
             <div className="flex items-center justify-between gap-2">
-              <span className="truncate text-sm text-muted-foreground">
+              <span className="text-muted-foreground truncate text-sm">
                 Team quota
               </span>
               <SidebarMenuAction aria-label="Open quota settings">
@@ -96,19 +96,19 @@ export function SidebarRecipeAiWorkspace() {
         </Sidebar>
         <SidebarInset className="p-6">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-md border border-border bg-background p-4">
-              <div className="text-sm font-semibold text-foreground">
+            <div className="border-border bg-background rounded-md border p-4">
+              <div className="text-foreground text-sm font-semibold">
                 38 active runs
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm">
                 Navigation state stays visible while the workspace updates.
               </p>
             </div>
-            <div className="rounded-md border border-border bg-background p-4">
-              <div className="text-sm font-semibold text-foreground">
+            <div className="border-border bg-background rounded-md border p-4">
+              <div className="text-foreground text-sm font-semibold">
                 92% eval pass rate
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="text-muted-foreground mt-2 text-sm">
                 Badges and descriptions fit dense AI-native surfaces.
               </p>
             </div>

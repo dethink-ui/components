@@ -40,7 +40,7 @@ export const navigationMenuProps: PropRow[] = [
     type: 'boolean | "page" | "location"',
     defaultValue: "—",
     description:
-      'Marks the current destination with aria-current and a stable data-current attribute.',
+      "Marks the current destination with aria-current and a stable data-current attribute.",
   },
   {
     prop: "NavigationMenuLink — disabled / external / icon / asChild",

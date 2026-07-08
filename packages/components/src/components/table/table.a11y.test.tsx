@@ -39,7 +39,9 @@ describe("Table accessibility", () => {
                 <TableHead id="production" scope="row">
                   Production
                 </TableHead>
-                <TableCell headers="production owner">ops@example.com</TableCell>
+                <TableCell headers="production owner">
+                  ops@example.com
+                </TableCell>
                 <TableCell headers="production usage" numeric align="end">
                   2.4 TB
                 </TableCell>
@@ -65,7 +67,9 @@ describe("Table accessibility", () => {
                 <TableHead id="audit" scope="row">
                   Audit
                 </TableHead>
-                <TableCell headers="audit owner">security@example.com</TableCell>
+                <TableCell headers="audit owner">
+                  security@example.com
+                </TableCell>
                 <TableCell headers="audit usage" numeric align="end">
                   18 GB
                 </TableCell>
@@ -79,7 +83,9 @@ describe("Table accessibility", () => {
       </DethinkProvider>,
     );
 
-    const table = screen.getByRole("table", { name: "Workspace billing summary" });
+    const table = screen.getByRole("table", {
+      name: "Workspace billing summary",
+    });
     const rowHeader = screen.getByRole("rowheader", { name: "Production" });
     const button = screen.getByRole("button", { name: "Manage" });
     const link = screen.getByRole("link", { name: "View details" });

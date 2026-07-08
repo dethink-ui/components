@@ -76,8 +76,8 @@ const teasers: Record<string, ReactNode> = {
 export default function HomePage() {
   return (
     <div className="flex flex-col">
-      <section className="sc-hero-backdrop border-b border-border/70">
-        <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
+      <section className="sc-hero-backdrop border-border/70 border-b">
+        <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <LandingHero />
         </div>
       </section>
@@ -94,14 +94,14 @@ export default function HomePage() {
             >
               Documented components
             </h2>
-            <p className="max-w-xl text-muted-foreground">
+            <p className="text-muted-foreground max-w-xl">
               Each page pairs live previews with the exact source behind them,
               installation steps, and a full props reference.
             </p>
           </div>
           <Link
             href="/components"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="text-primary inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
           >
             View all
             <ArrowRight className="size-4" aria-hidden="true" />
@@ -110,8 +110,8 @@ export default function HomePage() {
         <ul className="grid gap-5 md:grid-cols-3">
           {componentCatalog.map((component) => (
             <li key={component.slug} className="h-full">
-              <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-                <div className="sc-preview-surface flex min-h-36 flex-1 items-center justify-center border-b border-border/70 p-6">
+              <article className="group border-border bg-background hover:border-primary/50 flex h-full flex-col overflow-hidden rounded-xl border shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+                <div className="sc-preview-surface border-border/70 flex min-h-36 flex-1 items-center justify-center border-b p-6">
                   <div
                     aria-hidden="true"
                     className="pointer-events-none w-full max-w-60"
@@ -122,19 +122,19 @@ export default function HomePage() {
                   </div>
                 </div>
                 <div className="space-y-1.5 p-5">
-                  <h3 className="flex items-center justify-between font-heading text-lg font-semibold">
+                  <h3 className="font-heading flex items-center justify-between text-lg font-semibold">
                     <Link
                       href={`/components/${component.slug}`}
-                      className="inline-flex items-center gap-1.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      className="focus-visible:ring-ring focus-visible:ring-offset-background inline-flex items-center gap-1.5 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                     >
                       {component.name}
                       <ArrowRight
                         aria-hidden="true"
-                        className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+                        className="text-muted-foreground group-hover:text-primary size-4 transition-transform group-hover:translate-x-0.5"
                       />
                     </Link>
                   </h3>
-                  <p className="text-sm leading-6 text-muted-foreground">
+                  <p className="text-muted-foreground text-sm leading-6">
                     {component.description}
                   </p>
                 </div>
@@ -146,7 +146,7 @@ export default function HomePage() {
 
       <section
         aria-labelledby="principles-heading"
-        className="border-t border-border/70 bg-muted/40"
+        className="border-border/70 bg-muted/40 border-t"
       >
         <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 id="principles-heading" className="sr-only">
@@ -155,24 +155,25 @@ export default function HomePage() {
           <dl className="grid gap-10 md:grid-cols-3">
             <div className="space-y-2">
               <dt className="font-heading text-lg font-semibold">
-                <span aria-hidden="true" className="mr-2 text-primary">
+                <span aria-hidden="true" className="text-primary mr-2">
                   01
                 </span>
                 Own the code
               </dt>
-              <dd className="text-sm leading-6 text-muted-foreground">
-                Components install as readable source through a shadcn-compatible
-                registry. No black-box package — edit anything.
+              <dd className="text-muted-foreground text-sm leading-6">
+                Components install as readable source through a
+                shadcn-compatible registry. No black-box package — edit
+                anything.
               </dd>
             </div>
             <div className="space-y-2">
               <dt className="font-heading text-lg font-semibold">
-                <span aria-hidden="true" className="mr-2 text-primary">
+                <span aria-hidden="true" className="text-primary mr-2">
                   02
                 </span>
                 Themed by tokens
               </dt>
-              <dd className="text-sm leading-6 text-muted-foreground">
+              <dd className="text-muted-foreground text-sm leading-6">
                 Every color, radius, font, and density value is a CSS variable.
                 This site&apos;s teal brand is a pure token override — zero
                 component changes.
@@ -180,12 +181,12 @@ export default function HomePage() {
             </div>
             <div className="space-y-2">
               <dt className="font-heading text-lg font-semibold">
-                <span aria-hidden="true" className="mr-2 text-primary">
+                <span aria-hidden="true" className="text-primary mr-2">
                   03
                 </span>
                 Accessible by default
               </dt>
-              <dd className="text-sm leading-6 text-muted-foreground">
+              <dd className="text-muted-foreground text-sm leading-6">
                 Keyboard support, focus rings, ARIA states, and reduced-motion
                 behavior are built in and covered by automated a11y tests.
               </dd>

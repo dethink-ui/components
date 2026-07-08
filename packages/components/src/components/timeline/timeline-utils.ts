@@ -1,12 +1,7 @@
 import type { ReactNode } from "react";
 
 export type TimelineStatus =
-  | "neutral"
-  | "complete"
-  | "current"
-  | "upcoming"
-  | "warning"
-  | "error";
+  "neutral" | "complete" | "current" | "upcoming" | "warning" | "error";
 
 export type TimelineMode = "events" | "progress" | "story";
 export type TimelineOrientation = "horizontal" | "vertical";
@@ -137,13 +132,16 @@ export function normalizeViewportOptions(
     maxZoom,
     controls: viewport?.controls ?? timelineDefaultViewport.controls,
     controlsVisibility:
-      viewport?.controlsVisibility ?? timelineDefaultViewport.controlsVisibility,
+      viewport?.controlsVisibility ??
+      timelineDefaultViewport.controlsVisibility,
     chrome: viewport?.chrome ?? timelineDefaultViewport.chrome,
     wheelZoom: viewport?.wheelZoom ?? timelineDefaultViewport.wheelZoom,
   };
 }
 
-export function getTimelineDateValue(datetime: TimelineItemBaseData["datetime"]) {
+export function getTimelineDateValue(
+  datetime: TimelineItemBaseData["datetime"],
+) {
   if (!datetime) {
     return undefined;
   }
@@ -162,7 +160,9 @@ export function getTimelineDatetimeAttribute(
   }
 
   if (datetime instanceof Date) {
-    return Number.isNaN(datetime.getTime()) ? undefined : datetime.toISOString();
+    return Number.isNaN(datetime.getTime())
+      ? undefined
+      : datetime.toISOString();
   }
 
   return getTimelineDateValue(datetime) === undefined ? undefined : datetime;
@@ -170,10 +170,7 @@ export function getTimelineDatetimeAttribute(
 
 export function resolveTimelineScale<
   TPayload extends TimelineItemPayload = TimelineItemPayload,
->(
-  items: TimelineItemData<TPayload>[],
-  scale: TimelineScale = "auto",
-) {
+>(items: TimelineItemData<TPayload>[], scale: TimelineScale = "auto") {
   if (scale !== "auto") {
     return scale;
   }
@@ -322,7 +319,8 @@ export function normalizeTimelineItems<
         return aValue - bValue;
       })
     : withOriginalIndex;
-  const orderedItems = order === "desc" ? [...sortedItems].reverse() : sortedItems;
+  const orderedItems =
+    order === "desc" ? [...sortedItems].reverse() : sortedItems;
   const axisPositions = getAxisPositions(orderedItems, resolvedScale, order);
 
   return orderedItems.map((item, index): NormalizedTimelineItem<TPayload> => {
@@ -360,9 +358,11 @@ export function getTimelineContentSize<
 
   if (orientation === "horizontal") {
     const railY = getTimelineCrossAxisPosition(orientation, layout);
-    const cardInset = timelineGeometry.cardWidth / 2 + timelineGeometry.startPadding / 2;
+    const cardInset =
+      timelineGeometry.cardWidth / 2 + timelineGeometry.startPadding / 2;
     const cardBlock =
-      timelineGeometry.estimatedCardBlockSize + timelineGeometry.horizontalCardOffset;
+      timelineGeometry.estimatedCardBlockSize +
+      timelineGeometry.horizontalCardOffset;
 
     return {
       width: Math.ceil(maxX - Math.min(0, minX) + cardInset),
@@ -375,7 +375,9 @@ export function getTimelineContentSize<
   }
 
   const cardInset =
-    timelineGeometry.cardWidth + timelineGeometry.verticalCardOffset + timelineGeometry.startPadding;
+    timelineGeometry.cardWidth +
+    timelineGeometry.verticalCardOffset +
+    timelineGeometry.startPadding;
 
   return {
     width: Math.ceil(maxX - Math.min(0, minX) + cardInset),
@@ -446,7 +448,10 @@ export function fitTimelineTransform({
   }
 
   const zoom = clampNumber(
-    Math.min(viewportSize.width / contentSize.width, viewportSize.height / contentSize.height),
+    Math.min(
+      viewportSize.width / contentSize.width,
+      viewportSize.height / contentSize.height,
+    ),
     minZoom,
     maxZoom,
   );
@@ -488,7 +493,9 @@ export function getNextEnabledTimelineItemId(
   const currentIndex = enabledItems.findIndex((item) => item.id === selectedId);
 
   if (currentIndex === -1) {
-    return direction === 1 ? enabledItems[0].id : enabledItems[enabledItems.length - 1].id;
+    return direction === 1
+      ? enabledItems[0].id
+      : enabledItems[enabledItems.length - 1].id;
   }
 
   return enabledItems[

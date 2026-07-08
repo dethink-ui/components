@@ -92,7 +92,9 @@ export const FieldSetComposition: Story = {
                   </FieldControl>
                   <FieldContent>
                     <FieldLabel>Fast</FieldLabel>
-                    <FieldDescription>Prefer short answers and low latency.</FieldDescription>
+                    <FieldDescription>
+                      Prefer short answers and low latency.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
                 <Field id="mode-balanced" orientation="horizontal">
@@ -101,7 +103,9 @@ export const FieldSetComposition: Story = {
                   </FieldControl>
                   <FieldContent>
                     <FieldLabel>Balanced</FieldLabel>
-                    <FieldDescription>Balance detail with responsiveness.</FieldDescription>
+                    <FieldDescription>
+                      Balance detail with responsiveness.
+                    </FieldDescription>
                   </FieldContent>
                 </Field>
               </FieldGroup>
@@ -170,7 +174,12 @@ export const InvalidRequired: Story = {
                 </FieldControl>
                 <FieldLabel>Fast</FieldLabel>
               </Field>
-              <Field id="model-reasoning" orientation="horizontal" invalid required>
+              <Field
+                id="model-reasoning"
+                orientation="horizontal"
+                invalid
+                required
+              >
                 <FieldControl asChild>
                   <RadioGroupItem value="reasoning" />
                 </FieldControl>
@@ -244,7 +253,11 @@ export const SettingsCard: Story = {
           <CardContent>
             <FieldSet>
               <FieldLegend>Issue assignment</FieldLegend>
-              <RadioGroup name="assignment" defaultValue="balanced" orientation="horizontal">
+              <RadioGroup
+                name="assignment"
+                defaultValue="balanced"
+                orientation="horizontal"
+              >
                 <Field id="assignment-round-robin" orientation="horizontal">
                   <FieldControl asChild>
                     <RadioGroupItem value="round-robin" />
@@ -275,7 +288,7 @@ export const ThemeDensityAndRTL: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="sm">
             <FieldSet>
@@ -295,7 +308,9 @@ export const ThemeDensityAndRTL: Story = {
                   <FieldControl asChild>
                     <RadioGroupItem value="balanced" />
                   </FieldControl>
-                  <FieldLabel>{theme === "dark" ? "מאוזן" : "Balanced"}</FieldLabel>
+                  <FieldLabel>
+                    {theme === "dark" ? "מאוזן" : "Balanced"}
+                  </FieldLabel>
                 </Field>
               </RadioGroup>
             </FieldSet>

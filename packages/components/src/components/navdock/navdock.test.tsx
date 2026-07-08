@@ -150,9 +150,7 @@ function ControlledSubmenuDock({
   );
 }
 
-async function withOverflowingDockList(
-  callback: () => Promise<void> | void,
-) {
+async function withOverflowingDockList(callback: () => Promise<void> | void) {
   const scrollWidthDescriptor = Object.getOwnPropertyDescriptor(
     HTMLElement.prototype,
     "scrollWidth",
@@ -238,12 +236,18 @@ async function withAutoCollapseMedia(
     media: "(max-width: 640px), (pointer: coarse)",
     onchange: null,
     addEventListener: vi.fn(
-      (_eventName: "change", listener: (event: MediaQueryListEvent) => void) => {
+      (
+        _eventName: "change",
+        listener: (event: MediaQueryListEvent) => void,
+      ) => {
         listeners.add(listener);
       },
     ),
     removeEventListener: vi.fn(
-      (_eventName: "change", listener: (event: MediaQueryListEvent) => void) => {
+      (
+        _eventName: "change",
+        listener: (event: MediaQueryListEvent) => void,
+      ) => {
         listeners.delete(listener);
       },
     ),
@@ -286,7 +290,10 @@ describe("NavDock", () => {
     expect(nav).toHaveAttribute("data-orientation", "horizontal");
     expect(nav).toHaveAttribute("data-overflow-axis", "x");
     expect(nav).toHaveAttribute("data-show-title", "hover");
-    expect(screen.getByRole("list")).toHaveAttribute("data-slot", "navdock-list");
+    expect(screen.getByRole("list")).toHaveAttribute(
+      "data-slot",
+      "navdock-list",
+    );
     expect(screen.getByRole("list")).toHaveAttribute(
       "data-orientation",
       "horizontal",
@@ -401,7 +408,9 @@ describe("NavDock", () => {
 
     await user.click(closeTrigger);
 
-    await waitFor(() => expect(screen.queryByRole("list")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.queryByRole("list")).not.toBeInTheDocument(),
+    );
     expect(nav).toHaveAttribute("data-collapsed", "true");
   });
 
@@ -463,7 +472,9 @@ describe("NavDock", () => {
       </NavDock>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open navigation dock" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open navigation dock" }),
+    );
 
     const list = screen.getByRole("list");
     const trigger = screen.getByRole("button", {
@@ -491,7 +502,9 @@ describe("NavDock", () => {
       </NavDock>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open navigation dock" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open navigation dock" }),
+    );
 
     expect(onCollapsedChange).toHaveBeenLastCalledWith(false);
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
@@ -561,15 +574,23 @@ describe("NavDock", () => {
     trigger.focus();
     await user.keyboard("{Escape}");
 
-    await waitFor(() => expect(screen.queryByRole("list")).not.toBeInTheDocument());
-    expect(screen.getByRole("button", { name: "Open navigation dock" })).toHaveFocus();
+    await waitFor(() =>
+      expect(screen.queryByRole("list")).not.toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("button", { name: "Open navigation dock" }),
+    ).toHaveFocus();
 
-    await user.click(screen.getByRole("button", { name: "Open navigation dock" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open navigation dock" }),
+    );
     expect(screen.getByRole("list")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Outside action" }));
 
-    await waitFor(() => expect(screen.queryByRole("list")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.queryByRole("list")).not.toBeInTheDocument(),
+    );
   });
 
   it("uses auto collapsed mode for coarse pointer or compact viewports", async () => {
@@ -595,7 +616,9 @@ describe("NavDock", () => {
     await withAutoCollapseMedia(false, async () => {
       render(<NavDock collapseMode="auto" items={getItems()} />);
 
-      expect(screen.queryByRole("button", { name: "Open navigation dock" })).toBeNull();
+      expect(
+        screen.queryByRole("button", { name: "Open navigation dock" }),
+      ).toBeNull();
       expect(screen.getByRole("list")).toBeInTheDocument();
       expect(screen.getByRole("navigation")).not.toHaveAttribute(
         "data-collapse-active",
@@ -606,13 +629,17 @@ describe("NavDock", () => {
   it("ignores collapsed props when collapseMode is none", () => {
     render(<NavDock collapsed collapseMode="none" items={getItems()} />);
 
-    expect(screen.queryByRole("button", { name: "Open navigation dock" })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Open navigation dock" }),
+    ).toBeNull();
     expect(screen.getByRole("list")).toBeInTheDocument();
     expect(screen.getByRole("navigation")).toHaveAttribute(
       "data-collapse-mode",
       "none",
     );
-    expect(screen.getByRole("navigation")).not.toHaveAttribute("data-collapsed");
+    expect(screen.getByRole("navigation")).not.toHaveAttribute(
+      "data-collapsed",
+    );
   });
 
   it("keeps submenu triggers explicit after collapsed expansion", async () => {
@@ -624,14 +651,18 @@ describe("NavDock", () => {
       </NavDock>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open navigation dock" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open navigation dock" }),
+    );
     await user.click(screen.getByRole("button", { name: "Docs" }));
 
     expect(screen.getByRole("button", { name: "Docs" })).toHaveAttribute(
       "aria-expanded",
       "true",
     );
-    expect(screen.getByRole("link", { name: /API reference/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /API reference/ }),
+    ).toBeInTheDocument();
   });
 
   it("renders data-driven submenu disclosures from child item arrays", async () => {
@@ -649,10 +680,9 @@ describe("NavDock", () => {
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(trigger).not.toHaveAttribute("aria-haspopup");
     expect(trigger).toHaveAttribute("aria-controls");
-    expect(container.querySelector('[data-slot="navdock-submenu"]')).toHaveAttribute(
-      "data-state",
-      "open",
-    );
+    expect(
+      container.querySelector('[data-slot="navdock-submenu"]'),
+    ).toHaveAttribute("data-state", "open");
     expect(
       container.querySelector('[data-slot="navdock-submenu-content"]'),
     ).toHaveAttribute("role", "group");
@@ -743,9 +773,9 @@ describe("NavDock", () => {
         <NavDock defaultOpenValue="docs" items={getSubmenuItems()} />,
       );
       const submenu = container.querySelector('[data-slot="navdock-submenu"]');
-      const content = screen.getByText("API reference").closest(
-        '[data-slot="navdock-submenu-content"]',
-      );
+      const content = screen
+        .getByText("API reference")
+        .closest('[data-slot="navdock-submenu-content"]');
 
       expect(submenu).not.toBeNull();
       expect(content).not.toBeNull();
@@ -894,7 +924,10 @@ describe("NavDock", () => {
       "data-overflow-axis",
       overflowAxis,
     );
-    expect(screen.getByRole("list")).toHaveAttribute("data-placement", placement);
+    expect(screen.getByRole("list")).toHaveAttribute(
+      "data-placement",
+      placement,
+    );
     expect(screen.getByRole("list")).toHaveAttribute(
       "data-orientation",
       orientation,
@@ -919,15 +952,15 @@ describe("NavDock", () => {
     expect(
       navDockClassNames({ placement: "bottom", position: "fixed" }),
     ).toContain("env(safe-area-inset-bottom)");
-    expect(navDockClassNames({ placement: "top", position: "fixed" })).toContain(
-      "env(safe-area-inset-top)",
-    );
-    expect(navDockClassNames({ placement: "left", position: "fixed" })).toContain(
-      "env(safe-area-inset-left)",
-    );
-    expect(navDockClassNames({ placement: "right", position: "fixed" })).toContain(
-      "env(safe-area-inset-right)",
-    );
+    expect(
+      navDockClassNames({ placement: "top", position: "fixed" }),
+    ).toContain("env(safe-area-inset-top)");
+    expect(
+      navDockClassNames({ placement: "left", position: "fixed" }),
+    ).toContain("env(safe-area-inset-left)");
+    expect(
+      navDockClassNames({ placement: "right", position: "fixed" }),
+    ).toContain("env(safe-area-inset-right)");
   });
 
   it.each(variants)("renders %s variant state", (variant) => {
@@ -1005,9 +1038,9 @@ describe("NavDock", () => {
 
     expect(button).toHaveAttribute("aria-current", "true");
     expect(button).toHaveAttribute("data-current", "true");
-    expect(
-      screen.getByRole("link", { name: "Overview" }),
-    ).not.toHaveAttribute("data-current");
+    expect(screen.getByRole("link", { name: "Overview" })).not.toHaveAttribute(
+      "data-current",
+    );
   });
 
   it("keeps disabled items visible but non-activatable", async () => {
@@ -1208,7 +1241,9 @@ describe("NavDock", () => {
         );
 
         expect(hoverTitle).toHaveTextContent("Overview");
-        expect(container.querySelector('[data-slot="navdock-hover-title"]')).toBeNull();
+        expect(
+          container.querySelector('[data-slot="navdock-hover-title"]'),
+        ).toBeNull();
       });
     });
   });
@@ -1301,11 +1336,15 @@ describe("NavDock", () => {
 
     const overview = screen.getByRole("link", { name: "Overview" });
 
-    expect(container.querySelector('[data-slot="navdock-hover-title"]')).toBeNull();
+    expect(
+      container.querySelector('[data-slot="navdock-hover-title"]'),
+    ).toBeNull();
 
     await user.hover(overview);
 
-    const hoverTitle = container.querySelector('[data-slot="navdock-hover-title"]');
+    const hoverTitle = container.querySelector(
+      '[data-slot="navdock-hover-title"]',
+    );
 
     expect(overview).toHaveAccessibleName("Overview");
     expect(hoverTitle).toHaveTextContent("Overview");
@@ -1343,10 +1382,12 @@ describe("NavDock", () => {
 
     expect(link).toHaveAttribute("href", "/router");
     expect(link).toHaveAttribute("data-current", "true");
-    expect(link.querySelector('[data-slot="navdock-item-icon"]')).toBeInTheDocument();
-    expect(link.querySelector('[data-slot="navdock-item-title"]')).toHaveTextContent(
-      "Router",
-    );
+    expect(
+      link.querySelector('[data-slot="navdock-item-icon"]'),
+    ).toBeInTheDocument();
+    expect(
+      link.querySelector('[data-slot="navdock-item-title"]'),
+    ).toHaveTextContent("Router");
   });
 
   it("renders a decorative separator inside compound lists", () => {
@@ -1364,7 +1405,9 @@ describe("NavDock", () => {
       </NavDock>,
     );
 
-    const separator = container.querySelector('[data-slot="navdock-separator"]');
+    const separator = container.querySelector(
+      '[data-slot="navdock-separator"]',
+    );
 
     expect(separator?.tagName).toBe("LI");
     expect(separator).toHaveAttribute("aria-hidden", "true");
@@ -1388,7 +1431,9 @@ describe("NavDock", () => {
       </NavDock>,
     );
 
-    const separator = container.querySelector('[data-slot="navdock-separator"]');
+    const separator = container.querySelector(
+      '[data-slot="navdock-separator"]',
+    );
 
     expect(separator).toHaveAttribute("data-placement", "left");
     expect(separator).toHaveAttribute("data-orientation", "horizontal");
@@ -1504,7 +1549,9 @@ describe("NavDock", () => {
     expect(navDockListClassNames({ className: "custom" })).toContain("custom");
     expect(navDockItemClassNames({ className: "custom" })).toContain("custom");
     expect(navDockLinkClassNames({ className: "custom" })).toContain("custom");
-    expect(navDockButtonClassNames({ className: "custom" })).toContain("custom");
+    expect(navDockButtonClassNames({ className: "custom" })).toContain(
+      "custom",
+    );
     expect(navDockSeparatorClassNames({ className: "custom" })).toContain(
       "custom",
     );
@@ -1526,9 +1573,9 @@ describe("NavDock", () => {
     expect(navDockListClassNames({ overflowing: true })).toContain(
       "overflow-x-auto",
     );
-    expect(navDockListClassNames({ placement: "left", overflowing: true })).toContain(
-      "overflow-y-auto",
-    );
+    expect(
+      navDockListClassNames({ placement: "left", overflowing: true }),
+    ).toContain("overflow-y-auto");
     expect(navDockListClassNames()).toContain("[scrollbar-width:none]");
     expect(navDockListClassNames()).not.toContain("scroll-smooth");
     expect(className).not.toContain("transform-gpu");
@@ -1551,6 +1598,8 @@ describe("NavDock", () => {
     expect(overview.className).not.toContain("will-change-transform");
     expect(icon).toHaveClass("transform-gpu");
     expect(icon).toHaveClass("will-change-transform");
-    expect(icon?.className).toContain("data-[reduced-motion=true]:will-change-auto");
+    expect(icon?.className).toContain(
+      "data-[reduced-motion=true]:will-change-auto",
+    );
   });
 });

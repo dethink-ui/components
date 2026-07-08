@@ -51,7 +51,8 @@ export const timelineProps: PropRow[] = [
     prop: "viewport",
     type: "TimelineViewportOptions",
     defaultValue: "—",
-    description: "Zoom and pan options for long histories (defaultZoom, limits).",
+    description:
+      "Zoom and pan options for long histories (defaultZoom, limits).",
   },
   {
     prop: "renderItem",

@@ -141,17 +141,17 @@ export type NavDockSubmenuItemData = NavDockItemDataBase & {
 };
 
 export type NavDockItemData =
-  | NavDockLinkItemData
-  | NavDockActionItemData
-  | NavDockSubmenuItemData;
+  NavDockLinkItemData | NavDockActionItemData | NavDockSubmenuItemData;
 
 export type NavDockCurrentMatcher = (
   item: NavDockItemData,
   context: NavDockCurrentContext,
 ) => NavDockCurrent | undefined;
 
-export interface NavDockProps
-  extends Omit<HTMLAttributes<HTMLElement>, "defaultValue"> {
+export interface NavDockProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "defaultValue"
+> {
   collapseMode?: NavDockCollapseMode;
   collapsed?: boolean;
   currentValue?: string;
@@ -176,7 +176,10 @@ export interface NavDockProps
   variant?: NavDockVariant;
 }
 
-export interface CollapseDockProps extends Omit<HTMLMotionProps<"div">, "children"> {
+export interface CollapseDockProps extends Omit<
+  HTMLMotionProps<"div">,
+  "children"
+> {
   children?: ReactNode;
   collapseLabel?: string;
   collapseMode?: NavDockCollapseMode;
@@ -198,8 +201,10 @@ export type NavDockSeparatorProps = Omit<
   children?: never;
 };
 
-export interface NavDockItemProps
-  extends Omit<LiHTMLAttributes<HTMLLIElement>, "title"> {
+export interface NavDockItemProps extends Omit<
+  LiHTMLAttributes<HTMLLIElement>,
+  "title"
+> {
   disabled?: boolean;
   disabledReason?: ReactNode;
   icon?: ReactNode;
@@ -265,8 +270,10 @@ export type NavDockSubmenuTriggerProps = Omit<
   "current" | "onAction"
 >;
 
-export interface NavDockSubmenuContentProps
-  extends Omit<HTMLMotionProps<"div">, "children"> {
+export interface NavDockSubmenuContentProps extends Omit<
+  HTMLMotionProps<"div">,
+  "children"
+> {
   children?: ReactNode;
   panelClassName?: string;
 }
@@ -343,8 +350,9 @@ type NavDockSubmenuContextValue = {
 const NavDockContext = createContext<NavDockContextValue | null>(null);
 const NavDockItemContext = createContext<NavDockItemContextValue | null>(null);
 const NavDockListContext = createContext<NavDockListContextValue | null>(null);
-const NavDockSubmenuContext =
-  createContext<NavDockSubmenuContextValue | null>(null);
+const NavDockSubmenuContext = createContext<NavDockSubmenuContextValue | null>(
+  null,
+);
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -383,10 +391,8 @@ const navDockPositionPlacementClasses: Record<
   fixed: {
     bottom:
       "bottom-[calc(var(--navdock-position-offset)+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2",
-    top:
-      "left-1/2 top-[calc(var(--navdock-position-offset)+env(safe-area-inset-top))] -translate-x-1/2",
-    left:
-      "left-[calc(var(--navdock-position-offset)+env(safe-area-inset-left))] top-1/2 -translate-y-1/2",
+    top: "left-1/2 top-[calc(var(--navdock-position-offset)+env(safe-area-inset-top))] -translate-x-1/2",
+    left: "left-[calc(var(--navdock-position-offset)+env(safe-area-inset-left))] top-1/2 -translate-y-1/2",
     right:
       "right-[calc(var(--navdock-position-offset)+env(safe-area-inset-right))] top-1/2 -translate-y-1/2",
   },
@@ -413,19 +419,18 @@ const navDockListBaseClasses =
 const navDockListPlacementClasses: Record<NavDockPlacement, string> = {
   bottom:
     "max-w-[min(100%,calc(100vw-var(--dt-space-4)))] flex-row items-end [scroll-padding-inline:var(--dt-space-2)]",
-  top:
-    "max-w-[min(100%,calc(100vw-var(--dt-space-4)))] flex-row items-start [scroll-padding-inline:var(--dt-space-2)]",
-  left:
-    "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-start [scroll-padding-block:var(--dt-space-2)]",
+  top: "max-w-[min(100%,calc(100vw-var(--dt-space-4)))] flex-row items-start [scroll-padding-inline:var(--dt-space-2)]",
+  left: "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-start [scroll-padding-block:var(--dt-space-2)]",
   right:
     "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-end [scroll-padding-block:var(--dt-space-2)]",
 };
 
-const navDockListOverflowClasses: Record<NavDockOverflowAxis | "none", string> = {
-  none: "overflow-visible",
-  x: "overflow-x-auto overflow-y-visible",
-  y: "overflow-x-visible overflow-y-auto",
-};
+const navDockListOverflowClasses: Record<NavDockOverflowAxis | "none", string> =
+  {
+    none: "overflow-visible",
+    x: "overflow-x-auto overflow-y-visible",
+    y: "overflow-x-visible overflow-y-auto",
+  };
 
 const navDockSeparatorBaseClasses = "shrink-0 bg-border/70";
 
@@ -489,10 +494,8 @@ const navDockHoverTitleBaseClasses =
 const navDockHoverTitlePlacementClasses: Record<NavDockPlacement, string> = {
   bottom:
     "absolute bottom-[calc(100%+var(--dt-space-2))] left-1/2 -translate-x-1/2",
-  top:
-    "absolute left-1/2 top-[calc(100%+var(--dt-space-2))] -translate-x-1/2",
-  left:
-    "absolute left-[calc(100%+var(--dt-space-2))] top-1/2 -translate-y-1/2",
+  top: "absolute left-1/2 top-[calc(100%+var(--dt-space-2))] -translate-x-1/2",
+  left: "absolute left-[calc(100%+var(--dt-space-2))] top-1/2 -translate-y-1/2",
   right:
     "absolute right-[calc(100%+var(--dt-space-2))] top-1/2 -translate-y-1/2",
 };
@@ -555,12 +558,13 @@ const navDockSubmenuExitTransition: Transition = {
   ease: [0.4, 0, 1, 1],
 };
 
-const navDockCollapsedShellSpringOptions: Record<NavDockMotion, SpringOptions> = {
-  none: { stiffness: 1200, damping: 120, mass: 1 },
-  subtle: { stiffness: 420, damping: 42, mass: 1 },
-  standard: { stiffness: 340, damping: 32, mass: 1 },
-  expressive: { stiffness: 300, damping: 24, mass: 1 },
-};
+const navDockCollapsedShellSpringOptions: Record<NavDockMotion, SpringOptions> =
+  {
+    none: { stiffness: 1200, damping: 120, mass: 1 },
+    subtle: { stiffness: 420, damping: 42, mass: 1 },
+    standard: { stiffness: 340, damping: 32, mass: 1 },
+    expressive: { stiffness: 300, damping: 24, mass: 1 },
+  };
 
 const navDockCollapsedContentTransitions: Record<NavDockMotion, Transition> = {
   none: { duration: 0 },
@@ -585,16 +589,15 @@ const navDockSubmenuBaseClasses = "relative";
 const navDockSubmenuContentBaseClasses =
   "z-30 w-[var(--navdock-submenu-width,14rem)] max-w-[min(var(--navdock-submenu-max-width,18rem),calc(100vw_-_var(--dt-space-4)))] transform-gpu overflow-hidden rounded-md border border-border bg-background p-[var(--dt-space-1)] text-foreground shadow-lg outline-none will-change-transform data-[reduced-motion=true]:will-change-auto";
 
-const navDockSubmenuContentPlacementClasses: Record<NavDockPlacement, string> = {
-  bottom:
-    "absolute bottom-[calc(100%+var(--navdock-submenu-offset))] left-1/2 origin-bottom -translate-x-1/2",
-  top:
-    "absolute left-1/2 top-[calc(100%+var(--navdock-submenu-offset))] origin-top -translate-x-1/2",
-  left:
-    "absolute left-[calc(100%+var(--navdock-submenu-offset))] top-1/2 origin-left -translate-y-1/2",
-  right:
-    "absolute right-[calc(100%+var(--navdock-submenu-offset))] top-1/2 origin-right -translate-y-1/2",
-};
+const navDockSubmenuContentPlacementClasses: Record<NavDockPlacement, string> =
+  {
+    bottom:
+      "absolute bottom-[calc(100%+var(--navdock-submenu-offset))] left-1/2 origin-bottom -translate-x-1/2",
+    top: "absolute left-1/2 top-[calc(100%+var(--navdock-submenu-offset))] origin-top -translate-x-1/2",
+    left: "absolute left-[calc(100%+var(--navdock-submenu-offset))] top-1/2 origin-left -translate-y-1/2",
+    right:
+      "absolute right-[calc(100%+var(--navdock-submenu-offset))] top-1/2 origin-right -translate-y-1/2",
+  };
 
 const navDockSubmenuContentPortalledClasses = "fixed z-50 origin-center";
 
@@ -620,8 +623,7 @@ const navDockSubmenuItemExternalClasses =
 const navDockSubmenuLabelClasses =
   "px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-xs font-semibold uppercase leading-5 text-muted-foreground";
 
-const navDockSubmenuSeparatorClasses =
-  "my-[var(--dt-space-1)] h-px bg-border";
+const navDockSubmenuSeparatorClasses = "my-[var(--dt-space-1)] h-px bg-border";
 
 export function navDockClassNames({
   placement = "bottom",
@@ -694,7 +696,8 @@ export function navDockLinkClassNames({
 export function navDockButtonClassNames({
   placement = "bottom",
   className,
-}: Pick<NavDockProps, "placement"> & Pick<NavDockButtonProps, "className"> = {}) {
+}: Pick<NavDockProps, "placement"> &
+  Pick<NavDockButtonProps, "className"> = {}) {
   return cn(
     navDockInteractiveBaseClasses,
     navDockInteractivePlacementClasses[placement],
@@ -825,7 +828,9 @@ function useControllableValue({
   onValueChange?: (value: string | null) => void;
   value?: string | null;
 }) {
-  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue ?? null);
+  const [uncontrolledValue, setUncontrolledValue] = useState(
+    defaultValue ?? null,
+  );
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : uncontrolledValue;
 
@@ -871,7 +876,10 @@ function useControllableBoolean({
 }
 
 function getAutoCollapseMediaQueryList() {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return null;
   }
 
@@ -1059,7 +1067,9 @@ function useNavDockSubmenuContext() {
   const context = useContext(NavDockSubmenuContext);
 
   if (!context) {
-    throw new Error("NavDock submenu parts must be rendered inside NavDockSubmenu.");
+    throw new Error(
+      "NavDock submenu parts must be rendered inside NavDockSubmenu.",
+    );
   }
 
   return context;
@@ -1084,7 +1094,9 @@ function parseCssLength(value: string, owner: Element | null): number | null {
     const rootFontSize =
       typeof window === "undefined"
         ? 16
-        : Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize);
+        : Number.parseFloat(
+            window.getComputedStyle(document.documentElement).fontSize,
+          );
 
     return Number.parseFloat(trimmedValue) * rootFontSize;
   }
@@ -1271,7 +1283,11 @@ function resolveAriaCurrent(
 function hasCurrentState(
   ariaCurrent: AnchorHTMLAttributes<HTMLAnchorElement>["aria-current"],
 ) {
-  return ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false";
+  return (
+    ariaCurrent !== undefined &&
+    ariaCurrent !== false &&
+    ariaCurrent !== "false"
+  );
 }
 
 function shouldReduceNavDockMotion(
@@ -1467,7 +1483,9 @@ function getTitleMotionState({
   placement: NavDockPlacement;
   reducedMotion: boolean;
 }): TargetAndTransition {
-  const offset = reducedMotion ? { x: 0, y: 0 } : getTitleMotionOffset(placement);
+  const offset = reducedMotion
+    ? { x: 0, y: 0 }
+    : getTitleMotionOffset(placement);
 
   return {
     opacity: 0,
@@ -1598,7 +1616,9 @@ function getItemCurrent(
     return matched;
   }
 
-  return currentValue !== undefined && item.value === currentValue ? true : undefined;
+  return currentValue !== undefined && item.value === currentValue
+    ? true
+    : undefined;
 }
 
 function NavDockHoverTitle({
@@ -1647,9 +1667,11 @@ function NavDockHoverTitle({
           : getTitleMotionState({ placement, reducedMotion })
       }
       transition={
-        reducedMotion ? navDockTitleTransitions.none : navDockTitleTransitions[motion]
+        reducedMotion
+          ? navDockTitleTransitions.none
+          : navDockTitleTransitions[motion]
       }
-      style={shouldPortal ? portalledStyle ?? { left: 0, top: 0 } : undefined}
+      style={shouldPortal ? (portalledStyle ?? { left: 0, top: 0 }) : undefined}
       className={cn(
         navDockHoverTitleBaseClasses,
         shouldPortal
@@ -1861,9 +1883,15 @@ function getInteractiveContent({
           ) : null}
         </>
       ) : null}
-      {description !== undefined ? <span className="sr-only"> {description}</span> : null}
+      {description !== undefined ? (
+        <span className="sr-only"> {description}</span>
+      ) : null}
       {badge !== undefined ? (
-        <span aria-hidden="true" data-slot="navdock-item-badge" className={navDockBadgeClasses}>
+        <span
+          aria-hidden="true"
+          data-slot="navdock-item-badge"
+          className={navDockBadgeClasses}
+        >
           {badge}
         </span>
       ) : null}
@@ -1978,7 +2006,9 @@ export const CollapseDock = forwardRef<HTMLDivElement, CollapseDockProps>(
       ? triggerLabel
       : collapseLabel;
     const renderedTriggerIcon = triggerIcon ?? <DefaultNavDockTriggerIcon />;
-    const handleCollapseTriggerClick: MouseEventHandler<HTMLButtonElement> = () => {
+    const handleCollapseTriggerClick: MouseEventHandler<
+      HTMLButtonElement
+    > = () => {
       const nextCollapsed = !context.collapsed;
 
       context.setCollapsed(nextCollapsed);
@@ -2093,7 +2123,9 @@ CollapseDock.displayName = "CollapseDock";
 function isCollapseDockElement(
   child: ReactNode,
 ): child is ReactElement<CollapseDockProps> {
-  return isValidElement<CollapseDockProps>(child) && child.type === CollapseDock;
+  return (
+    isValidElement<CollapseDockProps>(child) && child.type === CollapseDock
+  );
 }
 
 function getCollapseDockElement(
@@ -2171,7 +2203,8 @@ export const NavDock = forwardRef<HTMLElement, NavDockProps>(
       (resolvedCollapseMode === "auto" && autoCollapseActive);
     const [currentCollapsed, setCollapsed, isCollapsedControlled] =
       useControllableBoolean({
-        defaultValue: resolvedDefaultCollapsed ?? resolvedCollapseMode === "always",
+        defaultValue:
+          resolvedDefaultCollapsed ?? resolvedCollapseMode === "always",
         onValueChange: resolvedOnCollapsedChange,
         value: resolvedCollapsed,
       });
@@ -2188,13 +2221,18 @@ export const NavDock = forwardRef<HTMLElement, NavDockProps>(
     const listId = useId();
     const [renderedListId, setRenderedListId] = useState(listId);
     const prefersReducedMotion = useReducedMotion();
-    const reducedMotion = shouldReduceNavDockMotion(motion, prefersReducedMotion);
+    const reducedMotion = shouldReduceNavDockMotion(
+      motion,
+      prefersReducedMotion,
+    );
     const [collapsedShellRef, collapsedShellHeight] = useCollapsedShellHeight({
       motion,
       open: collapseModeActive && !collapseDockElement && !isCollapsed,
       reducedMotion,
     });
-    const [registeredItemValues, setRegisteredItemValues] = useState<string[]>([]);
+    const [registeredItemValues, setRegisteredItemValues] = useState<string[]>(
+      [],
+    );
     const dataItemValues = useMemo(
       () => items?.map((item) => item.value) ?? [],
       [items],
@@ -2371,7 +2409,9 @@ export const NavDock = forwardRef<HTMLElement, NavDockProps>(
         event.preventDefault();
       }
     };
-    const handleCollapseTriggerClick: MouseEventHandler<HTMLButtonElement> = () => {
+    const handleCollapseTriggerClick: MouseEventHandler<
+      HTMLButtonElement
+    > = () => {
       const nextCollapsed = !isCollapsed;
 
       setCollapsed(nextCollapsed);
@@ -2404,95 +2444,96 @@ export const NavDock = forwardRef<HTMLElement, NavDockProps>(
     );
     const triggerAccessibleLabel = isCollapsed ? triggerLabel : collapseLabel;
     const renderedTriggerIcon = triggerIcon ?? <DefaultNavDockTriggerIcon />;
-    const renderedDockContent = collapseModeActive && !collapseDockElement ? (
-      <>
-        <span
-          aria-hidden="true"
-          data-slot="navdock-collapse-placeholder"
-          className={navDockCollapsedPlaceholderClasses}
-        />
-        <motionElement.div
-          ref={collapsedShellRef}
-          data-slot="navdock-collapsed-shell"
-          data-placement={layoutPlacement}
-          data-position={position}
-          data-reduced-motion={reducedMotion ? "true" : undefined}
-          data-size={size}
-          data-state={isCollapsed ? "closed" : "open"}
-          data-variant={variant}
-          initial={false}
-          style={{ height: collapsedShellHeight.height }}
-          className={navDockCollapsedShellClassNames({ variant })}
-        >
-          <AnimatePresence initial={false}>
-            {!isCollapsed ? (
-              <motionElement.div
-                key="navdock-collapsed-content"
-                data-slot="navdock-collapsed-content"
-                data-placement={layoutPlacement}
-                data-state="open"
-                data-reduced-motion={reducedMotion ? "true" : undefined}
-                initial={getCollapsedContentClosedMotionState({
-                  reducedMotion,
-                })}
-                animate={getCollapsedContentOpenMotionState()}
-                exit={getCollapsedContentExitMotionState({
-                  reducedMotion,
-                })}
-                transition={
-                  reducedMotion
-                    ? navDockMotionTransitions.none
-                    : navDockCollapsedContentTransitions[motion]
-                }
-                className={navDockCollapsedContentClasses}
-              >
-                <NavDockContext.Provider value={collapsedDockContext}>
-                  {dockContent}
-                </NavDockContext.Provider>
-              </motionElement.div>
-            ) : null}
-          </AnimatePresence>
-          <motionElement.button
-            ref={collapseTriggerRef}
-            type="button"
-            aria-controls={renderedListId}
-            aria-expanded={!isCollapsed}
-            data-slot="navdock-collapse-trigger"
+    const renderedDockContent =
+      collapseModeActive && !collapseDockElement ? (
+        <>
+          <span
+            aria-hidden="true"
+            data-slot="navdock-collapse-placeholder"
+            className={navDockCollapsedPlaceholderClasses}
+          />
+          <motionElement.div
+            ref={collapsedShellRef}
+            data-slot="navdock-collapsed-shell"
             data-placement={layoutPlacement}
             data-position={position}
             data-reduced-motion={reducedMotion ? "true" : undefined}
             data-size={size}
             data-state={isCollapsed ? "closed" : "open"}
             data-variant={variant}
-            className={navDockCollapseTriggerClassNames({
-              placement: layoutPlacement,
-            })}
             initial={false}
-            whileTap={getPressMotionTarget({
-              disabled: false,
-              reducedMotion,
-            })}
-            transition={
-              reducedMotion
-                ? navDockMotionTransitions.none
-                : navDockMotionTransitions[motion]
-            }
-            onClick={handleCollapseTriggerClick}
+            style={{ height: collapsedShellHeight.height }}
+            className={navDockCollapsedShellClassNames({ variant })}
           >
-            <span
-              aria-hidden="true"
-              data-slot="navdock-collapse-trigger-icon"
-              className={navDockCollapseTriggerIconClasses}
+            <AnimatePresence initial={false}>
+              {!isCollapsed ? (
+                <motionElement.div
+                  key="navdock-collapsed-content"
+                  data-slot="navdock-collapsed-content"
+                  data-placement={layoutPlacement}
+                  data-state="open"
+                  data-reduced-motion={reducedMotion ? "true" : undefined}
+                  initial={getCollapsedContentClosedMotionState({
+                    reducedMotion,
+                  })}
+                  animate={getCollapsedContentOpenMotionState()}
+                  exit={getCollapsedContentExitMotionState({
+                    reducedMotion,
+                  })}
+                  transition={
+                    reducedMotion
+                      ? navDockMotionTransitions.none
+                      : navDockCollapsedContentTransitions[motion]
+                  }
+                  className={navDockCollapsedContentClasses}
+                >
+                  <NavDockContext.Provider value={collapsedDockContext}>
+                    {dockContent}
+                  </NavDockContext.Provider>
+                </motionElement.div>
+              ) : null}
+            </AnimatePresence>
+            <motionElement.button
+              ref={collapseTriggerRef}
+              type="button"
+              aria-controls={renderedListId}
+              aria-expanded={!isCollapsed}
+              data-slot="navdock-collapse-trigger"
+              data-placement={layoutPlacement}
+              data-position={position}
+              data-reduced-motion={reducedMotion ? "true" : undefined}
+              data-size={size}
+              data-state={isCollapsed ? "closed" : "open"}
+              data-variant={variant}
+              className={navDockCollapseTriggerClassNames({
+                placement: layoutPlacement,
+              })}
+              initial={false}
+              whileTap={getPressMotionTarget({
+                disabled: false,
+                reducedMotion,
+              })}
+              transition={
+                reducedMotion
+                  ? navDockMotionTransitions.none
+                  : navDockMotionTransitions[motion]
+              }
+              onClick={handleCollapseTriggerClick}
             >
-              {renderedTriggerIcon}
-            </span>
-            <span className="sr-only">{triggerAccessibleLabel}</span>
-          </motionElement.button>
-        </motionElement.div>
-      </>
-    ) : (
-      dockContent
-    );
+              <span
+                aria-hidden="true"
+                data-slot="navdock-collapse-trigger-icon"
+                className={navDockCollapseTriggerIconClasses}
+              >
+                {renderedTriggerIcon}
+              </span>
+              <span className="sr-only">{triggerAccessibleLabel}</span>
+            </motionElement.button>
+          </motionElement.div>
+        </>
+      ) : (
+        dockContent
+      );
 
     return (
       <MotionConfig reducedMotion={motion === "none" ? "always" : "user"}>
@@ -2553,7 +2594,15 @@ NavDock.displayName = "NavDock";
 
 export const NavDockList = forwardRef<HTMLUListElement, NavDockListProps>(
   (
-    { className, id, onKeyDown, onPointerLeave, onPointerMove, role = "list", ...props },
+    {
+      className,
+      id,
+      onKeyDown,
+      onPointerLeave,
+      onPointerMove,
+      role = "list",
+      ...props
+    },
     ref,
   ) => {
     const context = useNavDockContext();
@@ -2662,7 +2711,9 @@ export const NavDockList = forwardRef<HTMLUListElement, NavDockListProps>(
         event.preventDefault();
       }
     };
-    const handlePointerMove: PointerEventHandler<HTMLUListElement> = (event) => {
+    const handlePointerMove: PointerEventHandler<HTMLUListElement> = (
+      event,
+    ) => {
       onPointerMove?.(event);
 
       // Touch input has no hover; magnifying under a finger just obscures it.
@@ -2672,7 +2723,9 @@ export const NavDockList = forwardRef<HTMLUListElement, NavDockListProps>(
         );
       }
     };
-    const handlePointerLeave: PointerEventHandler<HTMLUListElement> = (event) => {
+    const handlePointerLeave: PointerEventHandler<HTMLUListElement> = (
+      event,
+    ) => {
       onPointerLeave?.(event);
       pointerPosition.set(navDockPointerIdle);
     };
@@ -2892,7 +2945,10 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
       (item?.value !== undefined && context.currentValue === item.value
         ? true
         : undefined);
-    const resolvedAriaCurrent = resolveAriaCurrent(ariaCurrent, resolvedCurrent);
+    const resolvedAriaCurrent = resolveAriaCurrent(
+      ariaCurrent,
+      resolvedCurrent,
+    );
     const isCurrent = hasCurrentState(resolvedAriaCurrent);
     const isActive =
       item?.value !== undefined && context.activeValue === item.value;
@@ -2936,13 +2992,19 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
       const child = Children.only(children);
 
       if (!isValidElement<NavDockLinkSlotProps>(child)) {
-        throw new Error("NavDockLink with asChild expects a single React element child.");
+        throw new Error(
+          "NavDockLink with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);
       const childTarget = child.props.target ?? resolvedTarget;
-      const childRel = mergeRelForTarget(child.props.rel ?? resolvedRel, childTarget);
-      const childAriaCurrent = child.props["aria-current"] ?? resolvedAriaCurrent;
+      const childRel = mergeRelForTarget(
+        child.props.rel ?? resolvedRel,
+        childTarget,
+      );
+      const childAriaCurrent =
+        child.props["aria-current"] ?? resolvedAriaCurrent;
       const childDescribedBy = getDescribedBy(
         child.props["aria-describedby"] ?? ariaDescribedBy,
         resolvedDisabledReasonId,
@@ -2985,7 +3047,10 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
       return (
         <>
           {cloneElement(child, clonedProps, content)}
-          <DisabledReason id={resolvedDisabledReasonId} reason={resolvedDisabledReason} />
+          <DisabledReason
+            id={resolvedDisabledReasonId}
+            reason={resolvedDisabledReason}
+          />
         </>
       );
     }
@@ -3001,7 +3066,10 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
             interactiveRef as Ref<HTMLAnchorElement>,
           )}
           aria-current={resolvedAriaCurrent}
-          aria-describedby={getDescribedBy(ariaDescribedBy, resolvedDisabledReasonId)}
+          aria-describedby={getDescribedBy(
+            ariaDescribedBy,
+            resolvedDisabledReasonId,
+          )}
           aria-disabled={resolvedDisabled ? true : undefined}
           data-slot="navdock-link"
           data-active={isActive ? "true" : undefined}
@@ -3024,7 +3092,10 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
         >
           {content}
         </motionElement.a>
-        <DisabledReason id={resolvedDisabledReasonId} reason={resolvedDisabledReason} />
+        <DisabledReason
+          id={resolvedDisabledReasonId}
+          reason={resolvedDisabledReason}
+        />
       </>
     );
   },
@@ -3110,7 +3181,10 @@ export const NavDockButton = forwardRef<HTMLButtonElement, NavDockButtonProps>(
           type={type}
           disabled={resolvedDisabled}
           aria-current={resolvedAriaCurrent}
-          aria-describedby={getDescribedBy(ariaDescribedBy, resolvedDisabledReasonId)}
+          aria-describedby={getDescribedBy(
+            ariaDescribedBy,
+            resolvedDisabledReasonId,
+          )}
           data-slot="navdock-button"
           data-active={isActive ? "true" : undefined}
           data-current={isCurrent ? "true" : undefined}
@@ -3145,7 +3219,10 @@ export const NavDockButton = forwardRef<HTMLButtonElement, NavDockButtonProps>(
             title: resolvedTitle,
           })}
         </motionElement.button>
-        <DisabledReason id={resolvedDisabledReasonId} reason={resolvedDisabledReason} />
+        <DisabledReason
+          id={resolvedDisabledReasonId}
+          reason={resolvedDisabledReason}
+        />
       </>
     );
   },
@@ -3181,9 +3258,11 @@ export const NavDockSubmenu = forwardRef<HTMLDivElement, NavDockSubmenuProps>(
     const hoverOpenClickGuardTimerRef = useRef<number | null>(null);
     const [triggerElement, setTriggerElement] =
       useState<HTMLButtonElement | null>(null);
-    const [contentElement, setContentElement] =
-      useState<HTMLDivElement | null>(null);
-    const open = submenuValue !== undefined && context.openValue === submenuValue;
+    const [contentElement, setContentElement] = useState<HTMLDivElement | null>(
+      null,
+    );
+    const open =
+      submenuValue !== undefined && context.openValue === submenuValue;
     const setOpen = useCallback(
       (nextOpen: boolean) => {
         if (submenuValue === undefined || disabled) {
@@ -3403,7 +3482,9 @@ export const NavDockSubmenuTrigger = forwardRef<
       item?.value !== undefined && context.activeValue === item.value;
     const motionState = item?.motionState ?? "idle";
     const triggerId = id ?? submenu.triggerId;
-    const handlePointerDown: PointerEventHandler<HTMLButtonElement> = (event) => {
+    const handlePointerDown: PointerEventHandler<HTMLButtonElement> = (
+      event,
+    ) => {
       onPointerDown?.(event);
     };
     const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -3433,7 +3514,10 @@ export const NavDockSubmenuTrigger = forwardRef<
           type={type}
           disabled={resolvedDisabled}
           aria-controls={submenu.open ? submenu.contentId : undefined}
-          aria-describedby={getDescribedBy(ariaDescribedBy, resolvedDisabledReasonId)}
+          aria-describedby={getDescribedBy(
+            ariaDescribedBy,
+            resolvedDisabledReasonId,
+          )}
           aria-expanded={submenu.open}
           data-slot="navdock-submenu-trigger"
           data-active={isActive ? "true" : undefined}
@@ -3470,7 +3554,10 @@ export const NavDockSubmenuTrigger = forwardRef<
             title: resolvedTitle,
           })}
         </motionElement.button>
-        <DisabledReason id={resolvedDisabledReasonId} reason={resolvedDisabledReason} />
+        <DisabledReason
+          id={resolvedDisabledReasonId}
+          reason={resolvedDisabledReason}
+        />
       </>
     );
   },
@@ -3506,7 +3593,9 @@ export const NavDockSubmenuContent = forwardRef<
       context.motion,
       prefersReducedMotion,
     );
-    const portalled = Boolean(listContext?.overflowing && submenu.triggerElement);
+    const portalled = Boolean(
+      listContext?.overflowing && submenu.triggerElement,
+    );
     const portalTarget = portalled ? getPortalTarget() : null;
     const portalledStyle = useAnchoredLayerStyle({
       anchorElement: submenu.triggerElement,
@@ -3583,9 +3672,7 @@ export const NavDockSubmenuContent = forwardRef<
               })
         }
         animate={
-          shouldPortal
-            ? { opacity: 1, scale: 1 }
-            : getSubmenuOpenMotionState()
+          shouldPortal ? { opacity: 1, scale: 1 } : getSubmenuOpenMotionState()
         }
         exit={
           shouldPortal
@@ -3658,7 +3745,10 @@ function renderSubmenuItemContent({
 }) {
   return (
     <>
-      <span data-slot="navdock-submenu-item-text" className={navDockSubmenuItemTextClasses}>
+      <span
+        data-slot="navdock-submenu-item-text"
+        className={navDockSubmenuItemTextClasses}
+      >
         <span
           data-slot="navdock-submenu-item-label"
           className={navDockSubmenuItemLabelClasses}
@@ -3675,11 +3765,19 @@ function renderSubmenuItemContent({
         ) : null}
       </span>
       {badge !== undefined ? (
-        <span aria-hidden="true" data-slot="navdock-submenu-item-badge" className={navDockSubmenuItemBadgeClasses}>
+        <span
+          aria-hidden="true"
+          data-slot="navdock-submenu-item-badge"
+          className={navDockSubmenuItemBadgeClasses}
+        >
           {badge}
         </span>
       ) : external ? (
-        <span aria-hidden="true" data-slot="navdock-submenu-item-external" className={navDockSubmenuItemExternalClasses}>
+        <span
+          aria-hidden="true"
+          data-slot="navdock-submenu-item-external"
+          className={navDockSubmenuItemExternalClasses}
+        >
           ext
         </span>
       ) : null}

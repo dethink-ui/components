@@ -24,8 +24,8 @@ export function DialogBasic() {
             </DialogDescription>
           </DialogHeader>
           <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
-            Focus is trapped inside; Escape or the backdrop dismisses, and
-            focus returns to the trigger.
+            Focus is trapped inside; Escape or the backdrop dismisses, and focus
+            returns to the trigger.
           </div>
           <DialogFooter>
             <DialogClose variant="outline">Cancel</DialogClose>

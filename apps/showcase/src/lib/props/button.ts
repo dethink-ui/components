@@ -5,7 +5,8 @@ export const buttonProps: PropRow[] = [
     prop: "variant",
     type: '"solid" | "soft" | "outline" | "ghost" | "link" | "destructive"',
     defaultValue: '"solid"',
-    description: "Visual emphasis of the button, from primary action to inline link.",
+    description:
+      "Visual emphasis of the button, from primary action to inline link.",
   },
   {
     prop: "size",

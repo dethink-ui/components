@@ -5,8 +5,18 @@ import { Textarea } from "@dethink/components";
 export function TextareaStates() {
   return (
     <div className="mx-auto grid max-w-lg gap-4 sm:grid-cols-2">
-      <Textarea aria-label="Small" controlSize="sm" rows={2} placeholder="Small" />
-      <Textarea aria-label="Large" controlSize="lg" rows={2} placeholder="Large" />
+      <Textarea
+        aria-label="Small"
+        controlSize="sm"
+        rows={2}
+        placeholder="Small"
+      />
+      <Textarea
+        aria-label="Large"
+        controlSize="lg"
+        rows={2}
+        placeholder="Large"
+      />
       <Textarea
         aria-label="Disabled"
         disabled

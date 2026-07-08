@@ -25,20 +25,20 @@ export function SidebarMobileDrawer() {
 
   return (
     <SidebarProvider mobileOpen={open} onMobileOpenChange={setOpen}>
-      <div className="overflow-hidden rounded-lg border border-border bg-background">
+      <div className="border-border bg-background overflow-hidden rounded-lg border">
         <div className="flex items-center justify-between gap-4 p-6">
           <div className="flex min-w-0 items-center gap-3">
             <span
               aria-hidden="true"
-              className="flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground"
+              className="border-border bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center rounded-md border"
             >
               <Home className="size-4" />
             </span>
             <div className="min-w-0">
-              <div className="text-sm font-semibold text-foreground">
+              <div className="text-foreground text-sm font-semibold">
                 Mobile workspace
               </div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-muted-foreground text-xs">
                 Open the menu and choose a workspace link.
               </div>
             </div>
@@ -61,7 +61,7 @@ export function SidebarMobileDrawer() {
           hidden={!open}
           id="sidebar-mobile-menu-preview"
           data-state={open ? "open" : "closed"}
-          className="border-t border-border bg-muted/30 p-3 data-[state=open]:motion-safe:animate-sidebar-menu-open data-[state=open]:motion-reduce:animate-none"
+          className="border-border bg-muted/30 data-[state=open]:motion-safe:animate-sidebar-menu-open border-t p-3 data-[state=open]:motion-reduce:animate-none"
         >
           <SidebarContent>
             <SidebarGroup>

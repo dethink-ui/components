@@ -24,7 +24,13 @@ describe("Stack SSR", () => {
       .mockImplementation(() => undefined);
     const container = document.createElement("div");
     container.innerHTML = renderToString(
-      <Stack as="section" direction="horizontal" gap="4" justify="between" wrap="wrap">
+      <Stack
+        as="section"
+        direction="horizontal"
+        gap="4"
+        justify="between"
+        wrap="wrap"
+      >
         Hydrate stack
       </Stack>,
     );
@@ -32,7 +38,13 @@ describe("Stack SSR", () => {
     await act(async () => {
       hydrateRoot(
         container,
-        <Stack as="section" direction="horizontal" gap="4" justify="between" wrap="wrap">
+        <Stack
+          as="section"
+          direction="horizontal"
+          gap="4"
+          justify="between"
+          wrap="wrap"
+        >
           Hydrate stack
         </Stack>,
       );

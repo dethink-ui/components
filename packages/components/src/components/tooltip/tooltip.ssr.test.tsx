@@ -2,17 +2,15 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from ".";
+import { Tooltip, TooltipContent, TooltipTrigger } from ".";
 
 function ServerTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>Server tooltip trigger</TooltipTrigger>
-      <TooltipContent>Closed tooltips hydrate without mismatch warnings.</TooltipContent>
+      <TooltipContent>
+        Closed tooltips hydrate without mismatch warnings.
+      </TooltipContent>
     </Tooltip>
   );
 }

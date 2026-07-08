@@ -206,7 +206,11 @@ export function cardFooterClassNames({
   className,
   justify = "start",
 }: Pick<CardFooterProps, "className" | "justify"> = {}) {
-  return cn(cardFooterBaseClasses, cardFooterJustifyClasses[justify], className);
+  return cn(
+    cardFooterBaseClasses,
+    cardFooterJustifyClasses[justify],
+    className,
+  );
 }
 
 function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
@@ -233,14 +237,18 @@ function getChildRef(child: ReactElement<CardSlotProps>) {
     return child.props.ref;
   }
 
-  return reactVersion.startsWith("18.") ? (child as CardElementWithRef).ref : undefined;
+  return reactVersion.startsWith("18.")
+    ? (child as CardElementWithRef).ref
+    : undefined;
 }
 
 function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -274,7 +282,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -344,7 +355,9 @@ export const Card = forwardRef<HTMLElement, CardProps>(
       const child = Children.only(children);
 
       if (!isValidElement<CardSlotProps>(child)) {
-        throw new Error("Card with asChild expects a single React element child.");
+        throw new Error(
+          "Card with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

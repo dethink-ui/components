@@ -15,7 +15,7 @@ export function FeedbackLoading() {
         <Spinner aria-label="Refreshing" variant="dots" tone="muted" />
         <Progress label="Import progress" value={68} showValue tone="info" />
       </div>
-      <div className="grid gap-4 rounded-lg border border-border p-4">
+      <div className="border-border grid gap-4 rounded-lg border p-4">
         <div className="flex items-center gap-4">
           <ProgressCircle label="Upload" value={72} showValue tone="success" />
           <div className="grid flex-1 gap-2">

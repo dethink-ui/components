@@ -58,7 +58,8 @@ export const cardSubcomponentProps: PropRow[] = [
     prop: "CardTitle",
     type: 'as: "div" | "h2"–"h6"',
     defaultValue: '"h3"',
-    description: "Heading of the card. Pick the level that fits the page outline.",
+    description:
+      "Heading of the card. Pick the level that fits the page outline.",
   },
   {
     prop: "CardDescription",

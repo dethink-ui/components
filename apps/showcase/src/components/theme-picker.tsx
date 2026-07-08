@@ -52,7 +52,7 @@ export function ThemePicker() {
         variant="ghost"
         size="icon"
         aria-label="Brand theme"
-        className="size-8 rounded-md text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground size-8 rounded-md"
       >
         <Palette className="size-4" aria-hidden="true" />
       </DropdownMenuTrigger>
@@ -74,13 +74,13 @@ export function ThemePicker() {
               <DropdownMenuItemIcon>
                 <span
                   aria-hidden="true"
-                  className="size-3 rounded-full border border-foreground/15"
+                  className="border-foreground/15 size-3 rounded-full border"
                   style={{ backgroundColor: theme.swatch }}
                 />
               </DropdownMenuItemIcon>
               <DropdownMenuItemLabel>{theme.label}</DropdownMenuItemLabel>
               {brand === theme.id ? (
-                <Check className="size-4 text-primary" aria-hidden="true" />
+                <Check className="text-primary size-4" aria-hidden="true" />
               ) : null}
             </DropdownMenuItem>
           ))}

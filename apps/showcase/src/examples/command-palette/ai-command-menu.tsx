@@ -5,7 +5,12 @@ import {
   CommandPalette,
   type CommandPaletteCommand,
 } from "@dethink/components";
-import { FileText, MessageSquareText, Sparkles, WandSparkles } from "lucide-react";
+import {
+  FileText,
+  MessageSquareText,
+  Sparkles,
+  WandSparkles,
+} from "lucide-react";
 
 const baseCommands: CommandPaletteCommand[] = [
   {
@@ -123,10 +128,10 @@ export function CommandPaletteAiCommandMenu() {
         shouldFilter={false}
         staleMessage="Updating command suggestions."
       />
-      <p className="text-sm leading-6 text-muted-foreground">
-        Try <code className="font-mono text-foreground">runbook</code>,{" "}
-        <code className="font-mono text-foreground">release</code>, or{" "}
-        <code className="font-mono text-foreground">fail</code>.
+      <p className="text-muted-foreground text-sm leading-6">
+        Try <code className="text-foreground font-mono">runbook</code>,{" "}
+        <code className="text-foreground font-mono">release</code>, or{" "}
+        <code className="text-foreground font-mono">fail</code>.
       </p>
     </div>
   );

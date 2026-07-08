@@ -27,7 +27,9 @@ describe("Input SSR", () => {
     expect(markup).toContain('data-slot="field-control"');
     expect(markup).toContain('name="serverInput"');
     expect(markup).toContain('value="server"');
-    expect(markup).toContain('aria-describedby="server-input-description server-input-error"');
+    expect(markup).toContain(
+      'aria-describedby="server-input-description server-input-error"',
+    );
     expect(markup).toContain('aria-errormessage="server-input-error"');
     expect(markup).toContain('aria-invalid="true"');
   });

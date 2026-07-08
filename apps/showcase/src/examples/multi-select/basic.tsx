@@ -14,7 +14,9 @@ export function MultiSelectBasic() {
         <MultiSelectItem value="operations">Operations</MultiSelectItem>
         <MultiSelectItem value="finance">Finance</MultiSelectItem>
         <MultiSelectItem value="revops">RevOps</MultiSelectItem>
-        <MultiSelectItem value="customer-success">Customer success</MultiSelectItem>
+        <MultiSelectItem value="customer-success">
+          Customer success
+        </MultiSelectItem>
       </MultiSelect>
     </div>
   );

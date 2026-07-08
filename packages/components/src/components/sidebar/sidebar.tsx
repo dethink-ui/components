@@ -28,7 +28,8 @@ import { createPortal } from "react-dom";
 import { cn } from "../../utils/cn";
 
 export type SidebarSide = "left" | "right";
-export type SidebarVariant = "default" | "floating" | "inset" | "rail" | "bordered";
+export type SidebarVariant =
+  "default" | "floating" | "inset" | "rail" | "bordered";
 export type SidebarMotion = "none" | "subtle" | "standard" | "expressive";
 export type SidebarTriggerAction = "toggle" | "expand" | "collapse";
 
@@ -61,18 +62,21 @@ export interface SidebarGroupProps extends HTMLAttributes<HTMLDivElement> {
 }
 export interface SidebarGroupLabelProps extends HTMLAttributes<HTMLDivElement> {}
 export interface SidebarGroupContentProps extends HTMLAttributes<HTMLDivElement> {}
-export interface SidebarGroupTriggerProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {}
-export interface SidebarMobileProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+export interface SidebarGroupTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
+export interface SidebarMobileProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   closeButtonLabel?: string;
   label?: ReactNode;
   overlayClassName?: string;
   side?: SidebarSide;
   showCloseButton?: boolean;
 }
-export interface SidebarMobileTriggerProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface SidebarMobileTriggerProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   children?: ReactNode;
   closeLabel?: string;
   openLabel?: string;
@@ -82,8 +86,10 @@ export interface SidebarMenuProps extends HTMLAttributes<HTMLUListElement> {}
 export interface SidebarMenuItemProps extends HTMLAttributes<HTMLLIElement> {}
 export interface SidebarMenuBadgeProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export interface SidebarTriggerProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface SidebarTriggerProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   action?: SidebarTriggerAction;
   children?: ReactNode;
   collapseLabel?: string;
@@ -91,8 +97,10 @@ export interface SidebarTriggerProps
   side?: SidebarSide;
 }
 
-export interface SidebarRailProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+export interface SidebarRailProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "children"
+> {
   children?: ReactNode;
   collapseLabel?: string;
   expandLabel?: string;
@@ -136,15 +144,12 @@ type ChildSidebarMenuLinkProps = Omit<
   };
 
 export type SidebarMenuLinkProps =
-  | NativeSidebarMenuLinkProps
-  | ChildSidebarMenuLinkProps;
+  NativeSidebarMenuLinkProps | ChildSidebarMenuLinkProps;
 
 export interface SidebarMenuButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    SidebarMenuCommonProps {}
+  extends ButtonHTMLAttributes<HTMLButtonElement>, SidebarMenuCommonProps {}
 
-export interface SidebarMenuActionProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface SidebarMenuActionProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label?: string;
   showOnHover?: boolean;
 }
@@ -155,8 +160,7 @@ export interface SidebarInsetProps extends HTMLAttributes<HTMLElement> {
   as?: "div" | "main" | "section";
 }
 
-export interface SidebarSkipLinkProps
-  extends AnchorHTMLAttributes<HTMLAnchorElement> {
+export interface SidebarSkipLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   targetId?: string;
 }
 
@@ -193,7 +197,9 @@ interface SidebarSurfaceContextValue {
   variant: SidebarVariant;
 }
 
-const SidebarSurfaceContext = createContext<SidebarSurfaceContextValue | null>(null);
+const SidebarSurfaceContext = createContext<SidebarSurfaceContextValue | null>(
+  null,
+);
 
 interface SidebarGroupContextValue {
   collapsible: boolean;
@@ -203,7 +209,9 @@ interface SidebarGroupContextValue {
   toggleOpen: () => void;
 }
 
-const SidebarGroupContext = createContext<SidebarGroupContextValue | null>(null);
+const SidebarGroupContext = createContext<SidebarGroupContextValue | null>(
+  null,
+);
 
 const sidebarProviderClasses =
   "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width-ease:cubic-bezier(0.2,0,0,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
@@ -249,7 +257,8 @@ const sidebarMobileOverlayClasses =
 const sidebarMobilePanelClasses =
   "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none motion-safe:animate-sidebar-panel-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-panel-out data-[side=left]:start-0 data-[side=left]:border-e data-[side=left]:[--dt-sidebar-panel-motion-x:calc(var(--dt-space-3)*-1)] data-[side=right]:end-0 data-[side=right]:border-s data-[side=right]:[--dt-sidebar-panel-motion-x:var(--dt-space-3)]";
 
-const sidebarMobileCloseClasses = "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
+const sidebarMobileCloseClasses =
+  "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
 
 const sidebarMenuClasses = "grid min-w-0 list-none gap-[var(--dt-space-1)] p-0";
 
@@ -297,8 +306,7 @@ const sidebarMenuActionRevealClasses =
 const sidebarSeparatorClasses =
   "mx-[var(--dt-space-2)] my-[var(--dt-space-1)] h-px shrink-0 rounded-full bg-border";
 
-const sidebarInsetClasses =
-  "min-w-0 flex-1 bg-background text-foreground";
+const sidebarInsetClasses = "min-w-0 flex-1 bg-background text-foreground";
 
 const sidebarSkipLinkClasses =
   "sr-only fixed start-[var(--dt-space-3)] top-[var(--dt-space-3)] z-50 rounded-md bg-background px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium text-foreground shadow-lg ring-2 ring-ring focus:not-sr-only";
@@ -310,7 +318,10 @@ function canAnimateExit(motion: SidebarMotion) {
     return false;
   }
 
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return false;
   }
 
@@ -411,7 +422,10 @@ const focusableSelector = [
 ].join(",");
 
 function isFocusableElement(element: HTMLElement) {
-  if (element.hasAttribute("disabled") || element.getAttribute("aria-hidden") === "true") {
+  if (
+    element.hasAttribute("disabled") ||
+    element.getAttribute("aria-hidden") === "true"
+  ) {
     return false;
   }
 
@@ -421,15 +435,19 @@ function isFocusableElement(element: HTMLElement) {
 }
 
 function getFocusableElements(container: HTMLElement) {
-  return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
-    isFocusableElement,
-  );
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(focusableSelector),
+  ).filter(isFocusableElement);
 }
 
 function getChildRef(child: ReactElement<SidebarMenuLinkSlotProps>) {
   return (
     child.props.ref ??
-    (child as ReactElement<SidebarMenuLinkSlotProps> & { ref?: Ref<HTMLElement> }).ref
+    (
+      child as ReactElement<SidebarMenuLinkSlotProps> & {
+        ref?: Ref<HTMLElement>;
+      }
+    ).ref
   );
 }
 
@@ -450,7 +468,11 @@ function mergeRelForTarget(
 function hasCurrentState(
   ariaCurrent: AnchorHTMLAttributes<HTMLAnchorElement>["aria-current"],
 ) {
-  return ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false";
+  return (
+    ariaCurrent !== undefined &&
+    ariaCurrent !== false &&
+    ariaCurrent !== "false"
+  );
 }
 
 function resolveMenuTooltip(tooltip: string | undefined, children: ReactNode) {
@@ -484,7 +506,12 @@ function tooltipAnchorStyle(
 
 function ChevronLeftIcon() {
   return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      fill="none"
+      viewBox="0 0 16 16"
+      stroke="currentColor"
+    >
       <path
         d="M10 3.5 5.5 8l4.5 4.5"
         strokeLinecap="round"
@@ -497,7 +524,12 @@ function ChevronLeftIcon() {
 
 function ChevronRightIcon() {
   return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      fill="none"
+      viewBox="0 0 16 16"
+      stroke="currentColor"
+    >
       <path
         d="m6 3.5 4.5 4.5L6 12.5"
         strokeLinecap="round"
@@ -510,7 +542,12 @@ function ChevronRightIcon() {
 
 function CloseIcon() {
   return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      fill="none"
+      viewBox="0 0 16 16"
+      stroke="currentColor"
+    >
       <path
         d="m4.25 4.25 7.5 7.5m0-7.5-7.5 7.5"
         strokeLinecap="round"
@@ -552,7 +589,11 @@ function renderMenuContent({
           className={sidebarMenuIndicatorClasses}
         />
       ) : null}
-      <span aria-hidden="true" data-slot="sidebar-menu-icon" className={sidebarMenuIconClasses}>
+      <span
+        aria-hidden="true"
+        data-slot="sidebar-menu-icon"
+        className={sidebarMenuIconClasses}
+      >
         {icon ??
           (typeof children === "string" && children.trim() ? (
             <span
@@ -563,7 +604,10 @@ function renderMenuContent({
             </span>
           ) : null)}
         {badge ? (
-          <span data-slot="sidebar-menu-badge-dot" className={sidebarMenuBadgeDotClasses} />
+          <span
+            data-slot="sidebar-menu-badge-dot"
+            className={sidebarMenuBadgeDotClasses}
+          />
         ) : null}
       </span>
       <span data-slot="sidebar-menu-label" className={sidebarMenuLabelClasses}>
@@ -581,7 +625,10 @@ function renderMenuContent({
         <span data-slot="sidebar-menu-meta" className={sidebarMenuMetaClasses}>
           {badge ? <SidebarMenuBadge>{badge}</SidebarMenuBadge> : null}
           {shortcut ? (
-            <span data-slot="sidebar-menu-shortcut" className={sidebarMenuShortcutClasses}>
+            <span
+              data-slot="sidebar-menu-shortcut"
+              className={sidebarMenuShortcutClasses}
+            >
               {shortcut}
             </span>
           ) : null}
@@ -973,42 +1020,47 @@ SidebarGroupLabel.displayName = "SidebarGroupLabel";
 export const SidebarGroupTrigger = forwardRef<
   HTMLButtonElement,
   SidebarGroupTriggerProps
->(({ children, className, onClick, tabIndex, type = "button", ...props }, ref) => {
-  const context = useContext(SidebarGroupContext);
-  const surfaceContext = useContext(SidebarSurfaceContext);
-  const surfaceCollapsed = surfaceContext?.collapsed ?? false;
+>(
+  (
+    { children, className, onClick, tabIndex, type = "button", ...props },
+    ref,
+  ) => {
+    const context = useContext(SidebarGroupContext);
+    const surfaceContext = useContext(SidebarSurfaceContext);
+    const surfaceCollapsed = surfaceContext?.collapsed ?? false;
 
-  if (!context || !context.collapsible) {
-    throw new Error(
-      "SidebarGroupTrigger must be used inside a collapsible SidebarGroup.",
+    if (!context || !context.collapsible) {
+      throw new Error(
+        "SidebarGroupTrigger must be used inside a collapsible SidebarGroup.",
+      );
+    }
+
+    const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+      context.toggleOpen();
+      onClick?.(event);
+    };
+
+    return (
+      <button
+        {...props}
+        ref={ref}
+        type={type}
+        tabIndex={surfaceCollapsed ? -1 : tabIndex}
+        aria-controls={context.contentId}
+        aria-expanded={context.open}
+        data-open={String(context.open)}
+        data-slot="sidebar-group-trigger"
+        className={sidebarGroupTriggerClassNames({ className })}
+        onClick={handleClick}
+      >
+        <span className="min-w-0 truncate">{children}</span>
+        <span aria-hidden="true" className={sidebarGroupTriggerIconClasses}>
+          <ChevronRightIcon />
+        </span>
+      </button>
     );
-  }
-
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
-    context.toggleOpen();
-    onClick?.(event);
-  };
-
-  return (
-    <button
-      {...props}
-      ref={ref}
-      type={type}
-      tabIndex={surfaceCollapsed ? -1 : tabIndex}
-      aria-controls={context.contentId}
-      aria-expanded={context.open}
-      data-open={String(context.open)}
-      data-slot="sidebar-group-trigger"
-      className={sidebarGroupTriggerClassNames({ className })}
-      onClick={handleClick}
-    >
-      <span className="min-w-0 truncate">{children}</span>
-      <span aria-hidden="true" className={sidebarGroupTriggerIconClasses}>
-        <ChevronRightIcon />
-      </span>
-    </button>
-  );
-});
+  },
+);
 
 SidebarGroupTrigger.displayName = "SidebarGroupTrigger";
 
@@ -1038,7 +1090,9 @@ export const SidebarGroupContent = forwardRef<
     return () => window.clearTimeout(fallback);
   }, [isOpen, motion]);
 
-  const handleTransitionEnd: TransitionEventHandler<HTMLDivElement> = (event) => {
+  const handleTransitionEnd: TransitionEventHandler<HTMLDivElement> = (
+    event,
+  ) => {
     if (
       event.target === event.currentTarget &&
       event.propertyName === "grid-template-rows" &&
@@ -1097,7 +1151,9 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     const side = sideProp ?? surfaceContext?.side ?? context.side;
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const panelRef = useRef<HTMLDivElement | null>(null);
-    const [portalElement, setPortalElement] = useState<HTMLElement | null>(null);
+    const [portalElement, setPortalElement] = useState<HTMLElement | null>(
+      null,
+    );
     const titleId = useId();
     const wasOpenRef = useRef(context.mobileOpen);
     const previousOpenRef = useRef(context.mobileOpen);
@@ -1134,7 +1190,10 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
 
       panelElement?.addEventListener("animationend", handleAnimationEnd);
 
-      const fallback = window.setTimeout(() => setClosing(false), exitFallbackMs);
+      const fallback = window.setTimeout(
+        () => setClosing(false),
+        exitFallbackMs,
+      );
 
       return () => {
         panelElement?.removeEventListener("animationend", handleAnimationEnd);
@@ -1195,7 +1254,8 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
 
       document.addEventListener("keydown", handleDocumentKeyDown);
 
-      return () => document.removeEventListener("keydown", handleDocumentKeyDown);
+      return () =>
+        document.removeEventListener("keydown", handleDocumentKeyDown);
     }, [context]);
 
     const handleOverlayClick: MouseEventHandler<HTMLDivElement> = (event) => {
@@ -1242,9 +1302,13 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
         const lastElement = focusableElements[focusableElements.length - 1];
         const activeElement = document.activeElement;
         const isFocusOutsidePanel =
-          activeElement instanceof Node && !panelElement.contains(activeElement);
+          activeElement instanceof Node &&
+          !panelElement.contains(activeElement);
 
-        if (event.shiftKey && (activeElement === firstElement || isFocusOutsidePanel)) {
+        if (
+          event.shiftKey &&
+          (activeElement === firstElement || isFocusOutsidePanel)
+        ) {
           event.preventDefault();
           lastElement.focus();
         } else if (
@@ -1271,7 +1335,9 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
         data-slot="sidebar-mobile-overlay"
         data-motion={context.motion}
         data-state={state}
-        className={sidebarMobileOverlayClassNames({ className: overlayClassName })}
+        className={sidebarMobileOverlayClassNames({
+          className: overlayClassName,
+        })}
         onClick={handleOverlayClick}
       >
         <div
@@ -1388,7 +1454,10 @@ export const SidebarMenuItem = forwardRef<HTMLLIElement, SidebarMenuItemProps>(
 
 SidebarMenuItem.displayName = "SidebarMenuItem";
 
-export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProps>(
+export const SidebarMenuLink = forwardRef<
+  HTMLAnchorElement,
+  SidebarMenuLinkProps
+>(
   (
     {
       active = false,
@@ -1439,8 +1508,12 @@ export const SidebarMenuLink = forwardRef<HTMLAnchorElement, SidebarMenuLinkProp
 
       const childRef = getChildRef(child);
       const childTarget = child.props.target ?? resolvedTarget;
-      const childRel = mergeRelForTarget(child.props.rel ?? resolvedRel, childTarget);
-      const childAriaCurrent = child.props["aria-current"] ?? resolvedAriaCurrent;
+      const childRel = mergeRelForTarget(
+        child.props.rel ?? resolvedRel,
+        childTarget,
+      );
+      const childAriaCurrent =
+        child.props["aria-current"] ?? resolvedAriaCurrent;
       const childIsCurrent = current || hasCurrentState(childAriaCurrent);
       const childTooltip = resolveMenuTooltip(tooltip, child.props.children);
       const childStyle =
@@ -1571,53 +1644,70 @@ export const SidebarMenuButton = forwardRef<
 
 SidebarMenuButton.displayName = "SidebarMenuButton";
 
-export const SidebarMenuBadge = forwardRef<HTMLSpanElement, SidebarMenuBadgeProps>(
-  ({ className, ...props }, ref) => (
-    <span
-      {...props}
-      ref={ref}
-      data-slot="sidebar-menu-badge"
-      className={sidebarMenuBadgeClassNames({ className })}
-    />
-  ),
-);
+export const SidebarMenuBadge = forwardRef<
+  HTMLSpanElement,
+  SidebarMenuBadgeProps
+>(({ className, ...props }, ref) => (
+  <span
+    {...props}
+    ref={ref}
+    data-slot="sidebar-menu-badge"
+    className={sidebarMenuBadgeClassNames({ className })}
+  />
+));
 
 SidebarMenuBadge.displayName = "SidebarMenuBadge";
 
 export const SidebarMenuAction = forwardRef<
   HTMLButtonElement,
   SidebarMenuActionProps
->(({ children, className, label, showOnHover = false, type = "button", ...props }, ref) => (
-  <button
-    {...props}
-    ref={ref}
-    type={type}
-    aria-label={props["aria-label"] ?? label}
-    data-show-on-hover={showOnHover ? "true" : undefined}
-    data-slot="sidebar-menu-action"
-    className={sidebarMenuActionClassNames({ className, showOnHover })}
-  >
-    {children}
-  </button>
-));
-
-SidebarMenuAction.displayName = "SidebarMenuAction";
-
-export const SidebarSeparator = forwardRef<HTMLDivElement, SidebarSeparatorProps>(
-  ({ className, ...props }, ref) => (
-    <div
+>(
+  (
+    {
+      children,
+      className,
+      label,
+      showOnHover = false,
+      type = "button",
+      ...props
+    },
+    ref,
+  ) => (
+    <button
       {...props}
       ref={ref}
-      aria-hidden="true"
-      data-slot="sidebar-separator"
-      className={sidebarSeparatorClassNames({ className })}
-    />
+      type={type}
+      aria-label={props["aria-label"] ?? label}
+      data-show-on-hover={showOnHover ? "true" : undefined}
+      data-slot="sidebar-menu-action"
+      className={sidebarMenuActionClassNames({ className, showOnHover })}
+    >
+      {children}
+    </button>
   ),
 );
 
+SidebarMenuAction.displayName = "SidebarMenuAction";
+
+export const SidebarSeparator = forwardRef<
+  HTMLDivElement,
+  SidebarSeparatorProps
+>(({ className, ...props }, ref) => (
+  <div
+    {...props}
+    ref={ref}
+    aria-hidden="true"
+    data-slot="sidebar-separator"
+    className={sidebarSeparatorClassNames({ className })}
+  />
+));
+
 SidebarSeparator.displayName = "SidebarSeparator";
 
-export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>(
+export const SidebarTrigger = forwardRef<
+  HTMLButtonElement,
+  SidebarTriggerProps
+>(
   (
     {
       action = "toggle",
@@ -1758,8 +1848,20 @@ export const SidebarInset = forwardRef<HTMLElement, SidebarInsetProps>(
 
 SidebarInset.displayName = "SidebarInset";
 
-export const SidebarSkipLink = forwardRef<HTMLAnchorElement, SidebarSkipLinkProps>(
-  ({ children = "Skip to content", className, href, targetId = "content", ...props }, ref) => (
+export const SidebarSkipLink = forwardRef<
+  HTMLAnchorElement,
+  SidebarSkipLinkProps
+>(
+  (
+    {
+      children = "Skip to content",
+      className,
+      href,
+      targetId = "content",
+      ...props
+    },
+    ref,
+  ) => (
     <a
       {...props}
       ref={ref}

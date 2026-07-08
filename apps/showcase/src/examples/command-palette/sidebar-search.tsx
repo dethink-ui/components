@@ -53,7 +53,7 @@ const searchCommands: CommandPaletteCommand[] = [
 export function CommandPaletteSidebarSearch() {
   return (
     <SidebarProvider variant="floating" motion="subtle">
-      <div className="flex h-[30rem] overflow-hidden rounded-lg border border-border bg-muted/30">
+      <div className="border-border bg-muted/30 flex h-[30rem] overflow-hidden rounded-lg border">
         <Sidebar aria-label="Operations workspace">
           <SidebarHeader>
             <CommandPalette
@@ -70,17 +70,27 @@ export function CommandPaletteSidebarSearch() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuLink current href="#overview" icon={<Gauge aria-hidden="true" />}>
+                    <SidebarMenuLink
+                      current
+                      href="#overview"
+                      icon={<Gauge aria-hidden="true" />}
+                    >
                       Overview
                     </SidebarMenuLink>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuLink href="#projects" icon={<FolderKanban aria-hidden="true" />}>
+                    <SidebarMenuLink
+                      href="#projects"
+                      icon={<FolderKanban aria-hidden="true" />}
+                    >
                       Projects
                     </SidebarMenuLink>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuLink href="#audit" icon={<Activity aria-hidden="true" />}>
+                    <SidebarMenuLink
+                      href="#audit"
+                      icon={<Activity aria-hidden="true" />}
+                    >
                       Audit log
                     </SidebarMenuLink>
                   </SidebarMenuItem>
@@ -91,10 +101,10 @@ export function CommandPaletteSidebarSearch() {
           <SidebarRail />
         </Sidebar>
         <SidebarInset className="grid content-start gap-3 p-5">
-          <div className="text-sm font-semibold text-foreground">
+          <div className="text-foreground text-sm font-semibold">
             Search remains scoped to the workspace.
           </div>
-          <p className="max-w-md text-sm leading-6 text-muted-foreground">
+          <p className="text-muted-foreground max-w-md text-sm leading-6">
             Inline command search can live beside persistent navigation without
             becoming a form control.
           </p>

@@ -12,7 +12,9 @@ export function DateRangePickerForm() {
       onSubmit={(event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        setSubmitted(`checkIn=${data.get("checkIn")} checkOut=${data.get("checkOut")}`);
+        setSubmitted(
+          `checkIn=${data.get("checkIn")} checkOut=${data.get("checkOut")}`,
+        );
       }}
     >
       <DateRangePicker
@@ -25,7 +27,7 @@ export function DateRangePickerForm() {
         Book
       </Button>
       {submitted ? (
-        <p className="font-mono text-xs text-muted-foreground">{submitted}</p>
+        <p className="text-muted-foreground font-mono text-xs">{submitted}</p>
       ) : null}
     </form>
   );

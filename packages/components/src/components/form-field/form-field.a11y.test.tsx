@@ -72,14 +72,12 @@ describe("Field accessibility", () => {
       </DethinkProvider>,
     );
 
-    expect(screen.getByRole("group", { name: "Notifications" })).toHaveAttribute(
-      "data-slot",
-      "field-set",
-    );
-    expect(screen.getByRole("group", { name: "Notifications" })).toHaveAttribute(
-      "aria-describedby",
-      "notifications-help",
-    );
+    expect(
+      screen.getByRole("group", { name: "Notifications" }),
+    ).toHaveAttribute("data-slot", "field-set");
+    expect(
+      screen.getByRole("group", { name: "Notifications" }),
+    ).toHaveAttribute("aria-describedby", "notifications-help");
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "checkbox");
     expect(screen.getByLabelText("Slack")).toHaveAttribute("type", "checkbox");
 

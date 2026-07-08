@@ -82,7 +82,15 @@ const meta = {
     },
     content: {
       control: "inline-radio",
-      options: ["start", "center", "end", "between", "around", "evenly", "stretch"],
+      options: [
+        "start",
+        "center",
+        "end",
+        "between",
+        "around",
+        "evenly",
+        "stretch",
+      ],
     },
   },
 } satisfies Meta<typeof Flex>;
@@ -108,7 +116,14 @@ const directions: FlexDirection[] = ["row", "column"];
 const wraps: FlexWrap[] = ["nowrap", "wrap"];
 const gaps: FlexGap[] = ["none", "1", "2", "3", "4", "5", "6", "8", "10", "12"];
 const aligns: FlexAlign[] = ["stretch", "start", "center", "end", "baseline"];
-const justifies: FlexJustify[] = ["start", "center", "end", "between", "around", "evenly"];
+const justifies: FlexJustify[] = [
+  "start",
+  "center",
+  "end",
+  "between",
+  "around",
+  "evenly",
+];
 const contents: FlexContent[] = [
   "start",
   "center",
@@ -118,8 +133,23 @@ const contents: FlexContent[] = [
   "evenly",
   "stretch",
 ];
-const itemBases: FlexItemBasis[] = ["auto", "0", "full", "xs", "sm", "md", "lg"];
-const itemAligns: FlexItemAlign[] = ["auto", "stretch", "start", "center", "end", "baseline"];
+const itemBases: FlexItemBasis[] = [
+  "auto",
+  "0",
+  "full",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+];
+const itemAligns: FlexItemAlign[] = [
+  "auto",
+  "stretch",
+  "start",
+  "center",
+  "end",
+  "baseline",
+];
 
 const RouterAnchor = forwardRef<
   HTMLAnchorElement,
@@ -149,7 +179,10 @@ export const Base: Story = {};
 
 export const ToolbarComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Flex as="header" align="center" gap="4" justify="between" wrap="wrap">
         <Stack gap="1">
           <Heading level={2} visualLevel={4}>
@@ -170,10 +203,19 @@ export const ToolbarComposition: Story = {
 
 export const DirectionAndDisplayModes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="4" className="lg:grid-cols-2">
         {directions.map((direction) => (
-          <Box key={direction} border="default" p="4" radius="md" surface="background">
+          <Box
+            key={direction}
+            border="default"
+            p="4"
+            radius="md"
+            surface="background"
+          >
             <Flex
               direction={direction}
               gap="3"
@@ -191,7 +233,13 @@ export const DirectionAndDisplayModes: Story = {
       <Box className="mt-4" display="grid" gap="4" role="list">
         {displays.map((display) => (
           <Box key={display} role="listitem">
-            <Text className="me-3" as="span" size="sm" tone="muted" weight="medium">
+            <Text
+              className="me-3"
+              as="span"
+              size="sm"
+              tone="muted"
+              weight="medium"
+            >
               display={display}
             </Text>
             <Flex display={display} gap="2" align="center">
@@ -207,7 +255,10 @@ export const DirectionAndDisplayModes: Story = {
 
 export const WrappingAndAxisGaps: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         {wraps.map((wrap) => (
           <Stack key={wrap} gap="2">
@@ -215,17 +266,28 @@ export const WrappingAndAxisGaps: Story = {
               wrap={wrap}
             </Text>
             <Flex wrap={wrap} gap="2" rowGap="3" columnGap="2">
-              {["Analytics", "Billing", "Identity", "Support", "Data export", "Audit log"].map(
-                (label) => (
-                  <FilterChip key={label}>{label}</FilterChip>
-                ),
-              )}
+              {[
+                "Analytics",
+                "Billing",
+                "Identity",
+                "Support",
+                "Data export",
+                "Audit log",
+              ].map((label) => (
+                <FilterChip key={label}>{label}</FilterChip>
+              ))}
             </Flex>
           </Stack>
         ))}
         <Box display="grid" gap="3" className="sm:grid-cols-2 lg:grid-cols-5">
           {gaps.map((gap) => (
-            <Box key={gap} border="default" p="3" radius="md" surface="background">
+            <Box
+              key={gap}
+              border="default"
+              p="3"
+              radius="md"
+              surface="background"
+            >
               <Flex direction="column" gap={gap}>
                 <Text size="sm" tone="muted" weight="medium">
                   gap={gap}
@@ -243,11 +305,20 @@ export const WrappingAndAxisGaps: Story = {
 
 export const AlignmentAndDistribution: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="4">
         <Box display="grid" gap="3" className="lg:grid-cols-5">
           {aligns.map((align) => (
-            <Box key={align} border="default" p="3" radius="md" surface="background">
+            <Box
+              key={align}
+              border="default"
+              p="3"
+              radius="md"
+              surface="background"
+            >
               <Flex align={align} gap="2" className="min-h-28">
                 <Text size="sm" tone="muted" weight="medium">
                   align={align}
@@ -261,7 +332,13 @@ export const AlignmentAndDistribution: Story = {
         </Box>
         <Box display="grid" gap="3" className="lg:grid-cols-3">
           {justifies.map((justify) => (
-            <Box key={justify} border="default" p="3" radius="md" surface="background">
+            <Box
+              key={justify}
+              border="default"
+              p="3"
+              radius="md"
+              surface="background"
+            >
               <Flex justify={justify} gap="2" className="min-h-20">
                 <TokenTile label="A" />
                 <TokenTile label="B" />
@@ -274,8 +351,20 @@ export const AlignmentAndDistribution: Story = {
         </Box>
         <Box display="grid" gap="3" className="lg:grid-cols-4">
           {contents.map((content) => (
-            <Box key={content} border="default" p="3" radius="md" surface="background">
-              <Flex content={content} gap="2" rowGap="2" wrap="wrap" className="min-h-28">
+            <Box
+              key={content}
+              border="default"
+              p="3"
+              radius="md"
+              surface="background"
+            >
+              <Flex
+                content={content}
+                gap="2"
+                rowGap="2"
+                wrap="wrap"
+                className="min-h-28"
+              >
                 <TokenTile label="One" />
                 <TokenTile label="Two" />
                 <TokenTile label="Three" />
@@ -293,7 +382,10 @@ export const AlignmentAndDistribution: Story = {
 
 export const FlexItems: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         <Flex gap="3" wrap="wrap">
           {itemBases.map((basis) => (
@@ -314,7 +406,7 @@ export const FlexItems: Story = {
               asChild
               align="stretch"
               gap="3"
-              className="min-h-28 rounded-md border border-border p-3"
+              className="border-border min-h-28 rounded-md border p-3"
             >
               <section>
                 <FlexItem align={align}>
@@ -338,7 +430,10 @@ export const FlexItems: Story = {
 
 export const LongContentShrink: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Flex gap="3" align="center" className="max-w-xl">
         <FlexItem>
           <Box p="2" radius="full" surface="primary">
@@ -364,12 +459,15 @@ export const LongContentShrink: Story = {
 
 export const MediaRow: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Flex gap="4" align="start" className="max-w-2xl">
         <FlexItem shrink="0">
           <Box
             aria-hidden="true"
-            className="flex size-14 items-center justify-center rounded-md bg-primary text-lg font-semibold text-primary-foreground"
+            className="bg-primary text-primary-foreground flex size-14 items-center justify-center rounded-md text-lg font-semibold"
           >
             AP
           </Box>
@@ -385,8 +483,8 @@ export const MediaRow: Story = {
               </Text>
             </Flex>
             <Text tone="muted">
-              Flex keeps the media object, summary copy, and trailing metadata aligned
-              without changing reading order.
+              Flex keeps the media object, summary copy, and trailing metadata
+              aligned without changing reading order.
             </Text>
           </Stack>
         </FlexItem>
@@ -402,7 +500,10 @@ export const MediaRow: Story = {
 
 export const FormActionRow: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <form aria-label="Invite teammate">
         <Stack gap="4">
           <Stack gap="2">
@@ -411,7 +512,7 @@ export const FormActionRow: Story = {
             </label>
             <input
               id="flex-invite-email"
-              className="h-density-control rounded-md border border-input bg-background px-3 text-sm"
+              className="h-density-control border-input bg-background rounded-md border px-3 text-sm"
               placeholder="name@example.com"
               type="email"
             />
@@ -435,7 +536,10 @@ export const FormActionRow: Story = {
 
 export const PromptInputShell: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box border="default" p="3" radius="lg" surface="background">
         <Stack gap="3">
           <label className="sr-only" htmlFor="flex-prompt">
@@ -443,7 +547,7 @@ export const PromptInputShell: Story = {
           </label>
           <textarea
             id="flex-prompt"
-            className="min-h-24 w-full resize-none rounded-md border border-input bg-background p-3 text-sm"
+            className="border-input bg-background min-h-24 w-full resize-none rounded-md border p-3 text-sm"
             placeholder="Summarize deployment risk for the current release"
           />
           <Flex gap="3" align="center" justify="between" wrap="wrap">
@@ -469,16 +573,29 @@ export const PromptInputShell: Story = {
 
 export const SemanticElements: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="3" className="sm:grid-cols-2 lg:grid-cols-3">
         {elements.map((element) => (
-          <Box key={element} border="default" p="3" radius="md" surface="background">
+          <Box
+            key={element}
+            border="default"
+            p="3"
+            radius="md"
+            surface="background"
+          >
             <Flex
               as={element}
               direction="column"
               gap="2"
-              {...(element === "nav" ? { "aria-label": "Flex story navigation" } : {})}
-              {...(element === "form" ? { "aria-label": "Flex story form" } : {})}
+              {...(element === "nav"
+                ? { "aria-label": "Flex story navigation" }
+                : {})}
+              {...(element === "form"
+                ? { "aria-label": "Flex story form" }
+                : {})}
             >
               {element === "ul" || element === "ol" ? (
                 <>
@@ -495,19 +612,24 @@ export const SemanticElements: Story = {
                 </>
               ) : element === "form" ? (
                 <>
-                  <label className="text-sm font-medium" htmlFor="flex-story-filter">
+                  <label
+                    className="text-sm font-medium"
+                    htmlFor="flex-story-filter"
+                  >
                     Filter
                   </label>
                   <input
                     id="flex-story-filter"
-                    className="h-density-control rounded-md border border-input bg-background px-3 text-sm"
+                    className="h-density-control border-input bg-background rounded-md border px-3 text-sm"
                     placeholder="Status"
                   />
                 </>
               ) : element === "fieldset" ? (
                 <>
-                  <legend className="text-sm font-medium">Notification channels</legend>
-                  <label className="text-sm text-muted-foreground">
+                  <legend className="text-sm font-medium">
+                    Notification channels
+                  </legend>
+                  <label className="text-muted-foreground text-sm">
                     <input className="me-2" type="checkbox" /> Email
                   </label>
                 </>
@@ -536,13 +658,16 @@ export const SemanticElements: Story = {
 
 export const AsChildComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Flex gap="3" align="center" wrap="wrap">
         <Flex
           asChild
           gap="2"
           align="center"
-          className="rounded-md border border-primary bg-background px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="border-primary bg-background text-primary hover:bg-muted focus-visible:ring-ring rounded-md border px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none"
         >
           <RouterAnchor to="/dashboard">Router link child</RouterAnchor>
         </Flex>
@@ -551,7 +676,7 @@ export const AsChildComposition: Story = {
           basis="sm"
           grow="1"
           minInlineSize="0"
-          className="rounded-md border border-input bg-muted px-3 py-2 text-sm font-medium"
+          className="border-input bg-muted rounded-md border px-3 py-2 text-sm font-medium"
         >
           <button type="button">FlexItem button child</button>
         </FlexItem>
@@ -566,7 +691,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Stack gap="3">
           <Box border="default" p="4" radius="md" surface="background">
@@ -591,7 +716,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Stack gap="3">
           <Stack gap="2">

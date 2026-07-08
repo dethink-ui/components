@@ -69,7 +69,11 @@ describe("Switch accessibility", () => {
                   <FieldLabel>Session alerts</FieldLabel>
                 </FieldContent>
                 <FieldControl asChild>
-                  <Switch name="sessionAlerts" value="enabled" aria-invalid="true" />
+                  <Switch
+                    name="sessionAlerts"
+                    value="enabled"
+                    aria-invalid="true"
+                  />
                 </FieldControl>
               </Field>
             </FieldGroup>
@@ -81,14 +85,12 @@ describe("Switch accessibility", () => {
       </DethinkProvider>,
     );
 
-    expect(screen.getByRole("switch", { name: "Require admin MFA" })).toHaveAttribute(
-      "aria-invalid",
-      "true",
-    );
-    expect(screen.getByRole("switch", { name: "Session alerts" })).toHaveAttribute(
-      "aria-invalid",
-      "true",
-    );
+    expect(
+      screen.getByRole("switch", { name: "Require admin MFA" }),
+    ).toHaveAttribute("aria-invalid", "true");
+    expect(
+      screen.getByRole("switch", { name: "Session alerts" }),
+    ).toHaveAttribute("aria-invalid", "true");
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

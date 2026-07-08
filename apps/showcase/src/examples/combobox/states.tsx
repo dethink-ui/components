@@ -18,14 +18,24 @@ export function ComboboxStates() {
           </ComboboxItem>
         )}
       </Combobox>
-      <Combobox label="Disabled" disabled defaultValue="staging" items={environments}>
+      <Combobox
+        label="Disabled"
+        disabled
+        defaultValue="staging"
+        items={environments}
+      >
         {(item) => (
           <ComboboxItem key={item.value} value={item.value}>
             {item.label}
           </ComboboxItem>
         )}
       </Combobox>
-      <Combobox label="Read-only" readOnly defaultValue="production" items={environments}>
+      <Combobox
+        label="Read-only"
+        readOnly
+        defaultValue="production"
+        items={environments}
+      >
         {(item) => (
           <ComboboxItem key={item.value} value={item.value}>
             {item.label}

@@ -67,7 +67,10 @@ interface DrawerMotionPresetSettings {
  * `standard` matches the fixed spring this component shipped with before
  * motion presets existed, so the default look is unchanged.
  */
-const drawerMotionPresetSettings: Record<DrawerMotionPreset, DrawerMotionPresetSettings> = {
+const drawerMotionPresetSettings: Record<
+  DrawerMotionPreset,
+  DrawerMotionPresetSettings
+> = {
   none: {
     contentDurationClass: "motion-safe:duration-0",
     overlayDurationClass: "motion-safe:duration-0",
@@ -78,19 +81,34 @@ const drawerMotionPresetSettings: Record<DrawerMotionPreset, DrawerMotionPresetS
     contentDurationClass: "motion-safe:duration-[180ms]",
     overlayDurationClass: "motion-safe:duration-150",
     recedeScale: 0.98,
-    springTransition: { damping: 36, mass: 0.82, stiffness: 310, type: "spring" },
+    springTransition: {
+      damping: 36,
+      mass: 0.82,
+      stiffness: 310,
+      type: "spring",
+    },
   },
   standard: {
     contentDurationClass: "motion-safe:duration-[240ms]",
     overlayDurationClass: "motion-safe:duration-150",
     recedeScale: 0.96,
-    springTransition: { damping: 30, mass: 0.92, stiffness: 360, type: "spring" },
+    springTransition: {
+      damping: 30,
+      mass: 0.92,
+      stiffness: 360,
+      type: "spring",
+    },
   },
   expressive: {
     contentDurationClass: "motion-safe:duration-[320ms]",
     overlayDurationClass: "motion-safe:duration-200",
     recedeScale: 0.92,
-    springTransition: { damping: 23, mass: 0.96, stiffness: 420, type: "spring" },
+    springTransition: {
+      damping: 23,
+      mass: 0.96,
+      stiffness: 420,
+      type: "spring",
+    },
   },
 };
 
@@ -161,11 +179,14 @@ function measureContentSize(
   const rect = contentRef.current?.getBoundingClientRect();
 
   if (!rect) {
-    return fallbackContentSize ?? (typeof window === "undefined"
-      ? 0
-      : axis === "x"
-        ? window.innerWidth
-        : window.innerHeight);
+    return (
+      fallbackContentSize ??
+      (typeof window === "undefined"
+        ? 0
+        : axis === "x"
+          ? window.innerWidth
+          : window.innerHeight)
+    );
   }
 
   const measuredSize = axis === "x" ? rect.width : rect.height;
@@ -174,7 +195,10 @@ function measureContentSize(
     return measuredSize;
   }
 
-  return fallbackContentSize ?? (axis === "x" ? window.innerWidth : window.innerHeight);
+  return (
+    fallbackContentSize ??
+    (axis === "x" ? window.innerWidth : window.innerHeight)
+  );
 }
 
 /**
@@ -210,9 +234,13 @@ export function useDrawerDrag({
     resolveDrawerActiveSnapStop({ activeSnapPoint, defaultSnapPoint, stops }),
   );
   const resolvedSnapPoint = isControlled
-    ? findNearestDrawerSnapStop(clampSnapPointFraction(activeSnapPoint!), openStops)
+    ? findNearestDrawerSnapStop(
+        clampSnapPointFraction(activeSnapPoint!),
+        openStops,
+      )
     : uncontrolledSnapPoint;
-  const { recedeScale, springTransition } = getDrawerMotionPresetSettings(motionPreset);
+  const { recedeScale, springTransition } =
+    getDrawerMotionPresetSettings(motionPreset);
 
   const translateMotionValue = useMotionValue(0);
   const scaleMotionValue = useMotionValue(1);
@@ -227,7 +255,11 @@ export function useDrawerDrag({
     wasOpenRef.current = open;
     startSnapPointRef.current = resolvedSnapPoint;
 
-    const contentSize = measureContentSize(contentRef, axis, fallbackContentSize);
+    const contentSize = measureContentSize(
+      contentRef,
+      axis,
+      fallbackContentSize,
+    );
     if (contentSize <= 0) {
       return undefined;
     }
@@ -254,7 +286,14 @@ export function useDrawerDrag({
 
     return () => controls.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, resolvedSnapPoint, axis, closingSign, fallbackContentSize, springTransition]);
+  }, [
+    open,
+    resolvedSnapPoint,
+    axis,
+    closingSign,
+    fallbackContentSize,
+    springTransition,
+  ]);
 
   useEffect(() => {
     const controls = animate(
@@ -275,7 +314,11 @@ export function useDrawerDrag({
     onActiveSnapPointChange?.(nextSnapPoint);
 
     if (nextSnapPoint === resolvedSnapPoint) {
-      const contentSize = measureContentSize(contentRef, axis, fallbackContentSize);
+      const contentSize = measureContentSize(
+        contentRef,
+        axis,
+        fallbackContentSize,
+      );
       const target = (1 - nextSnapPoint) * contentSize * closingSign;
 
       animate(translateMotionValue, target, springTransition);
@@ -291,7 +334,12 @@ export function useDrawerDrag({
       return;
     }
 
-    if (shouldDismissDrawerFromVelocity({ velocity: signedVelocity, velocityThreshold })) {
+    if (
+      shouldDismissDrawerFromVelocity({
+        velocity: signedVelocity,
+        velocityThreshold,
+      })
+    ) {
       onOpenChange(false);
       return;
     }
@@ -346,7 +394,9 @@ export function useDrawerDrag({
 const drawerHandleBaseClasses =
   "relative mx-auto flex h-8 w-full shrink-0 touch-none cursor-grab items-center justify-center data-[direction=left]:absolute data-[direction=left]:inset-y-0 data-[direction=left]:right-0 data-[direction=left]:z-10 data-[direction=left]:mx-0 data-[direction=left]:my-auto data-[direction=left]:h-full data-[direction=left]:w-8 data-[direction=right]:absolute data-[direction=right]:inset-y-0 data-[direction=right]:left-0 data-[direction=right]:z-10 data-[direction=right]:mx-0 data-[direction=right]:my-auto data-[direction=right]:h-full data-[direction=right]:w-8 active:cursor-grabbing after:block after:h-1.5 after:w-12 after:rounded-full after:bg-muted-foreground/40 after:shadow-sm after:transition-[width,height,background-color,opacity] hover:after:bg-muted-foreground/55 active:after:w-14 data-[direction=left]:after:h-12 data-[direction=left]:after:w-1.5 data-[direction=left]:active:after:h-14 data-[direction=left]:active:after:w-1.5 data-[direction=right]:after:h-12 data-[direction=right]:after:w-1.5 data-[direction=right]:active:after:h-14 data-[direction=right]:active:after:w-1.5 motion-reduce:after:transition-none";
 
-export function drawerHandleClassNames({ className }: { className?: string } = {}) {
+export function drawerHandleClassNames({
+  className,
+}: { className?: string } = {}) {
   return drawerHandleBaseClasses + (className ? ` ${className}` : "");
 }
 
@@ -412,7 +462,7 @@ export function DrawerEdgeSwipeZone({
 }: DrawerEdgeSwipeZoneProps) {
   const axis = drawerDragAxis(direction);
   // Dragging opens the drawer from the edge opposite its closing direction.
-  const openingSign = (-drawerDragClosingSign(direction)) as 1 | -1;
+  const openingSign = -drawerDragClosingSign(direction) as 1 | -1;
 
   function handlePanEnd(_event: PointerEvent, info: PanInfo) {
     const rawOffset = axis === "x" ? info.offset.x : info.offset.y;
@@ -428,11 +478,16 @@ export function DrawerEdgeSwipeZone({
   return (
     <motion.div
       aria-hidden="true"
-      className={cn(drawerEdgeSwipeZoneBaseClasses, drawerEdgeSwipeZoneSideClasses[direction])}
+      className={cn(
+        drawerEdgeSwipeZoneBaseClasses,
+        drawerEdgeSwipeZoneSideClasses[direction],
+      )}
       data-direction={direction}
       data-slot="drawer-edge-swipe-zone"
       onPanEnd={handlePanEnd}
-      style={axis === "x" ? { width: hitRegionSize } : { height: hitRegionSize }}
+      style={
+        axis === "x" ? { width: hitRegionSize } : { height: hitRegionSize }
+      }
     />
   );
 }

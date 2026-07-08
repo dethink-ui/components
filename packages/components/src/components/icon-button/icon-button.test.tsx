@@ -41,7 +41,9 @@ const validAriaLabelledbyProps = {
 } satisfies IconButtonProps;
 
 // @ts-expect-error IconButton requires aria-label or aria-labelledby.
-const missingAccessibleNameProps = { children: <PlusIcon /> } satisfies IconButtonProps;
+const missingAccessibleNameProps: IconButtonProps = {
+  children: <PlusIcon />,
+};
 
 void validAriaLabelProps;
 void validAriaLabelledbyProps;
@@ -63,10 +65,9 @@ describe("IconButton", () => {
     expect(button).toHaveAttribute("data-variant", "ghost");
     expect(button).toHaveAttribute("data-size", "md");
     expect(button).toHaveAttribute("data-shape", "square");
-    expect(button.querySelector('[data-slot="icon-button-icon"]')).toHaveAttribute(
-      "aria-hidden",
-      "true",
-    );
+    expect(
+      button.querySelector('[data-slot="icon-button-icon"]'),
+    ).toHaveAttribute("aria-hidden", "true");
   });
 
   it("supports aria-labelledby as the accessible name", () => {
@@ -174,7 +175,9 @@ describe("IconButton", () => {
     expect(button).toHaveAttribute("aria-busy", "true");
     expect(button).toHaveAttribute("data-loading", "true");
     expect(button).toHaveAttribute("data-disabled", "true");
-    expect(button.querySelector('[data-slot="icon-button-spinner"]')).toBeTruthy();
+    expect(
+      button.querySelector('[data-slot="icon-button-spinner"]'),
+    ).toBeTruthy();
     expect(button.querySelector('[data-slot="icon-button-icon"]')).toBeNull();
 
     await user.click(button);
@@ -251,6 +254,8 @@ describe("IconButton", () => {
       </IconButton>,
     );
 
-    expect(ref.current).toBe(screen.getByRole("button", { name: "Ref target" }));
+    expect(ref.current).toBe(
+      screen.getByRole("button", { name: "Ref target" }),
+    );
   });
 });

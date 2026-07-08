@@ -177,7 +177,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Base: Story = {
   render: (args) => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette {...args} />
     </DethinkProvider>
   ),
@@ -186,13 +189,18 @@ export const Base: Story = {
     const input = canvas.getByLabelText("Command menu");
 
     await userEvent.type(input, "people");
-    await expect(canvas.getByRole("button", { name: "Invite teammate" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Invite teammate" }),
+    ).toBeVisible();
   },
 };
 
 export const CustomFilteringAndLimit: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette
         label="Workspace commands"
         commands={commands}
@@ -209,7 +217,10 @@ export const CustomFilteringAndLimit: Story = {
 
 export const ChildrenComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette aria-label="Custom command palette">
         <CommandPaletteInput placeholder="Search custom commands" />
         <CommandPaletteList>
@@ -217,12 +228,14 @@ export const ChildrenComposition: Story = {
             <CommandPaletteItem value="create">
               <span
                 aria-hidden="true"
-                className="flex size-4 items-center justify-center text-muted-foreground"
+                className="text-muted-foreground flex size-4 items-center justify-center"
               >
                 <Search aria-hidden="true" />
               </span>
               <span className="grid min-w-0 gap-0.5">
-                <CommandPaletteItemLabel>Create saved view</CommandPaletteItemLabel>
+                <CommandPaletteItemLabel>
+                  Create saved view
+                </CommandPaletteItemLabel>
                 <CommandPaletteItemDescription>
                   Save the current filters for this workspace
                 </CommandPaletteItemDescription>
@@ -242,7 +255,10 @@ export const ChildrenComposition: Story = {
 
 export const GlobalDialog: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <CommandPaletteDialog>
         <CommandPaletteTrigger>Open command menu</CommandPaletteTrigger>
         <CommandPaletteContent
@@ -257,9 +273,13 @@ export const GlobalDialog: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open command menu" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open command menu" }),
+    );
     await expect(
-      await within(document.body).findByRole("dialog", { name: "Command menu" }),
+      await within(document.body).findByRole("dialog", {
+        name: "Command menu",
+      }),
     ).toBeVisible();
   },
 };
@@ -268,8 +288,15 @@ function ControlledCommandDialogExample() {
   const [open, setOpen] = useState(false);
 
   return (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <CommandPaletteDialog open={open} onOpenChange={setOpen} closeOnRun={false}>
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <CommandPaletteDialog
+        open={open}
+        onOpenChange={setOpen}
+        closeOnRun={false}
+      >
         <CommandPaletteTrigger variant="outline">
           Open controlled commands
         </CommandPaletteTrigger>
@@ -343,7 +370,9 @@ function AsyncCommandSearchExample() {
           .map((command) => ({
             ...command,
             action: () => {
-              setLastRun(typeof command.label === "string" ? command.label : command.key);
+              setLastRun(
+                typeof command.label === "string" ? command.label : command.key,
+              );
             },
           })),
       );
@@ -356,7 +385,10 @@ function AsyncCommandSearchExample() {
   }, [query, retryCount]);
 
   return (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <div className="grid gap-3">
         <CommandPalette
           label="Server commands"
@@ -397,7 +429,10 @@ export const AsyncSearchWithSources: Story = {
 
 export const AsyncLoadingAndStale: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette
         label="Updating commands"
         commands={commands.slice(0, 1)}
@@ -413,7 +448,10 @@ export const AsyncLoadingAndStale: Story = {
 
 export const AsyncErrorRetry: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette
         label="Server commands"
         commands={[]}
@@ -429,7 +467,10 @@ export const AsyncErrorRetry: Story = {
 
 export const EmptyState: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette
         label="Empty commands"
         commands={commands.slice(0, 2)}
@@ -450,7 +491,10 @@ export const EmptyState: Story = {
 export const MotionPresets: Story = {
   render: () => (
     <div className="grid gap-4 lg:grid-cols-2">
-      <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+      <DethinkProvider
+        theme="light"
+        className="border-border max-w-lg rounded-lg border p-6"
+      >
         <CommandPalette
           label="Subtle motion"
           motionPreset="subtle"
@@ -459,7 +503,10 @@ export const MotionPresets: Story = {
           suggestedCommands={suggestedCommands}
         />
       </DethinkProvider>
-      <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+      <DethinkProvider
+        theme="light"
+        className="border-border max-w-lg rounded-lg border p-6"
+      >
         <CommandPalette
           label="Expressive motion"
           motionPreset="expressive"
@@ -493,7 +540,10 @@ function NestedPagesExample() {
   const [lastRun, setLastRun] = useState("");
 
   return (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette
         label="Workspace commands"
         description={lastRun || "Drill into project and resource command pages"}
@@ -547,13 +597,18 @@ export const NestedPages: Story = {
 
     await userEvent.click(canvas.getByRole("button", { name: /Projects/ }));
     await expect(canvas.getByRole("button", { name: "Back" })).toBeVisible();
-    await expect(canvas.getByRole("button", { name: /Open Alpha rollout/ })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: /Open Alpha rollout/ }),
+    ).toBeVisible();
   },
 };
 
 export const ReducedMotion: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-lg rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-lg rounded-lg border p-6"
+    >
       <CommandPalette
         label="Reduced motion"
         motionPreset="expressive"
@@ -592,7 +647,7 @@ function ControlledPageStackExample() {
     <DethinkProvider
       theme="light"
       density="compact"
-      className="max-w-lg rounded-lg border border-border p-6"
+      className="border-border max-w-lg rounded-lg border p-6"
     >
       <CommandPalette
         label="Controlled stack"
@@ -624,7 +679,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="max-w-lg rounded-lg border border-border p-6"
+        className="border-border max-w-lg rounded-lg border p-6"
       >
         <CommandPalette
           controlSize="sm"
@@ -636,7 +691,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="max-w-lg rounded-lg border border-border p-6"
+        className="border-border max-w-lg rounded-lg border p-6"
       >
         <CommandPalette
           controlSize="lg"
@@ -654,7 +709,7 @@ export const CustomThemeOverride: Story = {
       theme="light"
       density="comfortable"
       themeConfig={customTheme}
-      className="max-w-lg rounded-lg border border-border bg-background p-6"
+      className="border-border bg-background max-w-lg rounded-lg border p-6"
     >
       <CommandPalette
         controlSize="lg"

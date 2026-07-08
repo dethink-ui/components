@@ -15,10 +15,7 @@ import {
   Form,
 } from "../form-field";
 import { Checkbox } from "../checkbox";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "../radio-group";
+import { RadioGroup, RadioGroupItem } from "../radio-group";
 import { Switch } from "../switch";
 
 expect.extend(toHaveNoViolations);
@@ -41,13 +38,25 @@ describe("Choice controls suite accessibility", () => {
                   </FieldControl>
                   <FieldLabel>Read records</FieldLabel>
                 </Field>
-                <Field id="suite-permission-write" orientation="horizontal" invalid>
+                <Field
+                  id="suite-permission-write"
+                  orientation="horizontal"
+                  invalid
+                >
                   <FieldControl asChild>
-                    <Checkbox name="permissions" value="write" aria-invalid="true" />
+                    <Checkbox
+                      name="permissions"
+                      value="write"
+                      aria-invalid="true"
+                    />
                   </FieldControl>
                   <FieldLabel>Write records</FieldLabel>
                 </Field>
-                <Field id="suite-permission-all" orientation="horizontal" readOnly>
+                <Field
+                  id="suite-permission-all"
+                  orientation="horizontal"
+                  readOnly
+                >
                   <FieldControl asChild>
                     <Checkbox defaultChecked="indeterminate" readOnly />
                   </FieldControl>
@@ -86,28 +95,47 @@ describe("Choice controls suite accessibility", () => {
                 <Field id="suite-tool-browser" orientation="horizontal">
                   <FieldContent>
                     <FieldLabel>Browser tool</FieldLabel>
-                    <FieldDescription>The label remains stable as state changes.</FieldDescription>
+                    <FieldDescription>
+                      The label remains stable as state changes.
+                    </FieldDescription>
                   </FieldContent>
                   <FieldControl asChild>
                     <Switch name="browserTool" value="enabled" defaultChecked />
                   </FieldControl>
                 </Field>
-                <Field id="suite-tool-terminal" orientation="horizontal" disabled>
+                <Field
+                  id="suite-tool-terminal"
+                  orientation="horizontal"
+                  disabled
+                >
                   <FieldContent>
                     <FieldLabel>Terminal tool</FieldLabel>
-                    <FieldDescription>Disabled by workspace policy.</FieldDescription>
+                    <FieldDescription>
+                      Disabled by workspace policy.
+                    </FieldDescription>
                   </FieldContent>
                   <FieldControl asChild>
                     <Switch name="terminalTool" value="enabled" disabled />
                   </FieldControl>
                 </Field>
-                <Field id="suite-tool-network" orientation="horizontal" readOnly>
+                <Field
+                  id="suite-tool-network"
+                  orientation="horizontal"
+                  readOnly
+                >
                   <FieldContent>
                     <FieldLabel>Network access</FieldLabel>
-                    <FieldDescription>Read-only inherited environment setting.</FieldDescription>
+                    <FieldDescription>
+                      Read-only inherited environment setting.
+                    </FieldDescription>
                   </FieldContent>
                   <FieldControl asChild>
-                    <Switch name="networkAccess" value="enabled" readOnly defaultChecked />
+                    <Switch
+                      name="networkAccess"
+                      value="enabled"
+                      readOnly
+                      defaultChecked
+                    />
                   </FieldControl>
                 </Field>
               </FieldGroup>
@@ -125,13 +153,17 @@ describe("Choice controls suite accessibility", () => {
       "aria-invalid",
       "true",
     );
-    expect(screen.getByLabelText("Balanced model")).toHaveAttribute("type", "radio");
-    expect(screen.getByRole("switch", { name: "Browser tool" })).toBeChecked();
-    expect(screen.getByRole("switch", { name: "Terminal tool" })).toBeDisabled();
-    expect(screen.getByRole("switch", { name: "Network access" })).toHaveAttribute(
-      "aria-readonly",
-      "true",
+    expect(screen.getByLabelText("Balanced model")).toHaveAttribute(
+      "type",
+      "radio",
     );
+    expect(screen.getByRole("switch", { name: "Browser tool" })).toBeChecked();
+    expect(
+      screen.getByRole("switch", { name: "Terminal tool" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("switch", { name: "Network access" }),
+    ).toHaveAttribute("aria-readonly", "true");
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

@@ -36,6 +36,7 @@ export const iconButtonProps: PropRow[] = [
     prop: "…native button props",
     type: "ButtonHTMLAttributes",
     defaultValue: "—",
-    description: "Renders a real button: onClick, disabled, aria-pressed, type.",
+    description:
+      "Renders a real button: onClick, disabled, aria-pressed, type.",
   },
 ];

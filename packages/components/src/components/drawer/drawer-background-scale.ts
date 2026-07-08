@@ -9,7 +9,8 @@ import { cn } from "../../utils/cn";
  * communicated by toggling a second attribute on whatever element carries
  * this marker rather than through React context.
  */
-export const DRAWER_BACKGROUND_WRAPPER_ATTRIBUTE = "data-drawer-background-wrapper";
+export const DRAWER_BACKGROUND_WRAPPER_ATTRIBUTE =
+  "data-drawer-background-wrapper";
 export const DRAWER_BACKGROUND_SCALE_ATTRIBUTE = "data-drawer-background-scale";
 
 type DrawerBackgroundScaleValue = "scaled" | "dimmed";
@@ -27,7 +28,9 @@ function resolveBackgroundWrapper(): HTMLElement | null {
     return null;
   }
 
-  return document.querySelector<HTMLElement>(`[${DRAWER_BACKGROUND_WRAPPER_ATTRIBUTE}]`);
+  return document.querySelector<HTMLElement>(
+    `[${DRAWER_BACKGROUND_WRAPPER_ATTRIBUTE}]`,
+  );
 }
 
 function syncBackgroundWrapperAttribute() {
@@ -38,7 +41,11 @@ function syncBackgroundWrapperAttribute() {
   }
 
   const nextValue: DrawerBackgroundScaleValue | undefined =
-    scaledDrawers.size > 0 ? "scaled" : dimmedDrawers.size > 0 ? "dimmed" : undefined;
+    scaledDrawers.size > 0
+      ? "scaled"
+      : dimmedDrawers.size > 0
+        ? "dimmed"
+        : undefined;
 
   if (nextValue) {
     wrapper.setAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE, nextValue);

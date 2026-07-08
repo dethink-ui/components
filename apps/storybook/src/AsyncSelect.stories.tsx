@@ -74,7 +74,10 @@ export const Base: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.type(canvas.getByRole("combobox", { name: /Account/ }), "north");
+    await userEvent.type(
+      canvas.getByRole("combobox", { name: /Account/ }),
+      "north",
+    );
 
     await expect(
       await page.findByRole("option", { name: "Northstar Systems" }),
@@ -102,7 +105,9 @@ export const MultipleOwners: Story = {
               name="owners"
               onInputValueChange={setQuery}
               onValueChange={(nextValue) => setValue(nextValue as string[])}
-              selectedItems={ownerItems.filter((item) => value.includes(item.value))}
+              selectedItems={ownerItems.filter((item) =>
+                value.includes(item.value),
+              )}
               value={value}
             />
             <FieldDescription>

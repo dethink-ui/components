@@ -36,7 +36,11 @@ describe("IconButton accessibility", () => {
         <main aria-label="IconButton accessibility smoke">
           <div>
             {variants.map((variant) => (
-              <IconButton key={variant} aria-label={`${variant} action`} variant={variant}>
+              <IconButton
+                key={variant}
+                aria-label={`${variant} action`}
+                variant={variant}
+              >
                 <PlusIcon />
               </IconButton>
             ))}
@@ -50,7 +54,11 @@ describe("IconButton accessibility", () => {
           </div>
           <div>
             {shapes.map((shape) => (
-              <IconButton key={shape} aria-label={`${shape} action`} shape={shape}>
+              <IconButton
+                key={shape}
+                aria-label={`${shape} action`}
+                shape={shape}
+              >
                 <PlusIcon />
               </IconButton>
             ))}

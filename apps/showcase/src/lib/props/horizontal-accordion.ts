@@ -60,7 +60,8 @@ export const horizontalAccordionProps: PropRow[] = [
   {
     prop: "animation",
     type: "{ duration?: number; easing?: string; content?: boolean }",
-    defaultValue: '{ duration: 260, easing: "cubic-bezier(0.2, 0, 0, 1)", content: true }',
+    defaultValue:
+      '{ duration: 260, easing: "cubic-bezier(0.2, 0, 0, 1)", content: true }',
     description:
       "Tunes the expansion and Motion choreography globally. content false disables panel content animation.",
   },

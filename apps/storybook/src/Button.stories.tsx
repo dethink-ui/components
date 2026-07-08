@@ -26,7 +26,14 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const variants = ["solid", "soft", "outline", "ghost", "link", "destructive"] as const;
+const variants = [
+  "solid",
+  "soft",
+  "outline",
+  "ghost",
+  "link",
+  "destructive",
+] as const;
 const sizes = ["xs", "sm", "md", "lg", "xl", "icon"] as const;
 const tokenOverrideStyle = {
   "--dt-color-primary": "oklch(0.52 0.16 180)",
@@ -38,7 +45,12 @@ const tokenOverrideStyle = {
 
 function PlusIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
       <path d="M8 3v10M3 8h10" strokeLinecap="round" strokeWidth="1.75" />
     </svg>
   );
@@ -46,8 +58,18 @@ function PlusIcon() {
 
 function ArrowRightIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="M3.5 8h9M9 4.5 12.5 8 9 11.5" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="M3.5 8h9M9 4.5 12.5 8 9 11.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.75"
+      />
     </svg>
   );
 }
@@ -56,8 +78,11 @@ export const Base: Story = {};
 
 export const Variants: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {variants.map((variant) => (
           <Button key={variant} variant={variant}>
             {variant}
@@ -70,8 +95,11 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {sizes.map((size) => (
           <Button key={size} aria-label={`Button ${size}`} size={size}>
             {size === "icon" ? "+" : size}
@@ -84,34 +112,37 @@ export const Sizes: Story = {
 
 export const States: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Default</p>
+          <p className="text-muted-foreground text-sm font-medium">Default</p>
           <Button>Save changes</Button>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Focus</p>
-          <Button className="ring-2 ring-ring ring-offset-2 ring-offset-background">
+          <p className="text-muted-foreground text-sm font-medium">Focus</p>
+          <Button className="ring-ring ring-offset-background ring-2 ring-offset-2">
             Save changes
           </Button>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Disabled</p>
+          <p className="text-muted-foreground text-sm font-medium">Disabled</p>
           <Button disabled>Save changes</Button>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Loading</p>
+          <p className="text-muted-foreground text-sm font-medium">Loading</p>
           <Button loading>Saving changes</Button>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">
+          <p className="text-muted-foreground text-sm font-medium">
             Destructive
           </p>
           <Button variant="destructive">Delete project</Button>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium text-muted-foreground">Submit</p>
+          <p className="text-muted-foreground text-sm font-medium">Submit</p>
           <Button type="submit">Save project</Button>
         </div>
       </div>
@@ -121,17 +152,16 @@ export const States: Story = {
 
 export const IconAffordances: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         <Button leftIcon={<PlusIcon />}>Create project</Button>
         <Button variant="outline" rightIcon={<ArrowRightIcon />}>
           Continue
         </Button>
-        <Button
-          aria-label="Add project"
-          size="icon"
-          leftIcon={<PlusIcon />}
-        />
+        <Button aria-label="Add project" size="icon" leftIcon={<PlusIcon />} />
         <Button loading leftIcon={<PlusIcon />}>
           Creating
         </Button>
@@ -142,8 +172,11 @@ export const IconAffordances: Story = {
 
 export const Composition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         <Button asChild rightIcon={<ArrowRightIcon />}>
           <a href="/docs">Read docs</a>
         </Button>
@@ -165,13 +198,13 @@ export const ThemeMatrix: Story = {
         <DethinkProvider
           key={theme}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <div className="space-y-4">
-            <h2 className="text-sm font-medium capitalize text-muted-foreground">
+            <h2 className="text-muted-foreground text-sm font-medium capitalize">
               {theme}
             </h2>
-            <div className="flex flex-wrap items-center gap-density-gap">
+            <div className="gap-density-gap flex flex-wrap items-center">
               {variants.map((variant) => (
                 <Button key={variant} variant={variant}>
                   {variant}
@@ -193,10 +226,10 @@ export const DensityMatrix: Story = {
           key={density}
           density={density}
           theme="light"
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
-          <div className="flex flex-wrap items-center gap-density-gap">
-            <span className="min-w-24 text-sm font-medium text-muted-foreground">
+          <div className="gap-density-gap flex flex-wrap items-center">
+            <span className="text-muted-foreground min-w-24 text-sm font-medium">
               {density}
             </span>
             <Button>Primary</Button>
@@ -214,14 +247,14 @@ export const TokenOverride: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="rounded-lg border border-border p-6"
+      className="border-border rounded-lg border p-6"
       style={tokenOverrideStyle}
     >
-      <div className="flex flex-wrap items-center gap-density-gap">
+      <div className="gap-density-gap flex flex-wrap items-center">
         <Button>Token primary</Button>
         <Button variant="soft">Token soft</Button>
         <Button variant="outline">Token outline</Button>
-        <Button className="ring-2 ring-ring ring-offset-2 ring-offset-background">
+        <Button className="ring-ring ring-offset-background ring-2 ring-offset-2">
           Token focus
         </Button>
       </div>

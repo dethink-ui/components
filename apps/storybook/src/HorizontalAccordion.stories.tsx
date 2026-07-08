@@ -84,9 +84,9 @@ const sections = [
 
 function PanelBody({ title, body }: { title: string; body: string }) {
   return (
-    <div className="flex h-full flex-col justify-center gap-2 bg-background p-6">
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      <p className="max-w-md text-sm text-muted-foreground">{body}</p>
+    <div className="bg-background flex h-full flex-col justify-center gap-2 p-6">
+      <h3 className="text-foreground text-lg font-semibold">{title}</h3>
+      <p className="text-muted-foreground max-w-md text-sm">{body}</p>
     </div>
   );
 }
@@ -95,7 +95,7 @@ function DemoAccordion(props: Partial<HorizontalAccordionProps>) {
   return (
     <HorizontalAccordion
       aria-label="Product sections"
-      className="rounded-lg border border-border"
+      className="border-border rounded-lg border"
       height={320}
       {...props}
     >
@@ -167,9 +167,7 @@ export const KeyboardNavigation: Story = {
 
     overviewBlade.focus();
     await userEvent.keyboard("{ArrowRight}");
-    await expect(
-      canvas.getByRole("button", { name: "Metrics" }),
-    ).toHaveFocus();
+    await expect(canvas.getByRole("button", { name: "Metrics" })).toHaveFocus();
 
     await userEvent.keyboard("{Enter}");
     await expect(
@@ -193,7 +191,7 @@ export const Controlled: Story = {
           {sections.map((section) => (
             <button
               key={section.value}
-              className="rounded-md border border-border px-3 py-1 text-sm text-foreground data-[active=true]:bg-muted"
+              className="border-border text-foreground data-[active=true]:bg-muted rounded-md border px-3 py-1 text-sm"
               data-active={value === section.value}
               onClick={() => setValue(section.value)}
               type="button"
@@ -202,7 +200,7 @@ export const Controlled: Story = {
             </button>
           ))}
           <button
-            className="rounded-md border border-border px-3 py-1 text-sm text-muted-foreground"
+            className="border-border text-muted-foreground rounded-md border px-3 py-1 text-sm"
             onClick={() => setValue(undefined)}
             type="button"
           >
@@ -220,7 +218,7 @@ export const BladeContentMixes: Story = {
     <HorizontalAccordion
       {...args}
       aria-label="Blade content mixes"
-      className="rounded-lg border border-border"
+      className="border-border rounded-lg border"
       defaultValue="text"
     >
       <HorizontalAccordion.Item value="text">
@@ -341,7 +339,7 @@ export const RTL: Story = {
 
 export const DarkTheme: Story = {
   render: (args) => (
-    <DethinkProvider className="rounded-xl bg-background p-6" theme="dark">
+    <DethinkProvider className="bg-background rounded-xl p-6" theme="dark">
       <DemoAccordion {...args} defaultValue="metrics" />
     </DethinkProvider>
   ),

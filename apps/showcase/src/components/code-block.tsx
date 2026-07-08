@@ -7,7 +7,11 @@ interface CodeBlockProps {
   filename?: string;
 }
 
-export async function CodeBlock({ code, lang = "tsx", filename }: CodeBlockProps) {
+export async function CodeBlock({
+  code,
+  lang = "tsx",
+  filename,
+}: CodeBlockProps) {
   const trimmed = code.trimEnd();
   const html = await codeToHtml(trimmed, {
     lang,

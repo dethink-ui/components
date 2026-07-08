@@ -141,7 +141,11 @@ function mergeRelForTarget(
 function hasCurrentState(
   ariaCurrent: AnchorHTMLAttributes<HTMLAnchorElement>["aria-current"],
 ) {
-  return ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false";
+  return (
+    ariaCurrent !== undefined &&
+    ariaCurrent !== false &&
+    ariaCurrent !== "false"
+  );
 }
 
 export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
@@ -167,13 +171,18 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
       const child = Children.only(children);
 
       if (!isValidElement<LinkSlotProps>(child)) {
-        throw new Error("Link with asChild expects a single React element child.");
+        throw new Error(
+          "Link with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);
       const resolvedHref = child.props.href ?? href;
       const resolvedTarget = child.props.target ?? target;
-      const resolvedRel = mergeRelForTarget(child.props.rel ?? rel, resolvedTarget);
+      const resolvedRel = mergeRelForTarget(
+        child.props.rel ?? rel,
+        resolvedTarget,
+      );
       const resolvedAriaCurrent = child.props["aria-current"] ?? ariaCurrent;
       const isCurrent = hasCurrentState(resolvedAriaCurrent);
       const clonedProps: LinkSlotProps = {

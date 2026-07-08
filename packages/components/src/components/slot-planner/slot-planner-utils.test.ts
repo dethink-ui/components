@@ -203,7 +203,10 @@ describe("deriveOccurrenceStatus", () => {
       occurrenceDate: "2026-10-18",
       startTime: "09:00",
     };
-    const afterTransition = { ...beforeTransition, occurrenceDate: "2026-10-25" };
+    const afterTransition = {
+      ...beforeTransition,
+      occurrenceDate: "2026-10-25",
+    };
 
     expect(
       deriveOccurrenceStatus(dstSlot, beforeTransition, "2026-10-18T09:30:00Z"),
@@ -217,7 +220,12 @@ describe("deriveOccurrenceStatus", () => {
 describe("expandSlotOccurrences", () => {
   it("returns a single occurrence for a non-recurring slot inside the range", () => {
     const slot = findSampleSlot("tue-pairing");
-    const occurrences = expandSlotOccurrences(slot, "2026-07-06", "2026-07-12", NOW);
+    const occurrences = expandSlotOccurrences(
+      slot,
+      "2026-07-06",
+      "2026-07-12",
+      NOW,
+    );
 
     expect(occurrences).toHaveLength(1);
     expect(occurrences[0]).toMatchObject({
@@ -234,18 +242,30 @@ describe("expandSlotOccurrences", () => {
 
   it("expands a weekly series across weeks within the range", () => {
     const slot = findSampleSlot("mon-morning-architecture");
-    const occurrences = expandSlotOccurrences(slot, "2026-07-06", "2026-07-19", NOW);
+    const occurrences = expandSlotOccurrences(
+      slot,
+      "2026-07-06",
+      "2026-07-19",
+      NOW,
+    );
 
     expect(occurrences.map((occurrence) => occurrence.occurrenceDate)).toEqual([
       "2026-07-06",
       "2026-07-13",
     ]);
-    expect(occurrences.every((occurrence) => occurrence.isRecurring)).toBe(true);
+    expect(occurrences.every((occurrence) => occurrence.isRecurring)).toBe(
+      true,
+    );
   });
 
   it("steps biweekly, applies overrides, and drops cancelled occurrences", () => {
     const slot = findSampleSlot("wed-group-systems");
-    const occurrences = expandSlotOccurrences(slot, "2026-07-06", "2026-09-06", NOW);
+    const occurrences = expandSlotOccurrences(
+      slot,
+      "2026-07-06",
+      "2026-09-06",
+      NOW,
+    );
 
     // 2026-08-05 is override-cancelled and must be absent entirely.
     expect(occurrences.map((occurrence) => occurrence.occurrenceDate)).toEqual([
@@ -289,11 +309,18 @@ describe("expandSlotOccurrences", () => {
 
   it("keeps wall-clock time stable across the Europe/London DST end", () => {
     const slot = findSampleSlot("autumn-dst-spanning-clinic");
-    const occurrences = expandSlotOccurrences(slot, "2026-10-18", "2026-11-01", NOW);
+    const occurrences = expandSlotOccurrences(
+      slot,
+      "2026-10-18",
+      "2026-11-01",
+      NOW,
+    );
 
-    expect(
-      occurrences.map((occurrence) => occurrence.startTime),
-    ).toEqual(["09:00", "09:00", "09:00"]);
+    expect(occurrences.map((occurrence) => occurrence.startTime)).toEqual([
+      "09:00",
+      "09:00",
+      "09:00",
+    ]);
 
     // A "now" of 09:30 UTC on each occurrence date sits after the 10:00 BST
     // end (09:00 UTC) before the transition, but before the 10:00 GMT end
@@ -339,16 +366,19 @@ describe("expandSlotsForRange", () => {
       NOW,
     );
 
-    expect(byDate["2026-07-06"]?.map((occurrence) => occurrence.slotId)).toEqual([
-      "mon-morning-architecture",
-      "mon-evening-architecture",
-    ]);
-    expect(byDate["2026-07-08"]?.map((occurrence) => occurrence.slotId)).toEqual([
-      "wed-group-systems",
-    ]);
+    expect(
+      byDate["2026-07-06"]?.map((occurrence) => occurrence.slotId),
+    ).toEqual(["mon-morning-architecture", "mon-evening-architecture"]);
+    expect(
+      byDate["2026-07-08"]?.map((occurrence) => occurrence.slotId),
+    ).toEqual(["wed-group-systems"]);
     // The past and next-week fixtures fall outside this range entirely.
-    expect(Object.keys(byDate).every((date) => date >= "2026-07-06")).toBe(true);
-    expect(Object.keys(byDate).every((date) => date <= "2026-07-12")).toBe(true);
+    expect(Object.keys(byDate).every((date) => date >= "2026-07-06")).toBe(
+      true,
+    );
+    expect(Object.keys(byDate).every((date) => date <= "2026-07-12")).toBe(
+      true,
+    );
   });
 });
 

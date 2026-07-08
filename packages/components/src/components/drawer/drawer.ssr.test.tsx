@@ -18,7 +18,9 @@ function ServerDrawer() {
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>Server drawer</DrawerTitle>
-          <DrawerDescription>Hydrates without mismatch warnings.</DrawerDescription>
+          <DrawerDescription>
+            Hydrates without mismatch warnings.
+          </DrawerDescription>
         </DrawerHeader>
       </DrawerContent>
     </Drawer>

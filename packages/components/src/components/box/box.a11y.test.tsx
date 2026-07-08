@@ -12,7 +12,13 @@ describe("Box accessibility", () => {
     const { container } = render(
       <DethinkProvider theme="light">
         <Box as="main" aria-label="Box accessibility smoke" p="4">
-          <Box as="section" aria-labelledby="box-heading" border="default" p="4" radius="md">
+          <Box
+            as="section"
+            aria-labelledby="box-heading"
+            border="default"
+            p="4"
+            radius="md"
+          >
             <Heading id="box-heading" level={1} visualLevel={3}>
               Account summary
             </Heading>

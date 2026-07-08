@@ -42,8 +42,7 @@ export type HorizontalAccordionAnimation = {
 
 export type HorizontalAccordionActivationMode = "manual" | "automatic";
 
-export interface HorizontalAccordionProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface HorizontalAccordionProps extends HTMLAttributes<HTMLDivElement> {
   value?: HorizontalAccordionValue;
   defaultValue?: HorizontalAccordionValue;
   onValueChange?: (value: HorizontalAccordionValue) => void;
@@ -58,19 +57,14 @@ export interface HorizontalAccordionProps
 
 export type HorizontalAccordionLayout = "default" | "compact";
 
-export interface HorizontalAccordionItemProps
-  extends HTMLAttributes<HTMLDivElement> {
+export interface HorizontalAccordionItemProps extends HTMLAttributes<HTMLDivElement> {
   value: string;
 }
 
 export type HorizontalAccordionBladeIconPosition =
-  | "start"
-  | "end"
-  | "top"
-  | "bottom";
+  "start" | "end" | "top" | "bottom";
 
-export interface HorizontalAccordionBladeProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface HorizontalAccordionBladeProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconPosition?: HorizontalAccordionBladeIconPosition;
 }
 
@@ -78,11 +72,9 @@ export type HorizontalAccordionBladeIconProps = HTMLAttributes<HTMLSpanElement>;
 
 export type HorizontalAccordionBladeLabelOrientation = "rotated" | "vertical";
 export type HorizontalAccordionBladeLabelDirection =
-  | "bottom-to-top"
-  | "top-to-bottom";
+  "bottom-to-top" | "top-to-bottom";
 
-export interface HorizontalAccordionBladeLabelProps
-  extends HTMLAttributes<HTMLSpanElement> {
+export interface HorizontalAccordionBladeLabelProps extends HTMLAttributes<HTMLSpanElement> {
   orientation?: HorizontalAccordionBladeLabelOrientation;
   direction?: HorizontalAccordionBladeLabelDirection;
 }
@@ -232,7 +224,10 @@ function isDevelopment() {
 }
 
 function getAccordionPartName(type: unknown) {
-  if (typeof type === "function" || (typeof type === "object" && type !== null)) {
+  if (
+    typeof type === "function" ||
+    (typeof type === "object" && type !== null)
+  ) {
     return (type as MarkedAccordionPart)[ACCORDION_PART];
   }
 
@@ -364,7 +359,7 @@ function renderBladeChildren(children: ReactNode) {
     if (typeof child === "string" || typeof child === "number") {
       return (
         <span
-          className="pointer-events-none order-2 inline-flex min-w-0 flex-1 items-center justify-center whitespace-nowrap text-sm font-semibold"
+          className="pointer-events-none order-2 inline-flex min-w-0 flex-1 items-center justify-center text-sm font-semibold whitespace-nowrap"
           data-slot="horizontal-accordion-blade-content"
         >
           {child}
@@ -434,7 +429,9 @@ const HorizontalAccordionRoot = forwardRef<
     }
 
     const updateLayout = (width: number) => {
-      setLayout(width > 0 && width <= compactBreakpoint ? "compact" : "default");
+      setLayout(
+        width > 0 && width <= compactBreakpoint ? "compact" : "default",
+      );
     };
     const initialWidth = root.getBoundingClientRect().width;
 
@@ -805,7 +802,12 @@ export const HorizontalAccordionBladeLabel = forwardRef<
   HorizontalAccordionBladeLabelProps
 >(
   (
-    { className, orientation = "rotated", direction = "bottom-to-top", ...props },
+    {
+      className,
+      orientation = "rotated",
+      direction = "bottom-to-top",
+      ...props
+    },
     ref,
   ) => {
     const { layout } = useAccordionContext("HorizontalAccordion.BladeLabel");

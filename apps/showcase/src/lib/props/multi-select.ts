@@ -17,8 +17,7 @@ export const multiSelectProps: PropRow[] = [
     prop: "children",
     type: "MultiSelectItem nodes | (item) => MultiSelectItem",
     defaultValue: "—",
-    description:
-      "Static options, or a render function when passing item data.",
+    description: "Static options, or a render function when passing item data.",
   },
   {
     prop: "items / selectedItems",
@@ -43,7 +42,8 @@ export const multiSelectProps: PropRow[] = [
     prop: "placeholder / searchPlaceholder / emptyMessage",
     type: "ReactNode",
     defaultValue: "—",
-    description: "Copy for the empty control, chip input, and no-results state.",
+    description:
+      "Copy for the empty control, chip input, and no-results state.",
   },
   {
     prop: "controlSize",

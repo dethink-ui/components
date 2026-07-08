@@ -72,7 +72,10 @@ import { CalendarDate } from "@internationalized/date";`}
         title="Props"
         description="Calendar and RangeCalendar share the same API; RangeCalendar's value shape is { start, end }. Always give each calendar an aria-label (or aria-labelledby) describing what is being picked."
       >
-        <PropsTable caption="Calendar and RangeCalendar props" rows={calendarProps} />
+        <PropsTable
+          caption="Calendar and RangeCalendar props"
+          rows={calendarProps}
+        />
       </DocsSection>
     </DocsPage>
   );

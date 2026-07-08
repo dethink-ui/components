@@ -6,7 +6,13 @@
   "description": "TanStack-powered DataTable workflow with semantic Table rendering, sorting, filtering, pagination, row selection, column visibility, row actions, and accessible status states.",
   "dependencies": ["@tanstack/react-table"],
   "devDependencies": [],
-  "registryDependencies": ["dethink-base", "table", "button", "checkbox", "input"],
+  "registryDependencies": [
+    "dethink-base",
+    "table",
+    "button",
+    "checkbox",
+    "input"
+  ],
   "files": [
     {
       "path": "packages/components/src/components/data-table/data-table.tsx",

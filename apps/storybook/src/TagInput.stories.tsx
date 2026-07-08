@@ -82,7 +82,9 @@ export const ControlledAndPaste: Story = {
     await userEvent.click(input);
     await userEvent.paste("ops, renewal");
 
-    await expect(canvas.getByText("Serialized tags: finance, ops, renewal")).toBeVisible();
+    await expect(
+      canvas.getByText("Serialized tags: finance, ops, renewal"),
+    ).toBeVisible();
   },
 };
 
@@ -150,11 +152,7 @@ export const States: Story = {
             defaultValue={["finance", "renewal"]}
             label="Inherited labels"
           />
-          <TagInput
-            disabled
-            defaultValue={["locked"]}
-            label="Locked labels"
-          />
+          <TagInput disabled defaultValue={["locked"]} label="Locked labels" />
         </Stack>
       </Container>
     </DethinkProvider>
@@ -163,7 +161,12 @@ export const States: Story = {
 
 export const ThemeDensityAndRTL: Story = {
   render: () => (
-    <DethinkProvider theme="dark" density="comfortable" dir="rtl" className="p-6">
+    <DethinkProvider
+      theme="dark"
+      density="comfortable"
+      dir="rtl"
+      className="p-6"
+    >
       <Container size="sm">
         <TagInput
           controlSize="lg"

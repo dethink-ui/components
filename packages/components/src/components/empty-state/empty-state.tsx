@@ -1,14 +1,13 @@
-import {
-  forwardRef,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
+import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../../utils/cn";
 import type { FeedbackTone } from "../alert";
 
 export type EmptyStateVariant = "compact" | "card" | "table" | "page";
 
-export interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+export interface EmptyStateProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   variant?: EmptyStateVariant;
   tone?: FeedbackTone;
   visual?: ReactNode;
@@ -24,12 +23,10 @@ const emptyStateBaseClasses =
 
 const emptyStateVariantClasses: Record<EmptyStateVariant, string> = {
   compact: "gap-[var(--dt-space-2)] rounded-md p-[var(--dt-space-4)]",
-  card:
-    "gap-[var(--dt-space-3)] rounded-lg border border-border bg-background p-[var(--dt-space-6)] shadow-sm",
+  card: "gap-[var(--dt-space-3)] rounded-lg border border-border bg-background p-[var(--dt-space-6)] shadow-sm",
   table:
     "min-h-40 gap-[var(--dt-space-3)] rounded-md border border-dashed border-border bg-muted/20 p-[var(--dt-space-6)]",
-  page:
-    "min-h-80 gap-[var(--dt-space-4)] rounded-lg border border-border bg-background p-[var(--dt-space-8)] shadow-sm",
+  page: "min-h-80 gap-[var(--dt-space-4)] rounded-lg border border-border bg-background p-[var(--dt-space-8)] shadow-sm",
 };
 
 const emptyStateToneClasses: Record<FeedbackTone, string> = {
@@ -42,8 +39,10 @@ const emptyStateToneClasses: Record<FeedbackTone, string> = {
 
 const emptyStateVisualClasses =
   "inline-flex size-12 items-center justify-center rounded-lg border border-border bg-muted/45 [&>svg]:size-6";
-const emptyStateTitleClasses = "max-w-prose text-base font-medium leading-6 text-foreground";
-const emptyStateDescriptionClasses = "max-w-prose leading-6 text-muted-foreground";
+const emptyStateTitleClasses =
+  "max-w-prose text-base font-medium leading-6 text-foreground";
+const emptyStateDescriptionClasses =
+  "max-w-prose leading-6 text-muted-foreground";
 const emptyStateActionsClasses =
   "flex flex-wrap items-center justify-center gap-[var(--dt-space-2)]";
 
@@ -86,19 +85,32 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
       className={emptyStateClassNames({ className, tone, variant })}
     >
       {visual ? (
-        <div aria-hidden="true" data-slot="empty-state-visual" className={emptyStateVisualClasses}>
+        <div
+          aria-hidden="true"
+          data-slot="empty-state-visual"
+          className={emptyStateVisualClasses}
+        >
           {visual}
         </div>
       ) : null}
       {title || description ? (
-        <div data-slot="empty-state-copy" className="grid justify-items-center gap-[var(--dt-space-1)]">
+        <div
+          data-slot="empty-state-copy"
+          className="grid justify-items-center gap-[var(--dt-space-1)]"
+        >
           {title ? (
-            <div data-slot="empty-state-title" className={emptyStateTitleClasses}>
+            <div
+              data-slot="empty-state-title"
+              className={emptyStateTitleClasses}
+            >
               {title}
             </div>
           ) : null}
           {description ? (
-            <div data-slot="empty-state-description" className={emptyStateDescriptionClasses}>
+            <div
+              data-slot="empty-state-description"
+              className={emptyStateDescriptionClasses}
+            >
               {description}
             </div>
           ) : null}
@@ -106,13 +118,19 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
       ) : null}
       {children}
       {primaryAction || secondaryAction ? (
-        <div data-slot="empty-state-actions" className={emptyStateActionsClasses}>
+        <div
+          data-slot="empty-state-actions"
+          className={emptyStateActionsClasses}
+        >
           {primaryAction}
           {secondaryAction}
         </div>
       ) : null}
       {footer ? (
-        <div data-slot="empty-state-footer" className="text-xs text-muted-foreground">
+        <div
+          data-slot="empty-state-footer"
+          className="text-muted-foreground text-xs"
+        >
           {footer}
         </div>
       ) : null}

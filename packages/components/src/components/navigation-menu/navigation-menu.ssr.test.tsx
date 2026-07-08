@@ -39,7 +39,9 @@ function FlyoutNav({ defaultValue }: { defaultValue?: string | null }) {
           <NavigationMenuTrigger>Products</NavigationMenuTrigger>
           <NavigationMenuContent>
             <NavigationMenuSection>
-              <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+              <NavigationMenuLink href="/analytics">
+                Analytics
+              </NavigationMenuLink>
             </NavigationMenuSection>
           </NavigationMenuContent>
         </NavigationMenuItem>

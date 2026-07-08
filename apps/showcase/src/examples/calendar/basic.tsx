@@ -16,7 +16,7 @@ export function CalendarBasic() {
         value={value}
         onValueChange={setValue}
       />
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Selected: {value ? value.toString() : "none"}
       </p>
     </div>

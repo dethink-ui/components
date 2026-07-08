@@ -69,7 +69,9 @@ export function FormFieldRecipeProjectForm() {
         <FieldControl asChild>
           <Textarea name="project-description" rows={2} />
         </FieldControl>
-        <FieldDescription>Optional, shown on the project card.</FieldDescription>
+        <FieldDescription>
+          Optional, shown on the project card.
+        </FieldDescription>
       </Field>
 
       <Field id="proj-public" orientation="horizontal">
@@ -80,7 +82,7 @@ export function FormFieldRecipeProjectForm() {
       </Field>
 
       <div className="flex items-center justify-between">
-        <p aria-live="polite" className="text-sm text-muted-foreground">
+        <p aria-live="polite" className="text-muted-foreground text-sm">
           {created ? "Project created ✓" : ""}
         </p>
         <Button type="submit">Create project</Button>

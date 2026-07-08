@@ -17,10 +17,7 @@ import {
   DrawerTrigger,
   type DrawerDirection,
 } from ".";
-import {
-  useDrawerDrag,
-  type DrawerDragMotionProps,
-} from "./drawer-motion";
+import { useDrawerDrag, type DrawerDragMotionProps } from "./drawer-motion";
 
 interface TestMotionValue {
   get: () => number;
@@ -137,7 +134,9 @@ describe("Drawer motion (enabled)", () => {
           <DrawerHandle data-testid="drawer-handle" />
           <DrawerHeader>
             <DrawerTitle>Filters</DrawerTitle>
-            <DrawerDescription>Drag from the handle to resize.</DrawerDescription>
+            <DrawerDescription>
+              Drag from the handle to resize.
+            </DrawerDescription>
           </DrawerHeader>
         </DrawerContent>
       </Drawer>,
@@ -245,7 +244,9 @@ describe("Drawer motion (enabled)", () => {
       </Drawer>,
     );
 
-    expect(screen.getByRole("dialog", { name: "Bottom sheet" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Bottom sheet" }),
+    ).toBeInTheDocument();
     expect(handleActiveSnapPointChange).not.toHaveBeenCalled();
   });
 
@@ -253,7 +254,12 @@ describe("Drawer motion (enabled)", () => {
     const user = userEvent.setup();
 
     render(
-      <Drawer defaultOpen={false} direction="right" modal={false} snapPoints={[0.4, 1]}>
+      <Drawer
+        defaultOpen={false}
+        direction="right"
+        modal={false}
+        snapPoints={[0.4, 1]}
+      >
         <DrawerTrigger>Open inspector</DrawerTrigger>
         <DrawerContent>
           <DrawerHandle data-testid="push-handle" />
@@ -336,7 +342,9 @@ describe("Drawer motion (reduced motion override)", () => {
     });
 
     await user.click(screen.getByRole("button", { name: "Open sheet" }));
-    expect(await screen.findByRole("dialog", { name: "Filters" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("dialog", { name: "Filters" }),
+    ).toBeInTheDocument();
 
     await user.keyboard("{Escape}");
     await waitFor(() => {
@@ -475,7 +483,12 @@ describe("Drawer motionPreset", () => {
 
   it("applies data-motion in push mode too", () => {
     render(
-      <Drawer defaultOpen direction="right" modal={false} motionPreset="expressive">
+      <Drawer
+        defaultOpen
+        direction="right"
+        modal={false}
+        motionPreset="expressive"
+      >
         <DrawerTrigger>Toggle inspector</DrawerTrigger>
         <DrawerContent>
           <DrawerTitle>Inspector</DrawerTitle>
@@ -483,10 +496,9 @@ describe("Drawer motionPreset", () => {
       </Drawer>,
     );
 
-    expect(document.querySelector('[data-slot="drawer-content"]')).toHaveAttribute(
-      "data-motion",
-      "expressive",
-    );
+    expect(
+      document.querySelector('[data-slot="drawer-content"]'),
+    ).toHaveAttribute("data-motion", "expressive");
   });
 });
 
@@ -505,7 +517,9 @@ describe("Drawer layoutId passthrough", () => {
 
     await user.click(screen.getByRole("button", { name: "Open card" }));
 
-    expect(await screen.findByRole("dialog", { name: "Shared card" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("dialog", { name: "Shared card" }),
+    ).toBeInTheDocument();
   });
 
   it("accepts a layoutId without throwing in push mode", async () => {
@@ -522,7 +536,9 @@ describe("Drawer layoutId passthrough", () => {
 
     await user.click(screen.getByRole("button", { name: "Toggle inspector" }));
 
-    expect(await screen.findByRole("dialog", { name: "Shared inspector" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("dialog", { name: "Shared inspector" }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -564,7 +580,9 @@ describe("Drawer nested/stacked drawers", () => {
     await user.click(screen.getByRole("button", { name: "Close child" }));
 
     await waitFor(() => {
-      expect(screen.queryByRole("dialog", { name: "Child" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("dialog", { name: "Child" }),
+      ).not.toBeInTheDocument();
     });
     await waitFor(() => {
       expect(parentContent).not.toHaveAttribute("data-drawer-receded", "true");
@@ -638,13 +656,17 @@ describe("Drawer backgroundScale", () => {
     await screen.findByRole("dialog", { name: "Scaled background" });
 
     await waitFor(() => {
-      expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("scaled");
+      expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+        "scaled",
+      );
     });
 
     await user.keyboard("{Escape}");
 
     await waitFor(() => {
-      expect(wrapper.hasAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(false);
+      expect(wrapper.hasAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+        false,
+      );
     });
 
     wrapper.remove();
@@ -694,7 +716,9 @@ describe("Drawer backgroundScale", () => {
     await screen.findByRole("dialog", { name: "Reduced motion background" });
 
     await waitFor(() => {
-      expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("dimmed");
+      expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+        "dimmed",
+      );
     });
 
     wrapper.remove();

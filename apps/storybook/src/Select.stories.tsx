@@ -246,7 +246,8 @@ export const SettingsFilterCard: Story = {
           <CardHeader>
             <CardTitle>Workspace defaults</CardTitle>
             <CardDescription>
-              Select keeps one-of-many settings compact while preserving form submission.
+              Select keeps one-of-many settings compact while preserving form
+              submission.
             </CardDescription>
           </CardHeader>
           <CardContent>

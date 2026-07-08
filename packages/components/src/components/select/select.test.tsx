@@ -1,17 +1,9 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
-import {
-  Select,
-  SelectItem,
-  selectClassNames,
-  selectItemClassNames,
-} from ".";
+import { Select, SelectItem, selectClassNames, selectItemClassNames } from ".";
 
 const workspaceItems = [
   { label: "Production", value: "production" },
@@ -94,9 +86,9 @@ describe("Select", () => {
 
     render(<ControlledSelect />);
 
-    expect(screen.getByRole("button", { name: /Environment/ })).toHaveTextContent(
-      "Staging",
-    );
+    expect(
+      screen.getByRole("button", { name: /Environment/ }),
+    ).toHaveTextContent("Staging");
 
     await user.click(screen.getByRole("button", { name: /Environment/ }));
     await user.click(screen.getByRole("option", { name: "Production" }));
@@ -104,8 +96,12 @@ describe("Select", () => {
     const trigger = screen.getByRole("button", { name: /Environment/ });
 
     expect(trigger).toHaveTextContent("Production");
-    expect(trigger.querySelector('[data-slot="select-item-indicator"]')).toBeNull();
-    expect(trigger.querySelector('[data-slot="select-item-content"]')).toBeNull();
+    expect(
+      trigger.querySelector('[data-slot="select-item-indicator"]'),
+    ).toBeNull();
+    expect(
+      trigger.querySelector('[data-slot="select-item-content"]'),
+    ).toBeNull();
     expect(screen.getByText("production")).toBeInTheDocument();
   });
 
@@ -138,7 +134,11 @@ describe("Select", () => {
     const handleOpenChange = vi.fn();
 
     const { rerender } = render(
-      <Select label="Open workspace" defaultOpen onOpenChange={handleOpenChange}>
+      <Select
+        label="Open workspace"
+        defaultOpen
+        onOpenChange={handleOpenChange}
+      >
         <SelectItem value="production">Production</SelectItem>
         <SelectItem value="staging">Staging</SelectItem>
       </Select>,
@@ -184,9 +184,9 @@ describe("Select", () => {
       </Select>,
     );
 
-    expect(screen.getByRole("button", { name: /Default workspace/ })).toHaveTextContent(
-      "Sandbox",
-    );
+    expect(
+      screen.getByRole("button", { name: /Default workspace/ }),
+    ).toHaveTextContent("Sandbox");
 
     await user.click(screen.getByRole("button", { name: /Default workspace/ }));
     await user.click(screen.getByRole("option", { name: "Production" }));
@@ -217,7 +217,11 @@ describe("Select", () => {
         density="compact"
         dir="rtl"
       >
-        <Select label="Provider workspace" defaultOpen defaultValue="production">
+        <Select
+          label="Provider workspace"
+          defaultOpen
+          defaultValue="production"
+        >
           <SelectItem value="production">Production</SelectItem>
           <SelectItem value="staging">Staging</SelectItem>
         </Select>
@@ -256,7 +260,9 @@ describe("Select", () => {
       );
 
       const root = container.querySelector('[data-slot="select"]');
-      const trigger = screen.getByRole("button", { name: /Reviewed workspace/ });
+      const trigger = screen.getByRole("button", {
+        name: /Reviewed workspace/,
+      });
 
       expect(root).toHaveAttribute("data-invalid", "true");
       expect(trigger).toHaveAttribute("aria-invalid", ariaInvalid);
@@ -331,7 +337,12 @@ describe("Select", () => {
 
   it("forces controlled read-only open state closed", () => {
     render(
-      <Select readOnly open label="Read-only open workspace" defaultValue="production">
+      <Select
+        readOnly
+        open
+        label="Read-only open workspace"
+        defaultValue="production"
+      >
         <SelectItem value="production">Production</SelectItem>
         <SelectItem value="staging">Staging</SelectItem>
       </Select>,

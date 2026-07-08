@@ -145,7 +145,9 @@ export const DisabledAndReadOnly: Story = {
           <Field id="readonly-switch-story" orientation="horizontal" readOnly>
             <FieldContent>
               <FieldLabel>Inherited from organization policy</FieldLabel>
-              <FieldDescription>Managed by your workspace owner.</FieldDescription>
+              <FieldDescription>
+                Managed by your workspace owner.
+              </FieldDescription>
             </FieldContent>
             <FieldControl asChild>
               <Switch readOnly defaultChecked />
@@ -154,7 +156,9 @@ export const DisabledAndReadOnly: Story = {
           <Field id="disabled-switch-story" orientation="horizontal" disabled>
             <FieldContent>
               <FieldLabel>Requires enterprise plan</FieldLabel>
-              <FieldDescription>Upgrade before enabling this control.</FieldDescription>
+              <FieldDescription>
+                Upgrade before enabling this control.
+              </FieldDescription>
             </FieldContent>
             <FieldControl asChild>
               <Switch disabled />
@@ -219,7 +223,9 @@ export const GroupedSwitches: Story = {
             <Field id="tool-browser" orientation="horizontal">
               <FieldContent>
                 <FieldLabel>Browser tool</FieldLabel>
-                <FieldDescription>Allow website inspection during tasks.</FieldDescription>
+                <FieldDescription>
+                  Allow website inspection during tasks.
+                </FieldDescription>
               </FieldContent>
               <FieldControl asChild>
                 <Switch name="browserTool" value="enabled" defaultChecked />
@@ -228,7 +234,9 @@ export const GroupedSwitches: Story = {
             <Field id="tool-terminal" orientation="horizontal">
               <FieldContent>
                 <FieldLabel>Terminal tool</FieldLabel>
-                <FieldDescription>Allow local command execution.</FieldDescription>
+                <FieldDescription>
+                  Allow local command execution.
+                </FieldDescription>
               </FieldContent>
               <FieldControl asChild>
                 <Switch name="terminalTool" value="enabled" />
@@ -250,7 +258,7 @@ export const ThemeDensityAndRTL: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="sm">
             <Field id={`switch-${theme}`} orientation="horizontal">

@@ -4,7 +4,9 @@
     "composite": true,
     "paths": {
       "@dethink/components": ["../../packages/components/src/index.ts"],
-      "@dethink/components/styles.css": ["../../packages/components/src/styles.css"]
+      "@dethink/components/styles.css": [
+        "../../packages/components/src/styles.css"
+      ]
     },
     "types": ["node"]
   },

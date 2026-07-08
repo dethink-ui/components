@@ -37,7 +37,9 @@ describe("NavigationMenu accessibility", () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink href="/projects">Projects</NavigationMenuLink>
+                <NavigationMenuLink href="/projects">
+                  Projects
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <NavigationMenuLink disabled href="/billing">
@@ -77,7 +79,9 @@ describe("NavigationMenu accessibility", () => {
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <NavigationMenuLink href="/docs/tokens">Tokens</NavigationMenuLink>
+                <NavigationMenuLink href="/docs/tokens">
+                  Tokens
+                </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>

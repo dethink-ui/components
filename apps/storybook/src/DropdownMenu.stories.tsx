@@ -85,12 +85,7 @@ type Story = StoryObj<typeof meta>;
 
 function IconPath({ d }: { d: string }) {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d={d}
         stroke="currentColor"
@@ -107,7 +102,9 @@ function MoreIcon() {
 }
 
 function OpenIcon() {
-  return <IconPath d="M5 4.25h6.75V11A1.75 1.75 0 0 1 10 12.75H5A1.75 1.75 0 0 1 3.25 11V6A1.75 1.75 0 0 1 5 4.25Zm3.25-2h5.5v5.5M9 7l4.5-4.5" />;
+  return (
+    <IconPath d="M5 4.25h6.75V11A1.75 1.75 0 0 1 10 12.75H5A1.75 1.75 0 0 1 3.25 11V6A1.75 1.75 0 0 1 5 4.25Zm3.25-2h5.5v5.5M9 7l4.5-4.5" />
+  );
 }
 
 function RefreshIcon() {
@@ -115,23 +112,33 @@ function RefreshIcon() {
 }
 
 function CopyIcon() {
-  return <IconPath d="M6.25 5.25H11A1.75 1.75 0 0 1 12.75 7v4A1.75 1.75 0 0 1 11 12.75H7A1.75 1.75 0 0 1 5.25 11V6.25A1 1 0 0 1 6.25 5.25Zm-3-1A1.75 1.75 0 0 1 5 2.5h4A1.75 1.75 0 0 1 10.75 4" />;
+  return (
+    <IconPath d="M6.25 5.25H11A1.75 1.75 0 0 1 12.75 7v4A1.75 1.75 0 0 1 11 12.75H7A1.75 1.75 0 0 1 5.25 11V6.25A1 1 0 0 1 6.25 5.25Zm-3-1A1.75 1.75 0 0 1 5 2.5h4A1.75 1.75 0 0 1 10.75 4" />
+  );
 }
 
 function ArchiveIcon() {
-  return <IconPath d="M3 5.25h10M4.25 5.25v6A1.75 1.75 0 0 0 6 13h4a1.75 1.75 0 0 0 1.75-1.75v-6M3.75 3h8.5l.75 2.25H3L3.75 3Zm2.75 5h3" />;
+  return (
+    <IconPath d="M3 5.25h10M4.25 5.25v6A1.75 1.75 0 0 0 6 13h4a1.75 1.75 0 0 0 1.75-1.75v-6M3.75 3h8.5l.75 2.25H3L3.75 3Zm2.75 5h3" />
+  );
 }
 
 function TrashIcon() {
-  return <IconPath d="M3.5 4.5h9M6.25 4.5V3.25A1.25 1.25 0 0 1 7.5 2h1A1.25 1.25 0 0 1 9.75 3.25V4.5m1.5 0-.45 7.25A1.75 1.75 0 0 1 9.06 13.5H6.94a1.75 1.75 0 0 1-1.74-1.75L4.75 4.5" />;
+  return (
+    <IconPath d="M3.5 4.5h9M6.25 4.5V3.25A1.25 1.25 0 0 1 7.5 2h1A1.25 1.25 0 0 1 9.75 3.25V4.5m1.5 0-.45 7.25A1.75 1.75 0 0 1 9.06 13.5H6.94a1.75 1.75 0 0 1-1.74-1.75L4.75 4.5" />
+  );
 }
 
 function SettingsIcon() {
-  return <IconPath d="M8 5.5A2.5 2.5 0 1 1 8 10.5 2.5 2.5 0 0 1 8 5.5Zm5.25 2.5-.9-.55.15-1.05-1.15-2-.98.4-.85-.5L9.35 3H6.65l-.17 1.3-.85.5-.98-.4-1.15 2 .15 1.05-.9.55.9.55-.15 1.05 1.15 2 .98-.4.85.5.17 1.3h2.7l.17-1.3.85-.5.98.4 1.15-2-.15-1.05.9-.55Z" />;
+  return (
+    <IconPath d="M8 5.5A2.5 2.5 0 1 1 8 10.5 2.5 2.5 0 0 1 8 5.5Zm5.25 2.5-.9-.55.15-1.05-1.15-2-.98.4-.85-.5L9.35 3H6.65l-.17 1.3-.85.5-.98-.4-1.15 2 .15 1.05-.9.55.9.55-.15 1.05 1.15 2 .98-.4.85.5.17 1.3h2.7l.17-1.3.85-.5.98.4 1.15-2-.15-1.05.9-.55Z" />
+  );
 }
 
 function DownloadIcon() {
-  return <IconPath d="M8 2.75v6.5m0 0 2.75-2.75M8 9.25 5.25 6.5M3.5 11.5v.75A1.75 1.75 0 0 0 5.25 14h5.5a1.75 1.75 0 0 0 1.75-1.75v-.75" />;
+  return (
+    <IconPath d="M8 2.75v6.5m0 0 2.75-2.75M8 9.25 5.25 6.5M3.5 11.5v.75A1.75 1.75 0 0 0 5.25 14h5.5a1.75 1.75 0 0 0 1.75-1.75v-.75" />
+  );
 }
 
 export const Base: Story = {
@@ -188,7 +195,11 @@ export const RowActionMenu: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Container size="sm">
-        <Flex align="center" justify="between" className="rounded-md border border-border p-3">
+        <Flex
+          align="center"
+          justify="between"
+          className="border-border rounded-md border p-3"
+        >
           <Stack gap="1">
             <Text size="sm" weight="medium">
               Invoice batch
@@ -283,7 +294,9 @@ export const DestructiveAndDisabled: Story = {
           <DropdownMenuContent disabledKeys={["locked"]}>
             <DropdownMenuSection>
               <DropdownMenuLabel>Moderation</DropdownMenuLabel>
-              <DropdownMenuItem id="locked">Resolve locked item</DropdownMenuItem>
+              <DropdownMenuItem id="locked">
+                Resolve locked item
+              </DropdownMenuItem>
               <DropdownMenuItem disabled>Escalation disabled</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem destructive>
@@ -406,7 +419,9 @@ export const Controlled: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open controlled menu" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open controlled menu" }),
+    );
     await expect(await page.findByRole("menu")).toBeVisible();
     await userEvent.keyboard("{Escape}");
     await expect(await canvas.findByText("Menu state: closed")).toBeVisible();
@@ -418,7 +433,9 @@ export const ThemeDensityAndRTL: Story = {
     <DethinkProvider theme="dark" density="compact" dir="rtl" className="p-6">
       <Container size="sm">
         <DropdownMenu defaultOpen>
-          <DropdownMenuTrigger variant="outline">Workspace actions</DropdownMenuTrigger>
+          <DropdownMenuTrigger variant="outline">
+            Workspace actions
+          </DropdownMenuTrigger>
           <DropdownMenuContent placement="bottom start" showArrow>
             <DropdownMenuSection>
               <DropdownMenuLabel>Workspace</DropdownMenuLabel>
@@ -449,7 +466,9 @@ export const ThemeOverrides: Story = {
     >
       <Container size="sm">
         <DropdownMenu defaultOpen>
-          <DropdownMenuTrigger variant="outline">Operations menu</DropdownMenuTrigger>
+          <DropdownMenuTrigger variant="outline">
+            Operations menu
+          </DropdownMenuTrigger>
           <DropdownMenuContent showArrow>
             <DropdownMenuSection>
               <DropdownMenuLabel>Operations</DropdownMenuLabel>

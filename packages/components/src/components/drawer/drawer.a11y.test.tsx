@@ -28,7 +28,9 @@ describe("Drawer accessibility (modal mode)", () => {
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>Filters</DrawerTitle>
-              <DrawerDescription>Narrow results by workspace status.</DrawerDescription>
+              <DrawerDescription>
+                Narrow results by workspace status.
+              </DrawerDescription>
             </DrawerHeader>
             <DrawerFooter>
               <DrawerClose>Done</DrawerClose>
@@ -40,7 +42,9 @@ describe("Drawer accessibility (modal mode)", () => {
 
     await user.click(screen.getByRole("button", { name: "Open filters" }));
 
-    await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
   });
 
   it("has no axe violations when the visible title is hidden accessibly", async () => {
@@ -62,9 +66,13 @@ describe("Drawer accessibility (modal mode)", () => {
       </DethinkProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open compact sheet" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open compact sheet" }),
+    );
 
-    expect(screen.getByRole("dialog", { name: "Compact sheet" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Compact sheet" }),
+    ).toBeInTheDocument();
     await expect(axe(document.body)).resolves.toHaveNoViolations();
   });
 });
@@ -82,7 +90,9 @@ describe("Drawer accessibility (every direction)", () => {
               <DrawerHandle aria-label="Drag handle" />
               <DrawerHeader>
                 <DrawerTitle>{`${direction} drawer`}</DrawerTitle>
-                <DrawerDescription>Anchored to the {direction} edge.</DrawerDescription>
+                <DrawerDescription>
+                  Anchored to the {direction} edge.
+                </DrawerDescription>
               </DrawerHeader>
               <DrawerFooter>
                 <DrawerClose>Done</DrawerClose>
@@ -92,9 +102,13 @@ describe("Drawer accessibility (every direction)", () => {
         </DethinkProvider>,
       );
 
-      await user.click(screen.getByRole("button", { name: `Open ${direction} drawer` }));
+      await user.click(
+        screen.getByRole("button", { name: `Open ${direction} drawer` }),
+      );
 
-      await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+      await expect(
+        axe(container.ownerDocument.body),
+      ).resolves.toHaveNoViolations();
     },
   );
 });
@@ -103,7 +117,12 @@ describe("Drawer accessibility (reduced motion)", () => {
   it("has no axe violations for a modal drawer with the reducedMotion override", async () => {
     const { container } = render(
       <DethinkProvider theme="light">
-        <Drawer defaultOpen direction="bottom" reducedMotion snapPoints={[0.4, 1]}>
+        <Drawer
+          defaultOpen
+          direction="bottom"
+          reducedMotion
+          snapPoints={[0.4, 1]}
+        >
           <DrawerTrigger>Open sheet</DrawerTrigger>
           <DrawerContent>
             <DrawerHandle aria-label="Static handle" />
@@ -176,7 +195,9 @@ describe("Drawer accessibility (nested drawers)", () => {
     await user.click(screen.getByRole("button", { name: "Edit field" }));
     await screen.findByRole("dialog", { name: "Edit field" });
 
-    await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
   });
 });
 

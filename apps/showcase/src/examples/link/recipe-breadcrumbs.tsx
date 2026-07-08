@@ -24,7 +24,7 @@ export function LinkRecipeBreadcrumbs() {
             </Link>
             <ChevronRight
               aria-hidden="true"
-              className="size-3.5 text-muted-foreground/60"
+              className="text-muted-foreground/60 size-3.5"
             />
           </li>
         ))}

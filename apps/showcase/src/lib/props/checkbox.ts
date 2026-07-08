@@ -6,7 +6,7 @@ export const checkboxProps: PropRow[] = [
     type: 'boolean | "indeterminate"',
     defaultValue: "—",
     description:
-      "Controlled state. \"indeterminate\" renders the mixed state and announces as such.",
+      'Controlled state. "indeterminate" renders the mixed state and announces as such.',
   },
   {
     prop: "defaultChecked",
@@ -16,7 +16,7 @@ export const checkboxProps: PropRow[] = [
   },
   {
     prop: "onCheckedChange",
-    type: "(checked: boolean | \"indeterminate\") => void",
+    type: '(checked: boolean | "indeterminate") => void',
     defaultValue: "—",
     description: "Fires with the next state on user toggle.",
   },
@@ -37,6 +37,6 @@ export const checkboxProps: PropRow[] = [
     type: "InputHTMLAttributes",
     defaultValue: "—",
     description:
-      "Renders a real <input type=\"checkbox\">: name, value, disabled, required, readOnly, and form behavior are native.",
+      'Renders a real <input type="checkbox">: name, value, disabled, required, readOnly, and form behavior are native.',
   },
 ];

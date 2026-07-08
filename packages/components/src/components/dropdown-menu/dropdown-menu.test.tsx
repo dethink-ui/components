@@ -102,14 +102,18 @@ describe("DropdownMenu", () => {
     await user.click(trigger);
 
     const menu = await screen.findByRole("menu");
-    const content = menu.closest<HTMLElement>('[data-slot="dropdown-menu-content"]');
+    const content = menu.closest<HTMLElement>(
+      '[data-slot="dropdown-menu-content"]',
+    );
     const portalHost = content?.closest<HTMLElement>(
       '[data-slot="dropdown-menu-portal-container"]',
     );
     const provider = screen.getByTestId("dropdown-provider");
 
     if (!content || !portalHost) {
-      throw new Error("DropdownMenu should render inside a provider-aware portal host.");
+      throw new Error(
+        "DropdownMenu should render inside a provider-aware portal host.",
+      );
     }
 
     expect(handleOpenChange).toHaveBeenCalledWith(true);
@@ -162,7 +166,9 @@ describe("DropdownMenu", () => {
     await user.keyboard("{Escape}");
 
     await waitFor(() => {
-      expect(screen.getByTestId("controlled-state")).toHaveTextContent("closed");
+      expect(screen.getByTestId("controlled-state")).toHaveTextContent(
+        "closed",
+      );
     });
   });
 
@@ -252,8 +258,9 @@ describe("DropdownMenu", () => {
     await user.keyboard("{Enter}");
 
     expect(await screen.findByRole("menu")).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: "Duplicate" }))
-      .toHaveAttribute("data-focused");
+    expect(screen.getByRole("menuitem", { name: "Duplicate" })).toHaveAttribute(
+      "data-focused",
+    );
     expect(screen.getByText("Move to")).toHaveAttribute(
       "data-slot",
       "dropdown-menu-item-label",
@@ -318,10 +325,7 @@ describe("DropdownMenu", () => {
       <DropdownMenu>
         <DropdownMenuTrigger>Open close behavior actions</DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem
-            onAction={pinAction}
-            shouldCloseOnSelect={false}
-          >
+          <DropdownMenuItem onAction={pinAction} shouldCloseOnSelect={false}>
             Pin report
           </DropdownMenuItem>
           <DropdownMenuItem onAction={archiveAction}>
@@ -354,10 +358,12 @@ describe("DropdownMenu", () => {
     expect(dropdownMenuClassNames({ className: "custom-root" })).toContain(
       "custom-root",
     );
-    expect(dropdownMenuTriggerClassNames({ className: "custom-trigger" }))
-      .toContain("custom-trigger");
-    expect(dropdownMenuContentClassNames({ className: "custom-content" }))
-      .toContain("custom-content");
+    expect(
+      dropdownMenuTriggerClassNames({ className: "custom-trigger" }),
+    ).toContain("custom-trigger");
+    expect(
+      dropdownMenuContentClassNames({ className: "custom-content" }),
+    ).toContain("custom-content");
     expect(dropdownMenuContentClassNames()).toContain("bg-background");
     expect(dropdownMenuContentClassNames()).toContain(
       "motion-safe:data-[entering]:animate-overlay-in",
@@ -378,8 +384,9 @@ describe("DropdownMenu", () => {
     expect(dropdownMenuLabelClassNames()).toContain("uppercase");
     expect(dropdownMenuSeparatorClassNames()).toContain("bg-border");
     expect(dropdownMenuSectionClassNames()).toContain("grid");
-    expect(dropdownMenuArrowClassNames({ className: "custom-arrow" }))
-      .toContain("custom-arrow");
+    expect(
+      dropdownMenuArrowClassNames({ className: "custom-arrow" }),
+    ).toContain("custom-arrow");
   });
 
   it("renders stable item anatomy slots", () => {
@@ -395,7 +402,9 @@ describe("DropdownMenu", () => {
         <DropdownMenuItemDescription ref={descriptionRef}>
           Description
         </DropdownMenuItemDescription>
-        <DropdownMenuItemShortcut ref={shortcutRef}>⌘K</DropdownMenuItemShortcut>
+        <DropdownMenuItemShortcut ref={shortcutRef}>
+          ⌘K
+        </DropdownMenuItemShortcut>
         <DropdownMenuArrow ref={arrowRef} className="custom-arrow" />
       </>,
     );
@@ -416,8 +425,12 @@ describe("DropdownMenu", () => {
       "data-slot",
       "dropdown-menu-item-shortcut",
     );
-    expect(arrowRef.current).toHaveAttribute("data-slot", "dropdown-menu-arrow");
-    expect(container.querySelector('[data-slot="dropdown-menu-arrow-shape"]'))
-      .toBeInTheDocument();
+    expect(arrowRef.current).toHaveAttribute(
+      "data-slot",
+      "dropdown-menu-arrow",
+    );
+    expect(
+      container.querySelector('[data-slot="dropdown-menu-arrow-shape"]'),
+    ).toBeInTheDocument();
   });
 });

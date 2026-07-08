@@ -108,7 +108,9 @@ describe("Tooltip", () => {
     const provider = screen.getByTestId("tooltip-provider");
 
     if (!portalHost) {
-      throw new Error("Tooltip should render inside a provider-aware portal host.");
+      throw new Error(
+        "Tooltip should render inside a provider-aware portal host.",
+      );
     }
 
     expect(handleOpenChange).toHaveBeenCalledWith(true);
@@ -144,9 +146,9 @@ describe("Tooltip", () => {
 
     await user.tab();
 
-    expect(
-      await screen.findByRole("tooltip"),
-    ).toHaveTextContent("Focus-triggered supplemental text");
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "Focus-triggered supplemental text",
+    );
 
     await user.keyboard("{Escape}");
 

@@ -18,7 +18,7 @@ export const slotPlannerProps: PropRow[] = [
   {
     prop: "view / defaultView / onViewChange",
     type: '"week" | "day" / "week" | "day" / (view) => void',
-    defaultValue: "uncontrolled / \"week\" / undefined",
+    defaultValue: 'uncontrolled / "week" / undefined',
     description:
       "Controls the visible projection. Day view hides the rail while keeping toolbar navigation and the view switcher.",
   },
@@ -41,7 +41,7 @@ export const slotPlannerProps: PropRow[] = [
     type: "SlotPlannerTaxonomyInput",
     defaultValue: "neutral slot language",
     description:
-      "Overrides any subset of the noun, verb, and announcement vocabulary, e.g. renaming \"slot\" to \"session\" or \"appointment\".",
+      'Overrides any subset of the noun, verb, and announcement vocabulary, e.g. renaming "slot" to "session" or "appointment".',
   },
   {
     prop: "onCreateSlot / onUpdateSlot",
@@ -69,7 +69,7 @@ export const slotPlannerProps: PropRow[] = [
     type: "string / string",
     defaultValue: "current time / environment locale",
     description:
-      "Injectable \"now\" instant and locale for deterministic renders, including SSR.",
+      'Injectable "now" instant and locale for deterministic renders, including SSR.',
   },
   {
     prop: "loading / error",
@@ -126,12 +126,13 @@ export const slotPickerProps: PropRow[] = [
     prop: "taxonomy",
     type: "SlotPlannerTaxonomyInput",
     defaultValue: "neutral slot language",
-    description: "Same vocabulary override as SlotPlanner, phrased for book mode.",
+    description:
+      "Same vocabulary override as SlotPlanner, phrased for book mode.",
   },
   {
     prop: "view / defaultView / onViewChange",
     type: '"week" | "day" / "week" | "day" / (view) => void',
-    defaultValue: "uncontrolled / \"week\" / undefined",
+    defaultValue: 'uncontrolled / "week" / undefined',
     description:
       "Controls the visible projection. Day view hides the rail while keeping toolbar navigation and the view switcher.",
   },
@@ -146,7 +147,8 @@ export const slotPickerProps: PropRow[] = [
     prop: "now / locale",
     type: "string / string",
     defaultValue: "current time / environment locale",
-    description: "Injectable \"now\" instant and locale for deterministic renders.",
+    description:
+      'Injectable "now" instant and locale for deterministic renders.',
   },
   {
     prop: "loading / error",

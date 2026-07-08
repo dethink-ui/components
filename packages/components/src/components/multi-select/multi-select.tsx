@@ -44,28 +44,28 @@ export type MultiSelectItemData = {
 export interface MultiSelectProps<
   T extends MultiSelectItemData = MultiSelectItemData,
 > extends Omit<
-    AriaComboboxProps<T, "multiple">,
-    | "children"
-    | "className"
-    | "defaultInputValue"
-    | "defaultValue"
-    | "disabledKeys"
-    | "inputValue"
-    | "isDisabled"
-    | "isInvalid"
-    | "isReadOnly"
-    | "isRequired"
-    | "items"
-    | "menuTrigger"
-    | "name"
-    | "onChange"
-    | "onInputChange"
-    | "onOpenChange"
-    | "placeholder"
-    | "selectionMode"
-    | "validationBehavior"
-    | "value"
-  > {
+  AriaComboboxProps<T, "multiple">,
+  | "children"
+  | "className"
+  | "defaultInputValue"
+  | "defaultValue"
+  | "disabledKeys"
+  | "inputValue"
+  | "isDisabled"
+  | "isInvalid"
+  | "isReadOnly"
+  | "isRequired"
+  | "items"
+  | "menuTrigger"
+  | "name"
+  | "onChange"
+  | "onInputChange"
+  | "onOpenChange"
+  | "placeholder"
+  | "selectionMode"
+  | "validationBehavior"
+  | "value"
+> {
   "aria-invalid"?: boolean | "false" | "true" | "grammar" | "spelling";
   "data-slot"?: string;
   children?: ReactNode | ((item: T) => ReactNode);
@@ -97,11 +97,10 @@ export interface MultiSelectProps<
   value?: MultiSelectValue[];
 }
 
-export interface MultiSelectItemProps
-  extends Omit<
-    AriaListBoxItemProps<MultiSelectItemData>,
-    "children" | "className" | "id" | "isDisabled" | "value"
-  > {
+export interface MultiSelectItemProps extends Omit<
+  AriaListBoxItemProps<MultiSelectItemData>,
+  "children" | "className" | "id" | "isDisabled" | "value"
+> {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -174,8 +173,7 @@ const multiSelectItemContentClasses = "min-w-0 truncate";
 const multiSelectEmptyClasses =
   "px-[var(--dt-space-3)] py-[var(--dt-space-4)] text-sm text-muted-foreground";
 
-const multiSelectSrOnlyClasses =
-  "sr-only";
+const multiSelectSrOnlyClasses = "sr-only";
 
 type MultiSelectComponent = (<
   T extends MultiSelectItemData = MultiSelectItemData,
@@ -184,7 +182,12 @@ type MultiSelectComponent = (<
 ) => ReactElement | null) & { displayName?: string };
 
 function isAriaInvalid(value: MultiSelectProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function toDisabledKeys(disabledKeys: Iterable<MultiSelectValue> | undefined) {
@@ -495,11 +498,10 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
     return map;
   }, [resolvedItems]);
   const controlRef = useRef<HTMLDivElement | null>(null);
-  const { portalContainer, rootRef } =
-    useProviderPortalRoot<HTMLDivElement>({
-      forwardedRef: ref,
-      portalSlot: "multi-select-portal-container",
-    });
+  const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
+    forwardedRef: ref,
+    portalSlot: "multi-select-portal-container",
+  });
   const setControlRef = useCallback(
     (node: HTMLDivElement | null) => {
       controlRef.current = node;
@@ -509,7 +511,8 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
   );
   const selectedCount = selectedValues.length;
   const resolvedSelectedLabel =
-    selectedLabel ?? `${selectedCount} option${selectedCount === 1 ? "" : "s"} selected`;
+    selectedLabel ??
+    `${selectedCount} option${selectedCount === 1 ? "" : "s"} selected`;
   const disabledOrReadOnly = disabled || readOnly;
   const updateValue = useCallback(
     (nextValue: MultiSelectValue[]) => {
@@ -529,8 +532,8 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
     (selectedValue: MultiSelectValue) => {
       if (selectedValues.includes(selectedValue)) {
         updateValue(
-          selectedValues.filter((currentValue) =>
-            currentValue !== selectedValue,
+          selectedValues.filter(
+            (currentValue) => currentValue !== selectedValue,
           ),
         );
         return;
@@ -617,51 +620,53 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
             data-slot="multi-select-value"
             className={multiSelectValueClasses}
           >
-            {selectedValues.length > 0 ? (
-              selectedValues.map((selectedValue) => {
-                const item = itemLookup.get(selectedValue);
-                const labelNode = item?.label ?? selectedValue;
-                const textValue = item?.textValue ?? selectedValue;
+            {selectedValues.length > 0
+              ? selectedValues.map((selectedValue) => {
+                  const item = itemLookup.get(selectedValue);
+                  const labelNode = item?.label ?? selectedValue;
+                  const textValue = item?.textValue ?? selectedValue;
 
-                return (
-                  <span
-                    key={selectedValue}
-                    data-slot="multi-select-chip"
-                    data-value={selectedValue}
-                    className={multiSelectChipClasses}
-                  >
+                  return (
                     <span
-                      data-slot="multi-select-chip-text"
-                      className={multiSelectChipTextClasses}
+                      key={selectedValue}
+                      data-slot="multi-select-chip"
+                      data-value={selectedValue}
+                      className={multiSelectChipClasses}
                     >
-                      {labelNode}
+                      <span
+                        data-slot="multi-select-chip-text"
+                        className={multiSelectChipTextClasses}
+                      >
+                        {labelNode}
+                      </span>
+                      <button
+                        aria-label={`Remove ${textValue}`}
+                        className={multiSelectChipRemoveClasses}
+                        disabled={disabledOrReadOnly}
+                        onClick={(event) => {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          updateValue(
+                            selectedValues.filter(
+                              (currentValue) => currentValue !== selectedValue,
+                            ),
+                          );
+                        }}
+                        type="button"
+                      >
+                        <XIcon />
+                      </button>
                     </span>
-                    <button
-                      aria-label={`Remove ${textValue}`}
-                      className={multiSelectChipRemoveClasses}
-                      disabled={disabledOrReadOnly}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        updateValue(
-                          selectedValues.filter((currentValue) =>
-                            currentValue !== selectedValue,
-                          ),
-                        );
-                      }}
-                      type="button"
-                    >
-                      <XIcon />
-                    </button>
-                  </span>
-                );
-              })
-            ) : null}
+                  );
+                })
+              : null}
             <AriaInput
               aria-invalid={resolvedAriaInvalid}
               data-slot="multi-select-input"
               data-size={controlSize}
-              placeholder={selectedValues.length > 0 ? searchPlaceholder : placeholder}
+              placeholder={
+                selectedValues.length > 0 ? searchPlaceholder : placeholder
+              }
               className={multiSelectInputClasses}
             />
           </div>
@@ -694,16 +699,16 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
             </span>
           </AriaButton>
         </div>
-        {name && !disabled ? (
-          selectedValues.map((selectedValue) => (
-            <input
-              key={selectedValue}
-              name={name}
-              type="hidden"
-              value={selectedValue}
-            />
-          ))
-        ) : null}
+        {name && !disabled
+          ? selectedValues.map((selectedValue) => (
+              <input
+                key={selectedValue}
+                name={name}
+                type="hidden"
+                value={selectedValue}
+              />
+            ))
+          : null}
         <span
           aria-live="polite"
           data-slot="multi-select-status"
@@ -735,7 +740,10 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
         >
           {renderedChildrenCount > 0 ? (
             <ListBox
-              aria-label={searchLabel ?? `Options for ${toPlainText(label) || "multi-select"}`}
+              aria-label={
+                searchLabel ??
+                `Options for ${toPlainText(label) || "multi-select"}`
+              }
               data-slot="multi-select-listbox"
               className={multiSelectListBoxClasses}
             >
@@ -761,14 +769,7 @@ MultiSelect.displayName = "MultiSelect";
 
 export const MultiSelectItem = forwardRef<HTMLDivElement, MultiSelectItemProps>(
   (
-    {
-      children,
-      className,
-      disabled = false,
-      textValue,
-      value,
-      ...props
-    },
+    { children, className, disabled = false, textValue, value, ...props },
     ref,
   ) => (
     <ListBoxItem
@@ -776,7 +777,9 @@ export const MultiSelectItem = forwardRef<HTMLDivElement, MultiSelectItemProps>(
       ref={ref}
       id={value}
       isDisabled={disabled}
-      textValue={textValue ?? (typeof children === "string" ? children : undefined)}
+      textValue={
+        textValue ?? (typeof children === "string" ? children : undefined)
+      }
       data-slot="multi-select-item"
       data-value={value}
       className={multiSelectItemClassNames({ className })}

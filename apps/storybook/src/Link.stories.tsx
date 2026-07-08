@@ -45,8 +45,11 @@ export const Base: Story = {};
 
 export const InlineText: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-2xl rounded-lg border border-border p-6">
-      <p className="text-sm leading-6 text-foreground">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-2xl rounded-lg border p-6"
+    >
+      <p className="text-foreground text-sm leading-6">
         Build app chrome with semantic navigation. Start with the{" "}
         <Link href="/docs/link" underline="always">
           Link component notes
@@ -59,8 +62,11 @@ export const InlineText: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {variants.map((variant) => (
           <Link key={variant} href={`/${variant}`} variant={variant}>
             {variant}
@@ -73,8 +79,11 @@ export const Variants: Story = {
 
 export const UnderlineModes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {underlines.map((underline) => (
           <Link key={underline} href={`/${underline}`} underline={underline}>
             {underline}
@@ -87,9 +96,20 @@ export const UnderlineModes: Story = {
 
 export const NavigationCurrent: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <nav aria-label="Project sections" className="flex flex-wrap items-center gap-4">
-        <Link aria-current="page" href="/overview" underline="none" variant="nav">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <nav
+        aria-label="Project sections"
+        className="flex flex-wrap items-center gap-4"
+      >
+        <Link
+          aria-current="page"
+          href="/overview"
+          underline="none"
+          variant="nav"
+        >
           Overview
         </Link>
         <Link href="/activity" underline="none" variant="nav">
@@ -108,10 +128,17 @@ export const NavigationCurrent: Story = {
 
 export const ExternalLink: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <p className="text-sm leading-6 text-foreground">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <p className="text-foreground text-sm leading-6">
         Read the{" "}
-        <Link href="https://developer.mozilla.org/" rel="noreferrer" target="_blank">
+        <Link
+          href="https://developer.mozilla.org/"
+          rel="noreferrer"
+          target="_blank"
+        >
           MDN Web Docs reference
         </Link>{" "}
         in a new tab.
@@ -122,8 +149,11 @@ export const ExternalLink: Story = {
 
 export const RouterComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         <Link asChild variant="nav" underline="none">
           <RouterLink to="/dashboard">Router dashboard</RouterLink>
         </Link>
@@ -137,14 +167,17 @@ export const RouterComposition: Story = {
 
 export const DashboardExamples: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-border bg-muted/30 p-3">
+        <div className="border-border bg-muted/30 flex flex-wrap items-center justify-between gap-4 rounded-md border p-3">
           <div className="min-w-0">
-            <h2 className="truncate text-sm font-semibold text-foreground">
+            <h2 className="text-foreground truncate text-sm font-semibold">
               Revenue report
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Updated from pipeline run #428
             </p>
           </div>
@@ -157,7 +190,7 @@ export const DashboardExamples: Story = {
             </Link>
           </div>
         </div>
-        <p className="text-sm leading-6 text-muted-foreground">
+        <p className="text-muted-foreground text-sm leading-6">
           For risky destinations, use explicit surrounding copy before a{" "}
           <Link href="/projects/archive" variant="destructive">
             destructive navigation link
@@ -175,10 +208,18 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
-        <nav aria-label="Dark sections" className="flex flex-wrap items-center gap-4">
-          <Link aria-current="page" href="/dark/overview" underline="none" variant="nav">
+        <nav
+          aria-label="Dark sections"
+          className="flex flex-wrap items-center gap-4"
+        >
+          <Link
+            aria-current="page"
+            href="/dark/overview"
+            underline="none"
+            variant="nav"
+          >
             Overview
           </Link>
           <Link href="/dark/activity" underline="none" variant="nav">
@@ -193,10 +234,18 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
-        <nav aria-label="RTL sections" className="flex flex-wrap items-center gap-4">
-          <Link aria-current="page" href="/rtl/overview" underline="none" variant="nav">
+        <nav
+          aria-label="RTL sections"
+          className="flex flex-wrap items-center gap-4"
+        >
+          <Link
+            aria-current="page"
+            href="/rtl/overview"
+            underline="none"
+            variant="nav"
+          >
             Overview
           </Link>
           <Link href="/rtl/settings" underline="none" variant="nav">

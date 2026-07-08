@@ -19,10 +19,14 @@ export function ComboboxRichOptions() {
         menuTrigger="focus"
       >
         {(repo) => (
-          <ComboboxItem key={repo.value} value={repo.value} textValue={repo.value}>
+          <ComboboxItem
+            key={repo.value}
+            value={repo.value}
+            textValue={repo.value}
+          >
             <span className="flex w-full items-baseline justify-between gap-3">
               <span className="font-mono text-sm">{repo.value}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {repo.language} · ★ {repo.stars}
               </span>
             </span>

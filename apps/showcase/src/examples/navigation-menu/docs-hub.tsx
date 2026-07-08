@@ -51,7 +51,9 @@ export function NavigationMenuDocsHub() {
             <NavigationMenuTrigger>Reference</NavigationMenuTrigger>
             <NavigationMenuContent>
               <NavigationMenuSection>
-                <NavigationMenuLink href="#api">Component API</NavigationMenuLink>
+                <NavigationMenuLink href="#api">
+                  Component API
+                </NavigationMenuLink>
                 <NavigationMenuLink href="#tokens">Tokens</NavigationMenuLink>
               </NavigationMenuSection>
             </NavigationMenuContent>

@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  DateTimePicker,
-  type DateTimePickerValue,
-} from "@dethink/components";
+import { DateTimePicker, type DateTimePickerValue } from "@dethink/components";
 import { parseZonedDateTime } from "@internationalized/date";
 
 export function DateTimePickerZoned() {
@@ -20,7 +17,7 @@ export function DateTimePickerZoned() {
         onValueChange={setValue}
         clearable
       />
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Value: {value ? value.toString() : "none"}
       </p>
     </div>

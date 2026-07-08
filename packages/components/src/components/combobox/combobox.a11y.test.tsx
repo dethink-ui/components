@@ -3,10 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
-import {
-  Combobox,
-  ComboboxItem,
-} from ".";
+import { Combobox, ComboboxItem } from ".";
 
 expect.extend(toHaveNoViolations);
 

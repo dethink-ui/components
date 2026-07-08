@@ -15,7 +15,7 @@ export function InputStates() {
           invalid
           aria-describedby="state-invalid-hint"
         />
-        <p id="state-invalid-hint" className="text-xs text-destructive">
+        <p id="state-invalid-hint" className="text-destructive text-xs">
           Only lowercase letters and hyphens are allowed.
         </p>
       </div>

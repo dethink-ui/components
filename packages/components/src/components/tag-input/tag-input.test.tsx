@@ -1,14 +1,8 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import {
-  TagInput,
-  tagInputClassNames,
-} from ".";
+import { TagInput, tagInputClassNames } from ".";
 
 describe("TagInput", () => {
   it("renders labels, refs, classes, and uncontrolled tag creation", async () => {
@@ -133,7 +127,9 @@ describe("TagInput", () => {
 
     await user.type(input, "Finance{enter}");
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Finance is already added.");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Finance is already added.",
+    );
     expect(onValueChange).not.toHaveBeenCalled();
 
     rerender(<TagInput label="Keywords" maxTags={1} />);
@@ -141,7 +137,9 @@ describe("TagInput", () => {
     await user.type(input, "one{enter}");
     await user.type(input, "two{enter}");
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Add no more than 1 tags.");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Add no more than 1 tags.",
+    );
 
     rerender(<TagInput label="Keywords" maxTagLength={3} />);
     await user.clear(input);
@@ -162,7 +160,9 @@ describe("TagInput", () => {
     await user.clear(input);
     await user.type(input, "plain{enter}");
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Tags must start with #.");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Tags must start with #.",
+    );
   });
 
   it("keeps disabled and read-only tag inputs from changing", async () => {
@@ -179,8 +179,12 @@ describe("TagInput", () => {
       />,
     );
 
-    expect(screen.getByRole("textbox", { name: /Disabled tags/ })).toBeDisabled();
-    expect(screen.queryByRole("button", { name: /Remove locked/ })).toBeDisabled();
+    expect(
+      screen.getByRole("textbox", { name: /Disabled tags/ }),
+    ).toBeDisabled();
+    expect(
+      screen.queryByRole("button", { name: /Remove locked/ }),
+    ).toBeDisabled();
 
     rerender(
       <TagInput
@@ -191,7 +195,9 @@ describe("TagInput", () => {
       />,
     );
 
-    const readOnlyInput = screen.getByRole("textbox", { name: /Read only tags/ });
+    const readOnlyInput = screen.getByRole("textbox", {
+      name: /Read only tags/,
+    });
 
     expect(readOnlyInput).toHaveAttribute("readonly");
 

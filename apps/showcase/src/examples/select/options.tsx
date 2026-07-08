@@ -19,10 +19,14 @@ export function SelectOptions() {
         disabledKeys={["legacy"]}
       >
         {(item) => (
-          <SelectItem key={item.value} value={item.value} textValue={item.label}>
+          <SelectItem
+            key={item.value}
+            value={item.value}
+            textValue={item.label}
+          >
             <span className="flex w-full items-baseline justify-between gap-3">
               {item.label}
-              <span className="text-xs text-muted-foreground">{item.note}</span>
+              <span className="text-muted-foreground text-xs">{item.note}</span>
             </span>
           </SelectItem>
         )}

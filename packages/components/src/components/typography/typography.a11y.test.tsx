@@ -25,8 +25,8 @@ describe("Typography accessibility", () => {
               Complete
             </Text>
             <Text lineClamp={2} tone="subtle">
-              Last sync finished after importing customer records, dashboard metrics,
-              and billing events.
+              Last sync finished after importing customer records, dashboard
+              metrics, and billing events.
             </Text>
           </section>
           <Typography as="figcaption" variant="caption" tone="muted">

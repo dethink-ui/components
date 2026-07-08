@@ -16,7 +16,11 @@ describe("Checkbox SSR", () => {
     const markup = renderToString(
       <Field id="server-checkbox" invalid>
         <FieldControl asChild>
-          <Checkbox name="serverCheckbox" value="yes" defaultChecked="indeterminate" />
+          <Checkbox
+            name="serverCheckbox"
+            value="yes"
+            defaultChecked="indeterminate"
+          />
         </FieldControl>
         <FieldLabel>Server checkbox</FieldLabel>
         <FieldDescription>Rendered on the server.</FieldDescription>
@@ -30,7 +34,9 @@ describe("Checkbox SSR", () => {
     expect(markup).toContain('name="serverCheckbox"');
     expect(markup).toContain('value="yes"');
     expect(markup).toContain('aria-checked="mixed"');
-    expect(markup).toContain('aria-describedby="server-checkbox-description server-checkbox-error"');
+    expect(markup).toContain(
+      'aria-describedby="server-checkbox-description server-checkbox-error"',
+    );
     expect(markup).toContain('aria-errormessage="server-checkbox-error"');
     expect(markup).toContain('aria-invalid="true"');
   });

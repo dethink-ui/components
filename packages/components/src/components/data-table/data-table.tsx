@@ -1,9 +1,4 @@
-import {
-  type HTMLAttributes,
-  type ReactNode,
-  useId,
-  useState,
-} from "react";
+import { type HTMLAttributes, type ReactNode, useId, useState } from "react";
 import {
   flexRender,
   getFilteredRowModel,
@@ -47,8 +42,10 @@ export type DataTableColumnFiltersState = ColumnFiltersState;
 export type DataTablePaginationState = PaginationState;
 export type DataTableRowSelectionState = RowSelectionState;
 export type DataTableVisibilityState = VisibilityState;
-export type DataTableColumnDef<TData extends RowData, TValue = unknown> =
-  ColumnDef<TData, TValue>;
+export type DataTableColumnDef<
+  TData extends RowData,
+  TValue = unknown,
+> = ColumnDef<TData, TValue>;
 export type DataTableRow<TData extends RowData> = Row<TData>;
 export type DataTableCell<TData extends RowData, TValue = unknown> = Cell<
   TData,
@@ -83,8 +80,10 @@ export interface DataTableLabels {
   clearSort?: (column: string) => string;
 }
 
-export interface DataTableProps<TData extends RowData>
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+export interface DataTableProps<TData extends RowData> extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
   caption?: ReactNode;
   captionPlacement?: TableCaptionPlacement;
   columnFilters?: ColumnFiltersState;
@@ -109,7 +108,11 @@ export interface DataTableProps<TData extends RowData>
   globalFilterPlaceholder?: string;
   getCellClassName?: (cell: DataTableCell<TData>) => string | undefined;
   getRowClassName?: (row: DataTableRow<TData>) => string | undefined;
-  getRowId?: (row: TData, index: number, parent?: DataTableRow<TData>) => string;
+  getRowId?: (
+    row: TData,
+    index: number,
+    parent?: DataTableRow<TData>,
+  ) => string;
   labels?: DataTableLabels;
   loading?: boolean;
   loadingContent?: ReactNode;
@@ -143,7 +146,8 @@ const defaultLabels = {
   globalFilter: "Search table",
   loading: "Loading table data.",
   nextPage: "Next page",
-  pageLabel: (page: number, pageCount: number) => `Page ${page} of ${pageCount}`,
+  pageLabel: (page: number, pageCount: number) =>
+    `Page ${page} of ${pageCount}`,
   pageSize: "Rows per page",
   previousPage: "Previous page",
   rowActions: "Actions",
@@ -298,7 +302,9 @@ function getColumnLabel<TData extends RowData>(column: Column<TData, unknown>) {
 }
 
 function resolveUpdater<T>(updater: T | ((old: T) => T), current: T) {
-  return typeof updater === "function" ? (updater as (old: T) => T)(current) : updater;
+  return typeof updater === "function"
+    ? (updater as (old: T) => T)(current)
+    : updater;
 }
 
 function getSelectedRowCount(rowSelection: RowSelectionState) {
@@ -509,7 +515,9 @@ export function DataTable<TData extends RowData>({
       onColumnVisibilityChange?.(updater);
     },
     onGlobalFilterChange: (updater) => {
-      const nextValue = String(resolveUpdater(updater, currentGlobalFilter) ?? "");
+      const nextValue = String(
+        resolveUpdater(updater, currentGlobalFilter) ?? "",
+      );
 
       if (!isGlobalFilterControlled) {
         setInternalGlobalFilter(nextValue);
@@ -559,7 +567,8 @@ export function DataTable<TData extends RowData>({
   });
   const rows = table.getRowModel().rows;
   const selectedRowCount = getSelectedRowCount(currentRowSelection);
-  const totalRowCount = rowCount ?? table.getPrePaginationRowModel().rows.length;
+  const totalRowCount =
+    rowCount ?? table.getPrePaginationRowModel().rows.length;
   const visibleColumnCount = Math.max(
     table.getVisibleLeafColumns().length +
       (hasRowSelection ? 1 : 0) +
@@ -591,7 +600,10 @@ export function DataTable<TData extends RowData>({
       className={dataTableClassNames({ className })}
     >
       {hasToolbar ? (
-        <div data-slot="data-table-toolbar" className={dataTableToolbarClassNames()}>
+        <div
+          data-slot="data-table-toolbar"
+          className={dataTableToolbarClassNames()}
+        >
           {enableGlobalFilter ? (
             <div
               data-slot="data-table-global-filter"
@@ -610,7 +622,9 @@ export function DataTable<TData extends RowData>({
                 onChange={(event) => {
                   table.setGlobalFilter(event.currentTarget.value);
                 }}
-                placeholder={globalFilterPlaceholder ?? mergedLabels.globalFilter}
+                placeholder={
+                  globalFilterPlaceholder ?? mergedLabels.globalFilter
+                }
               />
               {currentGlobalFilter ? (
                 <Button
@@ -738,7 +752,9 @@ export function DataTable<TData extends RowData>({
                     data-sortable={canSort ? "true" : undefined}
                     data-sorted={sorted || undefined}
                     className={cn(
-                      canFilter ? dataTableHeaderCellFilterableClasses : undefined,
+                      canFilter
+                        ? dataTableHeaderCellFilterableClasses
+                        : undefined,
                     )}
                   >
                     <div
@@ -776,12 +792,12 @@ export function DataTable<TData extends RowData>({
                         </span>
                       )}
                       {canFilter && !header.isPlaceholder
-                        ? renderColumnFilter?.(header.column) ?? (
+                        ? (renderColumnFilter?.(header.column) ?? (
                             <DefaultColumnFilter
                               column={header.column}
                               label={columnLabel}
                             />
-                          )
+                          ))
                         : null}
                     </div>
                   </TableHead>
@@ -813,7 +829,9 @@ export function DataTable<TData extends RowData>({
                 data-table-slot="loading"
                 className={dataTableStateCellBaseClasses}
               >
-                <div role="status">{loadingContent ?? mergedLabels.loading}</div>
+                <div role="status">
+                  {loadingContent ?? mergedLabels.loading}
+                </div>
               </TableCell>
             </TableRow>
           ) : rows.length > 0 ? (

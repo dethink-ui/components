@@ -3,10 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
-import {
-  MultiSelect,
-  MultiSelectItem,
-} from ".";
+import { MultiSelect, MultiSelectItem } from ".";
 
 expect.extend(toHaveNoViolations);
 

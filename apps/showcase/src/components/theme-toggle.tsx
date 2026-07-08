@@ -48,7 +48,7 @@ export function ThemeToggle() {
     <div
       role="group"
       aria-label="Color mode"
-      className="flex items-center gap-0.5 rounded-full border border-border bg-muted/60 p-0.5"
+      className="border-border bg-muted/60 flex items-center gap-0.5 rounded-full border p-0.5"
     >
       {modes.map(({ value, label, icon: Icon }) => {
         const active = mode === value;
@@ -59,7 +59,7 @@ export function ThemeToggle() {
             aria-label={label}
             aria-pressed={active}
             onClick={() => applyMode(value)}
-            className={`grid size-7 place-items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+            className={`focus-visible:ring-ring grid size-7 place-items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none ${
               active
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"

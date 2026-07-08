@@ -33,10 +33,13 @@ export function CopyButton({ text }: { text: string }) {
       type="button"
       onClick={copy}
       aria-label={copied ? "Copied" : "Copy code"}
-      className="grid size-7 place-items-center rounded-md text-[oklch(0.72_0.03_200)] transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="focus-visible:ring-ring grid size-7 place-items-center rounded-md text-[oklch(0.72_0.03_200)] transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:outline-none"
     >
       {copied ? (
-        <Check className="size-3.5 text-[oklch(0.8_0.12_178)]" aria-hidden="true" />
+        <Check
+          className="size-3.5 text-[oklch(0.8_0.12_178)]"
+          aria-hidden="true"
+        />
       ) : (
         <Copy className="size-3.5" aria-hidden="true" />
       )}

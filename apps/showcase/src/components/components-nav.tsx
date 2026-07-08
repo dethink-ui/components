@@ -101,7 +101,7 @@ export function ComponentsNav() {
         <section key={group.id} aria-labelledby={`${group.id}-nav-heading`}>
           <p
             id={`${group.id}-nav-heading`}
-            className="mb-2 px-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground"
+            className="text-muted-foreground mb-2 px-3 text-xs font-semibold tracking-[0.14em] uppercase"
           >
             {group.name}
           </p>
@@ -116,9 +116,9 @@ export function ComponentsNav() {
                   <Link
                     href={href}
                     aria-current={active ? "page" : undefined}
-                    className={`flex min-h-8 items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                    className={`focus-visible:ring-ring focus-visible:ring-offset-background flex min-h-8 items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
                       active
-                        ? "bg-primary/10 font-medium text-primary"
+                        ? "bg-primary/10 text-primary font-medium"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >

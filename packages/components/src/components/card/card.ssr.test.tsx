@@ -54,7 +54,13 @@ describe("Card SSR", () => {
     await act(async () => {
       hydrateRoot(
         container,
-        <Card border="muted" radius="md" shadow="md" spacing="lg" surface="muted">
+        <Card
+          border="muted"
+          radius="md"
+          shadow="md"
+          spacing="lg"
+          surface="muted"
+        >
           <CardHeader>
             <CardTitle>Hydrate card</CardTitle>
             <CardDescription>Stable SSR card.</CardDescription>

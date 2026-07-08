@@ -112,15 +112,30 @@ import {
 
 function ArrowRightIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="M3.5 8h9M9 4.5 12.5 8 9 11.5" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="M3.5 8h9M9 4.5 12.5 8 9 11.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.75"
+      />
     </svg>
   );
 }
 
 function RefreshIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
       <path
         d="M13 4.5V1.75h-2.75M3 11.5v2.75h2.75M12.15 6A4.5 4.5 0 0 0 4.2 3.7L3 5M3.85 10A4.5 4.5 0 0 0 11.8 12.3L13 11"
         strokeLinecap="round"
@@ -224,9 +239,9 @@ export function App() {
             Foundation scaffold is active
           </Heading>
           <Text tone="muted">
-            This app verifies package imports, style imports, Tailwind tokens, the
-            foundation provider, and the first wrapper, container, layout, action,
-            navigation, typography, and date/time components.
+            This app verifies package imports, style imports, Tailwind tokens,
+            the foundation provider, and the first wrapper, container, layout,
+            action, navigation, typography, and date/time components.
           </Text>
           <Flex gap="2" align="center" wrap="wrap">
             <Button>Primary action</Button>
@@ -243,7 +258,11 @@ export function App() {
               <RefreshIcon />
             </IconButton>
           </Flex>
-          <Flex gap="3" align="center" className="rounded-lg border border-border p-3">
+          <Flex
+            gap="3"
+            align="center"
+            className="border-border rounded-lg border p-3"
+          >
             <FlexItem shrink="0">
               <Text size="sm" weight="medium">
                 Flex smoke
@@ -251,7 +270,8 @@ export function App() {
             </FlexItem>
             <FlexItem grow="1" minInlineSize="0">
               <Text className="truncate" size="sm" tone="muted">
-                Long content can shrink inside a FlexItem without forcing row overflow.
+                Long content can shrink inside a FlexItem without forcing row
+                overflow.
               </Text>
             </FlexItem>
             <FlexItem shrink="0">
@@ -305,12 +325,14 @@ export function App() {
               <CardHeader>
                 <CardTitle>CardStack smoke</CardTitle>
                 <CardDescription>
-                  Verifies the package export path for the interactive Card deck.
+                  Verifies the package export path for the interactive Card
+                  deck.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Text size="sm" tone="muted">
-                  The active card exposes controls while the inactive card is inert.
+                  The active card exposes controls while the inactive card is
+                  inert.
                 </Text>
               </CardContent>
             </Card>
@@ -328,7 +350,7 @@ export function App() {
           </CardStack>
           <HorizontalAccordion
             aria-label="Playground horizontal accordion"
-            className="rounded-lg border border-border"
+            className="border-border rounded-lg border"
             defaultValue="overview"
             height={280}
           >
@@ -340,8 +362,8 @@ export function App() {
               </HorizontalAccordion.Blade>
               <HorizontalAccordion.Panel className="p-[var(--dt-space-4)]">
                 <Text size="sm" tone="muted">
-                  HorizontalAccordion smoke: one expanded panel in a fixed-height
-                  band, verified through the package export path.
+                  HorizontalAccordion smoke: one expanded panel in a
+                  fixed-height band, verified through the package export path.
                 </Text>
               </HorizontalAccordion.Panel>
             </HorizontalAccordion.Item>
@@ -362,8 +384,8 @@ export function App() {
             <CardHeader>
               <CardTitle>Table smoke</CardTitle>
               <CardDescription>
-                Verifies semantic table slots, density, caption, row headers, and
-                responsive overflow through the package export path.
+                Verifies semantic table slots, density, caption, row headers,
+                and responsive overflow through the package export path.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -407,8 +429,8 @@ export function App() {
             <CardHeader>
               <CardTitle>DataTable smoke</CardTitle>
               <CardDescription>
-                Verifies DataTable sorting, filtering, pagination, selection, and
-                row actions through the package export path.
+                Verifies DataTable sorting, filtering, pagination, selection,
+                and row actions through the package export path.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -437,7 +459,7 @@ export function App() {
             p="4"
             radius="lg"
             surface="muted"
-            className="focus-within:ring-2 focus-within:ring-ring"
+            className="focus-within:ring-ring focus-within:ring-2"
           >
             <label className="block text-sm font-medium" htmlFor="smoke-input">
               Smoke input
@@ -524,8 +546,8 @@ export function App() {
             <CardHeader>
               <CardTitle>SlotPicker smoke</CardTitle>
               <CardDescription>
-                Verifies the book-mode picker and viewer-zone projection
-                through the package export.
+                Verifies the book-mode picker and viewer-zone projection through
+                the package export.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -617,7 +639,9 @@ export function App() {
                   <DropdownMenuSection>
                     <DropdownMenuLabel>Report</DropdownMenuLabel>
                     <DropdownMenuItem>
-                      <DropdownMenuItemLabel>Refresh report</DropdownMenuItemLabel>
+                      <DropdownMenuItemLabel>
+                        Refresh report
+                      </DropdownMenuItemLabel>
                       <DropdownMenuItemShortcut>R</DropdownMenuItemShortcut>
                     </DropdownMenuItem>
                     <DropdownMenuItem>Duplicate report</DropdownMenuItem>
@@ -634,14 +658,17 @@ export function App() {
             <CardHeader>
               <CardTitle>Dialog smoke</CardTitle>
               <CardDescription>
-                Verifies the package export, modal focus trap, and provider-aware
-                portal path.
+                Verifies the package export, modal focus trap, and
+                provider-aware portal path.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog>
                 <DialogTrigger>Open dialog</DialogTrigger>
-                <DialogContent showCloseButton closeButtonLabel="Close dialog smoke">
+                <DialogContent
+                  showCloseButton
+                  closeButtonLabel="Close dialog smoke"
+                >
                   <DialogHeader>
                     <DialogTitle>Deploy workspace changes</DialogTitle>
                     <DialogDescription>
@@ -651,8 +678,8 @@ export function App() {
                   </DialogHeader>
                   <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)]">
                     <Text size="sm" tone="muted">
-                      This smoke path exercises the package entrypoint and copied
-                      registry files in a consumer app.
+                      This smoke path exercises the package entrypoint and
+                      copied registry files in a consumer app.
                     </Text>
                   </div>
                   <DialogFooter>
@@ -705,7 +732,10 @@ export function App() {
             <CardContent>
               <Drawer direction="right">
                 <DrawerTrigger>Open drawer</DrawerTrigger>
-                <DrawerContent showCloseButton closeButtonLabel="Close drawer smoke">
+                <DrawerContent
+                  showCloseButton
+                  closeButtonLabel="Close drawer smoke"
+                >
                   <DrawerHeader>
                     <DrawerTitle>Deploy workspace changes</DrawerTitle>
                     <DrawerDescription>
@@ -715,8 +745,8 @@ export function App() {
                   </DrawerHeader>
                   <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)]">
                     <Text size="sm" tone="muted">
-                      This smoke path exercises the package entrypoint and copied
-                      registry files in a consumer app.
+                      This smoke path exercises the package entrypoint and
+                      copied registry files in a consumer app.
                     </Text>
                   </div>
                   <DrawerFooter>
@@ -740,20 +770,16 @@ export function App() {
                 <Field id="playground-workspace" required>
                   <FieldLabel>Workspace</FieldLabel>
                   <FieldControl asChild>
-                    <Input
-                      name="workspace"
-                      placeholder="Acme Ops"
-                    />
+                    <Input name="workspace" placeholder="Acme Ops" />
                   </FieldControl>
-                  <FieldDescription>Visible helper text is wired to the input.</FieldDescription>
+                  <FieldDescription>
+                    Visible helper text is wired to the input.
+                  </FieldDescription>
                 </Field>
                 <Field id="playground-owner" invalid>
                   <FieldLabel>Owner email</FieldLabel>
                   <FieldControl asChild>
-                    <Input
-                      name="owner"
-                      defaultValue="owner"
-                    />
+                    <Input name="owner" defaultValue="owner" />
                   </FieldControl>
                   <FieldError>Enter a valid owner email.</FieldError>
                 </Field>
@@ -780,7 +806,8 @@ export function App() {
                     />
                   </FieldControl>
                   <FieldDescription>
-                    Numeric-entry controls keep string values until app validation.
+                    Numeric-entry controls keep string values until app
+                    validation.
                   </FieldDescription>
                 </Field>
                 <FieldSet>
@@ -789,10 +816,16 @@ export function App() {
                     <Field id="playground-email" orientation="horizontal">
                       <FieldContent>
                         <FieldTitle>Email</FieldTitle>
-                        <FieldDescription>Send operational reports.</FieldDescription>
+                        <FieldDescription>
+                          Send operational reports.
+                        </FieldDescription>
                       </FieldContent>
                       <FieldControl asChild>
-                        <Checkbox name="channels" value="email" defaultChecked />
+                        <Checkbox
+                          name="channels"
+                          value="email"
+                          defaultChecked
+                        />
                       </FieldControl>
                     </Field>
                   </FieldGroup>
@@ -807,7 +840,10 @@ export function App() {
                         </FieldControl>
                         <FieldLabel>Fast</FieldLabel>
                       </Field>
-                      <Field id="playground-mode-balanced" orientation="horizontal">
+                      <Field
+                        id="playground-mode-balanced"
+                        orientation="horizontal"
+                      >
                         <FieldControl asChild>
                           <RadioGroupItem value="balanced" />
                         </FieldControl>
@@ -819,7 +855,9 @@ export function App() {
                 <Field id="playground-mfa" orientation="horizontal">
                   <FieldContent>
                     <FieldTitle>Multi-factor authentication</FieldTitle>
-                    <FieldDescription>Require a second verification step.</FieldDescription>
+                    <FieldDescription>
+                      Require a second verification step.
+                    </FieldDescription>
                   </FieldContent>
                   <FieldControl asChild>
                     <Switch name="multiFactor" value="enabled" defaultChecked />

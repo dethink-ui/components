@@ -43,8 +43,7 @@ const spinnerToneClasses: Record<SpinnerTone, string> = {
 const spinnerRingClasses =
   "size-full rounded-full border-2 border-current border-e-transparent animate-spin motion-reduce:animate-none motion-reduce:opacity-65";
 
-const spinnerDotsClasses =
-  "grid grid-cols-3 gap-1";
+const spinnerDotsClasses = "grid grid-cols-3 gap-1";
 
 const spinnerDotClasses =
   "size-1.5 rounded-full bg-current animate-pulse motion-reduce:animate-none motion-reduce:opacity-70";
@@ -54,7 +53,12 @@ export function spinnerClassNames({
   size = "md",
   tone = "current",
 }: Pick<SpinnerProps, "className" | "size" | "tone"> = {}) {
-  return cn(spinnerBaseClasses, spinnerSizeClasses[size], spinnerToneClasses[tone], className);
+  return cn(
+    spinnerBaseClasses,
+    spinnerSizeClasses[size],
+    spinnerToneClasses[tone],
+    className,
+  );
 }
 
 export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(
@@ -88,8 +92,12 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(
         {variant === "dots" ? (
           <span aria-hidden="true" className={spinnerDotsClasses}>
             <span className={spinnerDotClasses} />
-            <span className={cn(spinnerDotClasses, "[animation-delay:120ms]")} />
-            <span className={cn(spinnerDotClasses, "[animation-delay:240ms]")} />
+            <span
+              className={cn(spinnerDotClasses, "[animation-delay:120ms]")}
+            />
+            <span
+              className={cn(spinnerDotClasses, "[animation-delay:240ms]")}
+            />
           </span>
         ) : (
           <span aria-hidden="true" className={spinnerRingClasses} />

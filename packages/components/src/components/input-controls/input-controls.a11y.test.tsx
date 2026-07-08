@@ -27,7 +27,9 @@ describe("Input controls suite accessibility", () => {
               <FieldControl asChild>
                 <Input name="name" />
               </FieldControl>
-              <FieldDescription>Visible label and helper text.</FieldDescription>
+              <FieldDescription>
+                Visible label and helper text.
+              </FieldDescription>
             </Field>
             <Field id="suite-notes">
               <FieldLabel>Notes</FieldLabel>

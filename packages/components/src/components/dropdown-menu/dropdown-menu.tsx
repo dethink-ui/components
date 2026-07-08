@@ -52,11 +52,10 @@ import {
 import type { PositionedOverlayPositionProps } from "../../utils/positioned-overlay";
 import { cn } from "../../utils/cn";
 
-export interface DropdownMenuProps
-  extends Omit<
-    AriaMenuTriggerProps,
-    "children" | "isOpen" | "onOpenChange"
-  > {
+export interface DropdownMenuProps extends Omit<
+  AriaMenuTriggerProps,
+  "children" | "isOpen" | "onOpenChange"
+> {
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -64,8 +63,10 @@ export interface DropdownMenuProps
   open?: boolean;
 }
 
-export interface DropdownMenuTriggerProps
-  extends Omit<AriaButtonProps, "children" | "className" | "isDisabled"> {
+export interface DropdownMenuTriggerProps extends Omit<
+  AriaButtonProps,
+  "children" | "className" | "isDisabled"
+> {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -74,8 +75,7 @@ export interface DropdownMenuTriggerProps
 }
 
 export interface DropdownMenuContentProps<T extends object = object>
-  extends Omit<AriaMenuProps<T>, "className">,
-    PositionedOverlayPositionProps {
+  extends Omit<AriaMenuProps<T>, "className">, PositionedOverlayPositionProps {
   arrowClassName?: string;
   arrowShapeClassName?: string;
   className?: string;
@@ -83,57 +83,66 @@ export interface DropdownMenuContentProps<T extends object = object>
   showArrow?: boolean;
 }
 
-export interface DropdownMenuSubmenuContentProps<T extends object = object>
-  extends DropdownMenuContentProps<T> {}
+export interface DropdownMenuSubmenuContentProps<
+  T extends object = object,
+> extends DropdownMenuContentProps<T> {}
 
-export interface DropdownMenuItemProps<T extends object = object>
-  extends Omit<
-    AriaMenuItemProps<T>,
-    "children" | "className" | "isDisabled"
-  > {
+export interface DropdownMenuItemProps<T extends object = object> extends Omit<
+  AriaMenuItemProps<T>,
+  "children" | "className" | "isDisabled"
+> {
   children?: ReactNode | ((opts: AriaMenuItemRenderProps) => ReactNode);
   className?: string;
   destructive?: boolean;
   disabled?: boolean;
 }
 
-export interface DropdownMenuSectionProps<T extends object = object>
-  extends Omit<AriaMenuSectionProps<T>, "className"> {
+export interface DropdownMenuSectionProps<
+  T extends object = object,
+> extends Omit<AriaMenuSectionProps<T>, "className"> {
   className?: string;
 }
 
-export interface DropdownMenuSubmenuProps
-  extends Omit<AriaSubmenuTriggerProps, "children"> {
+export interface DropdownMenuSubmenuProps extends Omit<
+  AriaSubmenuTriggerProps,
+  "children"
+> {
   children: ReactElement[];
 }
 
 export interface DropdownMenuArrowProps extends PositionedOverlayArrowProps {}
 
-export interface DropdownMenuLabelProps
-  extends Omit<AriaHeaderProps, "className"> {
+export interface DropdownMenuLabelProps extends Omit<
+  AriaHeaderProps,
+  "className"
+> {
   className?: string;
 }
 
-export interface DropdownMenuSeparatorProps
-  extends Omit<AriaSeparatorProps, "className"> {
+export interface DropdownMenuSeparatorProps extends Omit<
+  AriaSeparatorProps,
+  "className"
+> {
   className?: string;
 }
 
-export interface DropdownMenuItemIconProps
-  extends HTMLAttributes<HTMLSpanElement> {}
+export interface DropdownMenuItemIconProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export interface DropdownMenuItemLabelProps
-  extends Omit<AriaTextProps, "className" | "slot"> {
+export interface DropdownMenuItemLabelProps extends Omit<
+  AriaTextProps,
+  "className" | "slot"
+> {
   className?: string;
 }
 
-export interface DropdownMenuItemDescriptionProps
-  extends Omit<AriaTextProps, "className" | "slot"> {
+export interface DropdownMenuItemDescriptionProps extends Omit<
+  AriaTextProps,
+  "className" | "slot"
+> {
   className?: string;
 }
 
-export interface DropdownMenuItemShortcutProps
-  extends HTMLAttributes<HTMLElement> {
+export interface DropdownMenuItemShortcutProps extends HTMLAttributes<HTMLElement> {
   className?: string;
 }
 
@@ -282,7 +291,10 @@ function renderMenuItemChildren(
   const renderedChildren =
     typeof children === "function" ? children(opts) : children;
 
-  if (typeof renderedChildren === "string" || typeof renderedChildren === "number") {
+  if (
+    typeof renderedChildren === "string" ||
+    typeof renderedChildren === "number"
+  ) {
     return (
       <>
         <DropdownMenuItemIcon aria-hidden="true" />
@@ -317,8 +329,7 @@ function DropdownMenuContentRoot<T extends object = object>(
     ...props
   }: DropdownMenuContentProps<T>,
   ref: ForwardedRef<HTMLElement>,
-  defaults: Required<PositionedOverlayPositionProps> =
-    positionedOverlayDropdownMenuDefaults,
+  defaults: Required<PositionedOverlayPositionProps> = positionedOverlayDropdownMenuDefaults,
   contentSlot = "dropdown-menu-content",
 ) {
   const positionProps = resolvePositionedOverlayPositionProps(
@@ -370,13 +381,12 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(
+      defaultOpen ?? false,
+    );
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
-    const {
-      portalContainer,
-      rootRef,
-    } = useProviderPortalRoot<HTMLDivElement>({
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "dropdown-menu-portal-container",
     });
@@ -461,7 +471,10 @@ export const DropdownMenuSubmenuContent = forwardRef<
 
 DropdownMenuSubmenuContent.displayName = "DropdownMenuSubmenuContent";
 
-export const DropdownMenuItem = forwardRef<HTMLDivElement, DropdownMenuItemProps>(
+export const DropdownMenuItem = forwardRef<
+  HTMLDivElement,
+  DropdownMenuItemProps
+>(
   (
     {
       children,
@@ -543,16 +556,17 @@ export const DropdownMenuArrow = forwardRef<
 
 DropdownMenuArrow.displayName = "DropdownMenuArrow";
 
-export const DropdownMenuLabel = forwardRef<HTMLElement, DropdownMenuLabelProps>(
-  ({ className, ...props }, ref) => (
-    <AriaHeader
-      {...props}
-      ref={ref}
-      data-slot="dropdown-menu-label"
-      className={dropdownMenuLabelClassNames({ className })}
-    />
-  ),
-);
+export const DropdownMenuLabel = forwardRef<
+  HTMLElement,
+  DropdownMenuLabelProps
+>(({ className, ...props }, ref) => (
+  <AriaHeader
+    {...props}
+    ref={ref}
+    data-slot="dropdown-menu-label"
+    className={dropdownMenuLabelClassNames({ className })}
+  />
+));
 
 DropdownMenuLabel.displayName = "DropdownMenuLabel";
 

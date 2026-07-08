@@ -37,7 +37,11 @@ export function NumberInputRecipeAllocator() {
     <div className="mx-auto max-w-sm space-y-4">
       <div className="grid grid-cols-3 gap-3">
         {channels.map((channel) => (
-          <Field key={channel.id} id={`alloc-${channel.id}`} invalid={!balanced}>
+          <Field
+            key={channel.id}
+            id={`alloc-${channel.id}`}
+            invalid={!balanced}
+          >
             <FieldLabel className="text-sm">{channel.label}</FieldLabel>
             <FieldControl asChild>
               <NumberInput
@@ -59,19 +63,25 @@ export function NumberInputRecipeAllocator() {
       <div className="space-y-1.5">
         <div
           aria-hidden="true"
-          className="flex h-2 overflow-hidden rounded-full bg-muted"
+          className="bg-muted flex h-2 overflow-hidden rounded-full"
         >
           {channels.map((channel, index) => (
             <div
               key={channel.id}
-              className={index === 0 ? "bg-primary" : index === 1 ? "bg-info" : "bg-success"}
+              className={
+                index === 0
+                  ? "bg-primary"
+                  : index === 1
+                    ? "bg-info"
+                    : "bg-success"
+              }
               style={{ width: `${Math.min(allocation[channel.id], 100)}%` }}
             />
           ))}
         </div>
         <p
           aria-live="polite"
-          className={`text-sm ${balanced ? "text-muted-foreground" : "font-medium text-destructive"}`}
+          className={`text-sm ${balanced ? "text-muted-foreground" : "text-destructive font-medium"}`}
         >
           {balanced
             ? "Budget fully allocated."

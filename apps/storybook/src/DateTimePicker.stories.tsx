@@ -143,9 +143,7 @@ export const TimezoneAwareEvent: Story = {
     <DethinkProvider theme="dark" className={storyProviderClasses}>
       <DateTimePicker
         clearable
-        defaultValue={parseZonedDateTime(
-          "2026-07-14T18:45[America/New_York]",
-        )}
+        defaultValue={parseZonedDateTime("2026-07-14T18:45[America/New_York]")}
         description="Displayed with the source timezone so global teams do not infer local time."
         granularity="minute"
         label="Investor briefing"

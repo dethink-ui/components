@@ -48,7 +48,8 @@ export interface TableCaptionProps extends HTMLAttributes<HTMLTableCaptionElemen
   placement?: TableCaptionPlacement;
 }
 
-const tableContainerBaseClasses = "relative w-full overflow-x-auto overscroll-x-contain";
+const tableContainerBaseClasses =
+  "relative w-full overflow-x-auto overscroll-x-contain";
 
 const tableDensityClasses: Record<TableDensity, string> = {
   compact:
@@ -159,13 +160,7 @@ export function tableCaptionClassNames({
 
 export const Table = forwardRef<HTMLTableElement, TableProps>(
   (
-    {
-      children,
-      className,
-      containerClassName,
-      density = "default",
-      ...props
-    },
+    { children, className, containerClassName, density = "default", ...props },
     ref,
   ) => (
     <div
@@ -191,16 +186,17 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(
 
 Table.displayName = "Table";
 
-export const TableHeader = forwardRef<HTMLTableSectionElement, TableHeaderProps>(
-  ({ className, ...props }, ref) => (
-    <thead
-      {...props}
-      ref={ref}
-      data-slot="table-header"
-      className={tableHeaderClassNames({ className })}
-    />
-  ),
-);
+export const TableHeader = forwardRef<
+  HTMLTableSectionElement,
+  TableHeaderProps
+>(({ className, ...props }, ref) => (
+  <thead
+    {...props}
+    ref={ref}
+    data-slot="table-header"
+    className={tableHeaderClassNames({ className })}
+  />
+));
 
 TableHeader.displayName = "TableHeader";
 
@@ -217,16 +213,17 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
 TableBody.displayName = "TableBody";
 
-export const TableFooter = forwardRef<HTMLTableSectionElement, TableFooterProps>(
-  ({ className, ...props }, ref) => (
-    <tfoot
-      {...props}
-      ref={ref}
-      data-slot="table-footer"
-      className={tableFooterClassNames({ className })}
-    />
-  ),
-);
+export const TableFooter = forwardRef<
+  HTMLTableSectionElement,
+  TableFooterProps
+>(({ className, ...props }, ref) => (
+  <tfoot
+    {...props}
+    ref={ref}
+    data-slot="table-footer"
+    className={tableFooterClassNames({ className })}
+  />
+));
 
 TableFooter.displayName = "TableFooter";
 
@@ -285,16 +282,17 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
 
 TableCell.displayName = "TableCell";
 
-export const TableCaption = forwardRef<HTMLTableCaptionElement, TableCaptionProps>(
-  ({ className, placement = "bottom", ...props }, ref) => (
-    <caption
-      {...props}
-      ref={ref}
-      data-slot="table-caption"
-      data-placement={placement}
-      className={tableCaptionClassNames({ className, placement })}
-    />
-  ),
-);
+export const TableCaption = forwardRef<
+  HTMLTableCaptionElement,
+  TableCaptionProps
+>(({ className, placement = "bottom", ...props }, ref) => (
+  <caption
+    {...props}
+    ref={ref}
+    data-slot="table-caption"
+    data-placement={placement}
+    className={tableCaptionClassNames({ className, placement })}
+  />
+));
 
 TableCaption.displayName = "TableCaption";

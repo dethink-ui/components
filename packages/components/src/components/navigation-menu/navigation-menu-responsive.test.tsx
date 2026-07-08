@@ -116,7 +116,9 @@ describe("NavigationMenu responsive composition", () => {
                 <NavigationMenuLink current="location" href="/audit">
                   Audit log
                 </NavigationMenuLink>
-                <NavigationMenuLink href="/settings">Settings</NavigationMenuLink>
+                <NavigationMenuLink href="/settings">
+                  Settings
+                </NavigationMenuLink>
               </NavigationMenuSection>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -135,7 +137,9 @@ describe("NavigationMenu responsive composition", () => {
 
     await user.keyboard("{Escape}");
 
-    expect(screen.queryByRole("link", { name: "Audit log" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Audit log" }),
+    ).not.toBeInTheDocument();
     expect(moreTrigger).toHaveFocus();
   });
 
@@ -150,7 +154,9 @@ describe("NavigationMenu responsive composition", () => {
       "md:hidden",
     );
     expect(
-      navigationMenuLinkClassNames({ className: "max-lg:px-[var(--dt-space-2)]" }),
+      navigationMenuLinkClassNames({
+        className: "max-lg:px-[var(--dt-space-2)]",
+      }),
     ).toContain("max-lg:px-[var(--dt-space-2)]");
   });
 

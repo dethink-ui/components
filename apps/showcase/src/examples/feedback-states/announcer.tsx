@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  LiveRegionProvider,
-  useAnnouncer,
-} from "@dethink/components";
+import { Button, LiveRegionProvider, useAnnouncer } from "@dethink/components";
 
 function AnnouncerControls() {
   const announcer = useAnnouncer();
   const [count, setCount] = useState(0);
-  const [politePreview, setPolitePreview] = useState("No result announcement sent.");
-  const [assertivePreview, setAssertivePreview] = useState("No failure announcement sent.");
+  const [politePreview, setPolitePreview] = useState(
+    "No result announcement sent.",
+  );
+  const [assertivePreview, setAssertivePreview] = useState(
+    "No failure announcement sent.",
+  );
 
   return (
     <div className="grid gap-4">
@@ -45,17 +45,19 @@ function AnnouncerControls() {
         </Button>
       </div>
       <dl className="grid gap-2 sm:grid-cols-2">
-        <div className="rounded-md border border-border bg-background/80 p-3 text-sm shadow-sm">
-          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <div className="border-border bg-background/80 rounded-md border p-3 text-sm shadow-sm">
+          <dt className="text-muted-foreground text-xs font-semibold tracking-[0.14em] uppercase">
             Polite
           </dt>
-          <dd className="mt-1 font-medium text-foreground">{politePreview}</dd>
+          <dd className="text-foreground mt-1 font-medium">{politePreview}</dd>
         </div>
-        <div className="rounded-md border border-border bg-background/80 p-3 text-sm shadow-sm">
-          <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <div className="border-border bg-background/80 rounded-md border p-3 text-sm shadow-sm">
+          <dt className="text-muted-foreground text-xs font-semibold tracking-[0.14em] uppercase">
             Assertive
           </dt>
-          <dd className="mt-1 font-medium text-foreground">{assertivePreview}</dd>
+          <dd className="text-foreground mt-1 font-medium">
+            {assertivePreview}
+          </dd>
         </div>
       </dl>
     </div>

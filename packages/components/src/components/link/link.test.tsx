@@ -2,12 +2,7 @@ import { createRef, forwardRef, type MouseEvent } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import {
-  Link,
-  linkClassNames,
-  type LinkUnderline,
-  type LinkVariant,
-} from ".";
+import { Link, linkClassNames, type LinkUnderline, type LinkVariant } from ".";
 
 const variants: LinkVariant[] = ["default", "muted", "nav", "destructive"];
 const underlines: LinkUnderline[] = ["hover", "always", "none"];
@@ -105,7 +100,11 @@ describe("Link", () => {
 
   it("adds noopener to new-tab links while preserving existing rel tokens", () => {
     render(
-      <Link href="https://example.com" rel="nofollow noreferrer" target="_blank">
+      <Link
+        href="https://example.com"
+        rel="nofollow noreferrer"
+        target="_blank"
+      >
         External
       </Link>,
     );

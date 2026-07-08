@@ -20,23 +20,26 @@ export function DrawerInspectorRail() {
   const [selected, setSelected] = useState(records[0]!);
 
   return (
-    <div className="flex min-h-[22rem] overflow-hidden rounded-lg border border-border">
-      <main className="flex-1 divide-y divide-border overflow-y-auto">
+    <div className="border-border flex min-h-[22rem] overflow-hidden rounded-lg border">
+      <main className="divide-border flex-1 divide-y overflow-y-auto">
         {records.map((record) => (
           <button
-            className="flex w-full items-center justify-between px-[var(--dt-space-4)] py-[var(--dt-space-3)] text-left text-sm hover:bg-muted data-[current=true]:bg-muted"
+            className="hover:bg-muted data-[current=true]:bg-muted flex w-full items-center justify-between px-[var(--dt-space-4)] py-[var(--dt-space-3)] text-left text-sm"
             data-current={record.id === selected.id}
             key={record.id}
             onClick={() => setSelected(record)}
             type="button"
           >
-            <span className="font-medium text-foreground">{record.name}</span>
+            <span className="text-foreground font-medium">{record.name}</span>
             <span className="text-muted-foreground">{record.owner}</span>
           </button>
         ))}
       </main>
       <Drawer defaultOpen direction="right" modal={false}>
-        <DrawerTrigger className="self-start rounded-none border-b border-border" variant="ghost">
+        <DrawerTrigger
+          className="border-border self-start rounded-none border-b"
+          variant="ghost"
+        >
           Toggle inspector
         </DrawerTrigger>
         <DrawerContent size="sm">
@@ -50,11 +53,11 @@ export function DrawerInspectorRail() {
           <dl className="grid gap-[var(--dt-space-2)] px-[var(--dt-space-6)] py-[var(--dt-space-2)] text-sm">
             <div className="flex justify-between">
               <dt className="text-muted-foreground">ID</dt>
-              <dd className="font-medium text-foreground">{selected.id}</dd>
+              <dd className="text-foreground font-medium">{selected.id}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Owner</dt>
-              <dd className="font-medium text-foreground">{selected.owner}</dd>
+              <dd className="text-foreground font-medium">{selected.owner}</dd>
             </div>
           </dl>
         </DrawerContent>

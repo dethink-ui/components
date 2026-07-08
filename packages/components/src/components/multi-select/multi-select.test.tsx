@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -52,7 +49,9 @@ describe("MultiSelect", () => {
     );
 
     const root = container.querySelector('[data-slot="multi-select"]');
-    const control = container.querySelector('[data-slot="multi-select-control"]');
+    const control = container.querySelector(
+      '[data-slot="multi-select-control"]',
+    );
     const input = screen.getByRole("combobox", { name: /Workspaces/ });
     const trigger = screen.getByRole("button", { name: /Show options/ });
 
@@ -61,16 +60,18 @@ describe("MultiSelect", () => {
     expect(ref.current).toBe(root);
     expect(control).not.toHaveTextContent("Choose workspacesChoose workspaces");
     expect(input).toHaveAttribute("placeholder", "Choose workspaces");
-    expect(multiSelectClassNames({ className: "custom-multi-select" })).toContain(
-      "custom-multi-select",
-    );
+    expect(
+      multiSelectClassNames({ className: "custom-multi-select" }),
+    ).toContain("custom-multi-select");
     expect(multiSelectItemClassNames({ className: "custom-item" })).toContain(
       "custom-item",
     );
 
     await user.click(trigger);
 
-    expect(screen.getByRole("combobox", { name: /Workspaces/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: /Workspaces/ }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("listbox")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Production" })).toHaveAttribute(
       "data-value",
@@ -101,9 +102,9 @@ describe("MultiSelect", () => {
 
     const { container } = render(<ControlledMultiSelect />);
 
-    expect(container.querySelector('[data-slot="multi-select-chip"]')).toHaveTextContent(
-      "Staging",
-    );
+    expect(
+      container.querySelector('[data-slot="multi-select-chip"]'),
+    ).toHaveTextContent("Staging");
     expect(screen.getByText("staging")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /Show options/ }));
@@ -121,11 +122,7 @@ describe("MultiSelect", () => {
     const user = userEvent.setup();
     render(
       <form aria-label="MultiSelect form">
-        <MultiSelect
-          label="Regions"
-          name="regions"
-          defaultValue={["us", "eu"]}
-        >
+        <MultiSelect label="Regions" name="regions" defaultValue={["us", "eu"]}>
           <MultiSelectItem value="us">US</MultiSelectItem>
           <MultiSelectItem value="eu">EU</MultiSelectItem>
           <MultiSelectItem value="apac">APAC</MultiSelectItem>
@@ -149,7 +146,9 @@ describe("MultiSelect", () => {
       "apac",
     ]);
 
-    await user.click(screen.getByRole("button", { name: /Clear selected options/ }));
+    await user.click(
+      screen.getByRole("button", { name: /Clear selected options/ }),
+    );
 
     expect(new FormData(form as HTMLFormElement).getAll("regions")).toEqual([]);
   });
@@ -168,7 +167,9 @@ describe("MultiSelect", () => {
       </form>,
     );
 
-    const form = screen.getByRole("form", { name: "Disabled MultiSelect form" });
+    const form = screen.getByRole("form", {
+      name: "Disabled MultiSelect form",
+    });
 
     expect(new FormData(form as HTMLFormElement).has("regions")).toBe(false);
   });
@@ -187,12 +188,19 @@ describe("MultiSelect", () => {
     );
 
     await user.click(screen.getByRole("button", { name: /Show options/ }));
-    await user.type(screen.getByRole("combobox", { name: /Default workspaces/ }), "stag");
+    await user.type(
+      screen.getByRole("combobox", { name: /Default workspaces/ }),
+      "stag",
+    );
 
     const listbox = screen.getByRole("listbox");
 
-    expect(within(listbox).getByRole("option", { name: "Staging" })).toBeInTheDocument();
-    expect(within(listbox).queryByRole("option", { name: "Production" })).not.toBeInTheDocument();
+    expect(
+      within(listbox).getByRole("option", { name: "Staging" }),
+    ).toBeInTheDocument();
+    expect(
+      within(listbox).queryByRole("option", { name: "Production" }),
+    ).not.toBeInTheDocument();
   });
 
   it("opens and filters options when typing into a closed search field", async () => {
@@ -211,8 +219,12 @@ describe("MultiSelect", () => {
 
     const listbox = await screen.findByRole("listbox");
 
-    expect(within(listbox).getByRole("option", { name: "Finance" })).toBeInTheDocument();
-    expect(within(listbox).queryByRole("option", { name: "Operations" })).not.toBeInTheDocument();
+    expect(
+      within(listbox).getByRole("option", { name: "Finance" }),
+    ).toBeInTheDocument();
+    expect(
+      within(listbox).queryByRole("option", { name: "Operations" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders an empty state when search has no matching items", async () => {
@@ -225,7 +237,10 @@ describe("MultiSelect", () => {
     );
 
     await user.click(screen.getByRole("button", { name: /Show options/ }));
-    await user.type(screen.getByRole("combobox", { name: /Workspace/ }), "missing");
+    await user.type(
+      screen.getByRole("combobox", { name: /Workspace/ }),
+      "missing",
+    );
 
     expect(screen.getByText("No workspace found")).toBeInTheDocument();
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
@@ -272,13 +287,17 @@ describe("MultiSelect", () => {
     );
 
     const root = container.querySelector('[data-slot="multi-select"]');
-    const control = container.querySelector('[data-slot="multi-select-control"]');
+    const control = container.querySelector(
+      '[data-slot="multi-select-control"]',
+    );
 
     expect(root).toHaveAttribute("data-readonly", "true");
     expect(control).toHaveAttribute("data-invalid", "true");
     expect(control).toHaveAttribute("data-required", "true");
     expect(control).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByText("Choose at least one available workspace.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Choose at least one available workspace."),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /Show options/ }));
 
@@ -295,7 +314,9 @@ describe("MultiSelect", () => {
         </MultiSelect>,
       );
 
-      const control = container.querySelector('[data-slot="multi-select-control"]');
+      const control = container.querySelector(
+        '[data-slot="multi-select-control"]',
+      );
 
       expect(control).toHaveAttribute("aria-invalid", ariaInvalid);
       expect(control).toHaveAttribute("data-invalid", "true");
@@ -345,7 +366,9 @@ describe("MultiSelect", () => {
     const provider = screen.getByTestId("multi-select-provider");
 
     if (!popover || !portalHost) {
-      throw new Error("MultiSelect popover should render inside a portal host.");
+      throw new Error(
+        "MultiSelect popover should render inside a portal host.",
+      );
     }
 
     expect(document.body).toContainElement(portalHost);

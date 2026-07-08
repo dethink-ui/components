@@ -60,8 +60,10 @@ export interface FieldLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   requiredMarker?: ReactNode | false;
 }
 
-export interface FieldControlProps
-  extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+export interface FieldControlProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "children"
+> {
   asChild?: boolean;
   children?: ReactElement<FieldControlSlotProps>;
   disabled?: boolean;
@@ -118,7 +120,10 @@ type FieldControlSlotProps = Record<string, unknown> & {
 };
 
 type FieldContextValue = {
-  allocateDescriptionId: (id: string | undefined, hasContent: boolean) => string;
+  allocateDescriptionId: (
+    id: string | undefined,
+    hasContent: boolean,
+  ) => string;
   allocateErrorId: (id: string | undefined, hasContent: boolean) => string;
   controlId: string;
   descriptionIds: string[];
@@ -172,13 +177,15 @@ const fieldSetBaseClasses =
 const fieldLegendBaseClasses = "max-w-full text-foreground";
 
 const fieldLegendVariantClasses: Record<FieldLegendVariant, string> = {
-  legend: "mb-[var(--dt-space-2)] font-heading text-base font-semibold leading-6",
+  legend:
+    "mb-[var(--dt-space-2)] font-heading text-base font-semibold leading-6",
   label: "mb-[var(--dt-space-2)] text-sm font-medium leading-none",
 };
 
 const fieldContentBaseClasses = "grid min-w-0 gap-[var(--dt-space-1-5)]";
 
-const fieldTitleBaseClasses = "text-sm font-medium leading-none text-foreground";
+const fieldTitleBaseClasses =
+  "text-sm font-medium leading-none text-foreground";
 
 function useFieldContext() {
   return useContext(FieldContext);
@@ -260,7 +267,10 @@ function getErrorContent({
 }: Pick<FieldErrorProps, "children" | "errors">) {
   const messages = (errors ?? [])
     .map((error) => getErrorMessage(error))
-    .filter((message): message is ReactNode => message !== null && message !== undefined);
+    .filter(
+      (message): message is ReactNode =>
+        message !== null && message !== undefined,
+    );
 
   return {
     content:
@@ -286,18 +296,21 @@ function collectFieldRelationshipIds(children: ReactNode, controlId: string) {
 
   function visit(node: ReactNode) {
     Children.forEach(node, (child) => {
-      if (!isValidElement<{
-        children?: ReactNode;
-        errors?: FieldErrorItem[];
-        id?: string;
-      }>(child)) {
+      if (
+        !isValidElement<{
+          children?: ReactNode;
+          errors?: FieldErrorItem[];
+          id?: string;
+        }>(child)
+      ) {
         return;
       }
 
       if (child.type === FieldDescription) {
         if (hasRenderableContent(child.props.children)) {
           descriptionIds.push(
-            child.props.id ?? getDefaultDescriptionId(controlId, descriptionIndex),
+            child.props.id ??
+              getDefaultDescriptionId(controlId, descriptionIndex),
           );
           descriptionIndex += 1;
         }
@@ -307,7 +320,9 @@ function collectFieldRelationshipIds(children: ReactNode, controlId: string) {
 
       if (child.type === FieldError) {
         if (hasRenderableContent(getErrorContent(child.props).content)) {
-          errorIds.push(child.props.id ?? getDefaultErrorId(controlId, errorIndex));
+          errorIds.push(
+            child.props.id ?? getDefaultErrorId(controlId, errorIndex),
+          );
           errorIndex += 1;
         }
 
@@ -412,7 +427,11 @@ export function fieldLegendClassNames({
   className,
   variant = "legend",
 }: Pick<FieldLegendProps, "className" | "variant"> = {}) {
-  return cn(fieldLegendBaseClasses, fieldLegendVariantClasses[variant], className);
+  return cn(
+    fieldLegendBaseClasses,
+    fieldLegendVariantClasses[variant],
+    className,
+  );
 }
 
 export function fieldContentClassNames({
@@ -428,15 +447,7 @@ export function fieldTitleClassNames({
 }
 
 export const Form = forwardRef<HTMLFormElement, FormProps>(
-  (
-    {
-      children,
-      className,
-      spacing = "md",
-      ...props
-    },
-    ref,
-  ) => (
+  ({ children, className, spacing = "md", ...props }, ref) => (
     <form
       {...props}
       ref={ref}
@@ -477,7 +488,9 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
       () => collectFieldRelationshipIds(children, controlId),
       [children, controlId],
     );
-    const [registeredDescriptionIds, setRegisteredDescriptionIds] = useState<string[]>([]);
+    const [registeredDescriptionIds, setRegisteredDescriptionIds] = useState<
+      string[]
+    >([]);
     const [registeredErrorIds, setRegisteredErrorIds] = useState<string[]>([]);
     const descriptionIds = useMemo(
       () =>
@@ -587,16 +600,7 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
 Field.displayName = "Field";
 
 export const FieldLabel = forwardRef<HTMLLabelElement, FieldLabelProps>(
-  (
-    {
-      children,
-      className,
-      htmlFor,
-      requiredMarker = "*",
-      ...props
-    },
-    ref,
-  ) => {
+  ({ children, className, htmlFor, requiredMarker = "*", ...props }, ref) => {
     const field = useFieldContext();
     const required = field?.required ?? false;
 
@@ -650,7 +654,7 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
     const describedBy = mergeIds(
       ariaDescribedBy,
       ...(field?.descriptionIds ?? []),
-      ...(resolvedInvalid ? field?.errorIds ?? [] : []),
+      ...(resolvedInvalid ? (field?.errorIds ?? []) : []),
     );
     const errorMessage = resolvedInvalid
       ? mergeIds(ariaErrorMessage, ...(field?.errorIds ?? []))
@@ -674,8 +678,13 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
       const childArray = Children.toArray(children);
       const child = childArray[0];
 
-      if (childArray.length !== 1 || !isValidElement<FieldControlSlotProps>(child)) {
-        throw new Error("FieldControl with asChild expects a single React element child.");
+      if (
+        childArray.length !== 1 ||
+        !isValidElement<FieldControlSlotProps>(child)
+      ) {
+        throw new Error(
+          "FieldControl with asChild expects a single React element child.",
+        );
       }
 
       const childDescribedBy = mergeIds(
@@ -683,30 +692,32 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
         controlProps["aria-describedby"],
       );
       const childErrorMessage = resolvedInvalid
-        ? mergeIds(child.props["aria-errormessage"], controlProps["aria-errormessage"])
+        ? mergeIds(
+            child.props["aria-errormessage"],
+            controlProps["aria-errormessage"],
+          )
         : mergeIds(child.props["aria-errormessage"], ariaErrorMessage);
 
-      return cloneElement(
-        child,
-        {
-          ...controlProps,
-          ...child.props,
-          ref: composeRefs(ref, getChildRef(child)),
-          id: controlProps.id ?? child.props.id,
-          "aria-describedby": childDescribedBy,
-          "aria-errormessage": childErrorMessage,
-          "aria-invalid": resolvedInvalid ? true : child.props["aria-invalid"] ?? ariaInvalid,
-          "data-slot": "field-control",
-          "data-disabled": resolvedDisabled ? "true" : undefined,
-          "data-invalid": resolvedInvalid ? "true" : undefined,
-          "data-readonly": resolvedReadOnly ? "true" : undefined,
-          "data-required": resolvedRequired ? "true" : undefined,
-          disabled: resolvedDisabled || child.props.disabled || undefined,
-          readOnly: resolvedReadOnly || child.props.readOnly || undefined,
-          required: resolvedRequired || child.props.required || undefined,
-          className: cn(controlProps.className, child.props.className),
-        } as Partial<FieldControlSlotProps>,
-      );
+      return cloneElement(child, {
+        ...controlProps,
+        ...child.props,
+        ref: composeRefs(ref, getChildRef(child)),
+        id: controlProps.id ?? child.props.id,
+        "aria-describedby": childDescribedBy,
+        "aria-errormessage": childErrorMessage,
+        "aria-invalid": resolvedInvalid
+          ? true
+          : (child.props["aria-invalid"] ?? ariaInvalid),
+        "data-slot": "field-control",
+        "data-disabled": resolvedDisabled ? "true" : undefined,
+        "data-invalid": resolvedInvalid ? "true" : undefined,
+        "data-readonly": resolvedReadOnly ? "true" : undefined,
+        "data-required": resolvedRequired ? "true" : undefined,
+        disabled: resolvedDisabled || child.props.disabled || undefined,
+        readOnly: resolvedReadOnly || child.props.readOnly || undefined,
+        required: resolvedRequired || child.props.required || undefined,
+        className: cn(controlProps.className, child.props.className),
+      } as Partial<FieldControlSlotProps>);
     }
 
     return createElement("div", controlProps, children);
@@ -716,16 +727,7 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
 FieldControl.displayName = "FieldControl";
 
 export const FieldDescription = forwardRef<HTMLElement, FieldDescriptionProps>(
-  (
-    {
-      as: Element = "p",
-      children,
-      className,
-      id,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ as: Element = "p", children, className, id, ...props }, ref) => {
     const field = useFieldContext();
     const generatedId = useId();
     const hasContent = hasRenderableContent(children);
@@ -762,23 +764,15 @@ export const FieldDescription = forwardRef<HTMLElement, FieldDescriptionProps>(
 FieldDescription.displayName = "FieldDescription";
 
 export const FieldError = forwardRef<HTMLElement, FieldErrorProps>(
-  (
-    {
-      as: Element = "div",
-      children,
-      className,
-      errors,
-      id,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ as: Element = "div", children, className, errors, id, ...props }, ref) => {
     const field = useFieldContext();
     const generatedId = useId();
     const { content } = getErrorContent({ children, errors });
     const hasContent = hasRenderableContent(content);
     const resolvedId =
-      field?.allocateErrorId(id, hasContent) ?? id ?? `field-${generatedId}-error`;
+      field?.allocateErrorId(id, hasContent) ??
+      id ??
+      `field-${generatedId}-error`;
 
     useRegisteredId({
       id: resolvedId,
@@ -808,16 +802,7 @@ export const FieldError = forwardRef<HTMLElement, FieldErrorProps>(
 FieldError.displayName = "FieldError";
 
 export const FieldGroup = forwardRef<HTMLElement, FieldGroupProps>(
-  (
-    {
-      as: Element = "div",
-      children,
-      className,
-      gap = "md",
-      ...props
-    },
-    ref,
-  ) =>
+  ({ as: Element = "div", children, className, gap = "md", ...props }, ref) =>
     createElement(
       Element,
       {
@@ -834,15 +819,7 @@ export const FieldGroup = forwardRef<HTMLElement, FieldGroupProps>(
 FieldGroup.displayName = "FieldGroup";
 
 export const FieldSet = forwardRef<HTMLFieldSetElement, FieldSetProps>(
-  (
-    {
-      children,
-      className,
-      disabled,
-      ...props
-    },
-    ref,
-  ) => (
+  ({ children, className, disabled, ...props }, ref) => (
     <fieldset
       {...props}
       ref={ref}
@@ -859,15 +836,7 @@ export const FieldSet = forwardRef<HTMLFieldSetElement, FieldSetProps>(
 FieldSet.displayName = "FieldSet";
 
 export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
-  (
-    {
-      children,
-      className,
-      variant = "legend",
-      ...props
-    },
-    ref,
-  ) => (
+  ({ children, className, variant = "legend", ...props }, ref) => (
     <legend
       {...props}
       ref={ref}
@@ -883,14 +852,7 @@ export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
 FieldLegend.displayName = "FieldLegend";
 
 export const FieldContent = forwardRef<HTMLDivElement, FieldContentProps>(
-  (
-    {
-      children,
-      className,
-      ...props
-    },
-    ref,
-  ) => (
+  ({ children, className, ...props }, ref) => (
     <div
       {...props}
       ref={ref}
@@ -905,15 +867,7 @@ export const FieldContent = forwardRef<HTMLDivElement, FieldContentProps>(
 FieldContent.displayName = "FieldContent";
 
 export const FieldTitle = forwardRef<HTMLElement, FieldTitleProps>(
-  (
-    {
-      as: Element = "div",
-      children,
-      className,
-      ...props
-    },
-    ref,
-  ) =>
+  ({ as: Element = "div", children, className, ...props }, ref) =>
     createElement(
       Element,
       {

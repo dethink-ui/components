@@ -33,8 +33,7 @@ const iconButtonBaseClasses =
 const iconButtonVariantClasses: Record<IconButtonVariant, string> = {
   solid:
     "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-  soft:
-    "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
+  soft: "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
   outline:
     "border-border bg-background text-foreground hover:bg-muted active:bg-muted/80",
   ghost: "bg-transparent text-foreground hover:bg-muted active:bg-muted/80",
@@ -74,10 +73,7 @@ export function iconButtonClassNames({
   size = "md",
   shape = "square",
   className,
-}: Pick<
-  IconButtonProps,
-  "variant" | "size" | "shape" | "className"
-> = {}) {
+}: Pick<IconButtonProps, "variant" | "size" | "shape" | "className"> = {}) {
   return cn(
     iconButtonBaseClasses,
     iconButtonSizeClasses[size],
@@ -134,13 +130,19 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           <span
             aria-hidden="true"
             data-slot="icon-button-spinner"
-            className={cn(iconButtonSpinnerClasses, iconButtonIconSizeClasses[size])}
+            className={cn(
+              iconButtonSpinnerClasses,
+              iconButtonIconSizeClasses[size],
+            )}
           />
         ) : (
           <span
             aria-hidden="true"
             data-slot="icon-button-icon"
-            className={cn(iconButtonIconClasses, iconButtonIconSizeClasses[size])}
+            className={cn(
+              iconButtonIconClasses,
+              iconButtonIconSizeClasses[size],
+            )}
           >
             {children}
           </span>

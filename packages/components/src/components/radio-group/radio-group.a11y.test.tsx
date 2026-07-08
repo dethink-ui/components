@@ -12,10 +12,7 @@ import {
   FieldLegend,
   FieldSet,
 } from "../form-field";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from ".";
+import { RadioGroup, RadioGroupItem } from ".";
 
 expect.extend(toHaveNoViolations);
 
@@ -86,7 +83,10 @@ describe("RadioGroup accessibility", () => {
       </DethinkProvider>,
     );
 
-    expect(screen.getByLabelText("Fast")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("Fast")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     expect(screen.getByLabelText("Careful")).toBeRequired();
 
     await expect(axe(container)).resolves.toHaveNoViolations();

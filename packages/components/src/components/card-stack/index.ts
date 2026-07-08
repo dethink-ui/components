@@ -5,4 +5,3 @@ export {
   type CardStackMode,
   type CardStackProps,
 } from "./card-stack";
-

@@ -45,7 +45,9 @@ describe("Popover accessibility", () => {
     expect(
       screen.getByRole("dialog", { name: "Workspace filters" }),
     ).toBeInTheDocument();
-    await expect(axe(container.ownerDocument.body)).resolves.toHaveNoViolations();
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
   });
 
   it("has no axe violations when the visible title is hidden accessibly", async () => {

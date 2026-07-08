@@ -32,8 +32,8 @@ export function NavDockAiWorkspace() {
   const [currentTool, setCurrentTool] = useState("agent");
 
   return (
-    <div className="flex min-h-[24rem] overflow-hidden rounded-md border border-border bg-muted/20">
-      <div className="flex w-24 items-center justify-center border-r border-border bg-background">
+    <div className="border-border bg-muted/20 flex min-h-[24rem] overflow-hidden rounded-md border">
+      <div className="border-border bg-background flex w-24 items-center justify-center border-r">
         <NavDock
           aria-label="AI workspace quick access"
           currentValue={currentTool}
@@ -74,13 +74,13 @@ export function NavDockAiWorkspace() {
                 <NavDockSubmenuTrigger />
                 <NavDockSubmenuContent>
                   <button
-                    className="rounded-sm px-3 py-2 text-start text-sm text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                    className="text-foreground hover:bg-muted focus-visible:ring-ring rounded-sm px-3 py-2 text-start text-sm outline-none focus-visible:ring-2"
                     type="button"
                   >
                     Model routing
                   </button>
                   <button
-                    className="rounded-sm px-3 py-2 text-start text-sm text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                    className="text-foreground hover:bg-muted focus-visible:ring-ring rounded-sm px-3 py-2 text-start text-sm outline-none focus-visible:ring-2"
                     type="button"
                   >
                     Cost limits
@@ -100,35 +100,35 @@ export function NavDockAiWorkspace() {
       </div>
 
       <div className="grid flex-1 content-center gap-4 p-6">
-        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground">
+        <div className="border-border bg-background text-muted-foreground inline-flex w-fit items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
           <DatabaseZap {...iconProps} className="size-4" />
           AI workspace
         </div>
         <div>
-          <h3 className="font-heading text-xl font-semibold text-foreground">
+          <h3 className="font-heading text-foreground text-xl font-semibold">
             {currentTool === "agent" ? "Agent run queue" : "Workspace panel"}
           </h3>
-          <p className="mt-2 max-w-lg text-sm leading-6 text-muted-foreground">
+          <p className="text-muted-foreground mt-2 max-w-lg text-sm leading-6">
             The dock stays compact while the main panel changes. Submenu items
             remain buttons and links rather than ARIA menu items.
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-border bg-background p-4">
-            <FileSearch {...iconProps} className="mb-3 size-5 text-primary" />
-            <div className="text-sm font-semibold text-foreground">
+          <div className="border-border bg-background rounded-md border p-4">
+            <FileSearch {...iconProps} className="text-primary mb-3 size-5" />
+            <div className="text-foreground text-sm font-semibold">
               Review queue
             </div>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm leading-6">
               12 runs waiting for review.
             </p>
           </div>
-          <div className="rounded-md border border-border bg-background p-4">
-            <BrainCircuit {...iconProps} className="mb-3 size-5 text-primary" />
-            <div className="text-sm font-semibold text-foreground">
+          <div className="border-border bg-background rounded-md border p-4">
+            <BrainCircuit {...iconProps} className="text-primary mb-3 size-5" />
+            <div className="text-foreground text-sm font-semibold">
               Eval pass rate
             </div>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm leading-6">
               94% across the latest prompt set.
             </p>
           </div>

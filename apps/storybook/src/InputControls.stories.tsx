@@ -54,9 +54,15 @@ export const NativeFormComposition: Story = {
                 <Field id="project-quota" className="min-w-0">
                   <FieldLabel>Monthly quota</FieldLabel>
                   <FieldControl asChild>
-                    <NumberInput name="quota" numberMode="numeric" defaultValue="250" />
+                    <NumberInput
+                      name="quota"
+                      numberMode="numeric"
+                      defaultValue="250"
+                    />
                   </FieldControl>
-                  <FieldDescription>Submitted as a string value.</FieldDescription>
+                  <FieldDescription>
+                    Submitted as a string value.
+                  </FieldDescription>
                 </Field>
                 <Field id="project-summary" className="min-w-0">
                   <FieldLabel>Summary</FieldLabel>
@@ -88,7 +94,9 @@ export const CRUDFilterAndEditor: Story = {
           <Card as="aside">
             <CardHeader>
               <CardTitle>Filters</CardTitle>
-              <CardDescription>Search and numeric filters stay native.</CardDescription>
+              <CardDescription>
+                Search and numeric filters stay native.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Form>
@@ -110,7 +118,9 @@ export const CRUDFilterAndEditor: Story = {
           <Card as="section">
             <CardHeader>
               <CardTitle>Edit incident</CardTitle>
-              <CardDescription>Textarea remains plain native text entry.</CardDescription>
+              <CardDescription>
+                Textarea remains plain native text entry.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Form>
@@ -125,7 +135,9 @@ export const CRUDFilterAndEditor: Story = {
                   <FieldControl asChild>
                     <Textarea name="impact" defaultValue="Slow" rows={5} />
                   </FieldControl>
-                  <FieldError>Describe affected customers and owner action.</FieldError>
+                  <FieldError>
+                    Describe affected customers and owner action.
+                  </FieldError>
                 </Field>
               </Form>
             </CardContent>
@@ -145,7 +157,7 @@ export const ThemeDensityAndRTL: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="md">
             <Form>
@@ -153,7 +165,9 @@ export const ThemeDensityAndRTL: Story = {
                 <Field id={`suite-name-${theme}`}>
                   <FieldLabel>{theme === "dark" ? "שם" : "Name"}</FieldLabel>
                   <FieldControl asChild>
-                    <Input defaultValue={theme === "dark" ? "פעולות" : "Operations"} />
+                    <Input
+                      defaultValue={theme === "dark" ? "פעולות" : "Operations"}
+                    />
                   </FieldControl>
                 </Field>
                 <Field id={`suite-quota-${theme}`}>
@@ -166,7 +180,9 @@ export const ThemeDensityAndRTL: Story = {
                   </FieldControl>
                 </Field>
                 <Field id={`suite-notes-${theme}`}>
-                  <FieldLabel>{theme === "dark" ? "הערות" : "Notes"}</FieldLabel>
+                  <FieldLabel>
+                    {theme === "dark" ? "הערות" : "Notes"}
+                  </FieldLabel>
                   <FieldControl asChild>
                     <Textarea
                       defaultValue={

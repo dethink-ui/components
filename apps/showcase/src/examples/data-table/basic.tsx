@@ -11,11 +11,41 @@ type Deploy = {
 };
 
 const deploys: Deploy[] = [
-  { id: "d1", service: "api-gateway", env: "production", status: "success", duration: "4m 12s" },
-  { id: "d2", service: "billing", env: "production", status: "failed", duration: "1m 03s" },
-  { id: "d3", service: "web-app", env: "staging", status: "success", duration: "6m 41s" },
-  { id: "d4", service: "worker", env: "production", status: "running", duration: "—" },
-  { id: "d5", service: "api-gateway", env: "staging", status: "success", duration: "3m 58s" },
+  {
+    id: "d1",
+    service: "api-gateway",
+    env: "production",
+    status: "success",
+    duration: "4m 12s",
+  },
+  {
+    id: "d2",
+    service: "billing",
+    env: "production",
+    status: "failed",
+    duration: "1m 03s",
+  },
+  {
+    id: "d3",
+    service: "web-app",
+    env: "staging",
+    status: "success",
+    duration: "6m 41s",
+  },
+  {
+    id: "d4",
+    service: "worker",
+    env: "production",
+    status: "running",
+    duration: "—",
+  },
+  {
+    id: "d5",
+    service: "api-gateway",
+    env: "staging",
+    status: "success",
+    duration: "3m 58s",
+  },
 ];
 
 const columns: DataTableColumnDef<Deploy>[] = [

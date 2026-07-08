@@ -34,15 +34,21 @@ export function DrawerMobileNavigation() {
               Swipe from the left edge, or use the trigger, to open.
             </DrawerDescription>
           </DrawerHeader>
-          <nav aria-label="Primary" className="px-[var(--dt-space-3)] pb-[var(--dt-space-3)]">
+          <nav
+            aria-label="Primary"
+            className="px-[var(--dt-space-3)] pb-[var(--dt-space-3)]"
+          >
             <ul className="grid gap-[var(--dt-space-1)]">
               {navLinks.map(({ icon: Icon, label }) => (
                 <li key={label}>
                   <a
-                    className="flex items-center gap-[var(--dt-space-3)] rounded-md px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium text-foreground hover:bg-muted"
+                    className="text-foreground hover:bg-muted flex items-center gap-[var(--dt-space-3)] rounded-md px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium"
                     href="#"
                   >
-                    <Icon aria-hidden="true" className="size-4 text-muted-foreground" />
+                    <Icon
+                      aria-hidden="true"
+                      className="text-muted-foreground size-4"
+                    />
                     {label}
                   </a>
                 </li>

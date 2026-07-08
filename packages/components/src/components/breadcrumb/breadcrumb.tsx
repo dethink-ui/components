@@ -37,8 +37,10 @@ export interface BreadcrumbItemData {
   onAction?: () => void;
 }
 
-export interface BreadcrumbProps
-  extends Omit<HTMLAttributes<HTMLElement>, "children"> {
+export interface BreadcrumbProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "children"
+> {
   children?: ReactNode;
   collapseFrom?: BreadcrumbCollapseFrom;
   items?: BreadcrumbItemData[];
@@ -50,8 +52,7 @@ export interface BreadcrumbProps
   size?: BreadcrumbSize;
 }
 
-export interface BreadcrumbListProps
-  extends HTMLAttributes<HTMLOListElement> {}
+export interface BreadcrumbListProps extends HTMLAttributes<HTMLOListElement> {}
 
 export interface BreadcrumbItemProps extends LiHTMLAttributes<HTMLLIElement> {
   current?: boolean;
@@ -110,16 +111,16 @@ export interface BreadcrumbPageProps extends HTMLAttributes<HTMLSpanElement> {
   icon?: ReactNode;
 }
 
-export interface BreadcrumbSeparatorProps
-  extends HTMLAttributes<HTMLSpanElement> {
+export interface BreadcrumbSeparatorProps extends HTMLAttributes<HTMLSpanElement> {
   separator?: BreadcrumbSeparatorVariant | ReactNode;
 }
 
-export interface BreadcrumbEllipsisProps
-  extends HTMLAttributes<HTMLSpanElement> {}
+export interface BreadcrumbEllipsisProps extends HTMLAttributes<HTMLSpanElement> {}
 
-export interface BreadcrumbOverflowProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+export interface BreadcrumbOverflowProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
   items: BreadcrumbItemData[];
   label?: string;
   size?: BreadcrumbSize;
@@ -344,11 +345,15 @@ function hasCurrentState(
   ariaCurrent: AnchorHTMLAttributes<HTMLAnchorElement>["aria-current"],
 ) {
   return (
-    ariaCurrent !== undefined && ariaCurrent !== false && ariaCurrent !== "false"
+    ariaCurrent !== undefined &&
+    ariaCurrent !== false &&
+    ariaCurrent !== "false"
   );
 }
 
-function normalizeItems(items: BreadcrumbItemData[]): NormalizedBreadcrumbItem[] {
+function normalizeItems(
+  items: BreadcrumbItemData[],
+): NormalizedBreadcrumbItem[] {
   if (items.length === 0) {
     return [];
   }
@@ -517,7 +522,9 @@ export function getBreadcrumbRenderItems(
   return entriesFromVisibleIndexes(items, visibleIndexes);
 }
 
-function renderSeparatorContent(separator: BreadcrumbSeparatorProps["separator"]) {
+function renderSeparatorContent(
+  separator: BreadcrumbSeparatorProps["separator"],
+) {
   if (separator === "none") {
     return null;
   }
@@ -562,7 +569,11 @@ function renderLinkChildren({
   return (
     <>
       {icon ? (
-        <span aria-hidden="true" data-slot="breadcrumb-link-icon" className={breadcrumbIconClasses}>
+        <span
+          aria-hidden="true"
+          data-slot="breadcrumb-link-icon"
+          className={breadcrumbIconClasses}
+        >
           {icon}
         </span>
       ) : null}
@@ -702,17 +713,16 @@ export const Breadcrumb = forwardRef<HTMLElement, BreadcrumbProps>(
 
 Breadcrumb.displayName = "Breadcrumb";
 
-export const BreadcrumbList = forwardRef<
-  HTMLOListElement,
-  BreadcrumbListProps
->(({ className, ...props }, ref) => (
-  <ol
-    {...props}
-    ref={ref}
-    data-slot="breadcrumb-list"
-    className={breadcrumbListClassNames({ className })}
-  />
-));
+export const BreadcrumbList = forwardRef<HTMLOListElement, BreadcrumbListProps>(
+  ({ className, ...props }, ref) => (
+    <ol
+      {...props}
+      ref={ref}
+      data-slot="breadcrumb-list"
+      className={breadcrumbListClassNames({ className })}
+    />
+  ),
+);
 
 BreadcrumbList.displayName = "BreadcrumbList";
 
@@ -780,7 +790,10 @@ export const BreadcrumbLink = forwardRef<HTMLElement, BreadcrumbLinkProps>(
       const childRef = getChildRef(child);
       const resolvedHref = child.props.href ?? href;
       const resolvedTarget = child.props.target ?? target;
-      const resolvedRel = mergeRelForTarget(child.props.rel ?? rel, resolvedTarget);
+      const resolvedRel = mergeRelForTarget(
+        child.props.rel ?? rel,
+        resolvedTarget,
+      );
       const resolvedChildAriaCurrent =
         child.props["aria-current"] ?? resolvedAriaCurrent;
       const isChildCurrent = hasCurrentState(resolvedChildAriaCurrent);
@@ -922,13 +935,7 @@ export const BreadcrumbOverflow = forwardRef<
   BreadcrumbOverflowProps
 >(
   (
-    {
-      className,
-      items,
-      label = "Show breadcrumb path",
-      size = "md",
-      ...props
-    },
+    { className, items, label = "Show breadcrumb path", size = "md", ...props },
     ref,
   ) => {
     const normalizedItems = normalizeOverflowItems(items);

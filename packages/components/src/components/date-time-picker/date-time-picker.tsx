@@ -13,13 +13,7 @@ import {
   Text,
   type DatePickerRenderProps,
 } from "react-aria-components";
-import {
-  forwardRef,
-  type ReactNode,
-  useId,
-  useRef,
-  useState,
-} from "react";
+import { forwardRef, type ReactNode, useId, useRef, useState } from "react";
 import type { DateValue } from "@internationalized/date";
 import { DateCalendarGrid } from "../calendar";
 import {
@@ -196,12 +190,7 @@ function setDateTimePickerTimeInputValue({
 
 function ClearIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="m4.5 4.5 7 7m0-7-7 7"
         stroke="currentColor"
@@ -214,12 +203,7 @@ function ClearIcon() {
 
 function CalendarIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="M4.5 2.5v2m7-2v2M3 6.5h10M3.5 4h9A1.5 1.5 0 0 1 14 5.5v7A1.5 1.5 0 0 1 12.5 14h-9A1.5 1.5 0 0 1 2 12.5v-7A1.5 1.5 0 0 1 3.5 4Z"
         stroke="currentColor"
@@ -269,11 +253,10 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
     const timeOptionsLabelId = useId();
     const [activePanel, setActivePanel] =
       useState<DateTimePickerPanel>("calendar");
-    const { portalContainer, rootRef } =
-      useProviderPortalRoot<HTMLDivElement>({
-        forwardedRef: ref,
-        portalSlot: "date-time-picker-portal-container",
-      });
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
+      forwardedRef: ref,
+      portalSlot: "date-time-picker-portal-container",
+    });
     const picker = (
       <DethinkPortalProvider container={portalContainer}>
         <AriaDatePicker<DateTimePickerValue>
@@ -356,7 +339,7 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                     data-slot="date-time-picker-input"
                     className={dateTimePickerInputClasses}
                   >
-                    {(segment) => (
+                    {(segment) =>
                       (() => {
                         const isTimeSegment = isDateTimePickerTimeSegment(
                           segment.type,
@@ -385,7 +368,7 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                           />
                         );
                       })()
-                    )}
+                    }
                   </DateInput>
                   {clearable ? (
                     <button

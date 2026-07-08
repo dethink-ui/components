@@ -30,7 +30,7 @@ export function DropdownMenuRecipeRowActions() {
 
   return (
     <div className="mx-auto max-w-sm space-y-2">
-      <ul className="divide-y divide-border rounded-lg border border-border">
+      <ul className="divide-border border-border divide-y rounded-lg border">
         {keys.map((apiKey) => (
           <li
             key={apiKey.id}
@@ -38,7 +38,7 @@ export function DropdownMenuRecipeRowActions() {
           >
             <div>
               <p className="font-mono text-sm">{apiKey.name}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Last used {apiKey.lastUsed}
               </p>
             </div>
@@ -80,7 +80,7 @@ export function DropdownMenuRecipeRowActions() {
           </li>
         ))}
       </ul>
-      <p aria-live="polite" className="text-sm text-muted-foreground">
+      <p aria-live="polite" className="text-muted-foreground text-sm">
         {status}
       </p>
     </div>

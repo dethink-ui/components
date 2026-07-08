@@ -33,7 +33,10 @@ describe("Textarea accessibility", () => {
 
     const textarea = screen.getByLabelText(/Release note/);
 
-    expect(textarea).toHaveAttribute("aria-describedby", "release-note-description");
+    expect(textarea).toHaveAttribute(
+      "aria-describedby",
+      "release-note-description",
+    );
     expect(textarea).toBeRequired();
 
     await expect(axe(container)).resolves.toHaveNoViolations();
@@ -57,7 +60,10 @@ describe("Textarea accessibility", () => {
     const textarea = screen.getByLabelText("Approval note");
 
     expect(textarea).toHaveAttribute("aria-invalid", "true");
-    expect(textarea).toHaveAttribute("aria-errormessage", "approval-note-error");
+    expect(textarea).toHaveAttribute(
+      "aria-errormessage",
+      "approval-note-error",
+    );
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

@@ -42,7 +42,9 @@ function getEnteringWeekPanel() {
   ) as HTMLElement;
 }
 
-async function createSlotThroughEditor(user: ReturnType<typeof userEvent.setup>) {
+async function createSlotThroughEditor(
+  user: ReturnType<typeof userEvent.setup>,
+) {
   await user.click(
     screen.getByRole("button", { name: "Add slot to this day" }),
   );
@@ -59,18 +61,18 @@ describe("SlotPlanner motion layer", () => {
     renderPlanner();
 
     expect(getIndicators()).toHaveLength(1);
-    expect(
-      screen.getAllByRole("tab")[0]!.contains(getIndicators()[0]!),
-    ).toBe(true);
+    expect(screen.getAllByRole("tab")[0]!.contains(getIndicators()[0]!)).toBe(
+      true,
+    );
 
     await user.click(screen.getAllByRole("tab")[2]!);
 
     // The indicator travels: it now renders only inside the new selection,
     // while the non-motion selection state stays on the tab itself.
     expect(getIndicators()).toHaveLength(1);
-    expect(
-      screen.getAllByRole("tab")[2]!.contains(getIndicators()[0]!),
-    ).toBe(true);
+    expect(screen.getAllByRole("tab")[2]!.contains(getIndicators()[0]!)).toBe(
+      true,
+    );
     expect(screen.getAllByRole("tab")[2]).toHaveAttribute(
       "data-selected",
       "true",
@@ -136,16 +138,14 @@ describe("SlotPlanner motion layer", () => {
       ).getByRole("button", { name: "Delete this occurrence" }),
     );
 
-    await waitForElementToBeRemoved(() =>
-      screen.queryByText("14:15 – 15:15"),
-    );
+    await waitForElementToBeRemoved(() => screen.queryByText("14:15 – 15:15"));
 
-    const remaining = within(screen.getByRole("list")).getAllByRole(
-      "listitem",
-    );
+    const remaining = within(screen.getByRole("list")).getAllByRole("listitem");
 
     expect(remaining).toHaveLength(1);
-    expect(within(remaining[0]!).getByText("18:00 – 19:00")).toBeInTheDocument();
+    expect(
+      within(remaining[0]!).getByText("18:00 – 19:00"),
+    ).toBeInTheDocument();
   });
 
   it("staggers and highlights slots arriving from a copy-day batch", async () => {
@@ -325,9 +325,9 @@ describe("SlotPlanner reduced motion", () => {
     await user.click(screen.getAllByRole("tab")[3]!);
 
     expect(getIndicators()).toHaveLength(1);
-    expect(
-      screen.getAllByRole("tab")[3]!.contains(getIndicators()[0]!),
-    ).toBe(true);
+    expect(screen.getAllByRole("tab")[3]!.contains(getIndicators()[0]!)).toBe(
+      true,
+    );
     expect(screen.getAllByRole("tab")[3]).toHaveAttribute(
       "data-selected",
       "true",

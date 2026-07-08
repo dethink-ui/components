@@ -61,7 +61,8 @@ export const paginationProps: PropRow[] = [
     prop: "size",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
-    description: "Tokenized control size for dense tables, default pages, or larger touch targets.",
+    description:
+      "Tokenized control size for dense tables, default pages, or larger touch targets.",
   },
   {
     prop: "status",

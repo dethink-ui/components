@@ -109,13 +109,13 @@ export function HorizontalAccordionControlled() {
         <Button onClick={() => setValue(undefined)} size="sm" variant="ghost">
           Collapse all
         </Button>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           Active: {value ?? "none"}
         </span>
       </div>
       <HorizontalAccordion
         aria-label="Delivery phases"
-        className="rounded-lg border border-border"
+        className="border-border rounded-lg border"
         compactBreakpoint={480}
         height={280}
         onValueChange={setValue}
@@ -132,15 +132,15 @@ export function HorizontalAccordionControlled() {
               </HorizontalAccordion.BladeLabel>
             </HorizontalAccordion.Blade>
             <HorizontalAccordion.Panel>
-              <div className="flex h-full items-center gap-5 bg-background p-8">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="bg-background flex h-full items-center gap-5 p-8">
+                <div className="bg-primary/10 text-primary flex size-12 shrink-0 items-center justify-center rounded-lg">
                   {phase.icon}
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-lg font-semibold text-foreground">
+                  <h3 className="text-foreground text-lg font-semibold">
                     {phase.title}
                   </h3>
-                  <p className="max-w-md text-sm leading-6 text-muted-foreground">
+                  <p className="text-muted-foreground max-w-md text-sm leading-6">
                     {phase.body}
                   </p>
                   <Link href="#controlled" underline="hover">

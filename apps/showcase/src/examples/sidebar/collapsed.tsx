@@ -25,7 +25,7 @@ const collapsedItems = [
 export function SidebarCollapsed() {
   return (
     <SidebarProvider defaultCollapsed motion="subtle">
-      <div className="flex h-72 overflow-hidden rounded-lg border border-border bg-background">
+      <div className="border-border bg-background flex h-72 overflow-hidden rounded-lg border">
         <Sidebar aria-label="Collapsed navigation" variant="bordered">
           <div className="px-2 py-2">
             <SidebarTrigger>
@@ -58,7 +58,7 @@ export function SidebarCollapsed() {
           </SidebarContent>
           <SidebarRail />
         </Sidebar>
-        <SidebarInset className="p-5 text-sm text-muted-foreground">
+        <SidebarInset className="text-muted-foreground p-5 text-sm">
           Collapsed labels remain in the accessibility tree while visual space
           stays compact.
         </SidebarInset>

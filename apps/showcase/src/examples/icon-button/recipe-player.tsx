@@ -23,7 +23,7 @@ export function IconButtonRecipePlayer() {
 
   return (
     <div className="mx-auto max-w-xs space-y-3">
-      <div className="flex items-center justify-center gap-1 rounded-full border border-border bg-muted/40 px-3 py-2">
+      <div className="border-border bg-muted/40 flex items-center justify-center gap-1 rounded-full border px-3 py-2">
         <IconButton aria-label="Previous track" variant="ghost" shape="circle">
           <SkipBack />
         </IconButton>
@@ -57,7 +57,10 @@ export function IconButtonRecipePlayer() {
           <Repeat />
         </IconButton>
       </div>
-      <p aria-live="polite" className="text-center text-sm text-muted-foreground">
+      <p
+        aria-live="polite"
+        className="text-muted-foreground text-center text-sm"
+      >
         {playing ? "Playing" : "Paused"}
         {liked ? " · liked" : ""}
         {repeat ? " · repeat on" : ""}

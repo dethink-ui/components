@@ -28,9 +28,9 @@ describe("Progress", () => {
       </>,
     );
 
-    expect(screen.getByRole("progressbar", { name: "Sync" })).not.toHaveAttribute(
-      "aria-valuenow",
-    );
+    expect(
+      screen.getByRole("progressbar", { name: "Sync" }),
+    ).not.toHaveAttribute("aria-valuenow");
     expect(screen.getByRole("progressbar", { name: "Upload" })).toHaveAttribute(
       "aria-valuenow",
       "50",

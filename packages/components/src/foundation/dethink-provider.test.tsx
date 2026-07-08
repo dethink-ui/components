@@ -27,7 +27,9 @@ const stylesPath = join(process.cwd(), "src/styles.css");
 
 describe("DethinkProvider", () => {
   it("keeps the default theme config available for consumers", () => {
-    expect(defaultDethinkTheme.colorSchemes?.light?.background).toBe("oklch(1 0 0)");
+    expect(defaultDethinkTheme.colorSchemes?.light?.background).toBe(
+      "oklch(1 0 0)",
+    );
     expect(defaultDethinkTheme.spacing?.["4"]).toBe("1rem");
     expect(defaultDethinkTheme.density?.default?.control).toBe("2.5rem");
   });
@@ -68,9 +70,7 @@ describe("DethinkProvider", () => {
       "oklch(0.44 0.12 250)",
     );
     expect(style["--dt-color-primary-light"]).toBe("oklch(0.55 0.2 260)");
-    expect(style["--dt-color-timeline-rail-dark"]).toBe(
-      "oklch(0.72 0.1 260)",
-    );
+    expect(style["--dt-color-timeline-rail-dark"]).toBe("oklch(0.72 0.1 260)");
     expect(style["--dt-font-body"]).toBe("Inter, sans-serif");
     expect(style["--dt-font-heading"]).toBe("Sora, sans-serif");
     expect(style["--dt-font-mono"]).toBe("JetBrains Mono, monospace");
@@ -95,13 +95,18 @@ describe("DethinkProvider", () => {
     expect(provider).toHaveAttribute("data-theme", "system");
     expect(provider).toHaveAttribute("data-density", "default");
     expect(provider).toHaveAttribute("dir", "ltr");
-    expect(provider).toHaveClass("bg-background", "font-sans", "text-foreground");
+    expect(provider).toHaveClass(
+      "bg-background",
+      "font-sans",
+      "text-foreground",
+    );
   });
 
   it("keeps system mode light by default and dark-media scoped to system roots", () => {
     const styles = readFileSync(stylesPath, "utf8");
-    const systemBlock = styles.match(/\[data-theme="system"\]\s*\{(?<block>[^}]+)\}/)
-      ?.groups?.block;
+    const systemBlock = styles.match(
+      /\[data-theme="system"\]\s*\{(?<block>[^}]+)\}/,
+    )?.groups?.block;
 
     expect(systemBlock).toContain("color-scheme: light dark");
     expect(systemBlock).toContain(
@@ -146,7 +151,9 @@ describe("DethinkProvider", () => {
     const provider = screen.getByTestId("provider");
 
     expect(provider).toHaveAttribute("data-theme", "dark");
-    expect(provider.style.getPropertyValue("--dt-font-body")).toBe("Override Sans");
+    expect(provider.style.getPropertyValue("--dt-font-body")).toBe(
+      "Override Sans",
+    );
     expect(provider.style.getPropertyValue("--dt-font-heading")).toBe(
       "Sora, sans-serif",
     );
@@ -230,9 +237,9 @@ describe("DethinkProvider", () => {
 
     const provider = screen.getByTestId("provider");
 
-    expect(provider.style.getPropertyValue("--dt-density-control-default")).toBe(
-      "3rem",
-    );
+    expect(
+      provider.style.getPropertyValue("--dt-density-control-default"),
+    ).toBe("3rem");
     expect(provider.style.getPropertyValue("--dt-density-gap-default")).toBe(
       "0.875rem",
     );
@@ -279,7 +286,11 @@ describe("DethinkProvider", () => {
 describe("DethinkThemeScript", () => {
   it("renders an optional no-flash script without browser-only provider logic", () => {
     const markup = renderToString(
-      <DethinkThemeScript defaultTheme="dark" nonce="nonce-value" storageKey="app-theme" />,
+      <DethinkThemeScript
+        defaultTheme="dark"
+        nonce="nonce-value"
+        storageKey="app-theme"
+      />,
     );
 
     expect(markup).toContain('nonce="nonce-value"');

@@ -86,14 +86,15 @@ describe("DataTable", () => {
     expect(table).not.toHaveAttribute("role", "grid");
     expect(screen.queryByRole("grid")).toBeNull();
     expect(screen.getByText("Workspace usage summary").tagName).toBe("CAPTION");
-    expect(screen.getByRole("columnheader", { name: /Workspace/ })).toHaveAttribute(
-      "data-table-slot",
-      "header-cell",
-    );
+    expect(
+      screen.getByRole("columnheader", { name: /Workspace/ }),
+    ).toHaveAttribute("data-table-slot", "header-cell");
     expect(firstBodyRow).toHaveAttribute("data-table-slot", "row");
     expect(firstBodyRow).toHaveAttribute("data-row-id", "workspace-production");
     expect(within(firstBodyRow).getByText("Production")).toBeInTheDocument();
-    expect(within(firstBodyRow).getByText("ops@example.com")).toBeInTheDocument();
+    expect(
+      within(firstBodyRow).getByText("ops@example.com"),
+    ).toBeInTheDocument();
     expect(within(firstBodyRow).getByText("12,400")).toBeInTheDocument();
   });
 
@@ -116,7 +117,10 @@ describe("DataTable", () => {
 
     expect(requestsHeader).not.toHaveAttribute("aria-sort");
     expect(requestsHeader).toHaveAttribute("data-sortable", "true");
-    expect(requestsButton).toHaveAttribute("data-slot", "data-table-sort-button");
+    expect(requestsButton).toHaveAttribute(
+      "data-slot",
+      "data-table-sort-button",
+    );
     expect(requestsButton).toHaveTextContent("Requests");
     expect(requestsButton).not.toHaveTextContent("Sort");
     expect(
@@ -134,7 +138,9 @@ describe("DataTable", () => {
     ).toHaveAttribute("data-sort-state", "asc");
     expect(within(getBodyRows()[0]).getByText("Audit")).toBeInTheDocument();
     expect(within(getBodyRows()[1]).getByText("Sandbox")).toBeInTheDocument();
-    expect(within(getBodyRows()[2]).getByText("Production")).toBeInTheDocument();
+    expect(
+      within(getBodyRows()[2]).getByText("Production"),
+    ).toBeInTheDocument();
 
     await user.click(requestsButton);
 
@@ -144,7 +150,9 @@ describe("DataTable", () => {
     expect(
       requestsButton.querySelector('[data-slot="data-table-sort-icon"]'),
     ).toHaveAttribute("data-sort-state", "desc");
-    expect(within(getBodyRows()[0]).getByText("Production")).toBeInTheDocument();
+    expect(
+      within(getBodyRows()[0]).getByText("Production"),
+    ).toBeInTheDocument();
   });
 
   it("supports controlled sorting state and change callbacks", async () => {
@@ -236,7 +244,9 @@ describe("DataTable", () => {
       "aria-sort",
       "ascending",
     );
-    expect(within(getBodyRows()[0]).getByText("Production")).toBeInTheDocument();
+    expect(
+      within(getBodyRows()[0]).getByText("Production"),
+    ).toBeInTheDocument();
     expect(within(getBodyRows()[1]).getByText("Sandbox")).toBeInTheDocument();
     expect(within(getBodyRows()[2]).getByText("Audit")).toBeInTheDocument();
   });
@@ -263,7 +273,11 @@ describe("DataTable", () => {
     expect(table.parentElement).toHaveClass("custom-container");
     expect(emptyCell).toHaveAttribute("data-table-slot", "empty");
     expect(emptyCell).toHaveAttribute("colspan", "3");
-    expect(emptyCell).toHaveClass("h-24", "text-center", "text-muted-foreground");
+    expect(emptyCell).toHaveClass(
+      "h-24",
+      "text-center",
+      "text-muted-foreground",
+    );
   });
 
   it("exposes class name helpers", () => {
@@ -348,7 +362,9 @@ describe("DataTable", () => {
     );
 
     expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
-    expect(within(getBodyRows()[0]).getByText("Production")).toBeInTheDocument();
+    expect(
+      within(getBodyRows()[0]).getByText("Production"),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Next page" }));
 
@@ -407,7 +423,9 @@ describe("DataTable", () => {
       />,
     );
 
-    expect(screen.getByRole("columnheader", { name: "Owner" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("columnheader", { name: "Owner" }),
+    ).toBeInTheDocument();
 
     await user.click(
       screen.getByRole("checkbox", { name: "Toggle Owner column" }),
@@ -447,7 +465,9 @@ describe("DataTable", () => {
 
     await user.type(screen.getByLabelText("Search table"), "missing");
 
-    expect(within(getBodyRows()[0]).getByText("Production")).toBeInTheDocument();
+    expect(
+      within(getBodyRows()[0]).getByText("Production"),
+    ).toBeInTheDocument();
   });
 
   it("counts controlled selected row ids outside the current manual page", () => {
@@ -487,9 +507,9 @@ describe("DataTable", () => {
       "Refreshing workspaces",
     );
     expect(
-      screen.getByRole("table", { name: "Loading workspaces" }).closest(
-        '[data-slot="data-table"]',
-      ),
+      screen
+        .getByRole("table", { name: "Loading workspaces" })
+        .closest('[data-slot="data-table"]'),
     ).toHaveAttribute("data-status", "loading");
 
     rerender(
@@ -505,9 +525,9 @@ describe("DataTable", () => {
       "Workspaces could not be loaded",
     );
     expect(
-      screen.getByRole("table", { name: "Errored workspaces" }).closest(
-        '[data-slot="data-table"]',
-      ),
+      screen
+        .getByRole("table", { name: "Errored workspaces" })
+        .closest('[data-slot="data-table"]'),
     ).toHaveAttribute("data-status", "error");
   });
 });

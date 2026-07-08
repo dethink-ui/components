@@ -103,10 +103,12 @@ export default function PaginationPage() {
           ].map(([title, body]) => (
             <section
               key={title}
-              className="rounded-lg border border-border bg-muted/30 p-4"
+              className="border-border bg-muted/30 rounded-lg border p-4"
             >
-              <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{body}</p>
+              <h3 className="text-foreground text-sm font-semibold">{title}</h3>
+              <p className="text-muted-foreground mt-2 text-sm leading-6">
+                {body}
+              </p>
             </section>
           ))}
         </div>

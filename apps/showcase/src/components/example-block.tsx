@@ -13,7 +13,10 @@ interface ExampleBlockProps {
 }
 
 function slugify(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
 export async function ExampleBlock({
@@ -29,19 +32,19 @@ export async function ExampleBlock({
   return (
     <section aria-labelledby={id} className="space-y-3">
       <div className="space-y-1">
-        <h3 id={id} className="scroll-mt-20 font-heading text-lg font-semibold">
+        <h3 id={id} className="font-heading scroll-mt-20 text-lg font-semibold">
           <a href={`#${id}`} className="hover:text-primary">
             {title}
           </a>
         </h3>
         {description ? (
-          <p className="max-w-prose text-sm leading-6 text-muted-foreground">
+          <p className="text-muted-foreground max-w-prose text-sm leading-6">
             {description}
           </p>
         ) : null}
       </div>
-      <div className="overflow-hidden rounded-lg border border-border">
-        <div className="sc-preview-surface flex min-h-44 items-center justify-center bg-background p-6 sm:p-10">
+      <div className="border-border overflow-hidden rounded-lg border">
+        <div className="sc-preview-surface bg-background flex min-h-44 items-center justify-center p-6 sm:p-10">
           <div className={wide ? "w-full" : "w-full max-w-xl"}>{children}</div>
         </div>
         <CodeBlock code={source} filename={`examples/${file}`} />

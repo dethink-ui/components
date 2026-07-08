@@ -44,12 +44,15 @@ export type GridColumns =
   | "auto-fit-lg";
 
 export type GridRows = "none" | "1" | "2" | "3" | "4" | "5" | "6";
-export type GridGap = "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
+export type GridGap =
+  "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
 export type GridAlign = "stretch" | "start" | "center" | "end";
 export type GridJustify = "stretch" | "start" | "center" | "end";
-export type GridContent = "start" | "center" | "end" | "between" | "around" | "evenly" | "stretch";
+export type GridContent =
+  "start" | "center" | "end" | "between" | "around" | "evenly" | "stretch";
 
-export type GridItemElement = "div" | "span" | "li" | "section" | "article" | "aside";
+export type GridItemElement =
+  "div" | "span" | "li" | "section" | "article" | "aside";
 export type GridItemSpan = "1" | "2" | "3" | "4" | "5" | "6" | "full";
 export type GridItemAlign = "auto" | "stretch" | "start" | "center" | "end";
 export type GridItemJustify = "auto" | "stretch" | "start" | "center" | "end";
@@ -81,7 +84,14 @@ type GridItemBaseProps = {
 
 type GridFormAttributes = Pick<
   FormHTMLAttributes<HTMLFormElement>,
-  "acceptCharset" | "action" | "autoComplete" | "encType" | "method" | "name" | "noValidate" | "target"
+  | "acceptCharset"
+  | "action"
+  | "autoComplete"
+  | "encType"
+  | "method"
+  | "name"
+  | "noValidate"
+  | "target"
 >;
 
 type GridFieldsetAttributes = Pick<
@@ -267,7 +277,10 @@ const gridItemJustifyClasses: Record<GridItemJustify, string> = {
   end: "justify-self-end",
 };
 
-const gridItemMinInlineSizeClasses: Record<GridItemMinInlineSize, string | undefined> = {
+const gridItemMinInlineSizeClasses: Record<
+  GridItemMinInlineSize,
+  string | undefined
+> = {
   auto: undefined,
   0: "min-w-0",
 };
@@ -357,14 +370,18 @@ function getChildRef(child: ReactElement<GridSlotProps>) {
     return child.props.ref;
   }
 
-  return reactVersion.startsWith("18.") ? (child as GridElementWithRef).ref : undefined;
+  return reactVersion.startsWith("18.")
+    ? (child as GridElementWithRef).ref
+    : undefined;
 }
 
 function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -398,7 +415,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -458,7 +478,13 @@ function getGridItemDataAttributes({
   rowSpan,
 }: Pick<
   GridItemProps,
-  "align" | "as" | "asChild" | "colSpan" | "justify" | "minInlineSize" | "rowSpan"
+  | "align"
+  | "as"
+  | "asChild"
+  | "colSpan"
+  | "justify"
+  | "minInlineSize"
+  | "rowSpan"
 >) {
   return {
     "data-slot": "grid-item",
@@ -522,7 +548,9 @@ export const Grid = forwardRef<HTMLElement, GridProps>(
       const child = Children.only(children);
 
       if (!isValidElement<GridSlotProps>(child)) {
-        throw new Error("Grid with asChild expects a single React element child.");
+        throw new Error(
+          "Grid with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);
@@ -589,7 +617,9 @@ export const GridItem = forwardRef<HTMLElement, GridItemProps>(
       const child = Children.only(children);
 
       if (!isValidElement<GridSlotProps>(child)) {
-        throw new Error("GridItem with asChild expects a single React element child.");
+        throw new Error(
+          "GridItem with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

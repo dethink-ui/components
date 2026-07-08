@@ -20,9 +20,9 @@ describe("Alert and Callout", () => {
     );
 
     expect(screen.getByRole("alert")).toHaveTextContent("Sync failed");
-    expect(screen.getByText("Tip").closest('[data-slot="callout"]')).not.toHaveAttribute(
-      "role",
-    );
+    expect(
+      screen.getByText("Tip").closest('[data-slot="callout"]'),
+    ).not.toHaveAttribute("role");
 
     fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
     expect(onDismiss).toHaveBeenCalledTimes(1);
@@ -30,7 +30,11 @@ describe("Alert and Callout", () => {
 
   it("composes tone and variant classes", () => {
     expect(
-      alertClassNames({ className: "custom", tone: "success", variant: "outline" }),
+      alertClassNames({
+        className: "custom",
+        tone: "success",
+        variant: "outline",
+      }),
     ).toContain("custom");
   });
 });

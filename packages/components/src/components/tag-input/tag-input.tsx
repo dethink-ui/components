@@ -94,7 +94,12 @@ const tagInputErrorClasses = "text-xs font-medium leading-5 text-destructive";
 const defaultDelimiters = [","];
 
 function isAriaInvalid(value: TagInputProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function defaultNormalizeTag(value: string) {
@@ -206,16 +211,15 @@ function TagInputRoot(
     ? normalizeInitialTags(value, normalizeTag)
     : uncontrolledValue;
   const resolvedInputValue = inputValue ?? uncontrolledInputValue;
-  const resolvedInvalid = invalid || Boolean(entryError) || isAriaInvalid(ariaInvalid);
+  const resolvedInvalid =
+    invalid || Boolean(entryError) || isAriaInvalid(ariaInvalid);
   const visibleError =
     entryError ?? (resolvedInvalid && errorMessage ? errorMessage : null);
   const disabledOrReadOnly = disabled || readOnly;
-  const describedBy = [
-    description ? descriptionId : null,
-    visibleError ? errorId : null,
-  ]
-    .filter(Boolean)
-    .join(" ") || undefined;
+  const describedBy =
+    [description ? descriptionId : null, visibleError ? errorId : null]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   const setInputValue = (nextValue: string) => {
     if (!inputControlled) {
@@ -329,7 +333,11 @@ function TagInputRoot(
       return;
     }
 
-    if (event.key === "Backspace" && !resolvedInputValue && resolvedValue.length > 0) {
+    if (
+      event.key === "Backspace" &&
+      !resolvedInputValue &&
+      resolvedValue.length > 0
+    ) {
       event.preventDefault();
       updateValue(resolvedValue.slice(0, -1));
     }
@@ -414,7 +422,10 @@ function TagInputRoot(
               isDisabled={disabled}
               className={tagInputTagClasses}
             >
-              <span data-slot="tag-input-tag-text" className={tagInputTagTextClasses}>
+              <span
+                data-slot="tag-input-tag-text"
+                className={tagInputTagTextClasses}
+              >
                 {item.value}
               </span>
               <AriaButton
@@ -450,11 +461,11 @@ function TagInputRoot(
           className={tagInputInputClasses}
         />
       </div>
-      {name && !disabled ? (
-        resolvedValue.map((tag) => (
-          <input key={tag} name={name} type="hidden" value={tag} />
-        ))
-      ) : null}
+      {name && !disabled
+        ? resolvedValue.map((tag) => (
+            <input key={tag} name={name} type="hidden" value={tag} />
+          ))
+        : null}
       {description ? (
         <p
           id={descriptionId}

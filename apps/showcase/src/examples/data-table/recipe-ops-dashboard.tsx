@@ -17,11 +17,41 @@ type Incident = {
 };
 
 const initialIncidents: Incident[] = [
-  { id: "i1", title: "Elevated 5xx on checkout", service: "billing", severity: "sev1", status: "open" },
-  { id: "i2", title: "Slow queries on search", service: "search", severity: "sev2", status: "open" },
-  { id: "i3", title: "Webhook retries spiking", service: "integrations", severity: "sev3", status: "acknowledged" },
-  { id: "i4", title: "Cache hit rate dropped", service: "api-gateway", severity: "sev2", status: "open" },
-  { id: "i5", title: "Cert expiring in 7 days", service: "edge", severity: "sev3", status: "open" },
+  {
+    id: "i1",
+    title: "Elevated 5xx on checkout",
+    service: "billing",
+    severity: "sev1",
+    status: "open",
+  },
+  {
+    id: "i2",
+    title: "Slow queries on search",
+    service: "search",
+    severity: "sev2",
+    status: "open",
+  },
+  {
+    id: "i3",
+    title: "Webhook retries spiking",
+    service: "integrations",
+    severity: "sev3",
+    status: "acknowledged",
+  },
+  {
+    id: "i4",
+    title: "Cache hit rate dropped",
+    service: "api-gateway",
+    severity: "sev2",
+    status: "open",
+  },
+  {
+    id: "i5",
+    title: "Cert expiring in 7 days",
+    service: "edge",
+    severity: "sev3",
+    status: "open",
+  },
 ];
 
 const severityTone: Record<Incident["severity"], string> = {
@@ -54,14 +84,18 @@ const columns: DataTableColumnDef<Incident>[] = [
  */
 export function DataTableRecipeOpsDashboard() {
   const [incidents, setIncidents] = useState(initialIncidents);
-  const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>({});
+  const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>(
+    {},
+  );
   const [statusMessage, setStatusMessage] = useState("");
-  const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
+  const selectedIds = Object.keys(rowSelection).filter(
+    (id) => rowSelection[id],
+  );
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <p aria-live="polite" className="text-sm text-muted-foreground">
+        <p aria-live="polite" className="text-muted-foreground text-sm">
           {statusMessage || `${selectedIds.length} selected`}
         </p>
         <Button

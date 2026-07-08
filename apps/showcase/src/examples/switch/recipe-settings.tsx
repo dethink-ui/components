@@ -23,10 +23,7 @@ export function SwitchRecipeSettings() {
     <div className="mx-auto max-w-sm space-y-4">
       <Field id="ns-all" orientation="horizontal">
         <FieldControl asChild>
-          <Switch
-            checked={notifications}
-            onCheckedChange={setNotifications}
-          />
+          <Switch checked={notifications} onCheckedChange={setNotifications} />
         </FieldControl>
         <FieldContent>
           <FieldLabel className="font-medium">Notifications</FieldLabel>
@@ -34,7 +31,7 @@ export function SwitchRecipeSettings() {
         </FieldContent>
       </Field>
       <div
-        className={`space-y-4 border-l border-border pl-6 transition-opacity ${
+        className={`border-border space-y-4 border-l pl-6 transition-opacity ${
           notifications ? "" : "opacity-50"
         }`}
       >

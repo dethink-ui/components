@@ -1,14 +1,13 @@
-import {
-  forwardRef,
-  type InputHTMLAttributes,
-} from "react";
+import { forwardRef, type InputHTMLAttributes } from "react";
 import { cn } from "../../utils/cn";
 
 export type NumberInputControlSize = "sm" | "md" | "lg";
 export type NumberInputMode = "decimal" | "numeric";
 
-export interface NumberInputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "inputMode" | "type"> {
+export interface NumberInputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "inputMode" | "type"
+> {
   controlSize?: NumberInputControlSize;
   invalid?: boolean;
   numberMode?: NumberInputMode;
@@ -25,7 +24,12 @@ const numberInputControlSizeClasses: Record<NumberInputControlSize, string> = {
 };
 
 function isAriaInvalid(value: NumberInputProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 export function numberInputClassNames({

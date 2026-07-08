@@ -20,8 +20,11 @@ export const slotPlannerRootClasses =
 export const slotPlannerToolbarClasses =
   "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] sm:grid-cols-[auto_1fr_auto]";
 
-export const slotPlannerToolbarButtonClasses =
-  buttonClassNames({ className: "shadow-sm", size: "sm", variant: "outline" });
+export const slotPlannerToolbarButtonClasses = buttonClassNames({
+  className: "shadow-sm",
+  size: "sm",
+  variant: "outline",
+});
 
 export const slotPlannerDayRailClasses =
   "flex min-w-0 gap-[var(--dt-space-2)] overflow-x-auto pb-[var(--dt-space-1)] md:min-h-full md:flex-col md:gap-0 md:overflow-visible md:rounded-md md:border md:border-border md:bg-background md:p-[var(--dt-space-1)] md:pb-[var(--dt-space-1)]";
@@ -66,8 +69,11 @@ export const slotPlannerStatusDotClasses: Record<
   cancelled: "bg-destructive",
 };
 
-export const slotPlannerSlotActionButtonClasses =
-  buttonClassNames({ className: "shadow-sm", size: "xs", variant: "outline" });
+export const slotPlannerSlotActionButtonClasses = buttonClassNames({
+  className: "shadow-sm",
+  size: "xs",
+  variant: "outline",
+});
 
 export const slotPlannerSavePendingClasses = "text-xs text-muted-foreground";
 
@@ -182,7 +188,11 @@ export function TrashIcon() {
       strokeWidth="2"
     >
       <path d="M3 6h18M8 6V4h8v2M10 11v6M14 11v6" strokeLinecap="round" />
-      <path d="M6 6l1 16h10l1-16" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M6 6l1 16h10l1-16"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }

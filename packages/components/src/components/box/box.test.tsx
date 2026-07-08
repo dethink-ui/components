@@ -46,7 +46,18 @@ const displayClasses: Record<BoxDisplay, string> = {
   "inline-flex": "inline-flex",
   grid: "grid",
 };
-const spacings: BoxSpacing[] = ["none", "1", "2", "3", "4", "5", "6", "8", "10", "12"];
+const spacings: BoxSpacing[] = [
+  "none",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "8",
+  "10",
+  "12",
+];
 const surfaces: BoxSurface[] = [
   "transparent",
   "background",
@@ -191,7 +202,10 @@ describe("Box", () => {
   it.each(overflows)("applies the %s overflow mode", (overflow) => {
     render(<Box overflow={overflow}>{overflow}</Box>);
 
-    expect(screen.getByText(overflow)).toHaveAttribute("data-overflow", overflow);
+    expect(screen.getByText(overflow)).toHaveAttribute(
+      "data-overflow",
+      overflow,
+    );
   });
 
   it("composes consumer classes after baseline classes", () => {

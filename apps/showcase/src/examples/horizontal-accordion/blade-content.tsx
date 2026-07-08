@@ -68,9 +68,9 @@ function Panel({
   cta: string;
 }) {
   return (
-    <div className="flex h-full flex-col justify-center gap-3 bg-background p-8">
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      <p className="max-w-md text-sm leading-6 text-muted-foreground">
+    <div className="bg-background flex h-full flex-col justify-center gap-3 p-8">
+      <h3 className="text-foreground text-lg font-semibold">{title}</h3>
+      <p className="text-muted-foreground max-w-md text-sm leading-6">
         {body}{" "}
         <Link href="#blade-content" variant="muted" underline="always">
           See the API
@@ -90,7 +90,7 @@ export function HorizontalAccordionBladeContent() {
   return (
     <HorizontalAccordion
       aria-label="Blade content mixes"
-      className="rounded-lg border border-border"
+      className="border-border rounded-lg border"
       compactBreakpoint={480}
       defaultValue="rotated"
       height={320}

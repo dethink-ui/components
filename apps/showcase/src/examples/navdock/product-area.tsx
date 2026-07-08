@@ -74,11 +74,11 @@ const items: NavDockItemData[] = [
 export function NavDockProductArea() {
   return (
     <div className="grid gap-6">
-      <div className="rounded-md border border-border bg-muted/30 p-4">
-        <div className="text-sm font-semibold text-foreground">
+      <div className="border-border bg-muted/30 rounded-md border p-4">
+        <div className="text-foreground text-sm font-semibold">
           Product operations
         </div>
-        <p className="mt-1 max-w-lg text-sm leading-6 text-muted-foreground">
+        <p className="text-muted-foreground mt-1 max-w-lg text-sm leading-6">
           Route-derived current state can match exact pages or child routes
           without changing the dock interaction state.
         </p>

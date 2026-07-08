@@ -127,7 +127,9 @@ export const Controlled: Story = {
               <FieldControl asChild>
                 <Checkbox
                   checked={checked}
-                  onCheckedChange={(nextChecked) => setChecked(nextChecked === true)}
+                  onCheckedChange={(nextChecked) =>
+                    setChecked(nextChecked === true)
+                  }
                 />
               </FieldControl>
               <FieldLabel>Enable rollout guardrails</FieldLabel>
@@ -206,7 +208,8 @@ export const AuthAndSettingsCard: Story = {
           <CardHeader>
             <CardTitle>Authentication preferences</CardTitle>
             <CardDescription>
-              Checkbox keeps native form submission while Field primitives own labels.
+              Checkbox keeps native form submission while Field primitives own
+              labels.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -250,7 +253,7 @@ export const ThemeDensityAndRTL: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="sm">
             <Field id={`checkbox-${theme}`} orientation="horizontal">

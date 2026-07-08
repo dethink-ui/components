@@ -33,7 +33,10 @@ export interface DethinkPortalProviderProps {
   container: HTMLElement | null;
 }
 
-function assignForwardedRef<T>(ref: ForwardedRef<T> | undefined, value: T | null) {
+function assignForwardedRef<T>(
+  ref: ForwardedRef<T> | undefined,
+  value: T | null,
+) {
   if (typeof ref === "function") {
     ref(value);
   } else if (ref) {
@@ -66,7 +69,9 @@ export function syncDethinkPortalContainer({
   portalSlot: string;
   provider: HTMLElement | null;
 }) {
-  const source = provider ?? (typeof document === "undefined" ? null : document.documentElement);
+  const source =
+    provider ??
+    (typeof document === "undefined" ? null : document.documentElement);
 
   container.setAttribute("data-slot", portalSlot);
   container.setAttribute("data-dethink-provider", "");
@@ -75,7 +80,8 @@ export function syncDethinkPortalContainer({
   container.style.display = "contents";
 
   for (const attribute of providerPortalMirroredAttributes) {
-    const value = source?.getAttribute(attribute) ?? fallbackProviderAttribute(attribute);
+    const value =
+      source?.getAttribute(attribute) ?? fallbackProviderAttribute(attribute);
 
     if (value) {
       container.setAttribute(attribute, value);
@@ -104,7 +110,8 @@ export function useProviderPortalRoot<T extends HTMLElement>({
       assignForwardedRef(forwardedRef, node);
 
       if (node && portalContainer && typeof document !== "undefined") {
-        const provider = node.closest<HTMLElement>("[data-dethink-provider]") ?? null;
+        const provider =
+          node.closest<HTMLElement>("[data-dethink-provider]") ?? null;
 
         syncDethinkPortalContainer({
           container: portalContainer,
@@ -125,7 +132,8 @@ export function useProviderPortalRoot<T extends HTMLElement>({
       return undefined;
     }
 
-    const provider = rootElement?.closest<HTMLElement>("[data-dethink-provider]") ?? null;
+    const provider =
+      rootElement?.closest<HTMLElement>("[data-dethink-provider]") ?? null;
     const syncContainer = () => {
       syncDethinkPortalContainer({
         container: portalContainer,
@@ -140,13 +148,7 @@ export function useProviderPortalRoot<T extends HTMLElement>({
     const observerTarget = provider ?? document.documentElement;
     const observer = new MutationObserver(syncContainer);
     observer.observe(observerTarget, {
-      attributeFilter: [
-        "class",
-        "data-density",
-        "data-theme",
-        "dir",
-        "style",
-      ],
+      attributeFilter: ["class", "data-density", "data-theme", "dir", "style"],
       attributes: true,
     });
 

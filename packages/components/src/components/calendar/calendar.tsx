@@ -36,24 +36,17 @@ import {
 import { cn } from "../../utils/cn";
 
 export type CalendarWeekStartsOn =
-  | "sun"
-  | "mon"
-  | "tue"
-  | "wed"
-  | "thu"
-  | "fri"
-  | "sat";
+  "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
 
-export interface CalendarProps<T extends DateValue = DateValue>
-  extends Omit<
-    AriaCalendarProps<T>,
-    | "children"
-    | "className"
-    | "firstDayOfWeek"
-    | "isDisabled"
-    | "isInvalid"
-    | "onChange"
-  > {
+export interface CalendarProps<T extends DateValue = DateValue> extends Omit<
+  AriaCalendarProps<T>,
+  | "children"
+  | "className"
+  | "firstDayOfWeek"
+  | "isDisabled"
+  | "isInvalid"
+  | "onChange"
+> {
   className?: string;
   disabled?: boolean;
   invalid?: boolean;
@@ -63,16 +56,17 @@ export interface CalendarProps<T extends DateValue = DateValue>
   weekStartsOn?: CalendarWeekStartsOn;
 }
 
-export interface RangeCalendarProps<T extends DateValue = DateValue>
-  extends Omit<
-    AriaRangeCalendarProps<T>,
-    | "children"
-    | "className"
-    | "firstDayOfWeek"
-    | "isDisabled"
-    | "isInvalid"
-    | "onChange"
-  > {
+export interface RangeCalendarProps<
+  T extends DateValue = DateValue,
+> extends Omit<
+  AriaRangeCalendarProps<T>,
+  | "children"
+  | "className"
+  | "firstDayOfWeek"
+  | "isDisabled"
+  | "isInvalid"
+  | "onChange"
+> {
   className?: string;
   disabled?: boolean;
   invalid?: boolean;
@@ -166,12 +160,7 @@ export function rangeCalendarCellClassNames({
 
 function ChevronLeftIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="m9.5 4-4 4 4 4"
         stroke="currentColor"
@@ -185,12 +174,7 @@ function ChevronLeftIcon() {
 
 function ChevronRightIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="m6.5 4 4 4-4 4"
         stroke="currentColor"
@@ -227,7 +211,7 @@ function isCalendarDateRangeOutsideBounds({
 
   return Boolean(
     (minValue && endDate.compare(minValue) < 0) ||
-      (maxValue && startDate.compare(maxValue) > 0),
+    (maxValue && startDate.compare(maxValue) > 0),
   );
 }
 
@@ -308,7 +292,10 @@ function CalendarPickerHeader({
   viewMode: CalendarViewMode;
 }) {
   return (
-    <div data-slot={`${dataSlotPrefix}-header`} className={calendarHeaderClasses}>
+    <div
+      data-slot={`${dataSlotPrefix}-header`}
+      className={calendarHeaderClasses}
+    >
       <CalendarNavigationButton
         dataSlotPrefix={dataSlotPrefix}
         direction="previous"
@@ -567,10 +554,7 @@ function CalendarRoot<T extends DateValue = DateValue>(
       data-slot="calendar"
       className={calendarClassNames({ className })}
     >
-      <DateCalendarGrid
-        dataSlotPrefix="calendar"
-        weekdayStyle={weekdayStyle}
-      />
+      <DateCalendarGrid dataSlotPrefix="calendar" weekdayStyle={weekdayStyle} />
     </AriaCalendar>
   );
 

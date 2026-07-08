@@ -73,8 +73,14 @@ describe("Checkbox accessibility", () => {
       </DethinkProvider>,
     );
 
-    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByLabelText("Slack")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(screen.getByLabelText("Slack")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

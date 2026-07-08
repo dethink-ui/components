@@ -1,7 +1,4 @@
-import {
-  forwardRef,
-  type TextareaHTMLAttributes,
-} from "react";
+import { forwardRef, type TextareaHTMLAttributes } from "react";
 import { cn } from "../../utils/cn";
 
 export type TextareaControlSize = "sm" | "md" | "lg";
@@ -30,7 +27,12 @@ const textareaResizeClasses: Record<TextareaResize, string> = {
 };
 
 function isAriaInvalid(value: TextareaProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 export function textareaClassNames({

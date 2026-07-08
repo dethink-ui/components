@@ -134,18 +134,21 @@ describe("NavigationMenu", () => {
     );
   });
 
-  it.each(orientations)("renders the %s orientation attributes", (orientation) => {
-    renderSimpleNav({ orientation });
+  it.each(orientations)(
+    "renders the %s orientation attributes",
+    (orientation) => {
+      renderSimpleNav({ orientation });
 
-    expect(screen.getByRole("navigation", { name: "Main" })).toHaveAttribute(
-      "data-orientation",
-      orientation,
-    );
-    expect(screen.getByRole("list")).toHaveAttribute(
-      "data-orientation",
-      orientation,
-    );
-  });
+      expect(screen.getByRole("navigation", { name: "Main" })).toHaveAttribute(
+        "data-orientation",
+        orientation,
+      );
+      expect(screen.getByRole("list")).toHaveAttribute(
+        "data-orientation",
+        orientation,
+      );
+    },
+  );
 
   it("exposes stable item values through data attributes", () => {
     renderSimpleNav();
@@ -169,14 +172,14 @@ describe("NavigationMenu", () => {
       </NavigationMenu>,
     );
 
-    expect(screen.getByRole("navigation", { name: "Main" }).className).toContain(
-      "custom-nav",
-    );
+    expect(
+      screen.getByRole("navigation", { name: "Main" }).className,
+    ).toContain("custom-nav");
     expect(screen.getByRole("list").className).toContain("custom-list");
     expect(screen.getByRole("listitem").className).toContain("custom-item");
-    expect(
-      screen.getByRole("link", { name: "Overview" }).className,
-    ).toContain("custom-link");
+    expect(screen.getByRole("link", { name: "Overview" }).className).toContain(
+      "custom-link",
+    );
   });
 
   it("uses tokenized focus-visible and state selectors", () => {

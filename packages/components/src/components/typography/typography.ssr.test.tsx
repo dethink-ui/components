@@ -6,15 +6,15 @@ import { Heading, Text, Typography } from ".";
 
 describe("Typography SSR", () => {
   it("renders semantic text markup on the server", () => {
-    expect(renderToString(<Heading level={1}>Server heading</Heading>)).toContain(
-      'data-slot="heading"',
-    );
+    expect(
+      renderToString(<Heading level={1}>Server heading</Heading>),
+    ).toContain('data-slot="heading"');
     expect(renderToString(<Text tone="muted">Server text</Text>)).toContain(
       'data-slot="text"',
     );
-    expect(renderToString(<Typography variant="caption">Caption</Typography>)).toContain(
-      'data-slot="typography"',
-    );
+    expect(
+      renderToString(<Typography variant="caption">Caption</Typography>),
+    ).toContain('data-slot="typography"');
   });
 
   it("hydrates without mismatch warnings", async () => {

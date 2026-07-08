@@ -40,7 +40,9 @@ describe("Sidebar accessibility", () => {
                       </SidebarMenuLink>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
-                      <SidebarMenuLink href="/activity">Activity</SidebarMenuLink>
+                      <SidebarMenuLink href="/activity">
+                        Activity
+                      </SidebarMenuLink>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                       <SidebarMenuLink disabled href="/billing">
@@ -87,7 +89,9 @@ describe("Sidebar accessibility", () => {
                   </SidebarMenuLink>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                  <SidebarMenuLink href="/mobile/activity">Activity</SidebarMenuLink>
+                  <SidebarMenuLink href="/mobile/activity">
+                    Activity
+                  </SidebarMenuLink>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarContent>
@@ -96,7 +100,9 @@ describe("Sidebar accessibility", () => {
       </DethinkProvider>,
     );
 
-    expect(screen.getByRole("dialog", { name: "Mobile product navigation" })).toBeVisible();
+    expect(
+      screen.getByRole("dialog", { name: "Mobile product navigation" }),
+    ).toBeVisible();
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

@@ -33,7 +33,10 @@ describe("Input accessibility", () => {
 
     const input = screen.getByLabelText(/Workspace name/);
 
-    expect(input).toHaveAttribute("aria-describedby", "workspace-name-description");
+    expect(input).toHaveAttribute(
+      "aria-describedby",
+      "workspace-name-description",
+    );
     expect(input).toBeRequired();
 
     await expect(axe(container)).resolves.toHaveNoViolations();

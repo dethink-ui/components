@@ -2,10 +2,7 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import {
-  Combobox,
-  ComboboxItem,
-} from ".";
+import { Combobox, ComboboxItem } from ".";
 
 describe("Combobox SSR", () => {
   it("renders combobox markup on the server", () => {

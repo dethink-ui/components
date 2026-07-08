@@ -26,7 +26,9 @@ describe("Card accessibility", () => {
               <CardTitle id="card-a11y-title" as="h2">
                 Workspace usage
               </CardTitle>
-              <CardDescription>Static surface with real nested actions.</CardDescription>
+              <CardDescription>
+                Static surface with real nested actions.
+              </CardDescription>
               <CardAction>
                 <Button size="sm" variant="outline">
                   Export
@@ -46,7 +48,10 @@ describe("Card accessibility", () => {
     );
 
     const article = screen.getByRole("article", { name: "Workspace usage" });
-    const heading = screen.getByRole("heading", { level: 2, name: "Workspace usage" });
+    const heading = screen.getByRole("heading", {
+      level: 2,
+      name: "Workspace usage",
+    });
     const button = screen.getByRole("button", { name: "Export" });
     const link = screen.getByRole("link", { name: "Open report" });
 
