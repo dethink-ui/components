@@ -62,6 +62,13 @@ export {
   type LinkVariant,
 } from "./components/link";
 export {
+  Label,
+  labelClassNames,
+  type LabelMarker,
+  type LabelProps,
+  type LabelSize,
+} from "./components/label";
+export {
   Breadcrumb,
   BreadcrumbEllipsis,
   BreadcrumbItem,
