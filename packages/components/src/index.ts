@@ -34,6 +34,19 @@ export {
   type BadgeVariant,
 } from "./components/badge";
 export {
+  Avatar,
+  avatarClassNames,
+  getAvatarInitials,
+  type AvatarImageProps,
+  type AvatarImageState,
+  type AvatarMotion,
+  type AvatarProps,
+  type AvatarRing,
+  type AvatarShape,
+  type AvatarSize,
+  type AvatarTone,
+} from "./components/avatar";
+export {
   Box,
   boxClassNames,
   type BoxBorder,

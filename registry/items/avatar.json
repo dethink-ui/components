@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar",
+  "type": "registry:ui",
+  "title": "Avatar",
+  "description": "Stable identity avatar primitive with native image behavior, deterministic initials and icon fallbacks, accessible decorative modes, constrained tones, rings, shapes, and optional reduced-motion-aware hover polish.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/avatar/avatar.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/avatar/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
