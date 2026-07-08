@@ -3,7 +3,7 @@
   "name": "hero-text-animation",
   "type": "registry:ui",
   "title": "HeroTextAnimation",
-  "description": "Accessible hero heading text animation foundation with a Motion-powered staggered word and line reveal.",
+  "description": "Accessible hero heading text animation foundation with Motion-powered staggered word, line, and masked curtain reveals.",
   "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],

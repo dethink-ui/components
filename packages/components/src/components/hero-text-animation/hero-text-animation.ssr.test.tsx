@@ -17,6 +17,22 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders masked curtain final text on the server without hidden motion styles", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="masked-curtain"
+        text={"Reveal clearly.\nStay readable."}
+      />,
+    );
+
+    expect(html).toContain('data-animation="masked-curtain"');
+    expect(html).toContain("Reveal clearly.");
+    expect(html).toContain("Stay readable.");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")

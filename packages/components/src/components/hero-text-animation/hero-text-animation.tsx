@@ -19,7 +19,7 @@ import {
 } from "motion/react";
 import { cn } from "../../utils/cn";
 
-export type HeroTextAnimationKind = "stagger-words";
+export type HeroTextAnimationKind = "stagger-words" | "masked-curtain";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -85,6 +85,7 @@ export const heroTextAnimationMotionTokens = {
   distance: {
     wordY: "0.6em",
     lineY: "0.6em",
+    curtainY: "0.85em",
     scrollY: -32,
   },
   spring: {
@@ -108,6 +109,10 @@ const heroTextAnimationWordClasses =
   "inline-block whitespace-pre align-baseline will-change-transform data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationLineClasses =
   "block min-w-0 overflow-visible will-change-transform data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationCurtainMaskClasses =
+  "block min-w-0 overflow-hidden [line-height:inherit]";
+const heroTextAnimationCurtainLineClasses =
+  "block min-w-0 will-change-transform data-[reduced-motion=true]:will-change-auto";
 
 const HeroTextAnimationReducedMotionContext =
   createContext<HeroTextAnimationProviderReducedMotion>("user");
@@ -171,7 +176,40 @@ function getContainerVariants({
   };
 }
 
-function getSegmentVariants({
+function getStaggeredSegmentVariants({
+  duration,
+  reducedMotion,
+  splitBy,
+}: {
+  duration: number;
+  reducedMotion: boolean;
+  splitBy: HeroTextAnimationSplitBy;
+}): Variants {
+  const distance =
+    splitBy === "line"
+      ? heroTextAnimationMotionTokens.distance.lineY
+      : heroTextAnimationMotionTokens.distance.wordY;
+  const hidden = reducedMotion
+    ? { opacity: 0 }
+    : {
+        opacity: 0,
+        y: distance,
+      };
+
+  return {
+    hidden,
+    visible: {
+      opacity: 1,
+      transition: {
+        duration,
+        ease: heroTextAnimationMotionTokens.easing.standard,
+      },
+      y: reducedMotion ? undefined : "0em",
+    },
+  };
+}
+
+function getMaskedCurtainSegmentVariants({
   duration,
   reducedMotion,
 }: {
@@ -182,7 +220,7 @@ function getSegmentVariants({
     ? { opacity: 0 }
     : {
         opacity: 0,
-        y: heroTextAnimationMotionTokens.distance.wordY,
+        y: heroTextAnimationMotionTokens.distance.curtainY,
       };
 
   return {
@@ -191,7 +229,7 @@ function getSegmentVariants({
       opacity: 1,
       transition: {
         duration,
-        ease: heroTextAnimationMotionTokens.easing.standard,
+        ease: heroTextAnimationMotionTokens.easing.soft,
       },
       y: reducedMotion ? undefined : "0em",
     },
@@ -262,7 +300,11 @@ function StaggeredSegments({
   onAnimationStart?: () => void;
 }) {
   const containerVariants = getContainerVariants({ delay, stagger });
-  const segmentVariants = getSegmentVariants({ duration, reducedMotion });
+  const segmentVariants = getStaggeredSegmentVariants({
+    duration,
+    reducedMotion,
+    splitBy,
+  });
   const triggerProps =
     trigger === "in-view"
       ? {
@@ -322,6 +364,78 @@ function StaggeredSegments({
   );
 }
 
+function MaskedCurtainSegments({
+  active,
+  delay,
+  duration,
+  once,
+  reducedMotion,
+  segments,
+  stagger,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  reducedMotion: boolean;
+  segments: HeroTextAnimationSegment[];
+  stagger: number;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const containerVariants = getContainerVariants({ delay, stagger });
+  const segmentVariants = getMaskedCurtainSegmentVariants({
+    duration,
+    reducedMotion,
+  });
+  const triggerProps =
+    trigger === "in-view"
+      ? {
+          whileInView: "visible",
+          viewport: { amount: 0.6, once },
+        }
+      : {
+          animate: trigger === "manual" && !active ? "hidden" : "visible",
+        };
+
+  return (
+    <motionElement.span
+      aria-hidden="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="line"
+      className={heroTextAnimationMotionClasses}
+      variants={containerVariants}
+      initial="hidden"
+      onAnimationComplete={onAnimationComplete}
+      onAnimationStart={onAnimationStart}
+      {...triggerProps}
+    >
+      {segments.map((segment, index) => (
+        <span
+          key={`${index}-${segment.text}`}
+          data-slot="hero-text-animation-mask"
+          className={heroTextAnimationCurtainMaskClasses}
+        >
+          <motionElement.span
+            data-slot="hero-text-animation-segment"
+            data-reduced-motion={reducedMotion ? "true" : undefined}
+            data-segment="line"
+            className={heroTextAnimationCurtainLineClasses}
+            variants={segmentVariants}
+            transition={getSegmentTransition(duration)}
+          >
+            {segment.text}
+          </motionElement.span>
+        </span>
+      ))}
+    </motionElement.span>
+  );
+}
+
 function getSegmentTransition(duration: number): Transition {
   return {
     duration,
@@ -345,7 +459,7 @@ export const HeroTextAnimation = forwardRef<
       once = true,
       reducedMotionStrategy = "opacity-only",
       splitBy = "word",
-      stagger = heroTextAnimationMotionTokens.stagger.word,
+      stagger,
       text,
       trigger = "mount",
       "data-testid": dataTestId = "hero-text-animation",
@@ -368,9 +482,15 @@ export const HeroTextAnimation = forwardRef<
           : prefersReducedMotion === true;
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
+    const resolvedSplitBy = animation === "masked-curtain" ? "line" : splitBy;
+    const resolvedStagger =
+      stagger ??
+      (resolvedSplitBy === "line"
+        ? heroTextAnimationMotionTokens.stagger.line
+        : heroTextAnimationMotionTokens.stagger.word);
     const segments = useMemo(
-      () => splitHeroText(text, splitBy),
-      [splitBy, text],
+      () => splitHeroText(text, resolvedSplitBy),
+      [resolvedSplitBy, text],
     );
     const accessibleLabel = ariaLabel ?? text;
     const animatedSegmentCount = segments.filter(
@@ -390,7 +510,7 @@ export const HeroTextAnimation = forwardRef<
         "data-reduced-motion-strategy": reducedMotionStrategy,
         "data-segment-count": animatedSegmentCount,
         "data-slot": "hero-text-animation",
-        "data-split-by": splitBy,
+        "data-split-by": resolvedSplitBy,
         "data-testid": dataTestId,
         "data-trigger": trigger,
       },
@@ -406,7 +526,20 @@ export const HeroTextAnimation = forwardRef<
         className={heroTextAnimationVisualClasses}
       >
         {renderStatic ? (
-          renderStaticSegments({ segments, splitBy })
+          renderStaticSegments({ segments, splitBy: resolvedSplitBy })
+        ) : animation === "masked-curtain" ? (
+          <MaskedCurtainSegments
+            active={active}
+            delay={delay}
+            duration={duration}
+            once={once}
+            reducedMotion={reducedMotion}
+            segments={segments}
+            stagger={resolvedStagger}
+            trigger={trigger}
+            onAnimationComplete={onAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
         ) : (
           <StaggeredSegments
             active={active}
@@ -415,8 +548,8 @@ export const HeroTextAnimation = forwardRef<
             once={once}
             reducedMotion={reducedMotion}
             segments={segments}
-            splitBy={splitBy}
-            stagger={stagger}
+            splitBy={resolvedSplitBy}
+            stagger={resolvedStagger}
             trigger={trigger}
             onAnimationComplete={onAnimationComplete}
             onAnimationStart={onAnimationStart}

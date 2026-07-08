@@ -9,7 +9,7 @@ import {
 } from ".";
 
 const validProps = {
-  animation: "stagger-words",
+  animation: "masked-curtain",
   text: "Build production-ready landing pages faster.",
 } satisfies HeroTextAnimationProps;
 
@@ -133,6 +133,64 @@ describe("HeroTextAnimation", () => {
     });
   });
 
+  it("renders masked curtain lines inside stable masks", async () => {
+    render(
+      <HeroTextAnimation
+        animation="masked-curtain"
+        text={"Build faster.\nLaunch safer."}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: /Build faster\.\s+Launch safer\./,
+    });
+
+    expect(heading).toHaveAttribute("data-animation", "masked-curtain");
+    expect(heading).toHaveAttribute("data-split-by", "line");
+    expect(heading).toHaveAttribute("data-segment-count", "2");
+
+    let masks: NodeListOf<Element> | undefined;
+
+    await waitFor(() => {
+      masks = heading.querySelectorAll(
+        '[data-slot="hero-text-animation-mask"]',
+      );
+      expect(masks).toHaveLength(2);
+    });
+
+    expect(masks?.[0]).toHaveClass("overflow-hidden");
+
+    expect(
+      heading.querySelectorAll(
+        '[data-slot="hero-text-animation-segment"][data-segment="line"]',
+      ),
+    ).toHaveLength(2);
+    expect(
+      heading.querySelector('[data-slot="hero-text-animation-visual"]'),
+    ).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("uses line masks for masked curtain even when splitBy is omitted", async () => {
+    render(
+      <HeroTextAnimation
+        animation="masked-curtain"
+        text="One readable hero sentence."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "One readable hero sentence.",
+    });
+
+    await waitFor(() => {
+      expect(
+        heading.querySelectorAll('[data-slot="hero-text-animation-mask"]'),
+      ).toHaveLength(1);
+    });
+
+    expect(heading).toHaveAttribute("data-split-by", "line");
+  });
+
   it("marks reduced-motion rendering and keeps transform motion out of segments", async () => {
     render(
       <HeroTextAnimationProvider reducedMotion="always">
@@ -154,6 +212,33 @@ describe("HeroTextAnimation", () => {
     expect(
       heading.querySelector('[data-slot="hero-text-animation-segment"]'),
     ).toHaveAttribute("data-reduced-motion", "true");
+  });
+
+  it("keeps masked curtain transform motion out of reduced-motion segments", async () => {
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="masked-curtain"
+          reducedMotionStrategy="opacity-only"
+          text={"Respect motion settings.\nReveal safely."}
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: /Respect motion settings\.\s+Reveal safely\./,
+    });
+
+    await waitFor(() =>
+      expect(heading).toHaveAttribute("data-reduced-motion", "true"),
+    );
+
+    expect(
+      heading.querySelector('[data-slot="hero-text-animation-segment"]'),
+    ).toHaveAttribute("data-reduced-motion", "true");
+    expect(
+      heading.querySelector('[data-slot="hero-text-animation-mask"]'),
+    ).toBeInTheDocument();
   });
 
   it("supports controlled manual trigger state", () => {
