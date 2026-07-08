@@ -14,6 +14,7 @@ import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/
 import { HeroTextAnimationRotatingKeywordHero } from "@/examples/hero-text-animation/rotating-keyword-hero";
 import { HeroTextAnimationScrollResponsiveHero } from "@/examples/hero-text-animation/scroll-responsive-hero";
 import { HeroTextAnimationScrambleDecryptHero } from "@/examples/hero-text-animation/scramble-decrypt-hero";
+import { HeroTextAnimationSvgStrokeDrawHero } from "@/examples/hero-text-animation/svg-stroke-draw-hero";
 import { HeroTextAnimationTypewriterHero } from "@/examples/hero-text-animation/typewriter-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
 
@@ -116,6 +117,16 @@ export default function HeroTextAnimationPage() {
             <HeroTextAnimationKineticEmphasisPopHero />
           </ExampleBlock>
           <ExampleBlock
+            file="hero-text-animation/svg-stroke-draw-hero.tsx"
+            title="SVG stroke draw hero section"
+            description="A separate production hero recipe for decorative SVG path drawing behind real HTML text, with navbar composition, CTAs, icon-led proof points, path/viewBox guidance, and reduced-motion-safe final copy."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationSvgStrokeDrawHero />
+          </ExampleBlock>
+          <ExampleBlock
             file="hero-text-animation/scroll-responsive-hero.tsx"
             title="Scroll responsive hero section"
             description="A separate production hero recipe for subtle first-scroll text response with normal document flow, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
@@ -154,9 +165,10 @@ export function Example() {
           compliance-critical wording. Use static text for copy where every
           character must be immediately reviewable. Limit blur focus to short
           cinematic hero headings that can finish resolving before users need to
-          read the copy. Use scroll-responsive text only when the full heading
-          is readable before the first scroll and the next content remains in
-          normal document flow.
+          read the copy. Use SVG stroke draw only as decorative path emphasis
+          around real text, never as SVG-only headline text. Use
+          scroll-responsive text only when the full heading is readable before
+          the first scroll and the next content remains in normal document flow.
         </p>
         <PropsTable
           caption="HeroTextAnimation props"

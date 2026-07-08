@@ -154,6 +154,27 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders svg stroke draw final text and filled decorative paths on the server", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="svg-stroke-draw"
+        text="Draw a launch path without SVG-only text."
+      />,
+    );
+
+    expect(html).toContain('data-animation="svg-stroke-draw"');
+    expect(html).toContain("Draw a launch path without SVG-only text.");
+    expect(html).toContain('data-svg-stroke-draw="true"');
+    expect(html).toContain('data-svg-path-valid="true"');
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain("hero-text-animation-svg-stroke");
+    expect(html).toContain('pathLength="1"');
+    expect(html).toContain('fill-opacity="1"');
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates scramble decrypt output without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -389,6 +410,37 @@ describe("HeroTextAnimation SSR", () => {
         <HeroTextAnimation
           animation="scroll-responsive"
           text="Hydrate scroll responsive hero text."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates svg stroke draw output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="svg-stroke-draw"
+        text="Hydrate stroke draw hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="svg-stroke-draw"
+          text="Hydrate stroke draw hero text."
         />,
       );
     });

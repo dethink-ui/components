@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus" | "kinetic-emphasis-pop" | "scroll-responsive"',
+    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus" | "kinetic-emphasis-pop" | "svg-stroke-draw" | "scroll-responsive"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, blur-focus for short cinematic hero headings that resolve quickly into crisp readable text, kinetic-emphasis-pop for one or two statically emphasized words with a subtle one-shot scale accent, or scroll-responsive for a subtle bounded first-scroll response on storytelling pages.",
+      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, blur-focus for short cinematic hero headings that resolve quickly into crisp readable text, kinetic-emphasis-pop for one or two statically emphasized words with a subtle one-shot scale accent, svg-stroke-draw for decorative tokenized SVG path drawing behind real HTML text, or scroll-responsive for a subtle bounded first-scroll response on storytelling pages.",
   },
   {
     prop: "as",
@@ -114,12 +114,33 @@ export const heroTextAnimationProps: PropRow[] = [
       "Zero-based word indices to emphasize for kinetic-emphasis-pop. Indices resolve before emphasisWords so precise targeting can override repeated terms.",
   },
   {
+    prop: "svgPathData",
+    type: "string | readonly string[] | readonly { d: string; strokeWidth?: number }[]",
+    defaultValue: "built-in underline path",
+    description:
+      "SVG path data for svg-stroke-draw. Paths are decorative by default and may use normal SVG path commands only; invalid path strings are skipped so the real HTML text remains visible.",
+  },
+  {
+    prop: "svgViewBox",
+    type: "string",
+    defaultValue: '"0 0 600 96"',
+    description:
+      "ViewBox for svg-stroke-draw paths. Provide four numeric values with positive width and height, and make sure custom path coordinates fit this box.",
+  },
+  {
+    prop: "svgAccessibleTitle",
+    type: "string",
+    defaultValue: "undefined",
+    description:
+      "Optional accessible title for the decorative SVG layer. Leave unset for normal hero copy so assistive technology reads only the real HTML text.",
+  },
+  {
     prop: "delay / duration / stagger",
     type: "number",
     defaultValue:
-      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42; scroll responsive maps the first 220px of scroll",
+      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42; svg stroke draw duration 1.15; scroll responsive maps the first 220px of scroll",
     description:
-      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, blur-focus, and kinetic-emphasis-pop use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight, blur-focus, and kinetic-emphasis-pop run once by default and use the shared repeat mechanism only when repeat is enabled. Scroll-responsive is tied to page scroll instead of duration and does not replay.",
+      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, blur-focus, kinetic-emphasis-pop, and svg-stroke-draw use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight, blur-focus, kinetic-emphasis-pop, and svg-stroke-draw run once by default and use the shared repeat mechanism only when repeat is enabled. Scroll-responsive is tied to page scroll instead of duration and does not replay.",
   },
   {
     prop: "blur-focus content guidance",
@@ -141,6 +162,13 @@ export const heroTextAnimationProps: PropRow[] = [
     defaultValue: "—",
     description:
       "Use scroll-responsive only when the complete heading is readable before scroll. The decorative layer maps the first 220px of page scroll to at most -32px of vertical movement and 92% opacity; reduced motion removes the scroll listener and transform style.",
+  },
+  {
+    prop: "svg-stroke-draw content guidance",
+    type: "decorative path behind real text",
+    defaultValue: "—",
+    description:
+      "Use svg-stroke-draw only as a highlight, underline, circle, or other decorative path around real HTML text. Do not encode the main message as SVG path text. Reduced motion renders the final filled path immediately and skips drawing.",
   },
   {
     prop: "HeroTextAnimationProvider",

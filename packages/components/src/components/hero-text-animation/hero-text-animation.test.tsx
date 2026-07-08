@@ -817,6 +817,158 @@ describe("HeroTextAnimation", () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 
+  it("renders svg stroke draw as decorative paths over real text", () => {
+    render(
+      <HeroTextAnimation
+        animation="svg-stroke-draw"
+        svgPathData="M10 48 C120 72 250 72 390 48"
+        svgViewBox="0 0 400 96"
+        text="Draw attention without replacing the headline."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Draw attention without replacing the headline.",
+    });
+    const visual = heading.querySelector(
+      '[data-slot="hero-text-animation-visual"]',
+    );
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
+    );
+    const svg = heading.querySelector('[data-slot="hero-text-animation-svg"]');
+    const path = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-path"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "svg-stroke-draw");
+    expect(heading).toHaveAttribute("data-split-by", "path");
+    expect(heading).toHaveAttribute("data-segment-count", "1");
+    expect(visual).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveTextContent(
+      "Draw attention without replacing the headline.",
+    );
+    expect(motion).toHaveAttribute("data-svg-path-valid", "true");
+    expect(motion).toHaveAttribute("data-svg-view-box-valid", "true");
+    expect(svg).toHaveAttribute("aria-hidden", "true");
+    expect(svg).toHaveAttribute("viewBox", "0 0 400 96");
+    expect(path).toHaveAttribute("d", "M10 48 C120 72 250 72 390 48");
+    expect(path).toHaveAttribute(
+      "stroke",
+      "var(--hero-text-animation-svg-stroke)",
+    );
+    expect(path).toHaveAttribute("fill", "var(--hero-text-animation-svg-fill)");
+    expect(motion?.getAttribute("style")).toContain(
+      "--hero-text-animation-svg-stroke: color-mix(in oklab, var(--dt-color-foreground) 78%, var(--dt-color-primary) 22%)",
+    );
+    expect(motion?.getAttribute("style")).not.toMatch(/#[0-9a-f]{3,8}|rgb/i);
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Draw attention without replacing the headline.");
+  });
+
+  it("keeps real text available when svg path data or viewBox are invalid", () => {
+    render(
+      <HeroTextAnimation
+        animation="svg-stroke-draw"
+        svgPathData="not a valid path"
+        svgViewBox="0 0 0 96"
+        text="Invalid path data still leaves readable text."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Invalid path data still leaves readable text.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
+    );
+
+    expect(motion).toHaveTextContent(
+      "Invalid path data still leaves readable text.",
+    );
+    expect(motion).toHaveAttribute("data-svg-path-count", "0");
+    expect(motion).toHaveAttribute("data-svg-path-valid", "false");
+    expect(motion).toHaveAttribute("data-svg-view-box-valid", "false");
+    expect(
+      heading.querySelector('[data-slot="hero-text-animation-svg-path"]'),
+    ).not.toBeInTheDocument();
+  });
+
+  it("can expose an explicit svg alternative while hiding decorative paths", () => {
+    render(
+      <HeroTextAnimation
+        animation="svg-stroke-draw"
+        data-testid="svg-stroke-heading"
+        svgAccessibleTitle="Decorative drawn route under the headline"
+        text="Expose the SVG only when configured."
+      />,
+    );
+
+    const heading = screen.getByTestId("svg-stroke-heading");
+    const visual = heading.querySelector(
+      '[data-slot="hero-text-animation-visual"]',
+    );
+    const svg = heading.querySelector('[data-slot="hero-text-animation-svg"]');
+    const path = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-path"]',
+    );
+
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Expose the SVG only when configured.");
+    expect(visual).not.toHaveAttribute("aria-hidden");
+    expect(svg).toHaveAttribute(
+      "aria-label",
+      "Decorative drawn route under the headline",
+    );
+    expect(svg).toHaveAttribute("role", "img");
+    expect(path).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("renders svg stroke draw final filled state in reduced motion without timers", () => {
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+    const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="svg-stroke-draw"
+          reducedMotionStrategy="opacity-only"
+          repeat
+          repeatDelay={0.1}
+          text="Reduced motion keeps the stroke draw settled."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Reduced motion keeps the stroke draw settled.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
+    );
+    const path = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-path"]',
+    );
+
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(heading).toHaveAttribute("data-repeat", "true");
+    expect(motion).toHaveAttribute("data-reduced-motion", "true");
+    expect(motion).toHaveTextContent(
+      "Reduced motion keeps the stroke draw settled.",
+    );
+    expect(path).toHaveAttribute("data-reduced-motion", "true");
+    expect(path).toHaveAttribute("pathLength", "1");
+    expect(path).toHaveAttribute("fill-opacity", "1");
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
   it("renders blur focus as a short phrase reveal with a crisp final target", () => {
     const handleComplete = vi.fn();
 

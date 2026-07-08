@@ -58,6 +58,11 @@ describe("HeroTextAnimation accessibility", () => {
               text="Make handoffs and risk impossible to miss."
             />
             <HeroTextAnimation
+              animation="svg-stroke-draw"
+              as="h2"
+              text="Draw a clear path under the hero promise."
+            />
+            <HeroTextAnimation
               animation="scroll-responsive"
               as="h2"
               text="Let launch copy respond subtly to scroll."
@@ -130,6 +135,23 @@ describe("HeroTextAnimation accessibility", () => {
             <HeroTextAnimation
               animation="scroll-responsive"
               text="Keep scroll responsive hero copy readable in dark mode."
+            />
+          </main>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for svg stroke draw in dark theme", async () => {
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <HeroTextAnimationProvider>
+          <main aria-label="SVG stroke draw dark accessibility smoke">
+            <HeroTextAnimation
+              animation="svg-stroke-draw"
+              text="Keep stroke draw hero copy readable in dark mode."
             />
           </main>
         </HeroTextAnimationProvider>
