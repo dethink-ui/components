@@ -33,6 +33,14 @@ describe("HeroTextAnimation accessibility", () => {
               as="p"
               text="Decrypt concise launch copy once."
             />
+            <HeroTextAnimation
+              animation="rotating-keyword"
+              as="h2"
+              rotatingKeywordOptions={["finance", "support", "sales"]}
+              rotatingKeywordPrefix="Build dashboards for "
+              rotatingKeywordSuffix=" teams."
+              text="Build dashboards for every revenue team."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,

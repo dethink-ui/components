@@ -65,6 +65,25 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders rotating keyword fallback on the server without motion styles", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordOptions={["finance", "customer success", "sales"]}
+        rotatingKeywordPrefix="Build dashboards for "
+        rotatingKeywordSuffix=" teams."
+        text="Build dashboards for every revenue team."
+      />,
+    );
+
+    expect(html).toContain('data-animation="rotating-keyword"');
+    expect(html).toContain("Build dashboards for every revenue team.");
+    expect(html).toContain("customer success");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates scramble decrypt output without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -139,6 +158,41 @@ describe("HeroTextAnimation SSR", () => {
         <HeroTextAnimation
           animation="typewriter"
           text="Hydrate typewriter hero text."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates rotating keyword output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordOptions={["finance", "support", "sales"]}
+        rotatingKeywordPrefix="Build for "
+        text="Hydrate rotating hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="rotating-keyword"
+          rotatingKeywordOptions={["finance", "support", "sales"]}
+          rotatingKeywordPrefix="Build for "
+          text="Hydrate rotating hero text."
         />,
       );
     });

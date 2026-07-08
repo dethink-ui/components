@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt"',
+    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, or scramble-decrypt for deterministic decorative glyph resolution.",
+      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, or rotating-keyword for a stable sentence with a decorative swapping slot.",
   },
   {
     prop: "as",
@@ -72,10 +72,38 @@ export const heroTextAnimationProps: PropRow[] = [
       "Delay in seconds before an enabled repeat starts the animation again. Reduced-motion rendering never schedules repeats.",
   },
   {
+    prop: "rotatingKeywordOptions",
+    type: "readonly string[]",
+    defaultValue: "[text]",
+    description:
+      "Keyword or short phrase options for the rotating-keyword visual slot. The slot reserves the longest option so the headline layout stays stable.",
+  },
+  {
+    prop: "rotatingKeywordPrefix / rotatingKeywordSuffix",
+    type: "string",
+    defaultValue: '"" / ""',
+    description:
+      "Visible decorative text rendered before and after the keyword slot. Keep text as the complete stable sentence for assistive technology.",
+  },
+  {
+    prop: "rotatingKeywordIndex / defaultRotatingKeywordIndex",
+    type: "number",
+    defaultValue: "undefined / 0",
+    description:
+      "Controls or initializes the active keyword. Use rotatingKeywordIndex with onRotatingKeywordIndexChange for manual selectors.",
+  },
+  {
+    prop: "autoRotateKeywords / rotatingKeywordInterval",
+    type: "boolean / number",
+    defaultValue: "false / 1.6",
+    description:
+      "Opt-in keyword auto rotation. Timers are bounded and stop within five seconds; reduced-motion rendering never schedules them.",
+  },
+  {
     prop: "delay / duration / stagger",
     type: "number",
     defaultValue:
-      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2",
+      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34",
     description:
       "Timing controls in seconds. Typewriter and scramble-decrypt use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second.",
   },

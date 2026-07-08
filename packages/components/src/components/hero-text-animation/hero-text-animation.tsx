@@ -13,6 +13,7 @@ import {
   type ReactNode,
 } from "react";
 import {
+  AnimatePresence,
   MotionConfig,
   motion as motionElement,
   useReducedMotion,
@@ -22,7 +23,11 @@ import {
 import { cn } from "../../utils/cn";
 
 export type HeroTextAnimationKind =
-  "stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt";
+  | "stagger-words"
+  | "masked-curtain"
+  | "typewriter"
+  | "scramble-decrypt"
+  | "rotating-keyword";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -44,6 +49,13 @@ export interface HeroTextAnimationProps extends Omit<
   reducedMotionStrategy?: HeroTextAnimationReducedMotionStrategy;
   repeat?: boolean;
   repeatDelay?: number;
+  autoRotateKeywords?: boolean;
+  defaultRotatingKeywordIndex?: number;
+  rotatingKeywordIndex?: number;
+  rotatingKeywordInterval?: number;
+  rotatingKeywordOptions?: readonly string[];
+  rotatingKeywordPrefix?: string;
+  rotatingKeywordSuffix?: string;
   showCaret?: boolean;
   splitBy?: HeroTextAnimationSplitBy;
   stagger?: number;
@@ -52,6 +64,7 @@ export interface HeroTextAnimationProps extends Omit<
   "data-testid"?: string;
   onAnimationComplete?: () => void;
   onAnimationStart?: () => void;
+  onRotatingKeywordIndexChange?: (index: number) => void;
 }
 
 export interface HeroTextAnimationProviderProps {
@@ -84,6 +97,7 @@ export const heroTextAnimationMotionTokens = {
     cinematic: 1.1,
     typewriter: 1.1,
     scramble: 1.2,
+    rotatingKeyword: 0.34,
   },
   stagger: {
     word: 0.045,
@@ -137,6 +151,15 @@ const heroTextAnimationScrambleTextClasses =
   "col-start-1 row-start-1 whitespace-pre-wrap";
 const heroTextAnimationScrambleGlyphClasses =
   "inline-block whitespace-pre align-baseline";
+const heroTextAnimationRotatingMotionClasses =
+  "inline-flex min-w-0 max-w-full flex-wrap items-baseline gap-x-[0.18em]";
+const heroTextAnimationRotatingTextClasses = "whitespace-pre-wrap";
+const heroTextAnimationRotatingSlotClasses =
+  "relative inline-grid overflow-hidden align-baseline [line-height:inherit] [contain:layout]";
+const heroTextAnimationRotatingSizerClasses =
+  "invisible col-start-1 row-start-1 whitespace-pre";
+const heroTextAnimationRotatingKeywordClasses =
+  "col-start-1 row-start-1 whitespace-pre will-change-transform data-[reduced-motion=true]:will-change-auto";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
@@ -147,6 +170,9 @@ const scrambleMinimumDurationMs = 700;
 const scrambleMaximumDurationMs = 1800;
 const scrambleMaximumUpdateCount = 5;
 const scrambleGlyphs = ["-", "+", "=", "~", "*", ":", ".", "_"] as const;
+const rotatingKeywordDefaultIntervalMs = 1600;
+const rotatingKeywordMinimumIntervalMs = 400;
+const rotatingKeywordMaximumAutoRotateMs = 5000;
 const defaultRepeatDelay = 1.8;
 
 const HeroTextAnimationReducedMotionContext =
@@ -800,6 +826,300 @@ function getScrambleFrameText({
     .join("");
 }
 
+function resolveRotatingKeywordOptions({
+  rotatingKeywordOptions,
+  text,
+}: {
+  rotatingKeywordOptions?: readonly string[];
+  text: string;
+}) {
+  const options =
+    rotatingKeywordOptions?.filter((keyword) => keyword.length > 0) ?? [];
+
+  return options.length > 0 ? options : [text];
+}
+
+function normalizeRotatingKeywordIndex(index: number, keywordCount: number) {
+  if (keywordCount <= 0) {
+    return 0;
+  }
+
+  const integerIndex = Number.isFinite(index) ? Math.trunc(index) : 0;
+
+  return ((integerIndex % keywordCount) + keywordCount) % keywordCount;
+}
+
+function getLongestRotatingKeyword(keywords: readonly string[]) {
+  return keywords.reduce((longestKeyword, keyword) =>
+    Array.from(keyword).length > Array.from(longestKeyword).length
+      ? keyword
+      : longestKeyword,
+  );
+}
+
+function getRotatingKeywordIntervalMs(intervalSeconds: number | undefined) {
+  return Math.max(
+    rotatingKeywordMinimumIntervalMs,
+    Math.round(
+      (intervalSeconds ?? rotatingKeywordDefaultIntervalMs / 1000) * 1000,
+    ),
+  );
+}
+
+function getRotatingKeywordVariants({
+  duration,
+  reducedMotion,
+}: {
+  duration: number;
+  reducedMotion: boolean;
+}): Variants {
+  if (reducedMotion) {
+    return {
+      enter: { opacity: 1 },
+      center: { opacity: 1 },
+      exit: { opacity: 1 },
+    };
+  }
+
+  return {
+    enter: {
+      opacity: 0,
+      y: "0.4em",
+    },
+    center: {
+      opacity: 1,
+      transition: {
+        duration,
+        ease: heroTextAnimationMotionTokens.easing.soft,
+      },
+      y: "0em",
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        duration: Math.min(
+          duration,
+          heroTextAnimationMotionTokens.duration.fast,
+        ),
+        ease: heroTextAnimationMotionTokens.easing.standard,
+      },
+      y: "-0.35em",
+    },
+  };
+}
+
+function renderStaticRotatingKeyword({
+  keyword,
+  keywordIndex,
+  longestKeyword,
+  prefix,
+  suffix,
+}: {
+  keyword: string;
+  keywordIndex: number;
+  longestKeyword: string;
+  prefix: string;
+  suffix: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      data-auto-rotate-keywords="false"
+      data-rotating-keyword-index={keywordIndex}
+      data-rotating-keyword-max-duration-ms={rotatingKeywordMaximumAutoRotateMs}
+      data-slot="hero-text-animation-motion"
+      data-split-by="keyword"
+      className={heroTextAnimationRotatingMotionClasses}
+    >
+      {prefix.length > 0 ? (
+        <span
+          data-slot="hero-text-animation-rotating-prefix"
+          className={heroTextAnimationRotatingTextClasses}
+        >
+          {prefix}
+        </span>
+      ) : null}
+      <span
+        data-slot="hero-text-animation-rotating-slot"
+        className={heroTextAnimationRotatingSlotClasses}
+      >
+        <span
+          data-slot="hero-text-animation-rotating-sizer"
+          className={heroTextAnimationRotatingSizerClasses}
+        >
+          {longestKeyword}
+        </span>
+        <span
+          data-reduced-motion="true"
+          data-slot="hero-text-animation-rotating-keyword"
+          className={heroTextAnimationRotatingKeywordClasses}
+        >
+          {keyword}
+        </span>
+      </span>
+      {suffix.length > 0 ? (
+        <span
+          data-slot="hero-text-animation-rotating-suffix"
+          className={heroTextAnimationRotatingTextClasses}
+        >
+          {suffix}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+function RotatingKeywordSegments({
+  active,
+  autoRotateKeywords,
+  duration,
+  keyword,
+  keywordCount,
+  keywordIndex,
+  keywords,
+  longestKeyword,
+  once,
+  prefix,
+  reducedMotion,
+  rotatingKeywordInterval,
+  suffix,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+  onKeywordIndexChange,
+}: {
+  active: boolean;
+  autoRotateKeywords: boolean;
+  duration: number;
+  keyword: string;
+  keywordCount: number;
+  keywordIndex: number;
+  keywords: readonly string[];
+  longestKeyword: string;
+  once: boolean;
+  prefix: string;
+  reducedMotion: boolean;
+  rotatingKeywordInterval?: number;
+  suffix: string;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+  onKeywordIndexChange: (index: number) => void;
+}) {
+  const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const keywordIndexRef = useRef(keywordIndex);
+  const intervalMs = getRotatingKeywordIntervalMs(rotatingKeywordInterval);
+  const variants = getRotatingKeywordVariants({ duration, reducedMotion });
+  const shouldStart =
+    trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
+
+  useEffect(() => {
+    keywordIndexRef.current = keywordIndex;
+  }, [keywordIndex]);
+
+  useEffect(() => {
+    if (
+      reducedMotion ||
+      !autoRotateKeywords ||
+      !shouldStart ||
+      keywordCount <= 1
+    ) {
+      return;
+    }
+
+    onAnimationStart?.();
+
+    const intervalId = window.setInterval(() => {
+      onKeywordIndexChange(keywordIndexRef.current + 1);
+    }, intervalMs);
+    const stopTimeoutId = window.setTimeout(() => {
+      window.clearInterval(intervalId);
+      onAnimationComplete?.();
+    }, rotatingKeywordMaximumAutoRotateMs - 1);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.clearTimeout(stopTimeoutId);
+    };
+  }, [
+    autoRotateKeywords,
+    intervalMs,
+    keywordCount,
+    onAnimationComplete,
+    onAnimationStart,
+    onKeywordIndexChange,
+    reducedMotion,
+    shouldStart,
+  ]);
+
+  return (
+    <span
+      ref={inViewRef}
+      aria-hidden="true"
+      data-auto-rotate-keywords={autoRotateKeywords ? "true" : "false"}
+      data-rotating-keyword-count={keywordCount}
+      data-rotating-keyword-index={keywordIndex}
+      data-rotating-keyword-interval-ms={intervalMs}
+      data-rotating-keyword-max-duration-ms={rotatingKeywordMaximumAutoRotateMs}
+      data-slot="hero-text-animation-motion"
+      data-split-by="keyword"
+      className={heroTextAnimationRotatingMotionClasses}
+    >
+      {prefix.length > 0 ? (
+        <span
+          data-slot="hero-text-animation-rotating-prefix"
+          className={heroTextAnimationRotatingTextClasses}
+        >
+          {prefix}
+        </span>
+      ) : null}
+      <span
+        data-slot="hero-text-animation-rotating-slot"
+        data-rotating-keyword-longest={longestKeyword}
+        className={heroTextAnimationRotatingSlotClasses}
+      >
+        <span
+          data-slot="hero-text-animation-rotating-sizer"
+          className={heroTextAnimationRotatingSizerClasses}
+        >
+          {longestKeyword}
+        </span>
+        {reducedMotion ? (
+          <span
+            data-reduced-motion="true"
+            data-slot="hero-text-animation-rotating-keyword"
+            className={heroTextAnimationRotatingKeywordClasses}
+          >
+            {keyword}
+          </span>
+        ) : (
+          <AnimatePresence initial={false}>
+            <motionElement.span
+              key={`${keywordIndex}-${keywords[keywordIndex] ?? keyword}`}
+              data-slot="hero-text-animation-rotating-keyword"
+              className={heroTextAnimationRotatingKeywordClasses}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+            >
+              {keyword}
+            </motionElement.span>
+          </AnimatePresence>
+        )}
+      </span>
+      {suffix.length > 0 ? (
+        <span
+          data-slot="hero-text-animation-rotating-suffix"
+          className={heroTextAnimationRotatingTextClasses}
+        >
+          {suffix}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 function ScrambleDecryptSegments({
   active,
   delay,
@@ -966,6 +1286,13 @@ export const HeroTextAnimation = forwardRef<
       reducedMotionStrategy = "opacity-only",
       repeat = false,
       repeatDelay = defaultRepeatDelay,
+      autoRotateKeywords = false,
+      defaultRotatingKeywordIndex = 0,
+      rotatingKeywordIndex,
+      rotatingKeywordInterval,
+      rotatingKeywordOptions,
+      rotatingKeywordPrefix = "",
+      rotatingKeywordSuffix = "",
       showCaret = true,
       splitBy = "word",
       stagger,
@@ -974,6 +1301,7 @@ export const HeroTextAnimation = forwardRef<
       "data-testid": dataTestId = "hero-text-animation",
       onAnimationComplete,
       onAnimationStart,
+      onRotatingKeywordIndexChange,
       ...props
     },
     ref,
@@ -991,17 +1319,20 @@ export const HeroTextAnimation = forwardRef<
           : prefersReducedMotion === true;
     const resolvedDuration =
       duration ??
-      (animation === "scramble-decrypt"
-        ? heroTextAnimationMotionTokens.duration.scramble
-        : animation === "typewriter"
-          ? heroTextAnimationMotionTokens.duration.typewriter
-          : heroTextAnimationMotionTokens.duration.base);
+      (animation === "rotating-keyword"
+        ? heroTextAnimationMotionTokens.duration.rotatingKeyword
+        : animation === "scramble-decrypt"
+          ? heroTextAnimationMotionTokens.duration.scramble
+          : animation === "typewriter"
+            ? heroTextAnimationMotionTokens.duration.typewriter
+            : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
     const canRepeat =
       hasHydrated &&
       repeat &&
       !reducedMotion &&
+      animation !== "rotating-keyword" &&
       (trigger !== "manual" || active) &&
       !renderStatic;
     const repeatDelayMs = Math.max(0, Math.round(repeatDelay * 1000));
@@ -1017,23 +1348,69 @@ export const HeroTextAnimation = forwardRef<
       () => splitHeroText(text, resolvedSplitBy),
       [resolvedSplitBy, text],
     );
+    const rotatingKeywords = useMemo(
+      () =>
+        resolveRotatingKeywordOptions({
+          rotatingKeywordOptions,
+          text,
+        }),
+      [rotatingKeywordOptions, text],
+    );
+    const keywordCount = rotatingKeywords.length;
+    const isRotatingKeywordControlled = rotatingKeywordIndex !== undefined;
+    const [
+      uncontrolledRotatingKeywordIndex,
+      setUncontrolledRotatingKeywordIndex,
+    ] = useState(() =>
+      normalizeRotatingKeywordIndex(defaultRotatingKeywordIndex, keywordCount),
+    );
+    const selectedRotatingKeywordIndex = normalizeRotatingKeywordIndex(
+      isRotatingKeywordControlled
+        ? rotatingKeywordIndex
+        : uncontrolledRotatingKeywordIndex,
+      keywordCount,
+    );
+    const selectedRotatingKeyword =
+      rotatingKeywords[selectedRotatingKeywordIndex] ?? text;
+    const longestRotatingKeyword = getLongestRotatingKeyword(rotatingKeywords);
     const accessibleLabel = ariaLabel ?? text;
     const animatedSegmentCount =
-      animation === "typewriter" || animation === "scramble-decrypt"
-        ? splitTypewriterCharacters(text).length
-        : segments.filter((segment) => segment.kind === "text").length;
+      animation === "rotating-keyword"
+        ? keywordCount
+        : animation === "typewriter" || animation === "scramble-decrypt"
+          ? splitTypewriterCharacters(text).length
+          : segments.filter((segment) => segment.kind === "text").length;
     const visualSplitBy =
-      animation === "typewriter" || animation === "scramble-decrypt"
-        ? "character"
-        : resolvedSplitBy;
+      animation === "rotating-keyword"
+        ? "keyword"
+        : animation === "typewriter" || animation === "scramble-decrypt"
+          ? "character"
+          : resolvedSplitBy;
     const visualKey = [
       animation,
       repeatIteration,
       text,
+      selectedRotatingKeywordIndex,
       resolvedSplitBy,
       resolvedStagger,
       resolvedDuration,
     ].join(":");
+
+    const handleRotatingKeywordIndexChange = useCallback(
+      (nextIndex: number) => {
+        const normalizedIndex = normalizeRotatingKeywordIndex(
+          nextIndex,
+          keywordCount,
+        );
+
+        if (!isRotatingKeywordControlled) {
+          setUncontrolledRotatingKeywordIndex(normalizedIndex);
+        }
+
+        onRotatingKeywordIndexChange?.(normalizedIndex);
+      },
+      [isRotatingKeywordControlled, keywordCount, onRotatingKeywordIndexChange],
+    );
 
     useEffect(() => {
       window.clearTimeout(repeatTimeoutRef.current);
@@ -1086,6 +1463,12 @@ export const HeroTextAnimation = forwardRef<
         "data-repeat-delay": repeatDelay,
         "data-reduced-motion": reducedMotion ? "true" : "false",
         "data-reduced-motion-strategy": reducedMotionStrategy,
+        "data-rotating-keyword-count":
+          animation === "rotating-keyword" ? keywordCount : undefined,
+        "data-rotating-keyword-index":
+          animation === "rotating-keyword"
+            ? selectedRotatingKeywordIndex
+            : undefined,
         "data-segment-count": animatedSegmentCount,
         "data-slot": "hero-text-animation",
         "data-split-by": visualSplitBy,
@@ -1103,7 +1486,15 @@ export const HeroTextAnimation = forwardRef<
         data-slot="hero-text-animation-visual"
         className={heroTextAnimationVisualClasses}
       >
-        {renderStatic ? (
+        {renderStatic && animation === "rotating-keyword" ? (
+          renderStaticRotatingKeyword({
+            keyword: selectedRotatingKeyword,
+            keywordIndex: selectedRotatingKeywordIndex,
+            longestKeyword: longestRotatingKeyword,
+            prefix: rotatingKeywordPrefix,
+            suffix: rotatingKeywordSuffix,
+          })
+        ) : renderStatic ? (
           renderStaticSegments({ segments, splitBy: resolvedSplitBy })
         ) : animation === "masked-curtain" ? (
           <MaskedCurtainSegments
@@ -1145,6 +1536,26 @@ export const HeroTextAnimation = forwardRef<
             trigger={trigger}
             onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "rotating-keyword" ? (
+          <RotatingKeywordSegments
+            active={active}
+            autoRotateKeywords={autoRotateKeywords}
+            duration={resolvedDuration}
+            keyword={selectedRotatingKeyword}
+            keywordCount={keywordCount}
+            keywordIndex={selectedRotatingKeywordIndex}
+            keywords={rotatingKeywords}
+            longestKeyword={longestRotatingKeyword}
+            once={once}
+            prefix={rotatingKeywordPrefix}
+            reducedMotion={reducedMotion}
+            rotatingKeywordInterval={rotatingKeywordInterval}
+            suffix={rotatingKeywordSuffix}
+            trigger={trigger}
+            onAnimationComplete={onAnimationComplete}
+            onAnimationStart={onAnimationStart}
+            onKeywordIndexChange={handleRotatingKeywordIndexChange}
           />
         ) : (
           <StaggeredSegments
