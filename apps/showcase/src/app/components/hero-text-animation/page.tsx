@@ -6,6 +6,7 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { HeroTextAnimationGradientHighlightHero } from "@/examples/hero-text-animation/gradient-highlight-hero";
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
 import { HeroTextAnimationRotatingKeywordHero } from "@/examples/hero-text-animation/rotating-keyword-hero";
@@ -80,6 +81,16 @@ export default function HeroTextAnimationPage() {
             wide
           >
             <HeroTextAnimationRotatingKeywordHero />
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/gradient-highlight-hero.tsx"
+            title="Gradient highlight hero section"
+            description="A separate production hero recipe for a one-shot gradient highlight sweep with tokenized contrast, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationGradientHighlightHero />
           </ExampleBlock>
         </div>
       </DocsSection>

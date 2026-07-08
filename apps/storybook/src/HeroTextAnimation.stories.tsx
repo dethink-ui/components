@@ -33,6 +33,7 @@ const meta = {
         "typewriter",
         "scramble-decrypt",
         "rotating-keyword",
+        "gradient-highlight",
       ],
     },
     as: {
@@ -89,6 +90,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "typewriter",
   "scramble-decrypt",
   "rotating-keyword",
+  "gradient-highlight",
 ];
 
 export const Base: Story = {};
@@ -287,6 +289,49 @@ export const RotatingKeywordReveal: Story = {
   },
 };
 
+export const GradientHighlightSweep: Story = {
+  render: () => (
+    <div className="grid gap-4 lg:grid-cols-2">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              one-shot sweep
+            </p>
+            <HeroTextAnimation
+              animation="gradient-highlight"
+              duration={0.9}
+              text="Highlight the conversion-critical launch promise."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+      <DethinkProvider
+        theme="dark"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              dark theme
+            </p>
+            <HeroTextAnimation
+              animation="gradient-highlight"
+              duration={0.9}
+              text="Keep the highlighted phrase readable after motion."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+    </div>
+  ),
+};
+
 export const RepeatPreview: Story = {
   render: () => (
     <DethinkProvider
@@ -402,6 +447,23 @@ export const RotatingKeywordReducedMotionFallback: Story = {
           rotatingKeywordPrefix="Build dashboards for "
           rotatingKeywordSuffix=" teams."
           text="Build dashboards for every revenue team."
+          className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const GradientHighlightReducedMotionFallback: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="gradient-highlight"
+          text="Reduced motion keeps the highlighted phrase settled."
           className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
         />
       </HeroTextAnimationProvider>

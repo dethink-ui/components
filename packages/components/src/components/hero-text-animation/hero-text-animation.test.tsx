@@ -749,6 +749,73 @@ describe("HeroTextAnimation", () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 
+  it("renders a tokenized gradient highlight phrase with stable accessible text", () => {
+    render(
+      <HeroTextAnimation
+        animation="gradient-highlight"
+        text="Highlight the conversion-critical phrase."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Highlight the conversion-critical phrase.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-highlight="gradient-highlight"]',
+    ) as HTMLElement | null;
+
+    expect(heading).toHaveAttribute("data-animation", "gradient-highlight");
+    expect(heading).toHaveAttribute("data-split-by", "phrase");
+    expect(heading).toHaveAttribute("data-segment-count", "1");
+    expect(heading).toHaveAttribute("data-repeat", "false");
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Highlight the conversion-critical phrase.");
+    expect(motion).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveClass("text-transparent", "underline");
+    expect(motion?.getAttribute("style")).toContain(
+      "--hero-text-animation-highlight-base: var(--dt-color-foreground)",
+    );
+    expect(motion?.getAttribute("style")).toContain(
+      "--hero-text-animation-highlight-sheen: color-mix(in oklab, var(--dt-color-foreground) 58%, var(--dt-color-background) 42%)",
+    );
+    expect(motion?.getAttribute("style")).not.toMatch(/#[0-9a-f]{3,8}|rgb/i);
+  });
+
+  it("keeps gradient highlight static in reduced motion without timers", () => {
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+    const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="gradient-highlight"
+          repeat
+          repeatDelay={0.1}
+          text="Reduced motion keeps the highlighted phrase settled."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Reduced motion keeps the highlighted phrase settled.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-highlight="gradient-highlight"]',
+    );
+
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(heading).toHaveAttribute("data-repeat", "true");
+    expect(motion).toHaveTextContent(
+      "Reduced motion keeps the highlighted phrase settled.",
+    );
+    expect(motion).toHaveAttribute("data-reduced-motion", "true");
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
   it("cleans typewriter timers on text changes and unmount", async () => {
     vi.useFakeTimers();
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");

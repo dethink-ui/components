@@ -84,6 +84,22 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders gradient highlight final text on the server without hidden motion styles", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="gradient-highlight"
+        text="Highlight launch copy without hiding text."
+      />,
+    );
+
+    expect(html).toContain('data-animation="gradient-highlight"');
+    expect(html).toContain("Highlight launch copy without hiding text.");
+    expect(html).toContain("hero-text-animation-highlight-base");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates scramble decrypt output without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -193,6 +209,37 @@ describe("HeroTextAnimation SSR", () => {
           rotatingKeywordOptions={["finance", "support", "sales"]}
           rotatingKeywordPrefix="Build for "
           text="Hydrate rotating hero text."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates gradient highlight output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="gradient-highlight"
+        text="Hydrate highlighted hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="gradient-highlight"
+          text="Hydrate highlighted hero text."
         />,
       );
     });
