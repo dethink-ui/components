@@ -139,6 +139,22 @@ export {
   type TypographyWeight,
 } from "./components/typography";
 export {
+  HeroTextAnimation,
+  HeroTextAnimationProvider,
+  heroTextAnimationClassNames,
+  heroTextAnimationMotionTokens,
+  splitHeroText,
+  type HeroTextAnimationElement,
+  type HeroTextAnimationKind,
+  type HeroTextAnimationProps,
+  type HeroTextAnimationProviderProps,
+  type HeroTextAnimationProviderReducedMotion,
+  type HeroTextAnimationReducedMotionStrategy,
+  type HeroTextAnimationSegment,
+  type HeroTextAnimationSplitBy,
+  type HeroTextAnimationTrigger,
+} from "./components/hero-text-animation";
+export {
   Stack,
   stackClassNames,
   type StackAlign,
