@@ -17,6 +17,7 @@ import {
   AnimatePresence,
   MotionConfig,
   motion as motionElement,
+  useMotionValue,
   useReducedMotion,
   type Transition,
   type Variants,
@@ -31,7 +32,8 @@ export type HeroTextAnimationKind =
   | "rotating-keyword"
   | "gradient-highlight"
   | "blur-focus"
-  | "kinetic-emphasis-pop";
+  | "kinetic-emphasis-pop"
+  | "scroll-responsive";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -107,6 +109,7 @@ export const heroTextAnimationMotionTokens = {
     gradientHighlight: 0.9,
     blurFocus: 0.42,
     kineticEmphasisPop: 0.42,
+    scrollResponsive: 0,
   },
   stagger: {
     word: 0.045,
@@ -178,6 +181,8 @@ const heroTextAnimationKineticEmphasisMotionClasses =
   "inline min-w-0 max-w-full";
 const heroTextAnimationKineticEmphasisWordClasses =
   "inline-block whitespace-pre align-baseline [transform-origin:center_70%] data-[emphasized=true]:text-primary data-[emphasized=true]:font-semibold data-[emphasized=true]:underline data-[emphasized=true]:decoration-current data-[emphasized=true]:decoration-[0.08em] data-[emphasized=true]:underline-offset-[0.14em] data-[emphasized=true]:[text-decoration-skip-ink:auto] data-[emphasized=true]:forced-colors:text-[CanvasText] data-[emphasized=true]:forced-colors:decoration-[CanvasText] data-[emphasized=true]:will-change-transform data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationScrollResponsiveClasses =
+  "inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline will-change-transform [transform-origin:center_top] data-[reduced-motion=true]:will-change-auto";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
@@ -195,6 +200,8 @@ const blurFocusInitialBlur = "6px";
 const blurFocusFinalBlur = "0px";
 const kineticEmphasisMaximumWordCount = 2;
 const kineticEmphasisScale = 1.045;
+const scrollResponsiveRangePx = 220;
+const scrollResponsiveMinimumOpacity = 0.92;
 const defaultRepeatDelay = 1.8;
 const gradientHighlightStyle = {
   "--hero-text-animation-highlight-base": "var(--dt-color-foreground)",
@@ -1759,6 +1766,119 @@ function renderStaticBlurFocus(text: string) {
   );
 }
 
+function renderStaticScrollResponsive(text: string) {
+  return (
+    <span
+      aria-hidden="true"
+      data-reduced-motion="true"
+      data-scroll-opacity-min={scrollResponsiveMinimumOpacity}
+      data-scroll-progress="0.000"
+      data-scroll-range-px={scrollResponsiveRangePx}
+      data-scroll-responsive="subtle"
+      data-scroll-y-max="0"
+      data-scroll-y-min={heroTextAnimationMotionTokens.distance.scrollY}
+      data-slot="hero-text-animation-motion"
+      data-split-by="phrase"
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationScrollResponsiveClasses,
+      )}
+    >
+      {text}
+    </span>
+  );
+}
+
+function ScrollResponsiveSegments({
+  reducedMotion,
+  text,
+}: {
+  reducedMotion: boolean;
+  text: string;
+}) {
+  const motionRef = useRef<HTMLSpanElement>(null);
+  const y = useMotionValue(0);
+  const opacity = useMotionValue(1);
+
+  useEffect(() => {
+    const element = motionRef.current;
+
+    y.set(0);
+    opacity.set(1);
+    element?.setAttribute("data-scroll-progress", "0.000");
+    element?.setAttribute("data-scroll-y", "0.000");
+    element?.setAttribute("data-scroll-opacity", "1.000");
+
+    if (reducedMotion || typeof window === "undefined") {
+      return;
+    }
+
+    let frameId: number | undefined;
+
+    const update = () => {
+      frameId = undefined;
+
+      const scrollY = Math.max(0, window.scrollY || window.pageYOffset || 0);
+      const progress = Math.min(1, scrollY / scrollResponsiveRangePx);
+      const nextY = heroTextAnimationMotionTokens.distance.scrollY * progress;
+      const nextOpacity = 1 - (1 - scrollResponsiveMinimumOpacity) * progress;
+
+      y.set(nextY);
+      opacity.set(nextOpacity);
+      element?.setAttribute("data-scroll-progress", progress.toFixed(3));
+      element?.setAttribute("data-scroll-y", nextY.toFixed(3));
+      element?.setAttribute("data-scroll-opacity", nextOpacity.toFixed(3));
+    };
+
+    const scheduleUpdate = () => {
+      if (frameId !== undefined) {
+        return;
+      }
+
+      frameId =
+        window.requestAnimationFrame?.(update) ?? window.setTimeout(update, 16);
+    };
+
+    update();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", scheduleUpdate);
+
+      if (frameId !== undefined) {
+        if (window.cancelAnimationFrame) {
+          window.cancelAnimationFrame(frameId);
+        } else {
+          window.clearTimeout(frameId);
+        }
+      }
+    };
+  }, [opacity, reducedMotion, y]);
+
+  return (
+    <motionElement.span
+      ref={motionRef}
+      aria-hidden="true"
+      data-reduced-motion={reducedMotion ? "true" : undefined}
+      data-scroll-opacity-min={scrollResponsiveMinimumOpacity}
+      data-scroll-progress="0.000"
+      data-scroll-range-px={scrollResponsiveRangePx}
+      data-scroll-responsive="subtle"
+      data-scroll-y-max="0"
+      data-scroll-y-min={heroTextAnimationMotionTokens.distance.scrollY}
+      data-slot="hero-text-animation-motion"
+      data-split-by="phrase"
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationScrollResponsiveClasses,
+      )}
+      style={reducedMotion ? undefined : { opacity, y }}
+    >
+      {text}
+    </motionElement.span>
+  );
+}
+
 function getSegmentTransition(duration: number): Transition {
   return {
     duration,
@@ -1828,9 +1948,11 @@ export const HeroTextAnimation = forwardRef<
               ? heroTextAnimationMotionTokens.duration.blurFocus
               : animation === "kinetic-emphasis-pop"
                 ? heroTextAnimationMotionTokens.duration.kineticEmphasisPop
-                : animation === "typewriter"
-                  ? heroTextAnimationMotionTokens.duration.typewriter
-                  : heroTextAnimationMotionTokens.duration.base);
+                : animation === "scroll-responsive"
+                  ? heroTextAnimationMotionTokens.duration.scrollResponsive
+                  : animation === "typewriter"
+                    ? heroTextAnimationMotionTokens.duration.typewriter
+                    : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
     const canRepeat =
@@ -1838,6 +1960,7 @@ export const HeroTextAnimation = forwardRef<
       repeat &&
       !reducedMotion &&
       animation !== "rotating-keyword" &&
+      animation !== "scroll-responsive" &&
       (trigger !== "manual" || active) &&
       !renderStatic;
     const repeatDelayMs = Math.max(0, Math.round(repeatDelay * 1000));
@@ -1896,7 +2019,9 @@ export const HeroTextAnimation = forwardRef<
     const animatedSegmentCount =
       animation === "rotating-keyword"
         ? keywordCount
-        : animation === "gradient-highlight" || animation === "blur-focus"
+        : animation === "gradient-highlight" ||
+            animation === "blur-focus" ||
+            animation === "scroll-responsive"
           ? 1
           : animation === "typewriter" || animation === "scramble-decrypt"
             ? splitTypewriterCharacters(text).length
@@ -1904,7 +2029,9 @@ export const HeroTextAnimation = forwardRef<
     const visualSplitBy =
       animation === "rotating-keyword"
         ? "keyword"
-        : animation === "gradient-highlight" || animation === "blur-focus"
+        : animation === "gradient-highlight" ||
+            animation === "blur-focus" ||
+            animation === "scroll-responsive"
           ? "phrase"
           : animation === "typewriter" || animation === "scramble-decrypt"
             ? "character"
@@ -2027,6 +2154,8 @@ export const HeroTextAnimation = forwardRef<
           renderStaticGradientHighlight(text)
         ) : renderStatic && animation === "blur-focus" ? (
           renderStaticBlurFocus(text)
+        ) : renderStatic && animation === "scroll-responsive" ? (
+          renderStaticScrollResponsive(text)
         ) : renderStatic && animation === "kinetic-emphasis-pop" ? (
           renderStaticKineticEmphasis({
             emphasisIndices: kineticEmphasisIndices,
@@ -2100,6 +2229,12 @@ export const HeroTextAnimation = forwardRef<
             trigger={trigger}
             onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "scroll-responsive" ? (
+          <ScrollResponsiveSegments
+            key={visualKey}
+            reducedMotion={reducedMotion}
+            text={text}
           />
         ) : animation === "kinetic-emphasis-pop" ? (
           <KineticEmphasisSegments
