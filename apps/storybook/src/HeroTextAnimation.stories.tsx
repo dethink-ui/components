@@ -17,6 +17,8 @@ const meta = {
     animation: "stagger-words",
     as: "h1",
     reducedMotionStrategy: "opacity-only",
+    repeat: false,
+    repeatDelay: 1.8,
     splitBy: "word",
     text: "Build production-ready landing pages faster.",
     trigger: "mount",
@@ -24,7 +26,7 @@ const meta = {
   argTypes: {
     animation: {
       control: "inline-radio",
-      options: ["stagger-words", "masked-curtain"],
+      options: ["stagger-words", "masked-curtain", "typewriter"],
     },
     as: {
       control: "inline-radio",
@@ -33,6 +35,12 @@ const meta = {
     reducedMotionStrategy: {
       control: "inline-radio",
       options: ["static", "opacity-only"],
+    },
+    repeat: {
+      control: "boolean",
+    },
+    repeatDelay: {
+      control: { type: "number", min: 0, step: 0.1 },
     },
     splitBy: {
       control: "inline-radio",
@@ -71,6 +79,7 @@ const triggers: HeroTextAnimationTrigger[] = ["mount", "manual", "in-view"];
 const animationKinds: HeroTextAnimationKind[] = [
   "stagger-words",
   "masked-curtain",
+  "typewriter",
 ];
 
 export const Base: Story = {};
@@ -128,6 +137,75 @@ export const MaskedCurtainReveal: Story = {
   ),
 };
 
+export const TypewriterReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <div className="grid gap-8 lg:grid-cols-2">
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              caret
+            </p>
+            <HeroTextAnimation
+              animation="typewriter"
+              duration={1.1}
+              text="Type concise launch copy once."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              no caret
+            </p>
+            <HeroTextAnimation
+              animation="typewriter"
+              duration={0.9}
+              showCaret={false}
+              text="Reveal the final message quickly."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const RepeatPreview: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <div className="grid gap-8 lg:grid-cols-3">
+          {animationKinds.map((animation) => (
+            <section key={animation} className="min-w-0">
+              <p className="text-muted-foreground mb-3 text-sm font-medium">
+                {animation}
+              </p>
+              <HeroTextAnimation
+                animation={animation}
+                repeat
+                repeatDelay={1.4}
+                text={
+                  animation === "masked-curtain"
+                    ? "Replay the reveal.\nKeep the copy readable."
+                    : "Replay the hero headline."
+                }
+                className="text-foreground text-2xl leading-tight font-semibold tracking-normal"
+              />
+            </section>
+          ))}
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
 export const ReducedMotionFallbacks: Story = {
   render: () => (
     <DethinkProvider
@@ -141,6 +219,29 @@ export const ReducedMotionFallbacks: Story = {
               key={strategy}
               reducedMotionStrategy={strategy}
               text={`${strategy} reduced motion keeps the headline readable.`}
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
+            />
+          ))}
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const TypewriterReducedMotionFallbacks: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <div className="grid gap-8 lg:grid-cols-2">
+          {reducedMotionStrategies.map((strategy) => (
+            <HeroTextAnimation
+              key={strategy}
+              animation="typewriter"
+              reducedMotionStrategy={strategy}
+              text={`${strategy} reduced motion shows the full typed headline.`}
               className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
             />
           ))}

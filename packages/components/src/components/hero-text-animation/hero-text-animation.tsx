@@ -2,10 +2,12 @@ import {
   createElement,
   createContext,
   forwardRef,
+  useCallback,
   useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   type HTMLAttributes,
   type ReactNode,
@@ -19,7 +21,8 @@ import {
 } from "motion/react";
 import { cn } from "../../utils/cn";
 
-export type HeroTextAnimationKind = "stagger-words" | "masked-curtain";
+export type HeroTextAnimationKind =
+  "stagger-words" | "masked-curtain" | "typewriter";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -39,6 +42,9 @@ export interface HeroTextAnimationProps extends Omit<
   duration?: number;
   once?: boolean;
   reducedMotionStrategy?: HeroTextAnimationReducedMotionStrategy;
+  repeat?: boolean;
+  repeatDelay?: number;
+  showCaret?: boolean;
   splitBy?: HeroTextAnimationSplitBy;
   stagger?: number;
   text: string;
@@ -76,6 +82,7 @@ export const heroTextAnimationMotionTokens = {
     base: 0.48,
     slow: 0.72,
     cinematic: 1.1,
+    typewriter: 1.1,
   },
   stagger: {
     word: 0.045,
@@ -113,6 +120,20 @@ const heroTextAnimationCurtainMaskClasses =
   "block min-w-0 overflow-hidden [line-height:inherit]";
 const heroTextAnimationCurtainLineClasses =
   "block min-w-0 will-change-transform data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationTypewriterMotionClasses =
+  "inline-grid min-w-0 max-w-full align-baseline";
+const heroTextAnimationTypewriterSizerClasses =
+  "invisible col-start-1 row-start-1 whitespace-pre-wrap";
+const heroTextAnimationTypewriterTextClasses =
+  "col-start-1 row-start-1 whitespace-pre-wrap";
+const heroTextAnimationTypewriterCaretClasses =
+  "ml-[0.08em] inline-block h-[0.9em] w-[0.08em] translate-y-[0.08em] bg-current align-baseline opacity-70";
+
+const typewriterDefaultIntervalMs = 28;
+const typewriterMinimumIntervalMs = 16;
+const typewriterMinimumDurationMs = 300;
+const typewriterMaximumDurationMs = 1400;
+const defaultRepeatDelay = 1.8;
 
 const HeroTextAnimationReducedMotionContext =
   createContext<HeroTextAnimationProviderReducedMotion>("user");
@@ -436,6 +457,254 @@ function MaskedCurtainSegments({
   );
 }
 
+function splitTypewriterCharacters(text: string) {
+  return Array.from(text);
+}
+
+function getTypewriterTiming({
+  characterCount,
+  duration,
+}: {
+  characterCount: number;
+  duration: number;
+}) {
+  const boundedDurationMs = Math.min(
+    typewriterMaximumDurationMs,
+    Math.max(typewriterMinimumDurationMs, Math.round(duration * 1000)),
+  );
+  const maxFrames = Math.max(
+    1,
+    Math.floor(boundedDurationMs / typewriterMinimumIntervalMs),
+  );
+  const charactersPerTick = Math.max(
+    1,
+    Math.ceil(Math.max(characterCount, 1) / maxFrames),
+  );
+  const tickCount = Math.max(
+    1,
+    Math.ceil(Math.max(characterCount, 1) / charactersPerTick),
+  );
+  const intervalMs = Math.min(
+    typewriterDefaultIntervalMs,
+    Math.max(
+      typewriterMinimumIntervalMs,
+      Math.floor(boundedDurationMs / tickCount),
+    ),
+  );
+
+  return {
+    charactersPerTick,
+    intervalMs,
+  };
+}
+
+function useTypewriterInView({
+  once,
+  trigger,
+}: {
+  once: boolean;
+  trigger: HeroTextAnimationTrigger;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [isInView, setIsInView] = useState(trigger !== "in-view");
+
+  useEffect(() => {
+    if (trigger !== "in-view") {
+      setIsInView(true);
+      return;
+    }
+
+    const element = ref.current;
+
+    if (
+      !element ||
+      typeof window === "undefined" ||
+      !("IntersectionObserver" in window)
+    ) {
+      setIsInView(true);
+      return;
+    }
+
+    setIsInView(false);
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (!entry) {
+          return;
+        }
+
+        if (entry.isIntersecting) {
+          setIsInView(true);
+
+          if (once) {
+            observer.disconnect();
+          }
+
+          return;
+        }
+
+        if (!once) {
+          setIsInView(false);
+        }
+      },
+      { threshold: 0.6 },
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [once, trigger]);
+
+  return [ref, isInView] as const;
+}
+
+function TypewriterSegments({
+  active,
+  delay,
+  duration,
+  once,
+  reducedMotion,
+  showCaret,
+  text,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  reducedMotion: boolean;
+  showCaret: boolean;
+  text: string;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const characters = useMemo(() => splitTypewriterCharacters(text), [text]);
+  const characterCount = characters.length;
+  const shouldStart =
+    trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
+  const [visibleLength, setVisibleLength] = useState(() =>
+    reducedMotion ? characterCount : 0,
+  );
+
+  useEffect(() => {
+    if (reducedMotion) {
+      setVisibleLength(characterCount);
+      return;
+    }
+
+    if (!shouldStart || characterCount === 0) {
+      setVisibleLength(0);
+      return;
+    }
+
+    const { charactersPerTick, intervalMs } = getTypewriterTiming({
+      characterCount,
+      duration,
+    });
+    let cancelled = false;
+    let nextVisibleLength = 0;
+    let intervalId: number | undefined;
+
+    setVisibleLength(0);
+
+    const delayId = window.setTimeout(
+      () => {
+        if (cancelled) {
+          return;
+        }
+
+        onAnimationStart?.();
+
+        intervalId = window.setInterval(() => {
+          if (cancelled) {
+            return;
+          }
+
+          nextVisibleLength = Math.min(
+            characterCount,
+            nextVisibleLength + charactersPerTick,
+          );
+          setVisibleLength(nextVisibleLength);
+
+          if (nextVisibleLength >= characterCount) {
+            if (intervalId !== undefined) {
+              window.clearInterval(intervalId);
+            }
+            onAnimationComplete?.();
+          }
+        }, intervalMs);
+      },
+      Math.max(0, Math.round(delay * 1000)),
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(delayId);
+
+      if (intervalId !== undefined) {
+        window.clearInterval(intervalId);
+      }
+    };
+  }, [
+    characterCount,
+    delay,
+    duration,
+    onAnimationComplete,
+    onAnimationStart,
+    reducedMotion,
+    shouldStart,
+    text,
+  ]);
+
+  const normalizedVisibleLength = reducedMotion
+    ? characterCount
+    : Math.min(visibleLength, characterCount);
+  const visibleText = characters.slice(0, normalizedVisibleLength).join("");
+  const isComplete = normalizedVisibleLength >= characterCount;
+  const shouldShowCaret =
+    showCaret &&
+    shouldStart &&
+    !reducedMotion &&
+    !isComplete &&
+    characterCount > 0;
+
+  return (
+    <span
+      ref={inViewRef}
+      aria-hidden="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="character"
+      data-typewriter-complete={isComplete ? "true" : "false"}
+      className={heroTextAnimationTypewriterMotionClasses}
+    >
+      <span
+        data-slot="hero-text-animation-typewriter-sizer"
+        className={heroTextAnimationTypewriterSizerClasses}
+      >
+        {text}
+      </span>
+      <span
+        data-slot="hero-text-animation-typewriter-text"
+        data-reduced-motion={reducedMotion ? "true" : undefined}
+        className={heroTextAnimationTypewriterTextClasses}
+      >
+        {visibleText}
+        {shouldShowCaret ? (
+          <span
+            aria-hidden="true"
+            data-slot="hero-text-animation-typewriter-caret"
+            className={heroTextAnimationTypewriterCaretClasses}
+          />
+        ) : null}
+      </span>
+    </span>
+  );
+}
+
 function getSegmentTransition(duration: number): Transition {
   return {
     duration,
@@ -455,9 +724,12 @@ export const HeroTextAnimation = forwardRef<
       as = "h1",
       className,
       delay = 0.05,
-      duration = heroTextAnimationMotionTokens.duration.base,
+      duration,
       once = true,
       reducedMotionStrategy = "opacity-only",
+      repeat = false,
+      repeatDelay = defaultRepeatDelay,
+      showCaret = true,
       splitBy = "word",
       stagger,
       text,
@@ -480,8 +752,22 @@ export const HeroTextAnimation = forwardRef<
         : reducedMotionOverride === "never"
           ? false
           : prefersReducedMotion === true;
+    const resolvedDuration =
+      duration ??
+      (animation === "typewriter"
+        ? heroTextAnimationMotionTokens.duration.typewriter
+        : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
+    const canRepeat =
+      hasHydrated &&
+      repeat &&
+      !reducedMotion &&
+      (trigger !== "manual" || active) &&
+      !renderStatic;
+    const repeatDelayMs = Math.max(0, Math.round(repeatDelay * 1000));
+    const repeatTimeoutRef = useRef<number | undefined>(undefined);
+    const [repeatIteration, setRepeatIteration] = useState(0);
     const resolvedSplitBy = animation === "masked-curtain" ? "line" : splitBy;
     const resolvedStagger =
       stagger ??
@@ -493,9 +779,56 @@ export const HeroTextAnimation = forwardRef<
       [resolvedSplitBy, text],
     );
     const accessibleLabel = ariaLabel ?? text;
-    const animatedSegmentCount = segments.filter(
-      (segment) => segment.kind === "text",
-    ).length;
+    const animatedSegmentCount =
+      animation === "typewriter"
+        ? splitTypewriterCharacters(text).length
+        : segments.filter((segment) => segment.kind === "text").length;
+    const visualKey = [
+      animation,
+      repeatIteration,
+      text,
+      resolvedSplitBy,
+      resolvedStagger,
+      resolvedDuration,
+    ].join(":");
+
+    useEffect(() => {
+      window.clearTimeout(repeatTimeoutRef.current);
+      repeatTimeoutRef.current = undefined;
+
+      return () => {
+        window.clearTimeout(repeatTimeoutRef.current);
+        repeatTimeoutRef.current = undefined;
+      };
+    }, [
+      active,
+      animation,
+      delay,
+      once,
+      repeat,
+      repeatDelayMs,
+      reducedMotion,
+      reducedMotionStrategy,
+      resolvedDuration,
+      resolvedSplitBy,
+      resolvedStagger,
+      showCaret,
+      text,
+      trigger,
+    ]);
+
+    const handleAnimationComplete = useCallback(() => {
+      onAnimationComplete?.();
+
+      if (!canRepeat) {
+        return;
+      }
+
+      window.clearTimeout(repeatTimeoutRef.current);
+      repeatTimeoutRef.current = window.setTimeout(() => {
+        setRepeatIteration((iteration) => iteration + 1);
+      }, repeatDelayMs);
+    }, [canRepeat, onAnimationComplete, repeatDelayMs]);
 
     return createElement(
       as,
@@ -506,6 +839,8 @@ export const HeroTextAnimation = forwardRef<
         "data-animation": animation,
         "data-active": active ? "true" : "false",
         "data-once": once ? "true" : "false",
+        "data-repeat": repeat ? "true" : "false",
+        "data-repeat-delay": repeatDelay,
         "data-reduced-motion": reducedMotion ? "true" : "false",
         "data-reduced-motion-strategy": reducedMotionStrategy,
         "data-segment-count": animatedSegmentCount,
@@ -529,29 +864,45 @@ export const HeroTextAnimation = forwardRef<
           renderStaticSegments({ segments, splitBy: resolvedSplitBy })
         ) : animation === "masked-curtain" ? (
           <MaskedCurtainSegments
+            key={visualKey}
             active={active}
             delay={delay}
-            duration={duration}
+            duration={resolvedDuration}
             once={once}
             reducedMotion={reducedMotion}
             segments={segments}
             stagger={resolvedStagger}
             trigger={trigger}
-            onAnimationComplete={onAnimationComplete}
+            onAnimationComplete={handleAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "typewriter" ? (
+          <TypewriterSegments
+            key={visualKey}
+            active={active}
+            delay={delay}
+            duration={resolvedDuration}
+            once={once}
+            reducedMotion={reducedMotion}
+            showCaret={showCaret}
+            text={text}
+            trigger={trigger}
+            onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}
           />
         ) : (
           <StaggeredSegments
+            key={visualKey}
             active={active}
             delay={delay}
-            duration={duration}
+            duration={resolvedDuration}
             once={once}
             reducedMotion={reducedMotion}
             segments={segments}
             splitBy={resolvedSplitBy}
             stagger={resolvedStagger}
             trigger={trigger}
-            onAnimationComplete={onAnimationComplete}
+            onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}
           />
         )}

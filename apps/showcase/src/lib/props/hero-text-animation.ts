@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words" | "masked-curtain"',
+    type: '"stagger-words" | "masked-curtain" | "typewriter"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. Use staggered words for the safest default or masked curtain for line-by-line hero reveals.",
+      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, or typewriter for short developer/product hero copy.",
   },
   {
     prop: "as",
@@ -51,11 +51,32 @@ export const heroTextAnimationProps: PropRow[] = [
       "Controls the fallback when reduced motion is active. Transform motion is removed either way.",
   },
   {
+    prop: "showCaret",
+    type: "boolean",
+    defaultValue: "true",
+    description:
+      "Shows a decorative typewriter caret while typing. The caret is removed after completion and never loops.",
+  },
+  {
+    prop: "repeat",
+    type: "boolean",
+    defaultValue: "false",
+    description:
+      "Replays the decorative visual animation after it completes. Keep it off for static content and enable it for demos or controlled preview surfaces.",
+  },
+  {
+    prop: "repeatDelay",
+    type: "number",
+    defaultValue: "1.8",
+    description:
+      "Delay in seconds before an enabled repeat starts the animation again. Reduced-motion rendering never schedules repeats.",
+  },
+  {
     prop: "delay / duration / stagger",
     type: "number",
-    defaultValue: "0.05 / 0.48 / 0.045",
+    defaultValue: "0.05 / 0.48 / 0.045; typewriter duration 1.1",
     description:
-      "Timing controls in seconds. Defaults keep normal hero copy readable in under one second.",
+      "Timing controls in seconds. Typewriter uses duration as a bounded total reveal time and defaults to the PRD-safe range.",
   },
   {
     prop: "HeroTextAnimationProvider",
