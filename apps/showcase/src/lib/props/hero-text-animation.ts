@@ -10,10 +10,10 @@ export const heroTextAnimationProps: PropRow[] = [
   },
   {
     prop: "animation",
-    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus" | "kinetic-emphasis-pop"',
+    type: '"stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt" | "rotating-keyword" | "gradient-highlight" | "blur-focus" | "kinetic-emphasis-pop" | "scroll-responsive"',
     defaultValue: '"stagger-words"',
     description:
-      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, blur-focus for short cinematic hero headings that resolve quickly into crisp readable text, or kinetic-emphasis-pop for one or two statically emphasized words with a subtle one-shot scale accent.",
+      "Animation style. Use staggered words for the safest default, masked curtain for line-by-line reveals, typewriter for short developer/product hero copy, scramble-decrypt for deterministic decorative glyph resolution, rotating-keyword for a stable sentence with a decorative swapping slot, gradient-highlight for a one-shot tokenized highlight sweep over a complete phrase, blur-focus for short cinematic hero headings that resolve quickly into crisp readable text, kinetic-emphasis-pop for one or two statically emphasized words with a subtle one-shot scale accent, or scroll-responsive for a subtle bounded first-scroll response on storytelling pages.",
   },
   {
     prop: "as",
@@ -117,9 +117,9 @@ export const heroTextAnimationProps: PropRow[] = [
     prop: "delay / duration / stagger",
     type: "number",
     defaultValue:
-      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42",
+      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42; scroll responsive maps the first 220px of scroll",
     description:
-      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, blur-focus, and kinetic-emphasis-pop use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight, blur-focus, and kinetic-emphasis-pop run once by default and use the shared repeat mechanism only when repeat is enabled.",
+      "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, blur-focus, and kinetic-emphasis-pop use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight, blur-focus, and kinetic-emphasis-pop run once by default and use the shared repeat mechanism only when repeat is enabled. Scroll-responsive is tied to page scroll instead of duration and does not replay.",
   },
   {
     prop: "blur-focus content guidance",
@@ -134,6 +134,13 @@ export const heroTextAnimationProps: PropRow[] = [
     defaultValue: "—",
     description:
       "Use kinetic emphasis for one or two words whose importance is also clear from static styling. Reduced motion removes scale animation and keeps the color, weight, and underline emphasis.",
+  },
+  {
+    prop: "scroll-responsive content guidance",
+    type: "storytelling hero heading",
+    defaultValue: "—",
+    description:
+      "Use scroll-responsive only when the complete heading is readable before scroll. The decorative layer maps the first 220px of page scroll to at most -32px of vertical movement and 92% opacity; reduced motion removes the scroll listener and transform style.",
   },
   {
     prop: "HeroTextAnimationProvider",

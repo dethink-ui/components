@@ -57,6 +57,11 @@ describe("HeroTextAnimation accessibility", () => {
               emphasisWords={["handoffs", "risk"]}
               text="Make handoffs and risk impossible to miss."
             />
+            <HeroTextAnimation
+              animation="scroll-responsive"
+              as="h2"
+              text="Let launch copy respond subtly to scroll."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,
@@ -108,6 +113,23 @@ describe("HeroTextAnimation accessibility", () => {
               animation="kinetic-emphasis-pop"
               emphasisWords={["quality", "speed"]}
               text="Balance quality with speed."
+            />
+          </main>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for scroll responsive text in dark theme", async () => {
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <HeroTextAnimationProvider>
+          <main aria-label="Scroll responsive dark accessibility smoke">
+            <HeroTextAnimation
+              animation="scroll-responsive"
+              text="Keep scroll responsive hero copy readable in dark mode."
             />
           </main>
         </HeroTextAnimationProvider>

@@ -12,6 +12,7 @@ import { HeroTextAnimationKineticEmphasisPopHero } from "@/examples/hero-text-an
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
 import { HeroTextAnimationRotatingKeywordHero } from "@/examples/hero-text-animation/rotating-keyword-hero";
+import { HeroTextAnimationScrollResponsiveHero } from "@/examples/hero-text-animation/scroll-responsive-hero";
 import { HeroTextAnimationScrambleDecryptHero } from "@/examples/hero-text-animation/scramble-decrypt-hero";
 import { HeroTextAnimationTypewriterHero } from "@/examples/hero-text-animation/typewriter-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
@@ -114,6 +115,16 @@ export default function HeroTextAnimationPage() {
           >
             <HeroTextAnimationKineticEmphasisPopHero />
           </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/scroll-responsive-hero.tsx"
+            title="Scroll responsive hero section"
+            description="A separate production hero recipe for subtle first-scroll text response with normal document flow, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationScrollResponsiveHero />
+          </ExampleBlock>
         </div>
       </DocsSection>
 
@@ -143,7 +154,9 @@ export function Example() {
           compliance-critical wording. Use static text for copy where every
           character must be immediately reviewable. Limit blur focus to short
           cinematic hero headings that can finish resolving before users need to
-          read the copy.
+          read the copy. Use scroll-responsive text only when the full heading
+          is readable before the first scroll and the next content remains in
+          normal document flow.
         </p>
         <PropsTable
           caption="HeroTextAnimation props"

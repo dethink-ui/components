@@ -25,6 +25,7 @@ void invalidChildrenProps;
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
@@ -993,6 +994,134 @@ describe("HeroTextAnimation", () => {
     );
     expect(setIntervalSpy).not.toHaveBeenCalled();
     expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
+  it("renders scroll-responsive text as readable copy with bounded scroll metadata", () => {
+    render(
+      <HeroTextAnimation
+        animation="scroll-responsive"
+        text="Let the hero respond subtly to the first scroll."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Let the hero respond subtly to the first scroll.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-scroll-responsive="subtle"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "scroll-responsive");
+    expect(heading).toHaveAttribute("data-split-by", "phrase");
+    expect(heading).toHaveAttribute("data-segment-count", "1");
+    expect(motion).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute("data-scroll-range-px", "220");
+    expect(motion).toHaveAttribute("data-scroll-y-min", "-32");
+    expect(motion).toHaveAttribute("data-scroll-y-max", "0");
+    expect(motion).toHaveAttribute("data-scroll-opacity-min", "0.92");
+    expect(motion).toHaveTextContent(
+      "Let the hero respond subtly to the first scroll.",
+    );
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Let the hero respond subtly to the first scroll.");
+  });
+
+  it("updates scroll-responsive transforms within a subtle bounded range", async () => {
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      return window.setTimeout(() => callback(0), 0);
+    });
+    vi.stubGlobal("cancelAnimationFrame", (frameId: number) => {
+      window.clearTimeout(frameId);
+    });
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      value: 0,
+      writable: true,
+    });
+
+    render(
+      <HeroTextAnimation
+        animation="scroll-responsive"
+        text="Scroll-linked copy stays available."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Scroll-linked copy stays available.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-scroll-responsive="subtle"]',
+    );
+
+    expect(motion).toHaveAttribute("data-scroll-progress", "0.000");
+
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      value: 110,
+      writable: true,
+    });
+    window.dispatchEvent(new Event("scroll"));
+
+    await waitFor(() => {
+      expect(motion).toHaveAttribute("data-scroll-progress", "0.500");
+    });
+
+    expect(motion).toHaveAttribute("data-scroll-y", "-16.000");
+    expect(motion).toHaveAttribute("data-scroll-opacity", "0.960");
+
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      value: 999,
+      writable: true,
+    });
+    window.dispatchEvent(new Event("scroll"));
+
+    await waitFor(() => {
+      expect(motion).toHaveAttribute("data-scroll-progress", "1.000");
+    });
+
+    expect(motion).toHaveAttribute("data-scroll-y", "-32.000");
+    expect(motion).toHaveAttribute("data-scroll-opacity", "0.920");
+  });
+
+  it("disables scroll-responsive listeners and transforms in reduced motion", async () => {
+    const addEventListenerSpy = vi.spyOn(window, "addEventListener");
+    const requestAnimationFrame = vi.fn();
+    vi.stubGlobal("requestAnimationFrame", requestAnimationFrame);
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="scroll-responsive"
+          repeat
+          text="Reduced motion keeps scroll-responsive text still."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Reduced motion keeps scroll-responsive text still.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-scroll-responsive="subtle"]',
+    );
+
+    await waitFor(() => {
+      expect(motion).toHaveAttribute("data-reduced-motion", "true");
+    });
+
+    expect(motion).toHaveAttribute("data-scroll-progress", "0.000");
+    expect(motion).toHaveAttribute("data-scroll-y", "0.000");
+    expect(motion).toHaveAttribute("data-scroll-opacity", "1.000");
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
+    expect(addEventListenerSpy).not.toHaveBeenCalledWith(
+      "scroll",
+      expect.any(Function),
+      expect.anything(),
+    );
   });
 
   it("cleans typewriter timers on text changes and unmount", async () => {

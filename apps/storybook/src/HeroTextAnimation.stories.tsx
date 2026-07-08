@@ -36,6 +36,7 @@ const meta = {
         "gradient-highlight",
         "blur-focus",
         "kinetic-emphasis-pop",
+        "scroll-responsive",
       ],
     },
     as: {
@@ -95,6 +96,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "gradient-highlight",
   "blur-focus",
   "kinetic-emphasis-pop",
+  "scroll-responsive",
 ];
 
 export const Base: Story = {};
@@ -424,6 +426,32 @@ export const KineticEmphasisPop: Story = {
   ),
 };
 
+export const ScrollResponsiveText: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-0"
+    >
+      <HeroTextAnimationProvider>
+        <section className="min-w-0 px-8 pt-8 pb-48">
+          <p className="text-muted-foreground mb-3 text-sm font-medium">
+            bounded first-scroll response
+          </p>
+          <HeroTextAnimation
+            animation="scroll-responsive"
+            text="Let the hero respond subtly as the story starts."
+            className="text-foreground max-w-3xl text-4xl leading-tight font-semibold tracking-normal md:text-6xl"
+          />
+          <p className="text-muted-foreground mt-5 max-w-xl text-sm leading-6">
+            The heading is readable before scrolling. The decorative visual
+            layer only shifts up to 32px and fades no lower than 92%.
+          </p>
+        </section>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
 export const RepeatPreview: Story = {
   render: () => (
     <DethinkProvider
@@ -597,6 +625,23 @@ export const KineticEmphasisReducedMotionFallback: Story = {
           animation="kinetic-emphasis-pop"
           emphasisWords={["static", "emphasis"]}
           text="Reduced motion keeps static emphasis without scale."
+          className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const ScrollResponsiveReducedMotionFallback: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="scroll-responsive"
+          text="Reduced motion keeps scroll-responsive copy still."
           className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
         />
       </HeroTextAnimationProvider>
@@ -783,5 +828,39 @@ export const KineticEmphasisInteraction: Story = {
       "data-emphasis-scale",
       "1.045",
     );
+  },
+};
+
+export const ScrollResponsiveInteraction: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <HeroTextAnimation
+          animation="scroll-responsive"
+          text="Scroll responsive headings stay readable."
+          className="text-foreground text-4xl leading-tight font-semibold tracking-normal"
+        />
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const heading = canvas.getByRole("heading", {
+      name: "Scroll responsive headings stay readable.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-scroll-responsive="subtle"]',
+    );
+
+    await expect(heading).toHaveAttribute(
+      "data-animation",
+      "scroll-responsive",
+    );
+    await expect(heading).toHaveAttribute("data-split-by", "phrase");
+    await expect(motion).toHaveAttribute("data-scroll-range-px", "220");
+    await expect(motion).toHaveAttribute("data-scroll-y-min", "-32");
   },
 };

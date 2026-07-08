@@ -137,6 +137,23 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders scroll responsive final text on the server without scroll transform styles", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="scroll-responsive"
+        text="Let scroll-responsive copy stay readable."
+      />,
+    );
+
+    expect(html).toContain('data-animation="scroll-responsive"');
+    expect(html).toContain("Let scroll-responsive copy stay readable.");
+    expect(html).toContain('data-scroll-responsive="subtle"');
+    expect(html).toContain('data-scroll-progress="0.000"');
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates scramble decrypt output without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -341,6 +358,37 @@ describe("HeroTextAnimation SSR", () => {
           animation="kinetic-emphasis-pop"
           emphasisWords={["quality", "speed"]}
           text="Hydrate quality speed emphasis."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates scroll responsive output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="scroll-responsive"
+        text="Hydrate scroll responsive hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="scroll-responsive"
+          text="Hydrate scroll responsive hero text."
         />,
       );
     });
