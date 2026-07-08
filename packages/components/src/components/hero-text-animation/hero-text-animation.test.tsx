@@ -371,6 +371,174 @@ describe("HeroTextAnimation", () => {
     expect(setIntervalSpy).not.toHaveBeenCalled();
   });
 
+  it("decrypts scramble text deterministically to the exact final copy once", async () => {
+    vi.useFakeTimers();
+    const handleComplete = vi.fn();
+
+    render(
+      <HeroTextAnimation
+        animation="scramble-decrypt"
+        delay={0}
+        duration={1.2}
+        text="Decrypt launch copy."
+        onAnimationComplete={handleComplete}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Decrypt launch copy.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"]',
+    );
+    const scrambleText = heading.querySelector(
+      '[data-slot="hero-text-animation-scramble-text"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "scramble-decrypt");
+    expect(heading).toHaveAttribute("data-split-by", "character");
+    expect(heading).toHaveAttribute("data-segment-count", "20");
+    expect(motion).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute("data-scramble-complete", "false");
+    expect(
+      Number(motion?.getAttribute("data-scramble-interval-ms")),
+    ).toBeGreaterThanOrEqual(334);
+    expect(
+      Number(motion?.getAttribute("data-scramble-max-updates")),
+    ).toBeLessThanOrEqual(5);
+    expect(scrambleText).not.toHaveTextContent("Decrypt launch copy.");
+
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    expect(scrambleText).toHaveTextContent("Decrypt launch copy.");
+    expect(motion).toHaveAttribute("data-scramble-complete", "true");
+    expect(handleComplete).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    expect(scrambleText).toHaveTextContent("Decrypt launch copy.");
+    expect(handleComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses deterministic scramble placeholder frames for the same text", () => {
+    vi.useFakeTimers();
+
+    const { unmount } = render(
+      <HeroTextAnimation
+        animation="scramble-decrypt"
+        delay={0}
+        duration={1.2}
+        text="Stable decrypt."
+      />,
+    );
+    const firstFrame = screen
+      .getByRole("heading", { name: "Stable decrypt." })
+      .querySelector(
+        '[data-slot="hero-text-animation-scramble-text"]',
+      )?.textContent;
+
+    unmount();
+
+    render(
+      <HeroTextAnimation
+        animation="scramble-decrypt"
+        delay={0}
+        duration={1.2}
+        text="Stable decrypt."
+      />,
+    );
+    const secondFrame = screen
+      .getByRole("heading", { name: "Stable decrypt." })
+      .querySelector(
+        '[data-slot="hero-text-animation-scramble-text"]',
+      )?.textContent;
+
+    expect(firstFrame).toBe(secondFrame);
+    expect(firstFrame).not.toBe("Stable decrypt.");
+  });
+
+  it("replays scramble text through the shared repeat mechanism", async () => {
+    vi.useFakeTimers();
+    const handleComplete = vi.fn();
+
+    render(
+      <HeroTextAnimation
+        animation="scramble-decrypt"
+        delay={0}
+        duration={0.7}
+        repeat
+        repeatDelay={0.2}
+        text="Replay"
+        onAnimationComplete={handleComplete}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Replay",
+    });
+    const getScrambleText = () =>
+      heading.querySelector('[data-slot="hero-text-animation-scramble-text"]');
+
+    expect(heading).toHaveAttribute("data-repeat", "true");
+    expect(getScrambleText()).not.toHaveTextContent("Replay");
+
+    await act(async () => {
+      vi.advanceTimersByTime(800);
+    });
+
+    expect(getScrambleText()).toHaveTextContent("Replay");
+    expect(handleComplete).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(getScrambleText()).not.toHaveTextContent("Replay");
+
+    await act(async () => {
+      vi.advanceTimersByTime(800);
+    });
+
+    expect(getScrambleText()).toHaveTextContent("Replay");
+    expect(handleComplete).toHaveBeenCalledTimes(2);
+  });
+
+  it("renders scramble final text immediately in reduced motion without timers", () => {
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+    const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="scramble-decrypt"
+          repeat
+          repeatDelay={0.1}
+          text="Reduced motion skips scramble timers."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Reduced motion skips scramble timers.",
+    });
+    const scrambleText = heading.querySelector(
+      '[data-slot="hero-text-animation-scramble-text"]',
+    );
+
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(heading).toHaveAttribute("data-repeat", "true");
+    expect(scrambleText).toHaveTextContent(
+      "Reduced motion skips scramble timers.",
+    );
+    expect(scrambleText).toHaveAttribute("data-reduced-motion", "true");
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
   it("cleans typewriter timers on text changes and unmount", async () => {
     vi.useFakeTimers();
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");

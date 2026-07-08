@@ -49,6 +49,53 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders scramble decrypt final text on the server without timer-only output", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="scramble-decrypt"
+        text="Decrypt concise launch copy once."
+      />,
+    );
+
+    expect(html).toContain('data-animation="scramble-decrypt"');
+    expect(html).toContain("Decrypt concise launch copy once.");
+    expect(html).not.toContain("hero-text-animation-scramble-fragment");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
+  it("hydrates scramble decrypt output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="scramble-decrypt"
+        text="Hydrate scramble hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="scramble-decrypt"
+          text="Hydrate scramble hero text."
+        />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
   it("hydrates without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")

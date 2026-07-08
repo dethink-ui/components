@@ -22,7 +22,7 @@ import {
 import { cn } from "../../utils/cn";
 
 export type HeroTextAnimationKind =
-  "stagger-words" | "masked-curtain" | "typewriter";
+  "stagger-words" | "masked-curtain" | "typewriter" | "scramble-decrypt";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -83,6 +83,7 @@ export const heroTextAnimationMotionTokens = {
     slow: 0.72,
     cinematic: 1.1,
     typewriter: 1.1,
+    scramble: 1.2,
   },
   stagger: {
     word: 0.045,
@@ -128,11 +129,24 @@ const heroTextAnimationTypewriterTextClasses =
   "col-start-1 row-start-1 whitespace-pre-wrap";
 const heroTextAnimationTypewriterCaretClasses =
   "ml-[0.08em] inline-block h-[0.9em] w-[0.08em] translate-y-[0.08em] bg-current align-baseline opacity-70";
+const heroTextAnimationScrambleMotionClasses =
+  "inline-grid min-w-0 max-w-full align-baseline";
+const heroTextAnimationScrambleSizerClasses =
+  "invisible col-start-1 row-start-1 whitespace-pre-wrap";
+const heroTextAnimationScrambleTextClasses =
+  "col-start-1 row-start-1 whitespace-pre-wrap";
+const heroTextAnimationScrambleGlyphClasses =
+  "inline-block whitespace-pre align-baseline";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
 const typewriterMinimumDurationMs = 300;
 const typewriterMaximumDurationMs = 1400;
+const scrambleMinimumIntervalMs = 334;
+const scrambleMinimumDurationMs = 700;
+const scrambleMaximumDurationMs = 1800;
+const scrambleMaximumUpdateCount = 5;
+const scrambleGlyphs = ["-", "+", "=", "~", "*", ":", ".", "_"] as const;
 const defaultRepeatDelay = 1.8;
 
 const HeroTextAnimationReducedMotionContext =
@@ -705,6 +719,229 @@ function TypewriterSegments({
   );
 }
 
+function getScrambleTiming({ duration }: { duration: number }) {
+  const boundedDurationMs = Math.min(
+    scrambleMaximumDurationMs,
+    Math.max(scrambleMinimumDurationMs, Math.round(duration * 1000)),
+  );
+  const updateCount = Math.max(
+    1,
+    Math.min(
+      scrambleMaximumUpdateCount,
+      Math.floor(boundedDurationMs / scrambleMinimumIntervalMs),
+    ),
+  );
+
+  return {
+    intervalMs: Math.max(
+      scrambleMinimumIntervalMs,
+      Math.floor(boundedDurationMs / updateCount),
+    ),
+    updateCount,
+  };
+}
+
+function getScrambleGlyph({
+  character,
+  characterIndex,
+  frame,
+}: {
+  character: string;
+  characterIndex: number;
+  frame: number;
+}) {
+  const codePoint = character.codePointAt(0) ?? 0;
+  const glyphIndex =
+    (codePoint + characterIndex * 7 + frame * 3) % scrambleGlyphs.length;
+
+  return scrambleGlyphs[glyphIndex];
+}
+
+function getScrambleFrameText({
+  frame,
+  text,
+  updateCount,
+}: {
+  frame: number;
+  text: string;
+  updateCount: number;
+}) {
+  if (frame >= updateCount) {
+    return text;
+  }
+
+  const characters = Array.from(text);
+  const revealableCount = characters.filter(
+    (character) => !/\s/.test(character),
+  ).length;
+  let revealableIndex = 0;
+
+  return characters
+    .map((character, characterIndex) => {
+      if (/\s/.test(character)) {
+        return character;
+      }
+
+      revealableIndex += 1;
+
+      const resolveFrame = Math.max(
+        1,
+        Math.ceil(
+          (revealableIndex / Math.max(1, revealableCount)) * updateCount,
+        ),
+      );
+
+      if (frame >= resolveFrame) {
+        return character;
+      }
+
+      return getScrambleGlyph({ character, characterIndex, frame });
+    })
+    .join("");
+}
+
+function ScrambleDecryptSegments({
+  active,
+  delay,
+  duration,
+  once,
+  reducedMotion,
+  text,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  reducedMotion: boolean;
+  text: string;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const { intervalMs, updateCount } = useMemo(
+    () => getScrambleTiming({ duration }),
+    [duration],
+  );
+  const shouldStart =
+    trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
+  const [frame, setFrame] = useState(() => (reducedMotion ? updateCount : 0));
+
+  useEffect(() => {
+    if (reducedMotion) {
+      return;
+    }
+
+    if (!shouldStart || text.length === 0) {
+      return;
+    }
+
+    let cancelled = false;
+    let nextFrame = 0;
+    let intervalId: number | undefined;
+
+    const delayId = window.setTimeout(
+      () => {
+        if (cancelled) {
+          return;
+        }
+
+        setFrame(0);
+        onAnimationStart?.();
+
+        intervalId = window.setInterval(() => {
+          if (cancelled) {
+            return;
+          }
+
+          nextFrame = Math.min(updateCount, nextFrame + 1);
+          setFrame(nextFrame);
+
+          if (nextFrame >= updateCount) {
+            if (intervalId !== undefined) {
+              window.clearInterval(intervalId);
+            }
+            onAnimationComplete?.();
+          }
+        }, intervalMs);
+      },
+      Math.max(0, Math.round(delay * 1000)),
+    );
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(delayId);
+
+      if (intervalId !== undefined) {
+        window.clearInterval(intervalId);
+      }
+    };
+  }, [
+    delay,
+    intervalMs,
+    onAnimationComplete,
+    onAnimationStart,
+    reducedMotion,
+    shouldStart,
+    text,
+    updateCount,
+  ]);
+
+  const normalizedFrame = reducedMotion
+    ? updateCount
+    : !shouldStart
+      ? 0
+      : Math.min(frame, updateCount);
+  const visualText = getScrambleFrameText({
+    frame: normalizedFrame,
+    text,
+    updateCount,
+  });
+  const finalCharacters = useMemo(() => Array.from(text), [text]);
+  const isComplete = normalizedFrame >= updateCount;
+
+  return (
+    <span
+      ref={inViewRef}
+      aria-hidden="true"
+      data-slot="hero-text-animation-motion"
+      data-scramble-complete={isComplete ? "true" : "false"}
+      data-scramble-interval-ms={intervalMs}
+      data-scramble-max-updates={updateCount}
+      data-split-by="character"
+      className={heroTextAnimationScrambleMotionClasses}
+    >
+      <span
+        data-slot="hero-text-animation-scramble-sizer"
+        className={heroTextAnimationScrambleSizerClasses}
+      >
+        {text}
+      </span>
+      <span
+        data-slot="hero-text-animation-scramble-text"
+        data-reduced-motion={reducedMotion ? "true" : undefined}
+        className={heroTextAnimationScrambleTextClasses}
+      >
+        {Array.from(visualText).map((character, index) => (
+          <span
+            key={`${index}-${character}`}
+            data-slot="hero-text-animation-scramble-fragment"
+            data-scramble-resolved={
+              character === finalCharacters[index] ? "true" : "false"
+            }
+            className={heroTextAnimationScrambleGlyphClasses}
+          >
+            {character}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 function getSegmentTransition(duration: number): Transition {
   return {
     duration,
@@ -754,9 +991,11 @@ export const HeroTextAnimation = forwardRef<
           : prefersReducedMotion === true;
     const resolvedDuration =
       duration ??
-      (animation === "typewriter"
-        ? heroTextAnimationMotionTokens.duration.typewriter
-        : heroTextAnimationMotionTokens.duration.base);
+      (animation === "scramble-decrypt"
+        ? heroTextAnimationMotionTokens.duration.scramble
+        : animation === "typewriter"
+          ? heroTextAnimationMotionTokens.duration.typewriter
+          : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
     const canRepeat =
@@ -780,9 +1019,13 @@ export const HeroTextAnimation = forwardRef<
     );
     const accessibleLabel = ariaLabel ?? text;
     const animatedSegmentCount =
-      animation === "typewriter"
+      animation === "typewriter" || animation === "scramble-decrypt"
         ? splitTypewriterCharacters(text).length
         : segments.filter((segment) => segment.kind === "text").length;
+    const visualSplitBy =
+      animation === "typewriter" || animation === "scramble-decrypt"
+        ? "character"
+        : resolvedSplitBy;
     const visualKey = [
       animation,
       repeatIteration,
@@ -845,7 +1088,7 @@ export const HeroTextAnimation = forwardRef<
         "data-reduced-motion-strategy": reducedMotionStrategy,
         "data-segment-count": animatedSegmentCount,
         "data-slot": "hero-text-animation",
-        "data-split-by": resolvedSplitBy,
+        "data-split-by": visualSplitBy,
         "data-testid": dataTestId,
         "data-trigger": trigger,
       },
@@ -885,6 +1128,19 @@ export const HeroTextAnimation = forwardRef<
             once={once}
             reducedMotion={reducedMotion}
             showCaret={showCaret}
+            text={text}
+            trigger={trigger}
+            onAnimationComplete={handleAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "scramble-decrypt" ? (
+          <ScrambleDecryptSegments
+            key={visualKey}
+            active={active}
+            delay={delay}
+            duration={resolvedDuration}
+            once={once}
+            reducedMotion={reducedMotion}
             text={text}
             trigger={trigger}
             onAnimationComplete={handleAnimationComplete}

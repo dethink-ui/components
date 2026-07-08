@@ -28,6 +28,11 @@ describe("HeroTextAnimation accessibility", () => {
               as="h2"
               text="Type concise launch copy once."
             />
+            <HeroTextAnimation
+              animation="scramble-decrypt"
+              as="p"
+              text="Decrypt concise launch copy once."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,

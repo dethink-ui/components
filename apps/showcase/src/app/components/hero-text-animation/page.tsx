@@ -8,6 +8,7 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
+import { HeroTextAnimationScrambleDecryptHero } from "@/examples/hero-text-animation/scramble-decrypt-hero";
 import { HeroTextAnimationTypewriterHero } from "@/examples/hero-text-animation/typewriter-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
 
@@ -59,6 +60,16 @@ export default function HeroTextAnimationPage() {
           >
             <HeroTextAnimationTypewriterHero />
           </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/scramble-decrypt-hero.tsx"
+            title="Scramble decrypt hero section"
+            description="A separate production hero recipe for deterministic decrypt copy with bounded glyph updates, navbar composition, CTAs, and reduced-motion-safe output."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationScrambleDecryptHero />
+          </ExampleBlock>
         </div>
       </DocsSection>
 
@@ -83,6 +94,11 @@ export function Example() {
         title="Props"
         description="HeroTextAnimation renders real text and uses a decorative visual layer only for the animation."
       >
+        <p className="text-muted-foreground mb-6 max-w-3xl text-sm leading-6">
+          Avoid scramble and decrypt effects for legal, medical, pricing, or
+          compliance-critical wording. Use static text for copy where every
+          character must be immediately reviewable.
+        </p>
         <PropsTable
           caption="HeroTextAnimation props"
           rows={heroTextAnimationProps}

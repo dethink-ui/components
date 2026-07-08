@@ -26,7 +26,12 @@ const meta = {
   argTypes: {
     animation: {
       control: "inline-radio",
-      options: ["stagger-words", "masked-curtain", "typewriter"],
+      options: [
+        "stagger-words",
+        "masked-curtain",
+        "typewriter",
+        "scramble-decrypt",
+      ],
     },
     as: {
       control: "inline-radio",
@@ -80,6 +85,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "stagger-words",
   "masked-curtain",
   "typewriter",
+  "scramble-decrypt",
 ];
 
 export const Base: Story = {};
@@ -174,6 +180,44 @@ export const TypewriterReveal: Story = {
   ),
 };
 
+export const ScrambleDecryptReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider>
+        <div className="grid gap-8 lg:grid-cols-2">
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              bounded decrypt
+            </p>
+            <HeroTextAnimation
+              animation="scramble-decrypt"
+              duration={1.2}
+              text="Decrypt the launch message once."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+          <section className="min-w-0">
+            <p className="text-muted-foreground mb-3 text-sm font-medium">
+              replay preview
+            </p>
+            <HeroTextAnimation
+              animation="scramble-decrypt"
+              duration={1}
+              repeat
+              repeatDelay={1.4}
+              text="Replay without exceeding flash limits."
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+            />
+          </section>
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
 export const RepeatPreview: Story = {
   render: () => (
     <DethinkProvider
@@ -242,6 +286,29 @@ export const TypewriterReducedMotionFallbacks: Story = {
               animation="typewriter"
               reducedMotionStrategy={strategy}
               text={`${strategy} reduced motion shows the full typed headline.`}
+              className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
+            />
+          ))}
+        </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const ScrambleReducedMotionFallbacks: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <div className="grid gap-8 lg:grid-cols-2">
+          {reducedMotionStrategies.map((strategy) => (
+            <HeroTextAnimation
+              key={strategy}
+              animation="scramble-decrypt"
+              reducedMotionStrategy={strategy}
+              text={`${strategy} reduced motion shows the decrypted headline.`}
               className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
             />
           ))}
