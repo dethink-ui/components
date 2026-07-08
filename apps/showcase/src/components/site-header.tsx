@@ -15,7 +15,10 @@ import { GithubIcon } from "@/components/icons";
 import { ThemePicker } from "@/components/theme-picker";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-const navLinks = [{ href: "/components", label: "Components" }];
+const navLinks = [
+  { href: "/components", label: "Components" },
+  { href: "/recipes", label: "Recipes" },
+];
 
 function BrandMark() {
   return (

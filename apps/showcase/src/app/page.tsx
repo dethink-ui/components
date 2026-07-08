@@ -37,6 +37,11 @@ import {
 } from "@/components/component-teasers";
 import { LandingHero } from "@/components/landing-hero";
 import { componentCatalog } from "@/lib/components-meta";
+import {
+  featuredRecipes,
+  getRecipeCategoryMeta,
+  getRecipeComponentMetas,
+} from "@/lib/recipes-meta";
 
 const teasers: Record<string, ReactNode> = {
   box: <BoxTeaser />,
@@ -79,6 +84,79 @@ export default function HomePage() {
       <section className="sc-hero-backdrop border-border/70 border-b">
         <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <LandingHero />
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="featured-recipes-heading"
+        className="border-border/70 bg-muted/25 border-b"
+      >
+        <div className="mx-auto box-border w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div className="space-y-2">
+              <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
+                Recipes
+              </p>
+              <h2
+                id="featured-recipes-heading"
+                className="font-heading text-3xl font-bold tracking-tight"
+              >
+                See the suite in complete product flows
+              </h2>
+              <p className="text-muted-foreground max-w-2xl text-sm leading-6">
+                Recipes compose the documented components into realistic auth,
+                landing, dashboard, and CRUD screens with source you can read.
+              </p>
+            </div>
+            <Link
+              href="/recipes"
+              className="text-primary inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
+            >
+              Browse recipes
+              <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+          </div>
+          <ul className="grid gap-5 lg:grid-cols-4">
+            {featuredRecipes.map((recipe) => {
+              const category = getRecipeCategoryMeta(recipe.category);
+              const components = getRecipeComponentMetas(recipe).slice(0, 3);
+
+              return (
+                <li key={recipe.slug}>
+                  <Link
+                    href={`/recipes/${recipe.slug}`}
+                    className="group border-border bg-background hover:border-primary/50 hover:bg-primary/[0.04] flex h-full flex-col gap-4 rounded-xl border p-5 shadow-sm transition-colors"
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="bg-primary/10 text-primary rounded-full px-2.5 py-1 text-xs font-medium">
+                        {category.name}
+                      </span>
+                      <ArrowRight
+                        aria-hidden="true"
+                        className="text-muted-foreground group-hover:text-primary size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+                      />
+                    </span>
+                    <span className="font-heading text-lg font-semibold">
+                      {recipe.title}
+                    </span>
+                    <span className="text-muted-foreground text-sm leading-6">
+                      {recipe.summary}
+                    </span>
+                    <span className="mt-auto flex flex-wrap gap-1.5 pt-2">
+                      {components.map((component) => (
+                        <span
+                          key={component.slug}
+                          className="bg-muted text-muted-foreground rounded px-2 py-1 text-xs"
+                        >
+                          {component.name}
+                        </span>
+                      ))}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </section>
 
