@@ -110,8 +110,8 @@ describe("HeroTextAnimation SSR", () => {
 
     expect(html).toContain('data-animation="blur-focus"');
     expect(html).toContain("Bring launch copy into focus.");
-    expect(html).toContain('data-blur-final="0px"');
-    expect(html).not.toContain("blur(6px)");
+    expect(html).toContain('data-blur-final="0em"');
+    expect(html).not.toContain("blur(");
     expect(html).not.toContain("opacity:0");
     expect(html).not.toContain("transform:");
     expect(html).not.toContain("translate");
@@ -154,7 +154,7 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
-  it("renders svg stroke draw final text and filled decorative paths on the server", () => {
+  it("renders svg stroke draw final filled letterforms on the server", () => {
     const html = renderToString(
       <HeroTextAnimation
         animation="svg-stroke-draw"
@@ -165,11 +165,13 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).toContain('data-animation="svg-stroke-draw"');
     expect(html).toContain("Draw a launch path without SVG-only text.");
     expect(html).toContain('data-svg-stroke-draw="true"');
-    expect(html).toContain('data-svg-path-valid="true"');
+    expect(html).toContain('data-svg-stroke-draw-mode="letter-trace"');
+    expect(html).toContain('data-svg-line-count="1"');
     expect(html).toContain('aria-hidden="true"');
     expect(html).toContain("hero-text-animation-svg-stroke");
-    expect(html).toContain('pathLength="1"');
+    expect(html).toContain('data-slot="hero-text-animation-svg-line"');
     expect(html).toContain('fill-opacity="1"');
+    expect(html).not.toContain('stroke-dashoffset="');
     expect(html).not.toContain("opacity:0");
     expect(html).not.toContain("transform:");
     expect(html).not.toContain("translate");

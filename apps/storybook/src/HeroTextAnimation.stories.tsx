@@ -438,15 +438,13 @@ export const SvgStrokeDrawReveal: Story = {
         <HeroTextAnimationProvider>
           <section className="min-w-0">
             <p className="text-muted-foreground mb-3 text-sm font-medium">
-              decorative path draw
+              single line — outline to fill
             </p>
             <HeroTextAnimation
               animation="svg-stroke-draw"
-              duration={1.15}
-              repeat
-              repeatDelay={1.5}
-              text="Draw a clear path under the launch promise."
-              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+              duration={1.4}
+              text="Draw it live."
+              className="text-foreground font-semibold tracking-normal"
             />
           </section>
         </HeroTextAnimationProvider>
@@ -458,15 +456,13 @@ export const SvgStrokeDrawReveal: Story = {
         <HeroTextAnimationProvider>
           <section className="min-w-0">
             <p className="text-muted-foreground mb-3 text-sm font-medium">
-              custom viewBox path
+              multi line — hard breaks trace per line
             </p>
             <HeroTextAnimation
               animation="svg-stroke-draw"
-              duration={1}
-              svgPathData="M14 52 C104 72 218 70 306 54 C384 40 462 40 546 56 L544 74 C430 58 348 62 270 74 C174 88 82 80 16 68 Z"
-              svgViewBox="0 0 560 96"
-              text="Keep the real headline in HTML."
-              className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+              duration={1.4}
+              text={"Make it\nunforgettable."}
+              className="text-foreground font-semibold tracking-normal"
             />
           </section>
         </HeroTextAnimationProvider>
@@ -691,8 +687,8 @@ export const SvgStrokeDrawReducedMotionFallback: Story = {
         <HeroTextAnimation
           animation="svg-stroke-draw"
           repeat
-          text="Reduced motion keeps the drawn path settled."
-          className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+          text="Reduced motion settles filled."
+          className="text-foreground font-semibold tracking-normal"
         />
       </HeroTextAnimationProvider>
     </DethinkProvider>
@@ -856,8 +852,8 @@ export const BlurFocusMobilePerformanceFixture: Story = {
 
     await expect(heading).toHaveAttribute("data-animation", "blur-focus");
     await expect(heading).toHaveAttribute("data-split-by", "phrase");
-    await expect(motion).toHaveAttribute("data-blur-initial", "6px");
-    await expect(motion).toHaveAttribute("data-blur-final", "0px");
+    await expect(motion).toHaveAttribute("data-blur-initial", "0.2em");
+    await expect(motion).toHaveAttribute("data-blur-final", "0em");
   },
 };
 
@@ -893,7 +889,7 @@ export const KineticEmphasisInteraction: Story = {
     await expect(heading).toHaveAttribute("data-emphasis-count", "2");
     await expect(emphasizedWords[0]).toHaveAttribute(
       "data-emphasis-scale",
-      "1.045",
+      "1.08",
     );
   },
 };
@@ -941,10 +937,8 @@ export const SvgStrokeDrawInteraction: Story = {
       <HeroTextAnimationProvider>
         <HeroTextAnimation
           animation="svg-stroke-draw"
-          svgPathData="M10 48 C116 72 252 70 390 48"
-          svgViewBox="0 0 400 96"
           text="Stroke draw headings keep real text."
-          className="text-foreground text-4xl leading-tight font-semibold tracking-normal"
+          className="text-foreground font-semibold tracking-normal"
         />
       </HeroTextAnimationProvider>
     </DethinkProvider>
@@ -958,11 +952,22 @@ export const SvgStrokeDrawInteraction: Story = {
       '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
     );
     const svg = heading.querySelector('[data-slot="hero-text-animation-svg"]');
+    const outline = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-line"]',
+    );
+    const fill = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-fill"]',
+    );
 
     await expect(heading).toHaveAttribute("data-animation", "svg-stroke-draw");
-    await expect(heading).toHaveAttribute("data-split-by", "path");
-    await expect(motion).toHaveAttribute("data-svg-path-valid", "true");
-    await expect(motion).toHaveAttribute("data-svg-view-box-valid", "true");
+    await expect(heading).toHaveAttribute("data-split-by", "line");
+    await expect(motion).toHaveAttribute(
+      "data-svg-stroke-draw-mode",
+      "letter-trace",
+    );
+    await expect(motion).toHaveAttribute("data-svg-line-count", "1");
     await expect(svg).toHaveAttribute("aria-hidden", "true");
+    await expect(outline).toHaveAttribute("fill", "none");
+    await expect(fill).toHaveAttribute("fill", "currentColor");
   },
 };

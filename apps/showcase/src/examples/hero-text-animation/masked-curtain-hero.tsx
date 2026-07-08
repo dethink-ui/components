@@ -2,79 +2,28 @@
 
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuItemDescription,
-  DropdownMenuItemIcon,
-  DropdownMenuItemLabel,
-  DropdownMenuLabel,
-  DropdownMenuSection,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   HeroTextAnimation,
   HeroTextAnimationProvider,
-  RevealButton,
 } from "@dethink/components";
-import {
-  ArrowRight,
-  BookOpenCheck,
-  ChevronDown,
-  Eye,
-  Gauge,
-  Layers3,
-  LifeBuoy,
-  MousePointer2,
-  PlayCircle,
-  Rocket,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
-const navItems = [
-  { href: "#examples", label: "Examples" },
-  { href: "#installation", label: "Install" },
-  { href: "#props", label: "API" },
-];
+const navItems = ["Work", "Studio", "Journal", "Contact"];
 
-const resourceItems = [
+const disciplines = [
   {
-    icon: Layers3,
-    label: "Reveal structure",
-    description: "Use the curtain mask when each line needs a crisp entrance.",
+    index: "01",
+    title: "Brand systems",
+    description: "Identity, voice, and design language built to scale.",
   },
   {
-    icon: ShieldCheck,
-    label: "Accessible headline",
-    description: "Keep one readable heading while the visual layer animates.",
+    index: "02",
+    title: "Web & product",
+    description: "Editorial marketing sites and considered product UI.",
   },
   {
-    icon: LifeBuoy,
-    label: "Motion fallback",
-    description: "Respect reduced-motion preferences without hiding content.",
-  },
-];
-
-const heroSignals = [
-  {
-    icon: Eye,
-    title: "Clear reveal",
-    description: "The mask moves away from the words without changing layout.",
-  },
-  {
-    icon: MousePointer2,
-    title: "Action ready",
-    description: "Primary and secondary CTAs stay available during motion.",
-  },
-  {
-    icon: Gauge,
-    title: "Measured pace",
-    description: "Short timing supports polish without slowing comprehension.",
-  },
-  {
-    icon: BookOpenCheck,
-    title: "Semantic copy",
-    description: "The visible animation mirrors the accessible text value.",
+    index: "03",
+    title: "Motion & film",
+    description: "Title sequences, launch films, and interface motion.",
   },
 ];
 
@@ -83,158 +32,92 @@ export function HeroTextAnimationMaskedCurtainHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-masked-curtain-heading"
-        className="bg-background text-foreground border-border rounded-md border"
+        className="bg-background text-foreground border-border overflow-hidden rounded-md border"
       >
-        <div className="mx-auto max-w-5xl px-5 py-5 sm:px-8 lg:px-10">
-          <header className="border-border bg-background/95 flex min-h-14 items-center gap-4 rounded-md border px-3 shadow-sm">
+        <header className="border-border flex items-center justify-between gap-4 border-b px-5 py-4 sm:px-8 lg:px-12">
+          <a
+            href="#examples"
+            className="font-heading focus-visible:ring-ring focus-visible:ring-offset-background rounded-sm text-xs font-semibold tracking-[0.28em] uppercase outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          >
+            Studio Dethink
+          </a>
+          <nav
+            aria-label="Studio navigation"
+            className="hidden items-center gap-7 md:flex"
+          >
+            {navItems.map((item) => (
+              <a
+                key={item}
+                href="#examples"
+                className="text-muted-foreground hover:text-foreground text-xs font-medium tracking-[0.14em] uppercase transition-colors"
+              >
+                {item}
+              </a>
+            ))}
+          </nav>
+          <span className="text-muted-foreground hidden text-xs tracking-[0.2em] uppercase sm:inline">
+            Est. MMXXVI
+          </span>
+        </header>
+
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-24">
+          <p className="text-muted-foreground text-xs font-medium tracking-[0.24em] uppercase">
+            Independent design &amp; motion studio
+          </p>
+          <span
+            aria-hidden="true"
+            className="bg-border mx-auto mt-6 block h-px w-10"
+          />
+          <HeroTextAnimation
+            animation="masked-curtain"
+            ariaLabel="We design brands that move with intent."
+            id="hero-text-masked-curtain-heading"
+            repeat
+            repeatDelay={1.8}
+            text={"We design brands\nthat move with intent."}
+            className="font-heading text-foreground mx-auto mt-8 max-w-3xl text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
+          />
+          <p className="text-muted-foreground mx-auto mt-7 max-w-xl text-base leading-7 sm:text-lg">
+            A small studio for founders who care about the details. We shape
+            identity, product, and motion into one deliberate, unhurried whole.
+          </p>
+          <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Button asChild size="lg" variant="outline">
+              <a href="#installation">Start a project</a>
+            </Button>
             <a
               href="#examples"
-              aria-label="Dethink masked curtain hero example"
-              className="focus-visible:ring-ring focus-visible:ring-offset-background flex min-w-0 shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="text-foreground focus-visible:ring-ring focus-visible:ring-offset-background group inline-flex items-center gap-1.5 rounded-sm text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             >
-              <span
+              View selected work
+              <ArrowUpRight
                 aria-hidden="true"
-                className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-md"
-              >
-                <Sparkles className="size-4" />
-              </span>
-              <span className="font-heading hidden text-sm font-semibold sm:inline">
-                Dethink Hero
-              </span>
+                className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              />
             </a>
-
-            <nav
-              aria-label="Masked curtain recipe navigation"
-              className="hidden min-w-0 flex-1 md:block"
-            >
-              <ul className="flex items-center justify-center gap-1">
-                {navItems.map((item) => (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring focus-visible:ring-offset-background inline-flex h-9 items-center rounded-md px-3 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div className="ml-auto flex shrink-0 items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  size="sm"
-                  variant="ghost"
-                  className="gap-1.5"
-                >
-                  Resources
-                  <ChevronDown aria-hidden="true" className="size-3.5" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent placement="bottom end" showArrow>
-                  <DropdownMenuSection>
-                    <DropdownMenuLabel>Masked curtain</DropdownMenuLabel>
-                    {resourceItems.map(({ icon: Icon, label, description }) => (
-                      <DropdownMenuItem key={label} textValue={label}>
-                        <DropdownMenuItemIcon aria-hidden="true">
-                          <Icon />
-                        </DropdownMenuItemIcon>
-                        <DropdownMenuItemLabel>{label}</DropdownMenuItemLabel>
-                        <DropdownMenuItemDescription>
-                          {description}
-                        </DropdownMenuItemDescription>
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem textValue="Open launch checklist">
-                      <DropdownMenuItemIcon aria-hidden="true">
-                        <BookOpenCheck />
-                      </DropdownMenuItemIcon>
-                      <DropdownMenuItemLabel>
-                        Launch checklist
-                      </DropdownMenuItemLabel>
-                    </DropdownMenuItem>
-                  </DropdownMenuSection>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <RevealButton
-                className="hidden sm:inline-flex"
-                icon={<PlayCircle />}
-                label="Preview"
-                size="sm"
-                variant="outline"
-              />
-              <RevealButton
-                icon={<Rocket />}
-                label="Start"
-                size="sm"
-                variant="solid"
-              />
-            </div>
-          </header>
-        </div>
-
-        <div className="mx-auto grid max-w-5xl gap-8 px-5 pt-6 pb-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:px-10 lg:pt-10 lg:pb-14">
-          <div className="min-w-0 space-y-7">
-            <div className="border-border bg-muted/50 text-muted-foreground inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
-              <Sparkles
-                aria-hidden="true"
-                className="text-primary size-3.5 shrink-0"
-              />
-              <span className="truncate">Masked curtain hero recipe</span>
-            </div>
-
-            <div className="space-y-5">
-              <HeroTextAnimation
-                animation="masked-curtain"
-                ariaLabel="Turn launch headlines into clear first impressions."
-                id="hero-text-masked-curtain-heading"
-                repeat
-                repeatDelay={1.6}
-                text={"Turn launch headlines into\nclear first impressions."}
-                className="font-heading text-foreground max-w-3xl text-4xl leading-[1.03] font-semibold tracking-normal sm:text-5xl lg:text-6xl"
-              />
-              <p className="text-muted-foreground max-w-xl text-base leading-7 sm:text-lg">
-                Use the masked curtain reveal when a headline needs a confident
-                line-by-line entrance. The surrounding navigation, actions, and
-                proof points remain stable so the section feels production
-                ready.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" rightIcon={<ArrowRight />}>
-                <a href="#installation">Install component</a>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <a href="#props">Review props</a>
-              </Button>
-            </div>
           </div>
-
-          <ul className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            {heroSignals.map(({ icon: Icon, title, description }) => (
-              <li
-                key={title}
-                className="border-border bg-muted/35 flex min-w-0 gap-3 rounded-md border p-4"
-              >
-                <span
-                  aria-hidden="true"
-                  className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-md"
-                >
-                  <Icon className="size-4" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-semibold">{title}</span>
-                  <span className="text-muted-foreground mt-1 block text-sm leading-6">
-                    {description}
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ul>
         </div>
+
+        <ul className="border-border grid border-t sm:grid-cols-3">
+          {disciplines.map(({ index, title, description }, position) => (
+            <li
+              key={title}
+              className={`px-5 py-8 sm:px-8 lg:px-12 ${
+                position > 0
+                  ? "border-border border-t sm:border-t-0 sm:border-l"
+                  : ""
+              }`}
+            >
+              <span className="text-muted-foreground font-mono text-xs tracking-widest">
+                {index}
+              </span>
+              <p className="font-heading mt-3 text-lg font-semibold">{title}</p>
+              <p className="text-muted-foreground mt-1.5 text-sm leading-6">
+                {description}
+              </p>
+            </li>
+          ))}
+        </ul>
       </section>
     </HeroTextAnimationProvider>
   );

@@ -287,27 +287,24 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-repeat-delay", "0.2");
     expect(getTypewriterText()).toHaveTextContent("");
 
+    // Typing now fills the requested duration (~50ms/char + 50ms delay ≈ 350ms
+    // for 6 characters) instead of snapping to a fixed fast interval.
     await act(async () => {
-      vi.advanceTimersByTime(250);
+      vi.advanceTimersByTime(400);
     });
 
     expect(getTypewriterText()).toHaveTextContent("Replay");
     expect(handleComplete).toHaveBeenCalledTimes(1);
 
+    // repeatDelay (200ms) elapses and the visual clears to replay.
     await act(async () => {
-      vi.advanceTimersByTime(150);
-    });
-
-    expect(getTypewriterText()).toHaveTextContent("Replay");
-
-    await act(async () => {
-      vi.advanceTimersByTime(50);
+      vi.advanceTimersByTime(160);
     });
 
     expect(getTypewriterText()).toHaveTextContent("");
 
     await act(async () => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(400);
     });
 
     expect(getTypewriterText()).toHaveTextContent("Replay");
@@ -401,12 +398,14 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-segment-count", "20");
     expect(motion).toHaveAttribute("aria-hidden", "true");
     expect(motion).toHaveAttribute("data-scramble-complete", "false");
+    // Snappy cadence: a short interval and many frames so the decrypt reads as
+    // rapid cipher churn rather than a few sluggish steps.
     expect(
       Number(motion?.getAttribute("data-scramble-interval-ms")),
-    ).toBeGreaterThanOrEqual(334);
+    ).toBeLessThanOrEqual(60);
     expect(
       Number(motion?.getAttribute("data-scramble-max-updates")),
-    ).toBeLessThanOrEqual(5);
+    ).toBeGreaterThanOrEqual(12);
     expect(scrambleText).not.toHaveTextContent("Decrypt launch copy.");
 
     await act(async () => {
@@ -775,12 +774,12 @@ describe("HeroTextAnimation", () => {
       ),
     ).toHaveTextContent("Highlight the conversion-critical phrase.");
     expect(motion).toHaveAttribute("aria-hidden", "true");
-    expect(motion).toHaveClass("text-transparent", "underline");
+    expect(motion).toHaveClass("text-transparent", "bg-clip-text", "bg-no-repeat");
     expect(motion?.getAttribute("style")).toContain(
       "--hero-text-animation-highlight-base: var(--dt-color-foreground)",
     );
     expect(motion?.getAttribute("style")).toContain(
-      "--hero-text-animation-highlight-sheen: color-mix(in oklab, var(--dt-color-foreground) 58%, var(--dt-color-background) 42%)",
+      "--hero-text-animation-highlight-sheen: color-mix(in oklab, var(--dt-color-primary) 55%, var(--dt-color-background) 45%)",
     );
     expect(motion?.getAttribute("style")).not.toMatch(/#[0-9a-f]{3,8}|rgb/i);
   });
@@ -817,12 +816,10 @@ describe("HeroTextAnimation", () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 
-  it("renders svg stroke draw as decorative paths over real text", () => {
+  it("renders svg stroke draw by tracing the heading letterforms", () => {
     render(
       <HeroTextAnimation
         animation="svg-stroke-draw"
-        svgPathData="M10 48 C120 72 250 72 390 48"
-        svgViewBox="0 0 400 96"
         text="Draw attention without replacing the headline."
       />,
     );
@@ -837,29 +834,38 @@ describe("HeroTextAnimation", () => {
       '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
     );
     const svg = heading.querySelector('[data-slot="hero-text-animation-svg"]');
-    const path = heading.querySelector(
-      '[data-slot="hero-text-animation-svg-path"]',
+    const outline = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-line"]',
+    );
+    const fill = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-fill"]',
     );
 
     expect(heading).toHaveAttribute("data-animation", "svg-stroke-draw");
-    expect(heading).toHaveAttribute("data-split-by", "path");
+    expect(heading).toHaveAttribute("data-split-by", "line");
     expect(heading).toHaveAttribute("data-segment-count", "1");
     expect(visual).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute(
+      "data-svg-stroke-draw-mode",
+      "letter-trace",
+    );
+    expect(motion).toHaveAttribute("data-svg-line-count", "1");
     expect(motion).toHaveTextContent(
       "Draw attention without replacing the headline.",
     );
-    expect(motion).toHaveAttribute("data-svg-path-valid", "true");
-    expect(motion).toHaveAttribute("data-svg-view-box-valid", "true");
     expect(svg).toHaveAttribute("aria-hidden", "true");
-    expect(svg).toHaveAttribute("viewBox", "0 0 400 96");
-    expect(path).toHaveAttribute("d", "M10 48 C120 72 250 72 390 48");
-    expect(path).toHaveAttribute(
+    expect(svg).toHaveAttribute("preserveAspectRatio", "xMidYMid meet");
+    expect(outline).toHaveTextContent(
+      "Draw attention without replacing the headline.",
+    );
+    expect(outline).toHaveAttribute(
       "stroke",
       "var(--hero-text-animation-svg-stroke)",
     );
-    expect(path).toHaveAttribute("fill", "var(--hero-text-animation-svg-fill)");
+    expect(outline).toHaveAttribute("fill", "none");
+    expect(fill).toHaveAttribute("fill", "currentColor");
     expect(motion?.getAttribute("style")).toContain(
-      "--hero-text-animation-svg-stroke: color-mix(in oklab, var(--dt-color-foreground) 78%, var(--dt-color-primary) 22%)",
+      "--hero-text-animation-svg-stroke: color-mix(in oklab, var(--dt-color-foreground) 82%, var(--dt-color-primary) 18%)",
     );
     expect(motion?.getAttribute("style")).not.toMatch(/#[0-9a-f]{3,8}|rgb/i);
     expect(
@@ -869,40 +875,63 @@ describe("HeroTextAnimation", () => {
     ).toHaveTextContent("Draw attention without replacing the headline.");
   });
 
-  it("keeps real text available when svg path data or viewBox are invalid", () => {
+  it("traces one line per hard break in the heading text", () => {
     render(
       <HeroTextAnimation
         animation="svg-stroke-draw"
-        svgPathData="not a valid path"
-        svgViewBox="0 0 0 96"
-        text="Invalid path data still leaves readable text."
+        text={"Make it\nunforgettable."}
       />,
     );
 
     const heading = screen.getByRole("heading", {
-      name: "Invalid path data still leaves readable text.",
+      name: /Make it\s+unforgettable\./,
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
+    );
+    const lines = heading.querySelectorAll(
+      '[data-slot="hero-text-animation-svg-line"]',
+    );
+
+    expect(heading).toHaveAttribute("data-segment-count", "2");
+    expect(motion).toHaveAttribute("data-svg-line-count", "2");
+    expect(lines).toHaveLength(2);
+    expect(lines[0]).toHaveTextContent("Make it");
+    expect(lines[1]).toHaveTextContent("unforgettable.");
+  });
+
+  it("frames the trace automatically when the view box override is invalid", () => {
+    render(
+      <HeroTextAnimation
+        animation="svg-stroke-draw"
+        svgViewBox="0 0 0 96"
+        text="Invalid view box still leaves readable text."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Invalid view box still leaves readable text.",
     });
     const motion = heading.querySelector(
       '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
     );
 
     expect(motion).toHaveTextContent(
-      "Invalid path data still leaves readable text.",
+      "Invalid view box still leaves readable text.",
     );
-    expect(motion).toHaveAttribute("data-svg-path-count", "0");
-    expect(motion).toHaveAttribute("data-svg-path-valid", "false");
+    expect(motion).toHaveAttribute("data-svg-line-count", "1");
     expect(motion).toHaveAttribute("data-svg-view-box-valid", "false");
     expect(
-      heading.querySelector('[data-slot="hero-text-animation-svg-path"]'),
-    ).not.toBeInTheDocument();
+      heading.querySelector('[data-slot="hero-text-animation-svg-line"]'),
+    ).toBeInTheDocument();
   });
 
-  it("can expose an explicit svg alternative while hiding decorative paths", () => {
+  it("can expose the trace as an image when an accessible title is set", () => {
     render(
       <HeroTextAnimation
         animation="svg-stroke-draw"
         data-testid="svg-stroke-heading"
-        svgAccessibleTitle="Decorative drawn route under the headline"
+        svgAccessibleTitle="The headline, hand drawn"
         text="Expose the SVG only when configured."
       />,
     );
@@ -912,8 +941,8 @@ describe("HeroTextAnimation", () => {
       '[data-slot="hero-text-animation-visual"]',
     );
     const svg = heading.querySelector('[data-slot="hero-text-animation-svg"]');
-    const path = heading.querySelector(
-      '[data-slot="hero-text-animation-svg-path"]',
+    const line = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-line"]',
     );
 
     expect(
@@ -922,12 +951,9 @@ describe("HeroTextAnimation", () => {
       ),
     ).toHaveTextContent("Expose the SVG only when configured.");
     expect(visual).not.toHaveAttribute("aria-hidden");
-    expect(svg).toHaveAttribute(
-      "aria-label",
-      "Decorative drawn route under the headline",
-    );
+    expect(svg).toHaveAttribute("aria-label", "The headline, hand drawn");
     expect(svg).toHaveAttribute("role", "img");
-    expect(path).toHaveAttribute("aria-hidden", "true");
+    expect(line).toHaveAttribute("aria-hidden", "true");
   });
 
   it("renders svg stroke draw final filled state in reduced motion without timers", () => {
@@ -952,8 +978,8 @@ describe("HeroTextAnimation", () => {
     const motion = heading.querySelector(
       '[data-slot="hero-text-animation-motion"][data-svg-stroke-draw="true"]',
     );
-    const path = heading.querySelector(
-      '[data-slot="hero-text-animation-svg-path"]',
+    const line = heading.querySelector(
+      '[data-slot="hero-text-animation-svg-line"]',
     );
 
     expect(heading).toHaveAttribute("data-reduced-motion", "true");
@@ -962,9 +988,9 @@ describe("HeroTextAnimation", () => {
     expect(motion).toHaveTextContent(
       "Reduced motion keeps the stroke draw settled.",
     );
-    expect(path).toHaveAttribute("data-reduced-motion", "true");
-    expect(path).toHaveAttribute("pathLength", "1");
-    expect(path).toHaveAttribute("fill-opacity", "1");
+    expect(line).toHaveAttribute("data-reduced-motion", "true");
+    expect(line).toHaveAttribute("fill", "currentColor");
+    expect(line).toHaveAttribute("fill-opacity", "1");
     expect(setIntervalSpy).not.toHaveBeenCalled();
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
@@ -992,8 +1018,8 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-split-by", "phrase");
     expect(heading).toHaveAttribute("data-segment-count", "1");
     expect(motion).toHaveAttribute("aria-hidden", "true");
-    expect(motion).toHaveAttribute("data-blur-initial", "6px");
-    expect(motion).toHaveAttribute("data-blur-final", "0px");
+    expect(motion).toHaveAttribute("data-blur-initial", "0.2em");
+    expect(motion).toHaveAttribute("data-blur-final", "0em");
     expect(motion).toHaveTextContent("Bring the launch promise into focus.");
     expect(motion).toHaveClass("will-change-[filter,opacity,transform]");
     expect(
@@ -1001,6 +1027,35 @@ describe("HeroTextAnimation", () => {
         '[data-slot="hero-text-animation-accessible-text"]',
       ),
     ).toHaveTextContent("Bring the launch promise into focus.");
+  });
+
+  it("splits blur focus into staggered words when splitBy is word", () => {
+    render(
+      <HeroTextAnimation
+        animation="blur-focus"
+        splitBy="word"
+        text="Focus each word in turn."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Focus each word in turn.",
+    });
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"][data-focus-reveal="blur-focus"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "blur-focus");
+    expect(heading).toHaveAttribute("data-split-by", "word");
+    expect(heading).toHaveAttribute("data-segment-count", "5");
+    expect(motion).toHaveAttribute("data-split-by", "word");
+    expect(motion).toHaveAttribute("data-blur-initial", "0.2em");
+    expect(
+      motion?.querySelectorAll(
+        '[data-slot="hero-text-animation-segment"][data-segment="word"]',
+      ),
+    ).toHaveLength(5);
+    expect(motion).toHaveTextContent("Focus each word in turn.");
   });
 
   it("removes blur and vertical transform from blur focus in reduced motion", () => {
@@ -1028,8 +1083,8 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-reduced-motion", "true");
     expect(heading).toHaveAttribute("data-repeat", "true");
     expect(motion).toHaveAttribute("data-reduced-motion", "true");
-    expect(motion).toHaveAttribute("data-blur-initial", "0px");
-    expect(motion).toHaveAttribute("data-blur-final", "0px");
+    expect(motion).toHaveAttribute("data-blur-initial", "0em");
+    expect(motion).toHaveAttribute("data-blur-final", "0em");
     expect(motion).toHaveTextContent(
       "Reduced motion keeps the focused heading readable.",
     );
@@ -1068,7 +1123,7 @@ describe("HeroTextAnimation", () => {
     expect(emphasizedWords).toHaveLength(2);
     expect(emphasizedWords[0]).toHaveTextContent("revenue");
     expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-word-index", "1");
-    expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-scale", "1.045");
+    expect(emphasizedWords[0]).toHaveAttribute("data-emphasis-scale", "1.08");
     expect(emphasizedWords[0]).toHaveClass(
       "data-[emphasized=true]:text-primary",
       "data-[emphasized=true]:underline",
@@ -1167,6 +1222,7 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-split-by", "phrase");
     expect(heading).toHaveAttribute("data-segment-count", "1");
     expect(motion).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute("data-scroll-anchor", "start start");
     expect(motion).toHaveAttribute("data-scroll-range-px", "220");
     expect(motion).toHaveAttribute("data-scroll-y-min", "-32");
     expect(motion).toHaveAttribute("data-scroll-y-max", "0");
@@ -1188,11 +1244,6 @@ describe("HeroTextAnimation", () => {
     vi.stubGlobal("cancelAnimationFrame", (frameId: number) => {
       window.clearTimeout(frameId);
     });
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      value: 0,
-      writable: true,
-    });
 
     render(
       <HeroTextAnimation
@@ -1206,16 +1257,30 @@ describe("HeroTextAnimation", () => {
     });
     const motion = heading.querySelector(
       '[data-slot="hero-text-animation-motion"][data-scroll-responsive="subtle"]',
-    );
+    ) as HTMLElement;
+
+    // Progress is anchored to the hero's own top: -rect.top / rangePx (220),
+    // clamped to [0, 1], so it engages once the hero scrolls past the top.
+    const scrollHeroTo = (top: number) => {
+      motion.getBoundingClientRect = () =>
+        ({
+          top,
+          height: 200,
+          bottom: top + 200,
+          left: 0,
+          right: 0,
+          width: 0,
+          x: 0,
+          y: top,
+          toJSON: () => ({}),
+        }) as DOMRect;
+      window.dispatchEvent(new Event("scroll"));
+    };
 
     expect(motion).toHaveAttribute("data-scroll-progress", "0.000");
 
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      value: 110,
-      writable: true,
-    });
-    window.dispatchEvent(new Event("scroll"));
+    // Hero top 110px above the viewport top => 110 / 220 => progress 0.5.
+    scrollHeroTo(-110);
 
     await waitFor(() => {
       expect(motion).toHaveAttribute("data-scroll-progress", "0.500");
@@ -1224,12 +1289,8 @@ describe("HeroTextAnimation", () => {
     expect(motion).toHaveAttribute("data-scroll-y", "-16.000");
     expect(motion).toHaveAttribute("data-scroll-opacity", "0.960");
 
-    Object.defineProperty(window, "scrollY", {
-      configurable: true,
-      value: 999,
-      writable: true,
-    });
-    window.dispatchEvent(new Event("scroll"));
+    // Scrolled well past the hero => progress clamps to 1 => full subtle effect.
+    scrollHeroTo(-500);
 
     await waitFor(() => {
       expect(motion).toHaveAttribute("data-scroll-progress", "1.000");

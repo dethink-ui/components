@@ -2,81 +2,38 @@
 
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuItemDescription,
-  DropdownMenuItemIcon,
-  DropdownMenuItemLabel,
-  DropdownMenuLabel,
-  DropdownMenuSection,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
   HeroTextAnimation,
   HeroTextAnimationProvider,
-  RevealButton,
 } from "@dethink/components";
+import type { CSSProperties } from "react";
 import {
   ArrowRight,
-  BadgeCheck,
-  BookOpenText,
-  BrainCircuit,
-  ChevronDown,
-  CircleGauge,
-  Command,
-  Eye,
-  LockKeyhole,
-  PlayCircle,
+  Fingerprint,
+  KeyRound,
+  Lock,
   ShieldCheck,
-  Sparkles,
-  TimerReset,
 } from "lucide-react";
 
-const navItems = [
-  { href: "#examples", label: "Examples" },
-  { href: "#installation", label: "Install" },
-  { href: "#props", label: "API" },
+const gridStyle: CSSProperties = {
+  backgroundImage:
+    "linear-gradient(var(--dt-color-border) 1px, transparent 1px), linear-gradient(90deg, var(--dt-color-border) 1px, transparent 1px)",
+  backgroundSize: "2.75rem 2.75rem",
+  maskImage: "radial-gradient(120% 90% at 30% 0%, black, transparent 75%)",
+  WebkitMaskImage:
+    "radial-gradient(120% 90% at 30% 0%, black, transparent 75%)",
+};
+
+const certifications = [
+  { icon: ShieldCheck, label: "SOC 2 Type II" },
+  { icon: Lock, label: "ISO 27001" },
+  { icon: Fingerprint, label: "Zero-trust" },
 ];
 
-const resourceItems = [
-  {
-    icon: TimerReset,
-    label: "Bounded reveal",
-    description: "The decrypt pass resolves quickly and then settles.",
-  },
-  {
-    icon: Eye,
-    label: "Stable wording",
-    description: "The final message is present for assistive technology.",
-  },
-  {
-    icon: ShieldCheck,
-    label: "Motion aware",
-    description: "Reduced-motion users receive the final copy immediately.",
-  },
-];
-
-const proofPoints = [
-  {
-    icon: BrainCircuit,
-    title: "Signal extraction",
-    description: "Surface pipeline insights without hiding the final message.",
-  },
-  {
-    icon: CircleGauge,
-    title: "Cadence limits",
-    description: "Keep the reveal deliberate instead of visually noisy.",
-  },
-  {
-    icon: LockKeyhole,
-    title: "Readable by default",
-    description: "Use decorative glyphs while the actual heading stays stable.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Launch ready",
-    description: "Pair animated copy with CTAs that remain available.",
-  },
+const logLines = [
+  { tone: "info", text: "handshake — TLS 1.3 established" },
+  { tone: "info", text: "identity — device attested" },
+  { tone: "ok", text: "keys — rotated 4m ago" },
+  { tone: "muted", text: "secret — sk_live_••••••••••••4e2a" },
 ];
 
 export function HeroTextAnimationScrambleDecryptHero() {
@@ -84,156 +41,106 @@ export function HeroTextAnimationScrambleDecryptHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-scramble-heading"
-        className="bg-background text-foreground border-border rounded-md border"
+        className="bg-background text-foreground border-border relative overflow-hidden rounded-md border"
       >
-        <div className="mx-auto max-w-5xl px-5 py-5 sm:px-8 lg:px-10">
-          <header className="border-border bg-background/95 flex min-h-14 items-center gap-4 rounded-md border px-3 shadow-sm">
-            <a
-              href="#examples"
-              aria-label="Dethink decrypt hero example"
-              className="focus-visible:ring-ring focus-visible:ring-offset-background flex min-w-0 shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-            >
-              <span
+        <span
+          aria-hidden="true"
+          style={gridStyle}
+          className="pointer-events-none absolute inset-0 opacity-60"
+        />
+
+        <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:px-10 lg:py-20">
+          <div className="min-w-0">
+            <span className="border-border bg-background/70 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-xs backdrop-blur">
+              <KeyRound
                 aria-hidden="true"
-                className="bg-primary text-primary-foreground grid size-8 shrink-0 place-items-center rounded-md"
-              >
-                <Command className="size-4" />
-              </span>
-              <span className="font-heading hidden text-sm font-semibold sm:inline">
-                Dethink Signal
-              </span>
-            </a>
+                className="text-info size-3.5"
+              />
+              End-to-end encrypted by default
+            </span>
 
-            <nav
-              aria-label="Scramble decrypt recipe navigation"
-              className="hidden min-w-0 flex-1 md:block"
-            >
-              <ul className="flex items-center justify-center gap-1">
-                {navItems.map((item) => (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring focus-visible:ring-offset-background inline-flex h-9 items-center rounded-md px-3 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <HeroTextAnimation
+              animation="scramble-decrypt"
+              duration={1}
+              id="hero-text-scramble-heading"
+              repeat
+              repeatDelay={1.8}
+              text="Decrypt threats before they move."
+              className="font-heading text-foreground mt-6 max-w-2xl text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl lg:text-6xl"
+            />
+            <p className="text-muted-foreground mt-6 max-w-lg text-base leading-7 sm:text-lg">
+              Runtime detection that resolves noise into signal. Continuous
+              posture, automated key rotation, and audit trails your security
+              team can actually read.
+            </p>
 
-            <div className="ml-auto flex shrink-0 items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  size="sm"
-                  variant="ghost"
-                  className="gap-1.5"
+            <div className="mt-7 flex flex-wrap items-center gap-2.5">
+              {certifications.map(({ icon: Icon, label }) => (
+                <span
+                  key={label}
+                  className="border-border bg-background/70 text-foreground inline-flex items-center gap-2 rounded-md border px-3 py-1.5 font-mono text-xs font-medium"
                 >
-                  Resources
-                  <ChevronDown aria-hidden="true" className="size-3.5" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent placement="bottom end" showArrow>
-                  <DropdownMenuSection>
-                    <DropdownMenuLabel>Decrypt reveal</DropdownMenuLabel>
-                    {resourceItems.map(({ icon: Icon, label, description }) => (
-                      <DropdownMenuItem key={label} textValue={label}>
-                        <DropdownMenuItemIcon aria-hidden="true">
-                          <Icon />
-                        </DropdownMenuItemIcon>
-                        <DropdownMenuItemLabel>{label}</DropdownMenuItemLabel>
-                        <DropdownMenuItemDescription>
-                          {description}
-                        </DropdownMenuItemDescription>
-                      </DropdownMenuItem>
-                    ))}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem textValue="Open launch notes">
-                      <DropdownMenuItemIcon aria-hidden="true">
-                        <BookOpenText />
-                      </DropdownMenuItemIcon>
-                      <DropdownMenuItemLabel>
-                        Launch notes
-                      </DropdownMenuItemLabel>
-                    </DropdownMenuItem>
-                  </DropdownMenuSection>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <RevealButton
-                className="hidden sm:inline-flex"
-                icon={<PlayCircle />}
-                label="Preview"
-                size="sm"
-                variant="outline"
-              />
-              <RevealButton
-                icon={<Sparkles />}
-                label="Launch"
-                size="sm"
-                variant="solid"
-              />
-            </div>
-          </header>
-        </div>
-
-        <div className="mx-auto grid max-w-5xl gap-8 px-5 pt-6 pb-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:px-10 lg:pt-10 lg:pb-14">
-          <div className="min-w-0 space-y-7">
-            <div className="border-border bg-muted/50 text-muted-foreground inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
-              <LockKeyhole
-                aria-hidden="true"
-                className="text-primary size-3.5 shrink-0"
-              />
-              <span className="truncate">Signal launch workspace</span>
+                  <Icon
+                    aria-hidden="true"
+                    className="text-muted-foreground size-3.5"
+                  />
+                  {label}
+                </span>
+              ))}
             </div>
 
-            <div className="space-y-5">
-              <HeroTextAnimation
-                animation="scramble-decrypt"
-                duration={1.2}
-                id="hero-text-scramble-heading"
-                repeat
-                repeatDelay={1.6}
-                text="Decode the work that moves accounts forward."
-                className="font-heading text-foreground max-w-3xl text-4xl leading-[1.03] font-semibold tracking-normal sm:text-5xl lg:text-6xl"
-              />
-              <p className="text-muted-foreground max-w-xl text-base leading-7 sm:text-lg">
-                Bring account signals, product usage, and team context into one
-                launch surface so operators can see the next best move without
-                chasing dashboards.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" rightIcon={<ArrowRight />}>
-                <a href="#installation">Install component</a>
+                <a href="#installation">Request access</a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href="#props">Review props</a>
+                <a href="#props">Read the security model</a>
               </Button>
             </div>
           </div>
 
-          <ul className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            {proofPoints.map(({ icon: Icon, title, description }) => (
-              <li
-                key={title}
-                className="border-border bg-muted/35 flex min-w-0 gap-3 rounded-md border p-4"
-              >
-                <span
-                  aria-hidden="true"
-                  className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-md"
-                >
-                  <Icon className="size-4" />
+          <div className="border-border bg-background/80 min-w-0 rounded-lg border shadow-sm backdrop-blur">
+            <div className="border-border flex items-center justify-between border-b px-4 py-3">
+              <span className="inline-flex items-center gap-2 font-mono text-xs font-medium">
+                <span className="relative flex size-2">
+                  <span className="bg-success/60 absolute inline-flex size-full animate-ping rounded-full motion-reduce:hidden" />
+                  <span className="bg-success relative inline-flex size-2 rounded-full" />
                 </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-semibold">{title}</span>
-                  <span className="text-muted-foreground mt-1 block text-sm leading-6">
-                    {description}
+                All systems encrypted
+              </span>
+              <span className="text-muted-foreground font-mono text-xs">
+                live
+              </span>
+            </div>
+            <ul className="space-y-3 px-4 py-4 font-mono text-xs">
+              {logLines.map(({ tone, text }, index) => (
+                <li key={index} className="flex items-center gap-2.5">
+                  <span
+                    aria-hidden="true"
+                    className={`size-1.5 shrink-0 rounded-full ${
+                      tone === "ok"
+                        ? "bg-success"
+                        : tone === "info"
+                          ? "bg-info"
+                          : "bg-muted-foreground/50"
+                    }`}
+                  />
+                  <span
+                    className={
+                      tone === "muted"
+                        ? "text-muted-foreground truncate"
+                        : "text-foreground truncate"
+                    }
+                  >
+                    {text}
                   </span>
-                </span>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+            <div className="border-border text-muted-foreground border-t px-4 py-2.5 font-mono text-[11px]">
+              audit log · 2,481 events today
+            </div>
+          </div>
         </div>
       </section>
     </HeroTextAnimationProvider>

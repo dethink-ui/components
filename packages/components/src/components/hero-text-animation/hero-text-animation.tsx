@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -42,6 +43,11 @@ export type HeroTextAnimationReducedMotionStrategy = "static" | "opacity-only";
 export type HeroTextAnimationProviderReducedMotion =
   "user" | "always" | "never";
 
+/**
+ * @deprecated `svg-stroke-draw` now traces the heading's own letterforms
+ * (outline → fill) instead of a decorative accent path, so `svgPathData` is no
+ * longer used. The type is retained for backwards compatibility only.
+ */
 export interface HeroTextAnimationSvgPath {
   d: string;
   strokeWidth?: number;
@@ -74,8 +80,17 @@ export interface HeroTextAnimationProps extends Omit<
   splitBy?: HeroTextAnimationSplitBy;
   stagger?: number;
   svgAccessibleTitle?: string;
+  /**
+   * @deprecated `svg-stroke-draw` traces the heading's own letterforms now, so
+   * this prop is ignored. It is kept only so existing callers keep type-checking.
+   */
   svgPathData?:
     string | readonly string[] | readonly HeroTextAnimationSvgPath[];
+  /**
+   * Optional view box override for the `svg-stroke-draw` letter trace. When
+   * omitted (recommended) the component frames the text automatically from its
+   * measured glyph metrics.
+   */
   svgViewBox?: string;
   text: string;
   trigger?: HeroTextAnimationTrigger;
@@ -113,13 +128,14 @@ export const heroTextAnimationMotionTokens = {
     base: 0.48,
     slow: 0.72,
     cinematic: 1.1,
+    maskedCurtain: 0.64,
     typewriter: 1.1,
     scramble: 1.2,
     rotatingKeyword: 0.34,
-    gradientHighlight: 0.9,
-    blurFocus: 0.42,
-    kineticEmphasisPop: 0.42,
-    svgStrokeDraw: 1.15,
+    gradientHighlight: 1.6,
+    blurFocus: 0.9,
+    kineticEmphasisPop: 0.5,
+    svgStrokeDraw: 1.4,
     scrollResponsive: 0,
   },
   stagger: {
@@ -131,15 +147,8 @@ export const heroTextAnimationMotionTokens = {
     wordY: "0.6em",
     lineY: "0.6em",
     curtainY: "0.85em",
-    blurFocusY: "0.16em",
+    blurFocusY: "0.2em",
     scrollY: -32,
-  },
-  spring: {
-    emphasis: {
-      damping: 28,
-      stiffness: 420,
-      type: "spring",
-    },
   },
 } as const;
 
@@ -166,15 +175,31 @@ const heroTextAnimationTypewriterSizerClasses =
 const heroTextAnimationTypewriterTextClasses =
   "col-start-1 row-start-1 whitespace-pre-wrap";
 const heroTextAnimationTypewriterCaretClasses =
-  "ml-[0.08em] inline-block h-[0.9em] w-[0.08em] translate-y-[0.08em] bg-current align-baseline opacity-70";
+  "ml-[0.08em] inline-block h-[0.9em] w-[0.08em] translate-y-[0.08em] bg-current align-baseline opacity-70 animate-pulse motion-reduce:animate-none";
+// Every state of the scramble — jumbled, settling, fully resolved, and the SSR
+// fallback — is rendered from the *same* per-character slots, so a character's
+// box is byte-for-byte identical whether it is showing a cipher glyph or its
+// final letter. Resolving a character only swaps the glyph inside its slot; the
+// slot itself never changes size. That invariance is what removes every source
+// of jitter and the settle-time shift, without depending on font kerning at all.
 const heroTextAnimationScrambleMotionClasses =
-  "inline-grid min-w-0 max-w-full align-baseline";
-const heroTextAnimationScrambleSizerClasses =
-  "invisible col-start-1 row-start-1 whitespace-pre-wrap";
-const heroTextAnimationScrambleTextClasses =
-  "col-start-1 row-start-1 whitespace-pre-wrap";
-const heroTextAnimationScrambleGlyphClasses =
+  "inline min-w-0 max-w-full";
+const heroTextAnimationScrambleTextClasses = "inline";
+// Each word is an inline-block so a run of character slots never breaks mid-word
+// — line breaks only happen at the real spaces between words.
+const heroTextAnimationScrambleWordClasses =
   "inline-block whitespace-pre align-baseline";
+// A resolved slot simply shows its final character (clean text, natural width).
+const heroTextAnimationScrambleResolvedGlyphClasses =
+  "inline-block whitespace-pre align-baseline";
+// An unresolved slot reserves its final character's width with an invisible copy
+// and floats the cycling cipher glyph, centered, on top — so glyph churn never
+// moves anything. Because the reserved width equals the resolved width, the slot
+// does not resize when it locks in.
+const heroTextAnimationScrambleGlyphClasses =
+  "relative inline-block whitespace-pre align-baseline";
+const heroTextAnimationScrambleGlyphOverlayClasses =
+  "absolute left-0 top-0 w-full text-center";
 const heroTextAnimationRotatingMotionClasses =
   "inline-flex min-w-0 max-w-full flex-wrap items-baseline gap-x-[0.18em]";
 const heroTextAnimationRotatingTextClasses = "whitespace-pre-wrap";
@@ -184,10 +209,22 @@ const heroTextAnimationRotatingSizerClasses =
   "invisible col-start-1 row-start-1 whitespace-pre";
 const heroTextAnimationRotatingKeywordClasses =
   "col-start-1 row-start-1 whitespace-pre will-change-transform data-[reduced-motion=true]:will-change-auto";
+// A light-sweep "paint-in" reveal. The heading is painted into the text via
+// `background-clip: text`, and the gradient runs revealed → glint → hidden:
+// `base` (foreground) on the left, a bright primary `sheen`/`accent` band at the
+// boundary, then `transparent` on the right. Animating `background-position`
+// slides that boundary across so each glyph flashes primary as it appears and
+// settles to foreground — a directional reveal, not a sheen over visible text,
+// so it reads clearly in light and dark themes. At the default position (0%) the
+// window sits entirely in `base`, so the static/reduced fallback is solid text.
 const heroTextAnimationGradientHighlightClasses =
-  "inline whitespace-pre-wrap bg-[linear-gradient(105deg,var(--hero-text-animation-highlight-base)_0%,var(--hero-text-animation-highlight-base)_34%,var(--hero-text-animation-highlight-accent)_44%,var(--hero-text-animation-highlight-sheen)_50%,var(--hero-text-animation-highlight-accent)_56%,var(--hero-text-animation-highlight-base)_66%,var(--hero-text-animation-highlight-base)_100%)] bg-[length:220%_100%] bg-clip-text text-transparent underline decoration-(--hero-text-animation-highlight-underline) decoration-[0.08em] underline-offset-[0.14em] will-change-[background-position] [text-decoration-skip-ink:auto] forced-colors:bg-none forced-colors:text-[CanvasText] forced-colors:decoration-[CanvasText] data-[reduced-motion=true]:will-change-auto";
+  "inline whitespace-pre-wrap bg-[linear-gradient(100deg,var(--hero-text-animation-highlight-base)_0%,var(--hero-text-animation-highlight-base)_36%,var(--hero-text-animation-highlight-accent)_45%,var(--hero-text-animation-highlight-sheen)_50%,var(--hero-text-animation-highlight-accent)_55%,transparent_64%,transparent_100%)] bg-[length:300%_100%] bg-no-repeat bg-clip-text text-transparent will-change-[background-position] forced-colors:bg-none forced-colors:text-[CanvasText] data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationBlurFocusClasses =
   "inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline will-change-[filter,opacity,transform] data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationBlurFocusWordClasses =
+  "inline-block whitespace-pre align-baseline will-change-[filter,opacity,transform] data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationBlurFocusLineClasses =
+  "block min-w-0 overflow-visible will-change-[filter,opacity,transform] data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationKineticEmphasisMotionClasses =
   "inline min-w-0 max-w-full";
 const heroTextAnimationKineticEmphasisWordClasses =
@@ -195,54 +232,112 @@ const heroTextAnimationKineticEmphasisWordClasses =
 const heroTextAnimationScrollResponsiveClasses =
   "inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline will-change-transform [transform-origin:center_top] data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationSvgStrokeDrawClasses =
-  "relative inline-block min-w-0 max-w-full whitespace-pre-wrap align-baseline";
-const heroTextAnimationSvgStrokeDrawTextClasses =
-  "relative z-10 whitespace-pre-wrap";
+  "block w-full min-w-0 max-w-full text-foreground";
 const heroTextAnimationSvgStrokeDrawSvgClasses =
-  "pointer-events-none absolute inset-x-0 -bottom-[0.16em] z-0 h-[0.48em] w-full overflow-visible text-primary";
-const heroTextAnimationSvgStrokeDrawPathClasses =
-  "will-change-[stroke-dashoffset,stroke-dasharray,opacity] data-[reduced-motion=true]:will-change-auto";
+  "block h-auto w-full overflow-visible";
+const heroTextAnimationSvgStrokeDrawLineClasses = "[paint-order:stroke]";
 
-const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
+// Upper bound on the per-character cadence so a long duration on a short string
+// still reads as typing rather than stalling between glyphs.
+const typewriterMaximumIntervalMs = 96;
 const typewriterMinimumDurationMs = 300;
-const typewriterMaximumDurationMs = 1400;
-const scrambleMinimumIntervalMs = 334;
-const scrambleMinimumDurationMs = 700;
-const scrambleMaximumDurationMs = 1800;
-const scrambleMaximumUpdateCount = 5;
-const scrambleGlyphs = ["-", "+", "=", "~", "*", ":", ".", "_"] as const;
-const rotatingKeywordDefaultIntervalMs = 1600;
+// Raised so a deliberately paced hero (a slower, more "typewriter" feel) is
+// honored end to end instead of being clamped back to a rushed reveal.
+const typewriterMaximumDurationMs = 2600;
+// A fast cadence with many frames so the reveal reads as rapid cipher churn
+// resolving left to right, rather than a handful of sluggish discrete steps.
+const scrambleMinimumIntervalMs = 30;
+const scrambleMinimumDurationMs = 500;
+const scrambleMaximumDurationMs = 2400;
+const scrambleMaximumUpdateCount = 56;
+// Uppercase letters, digits, and a few code-flavored symbols so the pre-reveal
+// text reads as encrypted copy decoding into the headline (not abstract noise).
+const scrambleGlyphs = Array.from(
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/<>*",
+) as readonly string[];
+const rotatingKeywordDefaultIntervalMs = 2000;
 const rotatingKeywordMinimumIntervalMs = 400;
 const rotatingKeywordMaximumAutoRotateMs = 5000;
-const blurFocusInitialBlur = "6px";
-const blurFocusFinalBlur = "0px";
+// Blur is expressed in `em` so the radius scales with the heading size — a
+// stronger, more cinematic defocus on large hero text while staying readable on
+// smaller headings. Initial and final must share a unit for Motion to
+// interpolate the blur() filter smoothly.
+const blurFocusInitialBlur = "0.2em";
+const blurFocusFinalBlur = "0em";
+const blurFocusInitialScale = 1.06;
+// A gently back-loaded ease so the defocus lingers and racks into sharp focus
+// near the end, instead of the front-loaded soft ease that snapped crisp within
+// the first fraction of the duration.
+const blurFocusFocusEase = [0.42, 0, 0.2, 1] as [
+  number,
+  number,
+  number,
+  number,
+];
+// The gradient sheen must glide across at a near-even pace so the sweep reads as
+// a deliberate glint. The front-loaded "soft" ease dumped most of the travel in
+// the first fraction of the duration, so the highlight flashed past instantly;
+// this gentle ease-in-out keeps it moving through the whole sweep.
+const gradientHighlightSweepEase = [0.4, 0, 0.2, 1] as [
+  number,
+  number,
+  number,
+  number,
+];
 const kineticEmphasisMaximumWordCount = 2;
-const kineticEmphasisScale = 1.045;
+// Peak scale of the emphasis pop. The word starts small, overshoots this peak,
+// then settles at rest — a deliberate punch rather than a symmetric zoom.
+const kineticEmphasisScale = 1.08;
+const kineticEmphasisHiddenScale = 0.84;
+const kineticEmphasisRise = "0.6em";
+// Scroll-responsive anchors to the hero's own position (offset "start start":
+// progress begins when the hero's top reaches the viewport top) rather than to
+// raw page scroll, so the effect is correct wherever the hero sits on the page
+// (PRD 9.9). The subtle transform then completes over a fixed scroll window so
+// the feel is independent of heading size.
+const scrollResponsiveAnchor = "start start";
 const scrollResponsiveRangePx = 220;
 const scrollResponsiveMinimumOpacity = 0.92;
-const defaultSvgStrokeDrawViewBox = "0 0 600 96";
-const defaultSvgStrokeDrawPaths = [
-  {
-    d: "M18 56 C128 82 252 78 356 58 C444 41 526 40 582 56 L580 76 C484 60 404 63 326 76 C214 95 102 86 20 70 Z",
-    strokeWidth: 5,
-  },
-] as const satisfies readonly HeroTextAnimationSvgPath[];
+// The letter-trace renders the heading as an SVG `<text>` in a fixed user-unit
+// coordinate space (font-size 100) so the geometry is independent of the
+// responsive display size — the SVG then scales to fill its container width.
+// Each line is revealed by a left-to-right clip wipe: the stroked outline is
+// exposed first, then a fill wipe follows a beat behind, so the word reads as a
+// pen drawing the outline and inking it in (PRD: outline → fill "wordmark that
+// draws itself"). A clip wipe is used rather than stroke-dashoffset because
+// `<text>` gives no reliable stroke length and browsers apply dashes per glyph
+// inconsistently, which makes a true dash trace non-portable.
+const svgStrokeDrawFontSize = 100;
+const svgStrokeDrawAscent = 82;
+const svgStrokeDrawDescent = 26;
+const svgStrokeDrawLineGap = 122;
+const svgStrokeDrawStrokeWidth = 2.4;
+const svgStrokeDrawViewBoxPadding = 8;
+// Fallback glyph advance (user units) used to frame the box before the text is
+// measured, and on the server where no layout is available.
+const svgStrokeDrawFallbackCharWidth = 60;
+// Fraction of the per-line duration by which the fill wipe trails the outline
+// wipe, so the fill inks in just behind the drawing edge.
+const svgStrokeDrawFillLagRatio = 0.22;
+const svgStrokeDrawLineStagger = 0.18;
 const defaultRepeatDelay = 1.8;
 const gradientHighlightStyle = {
+  // Settled text color once revealed.
   "--hero-text-animation-highlight-base": "var(--dt-color-foreground)",
+  // The glint edge — a vivid primary so each glyph flashes brand color as it is
+  // painted in.
   "--hero-text-animation-highlight-accent":
-    "color-mix(in oklab, var(--dt-color-foreground) 78%, var(--dt-color-primary) 22%)",
+    "color-mix(in oklab, var(--dt-color-primary) 80%, var(--dt-color-foreground) 20%)",
+  // The luminous core of the sweep. Leaning primary toward background keeps it
+  // reading as a bright light band that travels across the reveal boundary in
+  // any theme.
   "--hero-text-animation-highlight-sheen":
-    "color-mix(in oklab, var(--dt-color-foreground) 58%, var(--dt-color-background) 42%)",
-  "--hero-text-animation-highlight-underline":
-    "color-mix(in oklab, var(--dt-color-primary) 72%, var(--dt-color-foreground) 28%)",
+    "color-mix(in oklab, var(--dt-color-primary) 55%, var(--dt-color-background) 45%)",
 } as CSSProperties;
 const svgStrokeDrawStyle = {
   "--hero-text-animation-svg-stroke":
-    "color-mix(in oklab, var(--dt-color-foreground) 78%, var(--dt-color-primary) 22%)",
-  "--hero-text-animation-svg-fill":
-    "color-mix(in oklab, var(--dt-color-primary) 22%, transparent)",
+    "color-mix(in oklab, var(--dt-color-foreground) 82%, var(--dt-color-primary) 18%)",
 } as CSSProperties;
 
 const HeroTextAnimationReducedMotionContext =
@@ -355,40 +450,62 @@ function getSegmentWordIndices(segments: readonly HeroTextAnimationSegment[]) {
   });
 }
 
-function isValidSvgPathData(pathData: string) {
-  const trimmedPathData = pathData.trim();
-
-  return (
-    trimmedPathData.length > 0 &&
-    /^[MmZzLlHhVvCcSsQqTtAa]/.test(trimmedPathData) &&
-    /^[MmZzLlHhVvCcSsQqTtAaEe0-9,.\s+-]+$/.test(trimmedPathData)
-  );
+interface SvgStrokeDrawGeometry {
+  viewBox: string;
+  centerX: number;
+  baselines: number[];
+  lineWidths: number[];
+  measured: boolean;
 }
 
-function normalizeSvgStrokeDrawPaths(
-  svgPathData: HeroTextAnimationProps["svgPathData"],
-) {
-  const sourcePaths = svgPathData ?? defaultSvgStrokeDrawPaths;
-  const pathItems =
-    typeof sourcePaths === "string" ? [sourcePaths] : sourcePaths;
+function splitSvgStrokeDrawLines(text: string): string[] {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 
-  return pathItems.reduce<HeroTextAnimationSvgPath[]>((paths, pathItem) => {
-    const path =
-      typeof pathItem === "string" ? { d: pathItem } : { ...pathItem };
-    const strokeWidth =
-      path.strokeWidth === undefined || !Number.isFinite(path.strokeWidth)
-        ? undefined
-        : Math.max(0.5, path.strokeWidth);
+  return lines.length > 0 ? lines : [text.trim()];
+}
 
-    if (isValidSvgPathData(path.d)) {
-      paths.push({
-        d: path.d.trim(),
-        strokeWidth,
-      });
-    }
+// Deterministic geometry used for SSR, reduced motion, and as the pre-measure
+// frame on the client. Because it depends only on the text (not on layout), the
+// server and first client render agree, so hydration never mismatches; the
+// animated variant then refines the view box and dash lengths from the real
+// measured glyph metrics.
+function estimateSvgStrokeDrawGeometry(
+  lines: string[],
+  viewBoxOverride?: string,
+): SvgStrokeDrawGeometry {
+  const lineCount = Math.max(1, lines.length);
+  const baselines = Array.from(
+    { length: lineCount },
+    (_, index) => svgStrokeDrawAscent + index * svgStrokeDrawLineGap,
+  );
+  const contentWidth = Math.max(
+    svgStrokeDrawFontSize * 2,
+    ...lines.map(
+      (line) => Array.from(line).length * svgStrokeDrawFallbackCharWidth,
+    ),
+  );
+  const contentHeight =
+    svgStrokeDrawAscent +
+    svgStrokeDrawDescent +
+    (lineCount - 1) * svgStrokeDrawLineGap;
+  const pad = svgStrokeDrawViewBoxPadding;
+  const viewBox =
+    viewBoxOverride ??
+    `${-pad} ${-pad} ${contentWidth + pad * 2} ${contentHeight + pad * 2}`;
+  const lineWidths = lines.map((line) =>
+    Math.max(1, Array.from(line).length * svgStrokeDrawFallbackCharWidth),
+  );
 
-    return paths;
-  }, []);
+  return {
+    viewBox,
+    centerX: contentWidth / 2,
+    baselines,
+    lineWidths,
+    measured: false,
+  };
 }
 
 function isValidSvgViewBox(viewBox: string) {
@@ -413,6 +530,22 @@ function useHasHydrated() {
   }, []);
 
   return hasHydrated;
+}
+
+/**
+ * Tracks whether a one-shot animation is at rest so we can drop the
+ * `will-change` hint once motion completes. Motion's own performance guidance
+ * flags leaving `will-change` on every animated node as an anti-pattern because
+ * each promoted layer holds GPU memory and can subtly change text rasterization
+ * at rest. `willChangeClass` returns the resting override to merge in.
+ */
+function useMotionRest() {
+  const [atRest, setAtRest] = useState(false);
+  const markActive = useCallback(() => setAtRest(false), []);
+  const markRest = useCallback(() => setAtRest(true), []);
+  const willChangeClass = atRest ? "will-change-auto" : undefined;
+
+  return { markActive, markRest, willChangeClass };
 }
 
 function getContainerVariants({
@@ -506,7 +639,7 @@ function renderStaticSegments({
         key={`${index}-${segment.text}`}
         data-slot="hero-text-animation-segment"
         data-segment="line"
-        className={heroTextAnimationLineClasses}
+        className={cn(heroTextAnimationLineClasses, "will-change-auto")}
       >
         {segment.text}
       </span>
@@ -523,7 +656,7 @@ function renderStaticSegments({
         key={`${index}-${segment.text}`}
         data-slot="hero-text-animation-segment"
         data-segment="word"
-        className={heroTextAnimationWordClasses}
+        className={cn(heroTextAnimationWordClasses, "will-change-auto")}
       >
         {segment.text}
       </span>
@@ -578,55 +711,47 @@ function renderStaticKineticEmphasis({
   );
 }
 
-function getKineticEmphasisContainerVariants({
-  delay,
-  duration,
-}: {
-  delay: number;
-  duration: number;
-}): Variants {
-  return {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delay,
-        duration: Math.min(
-          duration,
-          heroTextAnimationMotionTokens.duration.fast,
-        ),
-        ease: "linear",
-      },
-    },
-  };
-}
-
 function getKineticEmphasisWordVariants({
-  delay,
   duration,
-  order,
+  emphasized,
 }: {
-  delay: number;
   duration: number;
-  order: number;
+  emphasized: boolean;
 }): Variants {
+  // Every word rises and fades in on a stagger so the line assembles as a
+  // kinetic sweep instead of the whole block blinking on. Emphasized words pop
+  // in from small, overshoot the peak scale, then settle — a one-shot punch that
+  // draws the eye, with the lasting emphasis still carried by the static weight,
+  // color, and underline (PRD 9.8).
+  if (!emphasized) {
+    return {
+      hidden: { opacity: 0, y: kineticEmphasisRise },
+      visible: {
+        opacity: 1,
+        transition: {
+          duration,
+          ease: heroTextAnimationMotionTokens.easing.standard,
+        },
+        y: "0em",
+      },
+    };
+  }
+
   return {
-    hidden: {
-      opacity: 1,
-      scale: 1,
-    },
+    hidden: { opacity: 0, scale: kineticEmphasisHiddenScale, y: kineticEmphasisRise },
     visible: {
-      opacity: [1, 1, 1],
-      scale: [1, kineticEmphasisScale, 1],
+      opacity: 1,
+      scale: [kineticEmphasisHiddenScale, kineticEmphasisScale, 1],
       transition: {
-        delay:
-          delay +
-          Math.min(duration, heroTextAnimationMotionTokens.duration.fast) +
-          order * heroTextAnimationMotionTokens.stagger.word,
         duration,
         ease: heroTextAnimationMotionTokens.easing.standard,
-        times: [0, 0.42, 1],
+        scale: {
+          duration,
+          ease: heroTextAnimationMotionTokens.easing.standard,
+          times: [0, 0.62, 1],
+        },
       },
+      y: "0em",
     },
   };
 }
@@ -639,6 +764,7 @@ function KineticEmphasisSegments({
   once,
   reducedMotion,
   segments,
+  stagger,
   trigger,
   onAnimationComplete,
   onAnimationStart,
@@ -650,14 +776,24 @@ function KineticEmphasisSegments({
   once: boolean;
   reducedMotion: boolean;
   segments: HeroTextAnimationSegment[];
+  stagger: number;
   trigger: HeroTextAnimationTrigger;
   onAnimationComplete?: () => void;
   onAnimationStart?: () => void;
 }) {
-  const containerVariants = getKineticEmphasisContainerVariants({
-    delay,
-    duration,
-  });
+  const { markActive, markRest, willChangeClass } = useMotionRest();
+  // Non-reduced: the container only orchestrates the per-word stagger so the
+  // line assembles as a sweep. Reduced motion falls back to a single opacity
+  // fade of the whole phrase with no transforms.
+  const containerVariants: Variants = reducedMotion
+    ? {
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: { delay, duration: 0.2, ease: "linear" },
+        },
+      }
+    : getContainerVariants({ delay, stagger });
   const triggerProps =
     trigger === "in-view"
       ? {
@@ -667,7 +803,6 @@ function KineticEmphasisSegments({
       : {
           animate: trigger === "manual" && !active ? "hidden" : "visible",
         };
-  const lastEmphasisOrder = emphasisIndices.length - 1;
   const segmentWordIndices = getSegmentWordIndices(segments);
 
   return (
@@ -681,12 +816,14 @@ function KineticEmphasisSegments({
       className={heroTextAnimationKineticEmphasisMotionClasses}
       variants={containerVariants}
       initial="hidden"
-      onAnimationComplete={
-        emphasisIndices.length === 0 && !reducedMotion
-          ? onAnimationComplete
-          : undefined
-      }
-      onAnimationStart={reducedMotion ? undefined : onAnimationStart}
+      onAnimationComplete={() => {
+        markRest();
+        onAnimationComplete?.();
+      }}
+      onAnimationStart={() => {
+        markActive();
+        onAnimationStart?.();
+      }}
       {...triggerProps}
     >
       {segments.map((segment, index) => {
@@ -706,10 +843,13 @@ function KineticEmphasisSegments({
           "data-reduced-motion": reducedMotion ? "true" : undefined,
           "data-segment": "word",
           "data-slot": "hero-text-animation-segment",
-          className: heroTextAnimationKineticEmphasisWordClasses,
+          className: cn(
+            heroTextAnimationKineticEmphasisWordClasses,
+            willChangeClass,
+          ),
         };
 
-        if (!emphasized || reducedMotion) {
+        if (reducedMotion) {
           return (
             <span key={`${index}-${segment.text}`} {...sharedProps}>
               {segment.text}
@@ -721,16 +861,7 @@ function KineticEmphasisSegments({
           <motionElement.span
             key={`${index}-${segment.text}`}
             {...sharedProps}
-            variants={getKineticEmphasisWordVariants({
-              delay,
-              duration,
-              order: emphasisOrder,
-            })}
-            onAnimationComplete={
-              emphasisOrder === lastEmphasisOrder
-                ? onAnimationComplete
-                : undefined
-            }
+            variants={getKineticEmphasisWordVariants({ duration, emphasized })}
           >
             {segment.text}
           </motionElement.span>
@@ -771,6 +902,7 @@ function StaggeredSegments({
     reducedMotion,
     splitBy,
   });
+  const { markActive, markRest, willChangeClass } = useMotionRest();
   const triggerProps =
     trigger === "in-view"
       ? {
@@ -789,8 +921,14 @@ function StaggeredSegments({
       className={heroTextAnimationMotionClasses}
       variants={containerVariants}
       initial="hidden"
-      onAnimationComplete={onAnimationComplete}
-      onAnimationStart={onAnimationStart}
+      onAnimationComplete={() => {
+        markRest();
+        onAnimationComplete?.();
+      }}
+      onAnimationStart={() => {
+        markActive();
+        onAnimationStart?.();
+      }}
       {...triggerProps}
     >
       {splitBy === "line"
@@ -800,7 +938,7 @@ function StaggeredSegments({
               data-slot="hero-text-animation-segment"
               data-reduced-motion={reducedMotion ? "true" : undefined}
               data-segment="line"
-              className={heroTextAnimationLineClasses}
+              className={cn(heroTextAnimationLineClasses, willChangeClass)}
               variants={segmentVariants}
               transition={getSegmentTransition(duration)}
             >
@@ -818,7 +956,7 @@ function StaggeredSegments({
                 data-slot="hero-text-animation-segment"
                 data-reduced-motion={reducedMotion ? "true" : undefined}
                 data-segment="word"
-                className={heroTextAnimationWordClasses}
+                className={cn(heroTextAnimationWordClasses, willChangeClass)}
                 variants={segmentVariants}
                 transition={getSegmentTransition(duration)}
               >
@@ -858,6 +996,7 @@ function MaskedCurtainSegments({
     duration,
     reducedMotion,
   });
+  const { markActive, markRest, willChangeClass } = useMotionRest();
   const triggerProps =
     trigger === "in-view"
       ? {
@@ -876,8 +1015,14 @@ function MaskedCurtainSegments({
       className={heroTextAnimationMotionClasses}
       variants={containerVariants}
       initial="hidden"
-      onAnimationComplete={onAnimationComplete}
-      onAnimationStart={onAnimationStart}
+      onAnimationComplete={() => {
+        markRest();
+        onAnimationComplete?.();
+      }}
+      onAnimationStart={() => {
+        markActive();
+        onAnimationStart?.();
+      }}
       {...triggerProps}
     >
       {segments.map((segment, index) => (
@@ -890,7 +1035,7 @@ function MaskedCurtainSegments({
             data-slot="hero-text-animation-segment"
             data-reduced-motion={reducedMotion ? "true" : undefined}
             data-segment="line"
-            className={heroTextAnimationCurtainLineClasses}
+            className={cn(heroTextAnimationCurtainLineClasses, willChangeClass)}
             variants={segmentVariants}
             transition={getSegmentTransition(duration)}
           >
@@ -917,23 +1062,23 @@ function getTypewriterTiming({
     typewriterMaximumDurationMs,
     Math.max(typewriterMinimumDurationMs, Math.round(duration * 1000)),
   );
+  const count = Math.max(characterCount, 1);
+  // Cap how many ticks we schedule so very long copy still reveals in a few
+  // characters per frame rather than thousands of timers.
   const maxFrames = Math.max(
     1,
     Math.floor(boundedDurationMs / typewriterMinimumIntervalMs),
   );
-  const charactersPerTick = Math.max(
-    1,
-    Math.ceil(Math.max(characterCount, 1) / maxFrames),
-  );
-  const tickCount = Math.max(
-    1,
-    Math.ceil(Math.max(characterCount, 1) / charactersPerTick),
-  );
+  const charactersPerTick = Math.max(1, Math.ceil(count / maxFrames));
+  const tickCount = Math.max(1, Math.ceil(count / charactersPerTick));
+  // Derive the cadence from the duration so the reveal actually fills the time
+  // asked for (bounded by a min/max so it never feels janky or stalled),
+  // instead of snapping back to a fixed fast interval.
   const intervalMs = Math.min(
-    typewriterDefaultIntervalMs,
+    typewriterMaximumIntervalMs,
     Math.max(
       typewriterMinimumIntervalMs,
-      Math.floor(boundedDurationMs / tickCount),
+      Math.round(boundedDurationMs / tickCount),
     ),
   );
 
@@ -1150,6 +1295,37 @@ function TypewriterSegments({
   );
 }
 
+// Static (pre-hydration / reduced-motion-static) render for the typewriter.
+// It reuses the exact grid + invisible sizer box that `TypewriterSegments`
+// renders so the reserved space is pixel-identical before and after hydration.
+// Falling back to plain word spans here (a different inline layout) is what made
+// the heading shift the moment typing began.
+function renderStaticTypewriter(text: string) {
+  return (
+    <span
+      aria-hidden="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="character"
+      data-typewriter-complete="true"
+      className={heroTextAnimationTypewriterMotionClasses}
+    >
+      <span
+        data-slot="hero-text-animation-typewriter-sizer"
+        className={heroTextAnimationTypewriterSizerClasses}
+      >
+        {text}
+      </span>
+      <span
+        data-slot="hero-text-animation-typewriter-text"
+        data-reduced-motion="true"
+        className={heroTextAnimationTypewriterTextClasses}
+      >
+        {text}
+      </span>
+    </span>
+  );
+}
+
 function getScrambleTiming({ duration }: { duration: number }) {
   const boundedDurationMs = Math.min(
     scrambleMaximumDurationMs,
@@ -1172,23 +1348,31 @@ function getScrambleTiming({ duration }: { duration: number }) {
   };
 }
 
+// Deterministic (no Math.random, so SSR and every mount agree) but chaotic
+// enough that consecutive frames don't march predictably through the alphabet.
 function getScrambleGlyph({
-  character,
   characterIndex,
   frame,
 }: {
-  character: string;
   characterIndex: number;
   frame: number;
 }) {
-  const codePoint = character.codePointAt(0) ?? 0;
-  const glyphIndex =
-    (codePoint + characterIndex * 7 + frame * 3) % scrambleGlyphs.length;
+  const hash = ((characterIndex + 1) * 2654435761 + (frame + 1) * 40503) >>> 0;
 
-  return scrambleGlyphs[glyphIndex];
+  return scrambleGlyphs[hash % scrambleGlyphs.length];
 }
 
-function getScrambleFrameText({
+interface ScrambleSlot {
+  finalCharacter: string;
+  glyph: string;
+  isSpace: boolean;
+  resolved: boolean;
+}
+
+// Resolves the whole string left to right: character i locks to its final glyph
+// once the frame passes its share of the timeline, while everything after it
+// keeps cycling. Spaces pass through untouched so word breaks stay put.
+function getScrambleFrameSlots({
   frame,
   text,
   updateCount,
@@ -1196,39 +1380,137 @@ function getScrambleFrameText({
   frame: number;
   text: string;
   updateCount: number;
-}) {
-  if (frame >= updateCount) {
-    return text;
-  }
-
+}): ScrambleSlot[] {
   const characters = Array.from(text);
   const revealableCount = characters.filter(
     (character) => !/\s/.test(character),
   ).length;
   let revealableIndex = 0;
 
-  return characters
-    .map((character, characterIndex) => {
-      if (/\s/.test(character)) {
-        return character;
+  return characters.map((finalCharacter, characterIndex) => {
+    if (/\s/.test(finalCharacter)) {
+      return {
+        finalCharacter,
+        glyph: finalCharacter,
+        isSpace: true,
+        resolved: true,
+      };
+    }
+
+    revealableIndex += 1;
+
+    const resolveFrame = Math.max(
+      1,
+      Math.ceil((revealableIndex / Math.max(1, revealableCount)) * updateCount),
+    );
+    const resolved = frame >= resolveFrame;
+
+    return {
+      finalCharacter,
+      glyph: resolved
+        ? finalCharacter
+        : getScrambleGlyph({ characterIndex, frame }),
+      isSpace: false,
+      resolved,
+    };
+  });
+}
+
+type ScrambleGroup =
+  | { kind: "space"; text: string }
+  | { kind: "word"; slots: { slot: ScrambleSlot; index: number }[] };
+
+// Groups the flat slot list into words (kept whole via an inline-block wrapper)
+// and the spaces between them (real break opportunities), so the overlay wraps
+// exactly like the plain sizer text underneath it.
+function groupScrambleSlots(slots: ScrambleSlot[]): ScrambleGroup[] {
+  const groups: ScrambleGroup[] = [];
+
+  slots.forEach((slot, index) => {
+    if (slot.isSpace) {
+      const previous = groups[groups.length - 1];
+
+      if (previous && previous.kind === "space") {
+        previous.text += slot.finalCharacter;
+      } else {
+        groups.push({ kind: "space", text: slot.finalCharacter });
       }
 
-      revealableIndex += 1;
+      return;
+    }
 
-      const resolveFrame = Math.max(
-        1,
-        Math.ceil(
-          (revealableIndex / Math.max(1, revealableCount)) * updateCount,
-        ),
-      );
+    const previous = groups[groups.length - 1];
 
-      if (frame >= resolveFrame) {
-        return character;
-      }
+    if (previous && previous.kind === "word") {
+      previous.slots.push({ slot, index });
+    } else {
+      groups.push({ kind: "word", slots: [{ slot, index }] });
+    }
+  });
 
-      return getScrambleGlyph({ character, characterIndex, frame });
-    })
-    .join("");
+  return groups;
+}
+
+// All-resolved slots, used for the SSR / reduced-motion / pre-hydration render
+// so it shares the exact per-character slot layout the animation settles into —
+// no plain-text run anywhere, so the client takeover never shifts the text.
+function getResolvedScrambleGroups(text: string): ScrambleGroup[] {
+  return groupScrambleSlots(
+    Array.from(text).map((finalCharacter) => ({
+      finalCharacter,
+      glyph: finalCharacter,
+      isSpace: /\s/.test(finalCharacter),
+      resolved: true,
+    })),
+  );
+}
+
+// Shared renderer for both the live animation and the static fallback. A
+// resolved slot is just its final character (clean text); an unresolved slot
+// reserves that same width with an invisible copy and floats the cipher glyph on
+// top. Only unresolved slots carry the fragment marker, so the static render is
+// free of scramble internals.
+function renderScrambleGroups(groups: ScrambleGroup[]) {
+  return groups.map((group, groupIndex) =>
+    group.kind === "space" ? (
+      <span key={`space-${groupIndex}`}>{group.text}</span>
+    ) : (
+      <span
+        key={`word-${groupIndex}`}
+        data-slot="hero-text-animation-scramble-word"
+        className={heroTextAnimationScrambleWordClasses}
+      >
+        {group.slots.map(({ slot, index }) =>
+          slot.resolved ? (
+            <span
+              key={`${index}-${slot.finalCharacter}`}
+              data-scramble-resolved="true"
+              className={heroTextAnimationScrambleResolvedGlyphClasses}
+            >
+              {slot.finalCharacter}
+            </span>
+          ) : (
+            <span
+              key={`${index}-${slot.finalCharacter}`}
+              data-slot="hero-text-animation-scramble-fragment"
+              data-scramble-resolved="false"
+              className={heroTextAnimationScrambleGlyphClasses}
+            >
+              <span aria-hidden="true" className="invisible">
+                {slot.finalCharacter}
+              </span>
+              <span
+                aria-hidden="true"
+                className={heroTextAnimationScrambleGlyphOverlayClasses}
+              >
+                {slot.glyph}
+              </span>
+            </span>
+          ),
+        )}
+      </span>
+    ),
+  );
 }
 
 function resolveRotatingKeywordOptions({
@@ -1525,6 +1807,30 @@ function RotatingKeywordSegments({
   );
 }
 
+// Static (SSR / pre-hydration / reduced-motion-static) render. It reuses the
+// exact sizer + overlay box the animated component settles into, so the plain
+// final text is shown with no glyph fragments and the layout never shifts when
+// the client takes over.
+function renderStaticScramble(text: string) {
+  return (
+    <span
+      aria-hidden="true"
+      data-slot="hero-text-animation-motion"
+      data-scramble-complete="true"
+      data-split-by="character"
+      className={heroTextAnimationScrambleMotionClasses}
+    >
+      <span
+        data-slot="hero-text-animation-scramble-text"
+        data-reduced-motion="true"
+        className={heroTextAnimationScrambleTextClasses}
+      >
+        {renderScrambleGroups(getResolvedScrambleGroups(text))}
+      </span>
+    </span>
+  );
+}
+
 function ScrambleDecryptSegments({
   active,
   delay,
@@ -1620,13 +1926,13 @@ function ScrambleDecryptSegments({
     : !shouldStart
       ? 0
       : Math.min(frame, updateCount);
-  const visualText = getScrambleFrameText({
+  const isComplete = normalizedFrame >= updateCount;
+  const slots = getScrambleFrameSlots({
     frame: normalizedFrame,
     text,
     updateCount,
   });
-  const finalCharacters = useMemo(() => Array.from(text), [text]);
-  const isComplete = normalizedFrame >= updateCount;
+  const groups = groupScrambleSlots(slots);
 
   return (
     <span
@@ -1640,28 +1946,11 @@ function ScrambleDecryptSegments({
       className={heroTextAnimationScrambleMotionClasses}
     >
       <span
-        data-slot="hero-text-animation-scramble-sizer"
-        className={heroTextAnimationScrambleSizerClasses}
-      >
-        {text}
-      </span>
-      <span
         data-slot="hero-text-animation-scramble-text"
         data-reduced-motion={reducedMotion ? "true" : undefined}
         className={heroTextAnimationScrambleTextClasses}
       >
-        {Array.from(visualText).map((character, index) => (
-          <span
-            key={`${index}-${character}`}
-            data-slot="hero-text-animation-scramble-fragment"
-            data-scramble-resolved={
-              character === finalCharacters[index] ? "true" : "false"
-            }
-            className={heroTextAnimationScrambleGlyphClasses}
-          >
-            {character}
-          </span>
-        ))}
+        {renderScrambleGroups(groups)}
       </span>
     </span>
   );
@@ -1689,18 +1978,25 @@ function GradientHighlightSegments({
   onAnimationStart?: () => void;
 }) {
   const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const { markActive, markRest, willChangeClass } = useMotionRest();
   const shouldStart =
     trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
-  const initialBackgroundPositionX =
-    reducedMotion || !shouldStart ? "0%" : "120%";
-  const targetBackgroundPositionX =
-    reducedMotion || !shouldStart ? "0%" : "-20%";
+  // Position 0% shows the fully revealed (base) text; 100% parks the window in
+  // the transparent zone so the heading starts invisible and paints in as the
+  // sweep drives the position back to 0%. Reduced motion rests revealed; an
+  // in-view trigger waits hidden until it scrolls into view.
+  const initialBackgroundPositionX = reducedMotion ? "0%" : "100%";
+  const targetBackgroundPositionX = reducedMotion
+    ? "0%"
+    : !shouldStart
+      ? "100%"
+      : "0%";
   const transition = reducedMotion
     ? { duration: 0 }
     : {
         delay,
         duration,
-        ease: heroTextAnimationMotionTokens.easing.soft,
+        ease: gradientHighlightSweepEase,
       };
 
   return (
@@ -1714,16 +2010,27 @@ function GradientHighlightSegments({
       className={cn(
         heroTextAnimationMotionClasses,
         heroTextAnimationGradientHighlightClasses,
+        willChangeClass,
       )}
       style={gradientHighlightStyle}
       initial={{ backgroundPositionX: initialBackgroundPositionX }}
       animate={{ backgroundPositionX: targetBackgroundPositionX }}
       transition={transition}
       onAnimationComplete={
-        reducedMotion || !shouldStart ? undefined : onAnimationComplete
+        reducedMotion || !shouldStart
+          ? undefined
+          : () => {
+              markRest();
+              onAnimationComplete?.();
+            }
       }
       onAnimationStart={
-        reducedMotion || !shouldStart ? undefined : onAnimationStart
+        reducedMotion || !shouldStart
+          ? undefined
+          : () => {
+              markActive();
+              onAnimationStart?.();
+            }
       }
     >
       {text}
@@ -1750,73 +2057,21 @@ function renderStaticGradientHighlight(text: string) {
   );
 }
 
-function SvgStrokeDrawGraphic({
-  accessibleTitle,
-  paths,
-  reducedMotion,
-  shouldExposeSvg,
-  viewBox,
-}: {
-  accessibleTitle?: string;
-  paths: readonly HeroTextAnimationSvgPath[];
-  reducedMotion: boolean;
-  shouldExposeSvg: boolean;
-  viewBox: string;
-}) {
-  if (paths.length === 0) {
-    return null;
-  }
-
-  return (
-    <svg
-      aria-hidden={shouldExposeSvg ? undefined : "true"}
-      aria-label={shouldExposeSvg ? accessibleTitle : undefined}
-      data-slot="hero-text-animation-svg"
-      fill="none"
-      focusable="false"
-      role={shouldExposeSvg ? "img" : undefined}
-      viewBox={viewBox}
-      className={heroTextAnimationSvgStrokeDrawSvgClasses}
-    >
-      {shouldExposeSvg && accessibleTitle ? (
-        <title>{accessibleTitle}</title>
-      ) : null}
-      {paths.map((path, index) => (
-        <path
-          key={`${index}-${path.d}`}
-          aria-hidden="true"
-          data-reduced-motion={reducedMotion ? "true" : undefined}
-          data-slot="hero-text-animation-svg-path"
-          d={path.d}
-          fill="var(--hero-text-animation-svg-fill)"
-          fillOpacity={1}
-          pathLength={1}
-          stroke="var(--hero-text-animation-svg-stroke)"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={path.strokeWidth ?? 5}
-          className={heroTextAnimationSvgStrokeDrawPathClasses}
-        />
-      ))}
-    </svg>
-  );
-}
-
 function renderStaticSvgStrokeDraw({
   accessibleTitle,
-  pathDataValid,
-  paths,
-  text,
+  lines,
   viewBox,
   viewBoxValid,
 }: {
   accessibleTitle?: string;
-  pathDataValid: boolean;
-  paths: readonly HeroTextAnimationSvgPath[];
-  text: string;
+  lines: string[];
   viewBox: string;
   viewBoxValid: boolean;
 }) {
+  const geometry = estimateSvgStrokeDrawGeometry(
+    lines,
+    viewBoxValid ? viewBox : undefined,
+  );
   const shouldExposeSvg =
     accessibleTitle !== undefined && accessibleTitle.length > 0;
 
@@ -1825,10 +2080,10 @@ function renderStaticSvgStrokeDraw({
       aria-hidden={shouldExposeSvg ? undefined : "true"}
       data-reduced-motion="true"
       data-slot="hero-text-animation-motion"
-      data-split-by="path"
-      data-svg-path-count={paths.length}
-      data-svg-path-valid={pathDataValid ? "true" : "false"}
+      data-split-by="line"
+      data-svg-line-count={lines.length}
       data-svg-stroke-draw="true"
+      data-svg-stroke-draw-mode="letter-trace"
       data-svg-view-box-valid={viewBoxValid ? "true" : "false"}
       className={cn(
         heroTextAnimationMotionClasses,
@@ -1836,20 +2091,42 @@ function renderStaticSvgStrokeDraw({
       )}
       style={svgStrokeDrawStyle}
     >
-      <span
-        aria-hidden={shouldExposeSvg ? "true" : undefined}
-        data-slot="hero-text-animation-svg-text"
-        className={heroTextAnimationSvgStrokeDrawTextClasses}
+      <svg
+        aria-hidden={shouldExposeSvg ? undefined : "true"}
+        aria-label={shouldExposeSvg ? accessibleTitle : undefined}
+        data-slot="hero-text-animation-svg"
+        fill="none"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        role={shouldExposeSvg ? "img" : undefined}
+        viewBox={geometry.viewBox}
+        className={heroTextAnimationSvgStrokeDrawSvgClasses}
       >
-        {text}
-      </span>
-      <SvgStrokeDrawGraphic
-        accessibleTitle={accessibleTitle}
-        paths={paths}
-        reducedMotion
-        shouldExposeSvg={shouldExposeSvg}
-        viewBox={viewBox}
-      />
+        {shouldExposeSvg && accessibleTitle ? (
+          <title>{accessibleTitle}</title>
+        ) : null}
+        {lines.map((line, index) => (
+          <text
+            key={`${index}-${line}`}
+            aria-hidden="true"
+            data-reduced-motion="true"
+            data-slot="hero-text-animation-svg-line"
+            x={geometry.centerX}
+            y={geometry.baselines[index]}
+            textAnchor="middle"
+            fontSize={svgStrokeDrawFontSize}
+            fill="currentColor"
+            fillOpacity={1}
+            stroke="var(--hero-text-animation-svg-stroke)"
+            strokeWidth={svgStrokeDrawStrokeWidth}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={heroTextAnimationSvgStrokeDrawLineClasses}
+          >
+            {line}
+          </text>
+        ))}
+      </svg>
     </span>
   );
 }
@@ -1859,10 +2136,8 @@ function SvgStrokeDrawSegments({
   active,
   delay,
   duration,
+  lines,
   once,
-  pathDataValid,
-  paths,
-  text,
   trigger,
   viewBox,
   viewBoxValid,
@@ -1873,10 +2148,8 @@ function SvgStrokeDrawSegments({
   active: boolean;
   delay: number;
   duration: number;
+  lines: string[];
   once: boolean;
-  pathDataValid: boolean;
-  paths: readonly HeroTextAnimationSvgPath[];
-  text: string;
   trigger: HeroTextAnimationTrigger;
   viewBox: string;
   viewBoxValid: boolean;
@@ -1884,21 +2157,110 @@ function SvgStrokeDrawSegments({
   onAnimationStart?: () => void;
 }) {
   const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const { markActive, markRest } = useMotionRest();
+  const clipId = useId().replace(/:/g, "");
   const shouldStart =
     trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
   const shouldExposeSvg =
     accessibleTitle !== undefined && accessibleTitle.length > 0;
-  const lastPathIndex = paths.length - 1;
+  const viewBoxOverride = viewBoxValid ? viewBox : undefined;
+  const [geometry, setGeometry] = useState(() =>
+    estimateSvgStrokeDrawGeometry(lines, viewBoxOverride),
+  );
+  const groupRef = useRef<SVGGElement>(null);
+  const lineRefs = useRef<Array<SVGTextElement | null>>([]);
+  const linesKey = lines.join("\n");
+
+  // Measure the real glyph metrics after layout so each line's wipe spans its
+  // exact width and the view box frames the text tightly. Re-measures once web
+  // fonts settle, since the glyph advances change when the real face swaps in.
+  useIsomorphicLayoutEffect(() => {
+    const measure = () => {
+      const group = groupRef.current;
+
+      if (!group || typeof group.getBBox !== "function") {
+        return;
+      }
+
+      let box: DOMRect;
+
+      try {
+        box = group.getBBox();
+      } catch {
+        return;
+      }
+
+      if (!box || box.width === 0 || box.height === 0) {
+        return;
+      }
+
+      const lineWidths = lines.map((_, index) => {
+        const element = lineRefs.current[index];
+        const length =
+          element && typeof element.getComputedTextLength === "function"
+            ? element.getComputedTextLength()
+            : 0;
+
+        return Math.max(1, length);
+      });
+      const pad = svgStrokeDrawViewBoxPadding;
+
+      setGeometry((previous) => ({
+        ...previous,
+        viewBox:
+          viewBoxOverride ??
+          `${box.x - pad} ${box.y - pad} ${box.width + pad * 2} ${
+            box.height + pad * 2
+          }`,
+        lineWidths,
+        measured: true,
+      }));
+    };
+
+    measure();
+
+    if (
+      typeof document !== "undefined" &&
+      document.fonts &&
+      "ready" in document.fonts
+    ) {
+      let cancelled = false;
+
+      document.fonts.ready
+        .then(() => {
+          if (!cancelled) {
+            measure();
+          }
+        })
+        .catch(() => {});
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    return undefined;
+  }, [linesKey, viewBoxOverride]);
+
+  const lastLineIndex = lines.length - 1;
+  const wipePad = svgStrokeDrawStrokeWidth * 2;
+  const fillLag = duration * svgStrokeDrawFillLagRatio;
+  const wipeTransition = (wipeDelay: number) => ({
+    delay: wipeDelay,
+    duration,
+    ease: "linear" as const,
+  });
 
   return (
     <span
       ref={inViewRef}
       aria-hidden={shouldExposeSvg ? undefined : "true"}
       data-slot="hero-text-animation-motion"
-      data-split-by="path"
-      data-svg-path-count={paths.length}
-      data-svg-path-valid={pathDataValid ? "true" : "false"}
+      data-split-by="line"
+      data-svg-line-count={lines.length}
+      data-svg-measured={geometry.measured ? "true" : "false"}
       data-svg-stroke-draw="true"
+      data-svg-stroke-draw-mode="letter-trace"
       data-svg-view-box-valid={viewBoxValid ? "true" : "false"}
       className={cn(
         heroTextAnimationMotionClasses,
@@ -1906,75 +2268,117 @@ function SvgStrokeDrawSegments({
       )}
       style={svgStrokeDrawStyle}
     >
-      <span
-        aria-hidden={shouldExposeSvg ? "true" : undefined}
-        data-slot="hero-text-animation-svg-text"
-        className={heroTextAnimationSvgStrokeDrawTextClasses}
+      <svg
+        aria-hidden={shouldExposeSvg ? undefined : "true"}
+        aria-label={shouldExposeSvg ? accessibleTitle : undefined}
+        data-slot="hero-text-animation-svg"
+        fill="none"
+        focusable="false"
+        preserveAspectRatio="xMidYMid meet"
+        role={shouldExposeSvg ? "img" : undefined}
+        viewBox={geometry.viewBox}
+        className={heroTextAnimationSvgStrokeDrawSvgClasses}
       >
-        {text}
-      </span>
-      {paths.length > 0 ? (
-        <svg
-          aria-hidden={shouldExposeSvg ? undefined : "true"}
-          aria-label={shouldExposeSvg ? accessibleTitle : undefined}
-          data-slot="hero-text-animation-svg"
-          fill="none"
-          focusable="false"
-          role={shouldExposeSvg ? "img" : undefined}
-          viewBox={viewBox}
-          className={heroTextAnimationSvgStrokeDrawSvgClasses}
-        >
-          {shouldExposeSvg && accessibleTitle ? (
-            <title>{accessibleTitle}</title>
-          ) : null}
-          {paths.map((path, index) => {
-            const pathDelay =
-              delay + index * heroTextAnimationMotionTokens.stagger.line;
+        {shouldExposeSvg && accessibleTitle ? (
+          <title>{accessibleTitle}</title>
+        ) : null}
+        <defs>
+          {lines.map((line, index) => {
+            const width = geometry.lineWidths[index] ?? 1;
+            const left = geometry.centerX - width / 2 - wipePad;
+            const fullWidth = width + wipePad * 2;
+            const top =
+              geometry.baselines[index] - svgStrokeDrawAscent - wipePad;
+            const height =
+              svgStrokeDrawAscent + svgStrokeDrawDescent + wipePad * 2;
+            const lineDelay = delay + index * svgStrokeDrawLineStagger;
+            // The wipe only runs once the text has been measured, so the reveal
+            // always spans the real line width rather than the placeholder.
+            const isDrawing = shouldStart && geometry.measured;
+
+            return [
+              <clipPath key={`o-${index}`} id={`${clipId}-o-${index}`}>
+                <motionElement.rect
+                  x={left}
+                  y={top}
+                  height={height}
+                  initial={{ width: 0 }}
+                  animate={{ width: isDrawing ? fullWidth : 0 }}
+                  transition={wipeTransition(lineDelay)}
+                  onAnimationStart={
+                    isDrawing && index === 0
+                      ? () => {
+                          markActive();
+                          onAnimationStart?.();
+                        }
+                      : undefined
+                  }
+                />
+              </clipPath>,
+              <clipPath key={`f-${index}`} id={`${clipId}-f-${index}`}>
+                <motionElement.rect
+                  x={left}
+                  y={top}
+                  height={height}
+                  initial={{ width: 0 }}
+                  animate={{ width: isDrawing ? fullWidth : 0 }}
+                  transition={wipeTransition(lineDelay + fillLag)}
+                  onAnimationComplete={
+                    isDrawing && index === lastLineIndex
+                      ? () => {
+                          markRest();
+                          onAnimationComplete?.();
+                        }
+                      : undefined
+                  }
+                />
+              </clipPath>,
+            ];
+          })}
+        </defs>
+        <g ref={groupRef} data-slot="hero-text-animation-svg-group">
+          {lines.map((line, index) => {
+            const baseTextProps = {
+              x: geometry.centerX,
+              y: geometry.baselines[index],
+              textAnchor: "middle" as const,
+              fontSize: svgStrokeDrawFontSize,
+            };
 
             return (
-              <motionElement.path
-                key={`${index}-${path.d}`}
-                aria-hidden="true"
-                data-reduced-motion={undefined}
-                data-slot="hero-text-animation-svg-path"
-                d={path.d}
-                fill="var(--hero-text-animation-svg-fill)"
-                initial={{ fillOpacity: 0, pathLength: 0 }}
-                animate={
-                  shouldStart
-                    ? { fillOpacity: 1, pathLength: 1 }
-                    : { fillOpacity: 0, pathLength: 0 }
-                }
-                stroke="var(--hero-text-animation-svg-stroke)"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={path.strokeWidth ?? 5}
-                className={heroTextAnimationSvgStrokeDrawPathClasses}
-                transition={{
-                  fillOpacity: {
-                    delay: pathDelay + duration * 0.72,
-                    duration: Math.min(0.28, duration * 0.32),
-                    ease: "linear",
-                  },
-                  pathLength: {
-                    delay: pathDelay,
-                    duration,
-                    ease: heroTextAnimationMotionTokens.easing.soft,
-                  },
-                }}
-                onAnimationComplete={
-                  shouldStart && index === lastPathIndex
-                    ? onAnimationComplete
-                    : undefined
-                }
-                onAnimationStart={
-                  shouldStart && index === 0 ? onAnimationStart : undefined
-                }
-              />
+              <g key={`${index}-${line}`} data-svg-line-index={index}>
+                <text
+                  {...baseTextProps}
+                  ref={(element) => {
+                    lineRefs.current[index] = element;
+                  }}
+                  aria-hidden="true"
+                  data-slot="hero-text-animation-svg-line"
+                  clipPath={`url(#${clipId}-o-${index})`}
+                  fill="none"
+                  stroke="var(--hero-text-animation-svg-stroke)"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={svgStrokeDrawStrokeWidth}
+                >
+                  {line}
+                </text>
+                <text
+                  {...baseTextProps}
+                  aria-hidden="true"
+                  data-slot="hero-text-animation-svg-fill"
+                  clipPath={`url(#${clipId}-f-${index})`}
+                  fill="currentColor"
+                  stroke="none"
+                  className={heroTextAnimationSvgStrokeDrawLineClasses}
+                >
+                  {line}
+                </text>
+              </g>
             );
           })}
-        </svg>
-      ) : null}
+        </g>
+      </svg>
     </span>
   );
 }
@@ -2001,6 +2405,7 @@ function BlurFocusSegments({
   onAnimationStart?: () => void;
 }) {
   const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const { markActive, markRest, willChangeClass } = useMotionRest();
   const shouldStart =
     trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
   const hiddenState = reducedMotion
@@ -2008,6 +2413,7 @@ function BlurFocusSegments({
     : {
         filter: `blur(${blurFocusInitialBlur})`,
         opacity: 0,
+        scale: blurFocusInitialScale,
         y: heroTextAnimationMotionTokens.distance.blurFocusY,
       };
   const visibleState = reducedMotion
@@ -2015,7 +2421,27 @@ function BlurFocusSegments({
     : {
         filter: `blur(${blurFocusFinalBlur})`,
         opacity: 1,
+        scale: 1,
         y: "0em",
+      };
+  const transition: Transition = reducedMotion
+    ? { delay, duration: 0.18, ease: "linear" }
+    : {
+        delay,
+        duration,
+        ease: blurFocusFocusEase,
+        // The defocus (blur/scale/y) racks in with the back-loaded ease so it
+        // stays perceptible through the reveal; opacity resolves sooner so the
+        // heading reads as a soft-focus word settling into clarity rather than
+        // fading in from nothing.
+        filter: { delay, duration, ease: blurFocusFocusEase },
+        scale: { delay, duration, ease: blurFocusFocusEase },
+        y: { delay, duration, ease: blurFocusFocusEase },
+        opacity: {
+          delay,
+          duration: duration * 0.6,
+          ease: heroTextAnimationMotionTokens.easing.soft,
+        },
       };
 
   return (
@@ -2033,23 +2459,26 @@ function BlurFocusSegments({
       className={cn(
         heroTextAnimationMotionClasses,
         heroTextAnimationBlurFocusClasses,
+        willChangeClass,
       )}
       initial={shouldStart ? hiddenState : { opacity: 0 }}
       animate={shouldStart ? visibleState : { opacity: 0 }}
-      transition={
-        reducedMotion
-          ? { delay, duration: 0.18, ease: "linear" }
-          : {
-              delay,
-              duration,
-              ease: heroTextAnimationMotionTokens.easing.soft,
-            }
-      }
+      transition={transition}
       onAnimationComplete={
-        shouldStart && !reducedMotion ? onAnimationComplete : undefined
+        shouldStart && !reducedMotion
+          ? () => {
+              markRest();
+              onAnimationComplete?.();
+            }
+          : undefined
       }
       onAnimationStart={
-        shouldStart && !reducedMotion ? onAnimationStart : undefined
+        shouldStart && !reducedMotion
+          ? () => {
+              markActive();
+              onAnimationStart?.();
+            }
+          : undefined
       }
     >
       {text}
@@ -2077,11 +2506,193 @@ function renderStaticBlurFocus(text: string) {
   );
 }
 
+function getBlurFocusSegmentVariants({
+  duration,
+  reducedMotion,
+  splitBy,
+}: {
+  duration: number;
+  reducedMotion: boolean;
+  splitBy: HeroTextAnimationSplitBy;
+}): Variants {
+  if (reducedMotion) {
+    return {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: { duration: 0.18, ease: "linear" },
+      },
+    };
+  }
+
+  const distance =
+    splitBy === "line"
+      ? heroTextAnimationMotionTokens.distance.lineY
+      : heroTextAnimationMotionTokens.distance.blurFocusY;
+
+  return {
+    hidden: {
+      filter: `blur(${blurFocusInitialBlur})`,
+      opacity: 0,
+      scale: blurFocusInitialScale,
+      y: distance,
+    },
+    visible: {
+      filter: `blur(${blurFocusFinalBlur})`,
+      opacity: 1,
+      scale: 1,
+      // Mirror the single-phrase reveal per segment: the defocus racks in with
+      // the back-loaded ease while opacity resolves sooner, so each word settles
+      // from soft focus into clarity as the stagger sweeps across the line.
+      transition: {
+        duration,
+        ease: blurFocusFocusEase,
+        opacity: {
+          duration: duration * 0.6,
+          ease: heroTextAnimationMotionTokens.easing.soft,
+        },
+      },
+      y: "0em",
+    },
+  };
+}
+
+function renderStaticBlurFocusSegments({
+  segments,
+  splitBy,
+}: {
+  segments: HeroTextAnimationSegment[];
+  splitBy: HeroTextAnimationSplitBy;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      data-blur-final={blurFocusFinalBlur}
+      data-blur-initial={blurFocusFinalBlur}
+      data-focus-reveal="blur-focus"
+      data-reduced-motion="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by={splitBy}
+      className={heroTextAnimationMotionClasses}
+    >
+      {renderStaticSegments({ segments, splitBy })}
+    </span>
+  );
+}
+
+function BlurFocusStaggeredSegments({
+  active,
+  delay,
+  duration,
+  once,
+  reducedMotion,
+  segments,
+  splitBy,
+  stagger,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  reducedMotion: boolean;
+  segments: HeroTextAnimationSegment[];
+  splitBy: HeroTextAnimationSplitBy;
+  stagger: number;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const containerVariants = getContainerVariants({ delay, stagger });
+  const segmentVariants = getBlurFocusSegmentVariants({
+    duration,
+    reducedMotion,
+    splitBy,
+  });
+  const { markActive, markRest, willChangeClass } = useMotionRest();
+  const triggerProps =
+    trigger === "in-view"
+      ? {
+          whileInView: "visible",
+          viewport: { amount: 0.6, once },
+        }
+      : {
+          animate: trigger === "manual" && !active ? "hidden" : "visible",
+        };
+
+  return (
+    <motionElement.span
+      aria-hidden="true"
+      data-blur-final={blurFocusFinalBlur}
+      data-blur-initial={
+        reducedMotion ? blurFocusFinalBlur : blurFocusInitialBlur
+      }
+      data-focus-reveal="blur-focus"
+      data-reduced-motion={reducedMotion ? "true" : undefined}
+      data-slot="hero-text-animation-motion"
+      data-split-by={splitBy}
+      className={heroTextAnimationMotionClasses}
+      variants={containerVariants}
+      initial="hidden"
+      onAnimationComplete={() => {
+        markRest();
+        onAnimationComplete?.();
+      }}
+      onAnimationStart={() => {
+        markActive();
+        onAnimationStart?.();
+      }}
+      {...triggerProps}
+    >
+      {splitBy === "line"
+        ? segments.map((segment, index) => (
+            <motionElement.span
+              key={`${index}-${segment.text}`}
+              data-slot="hero-text-animation-segment"
+              data-reduced-motion={reducedMotion ? "true" : undefined}
+              data-segment="line"
+              className={cn(
+                heroTextAnimationBlurFocusLineClasses,
+                willChangeClass,
+              )}
+              variants={segmentVariants}
+            >
+              {segment.text}
+            </motionElement.span>
+          ))
+        : segments.map((segment, index) => {
+            if (segment.kind === "space") {
+              return segment.text;
+            }
+
+            return (
+              <motionElement.span
+                key={`${index}-${segment.text}`}
+                data-slot="hero-text-animation-segment"
+                data-reduced-motion={reducedMotion ? "true" : undefined}
+                data-segment="word"
+                className={cn(
+                  heroTextAnimationBlurFocusWordClasses,
+                  willChangeClass,
+                )}
+                variants={segmentVariants}
+              >
+                {segment.text}
+              </motionElement.span>
+            );
+          })}
+    </motionElement.span>
+  );
+}
+
 function renderStaticScrollResponsive(text: string) {
   return (
     <span
       aria-hidden="true"
       data-reduced-motion="true"
+      data-scroll-anchor={scrollResponsiveAnchor}
       data-scroll-opacity-min={scrollResponsiveMinimumOpacity}
       data-scroll-progress="0.000"
       data-scroll-range-px={scrollResponsiveRangePx}
@@ -2129,16 +2740,27 @@ function ScrollResponsiveSegments({
     const update = () => {
       frameId = undefined;
 
-      const scrollY = Math.max(0, window.scrollY || window.pageYOffset || 0);
-      const progress = Math.min(1, scrollY / scrollResponsiveRangePx);
+      if (!element) {
+        return;
+      }
+
+      // Progress is anchored to the hero's own top: 0 while the hero top is at
+      // or below the viewport top, rising to 1 over the next `range` px of
+      // scroll. Uses the live element position, so it is correct wherever the
+      // hero is placed on the page.
+      const rect = element.getBoundingClientRect();
+      const progress = Math.min(
+        1,
+        Math.max(0, -rect.top / scrollResponsiveRangePx),
+      );
       const nextY = heroTextAnimationMotionTokens.distance.scrollY * progress;
       const nextOpacity = 1 - (1 - scrollResponsiveMinimumOpacity) * progress;
 
       y.set(nextY);
       opacity.set(nextOpacity);
-      element?.setAttribute("data-scroll-progress", progress.toFixed(3));
-      element?.setAttribute("data-scroll-y", nextY.toFixed(3));
-      element?.setAttribute("data-scroll-opacity", nextOpacity.toFixed(3));
+      element.setAttribute("data-scroll-progress", progress.toFixed(3));
+      element.setAttribute("data-scroll-y", nextY.toFixed(3));
+      element.setAttribute("data-scroll-opacity", nextOpacity.toFixed(3));
     };
 
     const scheduleUpdate = () => {
@@ -2152,9 +2774,11 @@ function ScrollResponsiveSegments({
 
     update();
     window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
 
       if (frameId !== undefined) {
         if (window.cancelAnimationFrame) {
@@ -2171,6 +2795,7 @@ function ScrollResponsiveSegments({
       ref={motionRef}
       aria-hidden="true"
       data-reduced-motion={reducedMotion ? "true" : undefined}
+      data-scroll-anchor={scrollResponsiveAnchor}
       data-scroll-opacity-min={scrollResponsiveMinimumOpacity}
       data-scroll-progress="0.000"
       data-scroll-range-px={scrollResponsiveRangePx}
@@ -2224,11 +2849,13 @@ export const HeroTextAnimation = forwardRef<
       rotatingKeywordPrefix = "",
       rotatingKeywordSuffix = "",
       showCaret = true,
-      splitBy = "word",
+      splitBy,
       stagger,
       svgAccessibleTitle,
-      svgPathData,
-      svgViewBox = defaultSvgStrokeDrawViewBox,
+      // Deprecated and ignored; destructured only to keep it out of `...props`
+      // so it never lands on the DOM node.
+      svgPathData: _svgPathData,
+      svgViewBox,
       text,
       trigger = "mount",
       "data-testid": dataTestId = "hero-text-animation",
@@ -2252,7 +2879,9 @@ export const HeroTextAnimation = forwardRef<
           : prefersReducedMotion === true;
     const resolvedDuration =
       duration ??
-      (animation === "rotating-keyword"
+      (animation === "masked-curtain"
+        ? heroTextAnimationMotionTokens.duration.maskedCurtain
+        : animation === "rotating-keyword"
         ? heroTextAnimationMotionTokens.duration.rotatingKeyword
         : animation === "scramble-decrypt"
           ? heroTextAnimationMotionTokens.duration.scramble
@@ -2290,7 +2919,13 @@ export const HeroTextAnimation = forwardRef<
         ? "line"
         : animation === "kinetic-emphasis-pop"
           ? "word"
-          : splitBy;
+          : (splitBy ?? "word");
+    // Blur-focus reveals the whole phrase at once by default. Passing an
+    // explicit splitBy opts into a staggered word-by-word (or line-by-line)
+    // focus-in; leaving it undefined keeps the original single-phrase behavior.
+    const blurFocusSegmented =
+      animation === "blur-focus" &&
+      (splitBy === "word" || splitBy === "line");
     const resolvedStagger =
       stagger ??
       (resolvedSplitBy === "line"
@@ -2317,16 +2952,13 @@ export const HeroTextAnimation = forwardRef<
         }),
       [rotatingKeywordOptions, text],
     );
-    const svgStrokeDrawPaths = useMemo(
-      () => normalizeSvgStrokeDrawPaths(svgPathData),
-      [svgPathData],
+    const svgStrokeDrawLines = useMemo(
+      () => splitSvgStrokeDrawLines(text),
+      [text],
     );
-    const svgPathDataValid =
-      svgPathData === undefined || svgStrokeDrawPaths.length > 0;
-    const svgViewBoxValid = isValidSvgViewBox(svgViewBox);
-    const resolvedSvgViewBox = svgViewBoxValid
-      ? svgViewBox.trim()
-      : defaultSvgStrokeDrawViewBox;
+    const svgViewBoxValid =
+      svgViewBox !== undefined && isValidSvgViewBox(svgViewBox);
+    const resolvedSvgViewBox = svgViewBoxValid ? svgViewBox.trim() : "";
     const exposesSvgAlternative =
       animation === "svg-stroke-draw" &&
       svgAccessibleTitle !== undefined &&
@@ -2352,27 +2984,33 @@ export const HeroTextAnimation = forwardRef<
     const animatedSegmentCount =
       animation === "rotating-keyword"
         ? keywordCount
-        : animation === "gradient-highlight" ||
-            animation === "blur-focus" ||
-            animation === "scroll-responsive"
-          ? 1
-          : animation === "svg-stroke-draw"
-            ? svgStrokeDrawPaths.length
-            : animation === "typewriter" || animation === "scramble-decrypt"
-              ? splitTypewriterCharacters(text).length
-              : segments.filter((segment) => segment.kind === "text").length;
+        : animation === "blur-focus"
+          ? blurFocusSegmented
+            ? segments.filter((segment) => segment.kind === "text").length
+            : 1
+          : animation === "gradient-highlight" ||
+              animation === "scroll-responsive"
+            ? 1
+            : animation === "svg-stroke-draw"
+              ? svgStrokeDrawLines.length
+              : animation === "typewriter" || animation === "scramble-decrypt"
+                ? splitTypewriterCharacters(text).length
+                : segments.filter((segment) => segment.kind === "text").length;
     const visualSplitBy =
       animation === "rotating-keyword"
         ? "keyword"
-        : animation === "gradient-highlight" ||
-            animation === "blur-focus" ||
-            animation === "scroll-responsive"
-          ? "phrase"
-          : animation === "svg-stroke-draw"
-            ? "path"
-            : animation === "typewriter" || animation === "scramble-decrypt"
-              ? "character"
-              : resolvedSplitBy;
+        : animation === "blur-focus"
+          ? blurFocusSegmented
+            ? resolvedSplitBy
+            : "phrase"
+          : animation === "gradient-highlight" ||
+              animation === "scroll-responsive"
+            ? "phrase"
+            : animation === "svg-stroke-draw"
+              ? "line"
+              : animation === "typewriter" || animation === "scramble-decrypt"
+                ? "character"
+                : resolvedSplitBy;
     const visualKey = [
       animation,
       repeatIteration,
@@ -2382,7 +3020,7 @@ export const HeroTextAnimation = forwardRef<
       resolvedStagger,
       resolvedDuration,
       kineticEmphasisIndices.join(","),
-      svgStrokeDrawPaths.map((path) => path.d).join("|"),
+      svgStrokeDrawLines.join("|"),
       resolvedSvgViewBox,
     ].join(":");
 
@@ -2423,7 +3061,6 @@ export const HeroTextAnimation = forwardRef<
       resolvedSplitBy,
       resolvedStagger,
       showCaret,
-      svgPathData,
       svgViewBox,
       text,
       trigger,
@@ -2491,10 +3128,21 @@ export const HeroTextAnimation = forwardRef<
             prefix: rotatingKeywordPrefix,
             suffix: rotatingKeywordSuffix,
           })
+        ) : renderStatic && animation === "typewriter" ? (
+          renderStaticTypewriter(text)
+        ) : renderStatic && animation === "scramble-decrypt" ? (
+          renderStaticScramble(text)
         ) : renderStatic && animation === "gradient-highlight" ? (
           renderStaticGradientHighlight(text)
         ) : renderStatic && animation === "blur-focus" ? (
-          renderStaticBlurFocus(text)
+          blurFocusSegmented ? (
+            renderStaticBlurFocusSegments({
+              segments,
+              splitBy: resolvedSplitBy,
+            })
+          ) : (
+            renderStaticBlurFocus(text)
+          )
         ) : renderStatic && animation === "scroll-responsive" ? (
           renderStaticScrollResponsive(text)
         ) : renderStatic && animation === "kinetic-emphasis-pop" ? (
@@ -2505,9 +3153,7 @@ export const HeroTextAnimation = forwardRef<
         ) : renderStatic && animation === "svg-stroke-draw" ? (
           renderStaticSvgStrokeDraw({
             accessibleTitle: svgAccessibleTitle,
-            pathDataValid: svgPathDataValid,
-            paths: svgStrokeDrawPaths,
-            text,
+            lines: svgStrokeDrawLines,
             viewBox: resolvedSvgViewBox,
             viewBoxValid: svgViewBoxValid,
           })
@@ -2568,18 +3214,35 @@ export const HeroTextAnimation = forwardRef<
             onAnimationStart={onAnimationStart}
           />
         ) : animation === "blur-focus" ? (
-          <BlurFocusSegments
-            key={visualKey}
-            active={active}
-            delay={delay}
-            duration={resolvedDuration}
-            once={once}
-            reducedMotion={reducedMotion}
-            text={text}
-            trigger={trigger}
-            onAnimationComplete={handleAnimationComplete}
-            onAnimationStart={onAnimationStart}
-          />
+          blurFocusSegmented ? (
+            <BlurFocusStaggeredSegments
+              key={visualKey}
+              active={active}
+              delay={delay}
+              duration={resolvedDuration}
+              once={once}
+              reducedMotion={reducedMotion}
+              segments={segments}
+              splitBy={resolvedSplitBy}
+              stagger={resolvedStagger}
+              trigger={trigger}
+              onAnimationComplete={handleAnimationComplete}
+              onAnimationStart={onAnimationStart}
+            />
+          ) : (
+            <BlurFocusSegments
+              key={visualKey}
+              active={active}
+              delay={delay}
+              duration={resolvedDuration}
+              once={once}
+              reducedMotion={reducedMotion}
+              text={text}
+              trigger={trigger}
+              onAnimationComplete={handleAnimationComplete}
+              onAnimationStart={onAnimationStart}
+            />
+          )
         ) : animation === "svg-stroke-draw" ? (
           <SvgStrokeDrawSegments
             key={visualKey}
@@ -2587,10 +3250,8 @@ export const HeroTextAnimation = forwardRef<
             active={active}
             delay={delay}
             duration={resolvedDuration}
+            lines={svgStrokeDrawLines}
             once={once}
-            pathDataValid={svgPathDataValid}
-            paths={svgStrokeDrawPaths}
-            text={text}
             trigger={trigger}
             viewBox={resolvedSvgViewBox}
             viewBoxValid={svgViewBoxValid}
@@ -2613,6 +3274,7 @@ export const HeroTextAnimation = forwardRef<
             once={once}
             reducedMotion={reducedMotion}
             segments={segments}
+            stagger={resolvedStagger}
             trigger={trigger}
             onAnimationComplete={handleAnimationComplete}
             onAnimationStart={onAnimationStart}

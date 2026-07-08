@@ -16,6 +16,7 @@ import { HeroTextAnimationScrollResponsiveHero } from "@/examples/hero-text-anim
 import { HeroTextAnimationScrambleDecryptHero } from "@/examples/hero-text-animation/scramble-decrypt-hero";
 import { HeroTextAnimationSvgStrokeDrawHero } from "@/examples/hero-text-animation/svg-stroke-draw-hero";
 import { HeroTextAnimationTypewriterHero } from "@/examples/hero-text-animation/typewriter-hero";
+import { HeroTextAnimationWordBlurFocusHero } from "@/examples/hero-text-animation/word-blur-focus-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
 
 export const metadata: Metadata = {
@@ -33,13 +34,13 @@ export default function HeroTextAnimationPage() {
       <DocsSection
         id="examples"
         title="Examples"
-        description="Production hero previews are shown first so animation behavior is easy to compare. Expand a source panel when you need the implementation."
+        description="Each animation is shown in a distinct, production-style hero tuned to where it fits best — SaaS, developer tools, security, editorial, luxury, and more. Expand a source panel when you need the implementation."
       >
         <div className="space-y-8">
           <ExampleBlock
             file="hero-text-animation/production-hero.tsx"
-            title="Staggered production hero section"
-            description="A focused staggered reveal recipe with animated semantic copy, navbar composition, CTAs, and icon-led proof points."
+            title="SaaS product hero — staggered words"
+            description="The default staggered word reveal in a conversion-focused SaaS layout: navbar, dual CTAs, and an icon-led proof grid."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -48,8 +49,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/masked-curtain-hero.tsx"
-            title="Masked curtain hero section"
-            description="A separate production hero recipe for the masked curtain reveal with the same navbar, action, and proof-point expectations."
+            title="Design studio hero — masked curtain"
+            description="An editorial agency layout where lines rise inside overflow masks: restrained typography, thin rules, and a numbered discipline index."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -58,8 +59,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/typewriter-hero.tsx"
-            title="Typewriter hero section"
-            description="A separate production hero recipe for short typewriter copy with final text available up front, stable actions, and reduced-motion-safe output."
+            title="Developer tool hero — typewriter"
+            description="A CLI/DX layout pairing the typed headline with a live terminal window, install command, and GitHub actions."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -68,8 +69,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/scramble-decrypt-hero.tsx"
-            title="Scramble decrypt hero section"
-            description="A separate production hero recipe for deterministic decrypt copy with bounded glyph updates, navbar composition, CTAs, and reduced-motion-safe output."
+            title="Security platform hero — scramble decrypt"
+            description="A zero-trust layout with a grid backdrop, compliance chips, and a live encrypted-status console beside the decrypting headline."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -78,8 +79,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/rotating-keyword-hero.tsx"
-            title="Rotating keyword hero section"
-            description="A separate production hero recipe for a stable accessible sentence with a decorative keyword slot, bounded auto rotation, navbar composition, CTAs, and icon-led proof points."
+            title="Multi-audience hero — rotating keyword"
+            description="A product-led layout that swaps the audience keyword while keeping one stable accessible sentence, audience chips, and a team avatar cloud."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -88,8 +89,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/gradient-highlight-hero.tsx"
-            title="Gradient highlight hero section"
-            description="A separate production hero recipe for a one-shot gradient highlight sweep with tokenized contrast, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
+            title="AI product hero — gradient highlight"
+            description="A brand-forward, centered layout with soft glow backdrops, a one-shot gradient sweep, and an early-access email capture."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -98,8 +99,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/blur-focus-hero.tsx"
-            title="Blur focus hero section"
-            description="A separate production hero recipe for a short cinematic blur-to-focus heading that resolves quickly to crisp text, avoids scale/parallax/rotation, and includes reduced-motion-safe final copy."
+            title="Luxury launch hero — blur focus"
+            description="A cinematic, minimal product-launch layout with generous whitespace, a soft vignette backdrop, and a single film CTA."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -107,9 +108,19 @@ export default function HeroTextAnimationPage() {
             <HeroTextAnimationBlurFocusHero />
           </ExampleBlock>
           <ExampleBlock
+            file="hero-text-animation/word-blur-focus-hero.tsx"
+            title="Photography studio hero — word-by-word blur focus"
+            description="The same blur-focus reveal split per word: each word racks from soft focus into clarity in sequence via the splitBy word prop, in an editorial studio layout."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationWordBlurFocusHero />
+          </ExampleBlock>
+          <ExampleBlock
             file="hero-text-animation/kinetic-emphasis-pop-hero.tsx"
-            title="Kinetic emphasis pop hero section"
-            description="A separate production hero recipe for one-shot word emphasis with static color, weight, and underline styling, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
+            title="Conversion hero — kinetic emphasis pop"
+            description="A marketing layout that pops key value words (reinforced by weight, color, and underline) above a star-rating proof line and a metric row."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -118,8 +129,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/svg-stroke-draw-hero.tsx"
-            title="SVG stroke draw hero section"
-            description="A separate production hero recipe for decorative SVG path drawing behind real HTML text, with navbar composition, CTAs, icon-led proof points, path/viewBox guidance, and reduced-motion-safe final copy."
+            title="Campaign poster hero — SVG stroke draw"
+            description="A design-forward poster layout with edition markers and a wordmark whose letterforms trace their outline and then fill, with the real heading kept available to assistive technology."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -128,8 +139,8 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/scroll-responsive-hero.tsx"
-            title="Scroll responsive hero section"
-            description="A separate production hero recipe for subtle first-scroll text response with normal document flow, navbar composition, CTAs, icon-led proof points, and reduced-motion-safe final copy."
+            title="Storytelling hero — scroll responsive"
+            description="A long-scroll narrative layout with chapter markers and a scroll cue, where the opening line subtly recedes on scroll while staying readable."
             codeCollapsible
             codeDefaultOpen={false}
             wide
@@ -165,8 +176,9 @@ export function Example() {
           compliance-critical wording. Use static text for copy where every
           character must be immediately reviewable. Limit blur focus to short
           cinematic hero headings that can finish resolving before users need to
-          read the copy. Use SVG stroke draw only as decorative path emphasis
-          around real text, never as SVG-only headline text. Use
+          read the copy. Use SVG stroke draw for short headings only; it renders
+          scalable letterforms that trace and fill, does not auto-wrap, and keeps
+          the real heading available to assistive technology. Use
           scroll-responsive text only when the full heading is readable before
           the first scroll and the next content remains in normal document flow.
         </p>
