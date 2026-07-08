@@ -33,6 +33,22 @@ describe("HeroTextAnimation SSR", () => {
     expect(html).not.toContain("translate");
   });
 
+  it("renders typewriter final text on the server without timer-only output", () => {
+    const html = renderToString(
+      <HeroTextAnimation
+        animation="typewriter"
+        text="Type concise launch copy once."
+      />,
+    );
+
+    expect(html).toContain('data-animation="typewriter"');
+    expect(html).toContain("Type concise launch copy once.");
+    expect(html).not.toContain("hero-text-animation-typewriter-caret");
+    expect(html).not.toContain("opacity:0");
+    expect(html).not.toContain("transform:");
+    expect(html).not.toContain("translate");
+  });
+
   it("hydrates without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")
@@ -46,6 +62,37 @@ describe("HeroTextAnimation SSR", () => {
       hydrateRoot(
         container,
         <HeroTextAnimation text="Hydrate production hero text." />,
+      );
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
+  it("hydrates typewriter output without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    container.innerHTML = renderToString(
+      <HeroTextAnimation
+        animation="typewriter"
+        text="Hydrate typewriter hero text."
+      />,
+    );
+
+    await act(async () => {
+      hydrateRoot(
+        container,
+        <HeroTextAnimation
+          animation="typewriter"
+          text="Hydrate typewriter hero text."
+        />,
       );
     });
 

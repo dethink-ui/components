@@ -18,11 +18,10 @@ import {
 } from "@dethink/components";
 import {
   ArrowRight,
-  BookOpenCheck,
+  BookOpenText,
   ChevronDown,
   Eye,
   Gauge,
-  Layers3,
   LifeBuoy,
   MousePointer2,
   PlayCircle,
@@ -39,57 +38,57 @@ const navItems = [
 
 const resourceItems = [
   {
-    icon: Layers3,
-    label: "Reveal structure",
-    description: "Use the curtain mask when each line needs a crisp entrance.",
+    icon: Gauge,
+    label: "Typing cadence",
+    description: "Keep short launch copy inside the bounded duration target.",
   },
   {
     icon: ShieldCheck,
-    label: "Accessible headline",
-    description: "Keep one readable heading while the visual layer animates.",
+    label: "Readable output",
+    description: "Serve final text first, then animate a decorative layer.",
   },
   {
     icon: LifeBuoy,
     label: "Motion fallback",
-    description: "Respect reduced-motion preferences without hiding content.",
+    description: "Skip timers when reduced motion is requested.",
   },
 ];
 
 const heroSignals = [
   {
     icon: Eye,
-    title: "Clear reveal",
-    description: "The mask moves away from the words without changing layout.",
-  },
-  {
-    icon: MousePointer2,
-    title: "Action ready",
-    description: "Primary and secondary CTAs stay available during motion.",
+    title: "Final copy first",
+    description: "The full headline is present for SSR and assistive tech.",
   },
   {
     icon: Gauge,
-    title: "Measured pace",
-    description: "Short timing supports polish without slowing comprehension.",
+    title: "Bounded timing",
+    description: "The typed layer finishes quickly and does not keep looping.",
   },
   {
-    icon: BookOpenCheck,
-    title: "Semantic copy",
-    description: "The visible animation mirrors the accessible text value.",
+    icon: MousePointer2,
+    title: "Action stays ready",
+    description: "Navigation and CTAs remain available while text reveals.",
+  },
+  {
+    icon: BookOpenText,
+    title: "Caret settles",
+    description: "The decorative caret disappears after the final character.",
   },
 ];
 
-export function HeroTextAnimationMaskedCurtainHero() {
+export function HeroTextAnimationTypewriterHero() {
   return (
     <HeroTextAnimationProvider>
       <section
-        aria-labelledby="hero-text-masked-curtain-heading"
+        aria-labelledby="hero-text-typewriter-heading"
         className="bg-background text-foreground border-border rounded-md border"
       >
         <div className="mx-auto max-w-5xl px-5 py-5 sm:px-8 lg:px-10">
           <header className="border-border bg-background/95 flex min-h-14 items-center gap-4 rounded-md border px-3 shadow-sm">
             <a
               href="#examples"
-              aria-label="Dethink masked curtain hero example"
+              aria-label="Dethink typewriter hero example"
               className="focus-visible:ring-ring focus-visible:ring-offset-background flex min-w-0 shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             >
               <span
@@ -104,7 +103,7 @@ export function HeroTextAnimationMaskedCurtainHero() {
             </a>
 
             <nav
-              aria-label="Masked curtain recipe navigation"
+              aria-label="Typewriter recipe navigation"
               className="hidden min-w-0 flex-1 md:block"
             >
               <ul className="flex items-center justify-center gap-1">
@@ -133,7 +132,7 @@ export function HeroTextAnimationMaskedCurtainHero() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent placement="bottom end" showArrow>
                   <DropdownMenuSection>
-                    <DropdownMenuLabel>Masked curtain</DropdownMenuLabel>
+                    <DropdownMenuLabel>Typewriter reveal</DropdownMenuLabel>
                     {resourceItems.map(({ icon: Icon, label, description }) => (
                       <DropdownMenuItem key={label} textValue={label}>
                         <DropdownMenuItemIcon aria-hidden="true">
@@ -146,12 +145,12 @@ export function HeroTextAnimationMaskedCurtainHero() {
                       </DropdownMenuItem>
                     ))}
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem textValue="Open launch checklist">
+                    <DropdownMenuItem textValue="Open copy checklist">
                       <DropdownMenuItemIcon aria-hidden="true">
-                        <BookOpenCheck />
+                        <BookOpenText />
                       </DropdownMenuItemIcon>
                       <DropdownMenuItemLabel>
-                        Launch checklist
+                        Copy checklist
                       </DropdownMenuItemLabel>
                     </DropdownMenuItem>
                   </DropdownMenuSection>
@@ -182,24 +181,24 @@ export function HeroTextAnimationMaskedCurtainHero() {
                 aria-hidden="true"
                 className="text-primary size-3.5 shrink-0"
               />
-              <span className="truncate">Masked curtain hero recipe</span>
+              <span className="truncate">Typewriter hero recipe</span>
             </div>
 
             <div className="space-y-5">
               <HeroTextAnimation
-                animation="masked-curtain"
-                ariaLabel="Turn launch headlines into clear first impressions."
-                id="hero-text-masked-curtain-heading"
+                animation="typewriter"
+                duration={1.1}
+                id="hero-text-typewriter-heading"
                 repeat
-                repeatDelay={1.6}
-                text={"Turn launch headlines into\nclear first impressions."}
+                repeatDelay={1.4}
+                text="Write launch copy that lands the point fast."
                 className="font-heading text-foreground max-w-3xl text-4xl leading-[1.03] font-semibold tracking-normal sm:text-5xl lg:text-6xl"
               />
               <p className="text-muted-foreground max-w-xl text-base leading-7 sm:text-lg">
-                Use the masked curtain reveal when a headline needs a confident
-                line-by-line entrance. The surrounding navigation, actions, and
-                proof points remain stable so the section feels production
-                ready.
+                Use the typewriter reveal for short developer, AI, or
+                command-line inspired headlines. The final message stays
+                available from the first render while the decorative layer types
+                once and then settles.
               </p>
             </div>
 

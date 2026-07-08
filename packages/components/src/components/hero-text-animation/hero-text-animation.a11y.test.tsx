@@ -23,6 +23,11 @@ describe("HeroTextAnimation accessibility", () => {
               as="h2"
               text={"Reveal clearly.\nStay readable."}
             />
+            <HeroTextAnimation
+              animation="typewriter"
+              as="h2"
+              text="Type concise launch copy once."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,

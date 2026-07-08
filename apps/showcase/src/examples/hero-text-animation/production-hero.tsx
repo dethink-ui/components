@@ -190,6 +190,8 @@ export function HeroTextAnimationProductionHero() {
             <div className="space-y-5">
               <HeroTextAnimation
                 id="hero-text-production-heading"
+                repeat
+                repeatDelay={1.6}
                 text="Turn your launch headline into a clear first impression."
                 className="font-heading text-foreground max-w-3xl text-4xl leading-[1.03] font-semibold tracking-normal sm:text-5xl lg:text-6xl"
               />

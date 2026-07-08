@@ -8,6 +8,7 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
+import { HeroTextAnimationTypewriterHero } from "@/examples/hero-text-animation/typewriter-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
 
 export const metadata: Metadata = {
@@ -25,24 +26,40 @@ export default function HeroTextAnimationPage() {
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Production hero previews are shown first so animation behavior is easy to compare. Expand a source panel when you need the implementation."
       >
-        <ExampleBlock
-          file="hero-text-animation/production-hero.tsx"
-          title="Staggered production hero section"
-          description="A focused staggered reveal recipe with animated semantic copy, navbar composition, CTAs, and icon-led proof points."
-          wide
-        >
-          <HeroTextAnimationProductionHero />
-        </ExampleBlock>
-        <ExampleBlock
-          file="hero-text-animation/masked-curtain-hero.tsx"
-          title="Masked curtain hero section"
-          description="A separate production hero recipe for the masked curtain reveal with the same navbar, action, and proof-point expectations."
-          wide
-        >
-          <HeroTextAnimationMaskedCurtainHero />
-        </ExampleBlock>
+        <div className="space-y-8">
+          <ExampleBlock
+            file="hero-text-animation/production-hero.tsx"
+            title="Staggered production hero section"
+            description="A focused staggered reveal recipe with animated semantic copy, navbar composition, CTAs, and icon-led proof points."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationProductionHero />
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/masked-curtain-hero.tsx"
+            title="Masked curtain hero section"
+            description="A separate production hero recipe for the masked curtain reveal with the same navbar, action, and proof-point expectations."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationMaskedCurtainHero />
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/typewriter-hero.tsx"
+            title="Typewriter hero section"
+            description="A separate production hero recipe for short typewriter copy with final text available up front, stable actions, and reduced-motion-safe output."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationTypewriterHero />
+          </ExampleBlock>
+        </div>
       </DocsSection>
 
       <InstallationSection
