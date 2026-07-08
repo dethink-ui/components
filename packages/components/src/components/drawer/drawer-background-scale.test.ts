@@ -25,7 +25,9 @@ describe("useDrawerBackgroundScale", () => {
   it("does nothing when inactive", () => {
     const wrapper = renderWrapper();
 
-    renderHook(() => useDrawerBackgroundScale({ active: false, reducedMotion: false }));
+    renderHook(() =>
+      useDrawerBackgroundScale({ active: false, reducedMotion: false }),
+    );
 
     expect(wrapper.hasAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(false);
   });
@@ -36,7 +38,9 @@ describe("useDrawerBackgroundScale", () => {
       useDrawerBackgroundScale({ active: true, reducedMotion: false }),
     );
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("scaled");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "scaled",
+    );
 
     unmount();
 
@@ -49,7 +53,9 @@ describe("useDrawerBackgroundScale", () => {
       useDrawerBackgroundScale({ active: true, reducedMotion: true }),
     );
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("dimmed");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "dimmed",
+    );
 
     unmount();
 
@@ -65,11 +71,15 @@ describe("useDrawerBackgroundScale", () => {
       useDrawerBackgroundScale({ active: true, reducedMotion: true }),
     );
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("scaled");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "scaled",
+    );
 
     dimmed.unmount();
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("scaled");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "scaled",
+    );
 
     scaled.unmount();
 
@@ -82,23 +92,32 @@ describe("useDrawerBackgroundScale", () => {
       useDrawerBackgroundScale({ active: true, reducedMotion: false }),
     );
 
-    renderHook(() => useDrawerBackgroundScale({ active: true, reducedMotion: true }));
+    renderHook(() =>
+      useDrawerBackgroundScale({ active: true, reducedMotion: true }),
+    );
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("scaled");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "scaled",
+    );
 
     scaled.unmount();
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("dimmed");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "dimmed",
+    );
   });
 
   it("re-syncs when `active` toggles false without unmounting", () => {
     const wrapper = renderWrapper();
     const { rerender } = renderHook(
-      ({ active }) => useDrawerBackgroundScale({ active, reducedMotion: false }),
+      ({ active }) =>
+        useDrawerBackgroundScale({ active, reducedMotion: false }),
       { initialProps: { active: true } },
     );
 
-    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe("scaled");
+    expect(wrapper.getAttribute(DRAWER_BACKGROUND_SCALE_ATTRIBUTE)).toBe(
+      "scaled",
+    );
 
     rerender({ active: false });
 

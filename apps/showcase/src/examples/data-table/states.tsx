@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button, DataTable, type DataTableColumnDef } from "@dethink/components";
+import {
+  Button,
+  DataTable,
+  type DataTableColumnDef,
+} from "@dethink/components";
 
 type Row = { id: string; name: string };
 
@@ -31,7 +35,11 @@ export function DataTableStates() {
         data={[]}
         getRowId={(row) => row.id}
         loading={state === "loading"}
-        error={state === "error" ? "Could not load projects — retry shortly." : undefined}
+        error={
+          state === "error"
+            ? "Could not load projects — retry shortly."
+            : undefined
+        }
         emptyContent="No projects yet. Create one to get started."
       />
     </div>

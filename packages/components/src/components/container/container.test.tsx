@@ -84,7 +84,13 @@ describe("Container", () => {
     expect(container).toHaveAttribute("data-align", "center");
     expect(container).toHaveAttribute("data-fluid", "false");
     expect(container).toHaveAttribute("data-safe-area", "false");
-    expect(container).toHaveClass("box-border", "w-full", "min-w-0", "max-w-[80rem]", "mx-auto");
+    expect(container).toHaveClass(
+      "box-border",
+      "w-full",
+      "min-w-0",
+      "max-w-[80rem]",
+      "mx-auto",
+    );
   });
 
   it.each(elements)("renders a semantic %s element", (as) => {

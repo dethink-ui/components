@@ -1,15 +1,5 @@
-import {
-  createRef,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import {
-  render,
-  screen,
-  waitFor,
-  within,
-} from "@testing-library/react";
+import { createRef, useEffect, useRef, useState } from "react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
@@ -56,7 +46,9 @@ describe("Dialog", () => {
     const { container } = render(
       <DethinkProvider theme="light">
         <Dialog ref={rootRef} className="custom-root">
-          <DialogTrigger className="custom-trigger">Open settings</DialogTrigger>
+          <DialogTrigger className="custom-trigger">
+            Open settings
+          </DialogTrigger>
           <DialogContent
             ref={contentRef}
             className="custom-content"
@@ -86,7 +78,9 @@ describe("Dialog", () => {
     expect(root).toHaveClass("custom-root");
     expect(trigger).toHaveAttribute("data-slot", "dialog-trigger");
     expect(trigger).toHaveClass("custom-trigger");
-    expect(dialogClassNames({ className: "custom-root" })).toContain("custom-root");
+    expect(dialogClassNames({ className: "custom-root" })).toContain(
+      "custom-root",
+    );
     expect(dialogTriggerClassNames({ className: "custom-trigger" })).toContain(
       "custom-trigger",
     );
@@ -104,7 +98,9 @@ describe("Dialog", () => {
     });
     const content = dialog.closest<HTMLElement>('[data-slot="dialog-content"]');
     const overlay = dialog.closest<HTMLElement>('[data-slot="dialog-overlay"]');
-    const footer = dialog.querySelector<HTMLElement>('[data-slot="dialog-footer"]');
+    const footer = dialog.querySelector<HTMLElement>(
+      '[data-slot="dialog-footer"]',
+    );
 
     if (!footer) {
       throw new Error("Expected DialogFooter to render.");
@@ -145,7 +141,9 @@ describe("Dialog", () => {
                 <>
                   <DialogHeader>
                     <DialogTitle>Controlled dialog</DialogTitle>
-                    <DialogDescription>Controlled by external state.</DialogDescription>
+                    <DialogDescription>
+                      Controlled by external state.
+                    </DialogDescription>
                   </DialogHeader>
                   <button type="button" onClick={close}>
                     Close from render prop
@@ -161,12 +159,18 @@ describe("Dialog", () => {
 
     render(<ControlledDialog />);
 
-    await user.click(screen.getByRole("button", { name: "Open controlled dialog" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open controlled dialog" }),
+    );
 
-    expect(screen.getByRole("dialog", { name: "Controlled dialog" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Controlled dialog" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("open")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Close from render prop" }));
+    await user.click(
+      screen.getByRole("button", { name: "Close from render prop" }),
+    );
 
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -209,7 +213,9 @@ describe("Dialog", () => {
     });
 
     expect(handleOpenChange).toHaveBeenCalledWith(false);
-    expect(screen.getByRole("dialog", { name: "Forced dialog" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Forced dialog" }),
+    ).toBeInTheDocument();
     expect(trigger).not.toHaveFocus();
     expect(closeButton).toHaveFocus();
   });
@@ -220,7 +226,9 @@ describe("Dialog", () => {
         <DialogTrigger>Open custom labelled dialog</DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle id="custom-dialog-title">Custom labelled dialog</DialogTitle>
+            <DialogTitle id="custom-dialog-title">
+              Custom labelled dialog
+            </DialogTitle>
             <DialogDescription>
               A custom heading id remains connected to the dialog.
             </DialogDescription>
@@ -255,14 +263,16 @@ describe("Dialog", () => {
       </Dialog>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Open sizing dialog" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open sizing dialog" }),
+    );
 
     expect(screen.getByRole("button", { name: "Save changes" })).toHaveClass(
       "px-[var(--dt-space-4)]",
     );
-    expect(screen.getByRole("button", { name: "Save changes" })).not.toHaveClass(
-      "w-density-control",
-    );
+    expect(
+      screen.getByRole("button", { name: "Save changes" }),
+    ).not.toHaveClass("w-density-control");
     expect(screen.getByRole("button", { name: "Dismiss dialog" })).toHaveClass(
       "w-density-control",
     );
@@ -285,7 +295,8 @@ describe("Dialog", () => {
           <DialogHeader data-testid="informational-dialog-header">
             <DialogTitle>Workspace notice</DialogTitle>
             <DialogDescription>
-              This informational dialog closes through the top-right icon button.
+              This informational dialog closes through the top-right icon
+              button.
             </DialogDescription>
           </DialogHeader>
           <div>Read-only details without footer actions.</div>
@@ -308,9 +319,9 @@ describe("Dialog", () => {
     expect(closeButton).toHaveClass("absolute");
     expect(closeButton).toHaveClass("end-[var(--dt-space-3)]");
     expect(closeButton).toHaveClass("w-density-control");
-    expect(dialogCloseButtonClassNames({ className: "custom-close-button" })).toContain(
-      "custom-close-button",
-    );
+    expect(
+      dialogCloseButtonClassNames({ className: "custom-close-button" }),
+    ).toContain("custom-close-button");
     expect(screen.getByTestId("informational-dialog-header")).toHaveClass(
       "pe-[calc(var(--dt-space-6)+var(--dt-space-8))]",
     );
@@ -371,7 +382,9 @@ describe("Dialog", () => {
 
     await user.keyboard("{Escape}");
 
-    expect(screen.getByRole("dialog", { name: "Locked notice" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Locked notice" }),
+    ).toBeInTheDocument();
   });
 
   it("mirrors provider context onto the body portal host", () => {
@@ -388,7 +401,9 @@ describe("Dialog", () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Themed dialog</DialogTitle>
-              <DialogDescription>Provider attributes cross the portal.</DialogDescription>
+              <DialogDescription>
+                Provider attributes cross the portal.
+              </DialogDescription>
             </DialogHeader>
           </DialogContent>
         </Dialog>
@@ -402,7 +417,9 @@ describe("Dialog", () => {
     const provider = screen.getByTestId("dialog-provider");
 
     if (!portalHost) {
-      throw new Error("Dialog should render inside a provider-aware portal host.");
+      throw new Error(
+        "Dialog should render inside a provider-aware portal host.",
+      );
     }
 
     expect(document.body).toContainElement(portalHost);
@@ -442,7 +459,9 @@ describe("AlertDialog", () => {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="destructive">Delete</AlertDialogAction>
+              <AlertDialogAction variant="destructive">
+                Delete
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -554,14 +573,18 @@ describe("AlertDialog", () => {
 
     render(<ControlledAlertDialog />);
 
-    await user.click(screen.getByRole("button", { name: "Open controlled alert" }));
+    await user.click(
+      screen.getByRole("button", { name: "Open controlled alert" }),
+    );
 
     expect(
       screen.getByRole("alertdialog", { name: "Controlled alert" }),
     ).toBeInTheDocument();
     expect(screen.getByText("open")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Close alert from render prop" }));
+    await user.click(
+      screen.getByRole("button", { name: "Close alert from render prop" }),
+    );
 
     await waitFor(() => {
       expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
@@ -580,7 +603,8 @@ describe("AlertDialog", () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete report</AlertDialogTitle>
             <AlertDialogDescription>
-              This cannot be undone and removes the report from scheduled exports.
+              This cannot be undone and removes the report from scheduled
+              exports.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -604,10 +628,9 @@ describe("AlertDialog", () => {
     });
 
     await user.click(
-      within(screen.getByRole("alertdialog", { name: "Delete report" })).getByRole(
-        "button",
-        { name: "Delete report" },
-      ),
+      within(
+        screen.getByRole("alertdialog", { name: "Delete report" }),
+      ).getByRole("button", { name: "Delete report" }),
     );
 
     expect(handleDelete).toHaveBeenCalledTimes(1);
@@ -795,7 +818,10 @@ describe("AlertDialog", () => {
       name: "Dismiss compact confirmation",
     });
 
-    expect(alertDialog).toHaveAttribute("aria-labelledby", "compact-alert-title");
+    expect(alertDialog).toHaveAttribute(
+      "aria-labelledby",
+      "compact-alert-title",
+    );
     expect(closeButton).toHaveAttribute("data-slot", "alert-dialog-close");
     expect(closeButton).toHaveClass("custom-alert-close");
     expect(closeButton).toHaveClass("w-density-control");
@@ -836,14 +862,18 @@ describe("AlertDialog", () => {
       </DethinkProvider>,
     );
 
-    const alertDialog = screen.getByRole("alertdialog", { name: "Themed alert" });
+    const alertDialog = screen.getByRole("alertdialog", {
+      name: "Themed alert",
+    });
     const portalHost = alertDialog.closest<HTMLElement>(
       '[data-slot="alert-dialog-portal-container"]',
     );
     const provider = screen.getByTestId("alert-dialog-provider");
 
     if (!portalHost) {
-      throw new Error("AlertDialog should render inside a provider-aware portal host.");
+      throw new Error(
+        "AlertDialog should render inside a provider-aware portal host.",
+      );
     }
 
     expect(document.body).toContainElement(portalHost);

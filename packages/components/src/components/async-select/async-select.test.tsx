@@ -1,14 +1,8 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import {
-  AsyncSelect,
-  asyncSelectClassNames,
-} from ".";
+import { AsyncSelect, asyncSelectClassNames } from ".";
 
 const accountItems = [
   { label: "Acme Operations", value: "acme" },
@@ -48,14 +42,18 @@ describe("AsyncSelect", () => {
 
     expect(root).toHaveClass("custom-async-select");
     expect(ref.current).toBe(root);
-    expect(asyncSelectClassNames({ className: "custom-async-select" })).toContain(
-      "custom-async-select",
-    );
+    expect(
+      asyncSelectClassNames({ className: "custom-async-select" }),
+    ).toContain("custom-async-select");
 
     await user.type(input, "north");
 
-    expect(screen.getByRole("option", { name: "Northstar Systems" })).toBeInTheDocument();
-    expect(screen.queryByRole("option", { name: "Acme Operations" })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("option", { name: "Northstar Systems" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: "Acme Operations" }),
+    ).not.toBeInTheDocument();
   });
 
   it("supports controlled single value changes and form serialization", async () => {
@@ -76,7 +74,8 @@ describe("AsyncSelect", () => {
             onValueChange={(nextValue) => {
               setValue(nextValue as string | null);
               setQuery(
-                accountItems.find((item) => item.value === nextValue)?.label ?? "",
+                accountItems.find((item) => item.value === nextValue)?.label ??
+                  "",
               );
             }}
             value={value}
@@ -90,7 +89,9 @@ describe("AsyncSelect", () => {
 
     const form = screen.getByRole("form", { name: "Async single form" });
 
-    expect(new FormData(form as HTMLFormElement).get("account")).toBe("dethink");
+    expect(new FormData(form as HTMLFormElement).get("account")).toBe(
+      "dethink",
+    );
 
     await user.click(screen.getByRole("button", { name: /Show options/ }));
     await user.click(screen.getByRole("option", { name: "Acme Operations" }));
@@ -146,7 +147,9 @@ describe("AsyncSelect", () => {
       />,
     );
 
-    expect(screen.getByRole("status")).toHaveTextContent("Finding customers...");
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Finding customers...",
+    );
 
     rerender(
       <AsyncSelect
@@ -169,7 +172,9 @@ describe("AsyncSelect", () => {
       />,
     );
 
-    expect(screen.getByRole("alert")).toHaveTextContent("Customer search failed.");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Customer search failed.",
+    );
 
     await user.click(screen.getByRole("button", { name: "Retry" }));
 
@@ -187,9 +192,9 @@ describe("AsyncSelect", () => {
       />,
     );
 
-    expect(container.querySelector('[data-slot="multi-select-chip"]')).toHaveTextContent(
-      "Acme Operations",
-    );
+    expect(
+      container.querySelector('[data-slot="multi-select-chip"]'),
+    ).toHaveTextContent("Acme Operations");
   });
 
   it("announces multiple-mode async status while closed", () => {

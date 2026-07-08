@@ -102,8 +102,9 @@ describe("positioned overlay utilities", () => {
     expect(positionedOverlaySurfaceClassNames()).toContain(
       "data-[placement=bottom]:[--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))]",
     );
-    expect(positionedOverlaySurfaceClassNames({ className: "custom-surface" }))
-      .toContain("custom-surface");
+    expect(
+      positionedOverlaySurfaceClassNames({ className: "custom-surface" }),
+    ).toContain("custom-surface");
 
     expect(positionedOverlayArrowClassNames()).toContain("group");
     expect(positionedOverlayArrowShapeClassNames()).toContain(
@@ -119,8 +120,9 @@ describe("positioned overlay utilities", () => {
     expect(positionedOverlayArrowShapeClassNames()).toContain(
       "group-data-[placement=left]:-rotate-90",
     );
-    expect(positionedOverlayArrowShapeClassNames({ className: "custom-shape" }))
-      .toContain("custom-shape");
+    expect(
+      positionedOverlayArrowShapeClassNames({ className: "custom-shape" }),
+    ).toContain("custom-shape");
   });
 
   it("renders a stable arrow slot and forwards refs", () => {

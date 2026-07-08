@@ -35,12 +35,7 @@ type Story = StoryObj<typeof meta>;
 
 function RefreshIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="M12.75 8A4.75 4.75 0 1 1 11.36 4.64M12.75 3.5v3.25H9.5"
         stroke="currentColor"

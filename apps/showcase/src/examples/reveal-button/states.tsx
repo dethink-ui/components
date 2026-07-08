@@ -8,7 +8,7 @@ export function RevealButtonStates() {
     <div className="flex flex-wrap items-center justify-center gap-2">
       <RevealButton icon={<Search />} label="Hover or focus" />
       <RevealButton
-        className="ring-2 ring-ring ring-offset-2 ring-offset-background"
+        className="ring-ring ring-offset-background ring-2 ring-offset-2"
         icon={<Settings />}
         label="Focused"
         variant="outline"
@@ -19,8 +19,18 @@ export function RevealButtonStates() {
         labelVisibility="always"
         variant="soft"
       />
-      <RevealButton disabled icon={<RefreshCw />} label="Disabled" variant="outline" />
-      <RevealButton icon={<RefreshCw />} label="Loading" loading variant="outline" />
+      <RevealButton
+        disabled
+        icon={<RefreshCw />}
+        label="Disabled"
+        variant="outline"
+      />
+      <RevealButton
+        icon={<RefreshCw />}
+        label="Loading"
+        loading
+        variant="outline"
+      />
       <RevealButton icon={<RefreshCw />} label="No motion" motion="none" />
     </div>
   );

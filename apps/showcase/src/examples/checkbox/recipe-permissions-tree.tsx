@@ -48,9 +48,13 @@ export function CheckboxRecipePermissionsTree() {
         </FieldControl>
         <FieldLabel className="font-medium">All permissions</FieldLabel>
       </Field>
-      <div className="space-y-3 border-l border-border pl-6">
+      <div className="border-border space-y-3 border-l pl-6">
         {permissions.map((permission) => (
-          <Field key={permission.id} id={`perm-${permission.id}`} orientation="horizontal">
+          <Field
+            key={permission.id}
+            id={`perm-${permission.id}`}
+            orientation="horizontal"
+          >
             <FieldControl asChild>
               <Checkbox
                 checked={granted.has(permission.id)}
@@ -71,7 +75,7 @@ export function CheckboxRecipePermissionsTree() {
           </Field>
         ))}
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         {granted.size} of {permissions.length} permissions granted
       </p>
     </div>

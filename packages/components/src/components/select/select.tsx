@@ -39,27 +39,28 @@ export type SelectItemData = {
   value: SelectValue;
 };
 
-export interface SelectProps<T extends SelectItemData = SelectItemData>
-  extends Omit<
-    AriaSelectProps<T>,
-    | "children"
-    | "className"
-    | "defaultOpen"
-    | "defaultSelectedKey"
-    | "defaultValue"
-    | "disabledKeys"
-    | "isDisabled"
-    | "isInvalid"
-    | "isOpen"
-    | "isRequired"
-    | "items"
-    | "onOpenChange"
-    | "onSelectionChange"
-    | "placeholder"
-    | "selectedKey"
-    | "validationBehavior"
-    | "value"
-  > {
+export interface SelectProps<
+  T extends SelectItemData = SelectItemData,
+> extends Omit<
+  AriaSelectProps<T>,
+  | "children"
+  | "className"
+  | "defaultOpen"
+  | "defaultSelectedKey"
+  | "defaultValue"
+  | "disabledKeys"
+  | "isDisabled"
+  | "isInvalid"
+  | "isOpen"
+  | "isRequired"
+  | "items"
+  | "onOpenChange"
+  | "onSelectionChange"
+  | "placeholder"
+  | "selectedKey"
+  | "validationBehavior"
+  | "value"
+> {
   "aria-invalid"?: boolean | "false" | "true" | "grammar" | "spelling";
   "data-slot"?: string;
   children?: ReactNode | ((item: T) => ReactNode);
@@ -83,11 +84,10 @@ export interface SelectProps<T extends SelectItemData = SelectItemData>
   value?: SelectValue;
 }
 
-export interface SelectItemProps
-  extends Omit<
-    AriaListBoxItemProps<SelectItemData>,
-    "children" | "className" | "id" | "isDisabled" | "value"
-  > {
+export interface SelectItemProps extends Omit<
+  AriaListBoxItemProps<SelectItemData>,
+  "children" | "className" | "id" | "isDisabled" | "value"
+> {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -138,7 +138,12 @@ type SelectComponent = (<T extends SelectItemData = SelectItemData>(
 ) => ReactElement | null) & { displayName?: string };
 
 function isAriaInvalid(value: SelectProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function toSelectionKey(value: SelectValue | undefined) {
@@ -269,11 +274,10 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
   const resolvedOpen = readOnly ? false : open;
   const resolvedDefaultOpen = readOnly ? false : defaultOpen;
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const { portalContainer, rootRef } =
-    useProviderPortalRoot<HTMLDivElement>({
-      forwardedRef: ref,
-      portalSlot: "select-portal-container",
-    });
+  const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
+    forwardedRef: ref,
+    portalSlot: "select-portal-container",
+  });
   const setTriggerRef = useCallback(
     (node: HTMLButtonElement | null) => {
       triggerRef.current = node;
@@ -337,10 +341,18 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
           data-invalid={resolvedInvalid ? "true" : undefined}
           data-readonly={readOnly ? "true" : undefined}
           data-required={required ? "true" : undefined}
-          className={cn(selectTriggerBaseClasses, selectControlSizeClasses[controlSize])}
+          className={cn(
+            selectTriggerBaseClasses,
+            selectControlSizeClasses[controlSize],
+          )}
         >
-          <AriaSelectValue data-slot="select-value" className={selectValueClasses}>
-            {({ selectedText, defaultChildren }) => selectedText || defaultChildren}
+          <AriaSelectValue
+            data-slot="select-value"
+            className={selectValueClasses}
+          >
+            {({ selectedText, defaultChildren }) =>
+              selectedText || defaultChildren
+            }
           </AriaSelectValue>
           <span
             aria-hidden="true"
@@ -364,14 +376,8 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
             {errorMessage}
           </FieldError>
         ) : null}
-        <Popover
-          data-slot="select-popover"
-          className={selectPopoverClasses}
-        >
-          <ListBox
-            data-slot="select-listbox"
-            className={selectListBoxClasses}
-          >
+        <Popover data-slot="select-popover" className={selectPopoverClasses}>
+          <ListBox data-slot="select-listbox" className={selectListBoxClasses}>
             {renderedChildren}
           </ListBox>
         </Popover>
@@ -386,14 +392,7 @@ Select.displayName = "Select";
 
 export const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
   (
-    {
-      children,
-      className,
-      disabled = false,
-      textValue,
-      value,
-      ...props
-    },
+    { children, className, disabled = false, textValue, value, ...props },
     ref,
   ) => (
     <ListBoxItem
@@ -401,7 +400,9 @@ export const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
       ref={ref}
       id={value}
       isDisabled={disabled}
-      textValue={textValue ?? (typeof children === "string" ? children : undefined)}
+      textValue={
+        textValue ?? (typeof children === "string" ? children : undefined)
+      }
       data-slot="select-item"
       data-value={value}
       className={selectItemClassNames({ className })}
@@ -416,7 +417,10 @@ export const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
           >
             {isSelected ? <CheckIcon /> : null}
           </span>
-          <span data-slot="select-item-content" className={selectItemContentClasses}>
+          <span
+            data-slot="select-item-content"
+            className={selectItemContentClasses}
+          >
             {children}
           </span>
         </>

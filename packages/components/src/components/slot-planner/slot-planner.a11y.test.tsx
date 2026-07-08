@@ -67,9 +67,9 @@ describe("SlotPlanner accessibility", () => {
     );
 
     await user.click(
-      within(
-        screen.getAllByRole("listitem")[0]!,
-      ).getByRole("button", { name: "Edit slot" }),
+      within(screen.getAllByRole("listitem")[0]!).getByRole("button", {
+        name: "Edit slot",
+      }),
     );
     await screen.findByRole("dialog", { name: "Edit slot" });
 

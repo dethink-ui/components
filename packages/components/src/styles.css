@@ -46,24 +46,32 @@
   --spacing-density-gap: var(--dt-density-gap);
   --animate-overlay-in: dt-overlay-in 160ms cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-overlay-out: dt-overlay-out 120ms cubic-bezier(0.4, 0, 1, 1) both;
-  --animate-sidebar-indicator-in: dt-sidebar-indicator-in var(--sidebar-motion-duration, 220ms)
+  --animate-sidebar-indicator-in: dt-sidebar-indicator-in
+    var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
-  --animate-sidebar-menu-open: dt-sidebar-menu-open var(--sidebar-motion-duration, 220ms)
+  --animate-sidebar-menu-open: dt-sidebar-menu-open
+    var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
-  --animate-sidebar-overlay-in: dt-sidebar-overlay-in var(--sidebar-motion-duration, 220ms)
-    ease-out both;
-  --animate-sidebar-overlay-out: dt-sidebar-overlay-out 150ms cubic-bezier(0.4, 0, 1, 1) both;
-  --animate-sidebar-panel-in: dt-sidebar-panel-in var(--sidebar-motion-duration, 220ms)
+  --animate-sidebar-overlay-in: dt-sidebar-overlay-in
+    var(--sidebar-motion-duration, 220ms) ease-out both;
+  --animate-sidebar-overlay-out: dt-sidebar-overlay-out 150ms
+    cubic-bezier(0.4, 0, 1, 1) both;
+  --animate-sidebar-panel-in: dt-sidebar-panel-in
+    var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
-  --animate-sidebar-panel-out: dt-sidebar-panel-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
-  --animate-nav-slide-in: dt-nav-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-nav-slide-out: dt-nav-slide-out 160ms cubic-bezier(0.4, 0, 1, 1) both;
+  --animate-sidebar-panel-out: dt-sidebar-panel-out 180ms
+    cubic-bezier(0.4, 0, 1, 1) both;
+  --animate-nav-slide-in: dt-nav-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1)
+    both;
+  --animate-nav-slide-out: dt-nav-slide-out 160ms cubic-bezier(0.4, 0, 1, 1)
+    both;
 }
 
 @keyframes dt-overlay-in {
   from {
     opacity: 0;
-    translate: var(--dt-overlay-motion-x, 0) var(--dt-overlay-motion-y, var(--dt-space-1));
+    translate: var(--dt-overlay-motion-x, 0)
+      var(--dt-overlay-motion-y, var(--dt-space-1));
     scale: 0.98;
   }
 
@@ -83,7 +91,8 @@
 
   to {
     opacity: 0;
-    translate: var(--dt-overlay-motion-x, 0) var(--dt-overlay-motion-y, var(--dt-space-1));
+    translate: var(--dt-overlay-motion-x, 0)
+      var(--dt-overlay-motion-y, var(--dt-space-1));
     scale: 0.98;
   }
 }
@@ -174,7 +183,8 @@
 @keyframes dt-nav-slide-in {
   from {
     opacity: 0;
-    translate: var(--dt-nav-motion-from-x, 0) var(--dt-nav-motion-from-y, var(--dt-space-1));
+    translate: var(--dt-nav-motion-from-x, 0)
+      var(--dt-nav-motion-from-y, var(--dt-space-1));
   }
 
   to {
@@ -191,7 +201,8 @@
 
   to {
     opacity: 0;
-    translate: var(--dt-nav-motion-to-x, 0) var(--dt-nav-motion-to-y, var(--dt-space-1));
+    translate: var(--dt-nav-motion-to-x, 0)
+      var(--dt-nav-motion-to-y, var(--dt-space-1));
   }
 }
 
@@ -314,7 +325,8 @@
       margin-inline-end: var(--dt-space-3);
     }
 
-    [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]:hover::after,
+    [data-slot="sidebar"][data-collapsed="true"]
+      [data-sidebar-tooltip]:hover::after,
     [data-slot="sidebar"][data-collapsed="true"]
       [data-sidebar-tooltip]:focus-visible::after {
       visibility: visible;
@@ -330,14 +342,16 @@
        (position-visibility support is the proxy); WebKit keeps a clean
        binary show/hide until its anchor positioning stabilizes. */
     @supports (position-visibility: anchors-visible) {
-      [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+      [data-slot="sidebar"][data-collapsed="true"]
+        [data-sidebar-tooltip]::after {
         opacity: 0;
         transition:
           visibility 0s linear 0s,
           opacity 120ms ease-out;
       }
 
-      [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]:hover::after,
+      [data-slot="sidebar"][data-collapsed="true"]
+        [data-sidebar-tooltip]:hover::after,
       [data-slot="sidebar"][data-collapsed="true"]
         [data-sidebar-tooltip]:focus-visible::after {
         opacity: 1;
@@ -350,7 +364,8 @@
       }
 
       @media (prefers-reduced-motion: reduce) {
-        [data-slot="sidebar"][data-collapsed="true"] [data-sidebar-tooltip]::after {
+        [data-slot="sidebar"][data-collapsed="true"]
+          [data-sidebar-tooltip]::after {
           transition:
             visibility 0s linear 0s,
             opacity 80ms linear;
@@ -445,7 +460,8 @@
     --dt-color-timeline-rail-dark: oklch(0.46 0 0);
     --dt-font-body: ui-sans-serif, system-ui, sans-serif;
     --dt-font-heading: ui-sans-serif, system-ui, sans-serif;
-    --dt-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --dt-font-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     --dt-space-0: 0rem;
     --dt-space-0-5: 0.125rem;
     --dt-space-1: 0.25rem;
@@ -481,7 +497,9 @@
     --dt-color-primary: var(--dt-color-primary-light);
     --dt-color-primary-foreground: var(--dt-color-primary-foreground-light);
     --dt-color-destructive: var(--dt-color-destructive-light);
-    --dt-color-destructive-foreground: var(--dt-color-destructive-foreground-light);
+    --dt-color-destructive-foreground: var(
+      --dt-color-destructive-foreground-light
+    );
     --dt-color-success: var(--dt-color-success-light);
     --dt-color-success-foreground: var(--dt-color-success-foreground-light);
     --dt-color-warning: var(--dt-color-warning-light);
@@ -504,7 +522,9 @@
     --dt-color-primary: var(--dt-color-primary-light);
     --dt-color-primary-foreground: var(--dt-color-primary-foreground-light);
     --dt-color-destructive: var(--dt-color-destructive-light);
-    --dt-color-destructive-foreground: var(--dt-color-destructive-foreground-light);
+    --dt-color-destructive-foreground: var(
+      --dt-color-destructive-foreground-light
+    );
     --dt-color-success: var(--dt-color-success-light);
     --dt-color-success-foreground: var(--dt-color-success-foreground-light);
     --dt-color-warning: var(--dt-color-warning-light);
@@ -527,7 +547,9 @@
     --dt-color-primary: var(--dt-color-primary-light);
     --dt-color-primary-foreground: var(--dt-color-primary-foreground-light);
     --dt-color-destructive: var(--dt-color-destructive-light);
-    --dt-color-destructive-foreground: var(--dt-color-destructive-foreground-light);
+    --dt-color-destructive-foreground: var(
+      --dt-color-destructive-foreground-light
+    );
     --dt-color-success: var(--dt-color-success-light);
     --dt-color-success-foreground: var(--dt-color-success-foreground-light);
     --dt-color-warning: var(--dt-color-warning-light);
@@ -551,7 +573,9 @@
     --dt-color-primary: var(--dt-color-primary-dark);
     --dt-color-primary-foreground: var(--dt-color-primary-foreground-dark);
     --dt-color-destructive: var(--dt-color-destructive-dark);
-    --dt-color-destructive-foreground: var(--dt-color-destructive-foreground-dark);
+    --dt-color-destructive-foreground: var(
+      --dt-color-destructive-foreground-dark
+    );
     --dt-color-success: var(--dt-color-success-dark);
     --dt-color-success-foreground: var(--dt-color-success-foreground-dark);
     --dt-color-warning: var(--dt-color-warning-dark);
@@ -575,7 +599,9 @@
       --dt-color-primary: var(--dt-color-primary-dark);
       --dt-color-primary-foreground: var(--dt-color-primary-foreground-dark);
       --dt-color-destructive: var(--dt-color-destructive-dark);
-      --dt-color-destructive-foreground: var(--dt-color-destructive-foreground-dark);
+      --dt-color-destructive-foreground: var(
+        --dt-color-destructive-foreground-dark
+      );
       --dt-color-success: var(--dt-color-success-dark);
       --dt-color-success-foreground: var(--dt-color-success-foreground-dark);
       --dt-color-warning: var(--dt-color-warning-dark);

@@ -4,7 +4,11 @@
   "type": "registry:ui",
   "title": "DateTimePicker",
   "description": "Accessible segmented DateTimePicker with shared calendar popover, selectable time controls, timezone-aware values, presets, and form wiring.",
-  "dependencies": ["@internationalized/date", "react-aria", "react-aria-components"],
+  "dependencies": [
+    "@internationalized/date",
+    "react-aria",
+    "react-aria-components"
+  ],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "calendar"],
   "files": [

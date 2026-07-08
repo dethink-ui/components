@@ -5,7 +5,7 @@ import { Form, Stack, TagInput } from "@dethink/components";
 export function TagInputRecipeLabelEditor() {
   return (
     <Form action="/cases" method="post" className="mx-auto max-w-md">
-      <div className="rounded-lg border border-border bg-muted/20 p-4">
+      <div className="border-border bg-muted/20 rounded-lg border p-4">
         <Stack gap="4">
           <TagInput
             defaultValue={["finance", "renewal", "priority"]}

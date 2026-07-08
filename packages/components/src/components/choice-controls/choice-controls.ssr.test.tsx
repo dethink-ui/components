@@ -15,10 +15,7 @@ import {
   Form,
 } from "../form-field";
 import { Checkbox } from "../checkbox";
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from "../radio-group";
+import { RadioGroup, RadioGroupItem } from "../radio-group";
 import { Switch } from "../switch";
 
 function ChoiceControlsFixture() {
@@ -61,7 +58,9 @@ function ChoiceControlsFixture() {
       <Field id="server-switch" orientation="horizontal" invalid required>
         <FieldContent>
           <FieldLabel>Server switch</FieldLabel>
-          <FieldDescription>Hydrates with stable switch semantics.</FieldDescription>
+          <FieldDescription>
+            Hydrates with stable switch semantics.
+          </FieldDescription>
           <FieldError>Server switch is invalid.</FieldError>
         </FieldContent>
         <FieldControl asChild>
@@ -104,7 +103,9 @@ describe("Choice controls suite SSR", () => {
 
     const mixedCheckbox = container.querySelector("[aria-checked='mixed']");
 
-    expect((mixedCheckbox as HTMLInputElement | null)?.indeterminate).toBe(true);
+    expect((mixedCheckbox as HTMLInputElement | null)?.indeterminate).toBe(
+      true,
+    );
     expect(
       consoleError.mock.calls.some(([message]) =>
         String(message).toLowerCase().includes("hydration"),

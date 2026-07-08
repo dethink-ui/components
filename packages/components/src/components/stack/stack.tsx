@@ -31,7 +31,8 @@ export type StackElement =
   | "span";
 
 export type StackDirection = "vertical" | "horizontal";
-export type StackGap = "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
+export type StackGap =
+  "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
 export type StackAlign = "stretch" | "start" | "center" | "end" | "baseline";
 export type StackJustify = "start" | "center" | "end" | "between";
 export type StackWrap = "nowrap" | "wrap";
@@ -48,7 +49,14 @@ type StackBaseProps = {
 
 type StackFormAttributes = Pick<
   FormHTMLAttributes<HTMLFormElement>,
-  "acceptCharset" | "action" | "autoComplete" | "encType" | "method" | "name" | "noValidate" | "target"
+  | "acceptCharset"
+  | "action"
+  | "autoComplete"
+  | "encType"
+  | "method"
+  | "name"
+  | "noValidate"
+  | "target"
 >;
 
 type StackFieldsetAttributes = Pick<
@@ -169,7 +177,9 @@ function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -203,7 +213,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -273,7 +286,9 @@ export const Stack = forwardRef<HTMLElement, StackProps>(
       const child = Children.only(children);
 
       if (!isValidElement<StackSlotProps>(child)) {
-        throw new Error("Stack with asChild expects a single React element child.");
+        throw new Error(
+          "Stack with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

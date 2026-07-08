@@ -13,11 +13,13 @@ export default function ComponentsIndexPage() {
   return (
     <div className="space-y-10">
       <header className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+        <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
           Catalog
         </p>
-        <h1 className="font-heading text-4xl font-bold tracking-tight">Components</h1>
-        <p className="max-w-2xl text-base leading-7 text-muted-foreground">
+        <h1 className="font-heading text-4xl font-bold tracking-tight">
+          Components
+        </h1>
+        <p className="text-muted-foreground max-w-2xl text-base leading-7">
           Every component ships with live examples, copyable usage code, a
           complete props reference, and a production-shaped recipe. The{" "}
           {componentCatalog.length} documented registry components are grouped
@@ -38,7 +40,7 @@ export default function ComponentsIndexPage() {
               >
                 {group.name}
               </h2>
-              <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+              <p className="text-muted-foreground max-w-2xl text-sm leading-6">
                 {group.description}
               </p>
             </div>
@@ -47,16 +49,16 @@ export default function ComponentsIndexPage() {
                 <li key={component.slug}>
                   <Link
                     href={`/components/${component.slug}`}
-                    className="group flex h-full flex-col gap-2 rounded-md border border-border bg-background p-5 shadow-sm transition-colors hover:border-primary/50 hover:bg-primary/[0.04]"
+                    className="group border-border bg-background hover:border-primary/50 hover:bg-primary/[0.04] flex h-full flex-col gap-2 rounded-md border p-5 shadow-sm transition-colors"
                   >
-                    <span className="flex items-center justify-between gap-3 font-heading text-lg font-semibold">
+                    <span className="font-heading flex items-center justify-between gap-3 text-lg font-semibold">
                       {component.name}
                       <ArrowRight
                         aria-hidden="true"
-                        className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+                        className="text-muted-foreground group-hover:text-primary size-4 shrink-0 transition-transform group-hover:translate-x-0.5"
                       />
                     </span>
-                    <span className="text-sm leading-6 text-muted-foreground">
+                    <span className="text-muted-foreground text-sm leading-6">
                       {component.description}
                     </span>
                   </Link>

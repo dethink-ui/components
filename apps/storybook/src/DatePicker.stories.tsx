@@ -87,7 +87,7 @@ function StoryShell({
   return (
     <DethinkProvider
       className={cn(
-        "min-h-0 w-fit bg-transparent p-0 text-foreground",
+        "text-foreground min-h-0 w-fit bg-transparent p-0",
         className,
       )}
       density={density}
@@ -117,7 +117,9 @@ export const Base: Story = {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole("button", { name: "Open calendar" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Open calendar" }),
+    );
     await expect(await page.findByRole("grid")).toBeVisible();
   },
 };
@@ -180,11 +182,7 @@ export const FormSerialization: Story = {
 export const ThemeDensityAndRtl: Story = {
   render: () => (
     <div className="flex w-fit flex-wrap gap-4">
-      <StoryShell
-        className="bg-background"
-        density="compact"
-        theme="dark"
-      >
+      <StoryShell className="bg-background" density="compact" theme="dark">
         <DatePicker
           clearable
           className={datePickerStoryClasses}

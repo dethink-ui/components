@@ -21,9 +21,15 @@ describe("NumberInput accessibility", () => {
           <Field id="seat-count" required>
             <FieldLabel>Seat count</FieldLabel>
             <FieldControl asChild>
-              <NumberInput name="seats" numberMode="numeric" defaultValue="12" />
+              <NumberInput
+                name="seats"
+                numberMode="numeric"
+                defaultValue="12"
+              />
             </FieldControl>
-            <FieldDescription>Enter the number of seats to provision.</FieldDescription>
+            <FieldDescription>
+              Enter the number of seats to provision.
+            </FieldDescription>
           </Field>
         </main>
       </DethinkProvider>,

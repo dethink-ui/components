@@ -32,7 +32,9 @@ describe("Input controls suite", () => {
           <FieldControl asChild>
             <NumberInput name="quota" defaultValue="025" numberMode="numeric" />
           </FieldControl>
-          <FieldDescription>Values remain strings until app validation.</FieldDescription>
+          <FieldDescription>
+            Values remain strings until app validation.
+          </FieldDescription>
         </Field>
       </Form>,
     );
@@ -43,8 +45,17 @@ describe("Input controls suite", () => {
     expect(formData.get("name")).toBe("Operations");
     expect(formData.get("notes")).toBe("Review weekly.");
     expect(formData.get("quota")).toBe("025");
-    expect(screen.getByLabelText("Name")).toHaveAttribute("data-slot", "field-control");
-    expect(screen.getByLabelText("Notes")).toHaveAttribute("data-slot", "field-control");
-    expect(screen.getByLabelText("Quota")).toHaveAttribute("inputmode", "numeric");
+    expect(screen.getByLabelText("Name")).toHaveAttribute(
+      "data-slot",
+      "field-control",
+    );
+    expect(screen.getByLabelText("Notes")).toHaveAttribute(
+      "data-slot",
+      "field-control",
+    );
+    expect(screen.getByLabelText("Quota")).toHaveAttribute(
+      "inputmode",
+      "numeric",
+    );
   });
 });

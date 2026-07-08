@@ -34,7 +34,18 @@ const directionClasses: Record<StackDirection, string> = {
   vertical: "flex-col",
   horizontal: "flex-row",
 };
-const gaps: StackGap[] = ["none", "1", "2", "3", "4", "5", "6", "8", "10", "12"];
+const gaps: StackGap[] = [
+  "none",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "8",
+  "10",
+  "12",
+];
 const aligns: StackAlign[] = ["stretch", "start", "center", "end", "baseline"];
 const alignClasses: Record<StackAlign, string> = {
   stretch: "items-stretch",
@@ -144,7 +155,9 @@ describe("Stack", () => {
   });
 
   it("composes consumer classes after baseline classes", () => {
-    expect(stackClassNames({ className: "custom-stack" })).toContain("custom-stack");
+    expect(stackClassNames({ className: "custom-stack" })).toContain(
+      "custom-stack",
+    );
   });
 
   it("uses flexbox, gap, alignment, justification, and wrap utilities", () => {
@@ -166,7 +179,9 @@ describe("Stack", () => {
 
   it("rejects unsupported token values at the TypeScript boundary", () => {
     const valid = <Stack gap="4" align="center" />;
-    const validForm = <Stack as="form" action="/search" method="get" noValidate />;
+    const validForm = (
+      <Stack as="form" action="/search" method="get" noValidate />
+    );
     const validFieldset = <Stack as="fieldset" disabled />;
     // @ts-expect-error Stack gaps use constrained token values.
     const invalidGap = <Stack gap="7" />;
@@ -203,7 +218,13 @@ describe("Stack", () => {
     });
 
     render(
-      <Stack asChild onClick={stackClick} direction="horizontal" gap="3" wrap="wrap">
+      <Stack
+        asChild
+        onClick={stackClick}
+        direction="horizontal"
+        gap="3"
+        wrap="wrap"
+      >
         <RouterAnchor className="custom-child" onClick={childClick} to="/docs">
           Stack child
         </RouterAnchor>
@@ -255,10 +276,8 @@ describe("Stack", () => {
       </Stack>,
     );
 
-    expect(screen.getAllByRole("button").map((button) => button.textContent)).toEqual([
-      "First",
-      "Second",
-      "Third",
-    ]);
+    expect(
+      screen.getAllByRole("button").map((button) => button.textContent),
+    ).toEqual(["First", "Second", "Third"]);
   });
 });

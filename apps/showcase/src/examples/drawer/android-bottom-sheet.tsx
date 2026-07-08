@@ -78,15 +78,15 @@ export function DrawerAndroidBottomSheet() {
               {quickLinks.map(({ description, href, icon: Icon, label }) => (
                 <li key={label}>
                   <a
-                    className="flex items-center gap-[var(--dt-space-3)] rounded-md px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    className="text-foreground hover:bg-muted focus-visible:ring-ring focus-visible:ring-offset-background flex items-center gap-[var(--dt-space-3)] rounded-md px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                     href={href}
                   >
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-md border border-border/70 bg-muted/60 text-foreground">
+                    <span className="border-border/70 bg-muted/60 text-foreground flex size-10 shrink-0 items-center justify-center rounded-md border">
                       <Icon aria-hidden="true" className="size-4" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-medium">{label}</span>
-                      <span className="block text-xs text-muted-foreground">
+                      <span className="text-muted-foreground block text-xs">
                         {description}
                       </span>
                     </span>
@@ -97,17 +97,20 @@ export function DrawerAndroidBottomSheet() {
             <div className="grid grid-cols-2 gap-[var(--dt-space-2)]">
               {utilityLinks.map(({ href, icon: Icon, label }) => (
                 <a
-                  className="flex items-center justify-center gap-[var(--dt-space-2)] rounded-md border border-border bg-background px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  className="border-border bg-background text-foreground hover:bg-muted focus-visible:ring-ring focus-visible:ring-offset-background flex items-center justify-center gap-[var(--dt-space-2)] rounded-md border px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                   href={href}
                   key={label}
                 >
-                  <Icon aria-hidden="true" className="size-4 text-muted-foreground" />
+                  <Icon
+                    aria-hidden="true"
+                    className="text-muted-foreground size-4"
+                  />
                   {label}
                 </a>
               ))}
             </div>
           </nav>
-          <div className="border-t border-border/60 p-[var(--dt-space-3)]">
+          <div className="border-border/60 border-t p-[var(--dt-space-3)]">
             <DrawerClose className="w-full" variant="ghost">
               Cancel
             </DrawerClose>

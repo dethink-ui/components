@@ -18,7 +18,9 @@ export function DropdownMenuBasic() {
   return (
     <div className="flex justify-center">
       <DropdownMenu>
-        <DropdownMenuTrigger variant="outline">Report actions</DropdownMenuTrigger>
+        <DropdownMenuTrigger variant="outline">
+          Report actions
+        </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuSection>
             <DropdownMenuLabel>Report</DropdownMenuLabel>

@@ -72,7 +72,10 @@ export default function RadioGroupPage() {
       >
         <div className="space-y-8">
           <PropsTable caption="RadioGroup props" rows={radioGroupProps} />
-          <PropsTable caption="RadioGroupItem props" rows={radioGroupItemProps} />
+          <PropsTable
+            caption="RadioGroupItem props"
+            rows={radioGroupItemProps}
+          />
         </div>
       </DocsSection>
     </DocsPage>

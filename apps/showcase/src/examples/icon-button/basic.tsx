@@ -21,7 +21,11 @@ export function IconButtonBasic() {
       <IconButton aria-label="Delete" variant="destructive">
         <Trash2 />
       </IconButton>
-      <IconButton aria-label="Search everywhere" shape="circle" variant="outline">
+      <IconButton
+        aria-label="Search everywhere"
+        shape="circle"
+        variant="outline"
+      >
         <Search />
       </IconButton>
     </div>

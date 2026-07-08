@@ -37,16 +37,7 @@ export type BoxDisplay =
   | "grid";
 
 export type BoxSpacing =
-  | "none"
-  | "1"
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "8"
-  | "10"
-  | "12";
+  "none" | "1" | "2" | "3" | "4" | "5" | "6" | "8" | "10" | "12";
 
 export type BoxSurface =
   | "transparent"
@@ -462,7 +453,9 @@ function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -496,7 +489,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -663,7 +659,9 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       const child = Children.only(children);
 
       if (!isValidElement<BoxSlotProps>(child)) {
-        throw new Error("Box with asChild expects a single React element child.");
+        throw new Error(
+          "Box with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

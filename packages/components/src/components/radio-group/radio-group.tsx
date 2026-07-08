@@ -32,11 +32,10 @@ export interface RadioGroupProps extends HTMLAttributes<HTMLDivElement> {
   value?: string;
 }
 
-export interface RadioGroupItemProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    "checked" | "defaultChecked" | "onChange" | "size" | "type" | "value"
-  > {
+export interface RadioGroupItemProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "checked" | "defaultChecked" | "onChange" | "size" | "type" | "value"
+> {
   "data-slot"?: string;
   checked?: boolean;
   controlSize?: RadioGroupControlSize;
@@ -90,7 +89,12 @@ function useRadioGroupContext() {
 }
 
 function isAriaInvalid(value: RadioGroupItemProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
@@ -164,12 +168,14 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     const isControlled = value !== undefined;
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
     const selectedValue = isControlled ? value : uncontrolledValue;
-    const hasAccessibleName = ariaLabel !== undefined || ariaLabelledBy !== undefined;
+    const hasAccessibleName =
+      ariaLabel !== undefined || ariaLabelledBy !== undefined;
     const resolvedRole = role ?? (hasAccessibleName ? "radiogroup" : undefined);
     const resolvedAriaInvalid = invalid ? true : ariaInvalid;
     const resolvedAriaRequired = required ? true : ariaRequired;
     const resolvedAriaOrientation =
-      ariaOrientation ?? (resolvedRole === "radiogroup" ? orientation : undefined);
+      ariaOrientation ??
+      (resolvedRole === "radiogroup" ? orientation : undefined);
 
     const handleItemChange = (
       nextValue: string,
@@ -207,7 +213,9 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
           aria-orientation={resolvedAriaOrientation}
-          aria-required={resolvedRole === "radiogroup" ? resolvedAriaRequired : ariaRequired}
+          aria-required={
+            resolvedRole === "radiogroup" ? resolvedAriaRequired : ariaRequired
+          }
           data-slot="radio-group"
           data-disabled={disabled ? "true" : undefined}
           data-invalid={invalid ? "true" : undefined}
@@ -253,14 +261,16 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
     const groupValue = group?.value;
     const itemControlSize = controlSize ?? group?.controlSize ?? "md";
     const itemDisabled = disabled ?? group?.disabled ?? false;
-    const itemInvalid = invalid || Boolean(group?.invalid) || isAriaInvalid(ariaInvalid);
+    const itemInvalid =
+      invalid || Boolean(group?.invalid) || isAriaInvalid(ariaInvalid);
     const itemAriaInvalid = invalid || group?.invalid ? true : ariaInvalid;
     const itemName = name ?? group?.name;
     const itemReadOnly = readOnly ?? group?.readOnly ?? false;
     const itemRequired = required ?? group?.required ?? false;
     const isGrouped = group !== null;
     const isControlled = checked !== undefined;
-    const [uncontrolledChecked, setUncontrolledChecked] = useState(defaultChecked);
+    const [uncontrolledChecked, setUncontrolledChecked] =
+      useState(defaultChecked);
     const selected = isGrouped
       ? groupValue === value
       : isControlled
@@ -363,7 +373,12 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
           data-value={value}
           className={radioGroupItemIndicatorBaseClasses}
         >
-          {selected ? <span data-slot="radio-group-item-dot" className={radioGroupItemDotClasses} /> : null}
+          {selected ? (
+            <span
+              data-slot="radio-group-item-dot"
+              className={radioGroupItemDotClasses}
+            />
+          ) : null}
         </span>
       </span>
     );

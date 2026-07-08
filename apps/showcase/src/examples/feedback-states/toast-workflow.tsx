@@ -52,7 +52,9 @@ function ToastControls() {
             render: ({ dismiss }) => (
               <div className="grid gap-3">
                 <div className="grid gap-1">
-                  <div className="font-medium text-foreground">CSV import ready</div>
+                  <div className="text-foreground font-medium">
+                    CSV import ready
+                  </div>
                   <div className="text-muted-foreground">
                     42 rows matched. 3 rows need review before publishing.
                   </div>

@@ -62,17 +62,23 @@ export function LandingDemo() {
             Invite
           </Button>
         </form>
-        <ul className="divide-y divide-border text-sm">
+        <ul className="divide-border divide-y text-sm">
           {team.map((member) => (
-            <li key={member.name} className="flex items-center justify-between py-2">
+            <li
+              key={member.name}
+              className="flex items-center justify-between py-2"
+            >
               <span className="font-medium">{member.name}</span>
               <span className="text-muted-foreground">{member.role}</span>
             </li>
           ))}
           {invited.map((address) => (
-            <li key={address} className="flex items-center justify-between py-2">
+            <li
+              key={address}
+              className="flex items-center justify-between py-2"
+            >
               <span className="font-medium">{address}</span>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+              <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-medium">
                 Invited
               </span>
             </li>
@@ -80,7 +86,7 @@ export function LandingDemo() {
         </ul>
       </CardContent>
       <CardFooter justify="between">
-        <p className="text-xs text-muted-foreground">2 seats remaining</p>
+        <p className="text-muted-foreground text-xs">2 seats remaining</p>
         <Button variant="soft" size="sm">
           Manage plan
         </Button>

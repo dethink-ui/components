@@ -110,7 +110,9 @@ export function containerClassNames({
     fluid ? containerSizeClasses.full : containerSizeClasses[size],
     containerAlignClasses[align],
     containerGutterVariableClasses[gutter],
-    safeArea ? containerSafeAreaPaddingClasses : containerGutterPaddingClasses[gutter],
+    safeArea
+      ? containerSafeAreaPaddingClasses
+      : containerGutterPaddingClasses[gutter],
     className,
   );
 }
@@ -150,7 +152,9 @@ function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -184,7 +188,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -200,7 +207,9 @@ function getContainerDataAttributes({
   gutter,
   safeArea,
   size,
-}: Required<Pick<ContainerBaseProps, "align" | "fluid" | "gutter" | "safeArea" | "size">> &
+}: Required<
+  Pick<ContainerBaseProps, "align" | "fluid" | "gutter" | "safeArea" | "size">
+> &
   Pick<ContainerBaseProps, "as" | "asChild">) {
   return {
     "data-slot": "container",

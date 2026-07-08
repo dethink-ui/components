@@ -4,12 +4,15 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "../button";
 import { Card, CardContent, CardHeader, CardTitle } from "../card";
-import {
-  CardStack,
-  cardStackClassNames,
-} from ".";
+import { CardStack, cardStackClassNames } from ".";
 
-function createExampleCard({ action, title }: { action?: string; title: string }) {
+function createExampleCard({
+  action,
+  title,
+}: {
+  action?: string;
+  title: string;
+}) {
   return (
     <Card key={title} as="article">
       <CardHeader>
@@ -22,7 +25,9 @@ function createExampleCard({ action, title }: { action?: string; title: string }
   );
 }
 
-function renderThreeCards(props: Partial<ComponentProps<typeof CardStack>> = {}) {
+function renderThreeCards(
+  props: Partial<ComponentProps<typeof CardStack>> = {},
+) {
   return render(
     <CardStack {...props}>
       {createExampleCard({ title: "First" })}
@@ -44,8 +49,12 @@ describe("CardStack", () => {
     expect(stack).toHaveAttribute("data-loop", "true");
     expect(stack).toHaveAttribute("data-count", "3");
     expect(stack).toHaveAttribute("data-active-index", "0");
-    expect(screen.getByRole("button", { name: "Show previous card" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "Show next card" })).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "Show previous card" }),
+    ).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "Show next card" }),
+    ).toBeEnabled();
     expect(cards[0]).toHaveAttribute("data-card-stack-active", "true");
     expect(cards[1]).toHaveAttribute("data-card-stack-active", "false");
     expect(cards[1]).toHaveAttribute("aria-hidden", "true");
@@ -69,9 +78,9 @@ describe("CardStack", () => {
   });
 
   it("supports mapped Card arrays", () => {
-    const cards = ["First", "Second"].map((title) => (
-      createExampleCard({ title })
-    ));
+    const cards = ["First", "Second"].map((title) =>
+      createExampleCard({ title }),
+    );
 
     render(<CardStack>{cards}</CardStack>);
 
@@ -101,7 +110,9 @@ describe("CardStack", () => {
 
     renderThreeCards({ onActiveIndexChange });
 
-    await user.click(screen.getByRole("button", { name: "Show previous card" }));
+    await user.click(
+      screen.getByRole("button", { name: "Show previous card" }),
+    );
 
     expect(screen.getByRole("group", { name: "Card stack" })).toHaveAttribute(
       "data-active-index",
@@ -208,9 +219,9 @@ describe("CardStack", () => {
 
     expect(screen.getByRole("button", { name: "Open active" })).toBeVisible();
     expect(screen.queryByRole("button", { name: "Open inactive" })).toBeNull();
-    expect(screen.getByText("Inactive").closest('[data-slot="card"]')).toHaveAttribute(
-      "inert",
-    );
+    expect(
+      screen.getByText("Inactive").closest('[data-slot="card"]'),
+    ).toHaveAttribute("inert");
   });
 
   it("handles empty and single-card stacks", () => {
@@ -222,11 +233,7 @@ describe("CardStack", () => {
     );
     expect(screen.queryByRole("button", { name: "Show next card" })).toBeNull();
 
-    rerender(
-      <CardStack>
-        {createExampleCard({ title: "Only" })}
-      </CardStack>,
-    );
+    rerender(<CardStack>{createExampleCard({ title: "Only" })}</CardStack>);
 
     expect(screen.getByRole("group", { name: "Card stack" })).toHaveAttribute(
       "data-count",

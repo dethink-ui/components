@@ -60,9 +60,9 @@ export function CommandPaletteDashboardActions() {
           }
         }}
       />
-      <div className="rounded-md border border-border bg-muted/40 p-4">
-        <div className="text-sm font-semibold text-foreground">Action log</div>
-        <output className="mt-2 block text-sm leading-6 text-muted-foreground">
+      <div className="border-border bg-muted/40 rounded-md border p-4">
+        <div className="text-foreground text-sm font-semibold">Action log</div>
+        <output className="text-muted-foreground mt-2 block text-sm leading-6">
           {status}
         </output>
       </div>

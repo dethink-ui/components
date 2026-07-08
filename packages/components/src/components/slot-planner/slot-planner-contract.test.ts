@@ -48,7 +48,10 @@ describe("slot planner contract JSON round-trip", () => {
   it("round-trips callback payload shapes losslessly", () => {
     const slot = findSlot("mon-morning-architecture");
     const groupSlot = findSlot("wed-group-systems");
-    const update: SlotPlannerUpdatePayload = { slot: groupSlot, previous: slot };
+    const update: SlotPlannerUpdatePayload = {
+      slot: groupSlot,
+      previous: slot,
+    };
     const bookRequest: SlotPlannerBookRequestPayload = {
       slotId: groupSlot.id,
       occurrenceDate: groupSlot.date,

@@ -62,7 +62,9 @@ describe("CommandPalette SSR", () => {
         label="Command menu"
         commands={commands}
         recentCommands={[{ key: "recent-settings", label: "Recent settings" }]}
-        suggestedCommands={[{ key: "suggested-invite", label: "Invite teammate" }]}
+        suggestedCommands={[
+          { key: "suggested-invite", label: "Invite teammate" },
+        ]}
         asyncCommands={[{ key: "remote-project", label: "Remote project" }]}
         shouldFilter={false}
       />,
@@ -89,7 +91,9 @@ describe("CommandPalette SSR", () => {
           { group: "Navigate", key: "settings", label: "Open settings" },
         ]}
         recentCommands={[{ key: "recent-settings", label: "Recent settings" }]}
-        suggestedCommands={[{ key: "suggested-invite", label: "Invite teammate" }]}
+        suggestedCommands={[
+          { key: "suggested-invite", label: "Invite teammate" },
+        ]}
         asyncCommands={[{ key: "remote-project", label: "Remote project" }]}
         shouldFilter={false}
       />
@@ -100,8 +104,12 @@ describe("CommandPalette SSR", () => {
     expect(container.innerHTML).toContain('data-source="recent"');
     expect(container.innerHTML).toContain('data-source="suggested"');
     expect(container.innerHTML).toContain('data-source="async"');
-    expect(container.innerHTML).toContain('data-slot="command-palette-motion-result"');
-    expect(container.innerHTML).toContain('data-slot="command-palette-selected-indicator"');
+    expect(container.innerHTML).toContain(
+      'data-slot="command-palette-motion-result"',
+    );
+    expect(container.innerHTML).toContain(
+      'data-slot="command-palette-selected-indicator"',
+    );
 
     await act(async () => {
       hydrateRoot(container, palette);
@@ -157,7 +165,9 @@ describe("CommandPalette SSR", () => {
         label="Command menu"
         commands={commands}
         recentCommands={[{ key: "recent-settings", label: "Recent settings" }]}
-        suggestedCommands={[{ key: "suggested-invite", label: "Invite teammate" }]}
+        suggestedCommands={[
+          { key: "suggested-invite", label: "Invite teammate" },
+        ]}
         asyncCommands={[{ key: "remote-project", label: "Remote project" }]}
         shouldFilter={false}
       />

@@ -1,11 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import {
-  expect,
-  userEvent,
-  waitFor,
-  within,
-} from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -121,8 +116,9 @@ export const Base: Story = {
                 Update how dashboards choose their default workspace.
               </DialogDescription>
             </DialogHeader>
-            <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
-              Production is used for live dashboards, billing reports, and alerts.
+            <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
+              Production is used for live dashboards, billing reports, and
+              alerts.
             </div>
             <DialogFooter>
               <DialogClose variant="outline">Cancel</DialogClose>
@@ -171,7 +167,7 @@ export const Controlled: Story = {
                     </DialogHeader>
                     <DialogFooter>
                       <button
-                        className="text-sm text-muted-foreground"
+                        className="text-muted-foreground text-sm"
                         type="button"
                         onClick={close}
                       >
@@ -182,7 +178,9 @@ export const Controlled: Story = {
                 )}
               </DialogContent>
             </Dialog>
-            <FieldDescription>Dialog state: {open ? "open" : "closed"}</FieldDescription>
+            <FieldDescription>
+              Dialog state: {open ? "open" : "closed"}
+            </FieldDescription>
           </Stack>
         </Container>
       </DethinkProvider>
@@ -207,7 +205,11 @@ export const FormDialog: Story = {
               <Field id="invite-email" required>
                 <FieldLabel>Email address</FieldLabel>
                 <FieldControl asChild>
-                  <Input name="email" placeholder="name@example.com" type="email" />
+                  <Input
+                    name="email"
+                    placeholder="name@example.com"
+                    type="email"
+                  />
                 </FieldControl>
               </Field>
               <Field id="invite-role">
@@ -234,17 +236,20 @@ export const Informational: Story = {
       <Container size="sm">
         <Dialog>
           <DialogTrigger>View service notice</DialogTrigger>
-          <DialogContent showCloseButton closeButtonLabel="Close service notice">
+          <DialogContent
+            showCloseButton
+            closeButtonLabel="Close service notice"
+          >
             <DialogHeader>
               <DialogTitle>Service window scheduled</DialogTitle>
               <DialogDescription>
-                This informational dialog has no footer actions and closes through
-                the top-right icon button.
+                This informational dialog has no footer actions and closes
+                through the top-right icon button.
               </DialogDescription>
             </DialogHeader>
-            <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
-              Workspace analytics may be read-only for a short maintenance window
-              while reports are reindexed.
+            <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
+              Workspace analytics may be read-only for a short maintenance
+              window while reports are reindexed.
             </div>
           </DialogContent>
         </Dialog>
@@ -260,7 +265,9 @@ export const Informational: Story = {
     await expect(
       await page.findByRole("dialog", { name: "Service window scheduled" }),
     ).toBeVisible();
-    await userEvent.click(page.getByRole("button", { name: "Close service notice" }));
+    await userEvent.click(
+      page.getByRole("button", { name: "Close service notice" }),
+    );
     await waitFor(() => {
       expect(page.queryByRole("dialog")).not.toBeInTheDocument();
     });
@@ -278,14 +285,16 @@ export const ScrollableContent: Story = {
             <DialogHeader>
               <DialogTitle>Release readiness</DialogTitle>
               <DialogDescription>
-                Long dialog content stays reachable without losing modal behavior.
+                Long dialog content stays reachable without losing modal
+                behavior.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm leading-6">
               {Array.from({ length: 12 }, (_, index) => (
                 <p key={index}>
                   Checklist item {index + 1}: verify deployment notes, owners,
-                  escalation paths, and customer-facing messaging before release.
+                  escalation paths, and customer-facing messaging before
+                  release.
                 </p>
               ))}
             </div>
@@ -309,7 +318,8 @@ export const NonDismissable: Story = {
             <DialogHeader>
               <DialogTitle>Explicit close required</DialogTitle>
               <DialogDescription>
-                Keyboard dismissal is disabled, so a visible close action remains.
+                Keyboard dismissal is disabled, so a visible close action
+                remains.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -365,7 +375,9 @@ export const ThemeDensityAndRTL: Story = {
   ),
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const dialog = await page.findByRole("dialog", { name: "Workspace direction" });
+    const dialog = await page.findByRole("dialog", {
+      name: "Workspace direction",
+    });
     const portalHost = dialog.closest<HTMLElement>(
       '[data-slot="dialog-portal-container"]',
     );
@@ -393,30 +405,32 @@ export const ThemeOverrides: Story = {
           <DialogTrigger>Open themed override dialog</DialogTrigger>
           <DialogContent showCloseButton closeButtonLabel="Close themed dialog">
             <DialogHeader>
-              <DialogTitle className="font-heading">Operations review</DialogTitle>
+              <DialogTitle className="font-heading">
+                Operations review
+              </DialogTitle>
               <DialogDescription>
                 Provider-level colors, typography, radius, spacing, and density
                 flow through the modal portal.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
-              <div className="rounded-md border border-border bg-muted p-[var(--dt-space-4)]">
-                <div className="font-heading text-base font-semibold text-foreground">
+            <div className="text-foreground grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
+              <div className="border-border bg-muted rounded-md border p-[var(--dt-space-4)]">
+                <div className="font-heading text-foreground text-base font-semibold">
                   Theme tokens active
                 </div>
-                <p className="mt-[var(--dt-space-1)] text-muted-foreground">
+                <p className="text-muted-foreground mt-[var(--dt-space-1)]">
                   The dialog uses the custom provider font stack and tokenized
                   surfaces instead of local hard-coded styles.
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-[var(--dt-space-2)]">
-                <span className="rounded-sm bg-primary px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-primary-foreground">
+                <span className="bg-primary text-primary-foreground rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium">
                   Primary
                 </span>
-                <span className="rounded-sm bg-success px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-success-foreground">
+                <span className="bg-success text-success-foreground rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium">
                   Success
                 </span>
-                <span className="rounded-sm bg-warning px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium text-warning-foreground">
+                <span className="bg-warning text-warning-foreground rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-center text-xs font-medium">
                   Warning
                 </span>
               </div>
@@ -432,7 +446,9 @@ export const ThemeOverrides: Story = {
   ),
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
-    const dialog = await page.findByRole("dialog", { name: "Operations review" });
+    const dialog = await page.findByRole("dialog", {
+      name: "Operations review",
+    });
     const portalHost = dialog.closest<HTMLElement>(
       '[data-slot="dialog-portal-container"]',
     );
@@ -459,9 +475,12 @@ export const VisuallyHiddenTitle: Story = {
           <DialogTrigger>Open compact dialog</DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle visuallyHidden>Compact workspace details</DialogTitle>
+              <DialogTitle visuallyHidden>
+                Compact workspace details
+              </DialogTitle>
               <DialogDescription>
-                The title is visually hidden while remaining the accessible name.
+                The title is visually hidden while remaining the accessible
+                name.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -628,11 +647,12 @@ export const LongAlertDescription: Story = {
             <AlertDialogHeader>
               <AlertDialogTitle>Reset integration token</AlertDialogTitle>
               <AlertDialogDescription>
-                Resetting the token immediately invalidates API clients, scheduled
-                sync jobs, and webhook retries that still use the current secret.
+                Resetting the token immediately invalidates API clients,
+                scheduled sync jobs, and webhook retries that still use the
+                current secret.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <div className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm leading-6 text-foreground">
+            <div className="text-foreground grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm leading-6">
               {Array.from({ length: 8 }, (_, index) => (
                 <p key={index}>
                   Dependent service {index + 1} must be rotated after this
@@ -642,7 +662,9 @@ export const LongAlertDescription: Story = {
             </div>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction variant="destructive">Reset token</AlertDialogAction>
+              <AlertDialogAction variant="destructive">
+                Reset token
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
@@ -684,7 +706,9 @@ export const AlertThemeDensityAndRTL: Story = {
     );
 
     if (!portalHost) {
-      throw new Error("AlertDialog story expected a provider-aware portal host.");
+      throw new Error(
+        "AlertDialog story expected a provider-aware portal host.",
+      );
     }
 
     await expect(portalHost).toHaveAttribute("data-theme", "dark");
@@ -710,12 +734,12 @@ export const AlertThemeOverrides: Story = {
                 Approve operations change
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Custom provider colors, typography, radius, and density cross the
-                alert dialog portal.
+                Custom provider colors, typography, radius, and density cross
+                the alert dialog portal.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)]">
-              <div className="rounded-md border border-border bg-muted p-[var(--dt-space-4)] text-sm text-muted-foreground">
+              <div className="border-border bg-muted text-muted-foreground rounded-md border p-[var(--dt-space-4)] text-sm">
                 Operations policy updates will apply to live dashboard alerts.
               </div>
             </div>
@@ -738,7 +762,9 @@ export const AlertThemeOverrides: Story = {
     );
 
     if (!portalHost) {
-      throw new Error("AlertDialog story expected a provider-aware portal host.");
+      throw new Error(
+        "AlertDialog story expected a provider-aware portal host.",
+      );
     }
 
     await expect(portalHost).toHaveStyle({
@@ -785,8 +811,8 @@ export const AlertReducedMotion: Story = {
             <AlertDialogHeader>
               <AlertDialogTitle>Confirm quiet transition</AlertDialogTitle>
               <AlertDialogDescription>
-                This confirmation appears before advancing the rollout to the next
-                operations group.
+                This confirmation appears before advancing the rollout to the
+                next operations group.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -811,11 +837,15 @@ export const AlertReducedMotion: Story = {
     );
 
     if (!content || !overlay) {
-      throw new Error("AlertDialog reduced-motion story expected overlay and content.");
+      throw new Error(
+        "AlertDialog reduced-motion story expected overlay and content.",
+      );
     }
 
     await expect(overlay).toHaveClass("motion-safe:transition-opacity");
-    await expect(content).toHaveClass("motion-safe:transition-[opacity,transform]");
+    await expect(content).toHaveClass(
+      "motion-safe:transition-[opacity,transform]",
+    );
   },
 };
 
@@ -823,13 +853,13 @@ export const AdminRowAlert: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Container size="md">
-        <div className="grid gap-[var(--dt-space-3)] rounded-lg border border-border bg-background p-[var(--dt-space-4)]">
+        <div className="border-border bg-background grid gap-[var(--dt-space-3)] rounded-lg border p-[var(--dt-space-4)]">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--dt-space-4)]">
             <div className="min-w-0">
-              <div className="text-sm font-medium text-foreground">
+              <div className="text-foreground text-sm font-medium">
                 Production billing export
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 Runs every weekday at 08:00 UTC.
               </div>
             </div>
@@ -841,12 +871,15 @@ export const AdminRowAlert: Story = {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Disable billing export</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Finance users will stop receiving the weekday billing export.
+                    Finance users will stop receiving the weekday billing
+                    export.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel autoFocus>Keep enabled</AlertDialogCancel>
-                  <AlertDialogAction variant="destructive">Disable export</AlertDialogAction>
+                  <AlertDialogAction variant="destructive">
+                    Disable export
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

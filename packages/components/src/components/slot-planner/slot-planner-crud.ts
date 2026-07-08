@@ -23,8 +23,7 @@ export type SlotPlannerMutation<
 
 /** Editor recurrence choice; `"none"` maps to an omitted `recurrence`. */
 export type SlotPlannerEditorRecurrence =
-  | "none"
-  | SlotPlannerRecurrenceFrequency;
+  "none" | SlotPlannerRecurrenceFrequency;
 
 /**
  * Normalized values submitted by the slot editor when creating a slot or

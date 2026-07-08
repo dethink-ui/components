@@ -6,9 +6,9 @@ import { Container } from ".";
 
 describe("Container SSR", () => {
   it("renders native and asChild markup on the server", () => {
-    expect(renderToString(<Container as="main">Server container</Container>)).toContain(
-      'data-slot="container"',
-    );
+    expect(
+      renderToString(<Container as="main">Server container</Container>),
+    ).toContain('data-slot="container"');
     expect(
       renderToString(
         <Container asChild gutter="lg" size="md">

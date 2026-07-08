@@ -39,9 +39,12 @@ describe("DateTimePicker", () => {
 
     expect(screen.getByText("Starts at")).toBeInTheDocument();
     expect(screen.getByText("Choose the launch window.")).toBeInTheDocument();
-    expect(container.querySelector('[data-slot="date-time-picker"]')).toBeTruthy();
     expect(
-      container.querySelectorAll('[data-slot="date-time-picker-segment"]').length,
+      container.querySelector('[data-slot="date-time-picker"]'),
+    ).toBeTruthy();
+    expect(
+      container.querySelectorAll('[data-slot="date-time-picker-segment"]')
+        .length,
     ).toBeGreaterThan(4);
     expect(
       container.querySelector<HTMLInputElement>(
@@ -63,7 +66,9 @@ describe("DateTimePicker", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Clear date and time" }));
+    await user.click(
+      screen.getByRole("button", { name: "Clear date and time" }),
+    );
 
     expect(onValueChange).toHaveBeenCalledWith(null);
   });
@@ -84,7 +89,9 @@ describe("DateTimePicker", () => {
     );
     expect(input).toHaveValue("2026-03-18T10:15:00");
 
-    await user.click(screen.getByRole("button", { name: "Clear date and time" }));
+    await user.click(
+      screen.getByRole("button", { name: "Clear date and time" }),
+    );
 
     expect(input).toHaveValue("");
   });
@@ -103,7 +110,9 @@ describe("DateTimePicker", () => {
     );
 
     const root = container.querySelector('[data-slot="date-time-picker"]');
-    const field = container.querySelector('[data-slot="date-time-picker-field"]');
+    const field = container.querySelector(
+      '[data-slot="date-time-picker-field"]',
+    );
 
     expect(root).toHaveAttribute("data-disabled", "true");
     expect(root).toHaveAttribute("data-readonly", "true");
@@ -159,7 +168,9 @@ describe("DateTimePicker", () => {
 
     expect(screen.getByRole("grid")).toBeInTheDocument();
     expect(screen.getAllByText(/January 2026/).length).toBeGreaterThan(0);
-    expect(screen.queryByRole("group", { name: "Time" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("group", { name: "Time" }),
+    ).not.toBeInTheDocument();
   });
 
   it("keeps the time selector hidden when opening the calendar trigger", async () => {
@@ -176,7 +187,9 @@ describe("DateTimePicker", () => {
     await user.click(screen.getByRole("button", { name: /Open calendar/ }));
 
     expect(screen.getByRole("grid")).toBeInTheDocument();
-    expect(screen.queryByRole("group", { name: "Time" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("group", { name: "Time" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders opt-in time options only from a time segment interaction", async () => {

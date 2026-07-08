@@ -21,10 +21,16 @@ describe("Skeleton", () => {
 
     expect(screen.getByTestId("block")).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByTestId("text").children).toHaveLength(2);
-    expect(screen.getByTestId("avatar")).toHaveAttribute("data-slot", "skeleton-avatar");
-    expect(screen.getByTestId("button")).toHaveAttribute("data-slot", "skeleton-button");
-    expect(skeletonClassNames({ animation: "none", className: "custom" })).toContain(
-      "custom",
+    expect(screen.getByTestId("avatar")).toHaveAttribute(
+      "data-slot",
+      "skeleton-avatar",
     );
+    expect(screen.getByTestId("button")).toHaveAttribute(
+      "data-slot",
+      "skeleton-button",
+    );
+    expect(
+      skeletonClassNames({ animation: "none", className: "custom" }),
+    ).toContain("custom");
   });
 });

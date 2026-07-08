@@ -37,7 +37,7 @@ export function SlotPlannerCustomRenderer() {
           <div className="grid gap-2">
             {renderDefault()}
             {typeof occurrence.slot.data?.priceUsd === "number" ? (
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-foreground text-sm font-medium">
                 ${occurrence.slot.data.priceUsd} per seat
               </p>
             ) : null}

@@ -20,7 +20,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../dialog";
-import { Field, FieldControl, FieldLabel, FieldSet, FieldLegend } from "../form-field";
+import {
+  Field,
+  FieldControl,
+  FieldLabel,
+  FieldSet,
+  FieldLegend,
+} from "../form-field";
 import { Input } from "../input";
 import { NumberInput } from "../number-input";
 import { RadioGroup, RadioGroupItem } from "../radio-group";
@@ -46,11 +52,9 @@ const editorFormClasses = "grid gap-[var(--dt-space-2)]";
 const editorFieldsClasses =
   "grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)]";
 
-const editorFieldRowClasses =
-  "grid gap-[var(--dt-space-4)] sm:grid-cols-2";
+const editorFieldRowClasses = "grid gap-[var(--dt-space-4)] sm:grid-cols-2";
 
-const editorRadioOptionClasses =
-  "flex items-center gap-[var(--dt-space-2)]";
+const editorRadioOptionClasses = "flex items-center gap-[var(--dt-space-2)]";
 
 const editorRadioLabelClasses = "text-sm leading-none text-foreground";
 
@@ -164,7 +168,9 @@ export function SlotPlannerEditorDialog({
   const [durationText, setDurationText] = useState(
     String(scopedInitial.durationMinutes),
   );
-  const [capacityText, setCapacityText] = useState(String(seriesValues.capacity));
+  const [capacityText, setCapacityText] = useState(
+    String(seriesValues.capacity),
+  );
   const [bufferBeforeText, setBufferBeforeText] = useState(
     String(seriesValues.bufferBeforeMinutes),
   );
@@ -285,10 +291,7 @@ export function SlotPlannerEditorDialog({
                 </label>
               </div>
               <div className={editorRadioOptionClasses}>
-                <RadioGroupItem
-                  id={`${baseId}-scope-series`}
-                  value="series"
-                />
+                <RadioGroupItem id={`${baseId}-scope-series`} value="series" />
                 <label
                   htmlFor={`${baseId}-scope-series`}
                   className={editorRadioLabelClasses}
@@ -366,9 +369,7 @@ export function SlotPlannerEditorDialog({
                     numberMode="numeric"
                     min={0}
                     value={bufferAfterText}
-                    onChange={(event) =>
-                      setBufferAfterText(event.target.value)
-                    }
+                    onChange={(event) => setBufferAfterText(event.target.value)}
                   />
                 </FieldControl>
               </Field>
@@ -443,9 +444,7 @@ export function SlotPlannerEditorDialog({
                   <Input
                     type="date"
                     value={recurrenceUntil}
-                    onChange={(event) =>
-                      setRecurrenceUntil(event.target.value)
-                    }
+                    onChange={(event) => setRecurrenceUntil(event.target.value)}
                   />
                 </FieldControl>
               </Field>
@@ -454,10 +453,7 @@ export function SlotPlannerEditorDialog({
         ) : null}
       </div>
       {violations && violations.length > 0 ? (
-        <SlotPlannerViolationList
-          taxonomy={taxonomy}
-          violations={violations}
-        />
+        <SlotPlannerViolationList taxonomy={taxonomy} violations={violations} />
       ) : null}
       <DialogFooter>
         <Button type="button" variant="outline" onClick={onDismiss}>
@@ -542,7 +538,10 @@ export function SlotPlannerDeleteDialog({
           </AlertDialogTitle>
           {confirmingSeries ? (
             <AlertDialogDescription>
-              {formatSlotPlannerTemplate(taxonomy.deleteSeriesConfirmBody, tokens)}
+              {formatSlotPlannerTemplate(
+                taxonomy.deleteSeriesConfirmBody,
+                tokens,
+              )}
             </AlertDialogDescription>
           ) : null}
         </AlertDialogHeader>
@@ -620,7 +619,9 @@ export function SlotPlannerCopyDayDialog({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onApply(targets.map(({ date }) => date).filter((date) => selected.has(date)));
+    onApply(
+      targets.map(({ date }) => date).filter((date) => selected.has(date)),
+    );
   };
 
   return (

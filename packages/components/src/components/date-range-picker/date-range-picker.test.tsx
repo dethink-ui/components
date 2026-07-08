@@ -56,8 +56,9 @@ describe("DateRangePicker", () => {
       container.querySelector('[data-slot="date-range-picker"]'),
     ).toBeTruthy();
     expect(
-      container.querySelectorAll('[data-slot="date-range-picker-start-segment"]')
-        .length,
+      container.querySelectorAll(
+        '[data-slot="date-range-picker-start-segment"]',
+      ).length,
     ).toBeGreaterThan(2);
     expect(
       container.querySelectorAll('[data-slot="date-range-picker-end-segment"]')

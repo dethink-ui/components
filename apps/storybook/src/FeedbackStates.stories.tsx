@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { AlertTriangle, CheckCircle2, Inbox, ListChecks, UploadCloud } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Inbox,
+  ListChecks,
+  UploadCloud,
+} from "lucide-react";
 import {
   Alert,
   Button,
@@ -88,7 +94,9 @@ function ToastDemo() {
             render: ({ dismiss }) => (
               <div className="grid gap-3">
                 <div className="grid gap-1">
-                  <div className="font-medium text-foreground">CSV import ready</div>
+                  <div className="text-foreground font-medium">
+                    CSV import ready
+                  </div>
                   <div className="text-muted-foreground">
                     42 rows matched. 3 rows need review before publishing.
                   </div>
@@ -113,7 +121,7 @@ export const LoadingAndProgress: Story = {
     <DethinkProvider
       density={args.density}
       theme={args.theme}
-      className="grid max-w-2xl gap-6 rounded-lg border border-border p-6"
+      className="border-border grid max-w-2xl gap-6 rounded-lg border p-6"
     >
       <div className="flex flex-wrap items-center gap-4">
         <Spinner label="Loading" tone="primary" />
@@ -139,7 +147,7 @@ export const MessagingAndEmptyState: Story = {
     <DethinkProvider
       density={args.density}
       theme={args.theme}
-      className="grid max-w-3xl gap-5 rounded-lg border border-border p-6"
+      className="border-border grid max-w-3xl gap-5 rounded-lg border p-6"
     >
       <Alert
         icon={<CheckCircle2 />}
@@ -168,7 +176,7 @@ export const ToastWorkflow: Story = {
     <DethinkProvider
       density={args.density}
       theme={args.theme}
-      className="min-h-80 rounded-lg border border-border p-6"
+      className="border-border min-h-80 rounded-lg border p-6"
     >
       <ToastProvider motion="standard">
         <ToastDemo />

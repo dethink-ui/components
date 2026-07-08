@@ -45,7 +45,8 @@ export const NativeFormComposition: Story = {
           <CardHeader>
             <CardTitle>Workspace preferences</CardTitle>
             <CardDescription>
-              Checkbox, RadioGroup, and Switch stay native while FieldControl owns labels.
+              Checkbox, RadioGroup, and Switch stay native while FieldControl
+              owns labels.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -67,7 +68,11 @@ export const NativeFormComposition: Story = {
                     </Field>
                     <Field id="choice-security-digest" orientation="horizontal">
                       <FieldControl asChild>
-                        <Checkbox name="securityDigest" value="yes" defaultChecked />
+                        <Checkbox
+                          name="securityDigest"
+                          value="yes"
+                          defaultChecked
+                        />
                       </FieldControl>
                       <FieldContent>
                         <FieldLabel>Security digest</FieldLabel>
@@ -81,20 +86,30 @@ export const NativeFormComposition: Story = {
 
                 <FieldSet>
                   <FieldLegend>Default response mode</FieldLegend>
-                  <RadioGroup name="responseMode" defaultValue="balanced" orientation="horizontal">
+                  <RadioGroup
+                    name="responseMode"
+                    defaultValue="balanced"
+                    orientation="horizontal"
+                  >
                     <Field id="choice-response-fast" orientation="horizontal">
                       <FieldControl asChild>
                         <RadioGroupItem value="fast" />
                       </FieldControl>
                       <FieldLabel>Fast</FieldLabel>
                     </Field>
-                    <Field id="choice-response-balanced" orientation="horizontal">
+                    <Field
+                      id="choice-response-balanced"
+                      orientation="horizontal"
+                    >
                       <FieldControl asChild>
                         <RadioGroupItem value="balanced" />
                       </FieldControl>
                       <FieldLabel>Balanced</FieldLabel>
                     </Field>
-                    <Field id="choice-response-careful" orientation="horizontal">
+                    <Field
+                      id="choice-response-careful"
+                      orientation="horizontal"
+                    >
                       <FieldControl asChild>
                         <RadioGroupItem value="careful" />
                       </FieldControl>
@@ -115,10 +130,17 @@ export const NativeFormComposition: Story = {
                   </FieldControl>
                 </Field>
 
-                <Field id="choice-admin-mfa" orientation="horizontal" invalid required>
+                <Field
+                  id="choice-admin-mfa"
+                  orientation="horizontal"
+                  invalid
+                  required
+                >
                   <FieldContent>
                     <FieldLabel>Require admin MFA</FieldLabel>
-                    <FieldDescription>Protect owner and billing actions.</FieldDescription>
+                    <FieldDescription>
+                      Protect owner and billing actions.
+                    </FieldDescription>
                     <FieldError>Enable this before inviting admins.</FieldError>
                   </FieldContent>
                   <FieldControl asChild>
@@ -163,26 +185,41 @@ export const ProductPatterns: Story = {
           <Card as="section">
             <CardHeader>
               <CardTitle>Feature flags</CardTitle>
-              <CardDescription>Settings rows use stable switch labels.</CardDescription>
+              <CardDescription>
+                Settings rows use stable switch labels.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Form>
                 <Field id="flag-beta-dashboard" orientation="horizontal">
                   <FieldContent>
                     <FieldLabel>Beta dashboard</FieldLabel>
-                    <FieldDescription>Expose the new operations dashboard.</FieldDescription>
+                    <FieldDescription>
+                      Expose the new operations dashboard.
+                    </FieldDescription>
                   </FieldContent>
                   <FieldControl asChild>
-                    <Switch name="betaDashboard" value="enabled" defaultChecked />
+                    <Switch
+                      name="betaDashboard"
+                      value="enabled"
+                      defaultChecked
+                    />
                   </FieldControl>
                 </Field>
                 <Field id="flag-fast-sync" orientation="horizontal" readOnly>
                   <FieldContent>
                     <FieldLabel>Fast sync</FieldLabel>
-                    <FieldDescription>Inherited from organization policy.</FieldDescription>
+                    <FieldDescription>
+                      Inherited from organization policy.
+                    </FieldDescription>
                   </FieldContent>
                   <FieldControl asChild>
-                    <Switch name="fastSync" value="enabled" readOnly defaultChecked />
+                    <Switch
+                      name="fastSync"
+                      value="enabled"
+                      readOnly
+                      defaultChecked
+                    />
                   </FieldControl>
                 </Field>
               </Form>
@@ -192,7 +229,9 @@ export const ProductPatterns: Story = {
           <Card as="section">
             <CardHeader>
               <CardTitle>CRUD filters</CardTitle>
-              <CardDescription>Checkbox groups submit native array values.</CardDescription>
+              <CardDescription>
+                Checkbox groups submit native array values.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <FieldSet>
@@ -224,7 +263,9 @@ export const ProductPatterns: Story = {
           <Card as="section">
             <CardHeader>
               <CardTitle>Permission choices</CardTitle>
-              <CardDescription>Mixed state documents partial role access.</CardDescription>
+              <CardDescription>
+                Mixed state documents partial role access.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <FieldSet aria-describedby="permissions-error">
@@ -238,13 +279,21 @@ export const ProductPatterns: Story = {
                   </Field>
                   <Field id="permission-read" orientation="horizontal">
                     <FieldControl asChild>
-                      <Checkbox name="permissions" value="read" defaultChecked />
+                      <Checkbox
+                        name="permissions"
+                        value="read"
+                        defaultChecked
+                      />
                     </FieldControl>
                     <FieldLabel>Read records</FieldLabel>
                   </Field>
                   <Field id="permission-write" orientation="horizontal" invalid>
                     <FieldControl asChild>
-                      <Checkbox name="permissions" value="write" aria-invalid="true" />
+                      <Checkbox
+                        name="permissions"
+                        value="write"
+                        aria-invalid="true"
+                      />
                     </FieldControl>
                     <FieldLabel>Write records</FieldLabel>
                   </Field>
@@ -259,7 +308,9 @@ export const ProductPatterns: Story = {
           <Card as="section">
             <CardHeader>
               <CardTitle>AI model and tools</CardTitle>
-              <CardDescription>Radio values and tool switches share form wiring.</CardDescription>
+              <CardDescription>
+                Radio values and tool switches share form wiring.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Stack gap="5">
@@ -286,16 +337,24 @@ export const ProductPatterns: Story = {
                     <Field id="tool-browser-suite" orientation="horizontal">
                       <FieldContent>
                         <FieldLabel>Browser tool</FieldLabel>
-                        <FieldDescription>Allow website inspection.</FieldDescription>
+                        <FieldDescription>
+                          Allow website inspection.
+                        </FieldDescription>
                       </FieldContent>
                       <FieldControl asChild>
-                        <Switch name="browserTool" value="enabled" defaultChecked />
+                        <Switch
+                          name="browserTool"
+                          value="enabled"
+                          defaultChecked
+                        />
                       </FieldControl>
                     </Field>
                     <Field id="tool-terminal-suite" orientation="horizontal">
                       <FieldContent>
                         <FieldLabel>Terminal tool</FieldLabel>
-                        <FieldDescription>Allow local command execution.</FieldDescription>
+                        <FieldDescription>
+                          Allow local command execution.
+                        </FieldDescription>
                       </FieldContent>
                       <FieldControl asChild>
                         <Switch name="terminalTool" value="enabled" />
@@ -321,30 +380,50 @@ export const ThemeDensityRTLAndResponsive: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="lg">
             <Form>
               <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
                 <FieldSet>
-                  <FieldLegend>{theme === "dark" ? "RTL choices" : "Responsive choices"}</FieldLegend>
+                  <FieldLegend>
+                    {theme === "dark" ? "RTL choices" : "Responsive choices"}
+                  </FieldLegend>
                   <FieldGroup>
-                    <Field id={`suite-checkbox-${theme}`} orientation="horizontal">
+                    <Field
+                      id={`suite-checkbox-${theme}`}
+                      orientation="horizontal"
+                    >
                       <FieldControl asChild>
-                        <Checkbox name={`density-${theme}`} value="compact" defaultChecked />
+                        <Checkbox
+                          name={`density-${theme}`}
+                          value="compact"
+                          defaultChecked
+                        />
                       </FieldControl>
                       <FieldContent>
                         <FieldLabel>Compact density</FieldLabel>
-                        <FieldDescription>Logical spacing keeps labels aligned.</FieldDescription>
+                        <FieldDescription>
+                          Logical spacing keeps labels aligned.
+                        </FieldDescription>
                       </FieldContent>
                     </Field>
-                    <Field id={`suite-switch-${theme}`} orientation="horizontal">
+                    <Field
+                      id={`suite-switch-${theme}`}
+                      orientation="horizontal"
+                    >
                       <FieldContent>
                         <FieldLabel>Receive alerts</FieldLabel>
-                        <FieldDescription>Switch thumb placement uses logical margins.</FieldDescription>
+                        <FieldDescription>
+                          Switch thumb placement uses logical margins.
+                        </FieldDescription>
                       </FieldContent>
                       <FieldControl asChild>
-                        <Switch name={`alerts-${theme}`} value="enabled" defaultChecked />
+                        <Switch
+                          name={`alerts-${theme}`}
+                          value="enabled"
+                          defaultChecked
+                        />
                       </FieldControl>
                     </Field>
                   </FieldGroup>
@@ -356,13 +435,19 @@ export const ThemeDensityRTLAndResponsive: Story = {
                     defaultValue="comfortable"
                     orientation="horizontal"
                   >
-                    <Field id={`layout-compact-${theme}`} orientation="horizontal">
+                    <Field
+                      id={`layout-compact-${theme}`}
+                      orientation="horizontal"
+                    >
                       <FieldControl asChild>
                         <RadioGroupItem value="compact" />
                       </FieldControl>
                       <FieldLabel>Compact</FieldLabel>
                     </Field>
-                    <Field id={`layout-comfortable-${theme}`} orientation="horizontal">
+                    <Field
+                      id={`layout-comfortable-${theme}`}
+                      orientation="horizontal"
+                    >
                       <FieldControl asChild>
                         <RadioGroupItem value="comfortable" />
                       </FieldControl>

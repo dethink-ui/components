@@ -17,14 +17,19 @@ const plans = [
 
 export function CardStackOpen() {
   return (
-    <CardStack aria-label="Pricing plans" mode="open" angle={10} defaultActiveIndex={1}>
+    <CardStack
+      aria-label="Pricing plans"
+      mode="open"
+      angle={10}
+      defaultActiveIndex={1}
+    >
       {plans.map((plan) => (
         <Card key={plan.name}>
           <CardHeader>
             <CardTitle>{plan.name}</CardTitle>
             <CardDescription>{plan.price} per month</CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground text-sm">
             {plan.blurb}
           </CardContent>
         </Card>

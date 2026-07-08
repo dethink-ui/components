@@ -2,7 +2,9 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const registryRoot = fileURLToPath(new URL("../registry/items", import.meta.url));
+const registryRoot = fileURLToPath(
+  new URL("../registry/items", import.meta.url),
+);
 
 async function findJsonFiles(directory, prefix = "") {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -32,7 +34,12 @@ if (files.length === 0) {
 }
 
 const requiredStringFields = ["name", "type", "title", "description"];
-const optionalArrayFields = ["dependencies", "devDependencies", "registryDependencies", "files"];
+const optionalArrayFields = [
+  "dependencies",
+  "devDependencies",
+  "registryDependencies",
+  "files",
+];
 
 for (const file of files) {
   const absolutePath = join(registryRoot, file);
@@ -57,10 +64,17 @@ for (const file of files) {
   if (Array.isArray(item.files)) {
     for (const [index, entry] of item.files.entries()) {
       if (typeof entry.path !== "string" || entry.path.length === 0) {
-        throw new Error(`${file}: files[${index}].path must be a non-empty string.`);
+        throw new Error(
+          `${file}: files[${index}].path must be a non-empty string.`,
+        );
       }
-      if (typeof entry.type !== "string" || !entry.type.startsWith("registry:")) {
-        throw new Error(`${file}: files[${index}].type must start with "registry:".`);
+      if (
+        typeof entry.type !== "string" ||
+        !entry.type.startsWith("registry:")
+      ) {
+        throw new Error(
+          `${file}: files[${index}].type must start with "registry:".`,
+        );
       }
     }
   }

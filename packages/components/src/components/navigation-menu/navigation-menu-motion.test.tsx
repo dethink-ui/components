@@ -102,7 +102,9 @@ describe("NavigationMenu motion presets", () => {
     const indicatorClasses = navigationMenuIndicatorClassNames();
     const viewportBodyClasses = navigationMenuViewportBodyClassNames();
 
-    expect(contentClasses).toContain("motion-safe:data-[state=open]:animate-nav-slide-in");
+    expect(contentClasses).toContain(
+      "motion-safe:data-[state=open]:animate-nav-slide-in",
+    );
     expect(contentClasses).toContain("motion-reduce:animate-none");
     expect(indicatorClasses).toContain("motion-reduce:transition-none");
     expect(viewportBodyClasses).toContain("transition-[width,height]");
@@ -204,7 +206,9 @@ describe("NavigationMenuIndicator", () => {
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+              <NavigationMenuLink href="/analytics">
+                Analytics
+              </NavigationMenuLink>
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuIndicator />
@@ -235,7 +239,9 @@ describe("NavigationMenuViewport morphing", () => {
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+              <NavigationMenuLink href="/analytics">
+                Analytics
+              </NavigationMenuLink>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>

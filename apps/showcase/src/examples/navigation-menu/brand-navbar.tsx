@@ -79,15 +79,15 @@ function BrandLogo() {
   return (
     <a
       href="#home"
-      className="flex shrink-0 items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="focus-visible:ring-ring focus-visible:ring-offset-background flex shrink-0 items-center gap-2 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <span
         aria-hidden="true"
-        className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 text-primary-foreground shadow-sm"
+        className="from-primary to-primary/60 text-primary-foreground flex size-8 items-center justify-center rounded-lg bg-gradient-to-br shadow-sm"
       >
         <Sparkles className="size-4" />
       </span>
-      <span className="text-base font-semibold tracking-tight text-foreground">
+      <span className="text-foreground text-base font-semibold tracking-tight">
         Dethink
       </span>
     </a>
@@ -114,7 +114,7 @@ function BrandNavItems({ stacked = false }: { stacked?: boolean }) {
     <>
       <NavigationMenuItem className={itemClass} value="product">
         <NavigationMenuTrigger className={triggerClass}>
-          <Rocket aria-hidden="true" className="size-4 text-muted-foreground" />
+          <Rocket aria-hidden="true" className="text-muted-foreground size-4" />
           Product
         </NavigationMenuTrigger>
         <NavigationMenuContent className={contentClass}>
@@ -150,7 +150,7 @@ function BrandNavItems({ stacked = false }: { stacked?: boolean }) {
         <NavigationMenuTrigger className={triggerClass}>
           <BookOpen
             aria-hidden="true"
-            className="size-4 text-muted-foreground"
+            className="text-muted-foreground size-4"
           />
           Resources
         </NavigationMenuTrigger>
@@ -196,8 +196,8 @@ export function NavigationMenuBrandNavbar() {
   return (
     // The container query keeps the collapse tied to the navbar's own width,
     // so the example adapts to whatever column hosts it.
-    <div className="min-h-[26rem] @container">
-      <header className="rounded-xl border border-border bg-background/80 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="@container min-h-[26rem]">
+      <header className="border-border bg-background/80 supports-[backdrop-filter]:bg-background/60 rounded-xl border shadow-sm backdrop-blur">
         <div className="flex h-14 items-center gap-2 px-3">
           <BrandLogo />
 
@@ -205,7 +205,7 @@ export function NavigationMenuBrandNavbar() {
               max-width is capped so flyouts stay inside the navbar column. */}
           <NavigationMenu
             aria-label="Main"
-            className="@max-3xl:hidden [--dt-navigation-menu-content-max-width:34rem]"
+            className="[--dt-navigation-menu-content-max-width:34rem] @max-3xl:hidden"
           >
             <NavigationMenuList>
               <BrandNavItems />
@@ -228,7 +228,7 @@ export function NavigationMenuBrandNavbar() {
 
             <span
               aria-hidden="true"
-              className="mx-1 h-5 w-px bg-border @max-md:hidden"
+              className="bg-border mx-1 h-5 w-px @max-md:hidden"
             />
 
             <Button variant="ghost" size="sm" className="@max-md:hidden">
@@ -259,7 +259,7 @@ export function NavigationMenuBrandNavbar() {
         <div
           id="brand-navbar-mobile-panel"
           hidden={!mobileOpen}
-          className="border-t border-border @3xl:hidden"
+          className="border-border border-t @3xl:hidden"
         >
           <div className="space-y-3 px-3 py-3">
             <NavigationMenu
@@ -273,7 +273,7 @@ export function NavigationMenuBrandNavbar() {
               </NavigationMenuList>
             </NavigationMenu>
             {/* Mirror the login action while the bar hides it. */}
-            <div className="border-t border-border pt-3 @md:hidden">
+            <div className="border-border border-t pt-3 @md:hidden">
               <Button variant="outline" size="sm" className="w-full">
                 Log in
               </Button>

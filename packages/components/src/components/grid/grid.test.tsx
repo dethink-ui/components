@@ -36,7 +36,14 @@ const elements: GridElement[] = [
   "form",
   "fieldset",
 ];
-const itemElements: GridItemElement[] = ["div", "span", "li", "section", "article", "aside"];
+const itemElements: GridItemElement[] = [
+  "div",
+  "span",
+  "li",
+  "section",
+  "article",
+  "aside",
+];
 const columns: GridColumns[] = [
   "1",
   "2",
@@ -64,8 +71,20 @@ const contents: GridContent[] = [
   "stretch",
 ];
 const itemSpans: GridItemSpan[] = ["1", "2", "3", "4", "5", "6", "full"];
-const itemAligns: GridItemAlign[] = ["auto", "stretch", "start", "center", "end"];
-const itemJustifies: GridItemJustify[] = ["auto", "stretch", "start", "center", "end"];
+const itemAligns: GridItemAlign[] = [
+  "auto",
+  "stretch",
+  "start",
+  "center",
+  "end",
+];
+const itemJustifies: GridItemJustify[] = [
+  "auto",
+  "stretch",
+  "start",
+  "center",
+  "end",
+];
 const itemMinInlineSizes: GridItemMinInlineSize[] = ["auto", "0"];
 
 const columnClasses: Record<GridColumns, string> = {
@@ -260,35 +279,52 @@ describe("Grid", () => {
     expect(grid).toHaveClass(alignClasses[align]);
   });
 
-  it.each(justifies)("applies %s item justification data and class", (justify) => {
-    render(<Grid justify={justify}>justify {justify}</Grid>);
+  it.each(justifies)(
+    "applies %s item justification data and class",
+    (justify) => {
+      render(<Grid justify={justify}>justify {justify}</Grid>);
 
-    const grid = screen.getByText(`justify ${justify}`);
+      const grid = screen.getByText(`justify ${justify}`);
 
-    expect(grid).toHaveAttribute("data-justify", justify);
-    expect(grid).toHaveClass(justifyClasses[justify]);
-  });
+      expect(grid).toHaveAttribute("data-justify", justify);
+      expect(grid).toHaveClass(justifyClasses[justify]);
+    },
+  );
 
-  it.each(contents)("applies %s align-content data and class", (alignContent) => {
-    render(<Grid alignContent={alignContent}>align content {alignContent}</Grid>);
+  it.each(contents)(
+    "applies %s align-content data and class",
+    (alignContent) => {
+      render(
+        <Grid alignContent={alignContent}>align content {alignContent}</Grid>,
+      );
 
-    const grid = screen.getByText(`align content ${alignContent}`);
+      const grid = screen.getByText(`align content ${alignContent}`);
 
-    expect(grid).toHaveAttribute("data-align-content", alignContent);
-    expect(grid).toHaveClass(contentClasses[alignContent]);
-  });
+      expect(grid).toHaveAttribute("data-align-content", alignContent);
+      expect(grid).toHaveClass(contentClasses[alignContent]);
+    },
+  );
 
-  it.each(contents)("applies %s justify-content data and class", (justifyContent) => {
-    render(<Grid justifyContent={justifyContent}>justify content {justifyContent}</Grid>);
+  it.each(contents)(
+    "applies %s justify-content data and class",
+    (justifyContent) => {
+      render(
+        <Grid justifyContent={justifyContent}>
+          justify content {justifyContent}
+        </Grid>,
+      );
 
-    const grid = screen.getByText(`justify content ${justifyContent}`);
+      const grid = screen.getByText(`justify content ${justifyContent}`);
 
-    expect(grid).toHaveAttribute("data-justify-content", justifyContent);
-    expect(grid).toHaveClass(justifyContentClasses[justifyContent]);
-  });
+      expect(grid).toHaveAttribute("data-justify-content", justifyContent);
+      expect(grid).toHaveClass(justifyContentClasses[justifyContent]);
+    },
+  );
 
   it("composes consumer classes after baseline classes", () => {
-    expect(gridClassNames({ className: "custom-grid" })).toContain("custom-grid");
+    expect(gridClassNames({ className: "custom-grid" })).toContain(
+      "custom-grid",
+    );
   });
 
   it("uses grid columns, rows, axis gap, alignment, and content utilities", () => {
@@ -305,7 +341,9 @@ describe("Grid", () => {
     });
 
     expect(className).toContain("grid");
-    expect(className).toContain("grid-cols-[repeat(auto-fit,minmax(min(16rem,100%),1fr))]");
+    expect(className).toContain(
+      "grid-cols-[repeat(auto-fit,minmax(min(16rem,100%),1fr))]",
+    );
     expect(className).toContain("grid-rows-3");
     expect(className).toContain("gap-[var(--dt-space-4)]");
     expect(className).toContain("gap-y-[var(--dt-space-2)]");
@@ -318,7 +356,9 @@ describe("Grid", () => {
 
   it("rejects unsupported token values at the TypeScript boundary", () => {
     const valid = <Grid columns="4" gap="4" />;
-    const validForm = <Grid as="form" action="/search" method="get" noValidate />;
+    const validForm = (
+      <Grid as="form" action="/search" method="get" noValidate />
+    );
     const validFieldset = <Grid as="fieldset" disabled />;
     // @ts-expect-error Grid columns use constrained token values.
     const invalidColumns = <Grid columns="7" />;
@@ -358,7 +398,12 @@ describe("Grid", () => {
 
     render(
       <Grid ref={gridRef} asChild columns="3" gap="3" onClick={gridClick}>
-        <RouterAnchor ref={childRef} className="custom-child" onClick={childClick} to="/docs">
+        <RouterAnchor
+          ref={childRef}
+          className="custom-child"
+          onClick={childClick}
+          to="/docs"
+        >
           Grid child
         </RouterAnchor>
       </Grid>,
@@ -390,11 +435,9 @@ describe("Grid", () => {
       </Grid>,
     );
 
-    expect(screen.getAllByRole("button").map((button) => button.textContent)).toEqual([
-      "First",
-      "Second",
-      "Third",
-    ]);
+    expect(
+      screen.getAllByRole("button").map((button) => button.textContent),
+    ).toEqual(["First", "Second", "Third"]);
   });
 });
 
@@ -412,13 +455,20 @@ describe("GridItem", () => {
     expect(item).toHaveAttribute("data-align", "auto");
     expect(item).toHaveAttribute("data-justify", "auto");
     expect(item).toHaveAttribute("data-min-inline-size", "auto");
-    expect(item).toHaveClass("col-span-1", "row-span-1", "self-auto", "justify-self-auto");
+    expect(item).toHaveClass(
+      "col-span-1",
+      "row-span-1",
+      "self-auto",
+      "justify-self-auto",
+    );
   });
 
   it.each(itemElements)("renders a semantic %s item element", (as) => {
     render(<GridItem as={as}>Semantic item {as}</GridItem>);
 
-    expect(screen.getByText(`Semantic item ${as}`).tagName).toBe(as.toUpperCase());
+    expect(screen.getByText(`Semantic item ${as}`).tagName).toBe(
+      as.toUpperCase(),
+    );
   });
 
   it.each(itemSpans)("applies %s column span data and class", (colSpan) => {
@@ -448,31 +498,43 @@ describe("GridItem", () => {
     expect(item).toHaveClass(itemAlignClasses[align]);
   });
 
-  it.each(itemJustifies)("applies %s self-justification data and class", (justify) => {
-    render(<GridItem justify={justify}>item justify {justify}</GridItem>);
+  it.each(itemJustifies)(
+    "applies %s self-justification data and class",
+    (justify) => {
+      render(<GridItem justify={justify}>item justify {justify}</GridItem>);
 
-    const item = screen.getByText(`item justify ${justify}`);
+      const item = screen.getByText(`item justify ${justify}`);
 
-    expect(item).toHaveAttribute("data-justify", justify);
-    expect(item).toHaveClass(itemJustifyClasses[justify]);
-  });
+      expect(item).toHaveAttribute("data-justify", justify);
+      expect(item).toHaveClass(itemJustifyClasses[justify]);
+    },
+  );
 
-  it.each(itemMinInlineSizes)("applies %s min inline size data", (minInlineSize) => {
-    render(<GridItem minInlineSize={minInlineSize}>min inline {minInlineSize}</GridItem>);
+  it.each(itemMinInlineSizes)(
+    "applies %s min inline size data",
+    (minInlineSize) => {
+      render(
+        <GridItem minInlineSize={minInlineSize}>
+          min inline {minInlineSize}
+        </GridItem>,
+      );
 
-    const item = screen.getByText(`min inline ${minInlineSize}`);
+      const item = screen.getByText(`min inline ${minInlineSize}`);
 
-    expect(item).toHaveAttribute("data-min-inline-size", minInlineSize);
+      expect(item).toHaveAttribute("data-min-inline-size", minInlineSize);
 
-    if (minInlineSize === "0") {
-      expect(item).toHaveClass("min-w-0");
-    } else {
-      expect(item).not.toHaveClass("min-w-0");
-    }
-  });
+      if (minInlineSize === "0") {
+        expect(item).toHaveClass("min-w-0");
+      } else {
+        expect(item).not.toHaveClass("min-w-0");
+      }
+    },
+  );
 
   it("composes item classes after baseline classes", () => {
-    expect(gridItemClassNames({ className: "custom-item" })).toContain("custom-item");
+    expect(gridItemClassNames({ className: "custom-item" })).toContain(
+      "custom-item",
+    );
   });
 
   it("uses item spans, alignment, justification, and long-content utilities", () => {

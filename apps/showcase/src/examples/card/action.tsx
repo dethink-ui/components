@@ -30,7 +30,7 @@ export function CardWithAction() {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <ul className="divide-y divide-border">
+        <ul className="divide-border divide-y">
           {members.map((member) => (
             <li
               key={member.name}

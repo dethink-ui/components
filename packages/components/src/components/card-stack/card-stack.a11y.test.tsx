@@ -36,9 +36,15 @@ describe("CardStack accessibility", () => {
     const stack = screen.getByRole("group", { name: "Review cards" });
 
     expect(stack).toHaveAttribute("data-slot", "card-stack");
-    expect(screen.getByRole("button", { name: "Show next card" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "Open active card" })).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Open inactive card" })).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Show next card" }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Open active card" }),
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "Open inactive card" }),
+    ).toBeNull();
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

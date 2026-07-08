@@ -4,9 +4,24 @@ import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@dethink/components";
 
 const plans = [
-  { value: "starter", name: "Starter", price: "$0", blurb: "Two projects, community support." },
-  { value: "team", name: "Team", price: "$29", blurb: "Unlimited projects, shared themes." },
-  { value: "scale", name: "Scale", price: "$99", blurb: "SSO, audit log, priority support." },
+  {
+    value: "starter",
+    name: "Starter",
+    price: "$0",
+    blurb: "Two projects, community support.",
+  },
+  {
+    value: "team",
+    name: "Team",
+    price: "$29",
+    blurb: "Unlimited projects, shared themes.",
+  },
+  {
+    value: "scale",
+    name: "Scale",
+    price: "$99",
+    blurb: "SSO, audit log, priority support.",
+  },
 ];
 
 /**
@@ -39,18 +54,18 @@ export function RadioGroupRecipePlanPicker() {
             <span className="flex-1">
               <span className="flex items-baseline justify-between">
                 <span className="font-heading font-semibold">{entry.name}</span>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   {entry.price}/mo
                 </span>
               </span>
-              <span className="mt-1 block text-sm text-muted-foreground">
+              <span className="text-muted-foreground mt-1 block text-sm">
                 {entry.blurb}
               </span>
             </span>
           </label>
         ))}
       </RadioGroup>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Selected: {plans.find((entry) => entry.value === plan)?.name}
       </p>
     </div>

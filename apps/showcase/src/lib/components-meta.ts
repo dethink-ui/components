@@ -402,7 +402,9 @@ export const componentTypes: ComponentTypeMeta[] = [
 export const componentGroups: ComponentGroup[] = componentTypes
   .map((type) => ({
     ...type,
-    components: componentCatalog.filter((component) => component.type === type.id),
+    components: componentCatalog.filter(
+      (component) => component.type === type.id,
+    ),
   }))
   .filter((group) => group.components.length > 0);
 

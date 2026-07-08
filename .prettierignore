@@ -1,0 +1,12 @@
+**/.agents
+**/.claude
+**/node_modules
+**/dist
+**/coverage
+**/.next
+**/.turbo
+**/storybook-static
+*.tsbuildinfo
+pnpm-lock.yaml
+*.docx
+~$*

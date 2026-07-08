@@ -63,9 +63,9 @@ export function useSlotPlannerCrud() {
   const [pendingKeys, setPendingKeys] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
-  const [retryByKey, setRetryByKey] = useState<
-    ReadonlyMap<string, () => void>
-  >(() => new Map());
+  const [retryByKey, setRetryByKey] = useState<ReadonlyMap<string, () => void>>(
+    () => new Map(),
+  );
 
   const clearError = useCallback((key: string) => {
     setRetryByKey((previous) => {
@@ -192,9 +192,7 @@ function defaultGenerateSlotId() {
 
 function isMutableAvailabilityStatus(status: SlotPlannerOccurrenceStatus) {
   return (
-    status === "draft" ||
-    status === "requestable" ||
-    status === "requested"
+    status === "draft" || status === "requestable" || status === "requested"
   );
 }
 
@@ -569,7 +567,8 @@ export function useSlotPlanner<
   ]);
 
   const summarizeDay = useCallback(
-    (dateIso: string) => summarizeSlotPlannerDay(occurrencesByDate[dateIso] ?? []),
+    (dateIso: string) =>
+      summarizeSlotPlannerDay(occurrencesByDate[dateIso] ?? []),
     [occurrencesByDate],
   );
 
@@ -718,7 +717,9 @@ export function useSlotPlanner<
     });
   };
 
-  const announceBatchResult = (payload: SlotPlannerBatchChangePayload<TData>) => {
+  const announceBatchResult = (
+    payload: SlotPlannerBatchChangePayload<TData>,
+  ) => {
     const nounTokens = {
       slot: resolvedTaxonomy.slot,
       slotPlural: resolvedTaxonomy.slotPlural,

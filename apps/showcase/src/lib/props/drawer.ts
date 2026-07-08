@@ -26,7 +26,8 @@ export const drawerProps: PropRow[] = [
     prop: "open / defaultOpen / onOpenChange",
     type: "boolean / boolean / (open) => void",
     defaultValue: "—",
-    description: "Controlled or uncontrolled open state, identical to Dialog's contract.",
+    description:
+      "Controlled or uncontrolled open state, identical to Dialog's contract.",
   },
   {
     prop: "DrawerContent — dismissible / keyboardDismissDisabled",
@@ -66,7 +67,8 @@ export const drawerProps: PropRow[] = [
     prop: "edgeSwipeToOpen / edgeSwipeHitRegionSize",
     type: "boolean / number",
     defaultValue: "false / 24",
-    description: "Opt-in edge-swipe gesture to open the drawer, and its hit-region size in px.",
+    description:
+      "Opt-in edge-swipe gesture to open the drawer, and its hit-region size in px.",
   },
   {
     prop: "motionPreset",

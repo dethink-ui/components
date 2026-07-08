@@ -89,7 +89,12 @@ const placements: NavDockPlacement[] = ["bottom", "top", "left", "right"];
 const variants: NavDockVariant[] = ["default", "glass", "solid"];
 const sizes: NavDockSize[] = ["sm", "md", "lg"];
 const showTitleModes: NavDockShowTitle[] = ["never", "hover", "always"];
-const motionPresets: NavDockMotion[] = ["none", "subtle", "standard", "expressive"];
+const motionPresets: NavDockMotion[] = [
+  "none",
+  "subtle",
+  "standard",
+  "expressive",
+];
 const overflowLabels = [
   "Overview",
   "Docs",
@@ -155,7 +160,9 @@ function getItems(onAction: () => void = () => undefined): NavDockItemData[] {
   ];
 }
 
-function getSubmenuItems(onAction: () => void = () => undefined): NavDockItemData[] {
+function getSubmenuItems(
+  onAction: () => void = () => undefined,
+): NavDockItemData[] {
   return [
     {
       href: "/overview",
@@ -269,13 +276,13 @@ export const Base: Story = {
   args: {
     size: "sm",
     collapseMode: "auto",
-    placement: "bottom"
+    placement: "bottom",
   },
 
   render: (args) => (
     <DethinkProvider
       theme="light"
-      className="flex min-h-screen items-start justify-center bg-background px-12 py-24"
+      className="bg-background flex min-h-screen items-start justify-center px-12 py-24"
     >
       <NavDock {...args} aria-label="Workspace dock" currentValue="dashboard">
         <NavDockList>
@@ -286,10 +293,18 @@ export const Base: Story = {
           >
             <NavDockLink href="/dashboard" />
           </NavDockItem>
-          <NavDockItem icon={<Search {...navDockIconProps} />} title="Search" value="search">
+          <NavDockItem
+            icon={<Search {...navDockIconProps} />}
+            title="Search"
+            value="search"
+          >
             <NavDockLink href="/search" />
           </NavDockItem>
-          <NavDockItem icon={<Bell {...navDockIconProps} />} title="Alerts" value="alerts">
+          <NavDockItem
+            icon={<Bell {...navDockIconProps} />}
+            title="Alerts"
+            value="alerts"
+          >
             <NavDockLink href="/alerts" />
           </NavDockItem>
           <NavDockItem
@@ -324,7 +339,7 @@ export const Base: Story = {
         </NavDockList>
       </NavDock>
     </DethinkProvider>
-  )
+  ),
 };
 
 export const InPageNavigation: Story = {
@@ -332,7 +347,10 @@ export const InPageNavigation: Story = {
     const [currentPanel, setCurrentPanel] = useState("overview");
 
     return (
-      <DethinkProvider theme="light" className="rounded-lg border border-border p-8">
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-8"
+      >
         <NavDock
           aria-label="Panel dock"
           currentValue={currentPanel}
@@ -346,7 +364,9 @@ export const InPageNavigation: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
-    await expect(canvas.getByRole("button", { name: "Activity" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Activity" }),
+    ).toBeVisible();
   },
 };
 
@@ -355,11 +375,14 @@ export const SubmenuDisclosures: Story = {
     placement: "top",
     showTitle: "always",
     size: "sm",
-    variant: "glass"
+    variant: "glass",
   },
 
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-8">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
       <div className="grid gap-8 md:grid-cols-2">
         <div className="min-h-48">
           <NavDock
@@ -381,13 +404,13 @@ export const SubmenuDisclosures: Story = {
                   <NavDockSubmenuTrigger />
                   <NavDockSubmenuContent>
                     <a
-                      className="rounded-sm px-3 py-2 text-sm text-foreground no-underline outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                      className="text-foreground hover:bg-muted focus-visible:ring-ring rounded-sm px-3 py-2 text-sm no-underline outline-none focus-visible:ring-2"
                       href="/admin/users"
                     >
                       Users
                     </a>
                     <button
-                      className="rounded-sm px-3 py-2 text-start text-sm text-foreground outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+                      className="text-foreground hover:bg-muted focus-visible:ring-ring rounded-sm px-3 py-2 text-start text-sm outline-none focus-visible:ring-2"
                       type="button"
                     >
                       Rebuild index
@@ -412,15 +435,20 @@ export const SubmenuDisclosures: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole("link", { name: /Components/ })).toBeVisible();
+    await expect(
+      canvas.getByRole("link", { name: /Components/ }),
+    ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Admin" }));
     await expect(canvas.getByRole("link", { name: "Users" })).toBeVisible();
-  }
+  },
 };
 
 export const CompoundRouterComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-8">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
       <NavDock aria-label="Router dock" currentValue="docs" showTitle="always">
         <NavDockList>
           <NavDockItem
@@ -448,14 +476,20 @@ export const CompoundRouterComposition: Story = {
 export const Placements: Story = {
   args: {
     showTitle: "never",
-    placement: "right"
+    placement: "right",
   },
 
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-8">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
       <div className="grid gap-6 md:grid-cols-2">
         {placements.map((placement) => (
-          <div key={placement} className="min-h-40 rounded-md border border-border p-4">
+          <div
+            key={placement}
+            className="border-border min-h-40 rounded-md border p-4"
+          >
             <NavDock
               aria-label={`${placement} dock`}
               currentValue="overview"
@@ -467,7 +501,7 @@ export const Placements: Story = {
         ))}
       </div>
     </DethinkProvider>
-  )
+  ),
 };
 
 export const OverflowAndPositioning: Story = {
@@ -482,10 +516,10 @@ export const OverflowAndPositioning: Story = {
   render: (args) => (
     <DethinkProvider
       theme="light"
-      className="min-h-[72vh] rounded-lg border border-border bg-background p-8"
+      className="border-border bg-background min-h-[72vh] rounded-lg border p-8"
     >
       <div className="grid gap-8">
-        <div className="w-80 rounded-md border border-border p-4">
+        <div className="border-border w-80 rounded-md border p-4">
           <NavDock
             aria-label="Overflow dock"
             currentValue="overview"
@@ -496,7 +530,7 @@ export const OverflowAndPositioning: Story = {
             variant={args.variant}
           />
         </div>
-        <div className="relative min-h-64 rounded-md border border-dashed border-border p-4">
+        <div className="border-border relative min-h-64 rounded-md border border-dashed p-4">
           <NavDock
             {...args}
             aria-label="Fixed placement dock"
@@ -524,7 +558,7 @@ export const ResponsiveCollapsedMode: Story = {
     return (
       <DethinkProvider
         theme="light"
-        className="grid min-h-[30rem] content-start gap-6 rounded-lg border border-border bg-background p-8"
+        className="border-border bg-background grid min-h-[30rem] content-start gap-6 rounded-lg border p-8"
       >
         <div className="flex min-h-80 items-end">
           <NavDock
@@ -541,8 +575,8 @@ export const ResponsiveCollapsedMode: Story = {
             />
           </NavDock>
         </div>
-        <div className="max-w-sm rounded-md border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
-          <strong className="block text-foreground">Current panel</strong>
+        <div className="border-border bg-muted/40 text-muted-foreground max-w-sm rounded-md border p-4 text-sm">
+          <strong className="text-foreground block">Current panel</strong>
           {currentPanel}
         </div>
       </DethinkProvider>
@@ -553,24 +587,35 @@ export const ResponsiveCollapsedMode: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(canvas.getByRole("button", { name: "Open dock" }));
-    await expect(canvas.getByRole("button", { name: "Close dock" })).toBeVisible();
-    await expect(canvas.getByRole("button", { name: "Activity" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Close dock" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Activity" }),
+    ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Close dock" }));
     await waitFor(() =>
-      expect(canvas.queryByRole("button", { name: "Activity" })).not.toBeInTheDocument(),
+      expect(
+        canvas.queryByRole("button", { name: "Activity" }),
+      ).not.toBeInTheDocument(),
     );
     await userEvent.click(canvas.getByRole("button", { name: "Open dock" }));
     await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
     await expect(canvas.getByText("activity")).toBeVisible();
     canvas.getByRole("button", { name: "Activity" }).focus();
     await userEvent.keyboard("{Escape}");
-    await expect(canvas.getByRole("button", { name: "Open dock" })).toBeVisible();
+    await expect(
+      canvas.getByRole("button", { name: "Open dock" }),
+    ).toBeVisible();
   },
 };
 
 export const VariantsSizesAndTitles: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-8">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
       <div className="grid gap-6">
         <div className="flex flex-wrap items-center gap-4">
           {variants.map((variant) => (
@@ -614,11 +659,14 @@ export const VariantsSizesAndTitles: Story = {
 
 export const MotionPresetsAndHoverTitles: Story = {
   args: {
-    size: "sm"
+    size: "sm",
   },
 
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-8">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
       <div className="flex flex-wrap items-center gap-6">
         {motionPresets.map((motion) => (
           <NavDock
@@ -642,7 +690,7 @@ export const MotionPresetsAndHoverTitles: Story = {
     await expect(
       canvasElement.querySelector('[data-slot="navdock-hover-title"]'),
     ).toHaveTextContent("Overview");
-  }
+  },
 };
 
 export const ThemeDensityAndRtl: Story = {
@@ -651,7 +699,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-8"
+        className="border-border rounded-lg border p-8"
       >
         <NavDock
           aria-label="Dark compact dock"
@@ -665,7 +713,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-8"
+        className="border-border rounded-lg border p-8"
       >
         <NavDock
           aria-label="RTL comfortable dock"
@@ -714,7 +762,7 @@ export const CustomCurrentMatchingAndLongLabels: Story = {
     return (
       <DethinkProvider
         theme="light"
-        className="rounded-lg border border-border p-8"
+        className="border-border rounded-lg border p-8"
       >
         <NavDock
           aria-label="Workspace pathname dock"

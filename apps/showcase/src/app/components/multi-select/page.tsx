@@ -91,7 +91,10 @@ export default function MultiSelectPage() {
       >
         <div className="space-y-8">
           <PropsTable caption="MultiSelect props" rows={multiSelectProps} />
-          <PropsTable caption="MultiSelectItem props" rows={multiSelectItemProps} />
+          <PropsTable
+            caption="MultiSelectItem props"
+            rows={multiSelectItemProps}
+          />
         </div>
       </DocsSection>
     </DocsPage>

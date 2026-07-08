@@ -115,10 +115,7 @@ type SlotPlannerWeekSlideItemProps = {
 const SlotPlannerWeekSlideItem = forwardRef<
   HTMLDivElement,
   SlotPlannerWeekSlideItemProps
->(function SlotPlannerWeekSlideItem(
-  { children, className, slideFactor },
-  ref,
-) {
+>(function SlotPlannerWeekSlideItem({ children, className, slideFactor }, ref) {
   const isPresent = useIsPresent();
 
   return (
@@ -272,7 +269,7 @@ function SlotPlannerSlotHighlight({ onComplete }: { onComplete: () => void }) {
     <motion.span
       aria-hidden="true"
       data-slot="slot-planner-slot-highlight"
-      className="pointer-events-none absolute inset-0 rounded-md bg-primary"
+      className="bg-primary pointer-events-none absolute inset-0 rounded-md"
       initial={{ opacity: 0 }}
       animate={{ opacity: [0, 0.14, 0] }}
       transition={slotPlannerHighlightTransition}

@@ -70,8 +70,11 @@ export const Base: Story = {};
 
 export const Variants: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {variants.map((variant) => (
           <RevealButton
             key={variant}
@@ -87,8 +90,11 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {sizes.map((size) => (
           <RevealButton
             key={size}
@@ -105,11 +111,14 @@ export const Sizes: Story = {
 
 export const States: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         <RevealButton icon={<Search />} label="Hover or focus" />
         <RevealButton
-          className="ring-2 ring-ring ring-offset-2 ring-offset-background"
+          className="ring-ring ring-offset-background ring-2 ring-offset-2"
           icon={<Settings />}
           label="Focused"
           variant="outline"
@@ -120,8 +129,18 @@ export const States: Story = {
           labelVisibility="always"
           variant="soft"
         />
-        <RevealButton disabled icon={<RefreshCw />} label="Disabled" variant="outline" />
-        <RevealButton icon={<RefreshCw />} label="Loading" loading variant="outline" />
+        <RevealButton
+          disabled
+          icon={<RefreshCw />}
+          label="Disabled"
+          variant="outline"
+        />
+        <RevealButton
+          icon={<RefreshCw />}
+          label="Loading"
+          loading
+          variant="outline"
+        />
         <RevealButton icon={<Bell />} label="No motion" motion="none" />
       </div>
     </DethinkProvider>
@@ -130,8 +149,11 @@ export const States: Story = {
 
 export const MotionPresets: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {motions.map((motion) => (
           <RevealButton
             key={motion}
@@ -148,13 +170,18 @@ export const MotionPresets: Story = {
 
 export const DocumentToolbar: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex items-center justify-between gap-4 rounded-md border border-border bg-muted/30 p-3">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="border-border bg-muted/30 flex items-center justify-between gap-4 rounded-md border p-3">
         <div className="min-w-0">
-          <h2 className="truncate text-sm font-semibold text-foreground">
+          <h2 className="text-foreground truncate text-sm font-semibold">
             Customer insight report
           </h2>
-          <p className="text-sm text-muted-foreground">Draft updated just now</p>
+          <p className="text-muted-foreground text-sm">
+            Draft updated just now
+          </p>
         </div>
         <div
           aria-label="Report actions"
@@ -165,7 +192,11 @@ export const DocumentToolbar: Story = {
           <RevealButton icon={<Copy />} label="Duplicate" variant="ghost" />
           <RevealButton icon={<Share2 />} label="Share" variant="ghost" />
           <RevealButton icon={<Download />} label="Export" variant="outline" />
-          <RevealButton icon={<Archive />} label="Archive" variant="destructive" />
+          <RevealButton
+            icon={<Archive />}
+            label="Archive"
+            variant="destructive"
+          />
         </div>
       </div>
     </DethinkProvider>
@@ -178,9 +209,9 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
-        <div className="flex flex-wrap items-center gap-density-gap">
+        <div className="gap-density-gap flex flex-wrap items-center">
           {variants.map((variant) => (
             <RevealButton
               key={variant}
@@ -195,9 +226,9 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
-        <div className="flex flex-wrap items-center gap-density-gap">
+        <div className="gap-density-gap flex flex-wrap items-center">
           <RevealButton icon={<Search />} label="Search" variant="ghost" />
           <RevealButton icon={<Bell />} label="Notify" variant="outline" />
           <RevealButton icon={<Settings />} label="Settings" variant="soft" />
@@ -209,7 +240,10 @@ export const ThemeDensityAndRtl: Story = {
 
 export const Interaction: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <RevealButton icon={<Search />} label="Search docs" />
     </DethinkProvider>
   ),
@@ -220,10 +254,14 @@ export const Interaction: Story = {
     await expect(button).toHaveAttribute("data-state", "collapsed");
 
     await userEvent.hover(button);
-    await waitFor(() => expect(button).toHaveAttribute("data-state", "revealed"));
+    await waitFor(() =>
+      expect(button).toHaveAttribute("data-state", "revealed"),
+    );
 
     await userEvent.unhover(button);
-    await waitFor(() => expect(button).toHaveAttribute("data-state", "collapsed"));
+    await waitFor(() =>
+      expect(button).toHaveAttribute("data-state", "collapsed"),
+    );
 
     button.focus();
     await expect(button).toHaveAttribute("data-state", "revealed");

@@ -53,7 +53,11 @@ describe("RevealButton accessibility", () => {
             ))}
           </div>
           <div>
-            <RevealButton disabled icon={<PlusIcon />} label="Disabled action" />
+            <RevealButton
+              disabled
+              icon={<PlusIcon />}
+              label="Disabled action"
+            />
             <RevealButton icon={<PlusIcon />} label="Loading action" loading />
             <RevealButton
               aria-pressed="true"

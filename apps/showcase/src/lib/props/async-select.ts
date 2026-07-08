@@ -5,7 +5,8 @@ export const asyncSelectProps: PropRow[] = [
     prop: "selectionMode",
     type: '"single" | "multiple"',
     defaultValue: '"single"',
-    description: "Whether the component renders Combobox or MultiSelect behavior.",
+    description:
+      "Whether the component renders Combobox or MultiSelect behavior.",
   },
   {
     prop: "value / defaultValue / onValueChange",

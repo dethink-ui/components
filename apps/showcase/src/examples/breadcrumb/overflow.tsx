@@ -10,7 +10,11 @@ export function BreadcrumbOverflowExample() {
       items={[
         { key: "home", label: "Home", href: "/" },
         { key: "platform", label: "Platform", href: "/platform" },
-        { key: "workspaces", label: "Workspaces", href: "/platform/workspaces" },
+        {
+          key: "workspaces",
+          label: "Workspaces",
+          href: "/platform/workspaces",
+        },
         {
           key: "operations",
           label: "Operations",

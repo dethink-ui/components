@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { NavDock, type NavDockItemData } from "@dethink/components";
-import { Activity, Gauge, PanelsTopLeft, Settings2, Sparkles } from "lucide-react";
+import {
+  Activity,
+  Gauge,
+  PanelsTopLeft,
+  Settings2,
+  Sparkles,
+} from "lucide-react";
 
 const iconProps = {
   "aria-hidden": true,
@@ -64,7 +70,7 @@ export function NavDockWorkspaceSwitcher() {
   );
 
   return (
-    <div className="grid gap-6 rounded-md border border-border bg-background p-5">
+    <div className="border-border bg-background grid gap-6 rounded-md border p-5">
       <div className="flex justify-center">
         <NavDock
           aria-label="Workspace section navigation"
@@ -75,11 +81,11 @@ export function NavDockWorkspaceSwitcher() {
         />
       </div>
 
-      <div className="rounded-md border border-border bg-muted/30 p-4">
-        <div className="text-sm font-semibold text-foreground">
+      <div className="border-border bg-muted/30 rounded-md border p-4">
+        <div className="text-foreground text-sm font-semibold">
           {currentSection.metric}
         </div>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        <p className="text-muted-foreground mt-2 text-sm leading-6">
           {currentSection.description}
         </p>
       </div>

@@ -22,7 +22,7 @@ export function CardBasic() {
       <CardContent>
         <p className="font-heading text-3xl font-semibold">
           12,480{" "}
-          <span className="text-sm font-normal text-muted-foreground">
+          <span className="text-muted-foreground text-sm font-normal">
             / 20,000 requests
           </span>
         </p>

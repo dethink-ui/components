@@ -4,12 +4,42 @@ import { useState } from "react";
 import { Combobox, ComboboxItem } from "@dethink/components";
 
 const commands = [
-  { value: "new-project", label: "Create new project…", shortcut: "⌘N", group: "Actions" },
-  { value: "invite", label: "Invite teammate…", shortcut: "⌘I", group: "Actions" },
-  { value: "toggle-theme", label: "Toggle color scheme", shortcut: "⌘⇧L", group: "Actions" },
-  { value: "goto-dashboard", label: "Go to dashboard", shortcut: "G D", group: "Navigate" },
-  { value: "goto-billing", label: "Go to billing", shortcut: "G B", group: "Navigate" },
-  { value: "goto-settings", label: "Go to settings", shortcut: "G S", group: "Navigate" },
+  {
+    value: "new-project",
+    label: "Create new project…",
+    shortcut: "⌘N",
+    group: "Actions",
+  },
+  {
+    value: "invite",
+    label: "Invite teammate…",
+    shortcut: "⌘I",
+    group: "Actions",
+  },
+  {
+    value: "toggle-theme",
+    label: "Toggle color scheme",
+    shortcut: "⌘⇧L",
+    group: "Actions",
+  },
+  {
+    value: "goto-dashboard",
+    label: "Go to dashboard",
+    shortcut: "G D",
+    group: "Navigate",
+  },
+  {
+    value: "goto-billing",
+    label: "Go to billing",
+    shortcut: "G B",
+    group: "Navigate",
+  },
+  {
+    value: "goto-settings",
+    label: "Go to settings",
+    shortcut: "G S",
+    group: "Navigate",
+  },
 ];
 
 /**
@@ -48,19 +78,19 @@ export function ComboboxRecipeCommandPalette() {
           >
             <span className="flex w-full items-center justify-between gap-4">
               <span className="flex items-baseline gap-2">
-                <span className="text-xs uppercase tracking-wide text-muted-foreground">
+                <span className="text-muted-foreground text-xs tracking-wide uppercase">
                   {command.group}
                 </span>
                 {command.label}
               </span>
-              <kbd className="rounded border border-border bg-muted px-1.5 font-mono text-xs text-muted-foreground">
+              <kbd className="border-border bg-muted text-muted-foreground rounded border px-1.5 font-mono text-xs">
                 {command.shortcut}
               </kbd>
             </span>
           </ComboboxItem>
         )}
       </Combobox>
-      <p aria-live="polite" className="text-sm text-muted-foreground">
+      <p aria-live="polite" className="text-muted-foreground text-sm">
         {lastCommand ? `Ran: ${lastCommand}` : "No command run yet."}
       </p>
     </div>

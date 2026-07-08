@@ -98,18 +98,31 @@ describe("Table", () => {
       </Table>,
     );
 
-    const table = screen.getByRole("table", { name: "Current workspace quotas" });
+    const table = screen.getByRole("table", {
+      name: "Current workspace quotas",
+    });
     const caption = screen.getByText("Current workspace quotas");
-    const productionHeader = screen.getByRole("rowheader", { name: "Production" });
+    const productionHeader = screen.getByRole("rowheader", {
+      name: "Production",
+    });
     const selectedRow = productionHeader.parentElement;
     const footerCell = screen.getByText("1 workspace");
 
     expect(caption.tagName).toBe("CAPTION");
     expect(caption).toHaveAttribute("data-slot", "table-caption");
     expect(caption).toHaveAttribute("data-placement", "bottom");
-    expect(table.querySelector("thead")).toHaveAttribute("data-slot", "table-header");
-    expect(table.querySelector("tbody")).toHaveAttribute("data-slot", "table-body");
-    expect(table.querySelector("tfoot")).toHaveAttribute("data-slot", "table-footer");
+    expect(table.querySelector("thead")).toHaveAttribute(
+      "data-slot",
+      "table-header",
+    );
+    expect(table.querySelector("tbody")).toHaveAttribute(
+      "data-slot",
+      "table-body",
+    );
+    expect(table.querySelector("tfoot")).toHaveAttribute(
+      "data-slot",
+      "table-footer",
+    );
     expect(selectedRow).toHaveAttribute("data-slot", "table-row");
     expect(selectedRow).toHaveAttribute("data-selected", "true");
     expect(selectedRow).toHaveAttribute("data-tone", "muted");
@@ -162,49 +175,55 @@ describe("Table", () => {
     );
   });
 
-  it.each(densities)("applies %s density to the responsive wrapper", (density) => {
-    render(
-      <Table density={density} aria-label={`${density} table`}>
-        <TableBody>
-          <TableRow>
-            <TableCell>{density}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>,
-    );
+  it.each(densities)(
+    "applies %s density to the responsive wrapper",
+    (density) => {
+      render(
+        <Table density={density} aria-label={`${density} table`}>
+          <TableBody>
+            <TableRow>
+              <TableCell>{density}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>,
+      );
 
-    const table = screen.getByRole("table", { name: `${density} table` });
+      const table = screen.getByRole("table", { name: `${density} table` });
 
-    expect(table).toHaveAttribute("data-density", density);
-    expect(table.parentElement).toHaveAttribute("data-density", density);
-    expect(table.parentElement?.className).toContain("--table-cell-px");
-    expect(table.parentElement?.className).toContain("--table-cell-py");
-  });
+      expect(table).toHaveAttribute("data-density", density);
+      expect(table.parentElement).toHaveAttribute("data-density", density);
+      expect(table.parentElement?.className).toContain("--table-cell-px");
+      expect(table.parentElement?.className).toContain("--table-cell-py");
+    },
+  );
 
-  it.each(alignments)("applies %s alignment to header and data cells", (align) => {
-    render(
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead align={align}>Head {align}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell align={align}>Cell {align}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>,
-    );
+  it.each(alignments)(
+    "applies %s alignment to header and data cells",
+    (align) => {
+      render(
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead align={align}>Head {align}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell align={align}>Cell {align}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>,
+      );
 
-    const head = screen.getByRole("columnheader", { name: `Head ${align}` });
-    const cell = screen.getByText(`Cell ${align}`);
+      const head = screen.getByRole("columnheader", { name: `Head ${align}` });
+      const cell = screen.getByText(`Cell ${align}`);
 
-    expect(head).toHaveAttribute("data-align", align);
-    expect(cell).toHaveAttribute("data-align", align);
-    expect(head).toHaveClass(alignClasses[align]);
-    expect(cell).toHaveClass(alignClasses[align]);
-  });
+      expect(head).toHaveAttribute("data-align", align);
+      expect(cell).toHaveAttribute("data-align", align);
+      expect(head).toHaveClass(alignClasses[align]);
+      expect(cell).toHaveClass(alignClasses[align]);
+    },
+  );
 
   it.each(captionPlacements)("applies %s caption placement", (placement) => {
     render(
@@ -216,7 +235,9 @@ describe("Table", () => {
     const caption = screen.getByText(`Caption ${placement}`);
 
     expect(caption).toHaveAttribute("data-placement", placement);
-    expect(caption).toHaveClass(placement === "top" ? "caption-top" : "caption-bottom");
+    expect(caption).toHaveClass(
+      placement === "top" ? "caption-top" : "caption-bottom",
+    );
   });
 
   it.each(rowTones)("applies %s row tone", (tone) => {
@@ -257,24 +278,24 @@ describe("Table", () => {
             <TableCell headers="production-row quota-header" rowSpan={2}>
               2 TB
             </TableCell>
-            <TableCell headers="production-row workspace-header">Active</TableCell>
+            <TableCell headers="production-row workspace-header">
+              Active
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>,
     );
 
-    expect(screen.getByRole("columnheader", { name: "Workspace" })).toHaveAttribute(
-      "abbr",
-      "Workspace",
-    );
+    expect(
+      screen.getByRole("columnheader", { name: "Workspace" }),
+    ).toHaveAttribute("abbr", "Workspace");
     expect(screen.getByRole("columnheader", { name: "Quota" })).toHaveAttribute(
       "colspan",
       "2",
     );
-    expect(screen.getByRole("rowheader", { name: "Production" })).toHaveAttribute(
-      "scope",
-      "row",
-    );
+    expect(
+      screen.getByRole("rowheader", { name: "Production" }),
+    ).toHaveAttribute("scope", "row");
     expect(screen.getByText("2 TB")).toHaveAttribute(
       "headers",
       "production-row quota-header",
@@ -300,15 +321,16 @@ describe("Table", () => {
       </Table>,
     );
 
-    expect(screen.getByRole("columnheader", { name: "Default column" })).toHaveAttribute(
+    expect(
+      screen.getByRole("columnheader", { name: "Default column" }),
+    ).toHaveAttribute("scope", "col");
+    expect(screen.getByText("Grouped column")).toHaveAttribute(
       "scope",
-      "col",
+      "colgroup",
     );
-    expect(screen.getByText("Grouped column")).toHaveAttribute("scope", "colgroup");
-    expect(screen.getByRole("rowheader", { name: "Row header" })).toHaveAttribute(
-      "scope",
-      "row",
-    );
+    expect(
+      screen.getByRole("rowheader", { name: "Row header" }),
+    ).toHaveAttribute("scope", "row");
   });
 
   it("marks numeric cells without formatting their values", () => {
@@ -331,12 +353,18 @@ describe("Table", () => {
   });
 
   it("composes consumer classes through helper functions", () => {
-    expect(tableContainerClassNames({ className: "custom-container" })).toContain(
-      "custom-container",
+    expect(
+      tableContainerClassNames({ className: "custom-container" }),
+    ).toContain("custom-container");
+    expect(tableRowClassNames({ className: "custom-row" })).toContain(
+      "custom-row",
     );
-    expect(tableRowClassNames({ className: "custom-row" })).toContain("custom-row");
-    expect(tableHeadClassNames({ className: "custom-head" })).toContain("custom-head");
-    expect(tableCellClassNames({ className: "custom-cell" })).toContain("custom-cell");
+    expect(tableHeadClassNames({ className: "custom-head" })).toContain(
+      "custom-head",
+    );
+    expect(tableCellClassNames({ className: "custom-cell" })).toContain(
+      "custom-cell",
+    );
     expect(tableCaptionClassNames({ className: "custom-caption" })).toContain(
       "custom-caption",
     );

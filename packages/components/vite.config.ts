@@ -24,7 +24,13 @@ export default defineConfig({
       cssFileName: "styles",
     },
     rollupOptions: {
-      external: ["react", "react-dom", "react/jsx-runtime", "motion", "motion/react"],
+      external: [
+        "react",
+        "react-dom",
+        "react/jsx-runtime",
+        "motion",
+        "motion/react",
+      ],
     },
   },
 });

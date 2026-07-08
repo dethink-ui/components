@@ -93,7 +93,9 @@ export const InvalidRequired: Story = {
           <FieldControl asChild>
             <Input name="billingEmail" type="email" defaultValue="billing" />
           </FieldControl>
-          <FieldDescription>Use a monitored finance team inbox.</FieldDescription>
+          <FieldDescription>
+            Use a monitored finance team inbox.
+          </FieldDescription>
           <FieldError>Enter a valid billing email address.</FieldError>
         </Field>
       </Container>
@@ -104,7 +106,10 @@ export const InvalidRequired: Story = {
     const input = canvas.getByLabelText(/Billing email/);
 
     await expect(input).toHaveAttribute("aria-invalid", "true");
-    await expect(input).toHaveAttribute("aria-errormessage", "billing-email-error");
+    await expect(input).toHaveAttribute(
+      "aria-errormessage",
+      "billing-email-error",
+    );
   },
 };
 
@@ -140,7 +145,8 @@ export const AuthCard: Story = {
           <CardHeader>
             <CardTitle>Sign in</CardTitle>
             <CardDescription>
-              Native form controls keep browser autofill and password managers intact.
+              Native form controls keep browser autofill and password managers
+              intact.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -184,11 +190,13 @@ export const ThemeDensityAndRTL: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="sm">
             <Field id={`input-${theme}`}>
-              <FieldLabel>{theme === "dark" ? "שם סביבת עבודה" : "Workspace"}</FieldLabel>
+              <FieldLabel>
+                {theme === "dark" ? "שם סביבת עבודה" : "Workspace"}
+              </FieldLabel>
               <FieldControl asChild>
                 <Input
                   defaultValue={theme === "dark" ? "פעולות" : "Operations"}

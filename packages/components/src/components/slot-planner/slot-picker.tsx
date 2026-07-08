@@ -238,7 +238,7 @@ function SlotPickerSlotCardContent<
       {showProviderContext ? (
         <p
           data-slot="slot-picker-provider-time"
-          className="text-xs text-muted-foreground"
+          className="text-muted-foreground text-xs"
         >
           {formatSlotPlannerTemplate(taxonomy.providerTimeContext, {
             time: occurrence.startTime,
@@ -262,7 +262,7 @@ function SlotPickerSlotCardContent<
       {note ? (
         <p
           data-slot="slot-picker-slot-note"
-          className="text-sm leading-6 text-muted-foreground"
+          className="text-muted-foreground text-sm leading-6"
         >
           {note}
         </p>
@@ -270,7 +270,7 @@ function SlotPickerSlotCardContent<
       {onRequest && occurrence.capacity > 1 ? (
         <p
           data-slot="slot-picker-remaining-seats"
-          className="text-xs text-muted-foreground"
+          className="text-muted-foreground text-xs"
         >
           {formatSlotPlannerCountTemplate(
             taxonomy.remainingSeats,
@@ -283,7 +283,7 @@ function SlotPickerSlotCardContent<
       {occurrence.status === "booked" ? (
         <p
           data-slot="slot-picker-slot-full"
-          className="text-xs font-medium text-muted-foreground"
+          className="text-muted-foreground text-xs font-medium"
         >
           {taxonomy.slotFull}
         </p>
@@ -419,8 +419,7 @@ function SlotPickerInner<
     () => getSlotPlannerWeekDays(currentFocusedDate),
     [currentFocusedDate],
   );
-  const rangeStart =
-    currentView === "week" ? weekDays[0]! : currentFocusedDate;
+  const rangeStart = currentView === "week" ? weekDays[0]! : currentFocusedDate;
   const rangeEnd = currentView === "week" ? weekDays[6]! : currentFocusedDate;
   // Occurrences are expanded in the provider zone and bucketed by the
   // VIEWER-zone date of their start instant; draft/cancelled never surface.
@@ -435,8 +434,7 @@ function SlotPickerInner<
       ),
     [rangeEnd, rangeStart, resolvedNow, resolvedViewerTimeZone, slots],
   );
-  const selectedOccurrences =
-    occurrencesByViewerDate[currentFocusedDate] ?? [];
+  const selectedOccurrences = occurrencesByViewerDate[currentFocusedDate] ?? [];
   const isPastDay = currentFocusedDate < todayIso;
 
   // Book requests reuse the CRUD pending/error/retry machinery, keyed per
@@ -601,7 +599,7 @@ function SlotPickerInner<
   const defaultEmptyDay = (
     <p
       data-slot="slot-picker-empty-day"
-      className="text-sm text-muted-foreground"
+      className="text-muted-foreground text-sm"
     >
       {resolvedTaxonomy.emptyDay}
     </p>
@@ -614,7 +612,7 @@ function SlotPickerInner<
     <p
       role="status"
       data-slot="slot-picker-loading"
-      className="text-sm text-muted-foreground"
+      className="text-muted-foreground text-sm"
     >
       {resolvedTaxonomy.loading}
     </p>
@@ -648,8 +646,8 @@ function SlotPickerInner<
       ? resolvedTaxonomy.nextDay
       : resolvedTaxonomy.nextWeek;
 
-  const availableCount = selectedOccurrences.filter(
-    (occurrence) => isSlotPickerOccurrenceAvailable(occurrence),
+  const availableCount = selectedOccurrences.filter((occurrence) =>
+    isSlotPickerOccurrenceAvailable(occurrence),
   ).length;
 
   const dayPanel = (
@@ -681,7 +679,7 @@ function SlotPickerInner<
         {isPastDay ? (
           <p
             data-slot="slot-picker-past-day"
-            className="text-sm text-muted-foreground"
+            className="text-muted-foreground text-sm"
           >
             {resolvedTaxonomy.pastDay}
           </p>
@@ -706,7 +704,7 @@ function SlotPickerInner<
             {availableCount === 0 ? (
               <p
                 data-slot="slot-picker-all-unavailable"
-                className="text-sm text-muted-foreground"
+                className="text-muted-foreground text-sm"
               >
                 {formatSlotPlannerTemplate(
                   resolvedTaxonomy.noAvailableSlots,
@@ -850,7 +848,7 @@ function SlotPickerInner<
             role="group"
             aria-label={resolvedTaxonomy.viewSwitcherLabel}
             data-slot="slot-picker-view-switch"
-            className="col-start-2 row-start-1 flex items-center gap-[var(--dt-space-1)] justify-self-end rounded-md border border-border bg-background p-0.5 sm:col-auto sm:row-auto"
+            className="border-border bg-background col-start-2 row-start-1 flex items-center gap-[var(--dt-space-1)] justify-self-end rounded-md border p-0.5 sm:col-auto sm:row-auto"
           >
             {(["week", "day"] as const).map((option) => (
               <button
@@ -860,7 +858,7 @@ function SlotPickerInner<
                 data-slot="slot-picker-view-switch-option"
                 data-view={option}
                 className={cn(
-                  "inline-flex h-7 items-center rounded px-[var(--dt-space-2)] text-xs font-medium text-muted-foreground motion-safe:transition-colors motion-safe:duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  "text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring focus-visible:ring-offset-background inline-flex h-7 items-center rounded px-[var(--dt-space-2)] text-xs font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-safe:transition-colors motion-safe:duration-150",
                   currentView === option &&
                     "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
                 )}
@@ -882,7 +880,9 @@ function SlotPickerInner<
               role="tablist"
               aria-label={formatSlotPlannerTemplate(
                 resolvedTaxonomy.announceWeekChanged,
-                { weekStart: longDateFormatter.format(toUtcDate(weekDays[0]!)) },
+                {
+                  weekStart: longDateFormatter.format(toUtcDate(weekDays[0]!)),
+                },
               )}
               data-slot="slot-picker-day-rail"
               className={slotPlannerDayRailClasses}
@@ -929,7 +929,7 @@ function SlotPickerInner<
                       slideFactor={weekSlideFactor}
                       className={slotPlannerDayTabContentClasses}
                     >
-                      <span className="text-xs font-medium text-muted-foreground">
+                      <span className="text-muted-foreground text-xs font-medium">
                         {weekdayFormatter.format(toUtcDate(date))}
                       </span>
                       <span className="text-sm font-semibold">
@@ -954,7 +954,7 @@ function SlotPickerInner<
                               title={summaryText}
                               data-slot="slot-picker-day-summary"
                               data-status={status}
-                              className="flex w-full min-w-0 items-center gap-[var(--dt-space-1)] overflow-hidden whitespace-nowrap text-xs text-muted-foreground"
+                              className="text-muted-foreground flex w-full min-w-0 items-center gap-[var(--dt-space-1)] overflow-hidden text-xs whitespace-nowrap"
                             >
                               <span
                                 aria-hidden="true"

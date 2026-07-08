@@ -19,7 +19,8 @@ export const breadcrumbProps: PropRow[] = [
     prop: "size",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
-    description: "Density-aware text and control sizing for headers and toolbars.",
+    description:
+      "Density-aware text and control sizing for headers and toolbars.",
   },
   {
     prop: "separator",
@@ -62,6 +63,7 @@ export const breadcrumbProps: PropRow[] = [
     prop: "…nav props",
     type: "HTMLAttributes<HTMLElement>",
     defaultValue: "—",
-    description: "Includes aria-label and aria-labelledby for the nav landmark.",
+    description:
+      "Includes aria-label and aria-labelledby for the nav landmark.",
   },
 ];

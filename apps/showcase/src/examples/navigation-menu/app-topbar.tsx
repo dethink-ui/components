@@ -21,8 +21,8 @@ const sections = [
 
 export function NavigationMenuAppTopbar() {
   return (
-    <header className="flex items-center justify-between gap-4 rounded-md border border-border bg-muted/30 px-4 py-2">
-      <span className="text-sm font-semibold text-foreground">Acme Cloud</span>
+    <header className="border-border bg-muted/30 flex items-center justify-between gap-4 rounded-md border px-4 py-2">
+      <span className="text-foreground text-sm font-semibold">Acme Cloud</span>
 
       {/* Desktop: persistent quiet nav. */}
       <NavigationMenu
@@ -46,7 +46,11 @@ export function NavigationMenuAppTopbar() {
           navigation primitive — the Dialog owns the overlay behavior. */}
       <div className="md:hidden">
         <Dialog>
-          <DialogTrigger aria-label="Open navigation" size="icon" variant="outline">
+          <DialogTrigger
+            aria-label="Open navigation"
+            size="icon"
+            variant="outline"
+          >
             <Menu aria-hidden="true" className="size-4" />
           </DialogTrigger>
           <DialogContent>
@@ -75,7 +79,7 @@ export function NavigationMenuAppTopbar() {
         </Dialog>
       </div>
 
-      <span className="text-sm text-muted-foreground max-md:hidden">
+      <span className="text-muted-foreground text-sm max-md:hidden">
         workspace: prod
       </span>
     </header>

@@ -8,7 +8,10 @@ function AnnouncerButtons() {
 
   return (
     <>
-      <button type="button" onClick={() => announcer.announcePolite("Saved workspace")}>
+      <button
+        type="button"
+        onClick={() => announcer.announcePolite("Saved workspace")}
+      >
         polite
       </button>
       <button
@@ -42,21 +45,23 @@ describe("LiveRegionProvider", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "polite" }));
 
-    expect(document.querySelector('[data-slot="live-region-polite"]')).toHaveTextContent(
-      "Saved workspace",
-    );
+    expect(
+      document.querySelector('[data-slot="live-region-polite"]'),
+    ).toHaveTextContent("Saved workspace");
 
     fireEvent.click(screen.getByRole("button", { name: "assertive" }));
 
-    expect(document.querySelector('[data-slot="live-region-assertive"]')).toHaveTextContent("");
+    expect(
+      document.querySelector('[data-slot="live-region-assertive"]'),
+    ).toHaveTextContent("");
 
     await act(async () => {
       vi.advanceTimersByTime(100);
     });
 
-    expect(document.querySelector('[data-slot="live-region-assertive"]')).toHaveTextContent(
-      "Connection lost",
-    );
+    expect(
+      document.querySelector('[data-slot="live-region-assertive"]'),
+    ).toHaveTextContent("Connection lost");
   });
 
   it("supports declarative announcements and visible live regions", () => {
@@ -67,9 +72,9 @@ describe("LiveRegionProvider", () => {
       </LiveRegionProvider>,
     );
 
-    expect(document.querySelector('[data-slot="live-region-polite"]')).toHaveTextContent(
-      "3 results available",
-    );
+    expect(
+      document.querySelector('[data-slot="live-region-polite"]'),
+    ).toHaveTextContent("3 results available");
     expect(screen.getByText("Visible status")).not.toHaveClass("sr-only");
   });
 });

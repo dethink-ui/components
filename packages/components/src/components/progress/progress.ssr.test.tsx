@@ -7,8 +7,8 @@ describe("Progress SSR", () => {
     expect(renderToString(<Progress label="Import" value={30} />)).toContain(
       'data-slot="progress"',
     );
-    expect(renderToString(<ProgressCircle label="Upload" value={30} />)).toContain(
-      'data-slot="progress-circle"',
-    );
+    expect(
+      renderToString(<ProgressCircle label="Upload" value={30} />),
+    ).toContain('data-slot="progress-circle"');
   });
 });

@@ -25,7 +25,16 @@ const meta = {
   argTypes: {
     as: {
       control: "select",
-      options: ["div", "main", "section", "article", "header", "footer", "aside", "nav"],
+      options: [
+        "div",
+        "main",
+        "section",
+        "article",
+        "header",
+        "footer",
+        "aside",
+        "nav",
+      ],
     },
     size: {
       control: "inline-radio",
@@ -83,7 +92,7 @@ function WidthSample({
       <Text size="sm" tone="muted" weight="medium">
         {label}
       </Text>
-      <Box className="mt-3 h-2 rounded-full bg-primary" />
+      <Box className="bg-primary mt-3 h-2 rounded-full" />
       {children}
     </Box>
   );
@@ -93,7 +102,10 @@ export const Base: Story = {};
 
 export const Sizes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="4">
         {sizes.map((size) => (
           <Box key={size} border="default" p="3" radius="md" surface="muted">
@@ -109,14 +121,18 @@ export const Sizes: Story = {
 
 export const Gutters: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="4">
         {gutters.map((gutter) => (
           <Box key={gutter} border="default" radius="md" surface="muted">
             <Container gutter={gutter} size="lg">
               <WidthSample label={`gutter=${gutter}`}>
                 <Text className="mt-2" size="sm" tone="muted">
-                  The outer band has no padding; Container owns the viewport gutter.
+                  The outer band has no padding; Container owns the viewport
+                  gutter.
                 </Text>
               </WidthSample>
             </Container>
@@ -129,7 +145,10 @@ export const Gutters: Story = {
 
 export const FluidAndNoGutter: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="4">
         <Container fluid gutter="lg">
           <Box border="default" p="4" radius="md" surface="background">
@@ -137,7 +156,8 @@ export const FluidAndNoGutter: Story = {
               Fluid product surface
             </Heading>
             <Text className="mt-2" tone="muted">
-              Fluid removes the max-width constraint while preserving page gutters.
+              Fluid removes the max-width constraint while preserving page
+              gutters.
             </Text>
           </Box>
         </Container>
@@ -153,7 +173,10 @@ export const FluidAndNoGutter: Story = {
 
 export const Alignment: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box border="default" p="3" radius="md" surface="muted">
         <Box display="grid" gap="4">
           {alignments.map((align) => (
@@ -169,16 +192,25 @@ export const Alignment: Story = {
 
 export const FullWidthBand: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border">
+    <DethinkProvider theme="light" className="border-border rounded-lg border">
       <Box as="section" surface="muted" className="py-8">
-        <Container as="section" aria-labelledby="container-band-title" size="lg">
-          <Box display="grid" gap="4" className="md:grid-cols-[1fr_auto] md:items-center">
+        <Container
+          as="section"
+          aria-labelledby="container-band-title"
+          size="lg"
+        >
+          <Box
+            display="grid"
+            gap="4"
+            className="md:grid-cols-[1fr_auto] md:items-center"
+          >
             <Box>
               <Heading id="container-band-title" level={2} visualLevel={3}>
                 Full-width band, constrained content
               </Heading>
               <Text className="mt-2" tone="muted">
-                Container constrains the readable content. Box owns the band surface.
+                Container constrains the readable content. Box owns the band
+                surface.
               </Text>
             </Box>
             <Box border="success" p="3" radius="md" surface="background">
@@ -195,7 +227,10 @@ export const FullWidthBand: Story = {
 
 export const SemanticElements: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Box display="grid" gap="3" className="lg:grid-cols-2">
         {elements.map((element) => (
           <Container
@@ -203,7 +238,9 @@ export const SemanticElements: Story = {
             as={element}
             gutter="sm"
             size="sm"
-            {...(element === "nav" ? { "aria-label": "Container story navigation" } : {})}
+            {...(element === "nav"
+              ? { "aria-label": "Container story navigation" }
+              : {})}
           >
             <Box border="default" p="3" radius="md" surface="background">
               <Text as="span" size="sm" tone="muted" weight="medium">
@@ -222,7 +259,7 @@ export const SemanticElements: Story = {
 
 export const SafeArea: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border">
+    <DethinkProvider theme="light" className="border-border rounded-lg border">
       <Box surface="muted" className="py-6">
         <Container safeArea gutter="lg" size="xl">
           <Box border="default" p="4" radius="md" surface="background">
@@ -230,8 +267,9 @@ export const SafeArea: Story = {
               Safe-area-aware gutter
             </Heading>
             <Text className="mt-2" tone="muted">
-              The selected gutter is preserved while physical safe-area insets can
-              increase the left and right padding on viewport-adjacent surfaces.
+              The selected gutter is preserved while physical safe-area insets
+              can increase the left and right padding on viewport-adjacent
+              surfaces.
             </Text>
           </Box>
         </Container>
@@ -242,13 +280,18 @@ export const SafeArea: Story = {
 
 export const AsChildComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Container
         asChild
         size="md"
-        className="block rounded-md border border-primary bg-background p-4 text-primary transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="border-primary bg-background text-primary hover:bg-muted focus-visible:ring-ring block rounded-md border p-4 transition-colors focus-visible:ring-2 focus-visible:outline-none"
       >
-        <RouterAnchor to="/dashboard">Router link composed with Container</RouterAnchor>
+        <RouterAnchor to="/dashboard">
+          Router link composed with Container
+        </RouterAnchor>
       </Container>
     </DethinkProvider>
   ),
@@ -256,7 +299,10 @@ export const AsChildComposition: Story = {
 
 export const BoxComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Container as="section" aria-labelledby="container-box-title" size="lg">
         <Box display="grid" gap="4">
           <Box>
@@ -264,13 +310,19 @@ export const BoxComposition: Story = {
               Container plus Box
             </Heading>
             <Text className="mt-2" tone="muted">
-              Container handles page width. Box handles panel surface, spacing, and
-              borders.
+              Container handles page width. Box handles panel surface, spacing,
+              and borders.
             </Text>
           </Box>
           <Box display="grid" gap="3" className="md:grid-cols-3">
             {["Plan", "Build", "Verify"].map((label) => (
-              <Box key={label} border="default" p="4" radius="md" surface="background">
+              <Box
+                key={label}
+                border="default"
+                p="4"
+                radius="md"
+                surface="background"
+              >
                 <Text weight="semibold">{label}</Text>
                 <Text className="mt-2" size="sm" tone="muted">
                   Layout primitives compose without hidden behavior.
@@ -290,7 +342,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Container size="md">
           <Box border="default" p="4" radius="md" surface="background">
@@ -298,8 +350,8 @@ export const ThemeDensityAndRtl: Story = {
               Dark compact Container
             </Heading>
             <Text className="mt-2" tone="muted">
-              Container supplies width and gutter behavior while dark tokens come
-              from nested content.
+              Container supplies width and gutter behavior while dark tokens
+              come from nested content.
             </Text>
           </Box>
         </Container>
@@ -308,7 +360,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Container align="start" size="md">
           <Box border="default" p="4" radius="md" surface="background">
@@ -316,7 +368,8 @@ export const ThemeDensityAndRtl: Story = {
               RTL inline alignment
             </Heading>
             <Text align="start" className="mt-2" tone="muted">
-              Start alignment and symmetric gutters follow the writing direction.
+              Start alignment and symmetric gutters follow the writing
+              direction.
             </Text>
           </Box>
         </Container>

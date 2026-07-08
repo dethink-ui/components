@@ -5,9 +5,7 @@ import type {
   SlotPlannerTaxonomy,
   SlotPlannerViolation,
 } from "./slot-planner-contract";
-import type {
-  SlotPlannerView,
-} from "./use-slot-planner";
+import type { SlotPlannerView } from "./use-slot-planner";
 import type {
   SlotPlannerEditorResult,
   SlotPlannerEditorSeriesValues,

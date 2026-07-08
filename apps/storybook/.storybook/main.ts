@@ -22,7 +22,10 @@ const config: StorybookConfig = {
     config.resolve.alias = [
       {
         find: "@dethink/components",
-        replacement: resolve(currentDir, "../../../packages/components/src/index.ts"),
+        replacement: resolve(
+          currentDir,
+          "../../../packages/components/src/index.ts",
+        ),
       },
       ...(Array.isArray(config.resolve.alias) ? config.resolve.alias : []),
     ];

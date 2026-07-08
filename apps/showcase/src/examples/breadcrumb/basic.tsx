@@ -32,13 +32,17 @@ export function BreadcrumbBasic() {
       />
       <Breadcrumb
         separator={
-          <span className="font-mono text-[0.7em] font-semibold text-info">
+          <span className="text-info font-mono text-[0.7em] font-semibold">
             {"<>"}
           </span>
         }
         items={[
           { key: "teams", label: "Teams", href: "/teams" },
-          { key: "permissions", label: "Permissions", href: "/teams/permissions" },
+          {
+            key: "permissions",
+            label: "Permissions",
+            href: "/teams/permissions",
+          },
           { key: "audit", label: "Audit trail" },
         ]}
       />

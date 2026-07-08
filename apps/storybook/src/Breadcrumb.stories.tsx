@@ -15,7 +15,7 @@ import {
 import { forwardRef, type AnchorHTMLAttributes } from "react";
 
 const angleSeparator = (
-  <span className="font-mono text-[0.7em] font-semibold text-info">{"<>"}</span>
+  <span className="text-info font-mono text-[0.7em] font-semibold">{"<>"}</span>
 );
 
 const meta = {
@@ -93,7 +93,10 @@ function HomeIcon() {
 
 export const Base: Story = {
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Breadcrumb {...args} />
     </DethinkProvider>
   ),
@@ -101,7 +104,10 @@ export const Base: Story = {
 
 export const CurrentLinkAndPage: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="grid gap-4 rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border grid gap-4 rounded-lg border p-6"
+    >
       <Breadcrumb
         aria-label="Current page as text"
         items={[
@@ -129,7 +135,10 @@ export const CurrentLinkAndPage: Story = {
 
 export const SeparatorsAndSizes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="grid gap-5 rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border grid gap-5 rounded-lg border p-6"
+    >
       {sizes.map((size) => (
         <div key={size} className="grid gap-3">
           {separators.map((separator) => (
@@ -152,7 +161,10 @@ export const SeparatorsAndSizes: Story = {
 
 export const CustomSeparator: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Breadcrumb
         separator={angleSeparator}
         items={[
@@ -167,7 +179,10 @@ export const CustomSeparator: Story = {
 
 export const IconsAndActions: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Breadcrumb
         items={[
           { key: "home", label: "Home", href: "/", icon: <HomeIcon /> },
@@ -185,7 +200,10 @@ export const IconsAndActions: Story = {
 
 export const RouterComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Breadcrumb aria-label="Router breadcrumb">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -205,7 +223,10 @@ export const RouterComposition: Story = {
 
 export const CollapsedOverflow: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Breadcrumb
         items={longItems}
         maxItems={4}
@@ -232,7 +253,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Breadcrumb items={longItems.slice(0, 4)} size="sm" />
       </DethinkProvider>
@@ -240,7 +261,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <Breadcrumb items={longItems.slice(0, 4)} separator="slash" />
       </DethinkProvider>

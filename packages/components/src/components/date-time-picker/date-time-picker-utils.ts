@@ -19,13 +19,7 @@ export type DateTimePickerTimeOption = {
 };
 
 export type DateTimePickerWeekStartsOn =
-  | "sun"
-  | "mon"
-  | "tue"
-  | "wed"
-  | "thu"
-  | "fri"
-  | "sat";
+  "sun" | "mon" | "tue" | "wed" | "thu" | "fri" | "sat";
 
 export function serializeDateTimePickerValue(
   value: DateTimePickerValue | null | undefined,
@@ -33,7 +27,9 @@ export function serializeDateTimePickerValue(
   return value?.toString() ?? "";
 }
 
-export function hasTimeZone(value: DateValue | null | undefined): value is ZonedDateTime {
+export function hasTimeZone(
+  value: DateValue | null | undefined,
+): value is ZonedDateTime {
   return Boolean(value && "timeZone" in value);
 }
 

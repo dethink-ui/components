@@ -31,7 +31,11 @@ export function DrawerFilterBottomSheet() {
         snapPoints={[0.35, 0.65, 1]}
       >
         <DrawerTrigger>Filter issues</DrawerTrigger>
-        <DrawerContent dismissible showCloseButton closeButtonLabel="Close filters">
+        <DrawerContent
+          dismissible
+          showCloseButton
+          closeButtonLabel="Close filters"
+        >
           <DrawerHandle aria-label="Drag to resize filters" />
           <DrawerHeader>
             <DrawerTitle>Filters</DrawerTitle>
@@ -41,20 +45,28 @@ export function DrawerFilterBottomSheet() {
             </DrawerDescription>
           </DrawerHeader>
           <div className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-2)]">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+            <p className="text-muted-foreground text-xs tracking-wide uppercase">
               Status
             </p>
             {statuses.map((status) => (
-              <Field id={`status-${status}`} key={status} orientation="horizontal">
+              <Field
+                id={`status-${status}`}
+                key={status}
+                orientation="horizontal"
+              >
                 <FieldControl asChild>
-                  <Checkbox defaultChecked={status === "Open"} name="status" value={status} />
+                  <Checkbox
+                    defaultChecked={status === "Open"}
+                    name="status"
+                    value={status}
+                  />
                 </FieldControl>
                 <FieldLabel>{status}</FieldLabel>
               </Field>
             ))}
           </div>
           <DrawerFooter>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               Snap point: {activeSnapPoint}
             </span>
             <DrawerClose>Apply filters</DrawerClose>

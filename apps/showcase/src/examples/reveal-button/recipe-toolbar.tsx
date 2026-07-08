@@ -5,12 +5,12 @@ import { Archive, Copy, Download, Pencil, Share2 } from "lucide-react";
 
 export function RevealButtonRecipeToolbar() {
   return (
-    <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-md border border-border bg-muted/30 p-3">
+    <div className="border-border bg-muted/30 mx-auto flex w-full max-w-2xl items-center justify-between gap-4 rounded-md border p-3">
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-foreground">
+        <p className="text-foreground truncate text-sm font-medium">
           Customer insight report
         </p>
-        <p className="text-sm text-muted-foreground">Draft updated just now</p>
+        <p className="text-muted-foreground text-sm">Draft updated just now</p>
       </div>
       <div
         aria-label="Report actions"
@@ -21,7 +21,11 @@ export function RevealButtonRecipeToolbar() {
         <RevealButton icon={<Copy />} label="Duplicate" variant="ghost" />
         <RevealButton icon={<Share2 />} label="Share" variant="ghost" />
         <RevealButton icon={<Download />} label="Export" variant="outline" />
-        <RevealButton icon={<Archive />} label="Archive" variant="destructive" />
+        <RevealButton
+          icon={<Archive />}
+          label="Archive"
+          variant="destructive"
+        />
       </div>
     </div>
   );

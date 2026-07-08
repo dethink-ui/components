@@ -34,7 +34,9 @@ describe("Switch SSR", () => {
     expect(markup).toContain('name="serverSwitch"');
     expect(markup).toContain('value="enabled"');
     expect(markup).toContain('aria-checked="true"');
-    expect(markup).toContain('aria-describedby="server-switch-description server-switch-error"');
+    expect(markup).toContain(
+      'aria-describedby="server-switch-description server-switch-error"',
+    );
     expect(markup).toContain('aria-errormessage="server-switch-error"');
     expect(markup).toContain('aria-invalid="true"');
   });

@@ -52,8 +52,7 @@ describe("positioned overlay SSR", () => {
 
   it("hydrates a closed provider-routed overlay without mismatch warnings", async () => {
     const reactActEnvironment = globalThis as ReactActEnvironment;
-    const previousActEnvironment =
-      reactActEnvironment.IS_REACT_ACT_ENVIRONMENT;
+    const previousActEnvironment = reactActEnvironment.IS_REACT_ACT_ENVIRONMENT;
 
     reactActEnvironment.IS_REACT_ACT_ENVIRONMENT = true;
 

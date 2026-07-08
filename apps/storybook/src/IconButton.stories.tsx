@@ -49,7 +49,12 @@ const shapes: IconButtonShape[] = ["square", "circle"];
 
 function RefreshIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
       <path
         d="M13 4.5V1.75h-2.75M3 11.5v2.75h2.75M12.15 6A4.5 4.5 0 0 0 4.2 3.7L3 5M3.85 10A4.5 4.5 0 0 0 11.8 12.3L13 11"
         strokeLinecap="round"
@@ -62,7 +67,12 @@ function RefreshIcon() {
 
 function SearchIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
       <path
         d="m11.25 11.25 2.25 2.25M7.25 12a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5Z"
         strokeLinecap="round"
@@ -74,15 +84,29 @@ function SearchIcon() {
 
 function FilterIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="M2.5 4h11M4.5 8h7M6.5 12h3" strokeLinecap="round" strokeWidth="1.75" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="M2.5 4h11M4.5 8h7M6.5 12h3"
+        strokeLinecap="round"
+        strokeWidth="1.75"
+      />
     </svg>
   );
 }
 
 function SettingsIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
       <path
         d="M8 10.25A2.25 2.25 0 1 0 8 5.75a2.25 2.25 0 0 0 0 4.5Z"
         strokeWidth="1.5"
@@ -98,24 +122,52 @@ function SettingsIcon() {
 
 function TrashIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="M2.5 4.5h11M6.5 2.5h3M6 7v4M10 7v4M4 4.5l.5 9h7l.5-9" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="M2.5 4.5h11M6.5 2.5h3M6 7v4M10 7v4M4 4.5l.5 9h7l.5-9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
 
 function BoldIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="M5 3h3.4a2.1 2.1 0 0 1 0 4.2H5V3ZM5 7.2h4a2.4 2.4 0 0 1 0 4.8H5V7.2Z" strokeLinejoin="round" strokeWidth="1.5" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="M5 3h3.4a2.1 2.1 0 0 1 0 4.2H5V3ZM5 7.2h4a2.4 2.4 0 0 1 0 4.8H5V7.2Z"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
     </svg>
   );
 }
 
 function ItalicIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="M7 3h5M4 13h5M9.5 3 6.5 13" strokeLinecap="round" strokeWidth="1.75" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="M7 3h5M4 13h5M9.5 3 6.5 13"
+        strokeLinecap="round"
+        strokeWidth="1.75"
+      />
     </svg>
   );
 }
@@ -124,10 +176,17 @@ export const Base: Story = {};
 
 export const Variants: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {variants.map((variant) => (
-          <IconButton key={variant} aria-label={`${variant} action`} variant={variant}>
+          <IconButton
+            key={variant}
+            aria-label={`${variant} action`}
+            variant={variant}
+          >
             {variant === "destructive" ? <TrashIcon /> : <RefreshIcon />}
           </IconButton>
         ))}
@@ -138,10 +197,18 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {sizes.map((size) => (
-          <IconButton key={size} aria-label={`${size} action`} size={size} variant="outline">
+          <IconButton
+            key={size}
+            aria-label={`${size} action`}
+            size={size}
+            variant="outline"
+          >
             <SearchIcon />
           </IconButton>
         ))}
@@ -152,10 +219,18 @@ export const Sizes: Story = {
 
 export const Shapes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         {shapes.map((shape) => (
-          <IconButton key={shape} aria-label={`${shape} action`} shape={shape} variant="soft">
+          <IconButton
+            key={shape}
+            aria-label={`${shape} action`}
+            shape={shape}
+            variant="soft"
+          >
             <SettingsIcon />
           </IconButton>
         ))}
@@ -166,14 +241,17 @@ export const Shapes: Story = {
 
 export const States: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex flex-wrap items-center gap-density-gap">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="gap-density-gap flex flex-wrap items-center">
         <IconButton aria-label="Refresh metrics" variant="ghost">
           <RefreshIcon />
         </IconButton>
         <IconButton
           aria-label="Focused refresh"
-          className="ring-2 ring-ring ring-offset-2 ring-offset-background"
+          className="ring-ring ring-offset-background ring-2 ring-offset-2"
           variant="outline"
         >
           <RefreshIcon />
@@ -194,19 +272,36 @@ export const States: Story = {
 
 export const ToggleToolbar: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div
         aria-label="Text formatting"
-        className="inline-flex items-center gap-1 rounded-md border border-border bg-background p-1"
+        className="border-border bg-background inline-flex items-center gap-1 rounded-md border p-1"
         role="toolbar"
       >
-        <IconButton aria-label="Bold" aria-pressed="true" size="sm" variant="soft">
+        <IconButton
+          aria-label="Bold"
+          aria-pressed="true"
+          size="sm"
+          variant="soft"
+        >
           <BoldIcon />
         </IconButton>
-        <IconButton aria-label="Italic" aria-pressed="false" size="sm" variant="ghost">
+        <IconButton
+          aria-label="Italic"
+          aria-pressed="false"
+          size="sm"
+          variant="ghost"
+        >
           <ItalicIcon />
         </IconButton>
-        <IconButton aria-label="Open formatting settings" size="sm" variant="ghost">
+        <IconButton
+          aria-label="Open formatting settings"
+          size="sm"
+          variant="ghost"
+        >
           <SettingsIcon />
         </IconButton>
       </div>
@@ -216,13 +311,16 @@ export const ToggleToolbar: Story = {
 
 export const DashboardToolbar: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
-      <div className="flex items-center justify-between gap-4 rounded-md border border-border bg-muted/30 p-3">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
+      <div className="border-border bg-muted/30 flex items-center justify-between gap-4 rounded-md border p-3">
         <div className="min-w-0">
-          <h2 className="truncate text-sm font-semibold text-foreground">
+          <h2 className="text-foreground truncate text-sm font-semibold">
             Revenue report
           </h2>
-          <p className="text-sm text-muted-foreground">Updated 2 minutes ago</p>
+          <p className="text-muted-foreground text-sm">Updated 2 minutes ago</p>
         </div>
         <div className="flex shrink-0 items-center gap-1">
           <IconButton aria-label="Search report" variant="ghost">
@@ -234,7 +332,11 @@ export const DashboardToolbar: Story = {
           <IconButton aria-label="Refresh report" variant="outline">
             <RefreshIcon />
           </IconButton>
-          <IconButton aria-label="Report settings" shape="circle" variant="soft">
+          <IconButton
+            aria-label="Report settings"
+            shape="circle"
+            variant="soft"
+          >
             <SettingsIcon />
           </IconButton>
         </div>
@@ -249,11 +351,15 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
-        <div className="flex flex-wrap items-center gap-density-gap">
+        <div className="gap-density-gap flex flex-wrap items-center">
           {variants.map((variant) => (
-            <IconButton key={variant} aria-label={`Dark ${variant}`} variant={variant}>
+            <IconButton
+              key={variant}
+              aria-label={`Dark ${variant}`}
+              variant={variant}
+            >
               {variant === "destructive" ? <TrashIcon /> : <RefreshIcon />}
             </IconButton>
           ))}
@@ -263,9 +369,9 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
-        <div className="flex flex-wrap items-center gap-density-gap">
+        <div className="gap-density-gap flex flex-wrap items-center">
           <IconButton aria-label="Search" variant="ghost">
             <SearchIcon />
           </IconButton>

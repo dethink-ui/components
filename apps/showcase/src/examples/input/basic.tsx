@@ -14,7 +14,7 @@ export function InputBasic() {
         placeholder="you@company.com"
         autoComplete="email"
       />
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         We only use this for account notifications.
       </p>
     </div>

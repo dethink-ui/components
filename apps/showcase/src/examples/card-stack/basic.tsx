@@ -13,7 +13,8 @@ const releases = [
   {
     version: "v1.4.0",
     date: "June 2026",
-    summary: "Date suite: Calendar, DatePicker, DateRangePicker, DateTimePicker.",
+    summary:
+      "Date suite: Calendar, DatePicker, DateRangePicker, DateTimePicker.",
   },
   {
     version: "v1.3.0",
@@ -36,7 +37,7 @@ export function CardStackBasic() {
             <CardTitle>{release.version}</CardTitle>
             <CardDescription>{release.date}</CardDescription>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground text-sm">
             {release.summary}
           </CardContent>
         </Card>

@@ -15,8 +15,8 @@ import {
 export function NavigationMenuDashboard() {
   return (
     <div className="space-y-4">
-      <header className="flex items-center justify-between gap-4 rounded-md border border-border bg-muted/30 px-4 py-2">
-        <span className="text-sm font-semibold text-foreground">Insights</span>
+      <header className="border-border bg-muted/30 flex items-center justify-between gap-4 rounded-md border px-4 py-2">
+        <span className="text-foreground text-sm font-semibold">Insights</span>
         <NavigationMenu aria-label="Workspace areas" size="sm" variant="quiet">
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -48,7 +48,9 @@ export function NavigationMenuDashboard() {
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="#retention">Retention</NavigationMenuLink>
+              <NavigationMenuLink href="#retention">
+                Retention
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink href="#usage">Usage</NavigationMenuLink>
@@ -62,7 +64,7 @@ export function NavigationMenuDashboard() {
             <CardDescription>Updated from pipeline run #428.</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Two NavigationMenu instances compose the shell: a quiet topbar for
               workspace areas and a vertical section list for the active report.
               A full application shell with a collapsible sidebar stays out of

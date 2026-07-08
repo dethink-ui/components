@@ -44,33 +44,33 @@ export type ComboboxItemData = {
 export interface ComboboxProps<
   T extends ComboboxItemData = ComboboxItemData,
 > extends Omit<
-    AriaComboboxProps<T, "single">,
-    | "children"
-    | "className"
-    | "defaultInputValue"
-    | "defaultItems"
-    | "defaultSelectedKey"
-    | "defaultValue"
-    | "disabledKeys"
-    | "formValue"
-    | "inputValue"
-    | "isDisabled"
-    | "isInvalid"
-    | "isReadOnly"
-    | "isRequired"
-    | "items"
-    | "label"
-    | "menuTrigger"
-    | "onChange"
-    | "onInputChange"
-    | "onOpenChange"
-    | "onSelectionChange"
-    | "placeholder"
-    | "selectedKey"
-    | "selectionMode"
-    | "validationBehavior"
-    | "value"
-  > {
+  AriaComboboxProps<T, "single">,
+  | "children"
+  | "className"
+  | "defaultInputValue"
+  | "defaultItems"
+  | "defaultSelectedKey"
+  | "defaultValue"
+  | "disabledKeys"
+  | "formValue"
+  | "inputValue"
+  | "isDisabled"
+  | "isInvalid"
+  | "isReadOnly"
+  | "isRequired"
+  | "items"
+  | "label"
+  | "menuTrigger"
+  | "onChange"
+  | "onInputChange"
+  | "onOpenChange"
+  | "onSelectionChange"
+  | "placeholder"
+  | "selectedKey"
+  | "selectionMode"
+  | "validationBehavior"
+  | "value"
+> {
   "aria-invalid"?: boolean | "false" | "true" | "grammar" | "spelling";
   "data-slot"?: string;
   children?: ReactNode | ((item: T) => ReactNode);
@@ -98,11 +98,10 @@ export interface ComboboxProps<
   value?: ComboboxValue | null;
 }
 
-export interface ComboboxItemProps
-  extends Omit<
-    AriaListBoxItemProps<ComboboxItemData>,
-    "children" | "className" | "id" | "isDisabled" | "value"
-  > {
+export interface ComboboxItemProps extends Omit<
+  AriaListBoxItemProps<ComboboxItemData>,
+  "children" | "className" | "id" | "isDisabled" | "value"
+> {
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -156,7 +155,12 @@ type ComboboxComponent = (<T extends ComboboxItemData = ComboboxItemData>(
 ) => ReactElement | null) & { displayName?: string };
 
 function isAriaInvalid(value: ComboboxProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function toSelectionKey(value: ComboboxValue | null | undefined) {
@@ -291,13 +295,16 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
 ) {
   const resolvedInvalid = invalid || isAriaInvalid(ariaInvalid);
   const resolvedAriaInvalid = invalid ? true : ariaInvalid;
-  const renderedChildren = renderComboboxChildren({ children, defaultItems, items });
+  const renderedChildren = renderComboboxChildren({
+    children,
+    defaultItems,
+    items,
+  });
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { portalContainer, rootRef } =
-    useProviderPortalRoot<HTMLDivElement>({
-      forwardedRef: ref,
-      portalSlot: "combobox-portal-container",
-    });
+  const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
+    forwardedRef: ref,
+    portalSlot: "combobox-portal-container",
+  });
   const setInputRef = useCallback(
     (node: HTMLInputElement | null) => {
       inputRef.current = node;
@@ -364,7 +371,10 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
           data-invalid={resolvedInvalid ? "true" : undefined}
           data-readonly={readOnly ? "true" : undefined}
           data-required={required ? "true" : undefined}
-          className={cn(comboboxControlBaseClasses, comboboxControlSizeClasses[controlSize])}
+          className={cn(
+            comboboxControlBaseClasses,
+            comboboxControlSizeClasses[controlSize],
+          )}
         >
           <AriaInput
             ref={setInputRef}
@@ -398,7 +408,10 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
           </Text>
         ) : null}
         {errorMessage ? (
-          <FieldError data-slot="combobox-error" className={comboboxErrorClasses}>
+          <FieldError
+            data-slot="combobox-error"
+            className={comboboxErrorClasses}
+          >
             {errorMessage}
           </FieldError>
         ) : null}
@@ -424,14 +437,7 @@ Combobox.displayName = "Combobox";
 
 export const ComboboxItem = forwardRef<HTMLDivElement, ComboboxItemProps>(
   (
-    {
-      children,
-      className,
-      disabled = false,
-      textValue,
-      value,
-      ...props
-    },
+    { children, className, disabled = false, textValue, value, ...props },
     ref,
   ) => (
     <ListBoxItem
@@ -439,7 +445,9 @@ export const ComboboxItem = forwardRef<HTMLDivElement, ComboboxItemProps>(
       ref={ref}
       id={value}
       isDisabled={disabled}
-      textValue={textValue ?? (typeof children === "string" ? children : undefined)}
+      textValue={
+        textValue ?? (typeof children === "string" ? children : undefined)
+      }
       data-slot="combobox-item"
       data-value={value}
       className={comboboxItemClassNames({ className })}
@@ -454,7 +462,10 @@ export const ComboboxItem = forwardRef<HTMLDivElement, ComboboxItemProps>(
           >
             {isSelected ? <CheckIcon /> : null}
           </span>
-          <span data-slot="combobox-item-content" className={comboboxItemContentClasses}>
+          <span
+            data-slot="combobox-item-content"
+            className={comboboxItemContentClasses}
+          >
             {children}
           </span>
         </>

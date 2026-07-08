@@ -27,11 +27,10 @@ export type RevealButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type RevealButtonMotion = "none" | "subtle" | "standard";
 export type RevealButtonLabelVisibility = "hover" | "always";
 
-export interface RevealButtonProps
-  extends Omit<
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    "aria-label" | "aria-labelledby" | "children"
-  > {
+export interface RevealButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "aria-label" | "aria-labelledby" | "children"
+> {
   icon: ReactNode;
   label: string;
   labelVisibility?: RevealButtonLabelVisibility;
@@ -47,8 +46,7 @@ const revealButtonBaseClasses =
 const revealButtonVariantClasses: Record<RevealButtonVariant, string> = {
   solid:
     "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-  soft:
-    "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
+  soft: "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
   outline:
     "border-border bg-background text-foreground hover:bg-muted active:bg-muted/80",
   ghost: "bg-transparent text-foreground hover:bg-muted active:bg-muted/80",
@@ -99,8 +97,7 @@ const revealButtonLabelPaddingClasses: Record<RevealButtonSize, string> = {
 const revealButtonIconClasses =
   "pointer-events-none inline-flex shrink-0 items-center justify-center";
 
-const revealButtonIconMotionClasses =
-  "inline-flex items-center justify-center";
+const revealButtonIconMotionClasses = "inline-flex items-center justify-center";
 
 const revealButtonSpinnerClasses =
   "pointer-events-none shrink-0 rounded-full border-2 border-current border-r-transparent animate-spin motion-reduce:animate-none";
@@ -222,7 +219,10 @@ function renderSizedIcon(icon: ReactNode) {
 }
 
 function canRevealForHover() {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+  if (
+    typeof window === "undefined" ||
+    typeof window.matchMedia !== "function"
+  ) {
     return true;
   }
 
@@ -373,7 +373,9 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
       onBlur?.(event);
     };
 
-    const handlePointerEnter: PointerEventHandler<HTMLButtonElement> = (event) => {
+    const handlePointerEnter: PointerEventHandler<HTMLButtonElement> = (
+      event,
+    ) => {
       if (canReveal && event.pointerType !== "touch" && canRevealForHover()) {
         setHovered(true);
       }
@@ -381,7 +383,9 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
       onPointerEnter?.(event);
     };
 
-    const handlePointerLeave: PointerEventHandler<HTMLButtonElement> = (event) => {
+    const handlePointerLeave: PointerEventHandler<HTMLButtonElement> = (
+      event,
+    ) => {
       setHovered(false);
       onPointerLeave?.(event);
     };
@@ -447,7 +451,10 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
           <span
             aria-hidden="true"
             data-slot="reveal-button-spinner"
-            className={cn(revealButtonIconClasses, revealButtonIconBoxClasses[size])}
+            className={cn(
+              revealButtonIconClasses,
+              revealButtonIconBoxClasses[size],
+            )}
           >
             <motionElement.span
               data-slot="reveal-button-spinner-motion"
@@ -468,7 +475,10 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
           <span
             aria-hidden="true"
             data-slot="reveal-button-icon"
-            className={cn(revealButtonIconClasses, revealButtonIconBoxClasses[size])}
+            className={cn(
+              revealButtonIconClasses,
+              revealButtonIconBoxClasses[size],
+            )}
           >
             <motionElement.span
               data-slot="reveal-button-icon-motion"

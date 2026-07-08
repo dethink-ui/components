@@ -195,7 +195,9 @@ function isEventHandler(key: string, value: unknown): value is EventHandler {
   return /^on[A-Z]/.test(key) && typeof value === "function";
 }
 
-function isDefaultPreventedEvent(event: unknown): event is { defaultPrevented: boolean } {
+function isDefaultPreventedEvent(
+  event: unknown,
+): event is { defaultPrevented: boolean } {
   return (
     typeof event === "object" &&
     event !== null &&
@@ -229,7 +231,10 @@ function composeSlotProps(
   for (const [key, componentValue] of Object.entries(componentProps)) {
     const childValue = childProps[key];
 
-    if (isEventHandler(key, componentValue) && isEventHandler(key, childValue)) {
+    if (
+      isEventHandler(key, componentValue) &&
+      isEventHandler(key, childValue)
+    ) {
       composedProps[key] = composeEventHandlers(componentValue, childValue);
     }
   }
@@ -265,7 +270,13 @@ function getSeparatorDataAttributes({
   tone,
 }: Pick<
   SeparatorProps,
-  "as" | "asChild" | "decorative" | "orientation" | "spacing" | "thickness" | "tone"
+  | "as"
+  | "asChild"
+  | "decorative"
+  | "orientation"
+  | "spacing"
+  | "thickness"
+  | "tone"
 >) {
   return {
     "data-slot": "separator",
@@ -344,7 +355,9 @@ export const Separator = forwardRef<HTMLElement, SeparatorProps>(
       const child = Children.only(children);
 
       if (!isValidElement<SeparatorSlotProps>(child)) {
-        throw new Error("Separator with asChild expects a single React element child.");
+        throw new Error(
+          "Separator with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

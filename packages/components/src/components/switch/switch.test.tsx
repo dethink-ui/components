@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -13,10 +10,7 @@ import {
   FieldError,
   FieldLabel,
 } from "../form-field";
-import {
-  Switch,
-  switchClassNames,
-} from ".";
+import { Switch, switchClassNames } from ".";
 
 describe("Switch", () => {
   it("renders a native checkbox input with switch semantics, attributes, classes, and refs", () => {
@@ -81,7 +75,9 @@ describe("Switch", () => {
 
     render(<ControlledSwitch />);
 
-    const switchInput = screen.getByRole("switch", { name: "Enable guardrails" });
+    const switchInput = screen.getByRole("switch", {
+      name: "Enable guardrails",
+    });
 
     await user.click(switchInput);
 
@@ -151,7 +147,9 @@ describe("Switch", () => {
       </>,
     );
 
-    const switchInput = screen.getByRole("switch", { name: "Read-only switch" });
+    const switchInput = screen.getByRole("switch", {
+      name: "Read-only switch",
+    });
 
     await user.click(switchInput);
 
@@ -205,7 +203,9 @@ describe("Switch", () => {
       <Field id="two-factor" invalid required orientation="horizontal">
         <FieldContent>
           <FieldLabel>Multi-factor authentication</FieldLabel>
-          <FieldDescription>Require a second verification step.</FieldDescription>
+          <FieldDescription>
+            Require a second verification step.
+          </FieldDescription>
           <FieldError>Enable this setting for admins.</FieldError>
         </FieldContent>
         <FieldControl asChild>
@@ -224,7 +224,10 @@ describe("Switch", () => {
       "aria-describedby",
       "two-factor-description two-factor-error",
     );
-    expect(switchInput).toHaveAttribute("aria-errormessage", "two-factor-error");
+    expect(switchInput).toHaveAttribute(
+      "aria-errormessage",
+      "two-factor-error",
+    );
     expect(switchInput).toHaveAttribute("aria-invalid", "true");
     expect(switchInput).toBeRequired();
     expect(root).toHaveClass(switchClassNames());

@@ -9,9 +9,9 @@ describe("Grid SSR", () => {
     expect(renderToString(<Grid as="section">Server grid</Grid>)).toContain(
       'data-slot="grid"',
     );
-    expect(renderToString(<GridItem colSpan="2">Server item</GridItem>)).toContain(
-      'data-slot="grid-item"',
-    );
+    expect(
+      renderToString(<GridItem colSpan="2">Server item</GridItem>),
+    ).toContain('data-slot="grid-item"');
     expect(
       renderToString(
         <Grid asChild gap="4">

@@ -73,20 +73,26 @@ describe("CommandPalette", () => {
       />,
     );
 
-    const root = screen.getByText("Command menu").closest('[data-slot="command-palette"]');
+    const root = screen
+      .getByText("Command menu")
+      .closest('[data-slot="command-palette"]');
 
     expect(root).toHaveAttribute("data-mode", "inline");
-    expect(screen.getByLabelText("Command menu")).toHaveAttribute("type", "search");
+    expect(screen.getByLabelText("Command menu")).toHaveAttribute(
+      "type",
+      "search",
+    );
     expect(screen.getByText("Actions")).toBeVisible();
-    expect(screen.getByRole("button", { name: /Create project/ })).toHaveTextContent("⌘N");
+    expect(
+      screen.getByRole("button", { name: /Create project/ }),
+    ).toHaveTextContent("⌘N");
     expect(screen.getByRole("link", { name: "Open settings" })).toHaveAttribute(
       "href",
       "/settings",
     );
-    expect(screen.getByRole("button", { name: /Delete workspace/ })).toHaveAttribute(
-      "data-destructive",
-      "true",
-    );
+    expect(
+      screen.getByRole("button", { name: /Delete workspace/ }),
+    ).toHaveAttribute("data-destructive", "true");
     expect(screen.getByText("Requires owner access")).toBeVisible();
     expect(
       document.querySelectorAll('[data-slot="command-palette-separator"]'),
@@ -100,14 +106,20 @@ describe("CommandPalette", () => {
 
     await user.type(screen.getByLabelText("Commands"), "people");
 
-    expect(screen.getByRole("button", { name: "Invite teammate" })).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: "Invite teammate" }),
+    ).toBeVisible();
     expect(screen.queryByRole("button", { name: /Create project/ })).toBeNull();
 
     await user.clear(screen.getByLabelText("Commands"));
     await user.type(screen.getByLabelText("Commands"), "workspace");
 
-    expect(screen.getByRole("button", { name: /Create project/ })).toBeVisible();
-    expect(screen.getByRole("button", { name: /Delete workspace/ })).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: /Create project/ }),
+    ).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: /Delete workspace/ }),
+    ).toBeVisible();
   });
 
   it("supports custom filtering, manual filtering, sorting, and result limits", () => {
@@ -235,11 +247,12 @@ describe("CommandPalette", () => {
     await user.type(screen.getByLabelText("Commands"), "cre");
 
     expect(screen.queryByRole("button", { name: "Open settings" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "Invite teammate" })).toBeNull();
-    expect(screen.getByRole("button", { name: "Create project" })).toHaveAttribute(
-      "data-source",
-      "base",
-    );
+    expect(
+      screen.queryByRole("button", { name: "Invite teammate" }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Create project" }),
+    ).toHaveAttribute("data-source", "base");
   });
 
   it("preserves data-driven separator commands", () => {
@@ -378,7 +391,9 @@ describe("CommandPalette", () => {
       document.querySelector('[data-slot="command-palette-page"]'),
     ).toHaveAttribute("data-motion", "expressive");
     expect(
-      document.querySelector('[data-slot="command-palette-selected-indicator"]'),
+      document.querySelector(
+        '[data-slot="command-palette-selected-indicator"]',
+      ),
     ).toHaveAttribute("data-motion", "expressive");
     expect(
       document.querySelectorAll('[data-slot="command-palette-motion-group"]')
@@ -388,7 +403,9 @@ describe("CommandPalette", () => {
       document.querySelectorAll('[data-slot="command-palette-motion-result"]')
         .length,
     ).toBeGreaterThanOrEqual(3);
-    expect(document.querySelectorAll('[data-motion-stagger="true"]').length).toBeGreaterThan(0);
+    expect(
+      document.querySelectorAll('[data-motion-stagger="true"]').length,
+    ).toBeGreaterThan(0);
   });
 
   it("keeps selected state visible while reduced motion disables stagger hooks", () => {
@@ -406,12 +423,15 @@ describe("CommandPalette", () => {
 
     const selected = screen.getByRole("button", { name: "Create project" });
 
-    expect(
-      selected.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("data-reduced-motion", "true");
+    expect(selected.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "data-reduced-motion",
+      "true",
+    );
     expect(selected).toHaveAttribute("data-selected", "true");
     expect(
-      document.querySelector('[data-slot="command-palette-selected-indicator"]'),
+      document.querySelector(
+        '[data-slot="command-palette-selected-indicator"]',
+      ),
     ).toHaveAttribute("data-reduced-motion", "true");
     expect(
       document.querySelector('[data-slot="command-palette-motion-result"]'),
@@ -455,7 +475,9 @@ describe("CommandPalette", () => {
       "/issues",
     );
     expect(
-      screen.getByText("G I").closest('[data-slot="command-palette-item-shortcut"]'),
+      screen
+        .getByText("G I")
+        .closest('[data-slot="command-palette-item-shortcut"]'),
     ).toBeVisible();
     expect(
       document.querySelector('[data-slot="command-palette-separator"]'),
@@ -579,9 +601,10 @@ describe("CommandPalette", () => {
     const empty = screen.getByRole("status");
 
     expect(empty).toHaveTextContent("No commands found.");
-    expect(
-      empty.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("data-empty", "true");
+    expect(empty.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "data-empty",
+      "true",
+    );
     expect(
       document.querySelector('[data-slot="command-palette-announcer"]'),
     ).toBeNull();
@@ -599,9 +622,10 @@ describe("CommandPalette", () => {
     const empty = screen.getByRole("status");
 
     expect(empty).toHaveTextContent("No commands configured.");
-    expect(
-      empty.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("data-empty", "true");
+    expect(empty.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "data-empty",
+      "true",
+    );
   });
 
   it("renders minimum-query, loading, and stale async states", async () => {
@@ -620,9 +644,10 @@ describe("CommandPalette", () => {
     let status = screen.getByRole("status");
 
     expect(status).toHaveTextContent("Type at least 2 characters to search.");
-    expect(
-      status.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("data-minimum-query", "true");
+    expect(status.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "data-minimum-query",
+      "true",
+    );
 
     rerender(
       <CommandPalette
@@ -639,9 +664,10 @@ describe("CommandPalette", () => {
     status = screen.getByRole("status");
 
     expect(status).toHaveTextContent("Searching server commands...");
-    expect(
-      status.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("aria-busy", "true");
+    expect(status.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
 
     rerender(
       <CommandPalette
@@ -655,16 +681,16 @@ describe("CommandPalette", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Remote result" })).toHaveAttribute(
-      "data-source",
-      "async",
-    );
+    expect(
+      screen.getByRole("button", { name: "Remote result" }),
+    ).toHaveAttribute("data-source", "async");
     status = screen.getByRole("status");
 
     expect(status).toHaveTextContent("Updating remote results.");
-    expect(
-      status.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("data-stale", "true");
+    expect(status.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "data-stale",
+      "true",
+    );
   });
 
   it("renders async error and keyboard-reachable retry control", async () => {
@@ -783,12 +809,15 @@ describe("CommandPalette", () => {
     );
 
     const dialog = screen.getByRole("dialog", { name: "Async commands" });
-    const result = within(dialog).getByRole("button", { name: "Remote result" });
+    const result = within(dialog).getByRole("button", {
+      name: "Remote result",
+    });
 
     expect(result).toHaveAttribute("data-source", "async");
-    expect(
-      result.closest('[data-slot="command-palette"]'),
-    ).toHaveAttribute("data-mode", "dialog");
+    expect(result.closest('[data-slot="command-palette"]')).toHaveAttribute(
+      "data-mode",
+      "dialog",
+    );
   });
 
   it("keeps dialog mode named when CommandPaletteContent title is omitted", () => {
@@ -872,7 +901,9 @@ describe("CommandPalette", () => {
 
       expect(activePage).toBeInTheDocument();
       expect(
-        within(activePage as HTMLElement).getByText("Project-specific commands"),
+        within(activePage as HTMLElement).getByText(
+          "Project-specific commands",
+        ),
       ).toBeVisible();
       expect(
         within(activePage as HTMLElement).getByRole("button", {
@@ -880,7 +911,9 @@ describe("CommandPalette", () => {
         }),
       ).toHaveAttribute("data-source", "page");
     });
-    expect(screen.queryByRole("button", { name: "Invite teammate" })).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Invite teammate" }),
+    ).toBeNull();
 
     await user.click(screen.getByRole("button", { name: "Open Alpha" }));
 
@@ -945,13 +978,17 @@ describe("CommandPalette", () => {
     );
 
     const dialog = screen.getByRole("dialog", { name: "Command menu" });
-    const input = within(dialog).getByRole("searchbox", { name: "Command menu" });
+    const input = within(dialog).getByRole("searchbox", {
+      name: "Command menu",
+    });
 
     await user.click(input);
     await user.keyboard("{Enter}");
 
     await waitFor(() => {
-      expect(within(dialog).getByRole("button", { name: "Back" })).toBeVisible();
+      expect(
+        within(dialog).getByRole("button", { name: "Back" }),
+      ).toBeVisible();
       expect(
         within(dialog).getByRole("button", { name: "Open Alpha" }),
       ).toBeVisible();
@@ -1014,9 +1051,9 @@ describe("CommandPalette", () => {
 
     expect(screen.getByText("projects")).toBeInTheDocument();
     expect(
-      screen.getByText("No project commands.").closest(
-        '[data-slot="command-palette-empty"]',
-      ),
+      screen
+        .getByText("No project commands.")
+        .closest('[data-slot="command-palette-empty"]'),
     ).toHaveTextContent("No project commands.");
 
     await user.click(screen.getByRole("button", { name: "Back" }));
@@ -1100,17 +1137,19 @@ describe("CommandPalette", () => {
     const trigger = screen.getByRole("button", { name: "Open command menu" });
 
     expect(trigger).toHaveAttribute("data-slot", "command-palette-trigger");
-    expect(commandPaletteTriggerClassNames({ className: "custom-trigger" })).toContain(
-      "custom-trigger",
-    );
-    expect(commandPaletteContentClassNames({ className: "custom-content" })).toContain(
-      "custom-content",
-    );
+    expect(
+      commandPaletteTriggerClassNames({ className: "custom-trigger" }),
+    ).toContain("custom-trigger");
+    expect(
+      commandPaletteContentClassNames({ className: "custom-content" }),
+    ).toContain("custom-content");
 
     await user.click(trigger);
 
     const dialog = await screen.findByRole("dialog", { name: "Command menu" });
-    const input = within(dialog).getByRole("searchbox", { name: "Command menu" });
+    const input = within(dialog).getByRole("searchbox", {
+      name: "Command menu",
+    });
     const content = input.closest<HTMLElement>(
       '[data-slot="command-palette-content"]',
     );
@@ -1150,7 +1189,9 @@ describe("CommandPalette", () => {
       return (
         <>
           <CommandPaletteDialog open={open} onOpenChange={setOpen}>
-            <CommandPaletteTrigger>Open controlled commands</CommandPaletteTrigger>
+            <CommandPaletteTrigger>
+              Open controlled commands
+            </CommandPaletteTrigger>
             <CommandPaletteContent title="Controlled commands">
               <CommandPalette
                 label="Controlled commands"
@@ -1177,7 +1218,9 @@ describe("CommandPalette", () => {
     await user.keyboard("{Escape}");
 
     await waitFor(() => {
-      expect(screen.queryByRole("dialog", { name: "Controlled commands" })).toBeNull();
+      expect(
+        screen.queryByRole("dialog", { name: "Controlled commands" }),
+      ).toBeNull();
     });
     expect(screen.getByText("closed")).toBeInTheDocument();
   });
@@ -1219,7 +1262,9 @@ describe("CommandPalette", () => {
     await user.click(screen.getByRole("button", { name: "Close command" }));
 
     await waitFor(() => {
-      expect(screen.queryByRole("dialog", { name: "Persistent commands" })).toBeNull();
+      expect(
+        screen.queryByRole("dialog", { name: "Persistent commands" }),
+      ).toBeNull();
     });
   });
 });

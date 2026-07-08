@@ -108,7 +108,8 @@ export const DecimalBudget: Story = {
             />
           </FieldControl>
           <FieldDescription>
-            The control preserves the string value and leaves formatting to app code.
+            The control preserves the string value and leaves formatting to app
+            code.
           </FieldDescription>
         </Field>
       </Container>
@@ -133,7 +134,8 @@ export const NativeNumberOptIn: Story = {
             />
           </FieldControl>
           <FieldDescription>
-            Use native number behavior only when browser spinbutton semantics are wanted.
+            Use native number behavior only when browser spinbutton semantics
+            are wanted.
           </FieldDescription>
         </Field>
       </Container>
@@ -204,13 +206,21 @@ export const SettingsCard: Story = {
               <Field id="limit-seats">
                 <FieldLabel>Seats</FieldLabel>
                 <FieldControl asChild>
-                  <NumberInput name="seats" numberMode="numeric" defaultValue="25" />
+                  <NumberInput
+                    name="seats"
+                    numberMode="numeric"
+                    defaultValue="25"
+                  />
                 </FieldControl>
               </Field>
               <Field id="limit-budget">
                 <FieldLabel>Budget</FieldLabel>
                 <FieldControl asChild>
-                  <NumberInput name="budget" defaultValue="5000.00" step="0.01" />
+                  <NumberInput
+                    name="budget"
+                    defaultValue="5000.00"
+                    step="0.01"
+                  />
                 </FieldControl>
               </Field>
               <Button type="submit">Save limits</Button>
@@ -231,7 +241,7 @@ export const ThemeDensityAndRTL: Story = {
           density={theme === "light" ? "compact" : "comfortable"}
           dir={theme === "dark" ? "rtl" : "ltr"}
           theme={theme}
-          className="rounded-lg border border-border p-6"
+          className="border-border rounded-lg border p-6"
         >
           <Container size="sm">
             <Field id={`number-input-${theme}`}>

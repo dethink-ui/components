@@ -46,7 +46,9 @@ describe("resolveDrawerSnapStops", () => {
   });
 
   it("dedupes, clamps, and sorts configured snap points, always including 0", () => {
-    expect(resolveDrawerSnapStops([0.6, 0.3, 0.6, 1.4, -0.2])).toEqual([0, 0.3, 0.6, 1]);
+    expect(resolveDrawerSnapStops([0.6, 0.3, 0.6, 1.4, -0.2])).toEqual([
+      0, 0.3, 0.6, 1,
+    ]);
   });
 
   it("does not force-include 1 when the largest snap point is below it", () => {
@@ -69,36 +71,56 @@ describe("resolveDrawerActiveSnapStop", () => {
   });
 
   it("uses defaultSnapPoint when provided, resolving to the nearest stop", () => {
-    expect(resolveDrawerActiveSnapStop({ defaultSnapPoint: 0.5, stops })).toBe(0.6);
+    expect(resolveDrawerActiveSnapStop({ defaultSnapPoint: 0.5, stops })).toBe(
+      0.6,
+    );
   });
 
   it("prefers activeSnapPoint over defaultSnapPoint", () => {
     expect(
-      resolveDrawerActiveSnapStop({ activeSnapPoint: 0.3, defaultSnapPoint: 1, stops }),
+      resolveDrawerActiveSnapStop({
+        activeSnapPoint: 0.3,
+        defaultSnapPoint: 1,
+        stops,
+      }),
     ).toBe(0.3);
   });
 
   it("never resolves to the closed (0) stop", () => {
-    expect(resolveDrawerActiveSnapStop({ activeSnapPoint: 0.01, stops })).toBe(0.3);
+    expect(resolveDrawerActiveSnapStop({ activeSnapPoint: 0.01, stops })).toBe(
+      0.3,
+    );
   });
 });
 
 describe("shouldDismissDrawerFromVelocity", () => {
   it("dismisses when velocity meets or exceeds the threshold", () => {
     expect(
-      shouldDismissDrawerFromVelocity({ velocity: 500, velocityThreshold: 500 }),
+      shouldDismissDrawerFromVelocity({
+        velocity: 500,
+        velocityThreshold: 500,
+      }),
     ).toBe(true);
     expect(
-      shouldDismissDrawerFromVelocity({ velocity: 800, velocityThreshold: 500 }),
+      shouldDismissDrawerFromVelocity({
+        velocity: 800,
+        velocityThreshold: 500,
+      }),
     ).toBe(true);
   });
 
   it("does not dismiss below the threshold or moving the wrong way", () => {
     expect(
-      shouldDismissDrawerFromVelocity({ velocity: 200, velocityThreshold: 500 }),
+      shouldDismissDrawerFromVelocity({
+        velocity: 200,
+        velocityThreshold: 500,
+      }),
     ).toBe(false);
     expect(
-      shouldDismissDrawerFromVelocity({ velocity: -900, velocityThreshold: 500 }),
+      shouldDismissDrawerFromVelocity({
+        velocity: -900,
+        velocityThreshold: 500,
+      }),
     ).toBe(false);
   });
 });

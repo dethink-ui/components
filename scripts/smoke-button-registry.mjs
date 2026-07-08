@@ -41,7 +41,9 @@ async function resolveExistingSourcePath(pathWithoutExtension) {
 }
 
 function collectRegistryFilePaths(item, registryItemsByName) {
-  const registryFilePaths = new Set((item.files ?? []).map((file) => normalize(file.path)));
+  const registryFilePaths = new Set(
+    (item.files ?? []).map((file) => normalize(file.path)),
+  );
 
   for (const dependencyName of item.registryDependencies ?? []) {
     const dependency = registryItemsByName.get(dependencyName);
@@ -99,7 +101,9 @@ const card = await readJson(join(registryRoot, "card.json"));
 const cardStack = await readJson(join(registryRoot, "card-stack.json"));
 const checkbox = await readJson(join(registryRoot, "checkbox.json"));
 const combobox = await readJson(join(registryRoot, "combobox.json"));
-const commandPalette = await readJson(join(registryRoot, "command-palette.json"));
+const commandPalette = await readJson(
+  join(registryRoot, "command-palette.json"),
+);
 const multiSelect = await readJson(join(registryRoot, "multi-select.json"));
 const asyncSelect = await readJson(join(registryRoot, "async-select.json"));
 const tagInput = await readJson(join(registryRoot, "tag-input.json"));
@@ -124,15 +128,21 @@ const table = await readJson(join(registryRoot, "table.json"));
 const dataTable = await readJson(join(registryRoot, "data-table.json"));
 const calendar = await readJson(join(registryRoot, "calendar.json"));
 const datePicker = await readJson(join(registryRoot, "date-picker.json"));
-const dateRangePicker = await readJson(join(registryRoot, "date-range-picker.json"));
+const dateRangePicker = await readJson(
+  join(registryRoot, "date-range-picker.json"),
+);
 const textarea = await readJson(join(registryRoot, "textarea.json"));
 const tooltip = await readJson(join(registryRoot, "tooltip.json"));
 const dropdownMenu = await readJson(join(registryRoot, "dropdown-menu.json"));
-const navigationMenu = await readJson(join(registryRoot, "navigation-menu.json"));
+const navigationMenu = await readJson(
+  join(registryRoot, "navigation-menu.json"),
+);
 const navDock = await readJson(join(registryRoot, "navdock.json"));
 const pagination = await readJson(join(registryRoot, "pagination.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
-const dateTimePicker = await readJson(join(registryRoot, "date-time-picker.json"));
+const dateTimePicker = await readJson(
+  join(registryRoot, "date-time-picker.json"),
+);
 const timeline = await readJson(join(registryRoot, "timeline.json"));
 const slotPlanner = await readJson(join(registryRoot, "slot-planner.json"));
 const liveRegion = await readJson(join(registryRoot, "live-region.json"));
@@ -142,7 +152,9 @@ const skeleton = await readJson(join(registryRoot, "skeleton.json"));
 const alert = await readJson(join(registryRoot, "alert.json"));
 const emptyState = await readJson(join(registryRoot, "empty-state.json"));
 const toast = await readJson(join(registryRoot, "toast.json"));
-const feedbackStates = await readJson(join(registryRoot, "feedback-states.json"));
+const feedbackStates = await readJson(
+  join(registryRoot, "feedback-states.json"),
+);
 
 const registryItemsByName = new Map(
   [
@@ -207,58 +219,148 @@ assert(
   cardStack.name === "card-stack",
   "card-stack registry item must be named card-stack.",
 );
-assert(checkbox.name === "checkbox", "checkbox registry item must be named checkbox.");
-assert(combobox.name === "combobox", "combobox registry item must be named combobox.");
-assert(commandPalette.name === "command-palette", "command-palette registry item must be named command-palette.");
-assert(multiSelect.name === "multi-select", "multi-select registry item must be named multi-select.");
-assert(asyncSelect.name === "async-select", "async-select registry item must be named async-select.");
-assert(tagInput.name === "tag-input", "tag-input registry item must be named tag-input.");
-assert(container.name === "container", "container registry item must be named container.");
+assert(
+  checkbox.name === "checkbox",
+  "checkbox registry item must be named checkbox.",
+);
+assert(
+  combobox.name === "combobox",
+  "combobox registry item must be named combobox.",
+);
+assert(
+  commandPalette.name === "command-palette",
+  "command-palette registry item must be named command-palette.",
+);
+assert(
+  multiSelect.name === "multi-select",
+  "multi-select registry item must be named multi-select.",
+);
+assert(
+  asyncSelect.name === "async-select",
+  "async-select registry item must be named async-select.",
+);
+assert(
+  tagInput.name === "tag-input",
+  "tag-input registry item must be named tag-input.",
+);
+assert(
+  container.name === "container",
+  "container registry item must be named container.",
+);
 assert(dialog.name === "dialog", "dialog registry item must be named dialog.");
 assert(drawer.name === "drawer", "drawer registry item must be named drawer.");
-assert(formField.name === "form-field", "form-field registry item must be named form-field.");
+assert(
+  formField.name === "form-field",
+  "form-field registry item must be named form-field.",
+);
 assert(input.name === "input", "input registry item must be named input.");
-assert(iconButton.name === "icon-button", "icon-button registry item must be named icon-button.");
-assert(revealButton.name === "reveal-button", "reveal-button registry item must be named reveal-button.");
+assert(
+  iconButton.name === "icon-button",
+  "icon-button registry item must be named icon-button.",
+);
+assert(
+  revealButton.name === "reveal-button",
+  "reveal-button registry item must be named reveal-button.",
+);
 assert(flex.name === "flex", "flex registry item must be named flex.");
 assert(grid.name === "grid", "grid registry item must be named grid.");
 assert(link.name === "link", "link registry item must be named link.");
-assert(numberInput.name === "number-input", "number-input registry item must be named number-input.");
-assert(popover.name === "popover", "popover registry item must be named popover.");
-assert(radioGroup.name === "radio-group", "radio-group registry item must be named radio-group.");
-assert(separator.name === "separator", "separator registry item must be named separator.");
+assert(
+  numberInput.name === "number-input",
+  "number-input registry item must be named number-input.",
+);
+assert(
+  popover.name === "popover",
+  "popover registry item must be named popover.",
+);
+assert(
+  radioGroup.name === "radio-group",
+  "radio-group registry item must be named radio-group.",
+);
+assert(
+  separator.name === "separator",
+  "separator registry item must be named separator.",
+);
 assert(select.name === "select", "select registry item must be named select.");
 assert(stack.name === "stack", "stack registry item must be named stack.");
-assert(switchItem.name === "switch", "switch registry item must be named switch.");
+assert(
+  switchItem.name === "switch",
+  "switch registry item must be named switch.",
+);
 assert(table.name === "table", "table registry item must be named table.");
-assert(dataTable.name === "data-table", "data-table registry item must be named data-table.");
-assert(calendar.name === "calendar", "calendar registry item must be named calendar.");
-assert(datePicker.name === "date-picker", "date-picker registry item must be named date-picker.");
+assert(
+  dataTable.name === "data-table",
+  "data-table registry item must be named data-table.",
+);
+assert(
+  calendar.name === "calendar",
+  "calendar registry item must be named calendar.",
+);
+assert(
+  datePicker.name === "date-picker",
+  "date-picker registry item must be named date-picker.",
+);
 assert(
   dateRangePicker.name === "date-range-picker",
   "date-range-picker registry item must be named date-range-picker.",
 );
-assert(textarea.name === "textarea", "textarea registry item must be named textarea.");
-assert(tooltip.name === "tooltip", "tooltip registry item must be named tooltip.");
-assert(dropdownMenu.name === "dropdown-menu", "dropdown-menu registry item must be named dropdown-menu.");
+assert(
+  textarea.name === "textarea",
+  "textarea registry item must be named textarea.",
+);
+assert(
+  tooltip.name === "tooltip",
+  "tooltip registry item must be named tooltip.",
+);
+assert(
+  dropdownMenu.name === "dropdown-menu",
+  "dropdown-menu registry item must be named dropdown-menu.",
+);
 assert(
   navigationMenu.name === "navigation-menu",
   "navigation-menu registry item must be named navigation-menu.",
 );
-assert(navDock.name === "navdock", "navdock registry item must be named navdock.");
-assert(pagination.name === "pagination", "pagination registry item must be named pagination.");
-assert(typography.name === "typography", "typography registry item must be named typography.");
+assert(
+  navDock.name === "navdock",
+  "navdock registry item must be named navdock.",
+);
+assert(
+  pagination.name === "pagination",
+  "pagination registry item must be named pagination.",
+);
+assert(
+  typography.name === "typography",
+  "typography registry item must be named typography.",
+);
 assert(
   dateTimePicker.name === "date-time-picker",
   "date-time-picker registry item must be named date-time-picker.",
 );
-assert(timeline.name === "timeline", "timeline registry item must be named timeline.");
-assert(liveRegion.name === "live-region", "live-region registry item must be named live-region.");
-assert(spinner.name === "spinner", "spinner registry item must be named spinner.");
-assert(progress.name === "progress", "progress registry item must be named progress.");
-assert(skeleton.name === "skeleton", "skeleton registry item must be named skeleton.");
+assert(
+  timeline.name === "timeline",
+  "timeline registry item must be named timeline.",
+);
+assert(
+  liveRegion.name === "live-region",
+  "live-region registry item must be named live-region.",
+);
+assert(
+  spinner.name === "spinner",
+  "spinner registry item must be named spinner.",
+);
+assert(
+  progress.name === "progress",
+  "progress registry item must be named progress.",
+);
+assert(
+  skeleton.name === "skeleton",
+  "skeleton registry item must be named skeleton.",
+);
 assert(alert.name === "alert", "alert registry item must be named alert.");
-assert(emptyState.name === "empty-state", "empty-state registry item must be named empty-state.");
+assert(
+  emptyState.name === "empty-state",
+  "empty-state registry item must be named empty-state.",
+);
 assert(toast.name === "toast", "toast registry item must be named toast.");
 assert(
   feedbackStates.name === "feedback-states",
@@ -702,7 +804,8 @@ assert(
   "input registry item must not add runtime dependencies.",
 );
 assert(
-  Array.isArray(iconButton.dependencies) && iconButton.dependencies.length === 0,
+  Array.isArray(iconButton.dependencies) &&
+    iconButton.dependencies.length === 0,
   "icon-button registry item must not add runtime dependencies.",
 );
 assert(
@@ -722,7 +825,8 @@ assert(
   "link registry item must not add runtime dependencies.",
 );
 assert(
-  Array.isArray(numberInput.dependencies) && numberInput.dependencies.length === 0,
+  Array.isArray(numberInput.dependencies) &&
+    numberInput.dependencies.length === 0,
   "number-input registry item must not add runtime dependencies.",
 );
 assert(
@@ -734,7 +838,8 @@ assert(
   "popover registry item must include react-aria-components.",
 );
 assert(
-  Array.isArray(radioGroup.dependencies) && radioGroup.dependencies.length === 0,
+  Array.isArray(radioGroup.dependencies) &&
+    radioGroup.dependencies.length === 0,
   "radio-group registry item must not add runtime dependencies.",
 );
 assert(
@@ -754,7 +859,8 @@ assert(
   "stack registry item must not add runtime dependencies.",
 );
 assert(
-  Array.isArray(switchItem.dependencies) && switchItem.dependencies.length === 0,
+  Array.isArray(switchItem.dependencies) &&
+    switchItem.dependencies.length === 0,
   "switch registry item must not add runtime dependencies.",
 );
 assert(
@@ -818,11 +924,13 @@ assert(
   "dropdown-menu registry item must include react-aria-components.",
 );
 assert(
-  Array.isArray(typography.dependencies) && typography.dependencies.length === 0,
+  Array.isArray(typography.dependencies) &&
+    typography.dependencies.length === 0,
   "typography registry item must not add runtime dependencies.",
 );
 assert(
-  Array.isArray(pagination.dependencies) && pagination.dependencies.length === 0,
+  Array.isArray(pagination.dependencies) &&
+    pagination.dependencies.length === 0,
   "pagination registry item must not add runtime dependencies.",
 );
 assert(
@@ -856,7 +964,8 @@ assert(
   "date-time-picker registry item must include react-aria-components.",
 );
 assert(
-  Array.isArray(liveRegion.dependencies) && liveRegion.dependencies.length === 0,
+  Array.isArray(liveRegion.dependencies) &&
+    liveRegion.dependencies.length === 0,
   "live-region registry item must not add runtime dependencies.",
 );
 assert(
@@ -876,7 +985,8 @@ assert(
   "alert registry item must not add runtime dependencies.",
 );
 assert(
-  Array.isArray(emptyState.dependencies) && emptyState.dependencies.length === 0,
+  Array.isArray(emptyState.dependencies) &&
+    emptyState.dependencies.length === 0,
   "empty-state registry item must not add runtime dependencies.",
 );
 assert(
@@ -884,7 +994,8 @@ assert(
   "toast registry item must include motion for stack presence and layout compaction.",
 );
 assert(
-  Array.isArray(feedbackStates.dependencies) && feedbackStates.dependencies.length === 0,
+  Array.isArray(feedbackStates.dependencies) &&
+    feedbackStates.dependencies.length === 0,
   "feedback-states registry item should receive runtime dependencies through its child items.",
 );
 
@@ -970,7 +1081,10 @@ await assertRegistryRelativeImportsResolve(table, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dataTable, registryItemsByName);
 await assertRegistryRelativeImportsResolve(calendar, registryItemsByName);
 await assertRegistryRelativeImportsResolve(datePicker, registryItemsByName);
-await assertRegistryRelativeImportsResolve(dateRangePicker, registryItemsByName);
+await assertRegistryRelativeImportsResolve(
+  dateRangePicker,
+  registryItemsByName,
+);
 await assertRegistryRelativeImportsResolve(textarea, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tooltip, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
@@ -988,7 +1102,9 @@ await assertRegistryRelativeImportsResolve(emptyState, registryItemsByName);
 await assertRegistryRelativeImportsResolve(toast, registryItemsByName);
 await assertRegistryRelativeImportsResolve(feedbackStates, registryItemsByName);
 
-const stylePath = base.files.find((file) => file.type === "registry:style")?.path;
+const stylePath = base.files.find(
+  (file) => file.type === "registry:style",
+)?.path;
 assert(stylePath, "base registry item must include a registry:style file.");
 
 const styles = await readFile(join(root, stylePath), "utf8");
@@ -1017,7 +1133,10 @@ const comboboxSource = await readFile(
   "utf8",
 );
 const commandPaletteSource = await readFile(
-  join(root, "packages/components/src/components/command-palette/command-palette.tsx"),
+  join(
+    root,
+    "packages/components/src/components/command-palette/command-palette.tsx",
+  ),
   "utf8",
 );
 const commandPaletteIndexSource = await readFile(
@@ -1029,11 +1148,17 @@ const packageIndexSource = await readFile(
   "utf8",
 );
 const multiSelectSource = await readFile(
-  join(root, "packages/components/src/components/multi-select/multi-select.tsx"),
+  join(
+    root,
+    "packages/components/src/components/multi-select/multi-select.tsx",
+  ),
   "utf8",
 );
 const asyncSelectSource = await readFile(
-  join(root, "packages/components/src/components/async-select/async-select.tsx"),
+  join(
+    root,
+    "packages/components/src/components/async-select/async-select.tsx",
+  ),
   "utf8",
 );
 const tagInputSource = await readFile(
@@ -1053,7 +1178,10 @@ const iconButtonSource = await readFile(
   "utf8",
 );
 const revealButtonSource = await readFile(
-  join(root, "packages/components/src/components/reveal-button/reveal-button.tsx"),
+  join(
+    root,
+    "packages/components/src/components/reveal-button/reveal-button.tsx",
+  ),
   "utf8",
 );
 const flexSource = await readFile(
@@ -1109,7 +1237,10 @@ const datePickerSource = await readFile(
   "utf8",
 );
 const dateRangePickerSource = await readFile(
-  join(root, "packages/components/src/components/date-range-picker/date-range-picker.tsx"),
+  join(
+    root,
+    "packages/components/src/components/date-range-picker/date-range-picker.tsx",
+  ),
   "utf8",
 );
 const tooltipSource = await readFile(
@@ -1117,7 +1248,10 @@ const tooltipSource = await readFile(
   "utf8",
 );
 const dropdownMenuSource = await readFile(
-  join(root, "packages/components/src/components/dropdown-menu/dropdown-menu.tsx"),
+  join(
+    root,
+    "packages/components/src/components/dropdown-menu/dropdown-menu.tsx",
+  ),
   "utf8",
 );
 const typographySource = await readFile(
@@ -1125,7 +1259,10 @@ const typographySource = await readFile(
   "utf8",
 );
 const dateTimePickerSource = await readFile(
-  join(root, "packages/components/src/components/date-time-picker/date-time-picker.tsx"),
+  join(
+    root,
+    "packages/components/src/components/date-time-picker/date-time-picker.tsx",
+  ),
   "utf8",
 );
 const dialogSource = await readFile(
@@ -1141,7 +1278,10 @@ const drawerMotionSource = await readFile(
   "utf8",
 );
 const drawerBackgroundScaleSource = await readFile(
-  join(root, "packages/components/src/components/drawer/drawer-background-scale.ts"),
+  join(
+    root,
+    "packages/components/src/components/drawer/drawer-background-scale.ts",
+  ),
   "utf8",
 );
 const providerPortalSource = await readFile(
@@ -1157,7 +1297,10 @@ const timelineSource = await readFile(
   "utf8",
 );
 const slotPlannerSource = await readFile(
-  join(root, "packages/components/src/components/slot-planner/slot-planner.tsx"),
+  join(
+    root,
+    "packages/components/src/components/slot-planner/slot-planner.tsx",
+  ),
   "utf8",
 );
 const slotPickerSource = await readFile(
@@ -1173,11 +1316,26 @@ const paginationSource = await readFile(
   "utf8",
 );
 
-assert(styles.includes('@import "tailwindcss";'), "base styles must import Tailwind.");
-assert(styles.includes("@source"), "base styles must register component sources.");
-assert(styles.includes("@theme"), "base styles must define Tailwind theme tokens.");
-assert(styles.includes("--color-primary"), "base styles must expose primary token.");
-assert(styles.includes("--spacing-density-control"), "base styles must expose density token.");
+assert(
+  styles.includes('@import "tailwindcss";'),
+  "base styles must import Tailwind.",
+);
+assert(
+  styles.includes("@source"),
+  "base styles must register component sources.",
+);
+assert(
+  styles.includes("@theme"),
+  "base styles must define Tailwind theme tokens.",
+);
+assert(
+  styles.includes("--color-primary"),
+  "base styles must expose primary token.",
+);
+assert(
+  styles.includes("--spacing-density-control"),
+  "base styles must expose density token.",
+);
 assert(
   styles.includes("--color-timeline-border"),
   "base styles must expose timeline border token.",
@@ -1198,8 +1356,14 @@ assert(
   packageIndexSource.includes("LiveRegionProvider"),
   "package index must export LiveRegionProvider.",
 );
-assert(packageIndexSource.includes("ProgressCircle"), "package index must export ProgressCircle.");
-assert(packageIndexSource.includes("ToastProvider"), "package index must export ToastProvider.");
+assert(
+  packageIndexSource.includes("ProgressCircle"),
+  "package index must export ProgressCircle.",
+);
+assert(
+  packageIndexSource.includes("ToastProvider"),
+  "package index must export ToastProvider.",
+);
 assert(
   paginationSource.includes("getPaginationRenderItems"),
   "pagination source must expose deterministic page-window generation.",
@@ -1220,9 +1384,18 @@ assert(
   paginationSource.includes("motion-reduce:transition-none"),
   "pagination source must respect reduced motion for transitions.",
 );
-assert(boxSource.includes('"data-slot": "box"'), "box source must expose stable slot data.");
-assert(boxSource.includes("asChild"), "box source must expose child composition.");
-assert(boxSource.includes("boxClassNames"), "box source must expose class-name composition.");
+assert(
+  boxSource.includes('"data-slot": "box"'),
+  "box source must expose stable slot data.",
+);
+assert(
+  boxSource.includes("asChild"),
+  "box source must expose child composition.",
+);
+assert(
+  boxSource.includes("boxClassNames"),
+  "box source must expose class-name composition.",
+);
 assert(
   boxSource.includes("ps-[var(--dt-space-4)]"),
   "box source must use tokenized logical start spacing utilities.",
@@ -1231,17 +1404,47 @@ assert(
   boxSource.includes("me-[var(--dt-space-4)]"),
   "box source must use tokenized logical end margin utilities.",
 );
-assert(boxSource.includes("bg-primary"), "box source must use tokenized primary surface utilities.");
-assert(boxSource.includes("border-input"), "box source must use tokenized input border utilities.");
-assert(boxSource.includes("rounded-md"), "box source must use tokenized radius utilities.");
-assert(boxSource.includes("overflow-clip"), "box source must expose overflow clip utilities.");
-assert(!boxSource.includes("@radix-ui"), "box source must remain dependency-free.");
-assert(buttonSource.includes("leftIcon"), "button source must expose leftIcon.");
-assert(buttonSource.includes("rightIcon"), "button source must expose rightIcon.");
+assert(
+  boxSource.includes("bg-primary"),
+  "box source must use tokenized primary surface utilities.",
+);
+assert(
+  boxSource.includes("border-input"),
+  "box source must use tokenized input border utilities.",
+);
+assert(
+  boxSource.includes("rounded-md"),
+  "box source must use tokenized radius utilities.",
+);
+assert(
+  boxSource.includes("overflow-clip"),
+  "box source must expose overflow clip utilities.",
+);
+assert(
+  !boxSource.includes("@radix-ui"),
+  "box source must remain dependency-free.",
+);
+assert(
+  buttonSource.includes("leftIcon"),
+  "button source must expose leftIcon.",
+);
+assert(
+  buttonSource.includes("rightIcon"),
+  "button source must expose rightIcon.",
+);
 assert(buttonSource.includes("asChild"), "button source must expose asChild.");
-assert(buttonSource.includes("data-slot=\"button\""), "button source must expose stable slot data.");
-assert(buttonSource.includes("bg-primary"), "button source must use tokenized primary utilities.");
-assert(!buttonSource.includes("@radix-ui"), "button source must remain dependency-free.");
+assert(
+  buttonSource.includes('data-slot="button"'),
+  "button source must expose stable slot data.",
+);
+assert(
+  buttonSource.includes("bg-primary"),
+  "button source must use tokenized primary utilities.",
+);
+assert(
+  !buttonSource.includes("@radix-ui"),
+  "button source must remain dependency-free.",
+);
 assert(
   revealButtonSource.includes('data-slot="reveal-button"'),
   "reveal-button source must expose stable root slot data.",
@@ -1266,7 +1469,10 @@ assert(
   packageIndexSource.includes("RevealButton"),
   "package index must export RevealButton.",
 );
-assert(cardSource.includes('"data-slot": "card"'), "card source must expose stable root slot data.");
+assert(
+  cardSource.includes('"data-slot": "card"'),
+  "card source must expose stable root slot data.",
+);
 assert(
   cardSource.includes('"data-slot": "card-header"'),
   "card source must expose stable header slot data.",
@@ -1291,22 +1497,58 @@ assert(
   cardSource.includes('"data-slot": "card-footer"'),
   "card source must expose stable footer slot data.",
 );
-assert(cardSource.includes("asChild"), "card source must expose child composition.");
-assert(cardSource.includes("cardClassNames"), "card source must expose class-name composition.");
-assert(cardSource.includes("CardFooterJustify"), "card source must expose footer justification typing.");
-assert(cardSource.includes("bg-background"), "card source must use tokenized background utilities.");
-assert(cardSource.includes("bg-muted"), "card source must use tokenized muted utilities.");
-assert(cardSource.includes("border-border"), "card source must use tokenized border utilities.");
-assert(cardSource.includes("rounded-lg"), "card source must use tokenized radius utilities.");
-assert(cardSource.includes("shadow-sm"), "card source must expose shadow utilities.");
-assert(cardSource.includes("--card-padding"), "card source must expose density-backed card padding.");
-assert(cardSource.includes("--card-gap"), "card source must expose density-backed card gap.");
+assert(
+  cardSource.includes("asChild"),
+  "card source must expose child composition.",
+);
+assert(
+  cardSource.includes("cardClassNames"),
+  "card source must expose class-name composition.",
+);
+assert(
+  cardSource.includes("CardFooterJustify"),
+  "card source must expose footer justification typing.",
+);
+assert(
+  cardSource.includes("bg-background"),
+  "card source must use tokenized background utilities.",
+);
+assert(
+  cardSource.includes("bg-muted"),
+  "card source must use tokenized muted utilities.",
+);
+assert(
+  cardSource.includes("border-border"),
+  "card source must use tokenized border utilities.",
+);
+assert(
+  cardSource.includes("rounded-lg"),
+  "card source must use tokenized radius utilities.",
+);
+assert(
+  cardSource.includes("shadow-sm"),
+  "card source must expose shadow utilities.",
+);
+assert(
+  cardSource.includes("--card-padding"),
+  "card source must expose density-backed card padding.",
+);
+assert(
+  cardSource.includes("--card-gap"),
+  "card source must expose density-backed card gap.",
+);
 assert(
   cardSource.includes("ms-[var(--dt-space-4)]"),
   "card source must use tokenized logical action spacing.",
 );
-assert(cardSource.includes("justify-between"), "card source must expose footer distribution utilities.");
-assert(!cardSource.includes("@radix-ui"), "card source must remain dependency-free.");
+assert(
+  cardSource.includes("justify-between"),
+  "card source must expose footer distribution utilities.",
+);
+assert(
+  !cardSource.includes("@radix-ui"),
+  "card source must remain dependency-free.",
+);
 assert(
   cardStackSource.includes('data-slot="card-stack"'),
   "card-stack source must expose stable root slot data.",
@@ -1335,7 +1577,10 @@ assert(
   cardStackSource.includes("onActiveIndexChange"),
   "card-stack source must expose active index change callbacks.",
 );
-assert(cardStackSource.includes("inert"), "card-stack source must make inactive cards inert.");
+assert(
+  cardStackSource.includes("inert"),
+  "card-stack source must make inactive cards inert.",
+);
 assert(
   cardStackSource.includes("aria-hidden"),
   "card-stack source must hide inactive cards from assistive tech.",
@@ -1352,8 +1597,14 @@ assert(
   cardStackSource.includes("motion-safe:transition"),
   "card-stack source must use reduced-motion-aware transitions.",
 );
-assert(!cardStackSource.includes("framer-motion"), "card-stack source must not use Motion.");
-assert(!cardStackSource.includes("@radix-ui"), "card-stack source must remain Radix-free.");
+assert(
+  !cardStackSource.includes("framer-motion"),
+  "card-stack source must not use Motion.",
+);
+assert(
+  !cardStackSource.includes("@radix-ui"),
+  "card-stack source must remain Radix-free.",
+);
 assert(
   checkboxSource.includes('data-slot={dataSlot ?? "checkbox"}'),
   "checkbox source must expose stable root slot data.",
@@ -1375,7 +1626,9 @@ assert(
   "checkbox source must support indeterminate state.",
 );
 assert(
-  checkboxSource.includes('aria-checked={checkedState === "indeterminate" ? "mixed" : undefined}'),
+  checkboxSource.includes(
+    'aria-checked={checkedState === "indeterminate" ? "mixed" : undefined}',
+  ),
   "checkbox source must expose mixed state to assistive tech.",
 );
 assert(
@@ -1383,7 +1636,7 @@ assert(
   "checkbox source must expose checked change callbacks.",
 );
 assert(
-  checkboxSource.includes("type=\"checkbox\""),
+  checkboxSource.includes('type="checkbox"'),
   "checkbox source must preserve native checkbox input semantics.",
 );
 assert(
@@ -1402,7 +1655,10 @@ assert(
   checkboxSource.includes("focus-visible:ring-2"),
   "checkbox source must include visible focus styling.",
 );
-assert(!checkboxSource.includes("@radix-ui"), "checkbox source must remain Radix-free.");
+assert(
+  !checkboxSource.includes("@radix-ui"),
+  "checkbox source must remain Radix-free.",
+);
 assert(
   comboboxSource.includes("react-aria-components"),
   "combobox source must use React Aria Components.",
@@ -1465,7 +1721,9 @@ assert(
   "combobox source must expose read-only state.",
 );
 assert(
-  comboboxSource.includes("type ComboboxComponent = (<T extends ComboboxItemData"),
+  comboboxSource.includes(
+    "type ComboboxComponent = (<T extends ComboboxItemData",
+  ),
   "combobox source must preserve generic item typing.",
 );
 assert(
@@ -1488,7 +1746,10 @@ assert(
   comboboxSource.includes("h-density-control"),
   "combobox source must use provider density control utilities.",
 );
-assert(!comboboxSource.includes("@radix-ui"), "combobox source must remain Radix-free.");
+assert(
+  !comboboxSource.includes("@radix-ui"),
+  "combobox source must remain Radix-free.",
+);
 assert(
   commandPaletteSource.includes('from "motion/react"') &&
     commandPaletteSource.includes("MotionConfig") &&
@@ -1509,8 +1770,12 @@ assert(
   "command-palette source must expose stable command anatomy slots.",
 );
 assert(
-  commandPaletteSource.includes('"data-slot": "command-palette-motion-result"') &&
-    commandPaletteSource.includes('"data-slot": "command-palette-selected-indicator"') &&
+  commandPaletteSource.includes(
+    '"data-slot": "command-palette-motion-result"',
+  ) &&
+    commandPaletteSource.includes(
+      '"data-slot": "command-palette-selected-indicator"',
+    ) &&
     commandPaletteSource.includes("data-motion-stagger") &&
     commandPaletteSource.includes("data-reduced-motion"),
   "command-palette source must expose result, selection, and reduced-motion hooks.",
@@ -1525,7 +1790,9 @@ assert(
   commandPaletteSource.includes("type CommandPaletteCommandType =") &&
     commandPaletteSource.includes("type CommandPaletteMotionPreset =") &&
     commandPaletteSource.includes("interface CommandPalettePageDefinition") &&
-    commandPaletteSource.includes("interface CommandPalettePageStackChangeContext"),
+    commandPaletteSource.includes(
+      "interface CommandPalettePageStackChangeContext",
+    ),
   "command-palette source must publish typed commands, motion presets, and nested page contracts.",
 );
 assert(
@@ -1550,8 +1817,14 @@ assert(
     packageIndexSource.includes("CommandPalettePageStackProps"),
   "root package index must export command-palette page-stack APIs.",
 );
-assert(!commandPaletteSource.includes("@radix-ui"), "command-palette source must remain Radix-free.");
-assert(!commandPaletteSource.includes("cmdk"), "command-palette source must not wrap cmdk.");
+assert(
+  !commandPaletteSource.includes("@radix-ui"),
+  "command-palette source must remain Radix-free.",
+);
+assert(
+  !commandPaletteSource.includes("cmdk"),
+  "command-palette source must not wrap cmdk.",
+);
 assert(
   multiSelectSource.includes("react-aria-components"),
   "multi-select source must use React Aria Components.",
@@ -1576,10 +1849,13 @@ assert(
   "multi-select source must preserve selected labels for async result windows.",
 );
 assert(
-  multiSelectSource.includes("type=\"hidden\""),
+  multiSelectSource.includes('type="hidden"'),
   "multi-select source must serialize repeated native form values.",
 );
-assert(!multiSelectSource.includes("@radix-ui"), "multi-select source must remain Radix-free.");
+assert(
+  !multiSelectSource.includes("@radix-ui"),
+  "multi-select source must remain Radix-free.",
+);
 assert(
   asyncSelectSource.includes('data-slot={dataSlot ?? "async-select"}'),
   "async-select source must expose stable root slot data.",
@@ -1596,7 +1872,10 @@ assert(
     asyncSelectSource.includes("onRetry"),
   "async-select source must expose loading/status/error retry states.",
 );
-assert(!asyncSelectSource.includes("@radix-ui"), "async-select source must remain Radix-free.");
+assert(
+  !asyncSelectSource.includes("@radix-ui"),
+  "async-select source must remain Radix-free.",
+);
 assert(
   tagInputSource.includes("TagGroup") &&
     tagInputSource.includes("TagList") &&
@@ -1613,15 +1892,21 @@ assert(
 assert(
   tagInputSource.includes("onPaste") &&
     tagInputSource.includes("validateTag") &&
-    tagInputSource.includes("type=\"hidden\""),
+    tagInputSource.includes('type="hidden"'),
   "tag-input source must support paste parsing, validation, and form serialization.",
 );
-assert(!tagInputSource.includes("@radix-ui"), "tag-input source must remain Radix-free.");
+assert(
+  !tagInputSource.includes("@radix-ui"),
+  "tag-input source must remain Radix-free.",
+);
 assert(
   containerSource.includes('"data-slot": "container"'),
   "container source must expose stable slot data.",
 );
-assert(containerSource.includes("asChild"), "container source must expose child composition.");
+assert(
+  containerSource.includes("asChild"),
+  "container source must expose child composition.",
+);
 assert(
   containerSource.includes("containerClassNames"),
   "container source must expose class-name composition.",
@@ -1638,10 +1923,22 @@ assert(
   containerSource.includes("safe-area-inset-left"),
   "container source must support safe-area gutters.",
 );
-assert(containerSource.includes("mx-auto"), "container source must default to centered layout.");
-assert(containerSource.includes("me-auto"), "container source must support logical start alignment.");
-assert(containerSource.includes("ms-auto"), "container source must support logical end alignment.");
-assert(!containerSource.includes("@radix-ui"), "container source must remain dependency-free.");
+assert(
+  containerSource.includes("mx-auto"),
+  "container source must default to centered layout.",
+);
+assert(
+  containerSource.includes("me-auto"),
+  "container source must support logical start alignment.",
+);
+assert(
+  containerSource.includes("ms-auto"),
+  "container source must support logical end alignment.",
+);
+assert(
+  !containerSource.includes("@radix-ui"),
+  "container source must remain dependency-free.",
+);
 assert(
   formFieldSource.includes('data-slot="form"'),
   "form-field source must expose stable form slot data.",
@@ -1690,37 +1987,70 @@ assert(
   formFieldSource.includes("useId"),
   "form-field source must generate hydration-safe accessibility ids.",
 );
-assert(!formFieldSource.includes("@radix-ui"), "form-field source must remain Radix-free.");
+assert(
+  !formFieldSource.includes("@radix-ui"),
+  "form-field source must remain Radix-free.",
+);
 assert(
   iconButtonSource.includes("IconButtonAccessibleName"),
   "icon-button source must expose accessible-name typing.",
 );
 assert(
-  iconButtonSource.includes("data-slot=\"icon-button\""),
+  iconButtonSource.includes('data-slot="icon-button"'),
   "icon-button source must expose stable root slot data.",
 );
 assert(
-  iconButtonSource.includes("data-slot=\"icon-button-icon\""),
+  iconButtonSource.includes('data-slot="icon-button-icon"'),
   "icon-button source must expose stable icon slot data.",
 );
 assert(
   iconButtonSource.includes("aria-busy"),
   "icon-button source must expose loading busy state.",
 );
-assert(iconButtonSource.includes("bg-primary"), "icon-button source must use tokenized primary utilities.");
-assert(!iconButtonSource.includes("@radix-ui"), "icon-button source must remain dependency-free.");
-assert(flexSource.includes('"data-slot": "flex"'), "flex source must expose stable root slot data.");
+assert(
+  iconButtonSource.includes("bg-primary"),
+  "icon-button source must use tokenized primary utilities.",
+);
+assert(
+  !iconButtonSource.includes("@radix-ui"),
+  "icon-button source must remain dependency-free.",
+);
+assert(
+  flexSource.includes('"data-slot": "flex"'),
+  "flex source must expose stable root slot data.",
+);
 assert(
   flexSource.includes('"data-slot": "flex-item"'),
   "flex source must expose stable item slot data.",
 );
-assert(flexSource.includes("asChild"), "flex source must expose child composition.");
-assert(flexSource.includes("flexClassNames"), "flex source must expose class-name composition.");
-assert(flexSource.includes("flexItemClassNames"), "flex source must expose item class-name composition.");
-assert(flexSource.includes("inline-flex"), "flex source must expose inline-flex utilities.");
-assert(flexSource.includes("flex-row"), "flex source must expose row direction utilities.");
-assert(flexSource.includes("flex-col"), "flex source must expose column direction utilities.");
-assert(flexSource.includes("flex-wrap"), "flex source must expose wrapping utilities.");
+assert(
+  flexSource.includes("asChild"),
+  "flex source must expose child composition.",
+);
+assert(
+  flexSource.includes("flexClassNames"),
+  "flex source must expose class-name composition.",
+);
+assert(
+  flexSource.includes("flexItemClassNames"),
+  "flex source must expose item class-name composition.",
+);
+assert(
+  flexSource.includes("inline-flex"),
+  "flex source must expose inline-flex utilities.",
+);
+assert(
+  flexSource.includes("flex-row"),
+  "flex source must expose row direction utilities.",
+);
+assert(
+  flexSource.includes("flex-col"),
+  "flex source must expose column direction utilities.",
+);
+assert(
+  flexSource.includes("flex-wrap"),
+  "flex source must expose wrapping utilities.",
+);
 assert(
   flexSource.includes("gap-y-[var(--dt-space-2)]"),
   "flex source must expose tokenized row gap utilities.",
@@ -1729,32 +2059,74 @@ assert(
   flexSource.includes("gap-x-[var(--dt-space-6)]"),
   "flex source must expose tokenized column gap utilities.",
 );
-assert(flexSource.includes("items-center"), "flex source must expose alignment utilities.");
-assert(flexSource.includes("justify-evenly"), "flex source must expose distribution utilities.");
-assert(flexSource.includes("content-between"), "flex source must expose align-content utilities.");
-assert(flexSource.includes("grow-0"), "flex source must expose grow utilities.");
-assert(flexSource.includes("shrink-0"), "flex source must expose shrink utilities.");
-assert(flexSource.includes("basis-64"), "flex source must expose basis utilities.");
-assert(flexSource.includes("min-w-0"), "flex source must expose long-content shrink utilities.");
-assert(!flexSource.includes("reverse"), "flex source must not expose visual reverse ordering.");
-assert(!flexSource.includes("@radix-ui"), "flex source must remain dependency-free.");
-assert(gridSource.includes('"data-slot": "grid"'), "grid source must expose stable root slot data.");
+assert(
+  flexSource.includes("items-center"),
+  "flex source must expose alignment utilities.",
+);
+assert(
+  flexSource.includes("justify-evenly"),
+  "flex source must expose distribution utilities.",
+);
+assert(
+  flexSource.includes("content-between"),
+  "flex source must expose align-content utilities.",
+);
+assert(
+  flexSource.includes("grow-0"),
+  "flex source must expose grow utilities.",
+);
+assert(
+  flexSource.includes("shrink-0"),
+  "flex source must expose shrink utilities.",
+);
+assert(
+  flexSource.includes("basis-64"),
+  "flex source must expose basis utilities.",
+);
+assert(
+  flexSource.includes("min-w-0"),
+  "flex source must expose long-content shrink utilities.",
+);
+assert(
+  !flexSource.includes("reverse"),
+  "flex source must not expose visual reverse ordering.",
+);
+assert(
+  !flexSource.includes("@radix-ui"),
+  "flex source must remain dependency-free.",
+);
+assert(
+  gridSource.includes('"data-slot": "grid"'),
+  "grid source must expose stable root slot data.",
+);
 assert(
   gridSource.includes('"data-slot": "grid-item"'),
   "grid source must expose stable item slot data.",
 );
-assert(gridSource.includes("asChild"), "grid source must expose child composition.");
-assert(gridSource.includes("gridClassNames"), "grid source must expose class-name composition.");
+assert(
+  gridSource.includes("asChild"),
+  "grid source must expose child composition.",
+);
+assert(
+  gridSource.includes("gridClassNames"),
+  "grid source must expose class-name composition.",
+);
 assert(
   gridSource.includes("gridItemClassNames"),
   "grid source must expose item class-name composition.",
 );
-assert(gridSource.includes("grid-cols-12"), "grid source must expose fixed grid columns.");
+assert(
+  gridSource.includes("grid-cols-12"),
+  "grid source must expose fixed grid columns.",
+);
 assert(
   gridSource.includes("repeat(auto-fit,minmax(min(16rem,100%),1fr))"),
   "grid source must expose static auto-fit grid columns.",
 );
-assert(gridSource.includes("grid-rows-3"), "grid source must expose row utilities.");
+assert(
+  gridSource.includes("grid-rows-3"),
+  "grid source must expose row utilities.",
+);
 assert(
   gridSource.includes("gap-y-[var(--dt-space-2)]"),
   "grid source must expose tokenized row gap utilities.",
@@ -1763,7 +2135,10 @@ assert(
   gridSource.includes("gap-x-[var(--dt-space-6)]"),
   "grid source must expose tokenized column gap utilities.",
 );
-assert(gridSource.includes("items-center"), "grid source must expose item alignment utilities.");
+assert(
+  gridSource.includes("items-center"),
+  "grid source must expose item alignment utilities.",
+);
 assert(
   gridSource.includes("justify-items-end"),
   "grid source must expose item justification utilities.",
@@ -1776,18 +2151,54 @@ assert(
   gridSource.includes("justify-evenly"),
   "grid source must expose justify-content utilities.",
 );
-assert(gridSource.includes("col-span-full"), "grid source must expose column span utilities.");
-assert(gridSource.includes("row-span-full"), "grid source must expose row span utilities.");
-assert(gridSource.includes("justify-self-end"), "grid source must expose item self justification utilities.");
-assert(gridSource.includes("min-w-0"), "grid source must expose long-content shrink utilities.");
-assert(!gridSource.includes("dense"), "grid source must not expose dense visual packing.");
-assert(!gridSource.includes("@radix-ui"), "grid source must remain dependency-free.");
-assert(linkSource.includes("data-slot=\"link\""), "link source must expose stable slot data.");
-assert(linkSource.includes("aria-current"), "link source must preserve aria-current state.");
-assert(linkSource.includes("noopener"), "link source must add new-tab noopener safety.");
-assert(linkSource.includes("asChild"), "link source must expose router composition.");
-assert(linkSource.includes("text-primary"), "link source must use tokenized primary utilities.");
-assert(!linkSource.includes("@radix-ui"), "link source must remain dependency-free.");
+assert(
+  gridSource.includes("col-span-full"),
+  "grid source must expose column span utilities.",
+);
+assert(
+  gridSource.includes("row-span-full"),
+  "grid source must expose row span utilities.",
+);
+assert(
+  gridSource.includes("justify-self-end"),
+  "grid source must expose item self justification utilities.",
+);
+assert(
+  gridSource.includes("min-w-0"),
+  "grid source must expose long-content shrink utilities.",
+);
+assert(
+  !gridSource.includes("dense"),
+  "grid source must not expose dense visual packing.",
+);
+assert(
+  !gridSource.includes("@radix-ui"),
+  "grid source must remain dependency-free.",
+);
+assert(
+  linkSource.includes('data-slot="link"'),
+  "link source must expose stable slot data.",
+);
+assert(
+  linkSource.includes("aria-current"),
+  "link source must preserve aria-current state.",
+);
+assert(
+  linkSource.includes("noopener"),
+  "link source must add new-tab noopener safety.",
+);
+assert(
+  linkSource.includes("asChild"),
+  "link source must expose router composition.",
+);
+assert(
+  linkSource.includes("text-primary"),
+  "link source must use tokenized primary utilities.",
+);
+assert(
+  !linkSource.includes("@radix-ui"),
+  "link source must remain dependency-free.",
+);
 assert(
   radioGroupSource.includes('data-slot="radio-group"'),
   "radio-group source must expose stable group slot data.",
@@ -1813,11 +2224,11 @@ assert(
   "radio-group source must share group state through context.",
 );
 assert(
-  radioGroupSource.includes('role={resolvedRole}'),
+  radioGroupSource.includes("role={resolvedRole}"),
   "radio-group source must expose radiogroup semantics for labelled standalone groups.",
 );
 assert(
-  radioGroupSource.includes("type=\"radio\""),
+  radioGroupSource.includes('type="radio"'),
   "radio-group source must preserve native radio input semantics.",
 );
 assert(
@@ -1836,28 +2247,60 @@ assert(
   radioGroupSource.includes("focus-visible:ring-2"),
   "radio-group source must include visible focus styling.",
 );
-assert(!radioGroupSource.includes("@radix-ui"), "radio-group source must remain Radix-free.");
+assert(
+  !radioGroupSource.includes("@radix-ui"),
+  "radio-group source must remain Radix-free.",
+);
 assert(
   separatorSource.includes('"data-slot": "separator"'),
   "separator source must expose stable slot data.",
 );
-assert(separatorSource.includes("Divider"), "separator source must expose Divider alias.");
-assert(separatorSource.includes("asChild"), "separator source must expose child composition.");
+assert(
+  separatorSource.includes("Divider"),
+  "separator source must expose Divider alias.",
+);
+assert(
+  separatorSource.includes("asChild"),
+  "separator source must expose child composition.",
+);
 assert(
   separatorSource.includes("separatorClassNames"),
   "separator source must expose class-name composition.",
 );
-assert(separatorSource.includes("aria-hidden"), "separator source must expose decorative mode.");
+assert(
+  separatorSource.includes("aria-hidden"),
+  "separator source must expose decorative mode.",
+);
 assert(
   separatorSource.includes("aria-orientation"),
   "separator source must expose orientation semantics.",
 );
-assert(separatorSource.includes('role: asChild || as !== "hr" ? "separator" : undefined'), "separator source must preserve native hr semantics.");
-assert(separatorSource.includes("h-px"), "separator source must expose horizontal thickness utilities.");
-assert(separatorSource.includes("w-px"), "separator source must expose vertical thickness utilities.");
-assert(separatorSource.includes("bg-border"), "separator source must use tokenized border color utilities.");
-assert(separatorSource.includes("bg-muted-foreground/25"), "separator source must expose muted tone utilities.");
-assert(separatorSource.includes("bg-foreground/40"), "separator source must expose strong tone utilities.");
+assert(
+  separatorSource.includes(
+    'role: asChild || as !== "hr" ? "separator" : undefined',
+  ),
+  "separator source must preserve native hr semantics.",
+);
+assert(
+  separatorSource.includes("h-px"),
+  "separator source must expose horizontal thickness utilities.",
+);
+assert(
+  separatorSource.includes("w-px"),
+  "separator source must expose vertical thickness utilities.",
+);
+assert(
+  separatorSource.includes("bg-border"),
+  "separator source must use tokenized border color utilities.",
+);
+assert(
+  separatorSource.includes("bg-muted-foreground/25"),
+  "separator source must expose muted tone utilities.",
+);
+assert(
+  separatorSource.includes("bg-foreground/40"),
+  "separator source must expose strong tone utilities.",
+);
 assert(
   separatorSource.includes("my-[var(--dt-space-4)]"),
   "separator source must expose tokenized horizontal spacing utilities.",
@@ -1874,7 +2317,10 @@ assert(
   separatorSource.includes('"aria-valuenow": undefined'),
   "separator source must strip splitter value semantics at runtime.",
 );
-assert(!separatorSource.includes("@radix-ui"), "separator source must remain dependency-free.");
+assert(
+  !separatorSource.includes("@radix-ui"),
+  "separator source must remain dependency-free.",
+);
 assert(
   selectSource.includes("react-aria-components"),
   "select source must use React Aria Components.",
@@ -1944,21 +2390,54 @@ assert(
   selectSource.includes("h-density-control"),
   "select source must use provider density control utilities.",
 );
-assert(!selectSource.includes("@radix-ui"), "select source must remain Radix-free.");
-assert(stackSource.includes('"data-slot": "stack"'), "stack source must expose stable slot data.");
-assert(stackSource.includes("asChild"), "stack source must expose child composition.");
-assert(stackSource.includes("stackClassNames"), "stack source must expose class-name composition.");
-assert(stackSource.includes("flex-col"), "stack source must expose vertical direction utilities.");
-assert(stackSource.includes("flex-row"), "stack source must expose horizontal direction utilities.");
+assert(
+  !selectSource.includes("@radix-ui"),
+  "select source must remain Radix-free.",
+);
+assert(
+  stackSource.includes('"data-slot": "stack"'),
+  "stack source must expose stable slot data.",
+);
+assert(
+  stackSource.includes("asChild"),
+  "stack source must expose child composition.",
+);
+assert(
+  stackSource.includes("stackClassNames"),
+  "stack source must expose class-name composition.",
+);
+assert(
+  stackSource.includes("flex-col"),
+  "stack source must expose vertical direction utilities.",
+);
+assert(
+  stackSource.includes("flex-row"),
+  "stack source must expose horizontal direction utilities.",
+);
 assert(
   stackSource.includes("gap-[var(--dt-space-4)]"),
   "stack source must expose tokenized gap utilities.",
 );
-assert(stackSource.includes("items-center"), "stack source must expose alignment utilities.");
-assert(stackSource.includes("justify-between"), "stack source must expose justification utilities.");
-assert(stackSource.includes("flex-wrap"), "stack source must expose wrapping utilities.");
-assert(!stackSource.includes("reverse"), "stack source must not expose visual reverse ordering.");
-assert(!stackSource.includes("@radix-ui"), "stack source must remain dependency-free.");
+assert(
+  stackSource.includes("items-center"),
+  "stack source must expose alignment utilities.",
+);
+assert(
+  stackSource.includes("justify-between"),
+  "stack source must expose justification utilities.",
+);
+assert(
+  stackSource.includes("flex-wrap"),
+  "stack source must expose wrapping utilities.",
+);
+assert(
+  !stackSource.includes("reverse"),
+  "stack source must not expose visual reverse ordering.",
+);
+assert(
+  !stackSource.includes("@radix-ui"),
+  "stack source must remain dependency-free.",
+);
 assert(
   switchSource.includes('data-slot={dataSlot ?? "switch"}'),
   "switch source must expose stable root slot data.",
@@ -1984,7 +2463,7 @@ assert(
   "switch source must expose switch semantics.",
 );
 assert(
-  switchSource.includes("type=\"checkbox\""),
+  switchSource.includes('type="checkbox"'),
   "switch source must preserve native checkbox input behavior.",
 );
 assert(
@@ -2007,7 +2486,10 @@ assert(
   switchSource.includes("focus-visible:ring-2"),
   "switch source must include visible focus styling.",
 );
-assert(!switchSource.includes("@radix-ui"), "switch source must remain Radix-free.");
+assert(
+  !switchSource.includes("@radix-ui"),
+  "switch source must remain Radix-free.",
+);
 assert(
   tableSource.includes('data-slot="table-container"'),
   "table source must expose stable responsive wrapper slot data.",
@@ -2044,7 +2526,10 @@ assert(
   tableSource.includes('data-slot="table-caption"'),
   "table source must expose stable caption slot data.",
 );
-assert(tableSource.includes("TableDensity"), "table source must expose density typing.");
+assert(
+  tableSource.includes("TableDensity"),
+  "table source must expose density typing.",
+);
 assert(
   tableSource.includes("TableCaptionPlacement"),
   "table source must expose caption placement typing.",
@@ -2070,11 +2555,12 @@ assert(
   "table source must wrap native tables with responsive horizontal overflow.",
 );
 assert(
-  tableSource.includes("scope = \"col\""),
+  tableSource.includes('scope = "col"'),
   "table source must default header cells to column scope.",
 );
 assert(
-  tableSource.includes("--table-cell-px") && tableSource.includes("--table-cell-py"),
+  tableSource.includes("--table-cell-px") &&
+    tableSource.includes("--table-cell-py"),
   "table source must use density-backed cell spacing variables.",
 );
 assert(
@@ -2087,8 +2573,14 @@ assert(
     !tableSource.includes("[role=checkbox]"),
   "table source must target real checkbox markup for compact selection cell padding.",
 );
-assert(tableSource.includes("border-border"), "table source must use tokenized borders.");
-assert(tableSource.includes("bg-muted"), "table source must use tokenized muted row states.");
+assert(
+  tableSource.includes("border-border"),
+  "table source must use tokenized borders.",
+);
+assert(
+  tableSource.includes("bg-muted"),
+  "table source must use tokenized muted row states.",
+);
 assert(
   tableSource.includes("motion-safe:transition-colors") &&
     tableSource.includes("motion-safe:duration-150") &&
@@ -2100,13 +2592,22 @@ assert(
   tableSource.includes("text-muted-foreground"),
   "table source must use tokenized caption and header text.",
 );
-assert(tableSource.includes("tabular-nums"), "table source must expose numeric cell styling.");
-assert(tableSource.includes("text-end"), "table source must expose logical end alignment.");
+assert(
+  tableSource.includes("tabular-nums"),
+  "table source must expose numeric cell styling.",
+);
+assert(
+  tableSource.includes("text-end"),
+  "table source must expose logical end alignment.",
+);
 assert(
   tableSource.includes("caption-top") && tableSource.includes("caption-bottom"),
   "table source must expose caption placement utilities.",
 );
-assert(!tableSource.includes("@radix-ui"), "table source must remain Radix-free.");
+assert(
+  !tableSource.includes("@radix-ui"),
+  "table source must remain Radix-free.",
+);
 assert(
   !tableSource.includes("react-aria"),
   "table source must remain dependency-free and avoid grid-style React Aria behavior.",
@@ -2179,12 +2680,18 @@ assert(
   "data-table source must compose existing controls.",
 );
 assert(
-  dataTableSource.includes("role=\"status\"") &&
-    dataTableSource.includes("role=\"alert\""),
+  dataTableSource.includes('role="status"') &&
+    dataTableSource.includes('role="alert"'),
   "data-table source must expose accessible loading and error states.",
 );
-assert(!dataTableSource.includes('role="grid"'), "data-table source must not add grid roles.");
-assert(!dataTableSource.includes("@radix-ui"), "data-table source must remain Radix-free.");
+assert(
+  !dataTableSource.includes('role="grid"'),
+  "data-table source must not add grid roles.",
+);
+assert(
+  !dataTableSource.includes("@radix-ui"),
+  "data-table source must remain Radix-free.",
+);
 assert(
   calendarSource.includes("react-aria-components"),
   "calendar source must use React Aria Components.",
@@ -2195,7 +2702,7 @@ assert(
   "calendar source must expose stable calendar and range-calendar slots.",
 );
 assert(
-  calendarSource.includes('data-slot={`${dataSlotPrefix}-cell`}'),
+  calendarSource.includes("data-slot={`${dataSlotPrefix}-cell`}"),
   "calendar source must expose stable date cell slots.",
 );
 assert(
@@ -2203,7 +2710,10 @@ assert(
     calendarSource.includes("calendarCellClassNames"),
   "calendar source must expose class-name helpers.",
 );
-assert(!calendarSource.includes("@radix-ui"), "calendar source must not use Radix.");
+assert(
+  !calendarSource.includes("@radix-ui"),
+  "calendar source must not use Radix.",
+);
 assert(
   datePickerSource.includes("react-aria-components"),
   "date-picker source must use React Aria Components.",
@@ -2225,7 +2735,10 @@ assert(
     datePickerSource.includes('portalSlot: "date-picker-portal-container"'),
   "date-picker source must render popovers through the provider-aware portal helper.",
 );
-assert(!datePickerSource.includes("@radix-ui"), "date-picker source must not use Radix.");
+assert(
+  !datePickerSource.includes("@radix-ui"),
+  "date-picker source must not use Radix.",
+);
 assert(
   dateRangePickerSource.includes("react-aria-components"),
   "date-range-picker source must use React Aria Components.",
@@ -2238,17 +2751,26 @@ assert(
 );
 assert(
   dateRangePickerSource.includes("getDateRangePickerFieldNames") &&
-    dateRangePickerSource.includes('data-slot="date-range-picker-start-form-value"') &&
-    dateRangePickerSource.includes('data-slot="date-range-picker-end-form-value"'),
+    dateRangePickerSource.includes(
+      'data-slot="date-range-picker-start-form-value"',
+    ) &&
+    dateRangePickerSource.includes(
+      'data-slot="date-range-picker-end-form-value"',
+    ),
   "date-range-picker source must expose start/end form serialization.",
 );
 assert(
   dateRangePickerSource.includes("DethinkPortalProvider") &&
     dateRangePickerSource.includes("useProviderPortalRoot") &&
-    dateRangePickerSource.includes('portalSlot: "date-range-picker-portal-container"'),
+    dateRangePickerSource.includes(
+      'portalSlot: "date-range-picker-portal-container"',
+    ),
   "date-range-picker source must render popovers through the provider-aware portal helper.",
 );
-assert(!dateRangePickerSource.includes("@radix-ui"), "date-range-picker source must not use Radix.");
+assert(
+  !dateRangePickerSource.includes("@radix-ui"),
+  "date-range-picker source must not use Radix.",
+);
 assert(
   typographySource.includes('"data-slot": "typography"'),
   "typography source must expose stable typography slot data.",
@@ -2265,10 +2787,22 @@ assert(
   typographySource.includes("headingElements"),
   "typography source must render native heading elements by level.",
 );
-assert(typographySource.includes("text-primary"), "typography source must use tokenized primary utilities.");
-assert(typographySource.includes("text-start"), "typography source must use logical alignment utilities.");
-assert(typographySource.includes("line-clamp-3"), "typography source must support line clamp utilities.");
-assert(!typographySource.includes("@radix-ui"), "typography source must remain dependency-free.");
+assert(
+  typographySource.includes("text-primary"),
+  "typography source must use tokenized primary utilities.",
+);
+assert(
+  typographySource.includes("text-start"),
+  "typography source must use logical alignment utilities.",
+);
+assert(
+  typographySource.includes("line-clamp-3"),
+  "typography source must support line clamp utilities.",
+);
+assert(
+  !typographySource.includes("@radix-ui"),
+  "typography source must remain dependency-free.",
+);
 assert(
   dateTimePickerSource.includes("react-aria-components"),
   "date-time-picker source must use React Aria Components.",
@@ -2293,7 +2827,9 @@ assert(
 assert(
   dateTimePickerSource.includes("DethinkPortalProvider") &&
     dateTimePickerSource.includes("useProviderPortalRoot") &&
-    dateTimePickerSource.includes('portalSlot: "date-time-picker-portal-container"'),
+    dateTimePickerSource.includes(
+      'portalSlot: "date-time-picker-portal-container"',
+    ),
   "date-time-picker source must render popovers through the provider-aware portal helper.",
 );
 assert(
@@ -2304,7 +2840,10 @@ assert(
   dateTimePickerSource.includes("focus-visible:ring-2"),
   "date-time-picker source must include visible focus styling.",
 );
-assert(!dateTimePickerSource.includes("@radix-ui"), "date-time-picker source must not use Radix.");
+assert(
+  !dateTimePickerSource.includes("@radix-ui"),
+  "date-time-picker source must not use Radix.",
+);
 assert(
   dialogSource.includes("react-aria-components"),
   "dialog source must use React Aria Components.",
@@ -2382,7 +2921,9 @@ assert(
   "dialog source must expose keyboard-dismiss control.",
 );
 assert(
-  dialogSource.includes("shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}"),
+  dialogSource.includes(
+    "shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}",
+  ),
   "dialog source must expose custom outside-interaction close guards.",
 );
 assert(
@@ -2402,7 +2943,8 @@ assert(
   "dialog source must use reduced-motion-aware transitions.",
 );
 assert(
-  dialogSource.includes("100dvh") && dialogSource.includes("env(safe-area-inset-top)"),
+  dialogSource.includes("100dvh") &&
+    dialogSource.includes("env(safe-area-inset-top)"),
   "dialog source must constrain viewport sizing with dynamic viewport and safe-area units.",
 );
 assert(
@@ -2423,7 +2965,10 @@ assert(
   providerPortalSource.includes("MutationObserver"),
   "provider portal helper must resync provider attribute changes.",
 );
-assert(!dialogSource.includes("@radix-ui"), "dialog source must remain Radix-free.");
+assert(
+  !dialogSource.includes("@radix-ui"),
+  "dialog source must remain Radix-free.",
+);
 assert(
   drawerSource.includes("react-aria-components"),
   "drawer source must use React Aria Components.",
@@ -2489,7 +3034,9 @@ assert(
   "drawer source must expose keyboard-dismiss control in modal mode.",
 );
 assert(
-  drawerSource.includes("shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}"),
+  drawerSource.includes(
+    "shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}",
+  ),
   "drawer source must expose custom outside-interaction close guards in modal mode.",
 );
 assert(
@@ -2502,15 +3049,18 @@ assert(
   "drawer source must expose the direction prop.",
 );
 assert(
-  drawerSource.includes("backgroundScale") && drawerSource.includes("useDrawerBackgroundScale"),
+  drawerSource.includes("backgroundScale") &&
+    drawerSource.includes("useDrawerBackgroundScale"),
   "drawer source must wire the backgroundScale prop to the background-scale hook.",
 );
 assert(
-  drawerSource.includes("edgeSwipeToOpen") && drawerSource.includes("DrawerEdgeSwipeZone"),
+  drawerSource.includes("edgeSwipeToOpen") &&
+    drawerSource.includes("DrawerEdgeSwipeZone"),
   "drawer source must wire edgeSwipeToOpen to the edge-swipe hit-region.",
 );
 assert(
-  drawerSource.includes("motionPreset") && drawerSource.includes("shouldEnableDrawerMotion"),
+  drawerSource.includes("motionPreset") &&
+    drawerSource.includes("shouldEnableDrawerMotion"),
   "drawer source must gate Motion-driven behavior through motionPreset.",
 );
 assert(
@@ -2518,7 +3068,8 @@ assert(
   "drawer source must expose the layoutId shared-element passthrough.",
 );
 assert(
-  drawerSource.includes("DrawerNestedContext") && drawerSource.includes("registerChildOpen"),
+  drawerSource.includes("DrawerNestedContext") &&
+    drawerSource.includes("registerChildOpen"),
   "drawer source must expose nested-drawer parent-recede bookkeeping.",
 );
 assert(
@@ -2534,10 +3085,14 @@ assert(
   "drawer source must use reduced-motion-aware transitions for its CSS-only fallback path.",
 );
 assert(
-  drawerSource.includes("dvh") && drawerSource.includes("env(safe-area-inset-top)"),
+  drawerSource.includes("dvh") &&
+    drawerSource.includes("env(safe-area-inset-top)"),
   "drawer source must constrain full-size directions with dynamic viewport and safe-area units.",
 );
-assert(!drawerSource.includes("@radix-ui"), "drawer source must remain Radix-free.");
+assert(
+  !drawerSource.includes("@radix-ui"),
+  "drawer source must remain Radix-free.",
+);
 assert(!drawerSource.includes("vaul"), "drawer source must not wrap vaul.");
 assert(
   drawerMotionSource.includes('from "motion/react"') &&
@@ -2561,8 +3116,9 @@ assert(
   "positioned overlay helper must expose component-specific overlay defaults.",
 );
 assert(
-  positionedOverlaySource.includes("motion-safe:data-[entering]:animate-overlay-in") &&
-    positionedOverlaySource.includes("motion-reduce:animate-none"),
+  positionedOverlaySource.includes(
+    "motion-safe:data-[entering]:animate-overlay-in",
+  ) && positionedOverlaySource.includes("motion-reduce:animate-none"),
   "positioned overlay helper must include reduced-motion-aware overlay classes.",
 );
 assert(
@@ -2646,16 +3202,43 @@ for (const [name, source] of [
   ["tooltip", tooltipSource],
   ["dropdown-menu", dropdownMenuSource],
 ]) {
-  assert(!source.includes("@radix-ui"), `${name} source must remain Radix-free.`);
-  assert(!source.includes("framer-motion"), `${name} source must not use Motion.`);
-  assert(!source.includes("floating-ui"), `${name} source must not use Floating UI.`);
+  assert(
+    !source.includes("@radix-ui"),
+    `${name} source must remain Radix-free.`,
+  );
+  assert(
+    !source.includes("framer-motion"),
+    `${name} source must not use Motion.`,
+  );
+  assert(
+    !source.includes("floating-ui"),
+    `${name} source must not use Floating UI.`,
+  );
 }
-assert(timelineSource.includes("data-slot=\"timeline\""), "timeline source must expose stable root slot data.");
-assert(timelineSource.includes("data-slot=\"timeline-viewport\""), "timeline source must expose viewport slot data.");
-assert(timelineSource.includes("<ol"), "timeline source must render an ordered list.");
-assert(timelineSource.includes("<time"), "timeline source must render machine-readable time elements.");
-assert(timelineSource.includes("bg-primary"), "timeline source must use tokenized primary utilities.");
-assert(timelineSource.includes("bg-success"), "timeline source must use tokenized success utilities.");
+assert(
+  timelineSource.includes('data-slot="timeline"'),
+  "timeline source must expose stable root slot data.",
+);
+assert(
+  timelineSource.includes('data-slot="timeline-viewport"'),
+  "timeline source must expose viewport slot data.",
+);
+assert(
+  timelineSource.includes("<ol"),
+  "timeline source must render an ordered list.",
+);
+assert(
+  timelineSource.includes("<time"),
+  "timeline source must render machine-readable time elements.",
+);
+assert(
+  timelineSource.includes("bg-primary"),
+  "timeline source must use tokenized primary utilities.",
+);
+assert(
+  timelineSource.includes("bg-success"),
+  "timeline source must use tokenized success utilities.",
+);
 assert(
   timelineSource.includes("border-timeline-border"),
   "timeline source must use timeline border token utilities.",
@@ -2664,7 +3247,10 @@ assert(
   timelineSource.includes("bg-timeline-rail"),
   "timeline source must use timeline rail token utilities.",
 );
-assert(!timelineSource.includes("@radix-ui"), "timeline source must remain dependency-free.");
+assert(
+  !timelineSource.includes("@radix-ui"),
+  "timeline source must remain dependency-free.",
+);
 assert(
   slotPlannerSource.includes('from "motion/react"') &&
     slotPlannerSource.includes("MotionConfig") &&
@@ -2725,11 +3311,20 @@ assert(
   !packageIndexSource.includes("slotPlannerSampleSlots"),
   "root package index must not export slot-planner fixtures; they ship through the registry item only.",
 );
-assert(!slotPlannerSource.includes("@radix-ui"), "slot-planner source must remain Radix-free.");
-assert(!slotPickerSource.includes("@radix-ui"), "slot-picker source must remain Radix-free.");
+assert(
+  !slotPlannerSource.includes("@radix-ui"),
+  "slot-planner source must remain Radix-free.",
+);
+assert(
+  !slotPickerSource.includes("@radix-ui"),
+  "slot-picker source must remain Radix-free.",
+);
 
 const navigationMenuSource = await readFile(
-  join(root, "packages/components/src/components/navigation-menu/navigation-menu.tsx"),
+  join(
+    root,
+    "packages/components/src/components/navigation-menu/navigation-menu.tsx",
+  ),
   "utf8",
 );
 const navDockSource = await readFile(
@@ -2767,9 +3362,13 @@ assert(
     navigationMenuSource.includes("motion-reduce:transition-none"),
   "navigation-menu source must use provider tokens and reduced-motion-aware classes.",
 );
-assert(!navigationMenuSource.includes("@radix-ui"), "navigation-menu source must remain Radix-free.");
 assert(
-  !navigationMenuSource.includes("framer-motion") && !navigationMenuSource.includes('from "motion'),
+  !navigationMenuSource.includes("@radix-ui"),
+  "navigation-menu source must remain Radix-free.",
+);
+assert(
+  !navigationMenuSource.includes("framer-motion") &&
+    !navigationMenuSource.includes('from "motion'),
   "navigation-menu source must not use Motion.",
 );
 assert(
@@ -2813,7 +3412,8 @@ assert(
   "navdock source must ship separator anatomy and compatibility alias.",
 );
 assert(
-  navDockSource.includes("isItemCurrent") && navDockSource.includes("currentValue"),
+  navDockSource.includes("isItemCurrent") &&
+    navDockSource.includes("currentValue"),
   "navdock source must support route-derived current matching.",
 );
 assert(
@@ -2823,8 +3423,17 @@ assert(
     navDockSource.includes("motion-safe:transition"),
   "navdock source must use provider tokens and reduced-motion-aware utility classes.",
 );
-assert(!navDockSource.includes("@radix-ui"), "navdock source must remain Radix-free.");
-assert(!navDockSource.includes("framer-motion"), "navdock source must use motion/react, not framer-motion.");
-assert(!navDockSource.includes("floating-ui"), "navdock source must not add Floating UI.");
+assert(
+  !navDockSource.includes("@radix-ui"),
+  "navdock source must remain Radix-free.",
+);
+assert(
+  !navDockSource.includes("framer-motion"),
+  "navdock source must use motion/react, not framer-motion.",
+);
+assert(
+  !navDockSource.includes("floating-ui"),
+  "navdock source must not add Floating UI.",
+);
 
 console.log("Registry smoke passed.");

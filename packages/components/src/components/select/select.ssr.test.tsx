@@ -2,10 +2,7 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import {
-  Select,
-  SelectItem,
-} from ".";
+import { Select, SelectItem } from ".";
 
 describe("Select SSR", () => {
   it("renders select markup on the server", () => {

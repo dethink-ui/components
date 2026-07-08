@@ -110,7 +110,9 @@ describe("Popover", () => {
     const dialog = await screen.findByRole("dialog", {
       name: "Workspace filters",
     });
-    const content = dialog.closest<HTMLElement>('[data-slot="popover-content"]');
+    const content = dialog.closest<HTMLElement>(
+      '[data-slot="popover-content"]',
+    );
     const panel = dialog.closest<HTMLElement>('[data-slot="popover-panel"]');
     const portalHost = content?.closest<HTMLElement>(
       '[data-slot="popover-portal-container"]',
@@ -118,7 +120,9 @@ describe("Popover", () => {
     const provider = screen.getByTestId("popover-provider");
 
     if (!content || !panel || !portalHost) {
-      throw new Error("Popover should render inside a provider-aware portal host.");
+      throw new Error(
+        "Popover should render inside a provider-aware portal host.",
+      );
     }
 
     expect(handleOpenChange).toHaveBeenCalledWith(true);
@@ -126,8 +130,9 @@ describe("Popover", () => {
     expect(content).toHaveClass("custom-popover-content");
     expect(content).toHaveAttribute("data-placement");
     expect(panel).toHaveClass("custom-popover-panel");
-    expect(screen.getByText("Tune the dashboard query before running it."))
-      .toHaveAttribute("data-slot", "popover-description");
+    expect(
+      screen.getByText("Tune the dashboard query before running it."),
+    ).toHaveAttribute("data-slot", "popover-description");
     expect(document.body).toContainElement(portalHost);
     expect(provider).not.toContainElement(content);
     expect(portalHost).toHaveAttribute("data-dethink-provider", "");
@@ -177,7 +182,9 @@ describe("Popover", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByTestId("controlled-state")).toHaveTextContent("closed");
+      expect(screen.getByTestId("controlled-state")).toHaveTextContent(
+        "closed",
+      );
     });
   });
 
@@ -341,11 +348,14 @@ describe("Popover", () => {
   it("renders a manually placed arrow with popover slots", () => {
     const { container } = render(<PopoverArrow className="custom-arrow" />);
 
-    expect(container.querySelector('[data-slot="popover-arrow"]'))
-      .toBeInTheDocument();
-    expect(container.querySelector('[data-slot="popover-arrow-shape"]'))
-      .toBeInTheDocument();
-    expect(container.querySelector('[data-slot="popover-arrow"]'))
-      .toHaveClass("custom-arrow");
+    expect(
+      container.querySelector('[data-slot="popover-arrow"]'),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-slot="popover-arrow-shape"]'),
+    ).toBeInTheDocument();
+    expect(container.querySelector('[data-slot="popover-arrow"]')).toHaveClass(
+      "custom-arrow",
+    );
   });
 });

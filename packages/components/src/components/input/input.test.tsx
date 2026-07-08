@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -12,10 +9,7 @@ import {
   FieldError,
   FieldLabel,
 } from "../form-field";
-import {
-  Input,
-  inputClassNames,
-} from ".";
+import { Input, inputClassNames } from ".";
 
 describe("Input", () => {
   it("renders a native input with attributes, classes, and refs", () => {

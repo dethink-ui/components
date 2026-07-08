@@ -25,11 +25,27 @@ const meta = {
   argTypes: {
     variant: {
       control: "inline-radio",
-      options: ["display", "heading", "title", "subtitle", "body", "caption", "label"],
+      options: [
+        "display",
+        "heading",
+        "title",
+        "subtitle",
+        "body",
+        "caption",
+        "label",
+      ],
     },
     tone: {
       control: "inline-radio",
-      options: ["default", "muted", "subtle", "primary", "success", "warning", "destructive"],
+      options: [
+        "default",
+        "muted",
+        "subtle",
+        "primary",
+        "success",
+        "warning",
+        "destructive",
+      ],
     },
     align: {
       control: "inline-radio",
@@ -70,7 +86,10 @@ export const Base: Story = {};
 
 export const HeadingScale: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-4">
         {headingLevels.map((level) => (
           <Heading key={level} level={level}>
@@ -84,7 +103,10 @@ export const HeadingScale: Story = {
 
 export const SemanticAndVisualLevels: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-4">
         <Heading level={2} visualLevel={4}>
           Semantic h2 styled like visual level 4
@@ -95,7 +117,10 @@ export const SemanticAndVisualLevels: Story = {
         </Text>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {visualLevels.map((visualLevel) => (
-            <div key={visualLevel} className="rounded-md border border-border bg-muted/30 p-3">
+            <div
+              key={visualLevel}
+              className="border-border bg-muted/30 rounded-md border p-3"
+            >
               <Heading level={3} visualLevel={visualLevel}>
                 Visual {visualLevel}
               </Heading>
@@ -112,7 +137,10 @@ export const SemanticAndVisualLevels: Story = {
 
 export const TextScale: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-3">
         {textSizes.map((size) => (
           <Text key={size} size={size}>
@@ -126,7 +154,10 @@ export const TextScale: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-4">
         {variants.map((variant) => (
           <Typography key={variant} variant={variant}>
@@ -140,7 +171,10 @@ export const Variants: Story = {
 
 export const TonesAndWeights: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="space-y-3">
           {tones.map((tone) => (
@@ -163,10 +197,16 @@ export const TonesAndWeights: Story = {
 
 export const Alignment: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="grid gap-4 lg:grid-cols-2">
         {alignments.map((align) => (
-          <div key={align} className="rounded-md border border-border bg-muted/30 p-3">
+          <div
+            key={align}
+            className="border-border bg-muted/30 rounded-md border p-3"
+          >
             <Text align={align}>
               {align} aligned copy demonstrates logical alignment utilities for
               internationalized layouts.
@@ -180,19 +220,23 @@ export const Alignment: Story = {
 
 export const TruncationAndClamp: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="max-w-xl rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border max-w-xl rounded-lg border p-6"
+    >
       <div className="space-y-4">
-        <div className="rounded-md border border-border bg-muted/30 p-3">
+        <div className="border-border bg-muted/30 rounded-md border p-3">
           <Text truncate weight="semibold">
             Very long customer workspace name that should truncate inside narrow
             dashboard navigation
           </Text>
         </div>
-        <div className="rounded-md border border-border bg-muted/30 p-3">
+        <div className="border-border bg-muted/30 rounded-md border p-3">
           <Text lineClamp={3} tone="muted">
-            Product activity generated a long operational summary after importing
-            events, validating customer records, checking the billing pipeline,
-            and reconciling dashboard metrics from multiple source systems.
+            Product activity generated a long operational summary after
+            importing events, validating customer records, checking the billing
+            pipeline, and reconciling dashboard metrics from multiple source
+            systems.
           </Text>
         </div>
       </div>
@@ -202,9 +246,12 @@ export const TruncationAndClamp: Story = {
 
 export const DashboardCopy: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="grid gap-4 lg:grid-cols-3">
-        <section className="rounded-md border border-border bg-background p-4">
+        <section className="border-border bg-background rounded-md border p-4">
           <Text as="span" size="sm" tone="muted" weight="medium">
             Pipeline
           </Text>
@@ -215,7 +262,7 @@ export const DashboardCopy: Story = {
             Records imported from CRM, support, and billing sources.
           </Text>
         </section>
-        <section className="rounded-md border border-border bg-background p-4">
+        <section className="border-border bg-background rounded-md border p-4">
           <Text as="span" size="sm" tone="success" weight="semibold">
             Complete
           </Text>
@@ -226,7 +273,7 @@ export const DashboardCopy: Story = {
             Validation finished without blocking errors.
           </Text>
         </section>
-        <section className="rounded-md border border-border bg-background p-4">
+        <section className="border-border bg-background rounded-md border p-4">
           <Text as="span" size="sm" tone="warning" weight="semibold">
             Attention
           </Text>
@@ -248,15 +295,15 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <div className="space-y-3">
           <Heading level={2} visualLevel={3}>
             Dark compact typography
           </Heading>
           <Text tone="muted">
-            Text primitives keep readable contrast while inheriting compact density
-            from the provider.
+            Text primitives keep readable contrast while inheriting compact
+            density from the provider.
           </Text>
           <Text tone="primary" weight="semibold">
             Primary emphasis
@@ -267,7 +314,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <div className="space-y-3">
           <Heading align="start" level={2} visualLevel={3}>

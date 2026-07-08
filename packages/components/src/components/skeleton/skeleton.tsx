@@ -40,14 +40,20 @@ const skeletonRadiusClasses: Record<SkeletonRadius, string> = {
   full: "rounded-full",
 };
 
-const skeletonAvatarSizeClasses: Record<NonNullable<SkeletonAvatarProps["size"]>, string> = {
+const skeletonAvatarSizeClasses: Record<
+  NonNullable<SkeletonAvatarProps["size"]>,
+  string
+> = {
   sm: "size-8",
   md: "size-10",
   lg: "size-12",
   xl: "size-16",
 };
 
-const skeletonButtonSizeClasses: Record<NonNullable<SkeletonButtonProps["size"]>, string> = {
+const skeletonButtonSizeClasses: Record<
+  NonNullable<SkeletonButtonProps["size"]>,
+  string
+> = {
   sm: "h-8 w-24",
   md: "h-density-control w-32",
   lg: "h-11 w-40",
@@ -67,7 +73,16 @@ export function skeletonClassNames({
 }
 
 export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ animation = "pulse", className, radius = "md", slotName = "skeleton", ...props }, ref) => (
+  (
+    {
+      animation = "pulse",
+      className,
+      radius = "md",
+      slotName = "skeleton",
+      ...props
+    },
+    ref,
+  ) => (
     <div
       {...props}
       ref={ref}
@@ -96,10 +111,7 @@ export const SkeletonText = forwardRef<HTMLDivElement, SkeletonTextProps>(
         <Skeleton
           key={index}
           animation={animation}
-          className={cn(
-            "h-3.5",
-            index === lines - 1 ? "w-2/3" : "w-full",
-          )}
+          className={cn("h-3.5", index === lines - 1 ? "w-2/3" : "w-full")}
         />
       ))}
     </div>

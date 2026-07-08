@@ -3,12 +3,7 @@ import { cn } from "../../utils/cn";
 
 export type ProgressSize = "sm" | "md" | "lg";
 export type ProgressTone =
-  | "primary"
-  | "success"
-  | "warning"
-  | "destructive"
-  | "info"
-  | "muted";
+  "primary" | "success" | "warning" | "destructive" | "info" | "muted";
 
 export interface ProgressValueOptions {
   value?: number | null;
@@ -16,20 +11,26 @@ export interface ProgressValueOptions {
   max?: number;
 }
 
-export interface ProgressProps extends HTMLAttributes<HTMLDivElement>, ProgressValueOptions {
+export interface ProgressProps
+  extends HTMLAttributes<HTMLDivElement>, ProgressValueOptions {
   tone?: ProgressTone;
   size?: ProgressSize;
   indeterminate?: boolean;
   label?: ReactNode;
   status?: ReactNode;
   showValue?: boolean;
-  formatValue?: (value: number, options: Required<Pick<ProgressValueOptions, "min" | "max">>) => ReactNode;
+  formatValue?: (
+    value: number,
+    options: Required<Pick<ProgressValueOptions, "min" | "max">>,
+  ) => ReactNode;
   trackClassName?: string;
   indicatorClassName?: string;
 }
 
-export interface ProgressCircleProps
-  extends Omit<ProgressProps, "trackClassName" | "indicatorClassName"> {
+export interface ProgressCircleProps extends Omit<
+  ProgressProps,
+  "trackClassName" | "indicatorClassName"
+> {
   thickness?: number;
 }
 
@@ -116,7 +117,9 @@ export function progressIndicatorClassNames({
   className,
   indeterminate,
   tone = "primary",
-}: Pick<ProgressProps, "indeterminate" | "tone"> & { className?: string } = {}) {
+}: Pick<ProgressProps, "indeterminate" | "tone"> & {
+  className?: string;
+} = {}) {
   return cn(
     progressIndicatorClasses,
     progressToneClasses[tone],
@@ -161,8 +164,13 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     const clamped = clampProgressValue({ max, min, value });
     const percent = getProgressPercent({ max, min, value });
     const hasValue = !indeterminate && clamped !== undefined;
-    const valueLabel = hasValue ? formatValue(clamped, { max, min }) : undefined;
-    const accessibleLabel = ariaLabel ?? (typeof label === "string" ? label : undefined) ?? "Progress";
+    const valueLabel = hasValue
+      ? formatValue(clamped, { max, min })
+      : undefined;
+    const accessibleLabel =
+      ariaLabel ??
+      (typeof label === "string" ? label : undefined) ??
+      "Progress";
 
     return (
       <div
@@ -173,7 +181,9 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         aria-valuemax={hasValue ? max : undefined}
         aria-valuemin={hasValue ? min : undefined}
         aria-valuenow={hasValue ? clamped : undefined}
-        aria-valuetext={hasValue && typeof valueLabel === "string" ? valueLabel : undefined}
+        aria-valuetext={
+          hasValue && typeof valueLabel === "string" ? valueLabel : undefined
+        }
         role="progressbar"
         data-slot="progress"
         data-state={indeterminate ? "indeterminate" : "determinate"}
@@ -198,7 +208,10 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
         <div
           aria-hidden="true"
           data-slot="progress-track"
-          className={progressTrackClassNames({ className: trackClassName, size })}
+          className={progressTrackClassNames({
+            className: trackClassName,
+            size,
+          })}
         >
           <div
             data-slot="progress-indicator"
@@ -241,11 +254,16 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
     const clamped = clampProgressValue({ max, min, value });
     const percent = getProgressPercent({ max, min, value }) ?? 0;
     const hasValue = !indeterminate && clamped !== undefined;
-    const valueLabel = hasValue ? formatValue(clamped, { max, min }) : undefined;
+    const valueLabel = hasValue
+      ? formatValue(clamped, { max, min })
+      : undefined;
     const radius = 42;
     const circumference = 2 * Math.PI * radius;
     const dashOffset = circumference - (percent / 100) * circumference;
-    const accessibleLabel = ariaLabel ?? (typeof label === "string" ? label : undefined) ?? "Progress";
+    const accessibleLabel =
+      ariaLabel ??
+      (typeof label === "string" ? label : undefined) ??
+      "Progress";
 
     return (
       <div
@@ -256,20 +274,27 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
         aria-valuemax={hasValue ? max : undefined}
         aria-valuemin={hasValue ? min : undefined}
         aria-valuenow={hasValue ? clamped : undefined}
-        aria-valuetext={hasValue && typeof valueLabel === "string" ? valueLabel : undefined}
+        aria-valuetext={
+          hasValue && typeof valueLabel === "string" ? valueLabel : undefined
+        }
         role="progressbar"
         data-slot="progress-circle"
         data-state={indeterminate ? "indeterminate" : "determinate"}
         data-size={size}
         data-tone={tone}
-        className={cn("inline-grid shrink-0 place-items-center gap-[var(--dt-space-2)] text-sm", className)}
+        className={cn(
+          "inline-grid shrink-0 place-items-center gap-[var(--dt-space-2)] text-sm",
+          className,
+        )}
       >
         <svg
           aria-hidden="true"
           viewBox="0 0 100 100"
           className={cn(
             progressCircleSizeClasses[size],
-            indeterminate ? "animate-spin motion-reduce:animate-none" : undefined,
+            indeterminate
+              ? "animate-spin motion-reduce:animate-none"
+              : undefined,
           )}
         >
           <circle
@@ -298,7 +323,10 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
           />
         </svg>
         {label || status || showValue ? (
-          <span data-slot="progress-circle-label" className="text-center text-muted-foreground">
+          <span
+            data-slot="progress-circle-label"
+            className="text-muted-foreground text-center"
+          >
             {status ?? (showValue ? valueLabel : label)}
           </span>
         ) : null}

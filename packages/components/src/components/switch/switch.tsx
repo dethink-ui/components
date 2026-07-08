@@ -11,11 +11,10 @@ import { cn } from "../../utils/cn";
 
 export type SwitchControlSize = "sm" | "md" | "lg";
 
-export interface SwitchProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    "checked" | "defaultChecked" | "onChange" | "size" | "type"
-  > {
+export interface SwitchProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "checked" | "defaultChecked" | "onChange" | "size" | "type"
+> {
   "data-slot"?: string;
   checked?: boolean;
   controlSize?: SwitchControlSize;
@@ -50,7 +49,12 @@ const switchThumbBaseClasses =
   "rounded-full bg-background text-background shadow-sm motion-safe:transition-[margin,background-color] motion-safe:duration-150 data-[state=checked]:ms-auto data-[state=checked]:bg-primary-foreground data-[readonly=true]:bg-muted-foreground/70";
 
 function isAriaInvalid(value: SwitchProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function getSwitchState(checked: boolean) {
@@ -80,7 +84,11 @@ export function switchClassNames({
   className,
   controlSize = "md",
 }: Pick<SwitchProps, "className" | "controlSize"> = {}) {
-  return cn(switchRootBaseClasses, switchControlSizeClasses[controlSize], className);
+  return cn(
+    switchRootBaseClasses,
+    switchControlSizeClasses[controlSize],
+    className,
+  );
 }
 
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
@@ -105,7 +113,8 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
   ) => {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const isControlled = checked !== undefined;
-    const [uncontrolledChecked, setUncontrolledChecked] = useState(defaultChecked);
+    const [uncontrolledChecked, setUncontrolledChecked] =
+      useState(defaultChecked);
     const checkedState = isControlled ? checked : uncontrolledChecked;
     const resolvedInvalid = invalid || isAriaInvalid(ariaInvalid);
     const state = getSwitchState(checkedState);
@@ -207,7 +216,10 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             data-invalid={resolvedInvalid ? "true" : undefined}
             data-readonly={readOnly ? "true" : undefined}
             data-required={required ? "true" : undefined}
-            className={cn(switchThumbBaseClasses, switchThumbSizeClasses[controlSize])}
+            className={cn(
+              switchThumbBaseClasses,
+              switchThumbSizeClasses[controlSize],
+            )}
           />
         </span>
       </span>

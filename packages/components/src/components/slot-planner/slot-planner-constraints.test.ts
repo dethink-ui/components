@@ -91,9 +91,9 @@ describe("duration constraints", () => {
     );
 
     expect(codesOf(violations)).toEqual(["duration-increment"]);
-    expect(findViolation(violations, "duration-increment")?.params).toMatchObject(
-      { durationMinutes: 50, increment: 15 },
-    );
+    expect(
+      findViolation(violations, "duration-increment")?.params,
+    ).toMatchObject({ durationMinutes: 50, increment: 15 });
     expect(
       validateSlotPlannerSlot(
         makeSlot({ id: "even", durationMinutes: 45 }),
@@ -110,9 +110,7 @@ describe("duration constraints", () => {
         recurrence: {
           frequency: "weekly",
           until: "2026-07-22",
-          overrides: [
-            { occurrenceDate: "2026-07-15", durationMinutes: 170 },
-          ],
+          overrides: [{ occurrenceDate: "2026-07-15", durationMinutes: 170 }],
         },
       }),
       makeContext({ constraints: { maxDurationMinutes: 90 } }),
@@ -276,7 +274,9 @@ describe("overlap", () => {
     expect(
       validateSlotPlannerSlot(
         makeSlot({ id: "past-candidate", date: "2026-06-29" }),
-        makeContext({ slots: [makeSlot({ id: "expired", date: "2026-06-29" })] }),
+        makeContext({
+          slots: [makeSlot({ id: "expired", date: "2026-06-29" })],
+        }),
       ),
     ).toEqual([]);
   });
@@ -637,9 +637,9 @@ describe("countSlotPlannerPublishedOccurrences", () => {
       makeSlot({ id: "other-day", date: "2026-07-09" }),
     ];
 
-    expect(
-      countSlotPlannerPublishedOccurrences(slots, "2026-07-08", NOW),
-    ).toBe(3);
+    expect(countSlotPlannerPublishedOccurrences(slots, "2026-07-08", NOW)).toBe(
+      3,
+    );
     // A recurring series counts on each occurrence date.
     expect(
       countSlotPlannerPublishedOccurrences(

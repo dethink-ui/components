@@ -73,7 +73,9 @@ describe("Choice controls suite", () => {
         <Form aria-label="Choice controls form">
           <FieldSet>
             <FieldLegend>Notification channels</FieldLegend>
-            <FieldDescription>Choose the channels submitted by the form.</FieldDescription>
+            <FieldDescription>
+              Choose the channels submitted by the form.
+            </FieldDescription>
             <FieldGroup>
               <Field id="suite-email" orientation="horizontal">
                 <FieldControl asChild>
@@ -92,7 +94,11 @@ describe("Choice controls suite", () => {
 
           <FieldSet>
             <FieldLegend>Default workflow mode</FieldLegend>
-            <RadioGroup name="workflowMode" defaultValue="balanced" orientation="horizontal">
+            <RadioGroup
+              name="workflowMode"
+              defaultValue="balanced"
+              orientation="horizontal"
+            >
               <Field id="suite-mode-fast" orientation="horizontal">
                 <FieldControl asChild>
                   <RadioGroupItem value="fast" />
@@ -111,7 +117,9 @@ describe("Choice controls suite", () => {
           <Field id="suite-browser-tool" orientation="horizontal">
             <FieldContent>
               <FieldLabel>Browser tool</FieldLabel>
-              <FieldDescription>Allow website inspection during agent tasks.</FieldDescription>
+              <FieldDescription>
+                Allow website inspection during agent tasks.
+              </FieldDescription>
             </FieldContent>
             <FieldControl asChild>
               <Switch name="browserTool" value="enabled" defaultChecked />
@@ -121,7 +129,9 @@ describe("Choice controls suite", () => {
           <Field id="suite-admin-mfa" orientation="horizontal" invalid required>
             <FieldContent>
               <FieldLabel>Require admin MFA</FieldLabel>
-              <FieldDescription>Protect owner and billing actions.</FieldDescription>
+              <FieldDescription>
+                Protect owner and billing actions.
+              </FieldDescription>
               <FieldError>Enable MFA before inviting admins.</FieldError>
             </FieldContent>
             <FieldControl asChild>
@@ -139,8 +149,12 @@ describe("Choice controls suite", () => {
     const adminMfa = screen.getByRole("switch", { name: "Require admin MFA" });
     const formData = new FormData(form as HTMLFormElement);
 
-    expect(screen.getByRole("group", { name: "Notification channels" })).toBeInTheDocument();
-    expect(screen.getByRole("group", { name: "Default workflow mode" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "Notification channels" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("group", { name: "Default workflow mode" }),
+    ).toBeInTheDocument();
     expect(email).toHaveAttribute("type", "checkbox");
     expect(email).not.toHaveAttribute("role");
     expect(balanced).toHaveAttribute("type", "radio");
@@ -156,7 +170,9 @@ describe("Choice controls suite", () => {
 
     await user.click(browserTool);
 
-    expect(screen.getByRole("switch", { name: "Browser tool" })).not.toBeChecked();
+    expect(
+      screen.getByRole("switch", { name: "Browser tool" }),
+    ).not.toBeChecked();
     expect(new FormData(form as HTMLFormElement).get("browserTool")).toBeNull();
   });
 });

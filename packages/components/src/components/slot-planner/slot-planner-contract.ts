@@ -497,8 +497,7 @@ export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
     "booking-horizon": "Starts beyond the booking horizon",
     "blackout-date": "Falls on a blackout date",
     "non-working-day": "Falls on a non-working day",
-    "invalid-wall-clock-time":
-      "Time does not exist on this date in {timeZone}",
+    "invalid-wall-clock-time": "Time does not exist on this date in {timeZone}",
   },
   violationsHeading: "Fix before saving",
   announceCreated: "{slot} added",

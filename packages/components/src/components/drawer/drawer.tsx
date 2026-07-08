@@ -91,8 +91,10 @@ export interface DrawerProps {
   velocityThreshold?: number;
 }
 
-export interface DrawerTriggerProps
-  extends Omit<AriaButtonProps, "children" | "className"> {
+export interface DrawerTriggerProps extends Omit<
+  AriaButtonProps,
+  "children" | "className"
+> {
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -100,26 +102,25 @@ export interface DrawerTriggerProps
   variant?: ButtonVariant;
 }
 
-export interface DrawerContentProps
-  extends Omit<
-    HTMLAttributes<HTMLDivElement>,
-    | "children"
-    | "className"
-    | "onAnimationEnd"
-    | "onAnimationIteration"
-    | "onAnimationStart"
-    | "onDrag"
-    | "onDragEnd"
-    | "onDragEnter"
-    | "onDragLeave"
-    | "onDragOver"
-    | "onDragStart"
-    | "onDrop"
-    | "onTransitionCancel"
-    | "onTransitionEnd"
-    | "onTransitionRun"
-    | "onTransitionStart"
-  > {
+export interface DrawerContentProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  | "children"
+  | "className"
+  | "onAnimationEnd"
+  | "onAnimationIteration"
+  | "onAnimationStart"
+  | "onDrag"
+  | "onDragEnd"
+  | "onDragEnter"
+  | "onDragLeave"
+  | "onDragOver"
+  | "onDragStart"
+  | "onDrop"
+  | "onTransitionCancel"
+  | "onTransitionEnd"
+  | "onTransitionRun"
+  | "onTransitionStart"
+> {
   "aria-describedby"?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -143,15 +144,16 @@ export interface DrawerHeaderProps extends HTMLAttributes<HTMLDivElement> {}
 
 export interface DrawerFooterProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface DrawerTitleProps
-  extends Omit<HTMLAttributes<HTMLHeadingElement>, "className"> {
+export interface DrawerTitleProps extends Omit<
+  HTMLAttributes<HTMLHeadingElement>,
+  "className"
+> {
   className?: string;
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   visuallyHidden?: boolean;
 }
 
-export interface DrawerDescriptionProps
-  extends HTMLAttributes<HTMLParagraphElement> {}
+export interface DrawerDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 export interface DrawerCloseProps extends DrawerTriggerProps {}
 
@@ -206,7 +208,9 @@ interface DrawerNestedContextValue {
   unregisterChildOpen: () => void;
 }
 
-const DrawerNestedContext = createContext<DrawerNestedContextValue | null>(null);
+const DrawerNestedContext = createContext<DrawerNestedContextValue | null>(
+  null,
+);
 
 interface DrawerContentContextValue {
   defaultTitleId: string;
@@ -217,18 +221,20 @@ interface DrawerContentContextValue {
   setTitleId: (id: string | null) => void;
 }
 
-const DrawerContentContext =
-  createContext<DrawerContentContextValue | null>(null);
+const DrawerContentContext = createContext<DrawerContentContextValue | null>(
+  null,
+);
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
-const drawerDirectionAxis: Record<DrawerDirection, "horizontal" | "vertical"> = {
-  bottom: "vertical",
-  left: "horizontal",
-  right: "horizontal",
-  top: "vertical",
-};
+const drawerDirectionAxis: Record<DrawerDirection, "horizontal" | "vertical"> =
+  {
+    bottom: "vertical",
+    left: "horizontal",
+    right: "horizontal",
+    top: "vertical",
+  };
 
 const drawerRootClasses = "contents";
 
@@ -287,10 +293,11 @@ const drawerCustomSizeClasses: Record<"horizontal" | "vertical", string> = {
   vertical: "h-[var(--drawer-size)]",
 };
 
-const drawerContentScrollBehaviorClasses: Record<DrawerScrollBehavior, string> = {
-  inside: "overflow-y-auto overscroll-contain",
-  outside: "overflow-visible",
-};
+const drawerContentScrollBehaviorClasses: Record<DrawerScrollBehavior, string> =
+  {
+    inside: "overflow-y-auto overscroll-contain",
+    outside: "overflow-visible",
+  };
 
 const drawerPanelClasses = "contents";
 
@@ -426,7 +433,10 @@ function resolveDrawerContentSizing({
   };
 }
 
-const drawerHorizontalFallbackSizePx: Record<Exclude<DrawerSize, "full">, number> = {
+const drawerHorizontalFallbackSizePx: Record<
+  Exclude<DrawerSize, "full">,
+  number
+> = {
   lg: 512,
   md: 384,
   sm: 320,
@@ -645,7 +655,8 @@ export function drawerContentClassNames({
       : axis === "vertical"
         ? drawerVerticalSizeClasses[resolvedSize]
         : drawerHorizontalSizeClasses[resolvedSize];
-  const durationClass = getDrawerMotionPresetSettings(motionPreset).contentDurationClass;
+  const durationClass =
+    getDrawerMotionPresetSettings(motionPreset).contentDurationClass;
 
   if (!modal) {
     const closedSizeClass = axis === "vertical" ? "h-0" : "w-0";
@@ -697,7 +708,11 @@ export function drawerTitleClassNames({
   className,
   visuallyHidden = false,
 }: Pick<DrawerTitleProps, "className" | "visuallyHidden"> = {}) {
-  return cn(drawerTitleClasses, visuallyHidden && visuallyHiddenClasses, className);
+  return cn(
+    drawerTitleClasses,
+    visuallyHidden && visuallyHiddenClasses,
+    className,
+  );
 }
 
 export function drawerDescriptionClassNames({
@@ -744,7 +759,9 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(
+      defaultOpen ?? false,
+    );
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
     const previousOpenRef = useRef(resolvedOpen);
@@ -757,7 +774,8 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
         portalSlot: "drawer-portal-container",
       });
     const nestedParentContext = useContext(DrawerNestedContext);
-    const portalContainer = nestedParentContext?.portalContainer ?? ownPortalContainer;
+    const portalContainer =
+      nestedParentContext?.portalContainer ?? ownPortalContainer;
 
     useEffect(() => {
       if (!nestedParentContext || !resolvedOpen) {
@@ -845,7 +863,10 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
     );
     const showEdgeSwipeZone =
       edgeSwipeToOpen &&
-      shouldEnableDrawerMotion({ motionPreset, reducedMotion: resolvedReducedMotion }) &&
+      shouldEnableDrawerMotion({
+        motionPreset,
+        reducedMotion: resolvedReducedMotion,
+      }) &&
       !resolvedOpen;
 
     return (
@@ -901,7 +922,9 @@ export const DrawerTrigger = forwardRef<HTMLButtonElement, DrawerTriggerProps>(
         aria-expanded={rootContext?.open ?? false}
         aria-haspopup={rootContext?.modal ? "dialog" : undefined}
         data-direction={rootContext?.direction}
-        data-modal={rootContext ? (rootContext.modal ? "true" : "false") : undefined}
+        data-modal={
+          rootContext ? (rootContext.modal ? "true" : "false") : undefined
+        }
         data-slot={dataSlot ?? "drawer-trigger"}
         className={drawerTriggerClassNames({ className, size, variant })}
         onPress={(event) => {
@@ -945,7 +968,8 @@ function DrawerPushContent(
   const outerRef = useRef<HTMLDivElement | null>(null);
   useClosedDrawerDescendantTabOrder(outerRef, !open);
   const prefersReducedMotion = useDrawerReducedMotion();
-  const resolvedReducedMotion = rootContext?.reducedMotion ?? prefersReducedMotion;
+  const resolvedReducedMotion =
+    rootContext?.reducedMotion ?? prefersReducedMotion;
   const motionEnabled = shouldEnableDrawerMotion({
     motionPreset,
     reducedMotion: resolvedReducedMotion,
@@ -956,7 +980,8 @@ function DrawerPushContent(
     () => ({
       portalContainer: rootContext?.portalContainer ?? null,
       registerChildOpen: () => setOpenChildCount((count) => count + 1),
-      unregisterChildOpen: () => setOpenChildCount((count) => Math.max(0, count - 1)),
+      unregisterChildOpen: () =>
+        setOpenChildCount((count) => Math.max(0, count - 1)),
     }),
     [rootContext?.portalContainer],
   );
@@ -972,7 +997,8 @@ function DrawerPushContent(
   });
   const { dragControls, getMotionProps } = useDrawerDrag({
     activeSnapPoint: rootContext?.activeSnapPoint,
-    closeThreshold: rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
+    closeThreshold:
+      rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
     contentRef: outerRef,
     defaultSnapPoint: rootContext?.defaultSnapPoint,
     direction,
@@ -990,7 +1016,7 @@ function DrawerPushContent(
   const [titleId, setTitleId] = useState<string | null>(null);
   const [descriptionId, setDescriptionId] = useState<string | null>(null);
   const labelledBy =
-    ariaLabelledBy ?? (ariaLabel ? undefined : titleId ?? defaultTitleId);
+    ariaLabelledBy ?? (ariaLabel ? undefined : (titleId ?? defaultTitleId));
   const panelRef = useRef<HTMLDivElement | null>(null);
   const wasOpenRef = useRef(open);
   const contextValue = useMemo(
@@ -1160,7 +1186,8 @@ function DrawerModalContent(
   const motionPreset = rootContext?.motionPreset ?? "standard";
   const outerRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useDrawerReducedMotion();
-  const resolvedReducedMotion = rootContext?.reducedMotion ?? prefersReducedMotion;
+  const resolvedReducedMotion =
+    rootContext?.reducedMotion ?? prefersReducedMotion;
   const motionEnabled = shouldEnableDrawerMotion({
     motionPreset,
     reducedMotion: resolvedReducedMotion,
@@ -1171,7 +1198,8 @@ function DrawerModalContent(
     () => ({
       portalContainer: rootContext?.portalContainer ?? null,
       registerChildOpen: () => setOpenChildCount((count) => count + 1),
-      unregisterChildOpen: () => setOpenChildCount((count) => Math.max(0, count - 1)),
+      unregisterChildOpen: () =>
+        setOpenChildCount((count) => Math.max(0, count - 1)),
     }),
     [rootContext?.portalContainer],
   );
@@ -1187,7 +1215,8 @@ function DrawerModalContent(
   });
   const { dragControls, getMotionProps } = useDrawerDrag({
     activeSnapPoint: rootContext?.activeSnapPoint,
-    closeThreshold: rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
+    closeThreshold:
+      rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
     contentRef: outerRef,
     defaultSnapPoint: rootContext?.defaultSnapPoint,
     direction,
@@ -1205,7 +1234,7 @@ function DrawerModalContent(
   const [titleId, setTitleId] = useState<string | null>(null);
   const [descriptionId, setDescriptionId] = useState<string | null>(null);
   const labelledBy =
-    ariaLabelledBy ?? (ariaLabel ? undefined : titleId ?? defaultTitleId);
+    ariaLabelledBy ?? (ariaLabel ? undefined : (titleId ?? defaultTitleId));
   const contextValue = useMemo(
     () => ({
       defaultTitleId,
@@ -1274,11 +1303,16 @@ function DrawerModalContent(
       onOpenChange={(isOpen) => rootContext?.onOpenChange(isOpen)}
       data-direction={direction}
       data-slot="drawer-overlay"
-      className={drawerOverlayClassNames({ className: overlayClassName, motionPreset })}
+      className={drawerOverlayClassNames({
+        className: overlayClassName,
+        motionPreset,
+      })}
     >
       {motionEnabled ? (
         (() => {
-          const motionProps = getMotionProps(rootContext?.dragHandleOnly ?? true);
+          const motionProps = getMotionProps(
+            rootContext?.dragHandleOnly ?? true,
+          );
           const motionStyle = {
             ...contentStyle,
             ...motionProps.style,
@@ -1454,7 +1488,9 @@ export const DrawerClose = forwardRef<HTMLButtonElement, DrawerCloseProps>(
       <AriaButton
         {...props}
         ref={ref}
-        aria-label={ariaLabel ?? (hasVisibleChildren ? undefined : "Close drawer")}
+        aria-label={
+          ariaLabel ?? (hasVisibleChildren ? undefined : "Close drawer")
+        }
         data-slot="drawer-close"
         className={drawerTriggerClassNames({
           className,

@@ -36,7 +36,11 @@ describe("Link accessibility", () => {
           </nav>
           <div>
             {underlines.map((underline) => (
-              <Link key={underline} href={`/${underline}`} underline={underline}>
+              <Link
+                key={underline}
+                href={`/${underline}`}
+                underline={underline}
+              >
                 {underline} underline
               </Link>
             ))}

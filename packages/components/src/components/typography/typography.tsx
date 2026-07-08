@@ -1,34 +1,19 @@
-import { createElement, forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import {
+  createElement,
+  forwardRef,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cn } from "../../utils/cn";
 
 export type TypographyElement =
-  | "p"
-  | "span"
-  | "div"
-  | "small"
-  | "strong"
-  | "em"
-  | "label"
-  | "figcaption";
+  "p" | "span" | "div" | "small" | "strong" | "em" | "label" | "figcaption";
 
 export type TypographyVariant =
-  | "display"
-  | "heading"
-  | "title"
-  | "subtitle"
-  | "body"
-  | "caption"
-  | "label";
+  "display" | "heading" | "title" | "subtitle" | "body" | "caption" | "label";
 
 export type TypographySize =
-  | "xs"
-  | "sm"
-  | "md"
-  | "lg"
-  | "xl"
-  | "2xl"
-  | "3xl"
-  | "4xl";
+  "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 
 export type TypographyTone =
   | "default"
@@ -70,7 +55,8 @@ export interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
   visualLevel?: HeadingVisualLevel;
 }
 
-export type TextElement = "p" | "span" | "div" | "small" | "label" | "strong" | "em";
+export type TextElement =
+  "p" | "span" | "div" | "small" | "label" | "strong" | "em";
 export type TextSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 export interface TextProps extends HTMLAttributes<HTMLElement> {
@@ -292,7 +278,8 @@ export const Typography = forwardRef<HTMLElement, TypographyProps>(
         "data-line-clamp": lineClamp,
         "data-size": size,
         "data-tone": tone,
-        "data-truncate": truncate && lineClamp === undefined ? "true" : undefined,
+        "data-truncate":
+          truncate && lineClamp === undefined ? "true" : undefined,
         "data-variant": variant,
         "data-weight": weight,
         className: typographyClassNames({
@@ -337,7 +324,8 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
         "data-level": level,
         "data-line-clamp": lineClamp,
         "data-tone": tone,
-        "data-truncate": truncate && lineClamp === undefined ? "true" : undefined,
+        "data-truncate":
+          truncate && lineClamp === undefined ? "true" : undefined,
         "data-visual-level": visualLevel,
         className: headingClassNames({
           align,
@@ -380,7 +368,8 @@ export const Text = forwardRef<HTMLElement, TextProps>(
         "data-line-clamp": lineClamp,
         "data-size": size,
         "data-tone": tone,
-        "data-truncate": truncate && lineClamp === undefined ? "true" : undefined,
+        "data-truncate":
+          truncate && lineClamp === undefined ? "true" : undefined,
         "data-weight": weight,
         className: textClassNames({
           align,

@@ -14,7 +14,13 @@ import {
 const lines = [
   { item: "Team plan · 12 seats", qty: 12, unit: 29, note: "" },
   { item: "SSO add-on", qty: 1, unit: 99, note: "" },
-  { item: "Usage overage", qty: 41_000, unit: 0.0008, note: "per request", muted: true },
+  {
+    item: "Usage overage",
+    qty: 41_000,
+    unit: 0.0008,
+    note: "per request",
+    muted: true,
+  },
 ];
 
 const currency = new Intl.NumberFormat("en-US", {
@@ -32,7 +38,9 @@ export function TableRecipeInvoice() {
 
   return (
     <Table>
-      <TableCaption placement="top">Invoice #2026-0714 — July 2026</TableCaption>
+      <TableCaption placement="top">
+        Invoice #2026-0714 — July 2026
+      </TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Item</TableHead>
@@ -47,7 +55,7 @@ export function TableRecipeInvoice() {
             <TableCell>
               {line.item}
               {line.note ? (
-                <span className="ml-2 text-xs text-muted-foreground">
+                <span className="text-muted-foreground ml-2 text-xs">
                   {line.note}
                 </span>
               ) : null}

@@ -42,7 +42,7 @@ function ControlGroup<T extends string>({
 }) {
   return (
     <fieldset className="min-w-0">
-      <legend className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <legend className="text-muted-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
         {label}
       </legend>
       <RadioGroup
@@ -56,7 +56,7 @@ function ControlGroup<T extends string>({
         {options.map((option) => (
           <label
             key={option}
-            className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium capitalize text-muted-foreground has-checked:text-foreground"
+            className="text-muted-foreground has-checked:text-foreground inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium capitalize"
           >
             <RadioGroupItem value={option} />
             {option}
@@ -182,7 +182,7 @@ export function NavDockPlayground() {
       </div>
 
       <div
-        className={`flex min-h-[22rem] items-center rounded-lg border border-border bg-muted/25 p-8 ${
+        className={`border-border bg-muted/25 flex min-h-[22rem] items-center rounded-lg border p-8 ${
           vertical
             ? placement === "left"
               ? "justify-start"
@@ -205,7 +205,7 @@ export function NavDockPlayground() {
         />
       </div>
 
-      <p className="text-sm leading-6 text-muted-foreground">
+      <p className="text-muted-foreground text-sm leading-6">
         Sweep the pointer along the dock to feel the continuous magnification,
         open the Team submenu, and switch motion presets to compare spring
         characters. The Support item shows the disabled state.

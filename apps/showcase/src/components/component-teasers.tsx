@@ -88,7 +88,9 @@ export function CardTeaser() {
     <Card spacing="sm" shadow="none" className="w-full">
       <CardContent className="text-sm">
         <p className="font-heading font-semibold">Monthly active users</p>
-        <p className="mt-1 font-heading text-2xl font-bold text-primary">24,310</p>
+        <p className="font-heading text-primary mt-1 text-2xl font-bold">
+          24,310
+        </p>
       </CardContent>
     </Card>
   );
@@ -97,8 +99,17 @@ export function CardTeaser() {
 export function InputTeaser() {
   return (
     <div className="w-full space-y-2">
-      <Input controlSize="sm" placeholder="you@company.com" aria-label="Email teaser" />
-      <Input controlSize="sm" invalid defaultValue="not an email" aria-label="Invalid teaser" />
+      <Input
+        controlSize="sm"
+        placeholder="you@company.com"
+        aria-label="Email teaser"
+      />
+      <Input
+        controlSize="sm"
+        invalid
+        defaultValue="not an email"
+        aria-label="Invalid teaser"
+      />
     </div>
   );
 }
@@ -117,7 +128,11 @@ export function CalendarTeaser() {
 
 export function CardStackTeaser() {
   return (
-    <CardStack aria-label="Card stack teaser" showControls={false} stackOffset={6}>
+    <CardStack
+      aria-label="Card stack teaser"
+      showControls={false}
+      stackOffset={6}
+    >
       {["Deck", "Layered", "Cards"].map((word) => (
         <Card key={word} spacing="sm" shadow="none">
           <CardContent className="text-sm">
@@ -312,11 +327,15 @@ export function TableTeaser() {
       <TableBody>
         <TableRow>
           <TableCell className="font-mono text-xs">1.4.0</TableCell>
-          <TableCell align="end" className="tabular-nums text-xs">12,410</TableCell>
+          <TableCell align="end" className="text-xs tabular-nums">
+            12,410
+          </TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="font-mono text-xs">1.3.2</TableCell>
-          <TableCell align="end" className="tabular-nums text-xs">31,876</TableCell>
+          <TableCell align="end" className="text-xs tabular-nums">
+            31,876
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -335,11 +354,11 @@ export function DataTableTeaser() {
       <TableBody>
         <TableRow selected>
           <TableCell className="text-xs">api-gateway</TableCell>
-          <TableCell className="text-xs text-success">success</TableCell>
+          <TableCell className="text-success text-xs">success</TableCell>
         </TableRow>
         <TableRow>
           <TableCell className="text-xs">billing</TableCell>
-          <TableCell className="text-xs text-destructive">failed</TableCell>
+          <TableCell className="text-destructive text-xs">failed</TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -459,7 +478,12 @@ export function NumberInputTeaser() {
       <Field id="teaser-ni">
         <FieldLabel className="text-sm">Seats</FieldLabel>
         <FieldControl asChild>
-          <NumberInput controlSize="sm" type="number" min={1} defaultValue={12} />
+          <NumberInput
+            controlSize="sm"
+            type="number"
+            min={1}
+            defaultValue={12}
+          />
         </FieldControl>
       </Field>
     </div>
@@ -475,7 +499,7 @@ export function FormFieldTeaser() {
           <Input controlSize="sm" defaultValue="sk_live_…" />
         </FieldControl>
       </Field>
-      <p className="text-xs text-destructive">This key was revoked.</p>
+      <p className="text-destructive text-xs">This key was revoked.</p>
     </div>
   );
 }
@@ -554,11 +578,7 @@ export function SelectTeaser() {
 export function ComboboxTeaser() {
   return (
     <div className="w-full">
-      <Combobox
-        label="Assignee"
-        placeholder="Type to filter"
-        controlSize="sm"
-      >
+      <Combobox label="Assignee" placeholder="Type to filter" controlSize="sm">
         <ComboboxItem value="amara">Amara Okafor</ComboboxItem>
         <ComboboxItem value="jonas">Jonas Weber</ComboboxItem>
       </Combobox>

@@ -18,7 +18,7 @@ export function DatePickerControlled() {
         clearable
       />
       <div className="flex items-center justify-between gap-2">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Value: {value ? value.toString() : "none"}
         </p>
         <Button

@@ -13,7 +13,15 @@ describe("getPaginationRenderItems", () => {
   it("creates a bounded middle window with ellipses", () => {
     expect(
       itemKeys(getPaginationRenderItems({ page: 5, pageCount: 10 })),
-    ).toEqual(["page-1", "ellipsis", "page-4", "page-5", "page-6", "ellipsis", "page-10"]);
+    ).toEqual([
+      "page-1",
+      "ellipsis",
+      "page-4",
+      "page-5",
+      "page-6",
+      "ellipsis",
+      "page-10",
+    ]);
   });
 
   it("renders small page counts without unnecessary ellipses", () => {
@@ -57,9 +65,7 @@ describe("getPaginationRenderItems", () => {
 
   it("supports unbounded windows without inventing a last page", () => {
     expect(
-      itemKeys(
-        getPaginationRenderItems({ hasNextPage: true, page: 8 }),
-      ),
+      itemKeys(getPaginationRenderItems({ hasNextPage: true, page: 8 })),
     ).toEqual(["page-1", "ellipsis", "page-7", "page-8", "page-9"]);
   });
 });
@@ -214,13 +220,7 @@ describe("Pagination", () => {
     const user = userEvent.setup();
     const onPageChange = vi.fn();
 
-    render(
-      <Pagination
-        hasNextPage
-        page={8}
-        onPageChange={onPageChange}
-      />,
-    );
+    render(<Pagination hasNextPage page={8} onPageChange={onPageChange} />);
 
     expect(screen.getByRole("button", { name: "Next page" })).toBeEnabled();
     expect(screen.queryByRole("button", { name: /Last page/ })).toBeNull();
@@ -266,10 +266,12 @@ describe("Pagination", () => {
       "@xs:w-full",
       "@xs:rtl:flex-row",
     );
-    expect(within(nav).getByRole("button", { name: "Previous page" }))
-      .toHaveTextContent("Back");
-    expect(within(nav).getByRole("button", { name: "Next page" }))
-      .toHaveTextContent("Next");
+    expect(
+      within(nav).getByRole("button", { name: "Previous page" }),
+    ).toHaveTextContent("Back");
+    expect(
+      within(nav).getByRole("button", { name: "Next page" }),
+    ).toHaveTextContent("Next");
     expect(
       within(nav)
         .getByRole("button", { name: "Previous page" })

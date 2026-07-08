@@ -1,20 +1,15 @@
-import {
-  forwardRef,
-  type HTMLAttributes,
-  type ReactNode,
-} from "react";
+import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../../utils/cn";
 
 export type FeedbackTone =
-  | "neutral"
-  | "info"
-  | "success"
-  | "warning"
-  | "destructive";
+  "neutral" | "info" | "success" | "warning" | "destructive";
 export type FeedbackVariant = "soft" | "outline" | "solid" | "subtle";
 export type AlertUrgency = "none" | "polite" | "assertive";
 
-export interface AlertProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+export interface AlertProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "title"
+> {
   tone?: FeedbackTone;
   variant?: FeedbackVariant;
   urgency?: AlertUrgency;
@@ -37,10 +32,12 @@ interface FeedbackSurfaceProps extends AlertProps {
 const feedbackBaseClasses =
   "relative grid min-w-0 gap-[var(--dt-space-3)] rounded-lg border p-[var(--dt-space-4)] text-sm leading-6 shadow-sm";
 
-const feedbackWithIconClasses =
-  "grid-cols-[auto_minmax(0,1fr)]";
+const feedbackWithIconClasses = "grid-cols-[auto_minmax(0,1fr)]";
 
-const feedbackVariantToneClasses: Record<FeedbackVariant, Record<FeedbackTone, string>> = {
+const feedbackVariantToneClasses: Record<
+  FeedbackVariant,
+  Record<FeedbackTone, string>
+> = {
   outline: {
     neutral: "border-border bg-background text-foreground",
     info: "border-info/40 bg-background text-foreground",
@@ -60,14 +57,16 @@ const feedbackVariantToneClasses: Record<FeedbackVariant, Record<FeedbackTone, s
     info: "border-info bg-info text-info-foreground",
     success: "border-success bg-success text-success-foreground",
     warning: "border-warning bg-warning text-warning-foreground",
-    destructive: "border-destructive bg-destructive text-destructive-foreground",
+    destructive:
+      "border-destructive bg-destructive text-destructive-foreground",
   },
   subtle: {
     neutral: "border-transparent bg-transparent text-foreground shadow-none",
     info: "border-transparent bg-transparent text-foreground shadow-none",
     success: "border-transparent bg-transparent text-foreground shadow-none",
     warning: "border-transparent bg-transparent text-foreground shadow-none",
-    destructive: "border-transparent bg-transparent text-foreground shadow-none",
+    destructive:
+      "border-transparent bg-transparent text-foreground shadow-none",
   },
 };
 
@@ -160,47 +159,58 @@ const FeedbackSurface = forwardRef<HTMLDivElement, FeedbackSurfaceProps>(
           variant,
         })}
       >
-      {icon ? (
-        <span
-          aria-hidden="true"
-          data-slot="feedback-icon"
-          className={cn(
-            "mt-0.5 inline-flex size-5 shrink-0 items-center justify-center",
-            variant === "solid" ? feedbackSolidIconClasses[tone] : feedbackIconToneClasses[tone],
-          )}
+        {icon ? (
+          <span
+            aria-hidden="true"
+            data-slot="feedback-icon"
+            className={cn(
+              "mt-0.5 inline-flex size-5 shrink-0 items-center justify-center",
+              variant === "solid"
+                ? feedbackSolidIconClasses[tone]
+                : feedbackIconToneClasses[tone],
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
+        <div
+          data-slot="feedback-content"
+          className="grid min-w-0 gap-[var(--dt-space-2)]"
         >
-          {icon}
-        </span>
-      ) : null}
-      <div data-slot="feedback-content" className="grid min-w-0 gap-[var(--dt-space-2)]">
-        {title ? (
-          <div data-slot="feedback-title" className={feedbackTitleClasses}>
-            {title}
-          </div>
+          {title ? (
+            <div data-slot="feedback-title" className={feedbackTitleClasses}>
+              {title}
+            </div>
+          ) : null}
+          {description ? (
+            <div
+              data-slot="feedback-description"
+              className={feedbackDescriptionClasses}
+            >
+              {description}
+            </div>
+          ) : null}
+          {children}
+          {actions ? (
+            <div
+              data-slot="feedback-actions"
+              className={feedbackActionsClasses}
+            >
+              {actions}
+            </div>
+          ) : null}
+        </div>
+        {onDismiss ? (
+          <button
+            type="button"
+            aria-label={dismissLabel}
+            data-slot="feedback-dismiss"
+            className={feedbackDismissClasses}
+            onClick={onDismiss}
+          >
+            <span aria-hidden="true">×</span>
+          </button>
         ) : null}
-        {description ? (
-          <div data-slot="feedback-description" className={feedbackDescriptionClasses}>
-            {description}
-          </div>
-        ) : null}
-        {children}
-        {actions ? (
-          <div data-slot="feedback-actions" className={feedbackActionsClasses}>
-            {actions}
-          </div>
-        ) : null}
-      </div>
-      {onDismiss ? (
-        <button
-          type="button"
-          aria-label={dismissLabel}
-          data-slot="feedback-dismiss"
-          className={feedbackDismissClasses}
-          onClick={onDismiss}
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-      ) : null}
       </div>
     );
   },
@@ -215,7 +225,10 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
 Alert.displayName = "Alert";
 
 export const Callout = forwardRef<HTMLDivElement, CalloutProps>(
-  ({ tone = "neutral", urgency = "none", variant = "outline", ...props }, ref) => (
+  (
+    { tone = "neutral", urgency = "none", variant = "outline", ...props },
+    ref,
+  ) => (
     <FeedbackSurface
       {...props}
       ref={ref}

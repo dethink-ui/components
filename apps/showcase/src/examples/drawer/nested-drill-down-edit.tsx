@@ -16,16 +16,19 @@ export function DrawerNestedDrillDownEdit() {
     <div className="flex justify-center">
       <Drawer direction="right">
         <DrawerTrigger>Open record</DrawerTrigger>
-        <DrawerContent dismissible showCloseButton closeButtonLabel="Close record">
+        <DrawerContent
+          dismissible
+          showCloseButton
+          closeButtonLabel="Close record"
+        >
           <DrawerHeader>
             <DrawerTitle>Record</DrawerTitle>
             <DrawerDescription>
-              Opening the nested edit drawer recedes this one — the same
-              spring primitives as drag-to-dismiss, not a separate animation
-              path.
+              Opening the nested edit drawer recedes this one — the same spring
+              primitives as drag-to-dismiss, not a separate animation path.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm text-foreground">
+          <div className="text-foreground px-[var(--dt-space-6)] py-[var(--dt-space-3)] text-sm">
             Status: <span className="font-medium">In review</span>
           </div>
           <Drawer direction="right">

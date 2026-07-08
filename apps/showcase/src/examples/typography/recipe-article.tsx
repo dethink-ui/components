@@ -10,7 +10,12 @@ import { Heading, Separator, Text } from "@dethink/components";
 export function TypographyRecipeArticle() {
   return (
     <article className="mx-auto max-w-md">
-      <Text size="xs" tone="primary" weight="medium" className="uppercase tracking-wider">
+      <Text
+        size="xs"
+        tone="primary"
+        weight="medium"
+        className="tracking-wider uppercase"
+      >
         Engineering
       </Text>
       <Heading level={3} visualLevel={2} className="mt-2">
@@ -30,8 +35,8 @@ export function TypographyRecipeArticle() {
       </div>
       <Separator spacing="4" />
       <Text lineClamp={3} tone="muted">
-        Every color, radius, font, and density value in Dethink Components is
-        a CSS custom property. That single decision means a theme is data, not
+        Every color, radius, font, and density value in Dethink Components is a
+        CSS custom property. That single decision means a theme is data, not
         code: hand the provider a palette and the whole tree — buttons,
         calendars, data tables — re-skins itself with no forked styles and no
         specificity fights.

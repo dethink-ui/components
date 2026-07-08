@@ -32,13 +32,18 @@ export function resolveDrawerSnapStops(
   snapPoints: DrawerSnapPoint[] | undefined,
 ): number[] {
   const source = snapPoints && snapPoints.length > 0 ? snapPoints : [1];
-  const openStops = source.map(clampSnapPointFraction).filter((value) => value > 0);
+  const openStops = source
+    .map(clampSnapPointFraction)
+    .filter((value) => value > 0);
   const unique = Array.from(new Set([0, ...openStops]));
 
   return unique.sort((a, b) => a - b);
 }
 
-export function findNearestDrawerSnapStop(value: number, stops: number[]): number {
+export function findNearestDrawerSnapStop(
+  value: number,
+  stops: number[],
+): number {
   let nearest = stops[0] ?? 1;
   let smallestDiff = Number.POSITIVE_INFINITY;
 

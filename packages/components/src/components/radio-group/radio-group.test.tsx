@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -38,7 +35,12 @@ describe("RadioGroup", () => {
         <label htmlFor="plan-free">Free</label>
         <RadioGroupItem id="plan-free" value="free" />
         <label htmlFor="plan-pro">Pro</label>
-        <RadioGroupItem ref={ref} className="custom-item" id="plan-pro" value="pro" />
+        <RadioGroupItem
+          ref={ref}
+          className="custom-item"
+          id="plan-pro"
+          value="pro"
+        />
       </RadioGroup>,
     );
 
@@ -46,7 +48,9 @@ describe("RadioGroup", () => {
     const free = screen.getByLabelText("Free");
     const pro = screen.getByLabelText("Pro");
     const proRoot = pro.closest("[data-slot='radio-group-item']");
-    const indicator = proRoot?.querySelector("[data-slot='radio-group-item-indicator']");
+    const indicator = proRoot?.querySelector(
+      "[data-slot='radio-group-item-indicator']",
+    );
 
     expect(group).toHaveAttribute("role", "radiogroup");
     expect(group).toHaveAttribute("aria-orientation", "horizontal");
@@ -164,7 +168,11 @@ describe("RadioGroup", () => {
         <label htmlFor="readonly-manual">Manual</label>
         <RadioGroupItem id="readonly-manual" value="manual" />
         <label htmlFor="readonly-auto">Automatic</label>
-        <RadioGroupItem id="readonly-auto" value="auto" onChange={handleChange} />
+        <RadioGroupItem
+          id="readonly-auto"
+          value="auto"
+          onChange={handleChange}
+        />
       </RadioGroup>,
     );
 
@@ -205,7 +213,11 @@ describe("RadioGroup", () => {
     const handleValueChange = vi.fn();
 
     render(
-      <RadioGroup name="delivery" defaultValue="standard" onValueChange={handleValueChange}>
+      <RadioGroup
+        name="delivery"
+        defaultValue="standard"
+        onValueChange={handleValueChange}
+      >
         <label htmlFor="delivery-standard">Standard</label>
         <RadioGroupItem id="delivery-standard" value="standard" />
         <label htmlFor="delivery-priority">Priority</label>
@@ -233,7 +245,12 @@ describe("RadioGroup", () => {
         <FieldDescription id="response-mode-help">
           Choose how the assistant should answer.
         </FieldDescription>
-        <RadioGroup name="responseMode" defaultValue="balanced" invalid required>
+        <RadioGroup
+          name="responseMode"
+          defaultValue="balanced"
+          invalid
+          required
+        >
           <FieldGroup>
             <Field id="response-fast" orientation="horizontal" invalid>
               <FieldControl asChild>

@@ -31,7 +31,9 @@ function FlyoutNav(props: Partial<NavigationMenuProps>) {
           <NavigationMenuContent>
             <NavigationMenuSection>
               <NavigationMenuLabel>Platform</NavigationMenuLabel>
-              <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+              <NavigationMenuLink href="/analytics">
+                Analytics
+              </NavigationMenuLink>
               <NavigationMenuLink href="/automation">
                 Automation
               </NavigationMenuLink>
@@ -42,7 +44,9 @@ function FlyoutNav(props: Partial<NavigationMenuProps>) {
           <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
           <NavigationMenuContent>
             <NavigationMenuSection>
-              <NavigationMenuLink href="/docs">Documentation</NavigationMenuLink>
+              <NavigationMenuLink href="/docs">
+                Documentation
+              </NavigationMenuLink>
             </NavigationMenuSection>
           </NavigationMenuContent>
         </NavigationMenuItem>
@@ -131,14 +135,17 @@ describe("NavigationMenuTrigger", () => {
 
     await user.click(trigger);
 
-    const panel = screen.getByText("Analytics").closest(
-      '[data-slot="navigation-menu-content"]',
-    );
+    const panel = screen
+      .getByText("Analytics")
+      .closest('[data-slot="navigation-menu-content"]');
 
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(trigger).toHaveAttribute("data-state", "open");
     expect(panel).not.toBeNull();
-    expect(trigger).toHaveAttribute("aria-controls", panel?.getAttribute("id") ?? "");
+    expect(trigger).toHaveAttribute(
+      "aria-controls",
+      panel?.getAttribute("id") ?? "",
+    );
 
     await user.click(trigger);
 
@@ -337,9 +344,10 @@ describe("NavigationMenuTrigger", () => {
     await user.tab();
 
     expect(screen.getByRole("link", { name: "Automation" })).toHaveFocus();
-    expect(
-      screen.getByRole("button", { name: "Products" }),
-    ).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("button", { name: "Products" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
   });
 
   it("ignores activation in manual mode", async () => {
@@ -552,9 +560,7 @@ describe("NavigationMenu rich panels", () => {
     await user.click(screen.getByRole("button", { name: "Products" }));
 
     const link = screen.getByRole("link", { name: /Analytics/ });
-    const icon = link.querySelector(
-      '[data-slot="navigation-menu-link-icon"]',
-    );
+    const icon = link.querySelector('[data-slot="navigation-menu-link-icon"]');
 
     expect(link).toHaveAttribute("data-panel", "true");
     expect(icon).toHaveAttribute("aria-hidden", "true");
@@ -627,7 +633,9 @@ describe("NavigationMenuViewport", () => {
           <NavigationMenuItem value="products">
             <NavigationMenuTrigger>Products</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+              <NavigationMenuLink href="/analytics">
+                Analytics
+              </NavigationMenuLink>
             </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>

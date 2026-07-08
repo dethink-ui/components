@@ -90,7 +90,7 @@ type Story = StoryObj<typeof meta>;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <Stack gap="2" className="rounded-md border border-border p-3">
+    <Stack gap="2" className="border-border rounded-md border p-3">
       <Text size="sm" weight="medium">
         {title}
       </Text>
@@ -117,13 +117,19 @@ function OverlaySet({ label }: { label: string }) {
         </PopoverContent>
       </Popover>
       <Tooltip delay={0} closeDelay={0}>
-        <TooltipTrigger aria-label={`${label} help`} size="icon" variant="outline">
+        <TooltipTrigger
+          aria-label={`${label} help`}
+          size="icon"
+          variant="outline"
+        >
           ?
         </TooltipTrigger>
         <TooltipContent showArrow>{label} tooltip help</TooltipContent>
       </Tooltip>
       <DropdownMenu>
-        <DropdownMenuTrigger variant="outline">{label} menu</DropdownMenuTrigger>
+        <DropdownMenuTrigger variant="outline">
+          {label} menu
+        </DropdownMenuTrigger>
         <DropdownMenuContent showArrow>
           <DropdownMenuSection>
             <DropdownMenuLabel>{label}</DropdownMenuLabel>
@@ -173,15 +179,15 @@ export const NestedProviderPortalScope: Story = {
       <Container size="sm">
         <Stack gap="3">
           <Text size="sm" tone="muted">
-            The nested provider owns portal theme, density, direction, and custom
-            token scope for all three overlay primitives.
+            The nested provider owns portal theme, density, direction, and
+            custom token scope for all three overlay primitives.
           </Text>
           <DethinkProvider
             theme="dark"
             density="compact"
             dir="rtl"
             themeConfig={overlayTheme}
-            className="rounded-md border border-border p-3"
+            className="border-border rounded-md border p-3"
           >
             <OverlaySet label="Nested" />
           </DethinkProvider>
@@ -194,7 +200,9 @@ export const NestedProviderPortalScope: Story = {
     const page = within(canvasElement.ownerDocument.body);
     const body = canvasElement.ownerDocument.body;
 
-    await userEvent.click(canvas.getByRole("button", { name: "Nested popover" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Nested popover" }),
+    );
     const dialog = await page.findByRole("dialog", { name: "Nested filters" });
     const popoverPortal = dialog.closest<HTMLElement>(
       '[data-slot="popover-portal-container"]',
@@ -256,7 +264,9 @@ export const KeyboardFocusAndResponsiveSmoke: Story = {
             </PopoverContent>
           </Popover>
           <DropdownMenu>
-            <DropdownMenuTrigger variant="outline">Keyboard menu</DropdownMenuTrigger>
+            <DropdownMenuTrigger variant="outline">
+              Keyboard menu
+            </DropdownMenuTrigger>
             <DropdownMenuContent placement="bottom start">
               <DropdownMenuItem>Duplicate</DropdownMenuItem>
               <DropdownMenuSubmenu>
@@ -281,7 +291,9 @@ export const KeyboardFocusAndResponsiveSmoke: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
-    const popoverTrigger = canvas.getByRole("button", { name: "Keyboard popover" });
+    const popoverTrigger = canvas.getByRole("button", {
+      name: "Keyboard popover",
+    });
 
     popoverTrigger.focus();
     await userEvent.keyboard("{Enter}");
@@ -304,9 +316,9 @@ export const KeyboardFocusAndResponsiveSmoke: Story = {
     });
 
     await userEvent.tab();
-    await expect(
-      await page.findByRole("tooltip"),
-    ).toHaveTextContent("Focus opens the tooltip in narrow layouts.");
+    await expect(await page.findByRole("tooltip")).toHaveTextContent(
+      "Focus opens the tooltip in narrow layouts.",
+    );
   },
 };
 
@@ -323,10 +335,14 @@ export const ReducedMotionClassCoverage: Story = {
           </Popover>
           <Tooltip defaultOpen delay={0} closeDelay={0}>
             <TooltipTrigger variant="outline">Motion tooltip</TooltipTrigger>
-            <TooltipContent showArrow>Reduced motion class coverage</TooltipContent>
+            <TooltipContent showArrow>
+              Reduced motion class coverage
+            </TooltipContent>
           </Tooltip>
           <DropdownMenu defaultOpen>
-            <DropdownMenuTrigger variant="outline">Motion menu</DropdownMenuTrigger>
+            <DropdownMenuTrigger variant="outline">
+              Motion menu
+            </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>Motion menu item</DropdownMenuItem>
             </DropdownMenuContent>

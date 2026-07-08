@@ -114,10 +114,7 @@ describe("NavDock accessibility", () => {
     const { container } = render(
       <DethinkProvider theme="light">
         <main aria-label="NavDock collapsed accessibility smoke">
-          <NavDock
-            aria-label="Workspace dock"
-            currentValue="overview"
-          >
+          <NavDock aria-label="Workspace dock" currentValue="overview">
             <CollapseDock items={items} />
           </NavDock>
         </main>

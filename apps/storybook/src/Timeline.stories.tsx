@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { DethinkProvider, Timeline, type TimelineItemData } from "@dethink/components";
+import {
+  DethinkProvider,
+  Timeline,
+  type TimelineItemData,
+} from "@dethink/components";
 import type { CSSProperties } from "react";
 
 const meta = {
@@ -16,7 +20,10 @@ const meta = {
   },
   argTypes: {
     mode: { control: "inline-radio", options: ["events", "progress", "story"] },
-    orientation: { control: "inline-radio", options: ["horizontal", "vertical"] },
+    orientation: {
+      control: "inline-radio",
+      options: ["horizontal", "vertical"],
+    },
     layout: {
       control: "inline-radio",
       options: ["rail", "alternating", "stacked", "story"],
@@ -34,7 +41,8 @@ const eventItems: TimelineItemData[] = [
   {
     id: "research",
     title: "Research complete",
-    description: "Competitive review, user needs, and core interaction model approved.",
+    description:
+      "Competitive review, user needs, and core interaction model approved.",
     datetime: "2026-01-12T09:00:00Z",
     dateLabel: "Jan 12, 2026",
     status: "complete",
@@ -42,7 +50,8 @@ const eventItems: TimelineItemData[] = [
   {
     id: "prototype",
     title: "Prototype review",
-    description: "Interactive DOM viewport validated with product and accessibility notes.",
+    description:
+      "Interactive DOM viewport validated with product and accessibility notes.",
     datetime: "2026-02-03T14:30:00Z",
     dateLabel: "Feb 3, 2026",
     status: "complete",
@@ -50,7 +59,8 @@ const eventItems: TimelineItemData[] = [
   {
     id: "beta",
     title: "Private beta",
-    description: "Selected teams start using event and progress timelines in dashboards.",
+    description:
+      "Selected teams start using event and progress timelines in dashboards.",
     datetime: "2026-03-18T10:00:00Z",
     dateLabel: "Mar 18, 2026",
     status: "current",
@@ -58,7 +68,8 @@ const eventItems: TimelineItemData[] = [
   {
     id: "launch",
     title: "General availability",
-    description: "Registry item, package export, docs, tests, and release notes are ready.",
+    description:
+      "Registry item, package export, docs, tests, and release notes are ready.",
     datetime: "2026-05-05T10:00:00Z",
     dateLabel: "May 5, 2026",
     status: "upcoming",
@@ -69,7 +80,8 @@ const imageItems: TimelineItemData[] = [
   {
     id: "brief",
     title: "Launch brief",
-    description: "Strategy, risks, and stakeholder responsibilities are captured.",
+    description:
+      "Strategy, risks, and stakeholder responsibilities are captured.",
     datetime: "2026-01-08T09:00:00Z",
     dateLabel: "Jan 8",
     status: "complete",
@@ -83,7 +95,8 @@ const imageItems: TimelineItemData[] = [
   {
     id: "build",
     title: "Build checkpoint",
-    description: "Engineering validates package export, registry files, and Storybook states.",
+    description:
+      "Engineering validates package export, registry files, and Storybook states.",
     datetime: "2026-02-11T09:00:00Z",
     dateLabel: "Feb 11",
     status: "current",
@@ -97,7 +110,8 @@ const imageItems: TimelineItemData[] = [
   {
     id: "qa",
     title: "Quality review",
-    description: "Accessibility, visual, and interaction checks run before release.",
+    description:
+      "Accessibility, visual, and interaction checks run before release.",
     datetime: "2026-03-10T09:00:00Z",
     dateLabel: "Mar 10",
     status: "warning",
@@ -114,7 +128,8 @@ const progressItems: TimelineItemData[] = [
   {
     id: "queued",
     title: "Queued",
-    description: "The request is captured and waiting for the next build window.",
+    description:
+      "The request is captured and waiting for the next build window.",
     status: "complete",
   },
   {
@@ -132,7 +147,8 @@ const progressItems: TimelineItemData[] = [
   {
     id: "blocked",
     title: "Blocked example",
-    description: "Disabled milestones remain visible but are skipped by selection.",
+    description:
+      "Disabled milestones remain visible but are skipped by selection.",
     status: "error",
     disabled: true,
   },
@@ -302,7 +318,11 @@ const planetItems: TimelineItemData<PlanetPayload>[] = [
     dateLabel: "08:00 UTC",
     status: "complete",
     marker: (
-      <PlanetMarker core="rgb(251 191 36)" rim="rgb(217 119 6)" glow="rgb(251 146 60 / 0.75)" />
+      <PlanetMarker
+        core="rgb(251 191 36)"
+        rim="rgb(217 119 6)"
+        glow="rgb(251 146 60 / 0.75)"
+      />
     ),
     data: {
       planet: "Venus",
@@ -330,7 +350,11 @@ const planetItems: TimelineItemData<PlanetPayload>[] = [
     dateLabel: "12:30 UTC",
     status: "current",
     marker: (
-      <PlanetMarker core="rgb(34 197 94)" rim="rgb(59 130 246)" glow="rgb(45 212 191 / 0.75)" />
+      <PlanetMarker
+        core="rgb(34 197 94)"
+        rim="rgb(59 130 246)"
+        glow="rgb(45 212 191 / 0.75)"
+      />
     ),
     data: {
       planet: "Earth",
@@ -358,7 +382,11 @@ const planetItems: TimelineItemData<PlanetPayload>[] = [
     dateLabel: "18:15 UTC",
     status: "warning",
     marker: (
-      <PlanetMarker core="rgb(248 113 113)" rim="rgb(194 65 12)" glow="rgb(244 63 94 / 0.7)" />
+      <PlanetMarker
+        core="rgb(248 113 113)"
+        rim="rgb(194 65 12)"
+        glow="rgb(244 63 94 / 0.7)"
+      />
     ),
     data: {
       planet: "Mars",
@@ -386,7 +414,11 @@ const planetItems: TimelineItemData<PlanetPayload>[] = [
     dateLabel: "05:45 UTC",
     status: "upcoming",
     marker: (
-      <PlanetMarker core="rgb(216 180 254)" rim="rgb(125 92 255)" glow="rgb(168 85 247 / 0.65)" />
+      <PlanetMarker
+        core="rgb(216 180 254)"
+        rim="rgb(125 92 255)"
+        glow="rgb(168 85 247 / 0.65)"
+      />
     ),
     data: {
       planet: "Jupiter",
@@ -516,8 +548,18 @@ const planetaryTimelineStyles = `
 
 function CheckIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor">
-      <path d="m3.5 8.5 3 3 6-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+    >
+      <path
+        d="m3.5 8.5 3 3 6-7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
@@ -579,7 +621,7 @@ export const ImageRich: Story = {
 
 export const VerticalAlternating: Story = {
   args: {
-    layout: "stacked"
+    layout: "stacked",
   },
 
   render: () => (
@@ -591,7 +633,7 @@ export const VerticalAlternating: Story = {
         viewport={{ defaultZoom: 0.85 }}
       />
     </DethinkProvider>
-  )
+  ),
 };
 
 export const CustomMarkerAndContent: Story = {
@@ -605,11 +647,13 @@ export const CustomMarkerAndContent: Story = {
         mode="progress"
         renderItem={(item) => (
           <div className="space-y-2">
-            <p className="text-xs font-medium uppercase text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-medium uppercase">
               {item.status}
             </p>
-            <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
-            <p className="text-sm leading-6 text-muted-foreground">
+            <h3 className="text-foreground text-sm font-semibold">
+              {item.title}
+            </h3>
+            <p className="text-muted-foreground text-sm leading-6">
               {item.description}
             </p>
           </div>
@@ -631,35 +675,41 @@ export const CustomPayloadTemplate: Story = {
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-xs font-medium uppercase text-muted-foreground">
+                <p className="text-muted-foreground text-xs font-medium uppercase">
                   {item.data?.environment}
                 </p>
-                <h3 className="truncate text-sm font-semibold text-foreground">
+                <h3 className="text-foreground truncate text-sm font-semibold">
                   {item.data?.service}
                 </h3>
               </div>
-              <span className="shrink-0 rounded-sm border border-timeline-border bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+              <span className="border-timeline-border bg-muted text-muted-foreground shrink-0 rounded-sm border px-2 py-1 text-xs font-medium">
                 {item.dateLabel}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div>
                 <p className="text-muted-foreground">Owner</p>
-                <p className="font-medium text-foreground">{item.data?.owner}</p>
+                <p className="text-foreground font-medium">
+                  {item.data?.owner}
+                </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Version</p>
-                <p className="font-medium text-foreground">{item.data?.version}</p>
+                <p className="text-foreground font-medium">
+                  {item.data?.version}
+                </p>
               </div>
             </div>
             <div className="grid gap-2">
               {item.data?.checks.map((check) => (
                 <div
                   key={check.label}
-                  className="flex items-center justify-between rounded-sm bg-muted px-2 py-1 text-xs"
+                  className="bg-muted flex items-center justify-between rounded-sm px-2 py-1 text-xs"
                 >
                   <span className="text-muted-foreground">{check.label}</span>
-                  <span className="font-medium text-foreground">{check.value}</span>
+                  <span className="text-foreground font-medium">
+                    {check.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -707,14 +757,14 @@ export const PlanetaryPositions: Story = {
                     className="dt-orbit relative size-20 shrink-0 rounded-full border border-white/15"
                   >
                     <span className="absolute inset-2 rounded-full border border-dashed border-white/15" />
-                    <span className="dt-signal absolute -right-1 top-1/2 size-2 -translate-y-1/2 rounded-full bg-white" />
-                    <span className="dt-planet absolute left-1/2 top-1/2 size-12 -translate-x-1/2 -translate-y-1/2 rounded-full" />
-                    <span className="absolute left-1/2 top-1/2 h-px w-16 -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full bg-white/25" />
+                    <span className="dt-signal absolute top-1/2 -right-1 size-2 -translate-y-1/2 rounded-full bg-white" />
+                    <span className="dt-planet absolute top-1/2 left-1/2 size-12 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+                    <span className="absolute top-1/2 left-1/2 h-px w-16 -translate-x-1/2 -translate-y-1/2 rotate-[-18deg] rounded-full bg-white/25" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-xs font-medium uppercase text-cyan-100/75">
+                        <p className="text-xs font-medium text-cyan-100/75 uppercase">
                           {payload.sector}
                         </p>
                         <h3 className="truncate text-base font-semibold text-white">
@@ -737,7 +787,7 @@ export const PlanetaryPositions: Story = {
                       key={entry.label}
                       className="rounded-sm border border-white/10 bg-white/10 px-2 py-2"
                     >
-                      <p className="text-[0.68rem] font-medium uppercase text-cyan-100/70">
+                      <p className="text-[0.68rem] font-medium text-cyan-100/70 uppercase">
                         {entry.label}
                       </p>
                       <p className="mt-1 truncate text-xs font-semibold text-white">
@@ -750,11 +800,15 @@ export const PlanetaryPositions: Story = {
                 <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/10 pt-3 text-xs">
                   <div>
                     <p className="text-cyan-100/65">Distance</p>
-                    <p className="font-semibold text-white">{payload.distance}</p>
+                    <p className="font-semibold text-white">
+                      {payload.distance}
+                    </p>
                   </div>
                   <div>
                     <p className="text-cyan-100/65">Velocity</p>
-                    <p className="font-semibold text-white">{payload.velocity}</p>
+                    <p className="font-semibold text-white">
+                      {payload.velocity}
+                    </p>
                   </div>
                   <div>
                     <p className="text-cyan-100/65">Signal</p>
@@ -777,11 +831,7 @@ export const PlanetaryPositions: Story = {
 export const ThemeDensityAndRtl: Story = {
   render: () => (
     <div className="grid gap-4 lg:grid-cols-2">
-      <DethinkProvider
-        theme="dark"
-        density="compact"
-        className="p-6"
-      >
+      <DethinkProvider theme="dark" density="compact" className="p-6">
         <Timeline
           aria-label="Dark compact timeline"
           items={eventItems}

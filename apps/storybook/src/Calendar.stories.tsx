@@ -103,7 +103,7 @@ function StoryShell({
   return (
     <DethinkProvider
       className={cn(
-        "min-h-[28rem] bg-background p-6 text-foreground",
+        "bg-background text-foreground min-h-[28rem] p-6",
         className,
       )}
       density={density}

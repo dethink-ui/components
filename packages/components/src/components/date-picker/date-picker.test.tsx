@@ -113,10 +113,7 @@ describe("DatePicker", () => {
     const user = userEvent.setup();
 
     render(
-      <DatePicker
-        label="Invoice date"
-        value={new CalendarDate(2026, 7, 3)}
-      />,
+      <DatePicker label="Invoice date" value={new CalendarDate(2026, 7, 3)} />,
     );
 
     await user.click(screen.getByRole("button", { name: /Open calendar/ }));
@@ -216,10 +213,7 @@ describe("DatePicker", () => {
     const user = userEvent.setup();
 
     render(
-      <DatePicker
-        label="Invoice date"
-        value={new CalendarDate(2026, 7, 3)}
-      />,
+      <DatePicker label="Invoice date" value={new CalendarDate(2026, 7, 3)} />,
     );
 
     const trigger = screen.getByRole("button", { name: /Open calendar/ });

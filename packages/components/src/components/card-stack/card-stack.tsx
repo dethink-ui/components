@@ -20,8 +20,10 @@ import { IconButton } from "../icon-button";
 export type CardStackMode = "stack" | "open";
 export type CardStackCardElement = ReactElement<CardProps>;
 
-export interface CardStackProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+export interface CardStackProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
   activeIndex?: number;
   angle?: number;
   children?: CardStackCardElement | CardStackCardElement[];
@@ -77,7 +79,11 @@ function positiveModulo(value: number, divisor: number) {
   return ((value % divisor) + divisor) % divisor;
 }
 
-function normalizeIndex(index: number | undefined, count: number, loop: boolean) {
+function normalizeIndex(
+  index: number | undefined,
+  count: number,
+  loop: boolean,
+) {
   if (count <= 0) {
     return -1;
   }
@@ -99,7 +105,11 @@ function getForwardDistance(index: number, activeIndex: number, count: number) {
   return positiveModulo(index - activeIndex, count);
 }
 
-function getOpenRelativePosition(index: number, activeIndex: number, count: number) {
+function getOpenRelativePosition(
+  index: number,
+  activeIndex: number,
+  count: number,
+) {
   let relativePosition = index - activeIndex;
 
   if (count > 2) {
@@ -173,7 +183,9 @@ function getItemStyle({
     };
   }
 
-  const depth = isActive ? 0 : Math.min(getForwardDistance(index, activeIndex, count), 4);
+  const depth = isActive
+    ? 0
+    : Math.min(getForwardDistance(index, activeIndex, count), 4);
   const rotate = isActive ? 0 : depth * 0.75;
   const scale = Math.max(0.9, 1 - depth * 0.02);
   const offset = depth * safeStackOffset;
@@ -205,7 +217,12 @@ function getCardChildren(children: CardStackProps["children"]) {
 
 function ChevronLeftIcon() {
   return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      fill="none"
+      viewBox="0 0 16 16"
+      stroke="currentColor"
+    >
       <path
         d="M10 3.5 5.5 8l4.5 4.5"
         strokeLinecap="round"
@@ -218,7 +235,12 @@ function ChevronLeftIcon() {
 
 function ChevronRightIcon() {
   return (
-    <svg aria-hidden="true" fill="none" viewBox="0 0 16 16" stroke="currentColor">
+    <svg
+      aria-hidden="true"
+      fill="none"
+      viewBox="0 0 16 16"
+      stroke="currentColor"
+    >
       <path
         d="m6 3.5 4.5 4.5L6 12.5"
         strokeLinecap="round"
@@ -277,8 +299,7 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
     const canMovePrevious = cardCount > 1 && (loop || resolvedActiveIndex > 0);
     const canMoveNext =
       cardCount > 1 && (loop || resolvedActiveIndex < cardCount - 1);
-    const controlsVisible =
-      showControls ?? (mode === "stack" && cardCount > 1);
+    const controlsVisible = showControls ?? (mode === "stack" && cardCount > 1);
     const resolvedTabIndex = tabIndex ?? (cardCount > 1 ? 0 : undefined);
 
     useEffect(() => {
@@ -387,7 +408,9 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
         data-mode={mode}
         data-loop={loop ? "true" : "false"}
         data-count={cardCount}
-        data-active-index={resolvedActiveIndex === -1 ? undefined : resolvedActiveIndex}
+        data-active-index={
+          resolvedActiveIndex === -1 ? undefined : resolvedActiveIndex
+        }
         className={cardStackClassNames({ className })}
         onKeyDown={handleKeyDown}
       >
@@ -406,7 +429,11 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
               mode,
               stackOffset,
             });
-            const position = getCardStackPosition(mode, relativePosition, isActive);
+            const position = getCardStackPosition(
+              mode,
+              relativePosition,
+              isActive,
+            );
             const inactiveOpenCard = mode === "open" && !isActive;
             const handleInactiveClick = (event: MouseEvent<HTMLDivElement>) => {
               if (!inactiveOpenCard) {
@@ -453,7 +480,10 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
           })}
         </div>
         {controlsVisible ? (
-          <div data-slot="card-stack-controls" className={cardStackControlsClasses}>
+          <div
+            data-slot="card-stack-controls"
+            className={cardStackControlsClasses}
+          >
             <IconButton
               aria-label={previousLabel}
               className="pointer-events-auto"

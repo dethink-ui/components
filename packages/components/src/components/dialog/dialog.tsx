@@ -39,11 +39,10 @@ import { cn } from "../../utils/cn";
 export type DialogSize = "sm" | "md" | "lg" | "xl" | "full";
 export type DialogScrollBehavior = "inside" | "outside";
 
-export interface DialogProps
-  extends Omit<
-    AriaDialogTriggerProps,
-    "children" | "isOpen" | "onOpenChange"
-  > {
+export interface DialogProps extends Omit<
+  AriaDialogTriggerProps,
+  "children" | "isOpen" | "onOpenChange"
+> {
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -51,8 +50,10 @@ export interface DialogProps
   open?: boolean;
 }
 
-export interface DialogTriggerProps
-  extends Omit<AriaButtonProps, "children" | "className"> {
+export interface DialogTriggerProps extends Omit<
+  AriaButtonProps,
+  "children" | "className"
+> {
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -60,18 +61,17 @@ export interface DialogTriggerProps
   variant?: ButtonVariant;
 }
 
-export interface DialogContentProps
-  extends Omit<
-    AriaModalOverlayProps,
-    | "children"
-    | "className"
-    | "defaultOpen"
-    | "isDismissable"
-    | "isKeyboardDismissDisabled"
-    | "isOpen"
-    | "onOpenChange"
-    | "UNSTABLE_portalContainer"
-  > {
+export interface DialogContentProps extends Omit<
+  AriaModalOverlayProps,
+  | "children"
+  | "className"
+  | "defaultOpen"
+  | "isDismissable"
+  | "isKeyboardDismissDisabled"
+  | "isOpen"
+  | "onOpenChange"
+  | "UNSTABLE_portalContainer"
+> {
   "aria-describedby"?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -91,14 +91,12 @@ export interface DialogHeaderProps extends HTMLAttributes<HTMLDivElement> {}
 
 export interface DialogFooterProps extends HTMLAttributes<HTMLDivElement> {}
 
-export interface DialogTitleProps
-  extends Omit<AriaHeadingProps, "className"> {
+export interface DialogTitleProps extends Omit<AriaHeadingProps, "className"> {
   className?: string;
   visuallyHidden?: boolean;
 }
 
-export interface DialogDescriptionProps
-  extends HTMLAttributes<HTMLParagraphElement> {}
+export interface DialogDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 export interface DialogCloseProps extends DialogTriggerProps {}
 
@@ -109,8 +107,9 @@ interface DialogContentContextValue {
   setTitleId: (id: string | null) => void;
 }
 
-const DialogContentContext =
-  createContext<DialogContentContextValue | null>(null);
+const DialogContentContext = createContext<DialogContentContextValue | null>(
+  null,
+);
 
 interface DialogRootContextValue {
   setTriggerElement: (element: HTMLButtonElement | null) => void;
@@ -137,11 +136,12 @@ const dialogContentSizeClasses: Record<DialogSize, string> = {
   full: "min-h-[calc(100dvh-(env(safe-area-inset-top)+env(safe-area-inset-bottom)+var(--dt-space-8)))] max-w-[calc(100vw-(env(safe-area-inset-left)+env(safe-area-inset-right)+var(--dt-space-8)))]",
 };
 
-const dialogContentScrollBehaviorClasses: Record<DialogScrollBehavior, string> = {
-  inside:
-    "max-h-[calc(100dvh-(env(safe-area-inset-top)+env(safe-area-inset-bottom)+var(--dt-space-8)))] overflow-y-auto overscroll-contain",
-  outside: "my-[var(--dt-space-4)] overflow-visible",
-};
+const dialogContentScrollBehaviorClasses: Record<DialogScrollBehavior, string> =
+  {
+    inside:
+      "max-h-[calc(100dvh-(env(safe-area-inset-top)+env(safe-area-inset-bottom)+var(--dt-space-8)))] overflow-y-auto overscroll-contain",
+    outside: "my-[var(--dt-space-4)] overflow-visible",
+  };
 
 const dialogPanelClasses = "contents";
 
@@ -160,14 +160,11 @@ const alertDialogFooterClasses =
 const dialogTitleClasses =
   "text-lg font-semibold leading-7 tracking-normal text-foreground";
 
-const dialogDescriptionClasses =
-  "text-sm leading-6 text-muted-foreground";
+const dialogDescriptionClasses = "text-sm leading-6 text-muted-foreground";
 
-const visuallyHiddenClasses =
-  "sr-only";
+const visuallyHiddenClasses = "sr-only";
 
-const dialogCloseIconClasses =
-  "pointer-events-none size-4 shrink-0";
+const dialogCloseIconClasses = "pointer-events-none size-4 shrink-0";
 
 const dialogCloseButtonClasses =
   "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
@@ -196,7 +193,8 @@ function renderDialogChildren(
   children: DialogContentProps["children"],
   opts: AriaDialogRenderProps,
 ) {
-  const renderedChildren = typeof children === "function" ? children(opts) : children;
+  const renderedChildren =
+    typeof children === "function" ? children(opts) : children;
 
   return renderedChildren;
 }
@@ -259,7 +257,11 @@ export function dialogTitleClassNames({
   className,
   visuallyHidden = false,
 }: Pick<DialogTitleProps, "className" | "visuallyHidden"> = {}) {
-  return cn(dialogTitleClasses, visuallyHidden && visuallyHiddenClasses, className);
+  return cn(
+    dialogTitleClasses,
+    visuallyHidden && visuallyHiddenClasses,
+    className,
+  );
 }
 
 export function dialogDescriptionClassNames({
@@ -307,15 +309,14 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(
+      defaultOpen ?? false,
+    );
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
     const previousOpenRef = useRef(resolvedOpen);
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
-    const {
-      portalContainer,
-      rootRef,
-    } = useProviderPortalRoot<HTMLDivElement>({
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "dialog-portal-container",
     });
@@ -433,8 +434,8 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
     const defaultTitleId = useId();
     const [titleId, setTitleId] = useState<string | null>(null);
     const [descriptionId, setDescriptionId] = useState<string | null>(null);
-    const labelledBy = ariaLabelledBy ??
-      (ariaLabel ? undefined : (titleId ?? defaultTitleId));
+    const labelledBy =
+      ariaLabelledBy ?? (ariaLabel ? undefined : (titleId ?? defaultTitleId));
     const contextValue = useMemo(
       () => ({
         defaultTitleId,
@@ -466,7 +467,10 @@ export const DialogContent = forwardRef<HTMLDivElement, DialogContentProps>(
           })}
         >
           <AriaDialog
-            aria-describedby={joinIds(ariaDescribedBy, descriptionId ?? undefined)}
+            aria-describedby={joinIds(
+              ariaDescribedBy,
+              descriptionId ?? undefined,
+            )}
             aria-label={ariaLabel}
             aria-labelledby={labelledBy}
             className={dialogPanelClasses}
@@ -529,16 +533,7 @@ export const DialogFooter = forwardRef<HTMLDivElement, DialogFooterProps>(
 DialogFooter.displayName = "DialogFooter";
 
 export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
-  (
-    {
-      className,
-      id,
-      level = 2,
-      visuallyHidden = false,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, id, level = 2, visuallyHidden = false, ...props }, ref) => {
     const context = useContext(DialogContentContext);
     const generatedId = useId();
     const resolvedId = id ?? context?.defaultTitleId ?? generatedId;
@@ -615,7 +610,9 @@ export const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
       <AriaButton
         {...props}
         ref={ref}
-        aria-label={ariaLabel ?? (hasVisibleChildren ? undefined : "Close dialog")}
+        aria-label={
+          ariaLabel ?? (hasVisibleChildren ? undefined : "Close dialog")
+        }
         slot="close"
         data-slot="dialog-close"
         className={dialogTriggerClassNames({
@@ -723,7 +720,11 @@ export function alertDialogTitleClassNames({
   className,
   visuallyHidden = false,
 }: Pick<AlertDialogTitleProps, "className" | "visuallyHidden"> = {}) {
-  return cn(dialogTitleClasses, visuallyHidden && visuallyHiddenClasses, className);
+  return cn(
+    dialogTitleClasses,
+    visuallyHidden && visuallyHiddenClasses,
+    className,
+  );
 }
 
 export function alertDialogDescriptionClassNames({
@@ -785,13 +786,12 @@ export const AlertDialog = forwardRef<HTMLDivElement, AlertDialogProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(
+      defaultOpen ?? false,
+    );
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
-    const {
-      portalContainer,
-      rootRef,
-    } = useProviderPortalRoot<HTMLDivElement>({
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "alert-dialog-portal-container",
     });
@@ -828,29 +828,18 @@ AlertDialog.displayName = "AlertDialog";
 export const AlertDialogTrigger = forwardRef<
   HTMLButtonElement,
   AlertDialogTriggerProps
->(
-  (
-    {
-      children,
-      className,
-      size = "md",
-      variant = "solid",
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <AriaButton
-        {...props}
-        ref={ref}
-        data-slot="alert-dialog-trigger"
-        className={alertDialogTriggerClassNames({ className, size, variant })}
-      >
-        {children}
-      </AriaButton>
-    );
-  },
-);
+>(({ children, className, size = "md", variant = "solid", ...props }, ref) => {
+  return (
+    <AriaButton
+      {...props}
+      ref={ref}
+      data-slot="alert-dialog-trigger"
+      className={alertDialogTriggerClassNames({ className, size, variant })}
+    >
+      {children}
+    </AriaButton>
+  );
+});
 
 AlertDialogTrigger.displayName = "AlertDialogTrigger";
 
@@ -881,8 +870,8 @@ export const AlertDialogContent = forwardRef<
     const defaultTitleId = useId();
     const [titleId, setTitleId] = useState<string | null>(null);
     const [descriptionId, setDescriptionId] = useState<string | null>(null);
-    const labelledBy = ariaLabelledBy ??
-      (ariaLabel ? undefined : (titleId ?? defaultTitleId));
+    const labelledBy =
+      ariaLabelledBy ?? (ariaLabel ? undefined : (titleId ?? defaultTitleId));
     const contextValue = useMemo(
       () => ({
         defaultTitleId,
@@ -900,7 +889,9 @@ export const AlertDialogContent = forwardRef<
         isDismissable={dismissible}
         isKeyboardDismissDisabled={keyboardDismissDisabled}
         shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}
-        className={alertDialogOverlayClassNames({ className: overlayClassName })}
+        className={alertDialogOverlayClassNames({
+          className: overlayClassName,
+        })}
       >
         <Modal
           ref={ref}
@@ -914,7 +905,10 @@ export const AlertDialogContent = forwardRef<
           })}
         >
           <AriaDialog
-            aria-describedby={joinIds(ariaDescribedBy, descriptionId ?? undefined)}
+            aria-describedby={joinIds(
+              ariaDescribedBy,
+              descriptionId ?? undefined,
+            )}
             aria-label={ariaLabel}
             aria-labelledby={labelledBy}
             className={dialogPanelClasses}
@@ -981,42 +975,31 @@ AlertDialogFooter.displayName = "AlertDialogFooter";
 export const AlertDialogTitle = forwardRef<
   HTMLHeadingElement,
   AlertDialogTitleProps
->(
-  (
-    {
-      className,
-      id,
-      level = 2,
-      visuallyHidden = false,
-      ...props
-    },
-    ref,
-  ) => {
-    const context = useContext(AlertDialogContentContext);
-    const generatedId = useId();
-    const resolvedId = id ?? context?.defaultTitleId ?? generatedId;
+>(({ className, id, level = 2, visuallyHidden = false, ...props }, ref) => {
+  const context = useContext(AlertDialogContentContext);
+  const generatedId = useId();
+  const resolvedId = id ?? context?.defaultTitleId ?? generatedId;
 
-    useIsomorphicLayoutEffect(() => {
-      context?.setTitleId(resolvedId);
+  useIsomorphicLayoutEffect(() => {
+    context?.setTitleId(resolvedId);
 
-      return () => {
-        context?.setTitleId(null);
-      };
-    }, [context, resolvedId]);
+    return () => {
+      context?.setTitleId(null);
+    };
+  }, [context, resolvedId]);
 
-    return (
-      <AriaHeading
-        {...props}
-        ref={ref}
-        id={resolvedId}
-        slot="title"
-        level={level}
-        data-slot="alert-dialog-title"
-        className={alertDialogTitleClassNames({ className, visuallyHidden })}
-      />
-    );
-  },
-);
+  return (
+    <AriaHeading
+      {...props}
+      ref={ref}
+      id={resolvedId}
+      slot="title"
+      level={level}
+      data-slot="alert-dialog-title"
+      className={alertDialogTitleClassNames({ className, visuallyHidden })}
+    />
+  );
+});
 
 AlertDialogTitle.displayName = "AlertDialogTitle";
 
@@ -1074,7 +1057,9 @@ function renderAlertDialogButton({
     <AriaButton
       {...props}
       ref={ref}
-      aria-label={ariaLabel ?? (hasVisibleChildren ? undefined : defaultAriaLabel)}
+      aria-label={
+        ariaLabel ?? (hasVisibleChildren ? undefined : defaultAriaLabel)
+      }
       slot="close"
       data-slot={dataSlot}
       className={alertDialogButtonClassNames({
@@ -1093,14 +1078,7 @@ export const AlertDialogClose = forwardRef<
   AlertDialogCloseProps
 >(
   (
-    {
-      "aria-label": ariaLabel,
-      children,
-      className,
-      size,
-      variant,
-      ...props
-    },
+    { "aria-label": ariaLabel, children, className, size, variant, ...props },
     ref,
   ) =>
     renderAlertDialogButton({
@@ -1124,14 +1102,7 @@ export const AlertDialogCancel = forwardRef<
   AlertDialogCancelProps
 >(
   (
-    {
-      "aria-label": ariaLabel,
-      children,
-      className,
-      size,
-      variant,
-      ...props
-    },
+    { "aria-label": ariaLabel, children, className, size, variant, ...props },
     ref,
   ) =>
     renderAlertDialogButton({
@@ -1155,14 +1126,7 @@ export const AlertDialogAction = forwardRef<
   AlertDialogActionProps
 >(
   (
-    {
-      "aria-label": ariaLabel,
-      children,
-      className,
-      size,
-      variant,
-      ...props
-    },
+    { "aria-label": ariaLabel, children, className, size, variant, ...props },
     ref,
   ) =>
     renderAlertDialogButton({

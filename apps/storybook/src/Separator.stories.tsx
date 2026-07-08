@@ -85,7 +85,10 @@ export const Base: Story = {};
 
 export const HorizontalAndVertical: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         <Stack gap="3">
           <Text weight="medium">Horizontal section boundary</Text>
@@ -106,7 +109,10 @@ export const HorizontalAndVertical: Story = {
 
 export const SemanticAndDecorative: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Grid columns="auto-fit-sm" gap="4">
         <Panel>
           <Stack gap="3">
@@ -137,7 +143,10 @@ export const SemanticAndDecorative: Story = {
 
 export const ThicknessToneAndSpacing: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="6">
         <Grid columns="auto-fit-xs" gap="4">
           {thicknesses.map((thickness) => (
@@ -183,7 +192,10 @@ export const ThicknessToneAndSpacing: Story = {
 
 export const ToolbarMenuSettingsAndForm: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="6">
         <Flex align="center" gap="3" wrap="wrap">
           <Button variant="outline">Duplicate</Button>
@@ -199,7 +211,13 @@ export const ToolbarMenuSettingsAndForm: Story = {
             <Separator />
             <Grid columns="auto-fit-xs" gap="3">
               {["Region", "Plan", "Seats"].map((label) => (
-                <Box key={label} border="default" p="3" radius="md" surface="muted">
+                <Box
+                  key={label}
+                  border="default"
+                  p="3"
+                  radius="md"
+                  surface="muted"
+                >
                   <Text size="sm" weight="medium">
                     {label}
                   </Text>
@@ -217,7 +235,7 @@ export const ToolbarMenuSettingsAndForm: Story = {
                 Email
                 <input
                   id="separator-email"
-                  className="h-density-control rounded-md border border-input bg-background px-3"
+                  className="h-density-control border-input bg-background rounded-md border px-3"
                   placeholder="ops@example.com"
                 />
               </label>
@@ -231,7 +249,10 @@ export const ToolbarMenuSettingsAndForm: Story = {
 
 export const ElementModesAndAsChild: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="5">
         <Grid columns="auto-fit-xs" gap="3">
           {elements.map((element) => (
@@ -259,7 +280,10 @@ export const ElementModesAndAsChild: Story = {
 
 export const OrientationMatrix: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Grid columns="auto-fit-sm" gap="4">
         {orientations.map((orientation) => (
           <Panel key={orientation}>
@@ -286,12 +310,16 @@ export const OrientationMatrix: Story = {
 
 export const ResponsiveClassNameComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <Stack gap="3">
         <Text weight="medium">Responsive rhythm</Text>
         <Separator spacing="2" className="sm:my-4 lg:my-6" />
         <Text size="sm" tone="muted">
-          Consumer classes remain the escape hatch for breakpoint-specific spacing.
+          Consumer classes remain the escape hatch for breakpoint-specific
+          spacing.
         </Text>
       </Stack>
     </DethinkProvider>
@@ -301,7 +329,11 @@ export const ResponsiveClassNameComposition: Story = {
 export const ThemeDensityAndRTL: Story = {
   render: () => (
     <Grid columns="1" gap="4">
-      <DethinkProvider theme="dark" density="compact" className="rounded-lg border border-border bg-background p-6">
+      <DethinkProvider
+        theme="dark"
+        density="compact"
+        className="border-border bg-background rounded-lg border p-6"
+      >
         <Stack gap="3" dir="rtl">
           <Text weight="medium">RTL compact dark</Text>
           <Separator tone="strong" />
@@ -312,13 +344,18 @@ export const ThemeDensityAndRTL: Story = {
           </Flex>
         </Stack>
       </DethinkProvider>
-      <DethinkProvider theme="light" density="comfortable" className="rounded-lg border border-border bg-background p-6">
+      <DethinkProvider
+        theme="light"
+        density="comfortable"
+        className="border-border bg-background rounded-lg border p-6"
+      >
         <Container size="md">
           <Stack gap="4">
             <Text weight="medium">Comfortable light</Text>
             <Separator spacing="2" tone="muted" />
             <Text size="sm" tone="muted">
-              Separator spacing follows the same density context as surrounding layout.
+              Separator spacing follows the same density context as surrounding
+              layout.
             </Text>
           </Stack>
         </Container>

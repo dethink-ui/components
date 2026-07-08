@@ -20,29 +20,29 @@ const navigationItems = [
 
 export function RevealButtonRecipeNavbar() {
   return (
-    <header className="mx-auto w-full max-w-5xl rounded-md border border-border bg-background shadow-sm">
+    <header className="border-border bg-background mx-auto w-full max-w-5xl rounded-md border shadow-sm">
       <div className="flex min-h-16 items-center gap-4 px-4 sm:px-5">
         <a
           href="#overview"
           aria-labelledby="reveal-navbar-brand-title reveal-navbar-brand-subtitle"
-          className="flex min-w-0 shrink-0 items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          className="focus-visible:ring-ring focus-visible:ring-offset-background flex min-w-0 shrink-0 items-center gap-3 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
         >
           <span
             aria-hidden="true"
-            className="grid size-10 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground shadow-sm"
+            className="bg-primary text-primary-foreground grid size-10 shrink-0 place-items-center rounded-md shadow-sm"
           >
             <ShieldCheck className="size-5" />
           </span>
           <span className="min-w-0 max-sm:hidden">
             <span
               id="reveal-navbar-brand-title"
-              className="block truncate font-heading text-sm font-semibold text-foreground"
+              className="font-heading text-foreground block truncate text-sm font-semibold"
             >
               Northstar Ops
             </span>
             <span
               id="reveal-navbar-brand-subtitle"
-              className="block truncate text-xs text-muted-foreground"
+              className="text-muted-foreground block truncate text-xs"
             >
               Production control
             </span>
@@ -56,7 +56,7 @@ export function RevealButtonRecipeNavbar() {
                 <a
                   href={item.href}
                   aria-current={item.current ? "page" : undefined}
-                  className="inline-flex h-9 items-center rounded-md px-3 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-[current=page]:bg-muted aria-[current=page]:text-foreground"
+                  className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-ring focus-visible:ring-offset-background aria-[current=page]:bg-muted aria-[current=page]:text-foreground inline-flex h-9 items-center rounded-md px-3 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 >
                   {item.label}
                 </a>

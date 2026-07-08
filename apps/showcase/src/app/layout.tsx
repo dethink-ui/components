@@ -51,7 +51,7 @@ export default function RootLayout({
     >
       <body
         data-density="default"
-        className="flex min-h-svh flex-col bg-background font-sans text-foreground antialiased"
+        className="bg-background text-foreground flex min-h-svh flex-col font-sans antialiased"
       >
         <script dangerouslySetInnerHTML={{ __html: brandInitScript }} />
         <ShowcaseProviders>

@@ -39,13 +39,27 @@ const elements: FlexElement[] = [
   "fieldset",
   "span",
 ];
-const itemElements: FlexItemElement[] = ["div", "span", "li", "section", "article", "aside"];
+const itemElements: FlexItemElement[] = [
+  "div",
+  "span",
+  "li",
+  "section",
+  "article",
+  "aside",
+];
 const displays: FlexDisplay[] = ["flex", "inline-flex"];
 const directions: FlexDirection[] = ["row", "column"];
 const wraps: FlexWrap[] = ["nowrap", "wrap"];
 const gaps: FlexGap[] = ["none", "1", "2", "3", "4", "5", "6", "8", "10", "12"];
 const aligns: FlexAlign[] = ["stretch", "start", "center", "end", "baseline"];
-const justifies: FlexJustify[] = ["start", "center", "end", "between", "around", "evenly"];
+const justifies: FlexJustify[] = [
+  "start",
+  "center",
+  "end",
+  "between",
+  "around",
+  "evenly",
+];
 const contents: FlexContent[] = [
   "start",
   "center",
@@ -57,8 +71,23 @@ const contents: FlexContent[] = [
 ];
 const itemGrows: FlexItemGrow[] = ["0", "1"];
 const itemShrinks: FlexItemShrink[] = ["0", "1"];
-const itemBases: FlexItemBasis[] = ["auto", "0", "full", "xs", "sm", "md", "lg"];
-const itemAligns: FlexItemAlign[] = ["auto", "stretch", "start", "center", "end", "baseline"];
+const itemBases: FlexItemBasis[] = [
+  "auto",
+  "0",
+  "full",
+  "xs",
+  "sm",
+  "md",
+  "lg",
+];
+const itemAligns: FlexItemAlign[] = [
+  "auto",
+  "stretch",
+  "start",
+  "center",
+  "end",
+  "baseline",
+];
 const itemMinInlineSizes: FlexItemMinInlineSize[] = ["auto", "0"];
 
 const displayClasses: Record<FlexDisplay, string> = {
@@ -255,7 +284,9 @@ describe("Flex", () => {
   });
 
   it("composes consumer classes after baseline classes", () => {
-    expect(flexClassNames({ className: "custom-flex" })).toContain("custom-flex");
+    expect(flexClassNames({ className: "custom-flex" })).toContain(
+      "custom-flex",
+    );
   });
 
   it("uses flexbox, axis gap, alignment, justification, and content utilities", () => {
@@ -284,7 +315,9 @@ describe("Flex", () => {
 
   it("rejects unsupported token values at the TypeScript boundary", () => {
     const valid = <Flex gap="4" align="center" />;
-    const validForm = <Flex as="form" action="/search" method="get" noValidate />;
+    const validForm = (
+      <Flex as="form" action="/search" method="get" noValidate />
+    );
     const validFieldset = <Flex as="fieldset" disabled />;
     // @ts-expect-error Flex gaps use constrained token values.
     const invalidGap = <Flex gap="7" />;
@@ -324,7 +357,12 @@ describe("Flex", () => {
 
     render(
       <Flex ref={flexRef} asChild gap="3" onClick={flexClick} wrap="wrap">
-        <RouterAnchor ref={childRef} className="custom-child" onClick={childClick} to="/docs">
+        <RouterAnchor
+          ref={childRef}
+          className="custom-child"
+          onClick={childClick}
+          to="/docs"
+        >
           Flex child
         </RouterAnchor>
       </Flex>,
@@ -357,11 +395,9 @@ describe("Flex", () => {
       </Flex>,
     );
 
-    expect(screen.getAllByRole("button").map((button) => button.textContent)).toEqual([
-      "First",
-      "Second",
-      "Third",
-    ]);
+    expect(
+      screen.getAllByRole("button").map((button) => button.textContent),
+    ).toEqual(["First", "Second", "Third"]);
   });
 });
 
@@ -383,7 +419,9 @@ describe("FlexItem", () => {
   it.each(itemElements)("renders a semantic %s item element", (as) => {
     render(<FlexItem as={as}>Semantic item {as}</FlexItem>);
 
-    expect(screen.getByText(`Semantic item ${as}`).tagName).toBe(as.toUpperCase());
+    expect(screen.getByText(`Semantic item ${as}`).tagName).toBe(
+      as.toUpperCase(),
+    );
   });
 
   it.each(itemGrows)("applies %s grow data and class", (grow) => {
@@ -422,22 +460,31 @@ describe("FlexItem", () => {
     expect(item).toHaveClass(itemAlignClasses[align]);
   });
 
-  it.each(itemMinInlineSizes)("applies %s min inline size data", (minInlineSize) => {
-    render(<FlexItem minInlineSize={minInlineSize}>min inline {minInlineSize}</FlexItem>);
+  it.each(itemMinInlineSizes)(
+    "applies %s min inline size data",
+    (minInlineSize) => {
+      render(
+        <FlexItem minInlineSize={minInlineSize}>
+          min inline {minInlineSize}
+        </FlexItem>,
+      );
 
-    const item = screen.getByText(`min inline ${minInlineSize}`);
+      const item = screen.getByText(`min inline ${minInlineSize}`);
 
-    expect(item).toHaveAttribute("data-min-inline-size", minInlineSize);
+      expect(item).toHaveAttribute("data-min-inline-size", minInlineSize);
 
-    if (minInlineSize === "0") {
-      expect(item).toHaveClass("min-w-0");
-    } else {
-      expect(item).not.toHaveClass("min-w-0");
-    }
-  });
+      if (minInlineSize === "0") {
+        expect(item).toHaveClass("min-w-0");
+      } else {
+        expect(item).not.toHaveClass("min-w-0");
+      }
+    },
+  );
 
   it("composes item classes after baseline classes", () => {
-    expect(flexItemClassNames({ className: "custom-item" })).toContain("custom-item");
+    expect(flexItemClassNames({ className: "custom-item" })).toContain(
+      "custom-item",
+    );
   });
 
   it("uses item grow, shrink, basis, alignment, and long-content utilities", () => {

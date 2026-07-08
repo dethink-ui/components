@@ -69,43 +69,49 @@ describe("RevealButton", () => {
     expect(button).toHaveAttribute("data-motion", "standard");
     expect(button).toHaveAttribute("data-label-visibility", "hover");
     expect(button).toHaveAttribute("data-state", "collapsed");
-    expect(button.querySelector('[data-slot="reveal-button-icon"]')).toHaveAttribute(
-      "aria-hidden",
-      "true",
-    );
+    expect(
+      button.querySelector('[data-slot="reveal-button-icon"]'),
+    ).toHaveAttribute("aria-hidden", "true");
     expect(
       button.querySelector('[data-slot="reveal-button-icon-motion"]'),
     ).toBeTruthy();
     expect(button.querySelector("svg")).toHaveClass("size-full");
-    expect(button.querySelector('[data-slot="reveal-button-label"]')).toHaveAttribute(
-      "aria-hidden",
-      "true",
-    );
+    expect(
+      button.querySelector('[data-slot="reveal-button-label"]'),
+    ).toHaveAttribute("aria-hidden", "true");
   });
 
   it.each(variants)("renders the %s variant attribute", (variant) => {
     render(
-      <RevealButton icon={<PlusIcon />} label={`${variant} action`} variant={variant} />,
+      <RevealButton
+        icon={<PlusIcon />}
+        label={`${variant} action`}
+        variant={variant}
+      />,
     );
 
-    expect(screen.getByRole("button", { name: `${variant} action` })).toHaveAttribute(
-      "data-variant",
-      variant,
-    );
+    expect(
+      screen.getByRole("button", { name: `${variant} action` }),
+    ).toHaveAttribute("data-variant", variant);
   });
 
   it.each(sizes)("renders the %s size attribute", (size) => {
-    render(<RevealButton icon={<PlusIcon />} label={`${size} action`} size={size} />);
-
-    expect(screen.getByRole("button", { name: `${size} action` })).toHaveAttribute(
-      "data-size",
-      size,
+    render(
+      <RevealButton icon={<PlusIcon />} label={`${size} action`} size={size} />,
     );
+
+    expect(
+      screen.getByRole("button", { name: `${size} action` }),
+    ).toHaveAttribute("data-size", size);
   });
 
   it.each(motions)("renders the %s motion attribute", (motion) => {
     render(
-      <RevealButton icon={<PlusIcon />} label={`${motion} action`} motion={motion} />,
+      <RevealButton
+        icon={<PlusIcon />}
+        label={`${motion} action`}
+        motion={motion}
+      />,
     );
 
     const button = screen.getByRole("button", { name: `${motion} action` });
@@ -117,19 +123,26 @@ describe("RevealButton", () => {
     }
   });
 
-  it.each(labelVisibilities)("renders the %s label visibility attribute", (mode) => {
-    render(
-      <RevealButton icon={<PlusIcon />} label={`${mode} action`} labelVisibility={mode} />,
-    );
+  it.each(labelVisibilities)(
+    "renders the %s label visibility attribute",
+    (mode) => {
+      render(
+        <RevealButton
+          icon={<PlusIcon />}
+          label={`${mode} action`}
+          labelVisibility={mode}
+        />,
+      );
 
-    const button = screen.getByRole("button", { name: `${mode} action` });
+      const button = screen.getByRole("button", { name: `${mode} action` });
 
-    expect(button).toHaveAttribute("data-label-visibility", mode);
-    expect(button).toHaveAttribute(
-      "data-state",
-      mode === "always" ? "revealed" : "collapsed",
-    );
-  });
+      expect(button).toHaveAttribute("data-label-visibility", mode);
+      expect(button).toHaveAttribute(
+        "data-state",
+        mode === "always" ? "revealed" : "collapsed",
+      );
+    },
+  );
 
   it("reveals the label on hover and collapses on unhover", async () => {
     const user = userEvent.setup();
@@ -139,10 +152,14 @@ describe("RevealButton", () => {
     const button = screen.getByRole("button", { name: "Create item" });
 
     await user.hover(button);
-    await waitFor(() => expect(button).toHaveAttribute("data-state", "revealed"));
+    await waitFor(() =>
+      expect(button).toHaveAttribute("data-state", "revealed"),
+    );
 
     await user.unhover(button);
-    await waitFor(() => expect(button).toHaveAttribute("data-state", "collapsed"));
+    await waitFor(() =>
+      expect(button).toHaveAttribute("data-state", "collapsed"),
+    );
   });
 
   it("reveals the label on keyboard focus and collapses on blur", async () => {
@@ -166,7 +183,11 @@ describe("RevealButton", () => {
     const onClick = vi.fn();
 
     render(
-      <RevealButton icon={<PlusIcon />} label="Create item" onClick={onClick} />,
+      <RevealButton
+        icon={<PlusIcon />}
+        label="Create item"
+        onClick={onClick}
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: "Create item" }));
@@ -217,7 +238,9 @@ describe("RevealButton", () => {
     expect(button).toHaveAttribute("aria-disabled", "true");
     expect(button).toHaveAttribute("data-loading", "true");
     expect(button).not.toHaveAttribute("data-disabled");
-    expect(button.querySelector('[data-slot="reveal-button-spinner"]')).toBeTruthy();
+    expect(
+      button.querySelector('[data-slot="reveal-button-spinner"]'),
+    ).toBeTruthy();
     expect(
       button.querySelector('[data-slot="reveal-button-spinner-glyph"]'),
     ).toBeTruthy();
@@ -244,10 +267,14 @@ describe("RevealButton", () => {
     const button = screen.getByRole("button", { name: "Refresh metrics" });
 
     await user.hover(button);
-    await waitFor(() => expect(button).toHaveAttribute("data-state", "revealed"));
+    await waitFor(() =>
+      expect(button).toHaveAttribute("data-state", "revealed"),
+    );
 
     await user.unhover(button);
-    await waitFor(() => expect(button).toHaveAttribute("data-state", "collapsed"));
+    await waitFor(() =>
+      expect(button).toHaveAttribute("data-state", "collapsed"),
+    );
 
     await user.click(button);
 
@@ -257,7 +284,9 @@ describe("RevealButton", () => {
   it("reveals the loading label on keyboard focus", async () => {
     const user = userEvent.setup();
 
-    render(<RevealButton icon={<PlusIcon />} label="Refresh metrics" loading />);
+    render(
+      <RevealButton icon={<PlusIcon />} label="Refresh metrics" loading />,
+    );
 
     const button = screen.getByRole("button", { name: "Refresh metrics" });
 
@@ -327,6 +356,8 @@ describe("RevealButton", () => {
 
     render(<RevealButton icon={<PlusIcon />} label="Ref target" ref={ref} />);
 
-    expect(ref.current).toBe(screen.getByRole("button", { name: "Ref target" }));
+    expect(ref.current).toBe(
+      screen.getByRole("button", { name: "Ref target" }),
+    );
   });
 });

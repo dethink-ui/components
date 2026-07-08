@@ -20,8 +20,8 @@ export function PopoverBasic() {
           <PopoverHeader>
             <PopoverTitle>Share dashboard</PopoverTitle>
             <PopoverDescription>
-              Anyone in the workspace can view. Focus moves inside and
-              returns to the trigger on close.
+              Anyone in the workspace can view. Focus moves inside and returns
+              to the trigger on close.
             </PopoverDescription>
           </PopoverHeader>
           <PopoverFooter>

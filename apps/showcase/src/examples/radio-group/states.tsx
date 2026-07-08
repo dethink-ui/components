@@ -16,7 +16,11 @@ export function RadioGroupStates() {
     <div className="mx-auto grid max-w-lg gap-6 sm:grid-cols-2">
       <FieldSet>
         <FieldLegend>Horizontal</FieldLegend>
-        <RadioGroup name="priority" orientation="horizontal" defaultValue="high">
+        <RadioGroup
+          name="priority"
+          orientation="horizontal"
+          defaultValue="high"
+        >
           <FieldGroup className="flex-row gap-4">
             <Field id="pri-low" orientation="horizontal">
               <FieldControl asChild>

@@ -86,7 +86,7 @@ export function HorizontalAccordionCompact() {
     <div className="mx-auto max-w-sm">
       <HorizontalAccordion
         aria-label="Compact layout demo"
-        className="rounded-lg border border-border"
+        className="border-border rounded-lg border"
         defaultValue="inbox"
         height={300}
       >
@@ -101,16 +101,16 @@ export function HorizontalAccordionCompact() {
               </HorizontalAccordion.BladeLabel>
             </HorizontalAccordion.Blade>
             <HorizontalAccordion.Panel>
-              <div className="flex h-full flex-col justify-center gap-3 bg-background p-6">
+              <div className="bg-background flex h-full flex-col justify-center gap-3 p-6">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold text-foreground">
+                  <h3 className="text-foreground text-lg font-semibold">
                     {folder.label}
                   </h3>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                  <span className="bg-primary/10 text-primary rounded-full px-2 py-0.5 text-xs font-semibold">
                     {folder.count}
                   </span>
                 </div>
-                <p className="text-sm leading-6 text-muted-foreground">
+                <p className="text-muted-foreground text-sm leading-6">
                   {folder.body}
                 </p>
                 <div>

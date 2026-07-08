@@ -28,7 +28,9 @@ function ServerDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Server dialog</DialogTitle>
-          <DialogDescription>Hydrates without mismatch warnings.</DialogDescription>
+          <DialogDescription>
+            Hydrates without mismatch warnings.
+          </DialogDescription>
         </DialogHeader>
       </DialogContent>
     </Dialog>
@@ -57,7 +59,9 @@ function ServerOpenAlertDialog() {
       <AlertDialogTrigger>Open compact server alert</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle visuallyHidden>Compact server alert</AlertDialogTitle>
+          <AlertDialogTitle visuallyHidden>
+            Compact server alert
+          </AlertDialogTitle>
           <AlertDialogDescription>
             Visually hidden alert titles hydrate with rendered content.
           </AlertDialogDescription>

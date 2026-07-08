@@ -17,7 +17,12 @@ describe("Flex accessibility", () => {
           direction="column"
           gap="6"
         >
-          <Flex as="section" aria-labelledby="flex-heading" direction="column" gap="3">
+          <Flex
+            as="section"
+            aria-labelledby="flex-heading"
+            direction="column"
+            gap="3"
+          >
             <Heading id="flex-heading" level={1} visualLevel={3}>
               Integration filters
             </Heading>
@@ -29,7 +34,12 @@ describe("Flex accessibility", () => {
             <FlexItem as="li">List semantics remain native.</FlexItem>
             <FlexItem as="li">No ARIA role is added by default.</FlexItem>
           </Flex>
-          <Flex as="form" aria-label="Example flex filter form" gap="3" wrap="wrap">
+          <Flex
+            as="form"
+            aria-label="Example flex filter form"
+            gap="3"
+            wrap="wrap"
+          >
             <FlexItem minInlineSize="0">
               <label htmlFor="flex-filter">Filter</label>
             </FlexItem>

@@ -98,9 +98,7 @@ describe("Calendar", () => {
       "w-64",
       "items-stretch",
     );
-    expect(screen.getByRole("button", { name: "2028" })).toHaveClass(
-      "h-full",
-    );
+    expect(screen.getByRole("button", { name: "2028" })).toHaveClass("h-full");
 
     await user.click(screen.getByRole("button", { name: "2028" }));
 
@@ -168,7 +166,9 @@ describe("RangeCalendar", () => {
       />,
     );
 
-    expect(container.querySelector('[data-slot="range-calendar"]')).toBeTruthy();
+    expect(
+      container.querySelector('[data-slot="range-calendar"]'),
+    ).toBeTruthy();
     expect(
       container.querySelector('[data-slot="range-calendar-grid"]'),
     ).toBeTruthy();

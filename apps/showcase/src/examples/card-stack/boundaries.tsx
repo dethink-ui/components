@@ -30,7 +30,7 @@ export function CardStackBoundaries() {
             <CardTitle>{step.title}</CardTitle>
             <CardDescription>Setup walkthrough</CardDescription>
           </CardHeader>
-          <CardContent className="font-mono text-sm text-muted-foreground">
+          <CardContent className="text-muted-foreground font-mono text-sm">
             {step.body}
           </CardContent>
         </Card>

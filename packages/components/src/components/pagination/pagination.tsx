@@ -60,8 +60,10 @@ export interface PaginationItemProps extends LiHTMLAttributes<HTMLLIElement> {
   disabled?: boolean;
 }
 
-export interface PaginationPageProps
-  extends Omit<HTMLAttributes<HTMLElement>, "children" | "onClick"> {
+export interface PaginationPageProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "children" | "onClick"
+> {
   children?: ReactNode;
   current?: boolean;
   disabled?: boolean;
@@ -72,8 +74,10 @@ export interface PaginationPageProps
   size?: PaginationSize;
 }
 
-export interface PaginationControlProps
-  extends Omit<HTMLAttributes<HTMLElement>, "children" | "onClick"> {
+export interface PaginationControlProps extends Omit<
+  HTMLAttributes<HTMLElement>,
+  "children" | "onClick"
+> {
   children?: ReactNode;
   disabled?: boolean;
   href?: string;
@@ -84,14 +88,12 @@ export interface PaginationControlProps
   type: PaginationControlType;
 }
 
-export interface PaginationEllipsisProps
-  extends HTMLAttributes<HTMLSpanElement> {
+export interface PaginationEllipsisProps extends HTMLAttributes<HTMLSpanElement> {
   label?: string;
   size?: PaginationSize;
 }
 
-export interface PaginationStatusProps
-  extends HTMLAttributes<HTMLParagraphElement> {}
+export interface PaginationStatusProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 export type PaginationRenderItem =
   | {
@@ -131,7 +133,10 @@ const defaultLabels = {
   previousPage: "Previous page",
   previousPageShort: "Back",
   root: "Pagination",
-  status: (page: number, { hasNextPage, pageCount }: PaginationStatusContext) => {
+  status: (
+    page: number,
+    { hasNextPage, pageCount }: PaginationStatusContext,
+  ) => {
     if (pageCount) {
       return `Page ${page} of ${pageCount}`;
     }
@@ -158,7 +163,8 @@ const paginationInteractiveBaseClasses =
 const paginationEllipsisClasses =
   "inline-flex shrink-0 select-none items-center justify-center rounded-md text-muted-foreground";
 
-const paginationStatusClasses = "m-0 shrink-0 whitespace-nowrap text-sm text-muted-foreground";
+const paginationStatusClasses =
+  "m-0 shrink-0 whitespace-nowrap text-sm text-muted-foreground";
 
 const paginationSizeClasses: Record<PaginationSize, string> = {
   sm: "h-8 min-w-8 px-[var(--dt-space-2)] text-xs",
@@ -224,11 +230,7 @@ export function paginationEllipsisClassNames({
   className,
   size = "md",
 }: Pick<PaginationEllipsisProps, "className" | "size"> = {}) {
-  return cn(
-    paginationEllipsisClasses,
-    paginationSizeClasses[size],
-    className,
-  );
+  return cn(paginationEllipsisClasses, paginationSizeClasses[size], className);
 }
 
 export function paginationStatusClassNames({
@@ -308,9 +310,7 @@ export function getPaginationRenderItems({
   siblingCount = 1,
 }: PaginationWindowOptions): PaginationRenderItem[] {
   const safeBoundaryCount = toNonNegativeInteger(boundaryCount, 1);
-  const safeSiblingCount = compact
-    ? 0
-    : toNonNegativeInteger(siblingCount, 1);
+  const safeSiblingCount = compact ? 0 : toNonNegativeInteger(siblingCount, 1);
   const safePageCount =
     pageCount === undefined ? undefined : toPositiveInteger(pageCount, 1);
   const currentPage = safePageCount
@@ -323,7 +323,10 @@ export function getPaginationRenderItems({
     return [];
   }
 
-  for (const pageNumber of range(1, Math.min(safeBoundaryCount, knownLastPage))) {
+  for (const pageNumber of range(
+    1,
+    Math.min(safeBoundaryCount, knownLastPage),
+  )) {
     visiblePages.add(pageNumber);
   }
 
@@ -409,13 +412,20 @@ function renderControlIcon(
   return (
     <svg
       aria-hidden="true"
-      className={cn(rotateInRtl && "rtl:rotate-180", isBoundary ? "w-4" : "w-3")}
+      className={cn(
+        rotateInRtl && "rtl:rotate-180",
+        isBoundary ? "w-4" : "w-3",
+      )}
       fill="none"
       viewBox="0 0 16 16"
     >
       {isBoundary ? (
         <path
-          d={isPrevious ? "M4.5 3.5v9m7-8-4 3.5 4 3.5" : "M11.5 3.5v9m-7-8 4 3.5-4 3.5"}
+          d={
+            isPrevious
+              ? "M4.5 3.5v9m7-8-4 3.5 4 3.5"
+              : "M11.5 3.5v9m-7-8 4 3.5-4 3.5"
+          }
           stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -512,7 +522,8 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
       siblingCount,
     });
     const resolvedAriaLabel =
-      ariaLabel ?? (ariaLabelledBy === undefined ? mergedLabels.root : undefined);
+      ariaLabel ??
+      (ariaLabelledBy === undefined ? mergedLabels.root : undefined);
     const resolvedStatus =
       status === false
         ? null
@@ -875,17 +886,22 @@ PaginationControl.displayName = "PaginationControl";
 export const PaginationEllipsis = forwardRef<
   HTMLSpanElement,
   PaginationEllipsisProps
->(({ className, label = defaultLabels.ellipsis, size = "md", ...props }, ref) => (
-  <span
-    {...props}
-    ref={ref}
-    data-slot="pagination-ellipsis"
-    className={paginationEllipsisClassNames({ className, size })}
-  >
-    <span aria-hidden="true">...</span>
-    <span className="sr-only">{label}</span>
-  </span>
-));
+>(
+  (
+    { className, label = defaultLabels.ellipsis, size = "md", ...props },
+    ref,
+  ) => (
+    <span
+      {...props}
+      ref={ref}
+      data-slot="pagination-ellipsis"
+      className={paginationEllipsisClassNames({ className, size })}
+    >
+      <span aria-hidden="true">...</span>
+      <span className="sr-only">{label}</span>
+    </span>
+  ),
+);
 
 PaginationEllipsis.displayName = "PaginationEllipsis";
 

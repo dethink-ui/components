@@ -1,4 +1,10 @@
-import { act, render, renderHook, screen, within } from "@testing-library/react";
+import {
+  act,
+  render,
+  renderHook,
+  screen,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -64,8 +70,16 @@ describe("useSlotPlanner", () => {
     expect(result.current.occurrencesByDate["2026-07-08"]).toHaveLength(1);
     expect(result.current.summarizeDay("2026-07-06").requestable).toBe(2);
     expect(result.current.summarizeDay("2026-07-09").booked).toBe(1);
-    expect(result.current.dailyCap).toEqual({ cap: 3, reached: false, used: 2 });
-    expect(result.current.weeklyCap).toEqual({ cap: 6, reached: false, used: 5 });
+    expect(result.current.dailyCap).toEqual({
+      cap: 3,
+      reached: false,
+      used: 2,
+    });
+    expect(result.current.weeklyCap).toEqual({
+      cap: 6,
+      reached: false,
+      used: 5,
+    });
     expect(result.current.slots).toBe(slotPlannerSampleSlots);
   });
 
@@ -364,8 +378,9 @@ describe("useSlotPlanner", () => {
 
     const payload = onBatchChange.mock.calls[0]![0];
 
-    expect(payload.createdSlots.map((slot: SlotPlannerSlotData) => slot.date))
-      .toEqual(["2026-07-07"]);
+    expect(
+      payload.createdSlots.map((slot: SlotPlannerSlotData) => slot.date),
+    ).toEqual(["2026-07-07"]);
     expect(payload.createdSlots[0]).toMatchObject({ capacity: 4 });
     expect(Object.keys(payload.violations)).toEqual(["gen-2"]);
     expect(result.current.occurrencesByDate["2026-07-07"]).toHaveLength(1);
@@ -485,26 +500,27 @@ describe("useSlotPlanner headless layout", () => {
     );
 
     // Navigation: selecting a day and advancing the week both re-render.
-    expect(
-      screen.getByRole("button", { name: "2026-07-06" }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "2026-07-06" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
     await user.click(screen.getByRole("button", { name: "2026-07-09" }));
 
-    expect(
-      screen.getByRole("button", { name: "2026-07-09" }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "2026-07-09" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
     await user.click(screen.getByRole("button", { name: "advance week" }));
 
-    expect(
-      screen.getByRole("button", { name: "2026-07-16" }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "2026-07-16" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
     // Create dispatches the same payload shape as the shipped editor flow.
-    await user.click(
-      screen.getByRole("button", { name: "add to 2026-07-16" }),
-    );
+    await user.click(screen.getByRole("button", { name: "add to 2026-07-16" }));
 
     expect(onCreateSlot).toHaveBeenCalledWith({
       slot: {
@@ -522,9 +538,7 @@ describe("useSlotPlanner headless layout", () => {
     expect(within(list).getByText("10:00")).toBeInTheDocument();
 
     // Uncontrolled delete applies to hook state.
-    await user.click(
-      within(list).getByRole("button", { name: "drop 10:00" }),
-    );
+    await user.click(within(list).getByRole("button", { name: "drop 10:00" }));
 
     expect(within(list).queryByText("10:00")).not.toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("slot deleted");

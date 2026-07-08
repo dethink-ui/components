@@ -19,7 +19,9 @@ describe("EmptyState", () => {
       "data-slot",
       "empty-state-title",
     );
-    expect(screen.getByRole("button", { name: "Create invoice" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Create invoice" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Read docs" })).toHaveAttribute(
       "href",
       "/docs",
@@ -28,8 +30,8 @@ describe("EmptyState", () => {
       "data-slot",
       "empty-state-footer",
     );
-    expect(emptyStateClassNames({ className: "custom", variant: "table" })).toContain(
-      "custom",
-    );
+    expect(
+      emptyStateClassNames({ className: "custom", variant: "table" }),
+    ).toContain("custom");
   });
 });

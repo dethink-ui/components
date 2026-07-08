@@ -145,7 +145,9 @@ describe("Card", () => {
   });
 
   it("composes consumer classes after baseline classes", () => {
-    expect(cardClassNames({ className: "custom-card" })).toContain("custom-card");
+    expect(cardClassNames({ className: "custom-card" })).toContain(
+      "custom-card",
+    );
   });
 
   it("uses tokenized surface, border, radius, shadow, and spacing classes", () => {
@@ -194,10 +196,9 @@ describe("Card", () => {
     expect(title).toHaveAttribute("data-slot", "card-title");
     expect(title).toHaveAttribute("data-element", "h2");
     expect(description).toHaveAttribute("data-slot", "card-description");
-    expect(screen.getByRole("button", { name: "Export" }).parentElement).toHaveAttribute(
-      "data-slot",
-      "card-action",
-    );
+    expect(
+      screen.getByRole("button", { name: "Export" }).parentElement,
+    ).toHaveAttribute("data-slot", "card-action");
     expect(content).toHaveAttribute("data-slot", "card-content");
     expect(footer).toHaveAttribute("data-slot", "card-footer");
     expect(footer).toHaveAttribute("data-justify", "between");

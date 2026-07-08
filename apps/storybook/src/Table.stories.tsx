@@ -219,7 +219,7 @@ const segmentRows = [
 
 function StatusPill({ children }: { children: string }) {
   return (
-    <span className="inline-flex rounded-md border border-border bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+    <span className="border-border bg-muted text-muted-foreground inline-flex rounded-md border px-2 py-1 text-xs font-medium">
       {children}
     </span>
   );
@@ -230,8 +230,8 @@ function CheckMark({ checked }: { checked: boolean }) {
     <span
       className={
         checked
-          ? "inline-flex h-6 min-w-10 items-center justify-center rounded-md bg-primary px-2 text-xs text-primary-foreground"
-          : "inline-flex h-6 min-w-10 items-center justify-center rounded-md border border-border px-2 text-xs text-muted-foreground"
+          ? "bg-primary text-primary-foreground inline-flex h-6 min-w-10 items-center justify-center rounded-md px-2 text-xs"
+          : "border-border text-muted-foreground inline-flex h-6 min-w-10 items-center justify-center rounded-md border px-2 text-xs"
       }
     >
       {checked ? "Yes" : "No"}
@@ -266,7 +266,9 @@ function ModernStatusPill({
 function WorkspaceTable({ density = "default" }: { density?: TableDensity }) {
   return (
     <Table density={density}>
-      <TableCaption>Workspace request volume for the current billing cycle.</TableCaption>
+      <TableCaption>
+        Workspace request volume for the current billing cycle.
+      </TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Workspace</TableHead>
@@ -278,7 +280,10 @@ function WorkspaceTable({ density = "default" }: { density?: TableDensity }) {
       </TableHeader>
       <TableBody>
         {workspaces.map((workspace) => (
-          <TableRow key={workspace.env} selected={workspace.env === "Production"}>
+          <TableRow
+            key={workspace.env}
+            selected={workspace.env === "Production"}
+          >
             <TableHead scope="row">{workspace.env}</TableHead>
             <TableCell>{workspace.owner}</TableCell>
             <TableCell>
@@ -320,7 +325,9 @@ export const CaptionAndRowHeaders: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Table>
-        <TableCaption placement="top">Permission groups by product area.</TableCaption>
+        <TableCaption placement="top">
+          Permission groups by product area.
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Group</TableHead>
@@ -378,7 +385,10 @@ export const ActionsAndSelection: Story = {
           {invoices.map((invoice, index) => (
             <TableRow key={invoice.invoice} selected={index === 0}>
               <TableCell>
-                <Checkbox aria-label={`Select ${invoice.invoice}`} defaultChecked={index === 0} />
+                <Checkbox
+                  aria-label={`Select ${invoice.invoice}`}
+                  defaultChecked={index === 0}
+                />
               </TableCell>
               <TableHead scope="row">
                 <Link href={`#${invoice.invoice}`}>{invoice.invoice}</Link>
@@ -398,12 +408,16 @@ export const ActionsAndSelection: Story = {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem>
-                      <DropdownMenuItemLabel>Open invoice</DropdownMenuItemLabel>
+                      <DropdownMenuItemLabel>
+                        Open invoice
+                      </DropdownMenuItemLabel>
                       <DropdownMenuItemShortcut>O</DropdownMenuItemShortcut>
                     </DropdownMenuItem>
                     <DropdownMenuItem>Download PDF</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem destructive>Void invoice</DropdownMenuItem>
+                    <DropdownMenuItem destructive>
+                      Void invoice
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -412,7 +426,7 @@ export const ActionsAndSelection: Story = {
         </TableBody>
       </Table>
     </DethinkProvider>
-  )
+  ),
 };
 
 export const DensityAndTheme: Story = {
@@ -454,7 +468,7 @@ export const ThemeOverrides: Story = {
       theme="light"
       density={density}
       themeConfig={modernTableTheme}
-      className="min-h-[36rem] bg-background p-6 text-foreground"
+      className="bg-background text-foreground min-h-[36rem] p-6"
     >
       <div className="mx-auto grid max-w-6xl gap-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
@@ -462,7 +476,7 @@ export const ThemeOverrides: Story = {
             <Text as="p" size="sm" tone="muted" weight="medium">
               Revenue operations
             </Text>
-            <h2 className="font-heading text-2xl font-semibold leading-tight">
+            <h2 className="font-heading text-2xl leading-tight font-semibold">
               Regional pipeline health
             </h2>
           </div>
@@ -474,7 +488,7 @@ export const ThemeOverrides: Story = {
             ].map(([label, value]) => (
               <div
                 key={label}
-                className="min-w-32 rounded-lg border border-border bg-muted/70 px-4 py-3"
+                className="border-border bg-muted/70 min-w-32 rounded-lg border px-4 py-3"
               >
                 <Text as="p" size="xs" tone="muted" weight="medium">
                   {label}
@@ -487,8 +501,8 @@ export const ThemeOverrides: Story = {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border bg-background shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+        <div className="border-border bg-background rounded-lg border shadow-sm">
+          <div className="border-border flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
             <div>
               <Text as="p" weight="medium">
                 Forecast segments
@@ -512,33 +526,33 @@ export const ThemeOverrides: Story = {
             </TableCaption>
             <TableHeader className="bg-muted/80">
               <TableRow hoverable={false}>
-                <TableHead className="h-12 ps-4 text-xs font-semibold uppercase tracking-normal">
+                <TableHead className="h-12 ps-4 text-xs font-semibold tracking-normal uppercase">
                   Segment
                 </TableHead>
-                <TableHead className="text-xs font-semibold uppercase tracking-normal">
+                <TableHead className="text-xs font-semibold tracking-normal uppercase">
                   Region
                 </TableHead>
-                <TableHead className="text-xs font-semibold uppercase tracking-normal">
+                <TableHead className="text-xs font-semibold tracking-normal uppercase">
                   Owner
                 </TableHead>
-                <TableHead className="text-xs font-semibold uppercase tracking-normal">
+                <TableHead className="text-xs font-semibold tracking-normal uppercase">
                   Status
                 </TableHead>
                 <TableHead
                   align="end"
-                  className="text-xs font-semibold uppercase tracking-normal"
+                  className="text-xs font-semibold tracking-normal uppercase"
                 >
                   Pipeline
                 </TableHead>
                 <TableHead
                   align="end"
-                  className="text-xs font-semibold uppercase tracking-normal"
+                  className="text-xs font-semibold tracking-normal uppercase"
                 >
                   Conversion
                 </TableHead>
                 <TableHead
                   align="end"
-                  className="pe-4 text-xs font-semibold uppercase tracking-normal"
+                  className="pe-4 text-xs font-semibold tracking-normal uppercase"
                 >
                   ARR
                 </TableHead>
@@ -555,7 +569,9 @@ export const ThemeOverrides: Story = {
                     {segment.account}
                   </TableHead>
                   <TableCell>{segment.region}</TableCell>
-                  <TableCell className="text-muted-foreground">{segment.owner}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {segment.owner}
+                  </TableCell>
                   <TableCell>
                     <ModernStatusPill
                       tone={
@@ -601,14 +617,16 @@ export const ThemeOverrides: Story = {
         </div>
       </div>
     </DethinkProvider>
-  )
+  ),
 };
 
 export const ResponsiveOverflow: Story = {
   render: () => (
     <DethinkProvider theme="light" className="max-w-md p-6">
       <Table className="min-w-[56rem]">
-        <TableCaption>Wide incident summary with horizontal overflow.</TableCaption>
+        <TableCaption>
+          Wide incident summary with horizontal overflow.
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Incident</TableHead>
@@ -655,7 +673,9 @@ export const EmptyStateRecipe: Story = {
             <TableCell colSpan={3}>
               <Container className="py-8 text-center" size="sm">
                 <Text weight="medium">No pending exports</Text>
-                <Text tone="muted">Completed exports remain available for 30 days.</Text>
+                <Text tone="muted">
+                  Completed exports remain available for 30 days.
+                </Text>
                 <Button className="mt-4" size="sm" variant="outline">
                   Create export
                 </Button>

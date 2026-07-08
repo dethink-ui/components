@@ -52,17 +52,20 @@ type Story = StoryObj<typeof meta>;
 
 const deckItems = [
   {
-    description: "Review product, design, and engineering readiness for launch.",
+    description:
+      "Review product, design, and engineering readiness for launch.",
     meta: "Today",
     title: "Launch review",
   },
   {
-    description: "Confirm regions, capacity headroom, and incident owner routing.",
+    description:
+      "Confirm regions, capacity headroom, and incident owner routing.",
     meta: "Operations",
     title: "Production readiness",
   },
   {
-    description: "Summarize adoption, retention, and account expansion signals.",
+    description:
+      "Summarize adoption, retention, and account expansion signals.",
     meta: "Analytics",
     title: "Growth signals",
   },
@@ -120,7 +123,7 @@ function IconFrame({ children }: { children: ReactNode }) {
   return (
     <span
       aria-hidden="true"
-      className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground"
+      className="border-border bg-muted text-muted-foreground inline-flex size-9 shrink-0 items-center justify-center rounded-md border"
     >
       {children}
     </span>
@@ -131,21 +134,21 @@ function MetricsMedia() {
   return (
     <div
       aria-hidden="true"
-      className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/40 p-5"
+      className="border-border bg-muted/40 aspect-[16/9] overflow-hidden border-b p-5"
     >
-      <div className="grid h-full grid-cols-[1fr_auto] items-end gap-4 rounded-md border border-border bg-background/90 p-4 shadow-sm">
+      <div className="border-border bg-background/90 grid h-full grid-cols-[1fr_auto] items-end gap-4 rounded-md border p-4 shadow-sm">
         <div className="flex h-full items-end gap-2">
-          <span className="h-1/3 w-5 rounded-t-sm bg-info/70" />
-          <span className="h-1/2 w-5 rounded-t-sm bg-success/70" />
-          <span className="h-2/3 w-5 rounded-t-sm bg-warning/80" />
-          <span className="h-4/5 w-5 rounded-t-sm bg-primary/70" />
-          <span className="h-3/5 w-5 rounded-t-sm bg-info/80" />
+          <span className="bg-info/70 h-1/3 w-5 rounded-t-sm" />
+          <span className="bg-success/70 h-1/2 w-5 rounded-t-sm" />
+          <span className="bg-warning/80 h-2/3 w-5 rounded-t-sm" />
+          <span className="bg-primary/70 h-4/5 w-5 rounded-t-sm" />
+          <span className="bg-info/80 h-3/5 w-5 rounded-t-sm" />
         </div>
         <div className="flex h-full w-24 flex-col justify-between py-1">
-          <span className="h-2 rounded-full bg-muted" />
-          <span className="h-2 w-5/6 rounded-full bg-muted" />
-          <span className="h-2 w-2/3 rounded-full bg-muted" />
-          <span className="h-2 w-3/4 rounded-full bg-primary/20" />
+          <span className="bg-muted h-2 rounded-full" />
+          <span className="bg-muted h-2 w-5/6 rounded-full" />
+          <span className="bg-muted h-2 w-2/3 rounded-full" />
+          <span className="bg-primary/20 h-2 w-3/4 rounded-full" />
         </div>
       </div>
     </div>
@@ -156,38 +159,38 @@ function LaunchTasksMedia() {
   return (
     <div
       aria-hidden="true"
-      className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/40 p-5"
+      className="border-border bg-muted/40 aspect-[16/9] overflow-hidden border-b p-5"
     >
-      <div className="grid h-full grid-cols-[0.9fr_1.1fr] gap-4 rounded-md border border-border bg-background/90 p-4 shadow-sm">
+      <div className="border-border bg-background/90 grid h-full grid-cols-[0.9fr_1.1fr] gap-4 rounded-md border p-4 shadow-sm">
         <div className="flex flex-col justify-between">
-          <div className="flex items-center gap-2 rounded-md border border-success/30 bg-success/10 px-3 py-2">
-            <span className="size-2.5 rounded-full bg-success" />
-            <span className="h-2 flex-1 rounded-full bg-success/30" />
+          <div className="border-success/30 bg-success/10 flex items-center gap-2 rounded-md border px-3 py-2">
+            <span className="bg-success size-2.5 rounded-full" />
+            <span className="bg-success/30 h-2 flex-1 rounded-full" />
           </div>
-          <div className="flex items-center gap-2 rounded-md border border-info/30 bg-info/10 px-3 py-2">
-            <span className="size-2.5 rounded-full bg-info" />
-            <span className="h-2 w-2/3 rounded-full bg-info/30" />
+          <div className="border-info/30 bg-info/10 flex items-center gap-2 rounded-md border px-3 py-2">
+            <span className="bg-info size-2.5 rounded-full" />
+            <span className="bg-info/30 h-2 w-2/3 rounded-full" />
           </div>
-          <div className="flex items-center gap-2 rounded-md border border-warning/40 bg-warning/10 px-3 py-2">
-            <span className="size-2.5 rounded-full bg-warning" />
-            <span className="h-2 w-3/4 rounded-full bg-warning/40" />
+          <div className="border-warning/40 bg-warning/10 flex items-center gap-2 rounded-md border px-3 py-2">
+            <span className="bg-warning size-2.5 rounded-full" />
+            <span className="bg-warning/40 h-2 w-3/4 rounded-full" />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2">
-          <div className="flex flex-col gap-2 rounded-md bg-muted/70 p-2">
-            <span className="h-2 rounded-full bg-primary/20" />
-            <span className="h-10 rounded-md border border-border bg-background" />
-            <span className="h-8 rounded-md border border-border bg-background" />
+          <div className="bg-muted/70 flex flex-col gap-2 rounded-md p-2">
+            <span className="bg-primary/20 h-2 rounded-full" />
+            <span className="border-border bg-background h-10 rounded-md border" />
+            <span className="border-border bg-background h-8 rounded-md border" />
           </div>
-          <div className="flex flex-col gap-2 rounded-md bg-muted/70 p-2">
-            <span className="h-2 rounded-full bg-primary/30" />
-            <span className="h-8 rounded-md border border-info/30 bg-info/10" />
-            <span className="h-10 rounded-md border border-border bg-background" />
+          <div className="bg-muted/70 flex flex-col gap-2 rounded-md p-2">
+            <span className="bg-primary/30 h-2 rounded-full" />
+            <span className="border-info/30 bg-info/10 h-8 rounded-md border" />
+            <span className="border-border bg-background h-10 rounded-md border" />
           </div>
-          <div className="flex flex-col gap-2 rounded-md bg-muted/70 p-2">
-            <span className="h-2 rounded-full bg-primary/40" />
-            <span className="h-12 rounded-md border border-success/30 bg-success/10" />
-            <span className="h-6 rounded-md border border-border bg-background" />
+          <div className="bg-muted/70 flex flex-col gap-2 rounded-md p-2">
+            <span className="bg-primary/40 h-2 rounded-full" />
+            <span className="border-success/30 bg-success/10 h-12 rounded-md border" />
+            <span className="border-border bg-background h-6 rounded-md border" />
           </div>
         </div>
       </div>
@@ -210,18 +213,19 @@ function createDeckCard({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
         <CardAction>
-          <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+          <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs">
             {meta}
           </span>
         </CardAction>
       </CardHeader>
       <CardContent>
         <Stack gap="2">
-          <div aria-hidden="true" className="h-2 rounded-full bg-muted">
-            <div className="h-2 w-2/3 rounded-full bg-primary" />
+          <div aria-hidden="true" className="bg-muted h-2 rounded-full">
+            <div className="bg-primary h-2 w-2/3 rounded-full" />
           </div>
           <Text size="sm" tone="muted">
-            Active cards keep nested controls available while inactive cards remain inert.
+            Active cards keep nested controls available while inactive cards
+            remain inert.
           </Text>
         </Stack>
       </CardContent>
@@ -247,9 +251,7 @@ function CardStackExample({
 }) {
   return (
     <CardStack angle={angle} loop={loop} mode={mode} stackOffset={stackOffset}>
-      {deckItems.map((item) => (
-        createDeckCard(item)
-      ))}
+      {deckItems.map((item) => createDeckCard(item))}
     </CardStack>
   );
 }
@@ -273,14 +275,18 @@ export const BaseStack: Story = {
 
     await expect(stack).toHaveAttribute("data-active-index", "0");
 
-    await userEvent.click(canvas.getByRole("button", { name: "Show next card" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Show next card" }),
+    );
     await expect(stack).toHaveAttribute("data-active-index", "1");
 
     stack.focus();
     await userEvent.keyboard("{ArrowRight}");
     await expect(stack).toHaveAttribute("data-active-index", "2");
 
-    await userEvent.click(canvas.getByRole("button", { name: "Show previous card" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Show previous card" }),
+    );
     await expect(stack).toHaveAttribute("data-active-index", "1");
   },
 };
@@ -300,9 +306,7 @@ export const OpenFan: Story = {
           mode={mode}
           stackOffset={stackOffset}
         >
-          {deckItems.map((item) => (
-            createDeckCard(item)
-          ))}
+          {deckItems.map((item) => createDeckCard(item))}
         </CardStack>
       </Container>
     </DethinkProvider>
@@ -333,9 +337,7 @@ export const AngleTuning: Story = {
               {angle} degrees
             </Text>
             <CardStack mode="open" angle={angle}>
-              {deckItems.slice(0, 3).map((item) => (
-                createDeckCard(item)
-              ))}
+              {deckItems.slice(0, 3).map((item) => createDeckCard(item))}
             </CardStack>
           </Stack>
         ))}
@@ -368,9 +370,7 @@ export const ControlledActiveIndex: Story = {
               activeIndex={activeIndex}
               onActiveIndexChange={setActiveIndex}
             >
-              {deckItems.map((item) => (
-                createDeckCard(item)
-              ))}
+              {deckItems.map((item) => createDeckCard(item))}
             </CardStack>
           </Stack>
         </Container>
@@ -393,7 +393,9 @@ export const MediaAndIconCards: Story = {
                 </IconFrame>
                 Launch tasks
               </CardTitle>
-              <CardDescription>Media stays regular Card content inside the deck.</CardDescription>
+              <CardDescription>
+                Media stays regular Card content inside the deck.
+              </CardDescription>
             </CardHeader>
           </Card>
           <Card as="article">
@@ -405,7 +407,9 @@ export const MediaAndIconCards: Story = {
                 </IconFrame>
                 Metrics review
               </CardTitle>
-              <CardDescription>Header icons remain decorative and inert when behind.</CardDescription>
+              <CardDescription>
+                Header icons remain decorative and inert when behind.
+              </CardDescription>
             </CardHeader>
           </Card>
           {createDeckCard({
@@ -422,21 +426,21 @@ export const MediaAndIconCards: Story = {
 export const ThemeDensityAndRTL: Story = {
   render: () => (
     <Grid columns="1" gap="4">
-      <DethinkProvider theme="dark" density="compact" className="bg-background p-6">
+      <DethinkProvider
+        theme="dark"
+        density="compact"
+        className="bg-background p-6"
+      >
         <Container size="sm">
           <CardStack dir="rtl" loop={false}>
-            {deckItems.slice(0, 3).map((item) => (
-              createDeckCard(item)
-            ))}
+            {deckItems.slice(0, 3).map((item) => createDeckCard(item))}
           </CardStack>
         </Container>
       </DethinkProvider>
       <DethinkProvider theme="light" density="comfortable" className="p-6">
         <Container size="sm">
           <CardStack mode="open" angle={20}>
-            {deckItems.slice(0, 3).map((item) => (
-              createDeckCard(item)
-            ))}
+            {deckItems.slice(0, 3).map((item) => createDeckCard(item))}
           </CardStack>
         </Container>
       </DethinkProvider>

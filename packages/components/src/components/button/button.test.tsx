@@ -2,7 +2,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { FormEvent, MouseEvent } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { Button, buttonClassNames, type ButtonSize, type ButtonVariant } from ".";
+import {
+  Button,
+  buttonClassNames,
+  type ButtonSize,
+  type ButtonVariant,
+} from ".";
 
 const variants: ButtonVariant[] = [
   "solid",
@@ -183,7 +188,9 @@ describe("Button", () => {
     const button = screen.getByRole("button", { name: "Create project" });
 
     expect(button.querySelector('[data-slot="button-left-icon"]')).toBeTruthy();
-    expect(button.querySelector('[data-slot="button-right-icon"]')).toBeTruthy();
+    expect(
+      button.querySelector('[data-slot="button-right-icon"]'),
+    ).toBeTruthy();
     expect(button).toHaveAccessibleName("Create project");
   });
 

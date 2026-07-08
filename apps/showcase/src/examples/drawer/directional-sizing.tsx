@@ -25,7 +25,7 @@ const sizeModes = [
   {
     value: "preset",
     label: "Preset lg",
-    summary: "Uses size=\"lg\" on the active edge.",
+    summary: 'Uses size="lg" on the active edge.',
   },
   {
     value: "custom",
@@ -53,13 +53,13 @@ export function DrawerDirectionalSizing() {
   const activeMode = sizeModes.find((item) => item.value === sizeMode)!;
 
   return (
-    <div className="mx-auto grid w-full max-w-2xl gap-[var(--dt-space-5)] rounded-lg border border-border bg-background p-[var(--dt-space-4)]">
+    <div className="border-border bg-background mx-auto grid w-full max-w-2xl gap-[var(--dt-space-5)] rounded-lg border p-[var(--dt-space-4)]">
       <div className="grid gap-[var(--dt-space-3)] sm:grid-cols-[1fr_auto] sm:items-start">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-foreground text-sm font-medium">
             Invoice review drawer
           </p>
-          <p className="text-sm leading-6 text-muted-foreground">
+          <p className="text-muted-foreground text-sm leading-6">
             Pick an edge and size mode, then open the same drawer content.
           </p>
         </div>
@@ -86,26 +86,26 @@ export function DrawerDirectionalSizing() {
               <dl className="grid gap-[var(--dt-space-2)]">
                 <div className="flex justify-between gap-[var(--dt-space-4)]">
                   <dt className="text-muted-foreground">Axis</dt>
-                  <dd className="font-medium text-foreground">
+                  <dd className="text-foreground font-medium">
                     {activeDirection.axis}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-[var(--dt-space-4)]">
                   <dt className="text-muted-foreground">Mode</dt>
-                  <dd className="font-medium text-foreground">
+                  <dd className="text-foreground font-medium">
                     {activeMode.label}
                   </dd>
                 </div>
                 <div className="flex justify-between gap-[var(--dt-space-4)]">
                   <dt className="text-muted-foreground">Custom dimension</dt>
-                  <dd className="font-medium text-foreground">
+                  <dd className="text-foreground font-medium">
                     {customDimension}
                   </dd>
                 </div>
               </dl>
-              <div className="rounded-md border border-border/70 bg-muted/30 p-[var(--dt-space-3)]">
-                <p className="font-medium text-foreground">Acme procurement</p>
-                <p className="mt-1 text-muted-foreground">
+              <div className="border-border/70 bg-muted/30 rounded-md border p-[var(--dt-space-3)]">
+                <p className="text-foreground font-medium">Acme procurement</p>
+                <p className="text-muted-foreground mt-1">
                   Subscription renewal, usage overage, and support add-on.
                 </p>
               </div>
@@ -120,12 +120,12 @@ export function DrawerDirectionalSizing() {
 
       <div className="grid gap-[var(--dt-space-3)] sm:grid-cols-2">
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.14em] uppercase">
             Edge
           </p>
           <div
             aria-label="Drawer edge"
-            className="flex flex-wrap gap-[var(--dt-space-1)] rounded-md border border-border bg-muted/30 p-[var(--dt-space-1)]"
+            className="border-border bg-muted/30 flex flex-wrap gap-[var(--dt-space-1)] rounded-md border p-[var(--dt-space-1)]"
             role="group"
           >
             {directions.map((item) => (
@@ -144,12 +144,12 @@ export function DrawerDirectionalSizing() {
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.14em] uppercase">
             Size
           </p>
           <div
             aria-label="Drawer size mode"
-            className="flex flex-wrap gap-[var(--dt-space-1)] rounded-md border border-border bg-muted/30 p-[var(--dt-space-1)]"
+            className="border-border bg-muted/30 flex flex-wrap gap-[var(--dt-space-1)] rounded-md border p-[var(--dt-space-1)]"
             role="group"
           >
             {sizeModes.map((item) => (
@@ -168,7 +168,7 @@ export function DrawerDirectionalSizing() {
         </div>
       </div>
 
-      <p className="text-sm leading-6 text-muted-foreground">
+      <p className="text-muted-foreground text-sm leading-6">
         {activeMode.summary}
       </p>
     </div>

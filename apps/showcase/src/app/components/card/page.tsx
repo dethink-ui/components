@@ -81,7 +81,9 @@ export default function CardPage() {
         <div className="space-y-8">
           <PropsTable caption="Card props" rows={cardProps} />
           <div className="space-y-3">
-            <h3 className="font-heading text-lg font-semibold">Section components</h3>
+            <h3 className="font-heading text-lg font-semibold">
+              Section components
+            </h3>
             <PropsTable
               caption="Card subcomponent props"
               rows={cardSubcomponentProps}

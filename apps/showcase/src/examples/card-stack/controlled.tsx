@@ -12,9 +12,18 @@ import {
 } from "@dethink/components";
 
 const quotes = [
-  { author: "Dana, platform lead", quote: "We rethemed the whole library in an afternoon." },
-  { author: "Miguel, frontend dev", quote: "Open code means no more fighting a black box." },
-  { author: "Priya, design systems", quote: "The tokens map one-to-one onto our brand." },
+  {
+    author: "Dana, platform lead",
+    quote: "We rethemed the whole library in an afternoon.",
+  },
+  {
+    author: "Miguel, frontend dev",
+    quote: "Open code means no more fighting a black box.",
+  },
+  {
+    author: "Priya, design systems",
+    quote: "The tokens map one-to-one onto our brand.",
+  },
 ];
 
 export function CardStackControlled() {
@@ -34,7 +43,7 @@ export function CardStackControlled() {
               <CardTitle>“{entry.quote}”</CardTitle>
               <CardDescription>{entry.author}</CardDescription>
             </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
+            <CardContent className="text-muted-foreground text-sm">
               Quote {quotes.indexOf(entry) + 1} of {quotes.length}
             </CardContent>
           </Card>

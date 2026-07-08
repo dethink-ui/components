@@ -220,19 +220,22 @@ const photoCards = [
 
 const iconHeaderCards = [
   {
-    description: "Prioritize unanswered review requests before the weekly cutover.",
+    description:
+      "Prioritize unanswered review requests before the weekly cutover.",
     icon: WorkflowIcon,
     label: "12 open",
     title: "Review queue",
   },
   {
-    description: "Watch build health and error budgets across production regions.",
+    description:
+      "Watch build health and error budgets across production regions.",
     icon: InfrastructureIcon,
     label: "99.98%",
     title: "Runtime health",
   },
   {
-    description: "Compare adoption, retention, and expansion signals by segment.",
+    description:
+      "Compare adoption, retention, and expansion signals by segment.",
     icon: AnalyticsIcon,
     label: "+18%",
     title: "Growth signals",
@@ -247,7 +250,7 @@ function IconFrame({
   return (
     <span
       aria-hidden="true"
-      className="inline-flex size-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground"
+      className="border-border bg-muted text-muted-foreground inline-flex size-9 shrink-0 items-center justify-center rounded-md border"
     >
       <Icon className="size-4" />
     </span>
@@ -267,11 +270,14 @@ export const Base: Story = {
       >
         <CardHeader>
           <CardTitle>Workspace usage</CardTitle>
-          <CardDescription>Track usage across your active workspace.</CardDescription>
+          <CardDescription>
+            Track usage across your active workspace.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Text tone="muted">
-            Card owns the framed surface and anatomy while content remains regular React.
+            Card owns the framed surface and anatomy while content remains
+            regular React.
           </Text>
         </CardContent>
       </Card>
@@ -285,7 +291,9 @@ export const Anatomy: Story = {
       <Card as="article">
         <CardHeader as="header">
           <CardTitle as="h2">Team workspace</CardTitle>
-          <CardDescription>Members, usage, and billing state in one surface.</CardDescription>
+          <CardDescription>
+            Members, usage, and billing state in one surface.
+          </CardDescription>
           <CardAction>
             <Button size="sm" variant="outline">
               Manage
@@ -320,7 +328,9 @@ export const Variants: Story = {
             <Card key={surface} surface={surface}>
               <CardHeader>
                 <CardTitle as="h3">surface {surface}</CardTitle>
-                <CardDescription>Token-backed surface treatment.</CardDescription>
+                <CardDescription>
+                  Token-backed surface treatment.
+                </CardDescription>
               </CardHeader>
             </Card>
           ))}
@@ -343,7 +353,9 @@ export const Variants: Story = {
                   <CardTitle as="h3">
                     {radius} / {shadow}
                   </CardTitle>
-                  <CardDescription>Radius and shadow stay tokenized.</CardDescription>
+                  <CardDescription>
+                    Radius and shadow stay tokenized.
+                  </CardDescription>
                 </CardHeader>
               </Card>
             )),
@@ -363,7 +375,9 @@ export const SpacingAndDensity: Story = {
             <Card key={spacing} spacing={spacing}>
               <CardHeader>
                 <CardTitle as="h3">compact {spacing}</CardTitle>
-                <CardDescription>Padding reacts to density tokens.</CardDescription>
+                <CardDescription>
+                  Padding reacts to density tokens.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Text size="sm">Compact card content remains readable.</Text>
@@ -376,10 +390,14 @@ export const SpacingAndDensity: Story = {
         <Card spacing="md">
           <CardHeader>
             <CardTitle>comfortable density</CardTitle>
-            <CardDescription>Cards inherit the provider density context.</CardDescription>
+            <CardDescription>
+              Cards inherit the provider density context.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Text tone="muted">The same spacing token expands in comfortable mode.</Text>
+            <Text tone="muted">
+              The same spacing token expands in comfortable mode.
+            </Text>
           </CardContent>
         </Card>
       </DethinkProvider>
@@ -393,7 +411,11 @@ export const DashboardCards: Story = {
       <Grid columns="auto-fit-xs" gap="3">
         <MetricCard detail="Up 12% this week" label="Requests" value="2.4M" />
         <MetricCard detail="Within target" label="Latency" value="132ms" />
-        <MetricCard detail="No active incident" label="Reliability" value="99.98%" />
+        <MetricCard
+          detail="No active incident"
+          label="Reliability"
+          value="99.98%"
+        />
       </Grid>
     </DethinkProvider>
   ),
@@ -407,8 +429,8 @@ export const ContentOnly: Story = {
           <Stack gap="2">
             <Text weight="medium">Content-only surface</Text>
             <Text tone="muted">
-              Use CardContent directly when the surrounding page already owns the
-              heading and action controls.
+              Use CardContent directly when the surrounding page already owns
+              the heading and action controls.
             </Text>
           </Stack>
         </CardContent>
@@ -421,7 +443,7 @@ export const MediaContent: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Card as="article" className="max-w-xl">
-        <div className="aspect-[16/9] bg-muted" aria-hidden="true" />
+        <div className="bg-muted aspect-[16/9]" aria-hidden="true" />
         <CardHeader>
           <CardTitle as="h2">Deployment overview</CardTitle>
           <CardDescription>
@@ -431,7 +453,7 @@ export const MediaContent: Story = {
         <CardContent>
           <Grid columns="auto-fit-xs" gap="3">
             {["Build", "Checks", "Regions"].map((label) => (
-              <div key={label} className="rounded-md border border-border p-3">
+              <div key={label} className="border-border rounded-md border p-3">
                 <Text size="sm" weight="medium">
                   {label}
                 </Text>
@@ -454,10 +476,14 @@ export const EmptyContentStates: Story = {
         <Card>
           <CardHeader>
             <CardTitle as="h3">No alerts</CardTitle>
-            <CardDescription>Nothing needs attention right now.</CardDescription>
+            <CardDescription>
+              Nothing needs attention right now.
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Text tone="muted">When EmptyState lands it should own richer empty UX.</Text>
+            <Text tone="muted">
+              When EmptyState lands it should own richer empty UX.
+            </Text>
           </CardContent>
           <CardFooter>
             <Button size="sm" variant="outline">
@@ -468,12 +494,14 @@ export const EmptyContentStates: Story = {
         <Card surface="muted">
           <CardHeader>
             <CardTitle as="h3">Loading placeholder</CardTitle>
-            <CardDescription>Skeleton will own animated loading states later.</CardDescription>
+            <CardDescription>
+              Skeleton will own animated loading states later.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Stack gap="2">
-              <div className="h-3 rounded-md bg-muted-foreground/20" />
-              <div className="h-3 w-2/3 rounded-md bg-muted-foreground/20" />
+              <div className="bg-muted-foreground/20 h-3 rounded-md" />
+              <div className="bg-muted-foreground/20 h-3 w-2/3 rounded-md" />
             </Stack>
           </CardContent>
         </Card>
@@ -489,8 +517,8 @@ export const ResponsiveClassNameComposition: Story = {
         <CardHeader>
           <CardTitle>Responsive local rhythm</CardTitle>
           <CardDescription>
-            Consumer classes remain the escape hatch for breakpoint-specific card
-            layout.
+            Consumer classes remain the escape hatch for breakpoint-specific
+            card layout.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -515,7 +543,9 @@ export const SettingsPanel: Story = {
         <Card as="section">
           <CardHeader>
             <CardTitle as="h2">Notification routing</CardTitle>
-            <CardDescription>Choose where operational updates are delivered.</CardDescription>
+            <CardDescription>
+              Choose where operational updates are delivered.
+            </CardDescription>
             <CardAction>
               <Button size="sm" variant="outline">
                 Test route
@@ -525,7 +555,10 @@ export const SettingsPanel: Story = {
           <CardContent>
             <Grid columns="auto-fit-xs" gap="3">
               {["Email", "Slack", "Pager"].map((label) => (
-                <div key={label} className="rounded-md border border-border p-3">
+                <div
+                  key={label}
+                  className="border-border rounded-md border p-3"
+                >
                   <Text size="sm" weight="medium">
                     {label}
                   </Text>
@@ -559,8 +592,12 @@ export const ResourceCards: Story = {
               </CardHeader>
               <CardContent>
                 <Flex align="center" gap="2" wrap="wrap">
-                  <span className="rounded-md bg-muted px-2 py-1 text-xs">Active</span>
-                  <span className="rounded-md bg-muted px-2 py-1 text-xs">Healthy</span>
+                  <span className="bg-muted rounded-md px-2 py-1 text-xs">
+                    Active
+                  </span>
+                  <span className="bg-muted rounded-md px-2 py-1 text-xs">
+                    Healthy
+                  </span>
                 </Flex>
               </CardContent>
             </Card>
@@ -575,37 +612,39 @@ export const PhotoCards: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Grid columns="auto-fit-sm" gap="4">
-        {photoCards.map(({ alt, description, icon, image, meta, status, title }) => (
-          <Card key={title} as="article">
-            <img
-              src={image}
-              alt={alt}
-              width="1200"
-              height="675"
-              className="block aspect-[16/9] w-full rounded-t-[inherit] object-cover"
-            />
-            <CardHeader>
-              <CardTitle as="h3" className="flex items-center gap-3">
-                <IconFrame icon={icon} />
-                <span>{title}</span>
-              </CardTitle>
-              <CardDescription>{description}</CardDescription>
-              <CardAction>
-                <Button size="sm" variant="outline">
-                  Open
-                </Button>
-              </CardAction>
-            </CardHeader>
-            <CardFooter justify="between">
-              <Text as="span" size="sm" tone="muted">
-                {meta}
-              </Text>
-              <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
-                {status}
-              </span>
-            </CardFooter>
-          </Card>
-        ))}
+        {photoCards.map(
+          ({ alt, description, icon, image, meta, status, title }) => (
+            <Card key={title} as="article">
+              <img
+                src={image}
+                alt={alt}
+                width="1200"
+                height="675"
+                className="block aspect-[16/9] w-full rounded-t-[inherit] object-cover"
+              />
+              <CardHeader>
+                <CardTitle as="h3" className="flex items-center gap-3">
+                  <IconFrame icon={icon} />
+                  <span>{title}</span>
+                </CardTitle>
+                <CardDescription>{description}</CardDescription>
+                <CardAction>
+                  <Button size="sm" variant="outline">
+                    Open
+                  </Button>
+                </CardAction>
+              </CardHeader>
+              <CardFooter justify="between">
+                <Text as="span" size="sm" tone="muted">
+                  {meta}
+                </Text>
+                <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs">
+                  {status}
+                </span>
+              </CardFooter>
+            </Card>
+          ),
+        )}
       </Grid>
     </DethinkProvider>
   ),
@@ -624,18 +663,19 @@ export const IconHeaderCards: Story = {
               </CardTitle>
               <CardDescription>{description}</CardDescription>
               <CardAction>
-                <span className="rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+                <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs">
                   {label}
                 </span>
               </CardAction>
             </CardHeader>
             <CardContent>
               <Stack gap="2">
-                <div aria-hidden="true" className="h-2 rounded-full bg-muted">
-                  <div className="h-2 w-2/3 rounded-full bg-primary" />
+                <div aria-hidden="true" className="bg-muted h-2 rounded-full">
+                  <div className="bg-primary h-2 w-2/3 rounded-full" />
                 </div>
                 <Text size="sm" tone="muted">
-                  Header icons are decorative and stay separate from action controls.
+                  Header icons are decorative and stay separate from action
+                  controls.
                 </Text>
               </Stack>
             </CardContent>
@@ -653,7 +693,9 @@ export const CompositionAndAsChild: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Sectioned card</CardTitle>
-            <CardDescription>Separator divides content without custom borders.</CardDescription>
+            <CardDescription>
+              Separator divides content without custom borders.
+            </CardDescription>
           </CardHeader>
           <Separator decorative />
           <CardContent>
@@ -666,7 +708,9 @@ export const CompositionAndAsChild: Story = {
           <RouterArticle to="#card-as-child">
             <CardHeader>
               <CardTitle as="h3">asChild article</CardTitle>
-              <CardDescription>Compatible semantic wrappers receive Card styling.</CardDescription>
+              <CardDescription>
+                Compatible semantic wrappers receive Card styling.
+              </CardDescription>
             </CardHeader>
           </RouterArticle>
         </Card>
@@ -684,16 +728,26 @@ export const ElementModes: Story = {
             <Card key={element} as={element}>
               <CardHeader>
                 <CardTitle as="h3">as {element}</CardTitle>
-                <CardDescription>Card preserves the selected static element.</CardDescription>
+                <CardDescription>
+                  Card preserves the selected static element.
+                </CardDescription>
               </CardHeader>
             </Card>
           ))}
         </Grid>
-        <Grid as="ul" role="list" columns="auto-fit-xs" gap="3" className="list-none p-0">
+        <Grid
+          as="ul"
+          role="list"
+          columns="auto-fit-xs"
+          gap="3"
+          className="list-none p-0"
+        >
           <Card as="li">
             <CardHeader>
               <CardTitle as="h3">as li</CardTitle>
-              <CardDescription>List-item cards stay inside a semantic list.</CardDescription>
+              <CardDescription>
+                List-item cards stay inside a semantic list.
+              </CardDescription>
             </CardHeader>
           </Card>
         </Grid>
@@ -705,11 +759,17 @@ export const ElementModes: Story = {
 export const ThemeDensityAndRTL: Story = {
   render: () => (
     <Grid columns="1" gap="4">
-      <DethinkProvider theme="dark" density="compact" className="bg-background p-6">
+      <DethinkProvider
+        theme="dark"
+        density="compact"
+        className="bg-background p-6"
+      >
         <Card as="section" dir="rtl">
           <CardHeader>
             <CardTitle as="h2">RTL compact dark</CardTitle>
-            <CardDescription>Header action uses logical inline spacing.</CardDescription>
+            <CardDescription>
+              Header action uses logical inline spacing.
+            </CardDescription>
             <CardAction>
               <Button size="sm" variant="outline">
                 Export
@@ -717,7 +777,9 @@ export const ThemeDensityAndRTL: Story = {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <Text tone="muted">Content remains readable in dark mode and RTL.</Text>
+            <Text tone="muted">
+              Content remains readable in dark mode and RTL.
+            </Text>
           </CardContent>
         </Card>
       </DethinkProvider>
@@ -725,7 +787,9 @@ export const ThemeDensityAndRTL: Story = {
         <Card>
           <CardHeader>
             <CardTitle>Comfortable light</CardTitle>
-            <CardDescription>Density changes flow through CSS variables.</CardDescription>
+            <CardDescription>
+              Density changes flow through CSS variables.
+            </CardDescription>
           </CardHeader>
           <CardFooter justify="between">
             <Text as="span" size="sm" tone="muted">

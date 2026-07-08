@@ -156,14 +156,16 @@ describe("Sidebar", () => {
     expect(dashboard).toHaveAttribute("href", "/dashboard");
     expect(dashboard).toHaveAttribute("aria-current", "page");
     expect(dashboard).toHaveAttribute("data-current", "true");
-    expect(document.querySelector('[data-slot="sidebar-menu-badge"]')).toHaveTextContent(
-      "12",
-    );
-    expect(screen.getByRole("button", { name: "Refresh data" })).toHaveAttribute(
+    expect(
+      document.querySelector('[data-slot="sidebar-menu-badge"]'),
+    ).toHaveTextContent("12");
+    expect(
+      screen.getByRole("button", { name: "Refresh data" }),
+    ).toHaveAttribute("data-slot", "sidebar-menu-button");
+    expect(screen.getByRole("main")).toHaveAttribute(
       "data-slot",
-      "sidebar-menu-button",
+      "sidebar-inset",
     );
-    expect(screen.getByRole("main")).toHaveAttribute("data-slot", "sidebar-inset");
   });
 
   it("renders a selection indicator only on current menu items", () => {
@@ -173,7 +175,11 @@ describe("Sidebar", () => {
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuLink current href="/current" icon={<DashboardIcon />}>
+                <SidebarMenuLink
+                  current
+                  href="/current"
+                  icon={<DashboardIcon />}
+                >
                   Current page
                 </SidebarMenuLink>
               </SidebarMenuItem>
@@ -253,14 +259,15 @@ describe("Sidebar", () => {
     expect(
       reports.querySelector('[data-slot="sidebar-menu-badge-dot"]'),
     ).not.toBeNull();
-    expect(billing.querySelector('[data-slot="sidebar-menu-badge-dot"]')).toBeNull();
+    expect(
+      billing.querySelector('[data-slot="sidebar-menu-badge-dot"]'),
+    ).toBeNull();
     expect(
       billing.querySelector('[data-slot="sidebar-menu-icon-fallback"]'),
     ).toHaveTextContent("B");
-    expect(screen.getByRole("link", { name: "Composed content" })).toHaveAttribute(
-      "data-sidebar-tooltip",
-      "Custom label",
-    );
+    expect(
+      screen.getByRole("link", { name: "Composed content" }),
+    ).toHaveAttribute("data-sidebar-tooltip", "Custom label");
     expect(screen.getByRole("button", { name: "Admin" })).toHaveAttribute(
       "tabindex",
       "-1",
@@ -344,18 +351,15 @@ describe("Sidebar", () => {
       </SidebarProvider>,
     );
 
-    expect(screen.getByRole("navigation", { name: "Right navigation" })).toHaveAttribute(
-      "data-side",
-      "right",
-    );
-    expect(screen.getByRole("button", { name: "Collapse sidebar" })).toHaveAttribute(
-      "data-side",
-      "right",
-    );
-    expect(screen.getByRole("button", { name: "Collapse sidebar rail" })).toHaveAttribute(
-      "data-side",
-      "right",
-    );
+    expect(
+      screen.getByRole("navigation", { name: "Right navigation" }),
+    ).toHaveAttribute("data-side", "right");
+    expect(
+      screen.getByRole("button", { name: "Collapse sidebar" }),
+    ).toHaveAttribute("data-side", "right");
+    expect(
+      screen.getByRole("button", { name: "Collapse sidebar rail" }),
+    ).toHaveAttribute("data-side", "right");
   });
 
   it("treats the rail variant as visually collapsed", () => {
@@ -381,10 +385,9 @@ describe("Sidebar", () => {
     expect(
       screen.getByRole("navigation", { name: "Rail variant navigation" }),
     ).toHaveAttribute("data-collapsed", "true");
-    expect(screen.getByRole("button", { name: "Expand sidebar" })).toHaveAttribute(
-      "data-collapsed",
-      "true",
-    );
+    expect(
+      screen.getByRole("button", { name: "Expand sidebar" }),
+    ).toHaveAttribute("data-collapsed", "true");
   });
 
   it("supports controlled collapsed state", async () => {
@@ -409,10 +412,9 @@ describe("Sidebar", () => {
       "data-collapsed",
       "true",
     );
-    expect(screen.getByRole("button", { name: "Expand sidebar" })).toHaveAttribute(
-      "aria-expanded",
-      "false",
-    );
+    expect(
+      screen.getByRole("button", { name: "Expand sidebar" }),
+    ).toHaveAttribute("aria-expanded", "false");
   });
 
   it("supports uncontrolled collapsible groups", async () => {
@@ -493,7 +495,9 @@ describe("Sidebar", () => {
                 <SidebarGroupContent>
                   <SidebarMenu>
                     <SidebarMenuItem>
-                      <SidebarMenuLink href="/admin/users">Users</SidebarMenuLink>
+                      <SidebarMenuLink href="/admin/users">
+                        Users
+                      </SidebarMenuLink>
                     </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
@@ -554,7 +558,9 @@ describe("Sidebar", () => {
       await user.keyboard("{Escape}");
 
       expect(dialog).toHaveAttribute("data-state", "closing");
-      expect(screen.getByRole("button", { name: "Open sidebar" })).toHaveFocus();
+      expect(
+        screen.getByRole("button", { name: "Open sidebar" }),
+      ).toHaveFocus();
 
       const animationEnd = createEvent.animationEnd(dialog);
       Object.defineProperty(animationEnd, "animationName", {
@@ -633,14 +639,12 @@ describe("Sidebar", () => {
       "rel",
       expect.stringContaining("noopener"),
     );
-    expect(screen.getByRole("link", { name: "Router project" })).toHaveAttribute(
-      "href",
-      "/router",
-    );
-    expect(screen.getByRole("link", { name: "Router project" })).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    expect(
+      screen.getByRole("link", { name: "Router project" }),
+    ).toHaveAttribute("href", "/router");
+    expect(
+      screen.getByRole("link", { name: "Router project" }),
+    ).toHaveAttribute("aria-current", "page");
     expect(routerLinkRef.current).toHaveAttribute("href", "/router");
   });
 
@@ -654,7 +658,9 @@ describe("Sidebar", () => {
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuLink href="#mobile">Mobile overview</SidebarMenuLink>
+                <SidebarMenuLink href="#mobile">
+                  Mobile overview
+                </SidebarMenuLink>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
@@ -674,7 +680,9 @@ describe("Sidebar", () => {
 
     await user.keyboard("{Escape}");
 
-    expect(screen.queryByRole("dialog", { name: "Mobile navigation" })).toBeNull();
+    expect(
+      screen.queryByRole("dialog", { name: "Mobile navigation" }),
+    ).toBeNull();
     expect(trigger).toHaveFocus();
     expect(container).not.toHaveAttribute("inert");
   });
@@ -691,7 +699,9 @@ describe("Sidebar", () => {
             <SidebarContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuLink href="#mobile">Mobile overview</SidebarMenuLink>
+                  <SidebarMenuLink href="#mobile">
+                    Mobile overview
+                  </SidebarMenuLink>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarContent>
@@ -720,7 +730,9 @@ describe("Sidebar", () => {
     expect(link).toHaveFocus();
 
     fireEvent.keyDown(document, { key: "Escape" });
-    expect(screen.queryByRole("dialog", { name: "Mobile navigation" })).toBeNull();
+    expect(
+      screen.queryByRole("dialog", { name: "Mobile navigation" }),
+    ).toBeNull();
   });
 
   it("dismisses the mobile drawer on outside click and link activation", async () => {
@@ -733,7 +745,9 @@ describe("Sidebar", () => {
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuLink href="#mobile">Mobile overview</SidebarMenuLink>
+                <SidebarMenuLink href="#mobile">
+                  Mobile overview
+                </SidebarMenuLink>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
@@ -744,17 +758,23 @@ describe("Sidebar", () => {
     await user.click(screen.getByRole("button", { name: "Open sidebar" }));
     await user.click(screen.getByRole("link", { name: "Mobile overview" }));
 
-    expect(screen.queryByRole("dialog", { name: "Mobile navigation" })).toBeNull();
+    expect(
+      screen.queryByRole("dialog", { name: "Mobile navigation" }),
+    ).toBeNull();
 
     await user.click(screen.getByRole("button", { name: "Open sidebar" }));
 
-    const overlay = document.querySelector('[data-slot="sidebar-mobile-overlay"]');
+    const overlay = document.querySelector(
+      '[data-slot="sidebar-mobile-overlay"]',
+    );
 
     expect(overlay).not.toBeNull();
 
     await user.click(overlay as HTMLElement);
 
-    expect(screen.queryByRole("dialog", { name: "Mobile navigation" })).toBeNull();
+    expect(
+      screen.queryByRole("dialog", { name: "Mobile navigation" }),
+    ).toBeNull();
   });
 
   it("supports controlled mobile drawer state", async () => {
@@ -762,7 +782,10 @@ describe("Sidebar", () => {
     const onMobileOpenChange = vi.fn();
 
     render(
-      <SidebarProvider mobileOpen={false} onMobileOpenChange={onMobileOpenChange}>
+      <SidebarProvider
+        mobileOpen={false}
+        onMobileOpenChange={onMobileOpenChange}
+      >
         <SidebarMobileTrigger />
         <SidebarMobile label="Controlled mobile navigation">
           <SidebarContent>Controlled drawer</SidebarContent>
@@ -801,10 +824,9 @@ describe("Sidebar", () => {
       </SidebarProvider>,
     );
 
-    expect(screen.getByRole("navigation", { name: "Motion navigation" })).toHaveAttribute(
-      "data-motion",
-      "none",
-    );
+    expect(
+      screen.getByRole("navigation", { name: "Motion navigation" }),
+    ).toHaveAttribute("data-motion", "none");
 
     await user.click(screen.getByRole("button", { name: "Open sidebar" }));
 
@@ -828,10 +850,9 @@ describe("Sidebar", () => {
       </SidebarProvider>,
     );
 
-    expect(document.querySelector('[data-slot="sidebar-provider"]')).toHaveAttribute(
-      "data-animate",
-      "false",
-    );
+    expect(
+      document.querySelector('[data-slot="sidebar-provider"]'),
+    ).toHaveAttribute("data-animate", "false");
     expect(
       screen.getByRole("navigation", { name: "Animation disabled navigation" }),
     ).toHaveAttribute("data-motion", "none");
@@ -843,10 +864,9 @@ describe("Sidebar", () => {
         name: "Animation disabled mobile navigation",
       }),
     ).toHaveAttribute("data-motion", "none");
-    expect(document.querySelector('[data-slot="sidebar-mobile-overlay"]')).toHaveAttribute(
-      "data-motion",
-      "none",
-    );
+    expect(
+      document.querySelector('[data-slot="sidebar-mobile-overlay"]'),
+    ).toHaveAttribute("data-motion", "none");
   });
 
   it("renders a decorative sidebar separator", () => {
@@ -898,11 +918,14 @@ describe("Sidebar", () => {
   });
 
   it("renders a skip link targeting main content", () => {
-    render(<SidebarSkipLink targetId="main-content">Skip navigation</SidebarSkipLink>);
-
-    expect(screen.getByRole("link", { name: "Skip navigation" })).toHaveAttribute(
-      "href",
-      "#main-content",
+    render(
+      <SidebarSkipLink targetId="main-content">
+        Skip navigation
+      </SidebarSkipLink>,
     );
+
+    expect(
+      screen.getByRole("link", { name: "Skip navigation" }),
+    ).toHaveAttribute("href", "#main-content");
   });
 });

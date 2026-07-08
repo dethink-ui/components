@@ -13,11 +13,7 @@ import {
   Text,
   type DateRangePickerRenderProps,
 } from "react-aria-components";
-import {
-  forwardRef,
-  type ReactNode,
-  useRef,
-} from "react";
+import { forwardRef, type ReactNode, useRef } from "react";
 import type { CalendarDate, DateValue } from "@internationalized/date";
 import { DateCalendarGrid, type CalendarWeekStartsOn } from "../calendar";
 import {
@@ -84,7 +80,8 @@ const dateRangePickerTriggerButtonClasses =
 const dateRangePickerPopoverClasses =
   "z-50 rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[entering]:opacity-100 data-[exiting]:translate-y-1 data-[exiting]:opacity-0";
 
-const dateRangePickerDialogClasses = "grid gap-[var(--dt-space-3)] outline-none";
+const dateRangePickerDialogClasses =
+  "grid gap-[var(--dt-space-3)] outline-none";
 
 const dateRangePickerCalendarClasses = "grid gap-[var(--dt-space-3)]";
 
@@ -107,12 +104,7 @@ export function dateRangePickerClassNames({
 
 function ClearIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="m4.5 4.5 7 7m0-7-7 7"
         stroke="currentColor"
@@ -125,12 +117,7 @@ function ClearIcon() {
 
 function CalendarIcon() {
   return (
-    <svg
-      aria-hidden="true"
-      className="size-4"
-      fill="none"
-      viewBox="0 0 16 16"
-    >
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
       <path
         d="M4.5 2.5v2m7-2v2M3 6.5h10M3.5 4h9A1.5 1.5 0 0 1 14 5.5v7A1.5 1.5 0 0 1 12.5 14h-9A1.5 1.5 0 0 1 2 12.5v-7A1.5 1.5 0 0 1 3.5 4Z"
         stroke="currentColor"
@@ -142,10 +129,7 @@ function CalendarIcon() {
   );
 }
 
-export const DateRangePicker = forwardRef<
-  HTMLDivElement,
-  DateRangePickerProps
->(
+export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   (
     {
       className,
@@ -173,12 +157,15 @@ export const DateRangePicker = forwardRef<
     ref,
   ) => {
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const { portalContainer, rootRef } =
-      useProviderPortalRoot<HTMLDivElement>({
-        forwardedRef: ref,
-        portalSlot: "date-range-picker-portal-container",
-      });
-    const formNames = getDateRangePickerFieldNames({ endName, name, startName });
+    const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
+      forwardedRef: ref,
+      portalSlot: "date-range-picker-portal-container",
+    });
+    const formNames = getDateRangePickerFieldNames({
+      endName,
+      name,
+      startName,
+    });
     const picker = (
       <DethinkPortalProvider container={portalContainer}>
         <AriaDateRangePicker<CalendarDate>

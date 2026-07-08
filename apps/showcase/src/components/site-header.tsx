@@ -21,7 +21,7 @@ function BrandMark() {
   return (
     <span
       aria-hidden="true"
-      className="sc-brand-mark grid size-7 shrink-0 place-items-center rounded-lg font-heading text-sm font-bold text-primary-foreground shadow-sm"
+      className="sc-brand-mark font-heading text-primary-foreground grid size-7 shrink-0 place-items-center rounded-lg text-sm font-bold shadow-sm"
     >
       D
     </span>
@@ -35,7 +35,7 @@ function GithubLink() {
       target="_blank"
       rel="noreferrer"
       aria-label="Dethink Components on GitHub"
-      className="grid size-8 place-items-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      className="text-muted-foreground hover:bg-muted hover:text-foreground grid size-8 place-items-center rounded-md transition-colors"
     >
       <GithubIcon className="size-4" />
     </a>
@@ -56,11 +56,11 @@ export function SiteHeader() {
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md">
+    <header className="border-border/70 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-3 rounded-md font-heading text-[15px] font-semibold tracking-tight"
+          className="font-heading flex shrink-0 items-center gap-3 rounded-md text-[15px] font-semibold tracking-tight"
         >
           <BrandMark />
           Dethink<span className="text-primary">/</span>Components
@@ -106,7 +106,7 @@ export function SiteHeader() {
       <div
         id="site-header-mobile-panel"
         hidden={!mobileOpen}
-        className="border-t border-border/70 md:hidden"
+        className="border-border/70 border-t md:hidden"
       >
         <div className="space-y-3 px-4 py-3">
           <NavigationMenu
@@ -129,7 +129,7 @@ export function SiteHeader() {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
-          <div className="flex items-center justify-between gap-2 border-t border-border/70 pt-3">
+          <div className="border-border/70 flex items-center justify-between gap-2 border-t pt-3">
             <GithubLink />
             <div className="flex items-center gap-2">
               <ThemePicker />

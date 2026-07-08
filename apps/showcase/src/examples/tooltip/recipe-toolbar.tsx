@@ -23,7 +23,7 @@ export function TooltipRecipeToolbar() {
     <div
       role="toolbar"
       aria-label="Text formatting"
-      className="mx-auto flex w-fit gap-1 rounded-lg border border-border bg-muted/40 p-1"
+      className="border-border bg-muted/40 mx-auto flex w-fit gap-1 rounded-lg border p-1"
     >
       {tools.map((tool) => (
         <Tooltip key={tool.id} delay={300}>
@@ -49,7 +49,7 @@ export function TooltipRecipeToolbar() {
           <TooltipContent placement="top">
             <span className="flex items-center gap-2">
               {tool.label}
-              <kbd className="rounded border border-border/60 px-1 font-mono text-[0.7em]">
+              <kbd className="border-border/60 rounded border px-1 font-mono text-[0.7em]">
                 {tool.keys}
               </kbd>
             </span>

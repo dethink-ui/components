@@ -22,7 +22,10 @@ export interface AnnounceOptions {
 
 export interface AnnouncerApi {
   announce: (message: string, options?: AnnounceOptions) => void;
-  announcePolite: (message: string, options?: Omit<AnnounceOptions, "politeness">) => void;
+  announcePolite: (
+    message: string,
+    options?: Omit<AnnounceOptions, "politeness">,
+  ) => void;
   announceAssertive: (
     message: string,
     options?: Omit<AnnounceOptions, "politeness">,
@@ -69,17 +72,19 @@ const noopAnnouncer: AnnouncerApi = {
 
 const LiveRegionContext = createContext<AnnouncerApi>(noopAnnouncer);
 
-const liveRegionBaseClasses =
-  "text-sm leading-5 text-foreground";
+const liveRegionBaseClasses = "text-sm leading-5 text-foreground";
 
-const liveRegionHiddenClasses =
-  "sr-only";
+const liveRegionHiddenClasses = "sr-only";
 
 export function liveRegionClassNames({
   className,
   visuallyHidden = true,
 }: Pick<LiveRegionProps, "className" | "visuallyHidden"> = {}) {
-  return cn(liveRegionBaseClasses, visuallyHidden ? liveRegionHiddenClasses : undefined, className);
+  return cn(
+    liveRegionBaseClasses,
+    visuallyHidden ? liveRegionHiddenClasses : undefined,
+    className,
+  );
 }
 
 export const LiveRegion = forwardRef<HTMLDivElement, LiveRegionProps>(

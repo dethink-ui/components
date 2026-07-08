@@ -135,7 +135,9 @@ describe("SlotPicker week view", () => {
       focusedDate: "2026-07-09",
     });
     const bookedCard = within(
-      bookedContainer.querySelector('[data-slot="slot-picker-slot-list"]') as HTMLElement,
+      bookedContainer.querySelector(
+        '[data-slot="slot-picker-slot-list"]',
+      ) as HTMLElement,
     ).getByRole("listitem");
 
     expect(bookedCard).toHaveAttribute("data-status", "booked");

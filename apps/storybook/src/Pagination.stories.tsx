@@ -45,7 +45,7 @@ function StoryShell({
 }) {
   return (
     <DethinkProvider
-      className="min-h-[18rem] bg-background p-6 text-foreground"
+      className="bg-background text-foreground min-h-[18rem] p-6"
       density={density}
       dir={dir}
       theme={theme}
@@ -143,11 +143,7 @@ export const Unbounded: Story = {
         title="Cursor-style results"
         description="Unbounded mode shows known pages and next availability without inventing a final page."
       >
-        <Pagination
-          hasNextPage
-          page={8}
-          onPageChange={() => undefined}
-        />
+        <Pagination hasNextPage page={8} onPageChange={() => undefined} />
       </StoryFrame>
     </StoryShell>
   ),
@@ -156,7 +152,7 @@ export const Unbounded: Story = {
 export const CompactCard: Story = {
   render: () => (
     <StoryShell>
-      <section className="max-w-xl rounded-lg border border-border bg-background p-4 shadow-sm">
+      <section className="border-border bg-background max-w-xl rounded-lg border p-4 shadow-sm">
         <Stack gap="4">
           <Stack gap="1">
             <Text weight="semibold">Search results</Text>
@@ -184,14 +180,14 @@ export const DataTableFooter: Story = {
         title="DataTable footer composition"
         description="Pagination can sit beside row-count and page-size controls without owning either concern."
       >
-        <div className="rounded-lg border border-border">
+        <div className="border-border rounded-lg border">
           <div className="grid gap-2 p-4 text-sm">
             <div className="font-medium">Audit log</div>
             <div className="text-muted-foreground">
               84 filtered records across 9 pages
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border p-3">
+          <div className="border-border flex flex-wrap items-center justify-between gap-3 border-t p-3">
             <Text size="sm" tone="muted">
               Rows 31-40 of 84
             </Text>

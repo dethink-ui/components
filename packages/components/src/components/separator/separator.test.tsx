@@ -31,7 +31,10 @@ const RouterSpan = forwardRef<
 >(({ to: _to, ...props }, ref) => <span ref={ref} {...props} />);
 RouterSpan.displayName = "RouterSpan";
 
-function spacingClass(orientation: SeparatorOrientation, spacing: SeparatorSpacing) {
+function spacingClass(
+  orientation: SeparatorOrientation,
+  spacing: SeparatorSpacing,
+) {
   if (spacing === "none") {
     return undefined;
   }
@@ -56,7 +59,14 @@ describe("Separator", () => {
     expect(separator).toHaveAttribute("aria-orientation", "horizontal");
     expect(separator).not.toHaveAttribute("role");
     expect(separator).not.toHaveAttribute("tabindex");
-    expect(separator).toHaveClass("block", "shrink-0", "border-0", "w-full", "h-px", "bg-border");
+    expect(separator).toHaveClass(
+      "block",
+      "shrink-0",
+      "border-0",
+      "w-full",
+      "h-px",
+      "bg-border",
+    );
   });
 
   it.each(elements)("renders a supported %s element", (as) => {
@@ -65,50 +75,70 @@ describe("Separator", () => {
     expect(screen.getByTestId(as).tagName).toBe(as.toUpperCase());
   });
 
-  it.each(orientations)("applies %s orientation data and classes", (orientation) => {
-    render(<Separator data-testid={orientation} orientation={orientation} />);
+  it.each(orientations)(
+    "applies %s orientation data and classes",
+    (orientation) => {
+      render(<Separator data-testid={orientation} orientation={orientation} />);
 
-    const separator = screen.getByTestId(orientation);
+      const separator = screen.getByTestId(orientation);
 
-    expect(separator).toHaveAttribute("data-orientation", orientation);
-    expect(separator).toHaveAttribute("aria-orientation", orientation);
+      expect(separator).toHaveAttribute("data-orientation", orientation);
+      expect(separator).toHaveAttribute("aria-orientation", orientation);
 
-    if (orientation === "horizontal") {
-      expect(separator).toHaveClass("w-full", "h-px");
-    } else {
-      expect(separator).toHaveClass("h-full", "min-h-4", "self-stretch", "w-px");
-    }
-  });
+      if (orientation === "horizontal") {
+        expect(separator).toHaveClass("w-full", "h-px");
+      } else {
+        expect(separator).toHaveClass(
+          "h-full",
+          "min-h-4",
+          "self-stretch",
+          "w-px",
+        );
+      }
+    },
+  );
 
-  it.each(thicknesses)("applies %s thickness for both orientations", (thickness) => {
-    render(
-      <>
-        <Separator data-testid={`horizontal-${thickness}`} thickness={thickness} />
-        <Separator
-          data-testid={`vertical-${thickness}`}
-          orientation="vertical"
-          thickness={thickness}
-        />
-      </>,
-    );
+  it.each(thicknesses)(
+    "applies %s thickness for both orientations",
+    (thickness) => {
+      render(
+        <>
+          <Separator
+            data-testid={`horizontal-${thickness}`}
+            thickness={thickness}
+          />
+          <Separator
+            data-testid={`vertical-${thickness}`}
+            orientation="vertical"
+            thickness={thickness}
+          />
+        </>,
+      );
 
-    expect(screen.getByTestId(`horizontal-${thickness}`)).toHaveAttribute(
-      "data-thickness",
-      thickness,
-    );
-    expect(screen.getByTestId(`vertical-${thickness}`)).toHaveAttribute(
-      "data-thickness",
-      thickness,
-    );
+      expect(screen.getByTestId(`horizontal-${thickness}`)).toHaveAttribute(
+        "data-thickness",
+        thickness,
+      );
+      expect(screen.getByTestId(`vertical-${thickness}`)).toHaveAttribute(
+        "data-thickness",
+        thickness,
+      );
 
-    if (thickness === "1") {
-      expect(screen.getByTestId(`horizontal-${thickness}`)).toHaveClass("h-px");
-      expect(screen.getByTestId(`vertical-${thickness}`)).toHaveClass("w-px");
-    } else {
-      expect(screen.getByTestId(`horizontal-${thickness}`)).toHaveClass("h-0.5");
-      expect(screen.getByTestId(`vertical-${thickness}`)).toHaveClass("w-0.5");
-    }
-  });
+      if (thickness === "1") {
+        expect(screen.getByTestId(`horizontal-${thickness}`)).toHaveClass(
+          "h-px",
+        );
+        expect(screen.getByTestId(`vertical-${thickness}`)).toHaveClass("w-px");
+      } else {
+        expect(screen.getByTestId(`horizontal-${thickness}`)).toHaveClass(
+          "h-0.5",
+        );
+        expect(screen.getByTestId(`vertical-${thickness}`)).toHaveClass(
+          "w-0.5",
+        );
+      }
+    },
+  );
 
   it.each(tones)("applies %s tone data and class", (tone) => {
     render(<Separator data-testid={tone} tone={tone} />);
@@ -150,7 +180,9 @@ describe("Separator", () => {
   });
 
   it("adds separator role for semantic non-hr rendering", () => {
-    render(<Separator as="div" data-testid="semantic-div" orientation="vertical" />);
+    render(
+      <Separator as="div" data-testid="semantic-div" orientation="vertical" />,
+    );
 
     const separator = screen.getByTestId("semantic-div");
 
@@ -161,7 +193,14 @@ describe("Separator", () => {
   });
 
   it("hides decorative separators from assistive technologies", () => {
-    render(<Separator as="div" data-testid="decorative" decorative orientation="vertical" />);
+    render(
+      <Separator
+        as="div"
+        data-testid="decorative"
+        decorative
+        orientation="vertical"
+      />,
+    );
 
     const separator = screen.getByTestId("decorative");
 

@@ -49,7 +49,9 @@ describe("Timeline utilities", () => {
 
   it("sorts event timelines by date and preserves progress input order", () => {
     expect(
-      normalizeTimelineItems(datedItems, { mode: "events" }).map((item) => item.id),
+      normalizeTimelineItems(datedItems, { mode: "events" }).map(
+        (item) => item.id,
+      ),
     ).toEqual(["kickoff", "beta", "release"]);
 
     expect(
@@ -132,9 +134,9 @@ describe("Timeline utilities", () => {
       { mode: "events", scale: "time" },
     );
 
-    expect(normalized[1].point.x - normalized[0].point.x).toBeGreaterThanOrEqual(
-      timelineGeometry.minimumItemGap,
-    );
+    expect(
+      normalized[1].point.x - normalized[0].point.x,
+    ).toBeGreaterThanOrEqual(timelineGeometry.minimumItemGap);
   });
 
   it("normalizes viewport zoom bounds", () => {

@@ -12,11 +12,17 @@ export default defineConfig({
     alias: [
       {
         find: "@dethink/components/styles.css",
-        replacement: resolve(currentDir, "../../packages/components/src/styles.css"),
+        replacement: resolve(
+          currentDir,
+          "../../packages/components/src/styles.css",
+        ),
       },
       {
         find: "@dethink/components",
-        replacement: resolve(currentDir, "../../packages/components/src/index.ts"),
+        replacement: resolve(
+          currentDir,
+          "../../packages/components/src/index.ts",
+        ),
       },
     ],
   },

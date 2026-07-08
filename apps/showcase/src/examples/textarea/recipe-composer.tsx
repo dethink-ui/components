@@ -39,7 +39,9 @@ export function TextareaRecipeComposer() {
           />
         </FieldControl>
         {overBudget ? (
-          <FieldError>Update is {-remaining} characters over the limit.</FieldError>
+          <FieldError>
+            Update is {-remaining} characters over the limit.
+          </FieldError>
         ) : null}
       </Field>
       <div className="flex items-center justify-between">
@@ -47,7 +49,7 @@ export function TextareaRecipeComposer() {
           aria-live="polite"
           className={`text-sm tabular-nums ${
             overBudget
-              ? "font-medium text-destructive"
+              ? "text-destructive font-medium"
               : remaining <= 40
                 ? "text-warning"
                 : "text-muted-foreground"

@@ -30,7 +30,16 @@ const variants: TypographyVariant[] = [
   "caption",
   "label",
 ];
-const sizes: TypographySize[] = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl"];
+const sizes: TypographySize[] = [
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "2xl",
+  "3xl",
+  "4xl",
+];
 const textSizes: TextSize[] = ["xs", "sm", "md", "lg", "xl"];
 const tones: TypographyTone[] = [
   "default",
@@ -71,11 +80,17 @@ describe("Typography", () => {
     expect(text).toHaveAttribute("data-variant", "caption");
   });
 
-  it.each(variants)("renders the %s typography variant attribute", (variant) => {
-    render(<Typography variant={variant}>{variant}</Typography>);
+  it.each(variants)(
+    "renders the %s typography variant attribute",
+    (variant) => {
+      render(<Typography variant={variant}>{variant}</Typography>);
 
-    expect(screen.getByText(variant)).toHaveAttribute("data-variant", variant);
-  });
+      expect(screen.getByText(variant)).toHaveAttribute(
+        "data-variant",
+        variant,
+      );
+    },
+  );
 
   it.each(sizes)("renders the %s typography size attribute", (size) => {
     render(<Typography size={size}>{size}</Typography>);
@@ -108,7 +123,9 @@ describe("Typography", () => {
     expect(headingClassNames({ className: "custom-heading" })).toContain(
       "custom-heading",
     );
-    expect(textClassNames({ className: "custom-text" })).toContain("custom-text");
+    expect(textClassNames({ className: "custom-text" })).toContain(
+      "custom-text",
+    );
   });
 
   it("uses tokenized tones and logical alignment classes", () => {
@@ -172,7 +189,10 @@ describe("Heading", () => {
   it("renders a level two heading by default", () => {
     render(<Heading>Section heading</Heading>);
 
-    const heading = screen.getByRole("heading", { level: 2, name: "Section heading" });
+    const heading = screen.getByRole("heading", {
+      level: 2,
+      name: "Section heading",
+    });
 
     expect(heading.tagName).toBe("H2");
     expect(heading).toHaveAttribute("data-slot", "heading");

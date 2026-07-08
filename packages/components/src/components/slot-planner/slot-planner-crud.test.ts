@@ -271,9 +271,7 @@ describe("updateSlotFromEditorValues", () => {
     expect(next.startTime).toBe("16:00");
     expect(next.recurrence?.frequency).toBe("weekly");
     expect(next.recurrence?.until).toBe("2026-11-01");
-    expect(next.recurrence?.overrides).toEqual(
-      previous.recurrence?.overrides,
-    );
+    expect(next.recurrence?.overrides).toEqual(previous.recurrence?.overrides);
     // Unknown payload keys (priceUsd) survive; conventional keys are replaced.
     expect(next.data).toEqual({
       tags: ["System Design"],
@@ -322,9 +320,7 @@ describe("CRUD payload JSON round-trips", () => {
 
     expect(roundTrip(createPayload)).toEqual(createPayload);
     expect(roundTrip(updatePayload)).toEqual(updatePayload);
-    expect(roundTrip(deleteOccurrencePayload)).toEqual(
-      deleteOccurrencePayload,
-    );
+    expect(roundTrip(deleteOccurrencePayload)).toEqual(deleteOccurrencePayload);
     expect(roundTrip(deleteSeriesPayload)).toEqual(deleteSeriesPayload);
   });
 });

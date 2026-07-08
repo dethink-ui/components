@@ -28,7 +28,9 @@ export function AsyncSelectMultiple() {
           name="owners"
           onInputValueChange={setQuery}
           onValueChange={(nextValue) => setValue(nextValue as string[])}
-          selectedItems={ownerItems.filter((item) => value.includes(item.value))}
+          selectedItems={ownerItems.filter((item) =>
+            value.includes(item.value),
+          )}
           value={value}
         />
         <FieldDescription>

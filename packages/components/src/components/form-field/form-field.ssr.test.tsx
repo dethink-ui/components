@@ -77,7 +77,8 @@ describe("Field SSR", () => {
     container.innerHTML = renderToString(field);
 
     const inputBeforeHydration = container.querySelector("input");
-    const serverDescription = inputBeforeHydration?.getAttribute("aria-describedby");
+    const serverDescription =
+      inputBeforeHydration?.getAttribute("aria-describedby");
     const serverErrorMessage =
       inputBeforeHydration?.getAttribute("aria-errormessage");
 

@@ -21,7 +21,7 @@ export function DateRangePickerControlled() {
         onValueChange={setValue}
         clearable
       />
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         {value
           ? `${value.start.toString()} → ${value.end.toString()}`
           : "No range selected"}

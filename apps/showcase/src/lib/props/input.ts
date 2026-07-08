@@ -25,7 +25,8 @@ export const inputProps: PropRow[] = [
     prop: "readOnly",
     type: "boolean",
     defaultValue: "false",
-    description: "Keeps the value selectable but not editable, on a muted surface.",
+    description:
+      "Keeps the value selectable but not editable, on a muted surface.",
   },
   {
     prop: "required",

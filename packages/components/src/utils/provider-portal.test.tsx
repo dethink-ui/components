@@ -55,7 +55,8 @@ describe("provider portal utilities", () => {
     provider.setAttribute("data-theme", "dark");
     provider.setAttribute("data-density", "compact");
     provider.setAttribute("dir", "rtl");
-    provider.className = "bg-background font-sans text-foreground custom-provider";
+    provider.className =
+      "bg-background font-sans text-foreground custom-provider";
     provider.style.setProperty("--dt-font-body", "Inter, sans-serif");
 
     syncDethinkPortalContainer({
@@ -92,7 +93,9 @@ describe("provider portal utilities", () => {
     const provider = screen.getByTestId("overlay-provider");
 
     if (!popover || !portalHost) {
-      throw new Error("Popover should render inside a provider-aware portal host.");
+      throw new Error(
+        "Popover should render inside a provider-aware portal host.",
+      );
     }
 
     expect(document.body).toContainElement(portalHost);

@@ -13,12 +13,7 @@ import {
 import { cn } from "../../utils/cn";
 
 export type ButtonVariant =
-  | "solid"
-  | "soft"
-  | "outline"
-  | "ghost"
-  | "link"
-  | "destructive";
+  "solid" | "soft" | "outline" | "ghost" | "link" | "destructive";
 
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "icon";
 
@@ -37,8 +32,7 @@ const buttonBaseClasses =
 const buttonVariantClasses: Record<ButtonVariant, string> = {
   solid:
     "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-  soft:
-    "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
+  soft: "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
   outline:
     "border-border bg-background text-foreground hover:bg-muted active:bg-muted/80",
   ghost: "bg-transparent text-foreground hover:bg-muted active:bg-muted/80",
@@ -189,7 +183,9 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
       const child = Children.only(children);
 
       if (!isValidElement<ButtonSlotProps>(child)) {
-        throw new Error("Button with asChild expects a single React element child.");
+        throw new Error(
+          "Button with asChild expects a single React element child.",
+        );
       }
 
       const childRef = getChildRef(child);

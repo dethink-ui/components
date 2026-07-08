@@ -1,11 +1,6 @@
 import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import {
-  expect,
-  userEvent,
-  waitFor,
-  within,
-} from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   Combobox,
   ComboboxItem,
@@ -74,7 +69,9 @@ export const Base: Story = {
 
     await userEvent.clear(input);
     await userEvent.type(input, "Sta");
-    await expect(await page.findByRole("option", { name: "Staging" })).toBeVisible();
+    await expect(
+      await page.findByRole("option", { name: "Staging" }),
+    ).toBeVisible();
   },
 };
 
@@ -107,7 +104,9 @@ export const Controlled: Story = {
               <ComboboxItem value="staging">Staging</ComboboxItem>
               <ComboboxItem value="sandbox">Sandbox</ComboboxItem>
             </Combobox>
-            <FieldDescription>Selected environment: {value ?? "none"}</FieldDescription>
+            <FieldDescription>
+              Selected environment: {value ?? "none"}
+            </FieldDescription>
           </Stack>
         </Container>
       </DethinkProvider>

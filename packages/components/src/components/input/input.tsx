@@ -1,7 +1,4 @@
-import {
-  forwardRef,
-  type InputHTMLAttributes,
-} from "react";
+import { forwardRef, type InputHTMLAttributes } from "react";
 import { cn } from "../../utils/cn";
 
 export type InputControlSize = "sm" | "md" | "lg";
@@ -21,7 +18,12 @@ const inputControlSizeClasses: Record<InputControlSize, string> = {
 };
 
 function isAriaInvalid(value: InputProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 export function inputClassNames({

@@ -19,4 +19,3 @@ describe("DethinkProvider accessibility", () => {
     await expect(axe(container)).resolves.toHaveNoViolations();
   });
 });
-

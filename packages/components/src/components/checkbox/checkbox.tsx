@@ -13,11 +13,10 @@ import { cn } from "../../utils/cn";
 export type CheckboxCheckedState = boolean | "indeterminate";
 export type CheckboxControlSize = "sm" | "md" | "lg";
 
-export interface CheckboxProps
-  extends Omit<
-    InputHTMLAttributes<HTMLInputElement>,
-    "checked" | "defaultChecked" | "onChange" | "size" | "type"
-  > {
+export interface CheckboxProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "checked" | "defaultChecked" | "onChange" | "size" | "type"
+> {
   "data-slot"?: string;
   checked?: CheckboxCheckedState;
   controlSize?: CheckboxControlSize;
@@ -43,7 +42,12 @@ const checkboxIndicatorBaseClasses =
   "pointer-events-none flex size-full items-center justify-center rounded border border-input bg-background text-transparent shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,opacity] motion-safe:duration-150 peer-disabled:opacity-60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background group-disabled/field-set:opacity-60 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[disabled=true]:opacity-60 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
 
 function isAriaInvalid(value: CheckboxProps["aria-invalid"]) {
-  return value === true || value === "true" || value === "grammar" || value === "spelling";
+  return (
+    value === true ||
+    value === "true" ||
+    value === "grammar" ||
+    value === "spelling"
+  );
 }
 
 function getCheckboxState(checked: CheckboxCheckedState) {
@@ -203,7 +207,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         data-state={state}
         data-checked={checkedState === true ? "true" : undefined}
         data-disabled={disabled ? "true" : undefined}
-        data-indeterminate={checkedState === "indeterminate" ? "true" : undefined}
+        data-indeterminate={
+          checkedState === "indeterminate" ? "true" : undefined
+        }
         data-invalid={resolvedInvalid ? "true" : undefined}
         data-readonly={readOnly ? "true" : undefined}
         data-required={required ? "true" : undefined}
@@ -222,7 +228,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           data-state={state}
           data-checked={checkedState === true ? "true" : undefined}
           data-disabled={disabled ? "true" : undefined}
-          data-indeterminate={checkedState === "indeterminate" ? "true" : undefined}
+          data-indeterminate={
+            checkedState === "indeterminate" ? "true" : undefined
+          }
           data-invalid={resolvedInvalid ? "true" : undefined}
           data-readonly={readOnly ? "true" : undefined}
           data-required={required ? "true" : undefined}
@@ -240,7 +248,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           data-state={state}
           data-checked={checkedState === true ? "true" : undefined}
           data-disabled={disabled ? "true" : undefined}
-          data-indeterminate={checkedState === "indeterminate" ? "true" : undefined}
+          data-indeterminate={
+            checkedState === "indeterminate" ? "true" : undefined
+          }
           data-invalid={resolvedInvalid ? "true" : undefined}
           data-readonly={readOnly ? "true" : undefined}
           data-required={required ? "true" : undefined}

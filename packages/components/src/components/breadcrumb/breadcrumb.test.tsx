@@ -48,11 +48,10 @@ describe("Breadcrumb", () => {
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute("href", "/");
     expect(
-      within(nav).getByText("Operations").closest('[data-slot="breadcrumb-page"]'),
-    ).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+      within(nav)
+        .getByText("Operations")
+        .closest('[data-slot="breadcrumb-page"]'),
+    ).toHaveAttribute("aria-current", "page");
   });
 
   it("supports children-driven compound anatomy", () => {
@@ -78,10 +77,7 @@ describe("Breadcrumb", () => {
     );
     expect(
       within(nav).getByText("Billing").closest('[data-slot="breadcrumb-page"]'),
-    ).toHaveAttribute(
-      "aria-current",
-      "page",
-    );
+    ).toHaveAttribute("aria-current", "page");
     expect(
       nav.querySelector('[data-slot="breadcrumb-separator"]'),
     ).toHaveAttribute("aria-hidden", "true");
@@ -217,14 +213,17 @@ describe("Breadcrumb", () => {
     const nav = screen.getByRole("navigation", { name: "Breadcrumb" });
 
     expect(within(nav).queryByRole("link", { name: "Workspaces" })).toBeNull();
-    await user.click(within(nav).getByRole("button", { name: "Show full path" }));
-
-    const dialog = await screen.findByRole("dialog", { name: "Show full path" });
-
-    expect(within(dialog).getByRole("link", { name: "Workspaces" })).toHaveAttribute(
-      "href",
-      "/workspaces",
+    await user.click(
+      within(nav).getByRole("button", { name: "Show full path" }),
     );
+
+    const dialog = await screen.findByRole("dialog", {
+      name: "Show full path",
+    });
+
+    expect(
+      within(dialog).getByRole("link", { name: "Workspaces" }),
+    ).toHaveAttribute("href", "/workspaces");
   });
 
   it("does not mark plain overflow-only ancestors as current by default", async () => {
@@ -242,7 +241,11 @@ describe("Breadcrumb", () => {
               label="Show hidden ancestors"
               items={[
                 { key: "workspace", label: "Workspace", href: "/workspace" },
-                { key: "project", label: "Project", href: "/workspace/project" },
+                {
+                  key: "project",
+                  label: "Project",
+                  href: "/workspace/project",
+                },
               ]}
             />
             <BreadcrumbSeparator />
@@ -262,11 +265,13 @@ describe("Breadcrumb", () => {
       name: "Show hidden ancestors",
     });
 
-    expect(within(dialog).getByRole("link", { name: "Project" })).not.toHaveAttribute(
-      "aria-current",
-    );
     expect(
-      screen.getByText("Revenue detail").closest('[data-slot="breadcrumb-page"]'),
+      within(dialog).getByRole("link", { name: "Project" }),
+    ).not.toHaveAttribute("aria-current");
+    expect(
+      screen
+        .getByText("Revenue detail")
+        .closest('[data-slot="breadcrumb-page"]'),
     ).toHaveAttribute("aria-current", "page");
   });
 

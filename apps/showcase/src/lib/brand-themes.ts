@@ -1,10 +1,5 @@
 export type BrandThemeId =
-  | "teal"
-  | "violet"
-  | "rose"
-  | "amber"
-  | "ocean"
-  | "forest";
+  "teal" | "violet" | "rose" | "amber" | "ocean" | "forest";
 
 export interface BrandTheme {
   id: BrandThemeId;

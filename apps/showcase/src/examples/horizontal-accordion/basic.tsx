@@ -91,7 +91,7 @@ const sections = [
 
 function Chip({ children }: { children: ReactNode }) {
   return (
-    <span className="rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+    <span className="border-border bg-muted text-muted-foreground rounded-full border px-2.5 py-0.5 text-xs font-medium">
       {children}
     </span>
   );
@@ -101,7 +101,7 @@ export function HorizontalAccordionBasic() {
   return (
     <HorizontalAccordion
       aria-label="Product sections"
-      className="rounded-lg border border-border"
+      className="border-border rounded-lg border"
       compactBreakpoint={480}
       defaultValue="overview"
       height={320}
@@ -117,15 +117,15 @@ export function HorizontalAccordionBasic() {
             </HorizontalAccordion.BladeLabel>
           </HorizontalAccordion.Blade>
           <HorizontalAccordion.Panel>
-            <div className="flex h-full flex-col justify-center gap-4 bg-background p-8">
+            <div className="bg-background flex h-full flex-col justify-center gap-4 p-8">
               <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">
+                <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
                   {section.kicker}
                 </p>
-                <h3 className="text-xl font-semibold text-foreground">
+                <h3 className="text-foreground text-xl font-semibold">
                   {section.title}
                 </h3>
-                <p className="max-w-md text-sm leading-6 text-muted-foreground">
+                <p className="text-muted-foreground max-w-md text-sm leading-6">
                   {section.body}{" "}
                   <Link href="#basic" variant="muted" underline="always">
                     Read the guide

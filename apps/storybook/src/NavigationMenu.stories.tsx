@@ -101,7 +101,10 @@ function ProductNavItems() {
 
 export const Base: Story = {
   render: (args) => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <NavigationMenu {...args} aria-label="Product">
         <ProductNavItems />
       </NavigationMenu>
@@ -111,9 +114,14 @@ export const Base: Story = {
 
 export const DashboardTopNavigation: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-4">
-      <header className="flex items-center justify-between gap-6 rounded-md border border-border bg-muted/30 px-4 py-2">
-        <span className="text-sm font-semibold text-foreground">Acme Cloud</span>
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-4"
+    >
+      <header className="border-border bg-muted/30 flex items-center justify-between gap-6 rounded-md border px-4 py-2">
+        <span className="text-foreground text-sm font-semibold">
+          Acme Cloud
+        </span>
         <NavigationMenu aria-label="Dashboard" variant="quiet">
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -127,14 +135,16 @@ export const DashboardTopNavigation: Story = {
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink href="/monitoring">Monitoring</NavigationMenuLink>
+              <NavigationMenuLink href="/monitoring">
+                Monitoring
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink href="/team">Team</NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <span className="text-sm text-muted-foreground">workspace: prod</span>
+        <span className="text-muted-foreground text-sm">workspace: prod</span>
       </header>
     </DethinkProvider>
   ),
@@ -142,14 +152,20 @@ export const DashboardTopNavigation: Story = {
 
 export const Variants: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-6">
         {variants.map((variant) => (
           <div key={variant} className="space-y-2">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               {variant}
             </p>
-            <NavigationMenu aria-label={`${variant} navigation`} variant={variant}>
+            <NavigationMenu
+              aria-label={`${variant} navigation`}
+              variant={variant}
+            >
               <ProductNavItems />
             </NavigationMenu>
           </div>
@@ -161,11 +177,14 @@ export const Variants: Story = {
 
 export const Sizes: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <div className="space-y-6">
         {sizes.map((size) => (
           <div key={size} className="space-y-2">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               {size}
             </p>
             <NavigationMenu aria-label={`${size} navigation`} size={size}>
@@ -180,7 +199,10 @@ export const Sizes: Story = {
 
 export const CurrentDisabledAndExternal: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <NavigationMenu aria-label="Workspace">
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -213,9 +235,13 @@ export const VerticalOrientation: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="max-w-xs rounded-lg border border-border p-6"
+      className="border-border max-w-xs rounded-lg border p-6"
     >
-      <NavigationMenu aria-label="Settings sections" orientation="vertical" variant="quiet">
+      <NavigationMenu
+        aria-label="Settings sections"
+        orientation="vertical"
+        variant="quiet"
+      >
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink current href="/settings/general">
@@ -223,7 +249,9 @@ export const VerticalOrientation: Story = {
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink href="/settings/members">Members</NavigationMenuLink>
+            <NavigationMenuLink href="/settings/members">
+              Members
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink href="/settings/integrations">
@@ -238,7 +266,10 @@ export const VerticalOrientation: Story = {
 
 export const RouterComposition: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-6">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-6"
+    >
       <NavigationMenu aria-label="Router navigation">
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -346,7 +377,7 @@ export const ProductFlyout: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[22rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[22rem] rounded-lg border p-6"
     >
       <ProductFlyoutNav />
     </DethinkProvider>
@@ -357,9 +388,13 @@ export const DocsFlyout: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[20rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[20rem] rounded-lg border p-6"
     >
-      <NavigationMenu aria-label="Documentation" defaultValue="guides" variant="quiet">
+      <NavigationMenu
+        aria-label="Documentation"
+        defaultValue="guides"
+        variant="quiet"
+      >
         <NavigationMenuList>
           <NavigationMenuItem value="guides">
             <NavigationMenuTrigger>Guides</NavigationMenuTrigger>
@@ -401,7 +436,9 @@ export const DocsFlyout: Story = {
                 <NavigationMenuLink href="/docs/api">
                   Component API
                 </NavigationMenuLink>
-                <NavigationMenuLink href="/docs/tokens">Tokens</NavigationMenuLink>
+                <NavigationMenuLink href="/docs/tokens">
+                  Tokens
+                </NavigationMenuLink>
               </NavigationMenuSection>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -418,10 +455,10 @@ export const HoverActivation: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[20rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[20rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Hover a trigger to open its panel after a short intent delay. Click,
           Enter, and Space still toggle for keyboard and touch users.
         </p>
@@ -468,17 +505,25 @@ function ControlledFlyoutExample() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-density-gap">
-        <Button size="sm" variant="outline" onClick={() => setValue("platform")}>
+      <div className="gap-density-gap flex flex-wrap items-center">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setValue("platform")}
+        >
           Open platform
         </Button>
-        <Button size="sm" variant="outline" onClick={() => setValue("solutions")}>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setValue("solutions")}
+        >
           Open solutions
         </Button>
         <Button size="sm" variant="ghost" onClick={() => setValue(null)}>
           Close
         </Button>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           value: {value ?? "null"}
         </span>
       </div>
@@ -492,7 +537,9 @@ function ControlledFlyoutExample() {
             <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
             <NavigationMenuContent>
               <NavigationMenuSection>
-                <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+                <NavigationMenuLink href="/analytics">
+                  Analytics
+                </NavigationMenuLink>
                 <NavigationMenuLink href="/automation">
                   Automation
                 </NavigationMenuLink>
@@ -519,7 +566,7 @@ export const ControlledFlyout: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[20rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[20rem] rounded-lg border p-6"
     >
       <ControlledFlyoutExample />
     </DethinkProvider>
@@ -530,7 +577,7 @@ export const WithViewport: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[22rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[22rem] rounded-lg border p-6"
     >
       <NavigationMenu aria-label="Viewport navigation" defaultValue="platform">
         <NavigationMenuList>
@@ -539,7 +586,9 @@ export const WithViewport: Story = {
             <NavigationMenuContent>
               <NavigationMenuSection>
                 <NavigationMenuLabel>Products</NavigationMenuLabel>
-                <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+                <NavigationMenuLink href="/analytics">
+                  Analytics
+                </NavigationMenuLink>
                 <NavigationMenuLink href="/automation">
                   Automation
                 </NavigationMenuLink>
@@ -566,10 +615,10 @@ export const KeyboardUsage: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[20rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[20rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           Tab moves through links and triggers in document order. Enter and
           Space toggle a trigger, Tab continues into the open panel, Escape
           closes the panel and returns focus to its trigger, and moving focus
@@ -590,8 +639,8 @@ const responsiveSections = [
 
 function ResponsiveTopbar() {
   return (
-    <header className="flex items-center justify-between gap-4 rounded-md border border-border bg-muted/30 px-4 py-2">
-      <span className="text-sm font-semibold text-foreground">Acme Cloud</span>
+    <header className="border-border bg-muted/30 flex items-center justify-between gap-4 rounded-md border px-4 py-2">
+      <span className="text-foreground text-sm font-semibold">Acme Cloud</span>
       <NavigationMenu
         aria-label="Dashboard"
         className="max-md:hidden"
@@ -644,9 +693,12 @@ function ResponsiveTopbar() {
 
 export const CompactAppTopbar: Story = {
   render: () => (
-    <DethinkProvider theme="light" className="rounded-lg border border-border p-4">
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-4"
+    >
       <div className="space-y-3">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Resize the viewport: the quiet nav renders inline on wide screens and
           hands off to a Dialog below the md breakpoint. NavigationMenu stays a
           navigation primitive — the Dialog owns the mobile overlay.
@@ -661,10 +713,10 @@ export const OverflowCollapse: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[16rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[16rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           Secondary destinations collapse behind a More disclosure below the lg
           breakpoint and render inline when space allows.
         </p>
@@ -682,8 +734,12 @@ export const OverflowCollapse: Story = {
               <NavigationMenuTrigger>More</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <NavigationMenuSection>
-                  <NavigationMenuLink href="/reports">Reports</NavigationMenuLink>
-                  <NavigationMenuLink href="/audit">Audit log</NavigationMenuLink>
+                  <NavigationMenuLink href="/reports">
+                    Reports
+                  </NavigationMenuLink>
+                  <NavigationMenuLink href="/audit">
+                    Audit log
+                  </NavigationMenuLink>
                   <NavigationMenuLink href="/settings">
                     Settings
                   </NavigationMenuLink>
@@ -712,7 +768,7 @@ export const MobileComposedThemes: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-4"
+        className="border-border rounded-lg border p-4"
       >
         <ResponsiveTopbar />
       </DethinkProvider>
@@ -720,7 +776,7 @@ export const MobileComposedThemes: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-4"
+        className="border-border rounded-lg border p-4"
       >
         <ResponsiveTopbar />
       </DethinkProvider>
@@ -732,10 +788,10 @@ export const AnimatedIndicator: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[20rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[20rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           The indicator tracks the open trigger, or the current link when no
           panel is open, and slides between items with a CSS transform
           transition. With reduced motion it snaps without animating.
@@ -782,14 +838,17 @@ export const ViewportMorph: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[24rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[24rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           The shared viewport measures each panel and animates its width and
           height between differently sized panels.
         </p>
-        <NavigationMenu aria-label="Morphing navigation" defaultValue="platform">
+        <NavigationMenu
+          aria-label="Morphing navigation"
+          defaultValue="platform"
+        >
           <NavigationMenuList>
             <NavigationMenuItem value="platform">
               <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
@@ -822,7 +881,9 @@ export const ViewportMorph: Story = {
               <NavigationMenuContent>
                 <NavigationMenuSection>
                   <NavigationMenuLink href="/about">About</NavigationMenuLink>
-                  <NavigationMenuLink href="/careers">Careers</NavigationMenuLink>
+                  <NavigationMenuLink href="/careers">
+                    Careers
+                  </NavigationMenuLink>
                 </NavigationMenuSection>
               </NavigationMenuContent>
             </NavigationMenuItem>
@@ -838,10 +899,10 @@ export const DirectionalTransitions: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[20rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[20rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           Switching between open triggers slides the next panel in from the
           direction of travel using the data-motion attribute. In RTL the
           directions flip automatically.
@@ -863,12 +924,12 @@ export const MotionPresets: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="rounded-lg border border-border p-6"
+      className="border-border rounded-lg border p-6"
     >
       <div className="space-y-8">
         {motionPresets.map((preset) => (
           <div key={preset} className="space-y-2">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               {preset}
             </p>
             <NavigationMenu
@@ -916,15 +977,15 @@ export const ReducedMotion: Story = {
   render: () => (
     <DethinkProvider
       theme="light"
-      className="min-h-[18rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[18rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           All NavigationMenu animation is gated behind motion-safe utilities.
           With prefers-reduced-motion enabled, panels appear and disappear
-          instantly, the indicator snaps between items, and the viewport
-          resizes without morphing — no state is communicated by animation
-          alone. Enable reduced motion in your OS settings to verify.
+          instantly, the indicator snaps between items, and the viewport resizes
+          without morphing — no state is communicated by animation alone. Enable
+          reduced motion in your OS settings to verify.
         </p>
         <ProductFlyoutNav />
       </div>
@@ -938,7 +999,7 @@ export const FlyoutThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="min-h-[20rem] rounded-lg border border-border p-6"
+        className="border-border min-h-[20rem] rounded-lg border p-6"
       >
         <NavigationMenu
           aria-label="Dark flyout navigation"
@@ -971,9 +1032,12 @@ export const FlyoutThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="min-h-[20rem] rounded-lg border border-border p-6"
+        className="border-border min-h-[20rem] rounded-lg border p-6"
       >
-        <NavigationMenu aria-label="RTL flyout navigation" defaultValue="products">
+        <NavigationMenu
+          aria-label="RTL flyout navigation"
+          defaultValue="products"
+        >
           <NavigationMenuList>
             <NavigationMenuItem value="products">
               <NavigationMenuTrigger>منتجات</NavigationMenuTrigger>
@@ -1005,21 +1069,27 @@ export const CustomThemeOverrides: Story = {
     <DethinkProvider
       theme="light"
       themeConfig={marketingTheme}
-      className="min-h-[18rem] rounded-lg border border-border p-6"
+      className="border-border min-h-[18rem] rounded-lg border p-6"
     >
       <div className="space-y-3">
-        <p className="max-w-xl text-sm text-muted-foreground">
+        <p className="text-muted-foreground max-w-xl text-sm">
           NavigationMenu inherits brand palettes through provider tokens — the
           underline indicator, hover surfaces, and focus rings all follow the
           themeConfig override with no component-specific setup.
         </p>
-        <NavigationMenu aria-label="Marketing" variant="underline" defaultValue="platform">
+        <NavigationMenu
+          aria-label="Marketing"
+          variant="underline"
+          defaultValue="platform"
+        >
           <NavigationMenuList>
             <NavigationMenuItem value="platform">
               <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <NavigationMenuSection>
-                  <NavigationMenuLink href="/analytics">Analytics</NavigationMenuLink>
+                  <NavigationMenuLink href="/analytics">
+                    Analytics
+                  </NavigationMenuLink>
                   <NavigationMenuLink href="/automation">
                     Automation
                   </NavigationMenuLink>
@@ -1045,7 +1115,7 @@ export const ThemeDensityAndRtl: Story = {
       <DethinkProvider
         theme="dark"
         density="compact"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <NavigationMenu aria-label="Dark navigation" variant="underline">
           <ProductNavItems />
@@ -1055,7 +1125,7 @@ export const ThemeDensityAndRtl: Story = {
         theme="light"
         density="comfortable"
         dir="rtl"
-        className="rounded-lg border border-border p-6"
+        className="border-border rounded-lg border p-6"
       >
         <NavigationMenu aria-label="RTL navigation">
           <ProductNavItems />

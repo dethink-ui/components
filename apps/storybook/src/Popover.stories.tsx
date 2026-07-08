@@ -93,7 +93,7 @@ export const Base: Story = {
                 Production dashboards refresh every five minutes.
               </PopoverDescription>
             </PopoverHeader>
-            <div className="text-sm leading-6 text-foreground">
+            <div className="text-foreground text-sm leading-6">
               Queue a refresh after changing the workspace filter set.
             </div>
             <PopoverFooter>
@@ -143,7 +143,9 @@ export const Controlled: Story = {
                 </PopoverFooter>
               </PopoverContent>
             </Popover>
-            <FieldDescription>Popover state: {open ? "open" : "closed"}</FieldDescription>
+            <FieldDescription>
+              Popover state: {open ? "open" : "closed"}
+            </FieldDescription>
           </Stack>
         </Container>
       </DethinkProvider>

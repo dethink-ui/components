@@ -1,7 +1,4 @@
-import {
-  createRef,
-  useState,
-} from "react";
+import { createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -12,10 +9,7 @@ import {
   FieldError,
   FieldLabel,
 } from "../form-field";
-import {
-  Textarea,
-  textareaClassNames,
-} from ".";
+import { Textarea, textareaClassNames } from ".";
 
 describe("Textarea", () => {
   it("renders a native textarea with attributes, classes, and refs", () => {
@@ -80,7 +74,9 @@ describe("Textarea", () => {
     await user.type(textarea, "Shipped");
 
     expect(textarea).toHaveValue("Shipped");
-    expect(screen.getByLabelText("Release note mirror")).toHaveTextContent("Shipped");
+    expect(screen.getByLabelText("Release note mirror")).toHaveTextContent(
+      "Shipped",
+    );
   });
 
   it("participates in native form data", () => {
@@ -127,7 +123,9 @@ describe("Textarea", () => {
         <FieldControl asChild>
           <Textarea name="summary" defaultValue="Too short" rows={4} />
         </FieldControl>
-        <FieldDescription>Summarize customer impact and owner action.</FieldDescription>
+        <FieldDescription>
+          Summarize customer impact and owner action.
+        </FieldDescription>
         <FieldError>Add more detail before submitting.</FieldError>
       </Field>,
     );
@@ -139,7 +137,10 @@ describe("Textarea", () => {
       "aria-describedby",
       "incident-summary-description incident-summary-error",
     );
-    expect(textarea).toHaveAttribute("aria-errormessage", "incident-summary-error");
+    expect(textarea).toHaveAttribute(
+      "aria-errormessage",
+      "incident-summary-error",
+    );
     expect(textarea).toHaveAttribute("aria-invalid", "true");
     expect(textarea).toBeRequired();
     expect(textarea).toHaveAttribute("data-slot", "field-control");

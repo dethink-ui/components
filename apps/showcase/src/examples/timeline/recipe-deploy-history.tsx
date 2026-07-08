@@ -63,18 +63,20 @@ export function TimelineRecipeDeployHistory() {
       />
       <div
         aria-live="polite"
-        className="mx-auto max-w-md rounded-lg border border-border px-4 py-3 text-sm"
+        className="border-border mx-auto max-w-md rounded-lg border px-4 py-3 text-sm"
       >
         {selected ? (
           <>
             <p className="font-medium">{selected.title}</p>
-            <p className="mt-0.5 text-muted-foreground">
+            <p className="text-muted-foreground mt-0.5">
               Commit <span className="font-mono">{selected.data?.sha}</span> ·
               deployed by {selected.data?.author}
             </p>
           </>
         ) : (
-          <p className="text-muted-foreground">Select a deployment for details.</p>
+          <p className="text-muted-foreground">
+            Select a deployment for details.
+          </p>
         )}
       </div>
     </div>

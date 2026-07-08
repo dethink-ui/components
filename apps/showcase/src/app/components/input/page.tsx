@@ -40,7 +40,7 @@ export default function InputPage() {
           <ExampleBlock
             file="input/sizes.tsx"
             title="Sizes"
-            description='Three control sizes. The default md height tracks the active density token, matching Button heights in the same layout.'
+            description="Three control sizes. The default md height tracks the active density token, matching Button heights in the same layout."
           >
             <InputSizes />
           </ExampleBlock>
