@@ -41,6 +41,28 @@ describe("HeroTextAnimation accessibility", () => {
               rotatingKeywordSuffix=" teams."
               text="Build dashboards for every revenue team."
             />
+            <HeroTextAnimation
+              animation="gradient-highlight"
+              as="h2"
+              text="Highlight the most important launch promise."
+            />
+          </main>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for gradient highlight in dark theme", async () => {
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <HeroTextAnimationProvider>
+          <main aria-label="Gradient highlight dark accessibility smoke">
+            <HeroTextAnimation
+              animation="gradient-highlight"
+              text="Keep highlighted hero copy readable in dark mode."
+            />
           </main>
         </HeroTextAnimationProvider>
       </DethinkProvider>,

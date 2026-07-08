@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
 } from "react";
@@ -27,7 +28,8 @@ export type HeroTextAnimationKind =
   | "masked-curtain"
   | "typewriter"
   | "scramble-decrypt"
-  | "rotating-keyword";
+  | "rotating-keyword"
+  | "gradient-highlight";
 export type HeroTextAnimationElement = "h1" | "h2" | "p" | "span";
 export type HeroTextAnimationSplitBy = "word" | "line";
 export type HeroTextAnimationTrigger = "mount" | "in-view" | "manual";
@@ -98,6 +100,7 @@ export const heroTextAnimationMotionTokens = {
     typewriter: 1.1,
     scramble: 1.2,
     rotatingKeyword: 0.34,
+    gradientHighlight: 0.9,
   },
   stagger: {
     word: 0.045,
@@ -160,6 +163,8 @@ const heroTextAnimationRotatingSizerClasses =
   "invisible col-start-1 row-start-1 whitespace-pre";
 const heroTextAnimationRotatingKeywordClasses =
   "col-start-1 row-start-1 whitespace-pre will-change-transform data-[reduced-motion=true]:will-change-auto";
+const heroTextAnimationGradientHighlightClasses =
+  "inline whitespace-pre-wrap bg-[linear-gradient(105deg,var(--hero-text-animation-highlight-base)_0%,var(--hero-text-animation-highlight-base)_34%,var(--hero-text-animation-highlight-accent)_44%,var(--hero-text-animation-highlight-sheen)_50%,var(--hero-text-animation-highlight-accent)_56%,var(--hero-text-animation-highlight-base)_66%,var(--hero-text-animation-highlight-base)_100%)] bg-[length:220%_100%] bg-clip-text text-transparent underline decoration-(--hero-text-animation-highlight-underline) decoration-[0.08em] underline-offset-[0.14em] will-change-[background-position] [text-decoration-skip-ink:auto] forced-colors:bg-none forced-colors:text-[CanvasText] forced-colors:decoration-[CanvasText] data-[reduced-motion=true]:will-change-auto";
 
 const typewriterDefaultIntervalMs = 28;
 const typewriterMinimumIntervalMs = 16;
@@ -174,6 +179,15 @@ const rotatingKeywordDefaultIntervalMs = 1600;
 const rotatingKeywordMinimumIntervalMs = 400;
 const rotatingKeywordMaximumAutoRotateMs = 5000;
 const defaultRepeatDelay = 1.8;
+const gradientHighlightStyle = {
+  "--hero-text-animation-highlight-base": "var(--dt-color-foreground)",
+  "--hero-text-animation-highlight-accent":
+    "color-mix(in oklab, var(--dt-color-foreground) 78%, var(--dt-color-primary) 22%)",
+  "--hero-text-animation-highlight-sheen":
+    "color-mix(in oklab, var(--dt-color-foreground) 58%, var(--dt-color-background) 42%)",
+  "--hero-text-animation-highlight-underline":
+    "color-mix(in oklab, var(--dt-color-primary) 72%, var(--dt-color-foreground) 28%)",
+} as CSSProperties;
 
 const HeroTextAnimationReducedMotionContext =
   createContext<HeroTextAnimationProviderReducedMotion>("user");
@@ -1262,6 +1276,89 @@ function ScrambleDecryptSegments({
   );
 }
 
+function GradientHighlightSegments({
+  active,
+  delay,
+  duration,
+  once,
+  reducedMotion,
+  text,
+  trigger,
+  onAnimationComplete,
+  onAnimationStart,
+}: {
+  active: boolean;
+  delay: number;
+  duration: number;
+  once: boolean;
+  reducedMotion: boolean;
+  text: string;
+  trigger: HeroTextAnimationTrigger;
+  onAnimationComplete?: () => void;
+  onAnimationStart?: () => void;
+}) {
+  const [inViewRef, isInView] = useTypewriterInView({ once, trigger });
+  const shouldStart =
+    trigger === "in-view" ? isInView : trigger === "manual" ? active : true;
+  const initialBackgroundPositionX =
+    reducedMotion || !shouldStart ? "0%" : "120%";
+  const targetBackgroundPositionX =
+    reducedMotion || !shouldStart ? "0%" : "-20%";
+  const transition = reducedMotion
+    ? { duration: 0 }
+    : {
+        delay,
+        duration,
+        ease: heroTextAnimationMotionTokens.easing.soft,
+      };
+
+  return (
+    <motionElement.span
+      ref={inViewRef}
+      aria-hidden="true"
+      data-highlight="gradient-highlight"
+      data-reduced-motion={reducedMotion ? "true" : undefined}
+      data-slot="hero-text-animation-motion"
+      data-split-by="phrase"
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationGradientHighlightClasses,
+      )}
+      style={gradientHighlightStyle}
+      initial={{ backgroundPositionX: initialBackgroundPositionX }}
+      animate={{ backgroundPositionX: targetBackgroundPositionX }}
+      transition={transition}
+      onAnimationComplete={
+        reducedMotion || !shouldStart ? undefined : onAnimationComplete
+      }
+      onAnimationStart={
+        reducedMotion || !shouldStart ? undefined : onAnimationStart
+      }
+    >
+      {text}
+    </motionElement.span>
+  );
+}
+
+function renderStaticGradientHighlight(text: string) {
+  return (
+    <span
+      aria-hidden="true"
+      data-highlight="gradient-highlight"
+      data-reduced-motion="true"
+      data-slot="hero-text-animation-motion"
+      data-split-by="phrase"
+      className={cn(
+        heroTextAnimationMotionClasses,
+        heroTextAnimationGradientHighlightClasses,
+      )}
+      style={gradientHighlightStyle}
+    >
+      {text}
+    </span>
+  );
+}
+
 function getSegmentTransition(duration: number): Transition {
   return {
     duration,
@@ -1323,9 +1420,11 @@ export const HeroTextAnimation = forwardRef<
         ? heroTextAnimationMotionTokens.duration.rotatingKeyword
         : animation === "scramble-decrypt"
           ? heroTextAnimationMotionTokens.duration.scramble
-          : animation === "typewriter"
-            ? heroTextAnimationMotionTokens.duration.typewriter
-            : heroTextAnimationMotionTokens.duration.base);
+          : animation === "gradient-highlight"
+            ? heroTextAnimationMotionTokens.duration.gradientHighlight
+            : animation === "typewriter"
+              ? heroTextAnimationMotionTokens.duration.typewriter
+              : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated || (reducedMotion && reducedMotionStrategy === "static");
     const canRepeat =
@@ -1377,15 +1476,19 @@ export const HeroTextAnimation = forwardRef<
     const animatedSegmentCount =
       animation === "rotating-keyword"
         ? keywordCount
-        : animation === "typewriter" || animation === "scramble-decrypt"
-          ? splitTypewriterCharacters(text).length
-          : segments.filter((segment) => segment.kind === "text").length;
+        : animation === "gradient-highlight"
+          ? 1
+          : animation === "typewriter" || animation === "scramble-decrypt"
+            ? splitTypewriterCharacters(text).length
+            : segments.filter((segment) => segment.kind === "text").length;
     const visualSplitBy =
       animation === "rotating-keyword"
         ? "keyword"
-        : animation === "typewriter" || animation === "scramble-decrypt"
-          ? "character"
-          : resolvedSplitBy;
+        : animation === "gradient-highlight"
+          ? "phrase"
+          : animation === "typewriter" || animation === "scramble-decrypt"
+            ? "character"
+            : resolvedSplitBy;
     const visualKey = [
       animation,
       repeatIteration,
@@ -1494,6 +1597,8 @@ export const HeroTextAnimation = forwardRef<
             prefix: rotatingKeywordPrefix,
             suffix: rotatingKeywordSuffix,
           })
+        ) : renderStatic && animation === "gradient-highlight" ? (
+          renderStaticGradientHighlight(text)
         ) : renderStatic ? (
           renderStaticSegments({ segments, splitBy: resolvedSplitBy })
         ) : animation === "masked-curtain" ? (
@@ -1526,6 +1631,19 @@ export const HeroTextAnimation = forwardRef<
           />
         ) : animation === "scramble-decrypt" ? (
           <ScrambleDecryptSegments
+            key={visualKey}
+            active={active}
+            delay={delay}
+            duration={resolvedDuration}
+            once={once}
+            reducedMotion={reducedMotion}
+            text={text}
+            trigger={trigger}
+            onAnimationComplete={handleAnimationComplete}
+            onAnimationStart={onAnimationStart}
+          />
+        ) : animation === "gradient-highlight" ? (
+          <GradientHighlightSegments
             key={visualKey}
             active={active}
             delay={delay}
