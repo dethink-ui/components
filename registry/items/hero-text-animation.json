@@ -3,7 +3,7 @@
   "name": "hero-text-animation",
   "type": "registry:ui",
   "title": "HeroTextAnimation",
-  "description": "Accessible hero heading text animation foundation with Motion-powered staggered word and masked curtain reveals, a bounded typewriter effect, and opt-in replay timing.",
+  "description": "Accessible hero heading text animation foundation with Motion-powered staggered word and masked curtain reveals, bounded typewriter and scramble decrypt effects, and opt-in replay timing.",
   "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
