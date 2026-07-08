@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-group",
+  "type": "registry:ui",
+  "title": "AvatarGroup",
+  "description": "Compact Avatar composition primitive with RTL-safe overlap, max visible members, overflow summary, and programmatic group/member names.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "avatar"],
+  "files": [
+    {
+      "path": "packages/components/src/components/avatar-group/avatar-group.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/avatar-group/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

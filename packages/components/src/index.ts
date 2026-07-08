@@ -47,6 +47,16 @@ export {
   type AvatarTone,
 } from "./components/avatar";
 export {
+  AvatarGroup,
+  avatarGroupClassNames,
+  type AvatarGroupMember,
+  type AvatarGroupOverflowLabel,
+  type AvatarGroupOverflowLabelContext,
+  type AvatarGroupOverlap,
+  type AvatarGroupProps,
+  type AvatarGroupVisibleMemberLabel,
+} from "./components/avatar-group";
+export {
   Box,
   boxClassNames,
   type BoxBorder,
