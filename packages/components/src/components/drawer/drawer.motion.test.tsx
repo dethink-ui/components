@@ -42,10 +42,12 @@ function readTranslateValue(value: TestMotionValue | null): number {
 
 function DrawerDragProbe({
   direction,
+  fallbackContentSize,
   onTranslateValue,
   open,
 }: {
   direction: DrawerDirection;
+  fallbackContentSize?: number;
   onTranslateValue: (value: TestMotionValue) => void;
   open: boolean;
 }) {
@@ -54,6 +56,7 @@ function DrawerDragProbe({
     closeThreshold: 0.25,
     contentRef,
     direction,
+    fallbackContentSize,
     motionPreset: "standard",
     onOpenChange: vi.fn(),
     open,
@@ -67,6 +70,36 @@ function DrawerDragProbe({
 }
 
 describe("Drawer motion (enabled)", () => {
+  it("seeds first open from the configured drawer size instead of the viewport", () => {
+    let translateValue: TestMotionValue | null = null;
+    const captureTranslateValue = (value: TestMotionValue) => {
+      translateValue = value;
+    };
+
+    const { rerender } = render(
+      <DrawerDragProbe
+        direction="right"
+        fallbackContentSize={384}
+        onTranslateValue={captureTranslateValue}
+        open={false}
+      />,
+    );
+
+    expect(readTranslateValue(translateValue)).toBe(384);
+    expect(readTranslateValue(translateValue)).toBeLessThan(window.innerWidth);
+
+    rerender(
+      <DrawerDragProbe
+        direction="right"
+        fallbackContentSize={384}
+        onTranslateValue={captureTranslateValue}
+        open
+      />,
+    );
+
+    expect(readTranslateValue(translateValue)).toBe(384);
+  });
+
   it("starts a first open from the current direction after changing direction while closed", () => {
     let translateValue: TestMotionValue | null = null;
     const captureTranslateValue = (value: TestMotionValue) => {
@@ -139,17 +172,18 @@ describe("Drawer motion (enabled)", () => {
       </Drawer>,
     );
 
-    expect(screen.getByTestId("side-handle")).toHaveAttribute(
-      "data-direction",
-      "right",
-    );
-    expect(screen.getByTestId("side-handle")).toHaveClass(
+    const rightHandle = screen.getByTestId("side-handle");
+
+    expect(rightHandle).toHaveAttribute("data-direction", "right");
+    expect(rightHandle).toHaveClass(
       "data-[direction=right]:absolute",
       "data-[direction=right]:inset-y-0",
       "data-[direction=right]:left-0",
       "data-[direction=right]:h-full",
       "data-[direction=right]:w-8",
     );
+    fireEvent.pointerEnter(rightHandle);
+    expect(rightHandle.style.transform).not.toContain("scale");
 
     rerender(
       <Drawer defaultOpen direction="left">
