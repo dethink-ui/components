@@ -8,6 +8,7 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { HeroTextAnimationMaskedCurtainHero } from "@/examples/hero-text-animation/masked-curtain-hero";
 import { HeroTextAnimationProductionHero } from "@/examples/hero-text-animation/production-hero";
+import { HeroTextAnimationRotatingKeywordHero } from "@/examples/hero-text-animation/rotating-keyword-hero";
 import { HeroTextAnimationScrambleDecryptHero } from "@/examples/hero-text-animation/scramble-decrypt-hero";
 import { HeroTextAnimationTypewriterHero } from "@/examples/hero-text-animation/typewriter-hero";
 import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
@@ -69,6 +70,16 @@ export default function HeroTextAnimationPage() {
             wide
           >
             <HeroTextAnimationScrambleDecryptHero />
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/rotating-keyword-hero.tsx"
+            title="Rotating keyword hero section"
+            description="A separate production hero recipe for a stable accessible sentence with a decorative keyword slot, bounded auto rotation, navbar composition, CTAs, and icon-led proof points."
+            codeCollapsible
+            codeDefaultOpen={false}
+            wide
+          >
+            <HeroTextAnimationRotatingKeywordHero />
           </ExampleBlock>
         </div>
       </DocsSection>

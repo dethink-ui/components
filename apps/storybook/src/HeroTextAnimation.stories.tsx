@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { useState } from "react";
 import { expect, within } from "storybook/test";
 import {
   DethinkProvider,
@@ -31,6 +32,7 @@ const meta = {
         "masked-curtain",
         "typewriter",
         "scramble-decrypt",
+        "rotating-keyword",
       ],
     },
     as: {
@@ -86,6 +88,7 @@ const animationKinds: HeroTextAnimationKind[] = [
   "masked-curtain",
   "typewriter",
   "scramble-decrypt",
+  "rotating-keyword",
 ];
 
 export const Base: Story = {};
@@ -218,6 +221,72 @@ export const ScrambleDecryptReveal: Story = {
   ),
 };
 
+export const RotatingKeywordReveal: Story = {
+  render: () => {
+    const keywords = ["finance", "customer success", "sales operations"];
+    const [keywordIndex, setKeywordIndex] = useState(0);
+
+    return (
+      <DethinkProvider
+        theme="light"
+        className="border-border rounded-lg border p-8"
+      >
+        <HeroTextAnimationProvider>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_18rem]">
+            <section className="min-w-0">
+              <p className="text-muted-foreground mb-3 text-sm font-medium">
+                controlled slot
+              </p>
+              <HeroTextAnimation
+                animation="rotating-keyword"
+                rotatingKeywordIndex={keywordIndex}
+                rotatingKeywordOptions={keywords}
+                rotatingKeywordPrefix="Build dashboards for "
+                rotatingKeywordSuffix=" teams."
+                text="Build dashboards for every revenue team."
+                onRotatingKeywordIndexChange={setKeywordIndex}
+                className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+              />
+              <div className="mt-5 flex flex-wrap gap-2">
+                {keywords.map((keyword, index) => (
+                  <button
+                    key={keyword}
+                    type="button"
+                    className="border-border bg-background text-foreground hover:bg-muted focus-visible:ring-ring focus-visible:ring-offset-background data-[active=true]:bg-primary data-[active=true]:text-primary-foreground rounded-md border px-3 py-2 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    data-active={keywordIndex === index ? "true" : "false"}
+                    onClick={() => setKeywordIndex(index)}
+                  >
+                    {keyword}
+                  </button>
+                ))}
+              </div>
+            </section>
+            <section className="min-w-0">
+              <p className="text-muted-foreground mb-3 text-sm font-medium">
+                bounded auto rotation
+              </p>
+              <HeroTextAnimation
+                animation="rotating-keyword"
+                autoRotateKeywords
+                rotatingKeywordInterval={1.2}
+                rotatingKeywordOptions={[
+                  "pipeline gaps",
+                  "launch blockers",
+                  "handoff risks",
+                ]}
+                rotatingKeywordPrefix="Spot "
+                rotatingKeywordSuffix=" before release."
+                text="Spot release risks before launch."
+                className="text-foreground text-3xl leading-tight font-semibold tracking-normal"
+              />
+            </section>
+          </div>
+        </HeroTextAnimationProvider>
+      </DethinkProvider>
+    );
+  },
+};
+
 export const RepeatPreview: Story = {
   render: () => (
     <DethinkProvider
@@ -313,6 +382,28 @@ export const ScrambleReducedMotionFallbacks: Story = {
             />
           ))}
         </div>
+      </HeroTextAnimationProvider>
+    </DethinkProvider>
+  ),
+};
+
+export const RotatingKeywordReducedMotionFallback: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border rounded-lg border p-8"
+    >
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="rotating-keyword"
+          autoRotateKeywords
+          rotatingKeywordIndex={1}
+          rotatingKeywordOptions={["finance", "support", "sales"]}
+          rotatingKeywordPrefix="Build dashboards for "
+          rotatingKeywordSuffix=" teams."
+          text="Build dashboards for every revenue team."
+          className="text-foreground text-3xl leading-tight font-semibold tracking-normal md:text-5xl"
+        />
       </HeroTextAnimationProvider>
     </DethinkProvider>
   ),

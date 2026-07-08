@@ -539,6 +539,216 @@ describe("HeroTextAnimation", () => {
     expect(setTimeoutSpy).not.toHaveBeenCalled();
   });
 
+  it("renders a rotating keyword slot with one stable accessible sentence", () => {
+    render(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordOptions={["finance", "customer success", "sales"]}
+        rotatingKeywordPrefix="Build dashboards for "
+        rotatingKeywordSuffix=" teams."
+        text="Build dashboards for every revenue team."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Build dashboards for every revenue team.",
+    });
+    const visual = heading.querySelector(
+      '[data-slot="hero-text-animation-visual"]',
+    );
+    const motion = heading.querySelector(
+      '[data-slot="hero-text-animation-motion"]',
+    );
+    const keyword = heading.querySelector(
+      '[data-slot="hero-text-animation-rotating-keyword"]',
+    );
+    const sizer = heading.querySelector(
+      '[data-slot="hero-text-animation-rotating-sizer"]',
+    );
+
+    expect(heading).toHaveAttribute("data-animation", "rotating-keyword");
+    expect(heading).toHaveAttribute("data-split-by", "keyword");
+    expect(heading).toHaveAttribute("data-segment-count", "3");
+    expect(heading).toHaveAttribute("data-rotating-keyword-count", "3");
+    expect(heading).toHaveAttribute("data-rotating-keyword-index", "0");
+    expect(visual).toHaveAttribute("aria-hidden", "true");
+    expect(motion).toHaveAttribute("data-auto-rotate-keywords", "false");
+    expect(keyword).toHaveTextContent("finance");
+    expect(sizer).toHaveTextContent("customer success");
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-accessible-text"]',
+      ),
+    ).toHaveTextContent("Build dashboards for every revenue team.");
+  });
+
+  it("supports controlled rotating keyword index updates", () => {
+    const { rerender } = render(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordIndex={0}
+        rotatingKeywordOptions={["finance", "support", "sales"]}
+        rotatingKeywordPrefix="Build for "
+        text="Build dashboards for every team."
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Build dashboards for every team.",
+    });
+    const getKeyword = () =>
+      Array.from(
+        heading.querySelectorAll(
+          '[data-slot="hero-text-animation-rotating-keyword"]',
+        ),
+      );
+
+    expect(getKeyword().at(-1)).toHaveTextContent("finance");
+
+    rerender(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordIndex={2}
+        rotatingKeywordOptions={["finance", "support", "sales"]}
+        rotatingKeywordPrefix="Build for "
+        text="Build dashboards for every team."
+      />,
+    );
+
+    expect(heading).toHaveAttribute("data-rotating-keyword-index", "2");
+    expect(getKeyword().at(-1)).toHaveTextContent("sales");
+
+    rerender(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordIndex={1}
+        rotatingKeywordOptions={["finance", "support", "sales"]}
+        rotatingKeywordPrefix="Build for "
+        text="Build dashboards for every team."
+      />,
+    );
+
+    expect(heading).toHaveAttribute("data-rotating-keyword-index", "1");
+    expect(getKeyword().at(-1)).toHaveTextContent("support");
+  });
+
+  it("does not start rotating keyword timers unless auto rotation is enabled", () => {
+    vi.useFakeTimers();
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+
+    render(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        rotatingKeywordOptions={["finance", "support"]}
+        rotatingKeywordPrefix="Build for "
+        text="Build dashboards for every team."
+      />,
+    );
+
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+
+    expect(
+      screen
+        .getByRole("heading", {
+          name: "Build dashboards for every team.",
+        })
+        .querySelector('[data-slot="hero-text-animation-rotating-keyword"]'),
+    ).toHaveTextContent("finance");
+  });
+
+  it("auto-rotates keywords with bounded timers and stops within five seconds", async () => {
+    vi.useFakeTimers();
+    const clearIntervalSpy = vi.spyOn(window, "clearInterval");
+    const handleChange = vi.fn();
+    const handleComplete = vi.fn();
+
+    render(
+      <HeroTextAnimation
+        animation="rotating-keyword"
+        autoRotateKeywords
+        rotatingKeywordInterval={1}
+        rotatingKeywordOptions={["finance", "support", "sales"]}
+        rotatingKeywordPrefix="Build for "
+        text="Build dashboards for every team."
+        onAnimationComplete={handleComplete}
+        onRotatingKeywordIndexChange={handleChange}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Build dashboards for every team.",
+    });
+    const getKeyword = () =>
+      Array.from(
+        heading.querySelectorAll(
+          '[data-slot="hero-text-animation-rotating-keyword"]',
+        ),
+      );
+
+    expect(getKeyword().at(-1)).toHaveTextContent("finance");
+    expect(heading).toHaveAttribute("data-rotating-keyword-index", "0");
+    expect(
+      heading.querySelector('[data-slot="hero-text-animation-motion"]'),
+    ).toHaveAttribute("data-rotating-keyword-max-duration-ms", "5000");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(handleChange).toHaveBeenLastCalledWith(1);
+    expect(getKeyword().at(-1)).toHaveTextContent("support");
+
+    await act(async () => {
+      vi.advanceTimersByTime(4000);
+    });
+
+    expect(handleComplete).toHaveBeenCalledTimes(1);
+    expect(clearIntervalSpy).toHaveBeenCalled();
+    expect(handleChange).toHaveBeenCalledTimes(4);
+
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    expect(handleChange).toHaveBeenCalledTimes(4);
+  });
+
+  it("renders rotating keyword fallback immediately in reduced motion without timers", () => {
+    const setIntervalSpy = vi.spyOn(window, "setInterval");
+    const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+
+    render(
+      <HeroTextAnimationProvider reducedMotion="always">
+        <HeroTextAnimation
+          animation="rotating-keyword"
+          autoRotateKeywords
+          rotatingKeywordIndex={1}
+          rotatingKeywordOptions={["finance", "support", "sales"]}
+          rotatingKeywordPrefix="Build for "
+          text="Build dashboards for every team."
+        />
+      </HeroTextAnimationProvider>,
+    );
+
+    const heading = screen.getByRole("heading", {
+      name: "Build dashboards for every team.",
+    });
+    const keyword = heading.querySelector(
+      '[data-slot="hero-text-animation-rotating-keyword"]',
+    );
+
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(heading).toHaveAttribute("data-rotating-keyword-index", "1");
+    expect(keyword).toHaveTextContent("support");
+    expect(keyword).toHaveAttribute("data-reduced-motion", "true");
+    expect(setIntervalSpy).not.toHaveBeenCalled();
+    expect(setTimeoutSpy).not.toHaveBeenCalled();
+  });
+
   it("cleans typewriter timers on text changes and unmount", async () => {
     vi.useFakeTimers();
     const clearIntervalSpy = vi.spyOn(window, "clearInterval");
