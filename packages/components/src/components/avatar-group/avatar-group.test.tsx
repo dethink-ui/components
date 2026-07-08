@@ -7,8 +7,11 @@ import {
   AvatarGroup,
   avatarGroupClassNames,
   type AvatarGroupMember,
+  type AvatarGroupMotion,
   type AvatarGroupOverlap,
   type AvatarGroupProps,
+  type AvatarGroupReveal,
+  type AvatarGroupRevealLabelVisibility,
 } from ".";
 
 const members: AvatarGroupMember[] = [
@@ -72,13 +75,19 @@ describe("AvatarGroup", () => {
     expect(group).toBe(screen.getByTestId("group"));
     expect(group).toHaveAttribute("data-slot", "avatar-group");
     expect(group).toHaveAttribute("data-count", "5");
+    expect(group).toHaveAttribute("data-motion", "standard");
+    expect(group).toHaveAttribute("data-motion-behavior", "disabled");
     expect(group).toHaveAttribute("data-visible-count", "3");
     expect(group).toHaveAttribute("data-overflow", "true");
     expect(group).toHaveAttribute("data-overflow-count", "2");
+    expect(group).toHaveAttribute("data-reveal", "none");
+    expect(group).toHaveAttribute("data-reveal-label-visibility", "hover");
     expect(group).toHaveAttribute("data-size", "sm");
     expect(group).toHaveAttribute("data-shape", "circle");
     expect(group).toHaveAttribute("data-ring", "border");
     expect(group).toHaveAttribute("data-overlap", "md");
+    expect(group).toHaveAttribute("data-state", "collapsed");
+    expect(group).not.toHaveAttribute("tabindex");
     expect(stack).toHaveAttribute("aria-hidden", "true");
     expect(visualAvatars).toHaveLength(4);
     expect(visualAvatars[0]).toHaveAttribute("data-slot", "avatar");
@@ -267,11 +276,29 @@ describe("AvatarGroup", () => {
       label: "Valid group",
       max: 2,
       members: [validMember],
+      motion: "subtle",
       overlap: "sm",
+      reveal: "spread",
+      revealLabelVisibility: "hover",
     } satisfies AvatarGroupProps;
+    const validMotion = "none" satisfies AvatarGroupMotion;
+    const validReveal = "names" satisfies AvatarGroupReveal;
+    const validLabelVisibility =
+      "always" satisfies AvatarGroupRevealLabelVisibility;
     const valid = <AvatarGroup {...validProps} />;
     // @ts-expect-error AvatarGroup overlap values are intentionally constrained.
     const invalidOverlap = <AvatarGroup members={[]} overlap="xl" />;
+    // @ts-expect-error AvatarGroup motion values use Avatar's constrained tokens.
+    const invalidMotion = <AvatarGroup members={[]} motion="fast" />;
+    // @ts-expect-error AvatarGroup reveal values are intentionally constrained.
+    const invalidReveal = <AvatarGroup members={[]} reveal="tooltip" />;
+    const invalidLabelVisibility = (
+      <AvatarGroup
+        members={[]}
+        // @ts-expect-error AvatarGroup reveal label visibility is intentionally constrained.
+        revealLabelVisibility="focus"
+      />
+    );
     const invalidMemberTone: AvatarGroupMember = {
       name: "Invalid user",
       // @ts-expect-error AvatarGroup member tones use Avatar's constrained tokens.
@@ -281,12 +308,18 @@ describe("AvatarGroup", () => {
     const invalidChildren = <AvatarGroup members={[]}>Children</AvatarGroup>;
 
     expect(valid).toBeTruthy();
+    expect(validMotion).toBeTruthy();
+    expect(validReveal).toBeTruthy();
+    expect(validLabelVisibility).toBeTruthy();
     expect(invalidOverlap).toBeTruthy();
+    expect(invalidMotion).toBeTruthy();
+    expect(invalidReveal).toBeTruthy();
+    expect(invalidLabelVisibility).toBeTruthy();
     expect(invalidMemberTone).toBeTruthy();
     expect(invalidChildren).toBeTruthy();
   });
 
-  it("declares Avatar-backed registry metadata without a direct Motion dependency", () => {
+  it("declares Avatar-backed registry metadata with the direct Motion dependency used by reveal", () => {
     const registryItem = JSON.parse(
       readFileSync(
         resolve(process.cwd(), "../../registry/items/avatar-group.json"),
@@ -301,7 +334,7 @@ describe("AvatarGroup", () => {
     };
 
     expect(registryItem.name).toBe("avatar-group");
-    expect(registryItem.dependencies).toEqual([]);
+    expect(registryItem.dependencies).toEqual(["motion"]);
     expect(registryItem.devDependencies).toEqual([]);
     expect(registryItem.registryDependencies).toEqual([
       "dethink-base",
@@ -321,7 +354,7 @@ describe("AvatarGroup", () => {
         type: "registry:lib",
       },
     ]);
-    expect(JSON.stringify(registryItem)).not.toContain("motion");
+    expect(JSON.stringify(registryItem)).toContain("motion");
     expect(JSON.stringify(registryItem)).toContain("avatar");
   });
 });

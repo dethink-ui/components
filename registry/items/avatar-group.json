@@ -3,8 +3,8 @@
   "name": "avatar-group",
   "type": "registry:ui",
   "title": "AvatarGroup",
-  "description": "Compact Avatar composition primitive with RTL-safe overlap, max visible members, overflow summary, and programmatic group/member names.",
-  "dependencies": [],
+  "description": "Compact Avatar composition primitive with RTL-safe overlap, max visible members, overflow summary, programmatic group/member names, and optional Motion-powered reveal polish.",
+  "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "avatar"],
   "files": [

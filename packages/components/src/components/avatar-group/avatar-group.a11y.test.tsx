@@ -25,6 +25,7 @@ describe("AvatarGroup accessibility", () => {
               max={2}
               members={reviewers}
               overflowLabel={({ count }) => `${count} more reviewers`}
+              reveal="spread"
             />
             <p>Ada Lovelace, Grace Hopper, Maya Lin, and Alan Turing</p>
           </section>
@@ -60,10 +61,15 @@ describe("AvatarGroup accessibility", () => {
 
     expect(group).toHaveAccessibleDescription(/Ada Lovelace/);
     expect(group).toHaveAccessibleDescription(/2 more reviewers/);
+    expect(group).toHaveAttribute("data-reveal", "spread");
+    expect(group).toHaveAttribute("tabindex", "0");
     expect(list).toHaveTextContent("Grace Hopper");
     expect(list).toHaveTextContent("Alan Turing");
     expect(
       group.querySelector('[data-slot="avatar-group-stack"]'),
+    ).toHaveAttribute("aria-hidden", "true");
+    expect(
+      group.querySelector('[data-slot="avatar-group-reveal-label"]'),
     ).toHaveAttribute("aria-hidden", "true");
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

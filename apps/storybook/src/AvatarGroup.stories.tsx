@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import type { CSSProperties } from "react";
 import {
   Building2,
@@ -152,6 +153,21 @@ const meta = {
       control: "inline-radio",
       options: ["none", "sm", "md", "lg"],
     },
+    motion: {
+      control: "inline-radio",
+      options: ["none", "subtle", "standard"],
+    },
+    reducedMotion: {
+      control: "boolean",
+    },
+    reveal: {
+      control: "inline-radio",
+      options: ["none", "spread", "names"],
+    },
+    revealLabelVisibility: {
+      control: "inline-radio",
+      options: ["hover", "always"],
+    },
     ring: {
       control: "inline-radio",
       options: ["none", "border", "ring"],
@@ -288,6 +304,184 @@ export const LargerGroupWithOverflow: Story = {
           ring="ring"
         />
       </div>
+    </DethinkProvider>
+  ),
+};
+
+export const SpreadReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border grid max-w-2xl gap-5 rounded-lg border p-6"
+    >
+      <div className="flex items-center justify-between gap-[var(--dt-space-4)]">
+        <div>
+          <p className="text-foreground text-sm font-medium">
+            Access policy review
+          </p>
+          <p className="text-muted-foreground text-xs">
+            Security, runtime, and analytics
+          </p>
+        </div>
+        <AvatarGroup
+          label="Access policy reviewers"
+          max={3}
+          members={reviewers}
+          reveal="spread"
+          ring="ring"
+        />
+      </div>
+      <div className="flex items-center justify-between gap-[var(--dt-space-4)]">
+        <div>
+          <p className="text-foreground text-sm font-medium">
+            Billing export owners
+          </p>
+          <p className="text-muted-foreground text-xs">Export controls</p>
+        </div>
+        <AvatarGroup
+          label="Billing export owners"
+          max={2}
+          members={assignees}
+          overlap="sm"
+          reveal="names"
+          size="sm"
+        />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const KeyboardFocusReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border flex max-w-xl items-center justify-between gap-[var(--dt-space-4)] rounded-lg border p-6"
+    >
+      <div>
+        <p className="text-foreground text-sm font-medium">Release reviewers</p>
+        <p className="text-muted-foreground text-xs">Two pending sign-offs</p>
+      </div>
+      <AvatarGroup
+        label="Release reviewers"
+        max={3}
+        members={reviewers}
+        reveal="spread"
+      />
+      <button
+        type="button"
+        className="border-border text-foreground h-8 rounded-md border px-3 text-sm"
+      >
+        Approve
+      </button>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole("group", { name: "Release reviewers" });
+
+    await expect(group).toHaveAttribute("data-state", "collapsed");
+
+    await userEvent.tab();
+    await expect(group).toHaveFocus();
+    await expect(group).toHaveAttribute("data-state", "revealed");
+
+    await userEvent.tab();
+    await waitFor(() =>
+      expect(group).toHaveAttribute("data-state", "collapsed"),
+    );
+  },
+};
+
+export const ReducedMotionReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border grid max-w-2xl gap-5 rounded-lg border p-6"
+    >
+      <div className="flex items-center justify-between gap-[var(--dt-space-4)]">
+        <div>
+          <p className="text-foreground text-sm font-medium">
+            Incident response
+          </p>
+          <p className="text-muted-foreground text-xs">
+            Incident command owners
+          </p>
+        </div>
+        <AvatarGroup
+          label="Incident responders"
+          max={3}
+          members={assignees}
+          motion="none"
+          reveal="spread"
+          revealLabelVisibility="always"
+        />
+      </div>
+      <div className="flex items-center justify-between gap-[var(--dt-space-4)]">
+        <div>
+          <p className="text-foreground text-sm font-medium">Audit sign-off</p>
+          <p className="text-muted-foreground text-xs">
+            Audit and runtime queue
+          </p>
+        </div>
+        <AvatarGroup
+          label="Audit sign-off reviewers"
+          max={3}
+          members={reviewers}
+          reducedMotion
+          reveal="names"
+          revealLabelVisibility="always"
+        />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+export const ProfileDisclosureComposition: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border grid max-w-2xl gap-4 rounded-lg border p-6"
+    >
+      {[
+        {
+          action: "View roster",
+          label: "Quarterly planning",
+          members: reviewers,
+          status: "Reviewing",
+        },
+        {
+          action: "Open owners",
+          label: "Enterprise migration",
+          members: assignees,
+          status: "Active",
+        },
+      ].map(({ action, label, members: rowMembers, status }) => (
+        <div
+          key={label}
+          className="flex items-center justify-between gap-[var(--dt-space-4)]"
+        >
+          <div className="min-w-0">
+            <p className="text-foreground truncate text-sm font-medium">
+              {label}
+            </p>
+            <p className="text-muted-foreground text-xs">{status}</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-[var(--dt-space-3)]">
+            <AvatarGroup
+              label={`${label} participants`}
+              max={3}
+              members={rowMembers}
+              reveal="names"
+            />
+            <button
+              type="button"
+              className="border-border text-foreground h-8 rounded-md border px-3 text-sm"
+            >
+              {action}
+            </button>
+          </div>
+        </div>
+      ))}
     </DethinkProvider>
   ),
 };
