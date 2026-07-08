@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "reveal-button",
+  "type": "registry:ui",
+  "title": "RevealButton",
+  "description": "Motion-powered icon-first button that reveals its label on hover and focus.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/reveal-button/reveal-button.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/reveal-button/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
