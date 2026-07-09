@@ -57,6 +57,7 @@ describe("AvatarGroup reveal motion", () => {
     expect(group).toHaveAttribute("data-reveal", "spread");
     expect(group).toHaveAttribute("data-motion", "standard");
     expect(group).toHaveAttribute("data-motion-behavior", "transform-opacity");
+    expect(group).toHaveAttribute("data-magnify", "true");
     expect(group).toHaveAttribute("data-state", "collapsed");
     expect(group).toHaveAttribute("tabindex", "0");
     expect(group).not.toHaveAttribute("data-reduced-motion");
@@ -66,18 +67,88 @@ describe("AvatarGroup reveal motion", () => {
     ).toBeInTheDocument();
     expect(within(list).getByText("1 more reviewer")).toBeInTheDocument();
 
+    // The dock wave magnifies in place, so items do not fan apart and each
+    // avatar owns its own (still hidden) tooltip label.
     expect(items).toHaveLength(3);
-    expect(items[0]).toHaveAttribute("data-reveal-offset", "-14");
-    expect(items[1]).toHaveAttribute("data-reveal-offset", "0");
-    expect(items[2]).toHaveAttribute("data-reveal-offset", "14");
+    items.forEach((item) => {
+      expect(item).toHaveAttribute("data-reveal-offset", "0");
+    });
     expect(items[0].className).toContain("[translate:0_0]");
     expect(items[0].className).toContain("[rotate:0deg]");
     expect(items[0].className).toContain("[scale:1]");
 
     expect(labels).toHaveLength(3);
     expect(labels[0]).toHaveAttribute("aria-hidden", "true");
+    expect(labels[0]).toHaveAttribute("data-state", "collapsed");
     expect(labels[0]).toHaveTextContent("Ada Lovelace");
     expect(labels[2]).toHaveTextContent("1 more reviewer");
+  });
+
+  it("zooms only the hovered avatar and resets the previous one when the pointer moves", () => {
+    render(
+      <AvatarGroup
+        label="Wave reviewers"
+        max={3}
+        members={members}
+        reveal="spread"
+      />,
+    );
+
+    const group = screen.getByRole("group", { name: "Wave reviewers" });
+    const items = getVisualItems(group);
+    const labels = group.querySelectorAll(
+      '[data-slot="avatar-group-reveal-label"]',
+    );
+
+    expect(group).toHaveAttribute("data-magnify", "true");
+    expect(items).toHaveLength(3);
+
+    // jsdom has no layout, so give each avatar a distinct horizontal center for
+    // the nearest-pointer calculation to resolve against.
+    items.forEach((item, index) => {
+      item.getBoundingClientRect = () =>
+        ({
+          bottom: 40,
+          height: 40,
+          left: index * 100,
+          right: index * 100 + 40,
+          toJSON: () => ({}),
+          top: 0,
+          width: 40,
+          x: index * 100,
+          y: 0,
+        }) as DOMRect;
+    });
+
+    fireEvent.pointerEnter(group, { pointerType: "mouse" });
+    fireEvent.pointerMove(group, { clientX: 120, pointerType: "mouse" });
+
+    expect(group).toHaveAttribute("data-state", "revealed");
+    // clientX 120 is closest to the middle avatar (center 120), so only it zooms
+    // and reveals its label.
+    expect(items[1]).toHaveAttribute("data-active", "true");
+    expect(items[0]).not.toHaveAttribute("data-active");
+    expect(items[2]).not.toHaveAttribute("data-active");
+    expect(labels[1]).toHaveAttribute("data-state", "revealed");
+    expect(labels[0]).toHaveAttribute("data-state", "collapsed");
+    expect(labels[2]).toHaveAttribute("data-state", "collapsed");
+
+    // Moving to the first avatar makes it the only active one; the middle avatar
+    // returns to its resting state.
+    fireEvent.pointerMove(group, { clientX: 10, pointerType: "mouse" });
+    expect(items[0]).toHaveAttribute("data-active", "true");
+    expect(items[1]).not.toHaveAttribute("data-active");
+    expect(labels[0]).toHaveAttribute("data-state", "revealed");
+    expect(labels[1]).toHaveAttribute("data-state", "collapsed");
+
+    fireEvent.pointerLeave(group, { pointerType: "mouse" });
+    expect(group).toHaveAttribute("data-state", "collapsed");
+    items.forEach((item) => {
+      expect(item).not.toHaveAttribute("data-active");
+    });
+    labels.forEach((label) => {
+      expect(label).toHaveAttribute("data-state", "collapsed");
+    });
   });
 
   it("reveals on pointer hover, collapses on leave, and ignores touch hover", async () => {

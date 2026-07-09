@@ -1,8 +1,8 @@
 import {
   forwardRef,
+  useRef,
   useState,
   useId,
-  type CSSProperties,
   type FocusEventHandler,
   type HTMLAttributes,
   type MouseEventHandler,
@@ -119,19 +119,15 @@ const avatarGroupRevealLabelClasses =
 const avatarGroupRevealSummaryClasses =
   "pointer-events-none absolute start-1/2 top-full z-50 mt-[var(--dt-space-2)] max-w-[min(20rem,calc(100vw-var(--dt-space-4)))] -translate-x-1/2 truncate rounded-md border border-border bg-background px-[var(--dt-space-3)] py-[var(--dt-space-1)] text-xs font-medium text-foreground shadow-lg rtl:translate-x-1/2";
 
+// Per-step translate that fans the overlapped stack apart on hover so the
+// avatars separate cleanly and the zoomed one never collides with a neighbor.
 const avatarGroupRevealSpread: Record<AvatarSize, number> = {
-  xs: 10,
-  sm: 12,
-  md: 14,
-  lg: 18,
-  xl: 22,
-  "2xl": 26,
-};
-
-const avatarGroupTransitions: Record<AvatarGroupMotion, Transition> = {
-  none: { duration: 0 },
-  subtle: { type: "spring", stiffness: 360, damping: 34, mass: 0.9 },
-  standard: { type: "spring", stiffness: 440, damping: 34, mass: 0.85 },
+  xs: 16,
+  sm: 18,
+  md: 22,
+  lg: 26,
+  xl: 32,
+  "2xl": 38,
 };
 
 const avatarGroupLabelTransitions: Record<AvatarGroupMotion, Transition> = {
@@ -139,6 +135,23 @@ const avatarGroupLabelTransitions: Record<AvatarGroupMotion, Transition> = {
   subtle: { duration: 0.12, ease: "easeOut" },
   standard: { duration: 0.16, ease: "easeOut" },
 };
+
+// Hovering the group expands the stack; only the avatar under the pointer zooms,
+// and moving to another avatar returns the previous one to its resting size.
+const avatarGroupZoomScale: Record<AvatarGroupMotion, number> = {
+  none: 1,
+  subtle: 1.22,
+  standard: 1.3,
+};
+
+const avatarGroupExpandTransitions: Record<AvatarGroupMotion, Transition> = {
+  none: { duration: 0 },
+  subtle: { type: "spring", stiffness: 420, damping: 34, mass: 0.8 },
+  standard: { type: "spring", stiffness: 380, damping: 30, mass: 0.8 },
+};
+
+const avatarGroupItemScaleClasses =
+  "inline-flex origin-bottom transform-gpu will-change-transform data-[reduced-motion=true]:will-change-auto";
 
 export function avatarGroupClassNames({
   className,
@@ -253,10 +266,6 @@ function getOverflowLabel({
   return `${context.count} more ${normalizedNoun}`;
 }
 
-function getItemStyle(index: number): CSSProperties {
-  return { zIndex: index + 1 };
-}
-
 function canRevealForHover() {
   if (
     typeof window === "undefined" ||
@@ -346,6 +355,100 @@ function renderMemberMetadata(metadata: ReactNode) {
   return <> - {metadata}</>;
 }
 
+type AvatarGroupActiveKey = number | "overflow";
+
+interface AvatarGroupItemProps {
+  active: boolean;
+  children: ReactNode;
+  expandTransition: Transition;
+  label?: string;
+  labelActive: boolean;
+  labelTransition: Transition;
+  motionBehavior: ReturnType<typeof getMotionBehavior>;
+  reducedMotion: boolean;
+  revealOffset: number;
+  revealState: "revealed" | "collapsed";
+  showLabel: boolean;
+  slot: "item" | "overflow";
+  stackIndex: number;
+  xTarget: number;
+  zIndex: number;
+  zoomScale: number;
+  itemIndex?: number;
+}
+
+function AvatarGroupItem({
+  active,
+  children,
+  expandTransition,
+  itemIndex,
+  label,
+  labelActive,
+  labelTransition,
+  motionBehavior,
+  reducedMotion,
+  revealOffset,
+  revealState,
+  showLabel,
+  slot,
+  stackIndex,
+  xTarget,
+  zIndex,
+  zoomScale,
+}: AvatarGroupItemProps) {
+  const slotProps =
+    slot === "overflow"
+      ? { "data-overflow-item": "true", "data-slot": "avatar-group-overflow" }
+      : { "data-member-index": itemIndex, "data-slot": "avatar-group-item" };
+  // Only the hovered avatar zooms; the stack fans apart via `x` so nothing
+  // overlaps while it is enlarged.
+  const scaleTarget = active && !reducedMotion ? zoomScale : 1;
+
+  return (
+    <motionElement.li
+      {...slotProps}
+      data-active={active ? "true" : undefined}
+      data-motion-behavior={motionBehavior}
+      data-reveal-offset={revealOffset}
+      data-stack-index={stackIndex}
+      data-state={revealState}
+      className={avatarGroupItemClasses}
+      style={{ zIndex }}
+      initial={false}
+      animate={{ x: xTarget }}
+      transition={expandTransition}
+    >
+      <motionElement.span
+        aria-hidden="true"
+        data-slot="avatar-group-item-scale"
+        data-reduced-motion={reducedMotion ? "true" : undefined}
+        className={avatarGroupItemScaleClasses}
+        initial={false}
+        animate={{ scale: scaleTarget }}
+        transition={expandTransition}
+      >
+        {children}
+      </motionElement.span>
+      {showLabel && label ? (
+        <motionElement.span
+          aria-hidden="true"
+          data-slot="avatar-group-reveal-label"
+          data-state={labelActive ? "revealed" : "collapsed"}
+          className={avatarGroupRevealLabelClasses}
+          initial={false}
+          animate={{
+            opacity: labelActive ? 1 : 0,
+            y: labelActive || reducedMotion ? 0 : -2,
+          }}
+          transition={labelTransition}
+        >
+          {label}
+        </motionElement.span>
+      ) : null}
+    </motionElement.li>
+  );
+}
+
 export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
   (
     {
@@ -362,6 +465,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       onMouseLeave,
       onPointerEnter,
       onPointerLeave,
+      onPointerMove,
       overlap = "md",
       overflowLabel,
       reducedMotion: reducedMotionProp,
@@ -381,6 +485,10 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     const memberListId = useId();
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
+    const [activeKey, setActiveKey] = useState<AvatarGroupActiveKey | null>(
+      null,
+    );
+    const stackRef = useRef<HTMLUListElement>(null);
     const totalCount = members.length;
     const visibleLimit = Math.min(normalizeMax(max, totalCount), totalCount);
     const visibleMembers = members.slice(0, visibleLimit);
@@ -417,9 +525,20 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     const revealActive =
       canReveal && (revealLabelVisibility === "always" || hovered || focused);
     const revealState = revealActive ? "revealed" : "collapsed";
-    const transition = reducedMotion
-      ? avatarGroupTransitions.none
-      : avatarGroupTransitions[motion];
+    // Hovering a spread group fans the stack apart and zooms only the avatar
+    // under the pointer, revealing its label. The static spread (all labels,
+    // permanently fanned apart) is kept for the always/reduced/no-motion paths
+    // where there is no pointer to follow.
+    // `reducedMotion` already folds in `motion === "none"`, so excluding it here
+    // also covers the no-motion path.
+    const magnifyMode =
+      reveal === "spread" &&
+      revealLabelVisibility === "hover" &&
+      !reducedMotion;
+    const zoomScale = avatarGroupZoomScale[motion];
+    const expandTransition = reducedMotion
+      ? avatarGroupExpandTransitions.none
+      : avatarGroupExpandTransitions[motion];
     const labelTransition = reducedMotion
       ? avatarGroupLabelTransitions.none
       : avatarGroupLabelTransitions[motion];
@@ -433,6 +552,48 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       visibleMemberLabel,
       visibleMembers,
     });
+
+    const resetPointerState = () => {
+      setHovered(false);
+      setActiveKey(null);
+    };
+
+    // Track the avatar nearest the pointer so only it zooms and surfaces its
+    // label; moving the pointer resets the previously active avatar.
+    const updateActiveKeyFromPointer = (clientX: number) => {
+      const stack = stackRef.current;
+
+      if (!stack) {
+        return;
+      }
+
+      const nodes = stack.querySelectorAll<HTMLElement>(
+        '[data-slot="avatar-group-item"], [data-slot="avatar-group-overflow"]',
+      );
+      let nearest: AvatarGroupActiveKey | null = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      nodes.forEach((node) => {
+        const bounds = node.getBoundingClientRect();
+
+        if (bounds.width <= 0) {
+          return;
+        }
+
+        const distance = Math.abs(clientX - (bounds.left + bounds.width / 2));
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearest = node.hasAttribute("data-overflow-item")
+            ? "overflow"
+            : Number(node.getAttribute("data-member-index"));
+        }
+      });
+
+      if (nearest !== null) {
+        setActiveKey((current) => (current === nearest ? current : nearest));
+      }
+    };
 
     const handleFocus: FocusEventHandler<HTMLDivElement> = (event) => {
       if (canReveal) {
@@ -455,8 +616,18 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
       onPointerEnter?.(event);
     };
 
+    const handlePointerMove: PointerEventHandler<HTMLDivElement> = (event) => {
+      onPointerMove?.(event);
+
+      if (!magnifyMode || event.pointerType === "touch") {
+        return;
+      }
+
+      updateActiveKeyFromPointer(event.clientX);
+    };
+
     const handlePointerLeave: PointerEventHandler<HTMLDivElement> = (event) => {
-      setHovered(false);
+      resetPointerState();
       onPointerLeave?.(event);
     };
 
@@ -469,14 +640,15 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     };
 
     const handleMouseLeave: MouseEventHandler<HTMLDivElement> = (event) => {
-      setHovered(false);
+      resetPointerState();
       onMouseLeave?.(event);
     };
 
-    const labelVariants = {
-      collapsed: { opacity: revealLabelVisibility === "always" ? 1 : 0 },
-      revealed: { opacity: 1 },
-    };
+    // The names summary (and the spread summary shown on keyboard focus, where
+    // there is no pointer to drive the wave) fades as a single element.
+    const showSummary =
+      reveal === "names" || (reveal === "spread" && magnifyMode);
+    const summaryVisible = reveal === "names" ? revealActive : focused;
 
     return (
       <motionElement.div
@@ -497,6 +669,7 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
         data-ring={ring}
         data-shape={shape}
         data-size={size}
+        data-magnify={magnifyMode ? "true" : undefined}
         data-slot="avatar-group"
         data-state={revealState}
         data-visible-count={visibleMembers.length}
@@ -504,18 +677,14 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
         role="group"
         tabIndex={resolvedTabIndex}
         className={avatarGroupClassNames({ className, overlap })}
-        variants={{ collapsed: {}, revealed: {} }}
         initial={false}
-        animate={revealState}
-        whileHover={canReveal ? "revealed" : undefined}
-        whileFocus={canReveal ? "revealed" : undefined}
-        transition={transition}
         onBlur={handleBlur}
         onFocus={handleFocus}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
+        onPointerMove={handlePointerMove}
       >
         <span
           id={descriptionId}
@@ -538,12 +707,14 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
           {overflowAccessibleLabel ? <> {overflowAccessibleLabel}.</> : null}
         </span>
         <ul
+          ref={stackRef}
           aria-hidden="true"
           data-slot="avatar-group-stack"
           className={avatarGroupStackClasses}
         >
           {visibleMembers.map((member, index) => {
-            const revealOffset = getRevealOffset({
+            // Non-zero for spread (transform-opacity); zero for reduced/no-motion.
+            const spreadOffset = getRevealOffset({
               count: visualItems,
               direction,
               index,
@@ -551,23 +722,27 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
               reveal,
               size,
             });
+            const itemActive = magnifyMode && hovered && activeKey === index;
 
             return (
-              <motionElement.li
+              <AvatarGroupItem
                 key={getMemberKey(member, index)}
-                data-member-index={index}
-                data-motion-behavior={motionBehavior}
-                data-reveal-offset={revealOffset}
-                data-slot="avatar-group-item"
-                data-stack-index={index + 1}
-                data-state={revealState}
-                style={getItemStyle(index)}
-                className={avatarGroupItemClasses}
-                variants={{
-                  collapsed: { x: 0 },
-                  revealed: { x: revealOffset },
-                }}
-                transition={transition}
+                active={itemActive}
+                expandTransition={expandTransition}
+                itemIndex={index}
+                label={getMemberLabel({ index, member, visibleMemberLabel })}
+                labelActive={magnifyMode ? itemActive : revealActive}
+                labelTransition={labelTransition}
+                motionBehavior={motionBehavior}
+                reducedMotion={reducedMotion}
+                revealOffset={magnifyMode ? 0 : spreadOffset}
+                revealState={revealState}
+                showLabel={reveal === "spread"}
+                slot="item"
+                stackIndex={index + 1}
+                xTarget={magnifyMode ? (hovered ? spreadOffset : 0) : spreadOffset}
+                zIndex={itemActive ? visualItems + 10 : index + 1}
+                zoomScale={zoomScale}
               >
                 <Avatar
                   alt=""
@@ -594,90 +769,68 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
                   srcSet={member.srcSet}
                   tone={member.tone}
                 />
-                {reveal === "spread" ? (
-                  <motionElement.span
-                    aria-hidden="true"
-                    data-slot="avatar-group-reveal-label"
-                    data-state={revealState}
-                    className={avatarGroupRevealLabelClasses}
-                    variants={labelVariants}
-                    transition={labelTransition}
-                  >
-                    {getMemberLabel({
-                      index,
-                      member,
-                      visibleMemberLabel,
-                    })}
-                  </motionElement.span>
-                ) : null}
-              </motionElement.li>
+              </AvatarGroupItem>
             );
           })}
-          {overflowCount > 0 ? (
-            <motionElement.li
-              data-overflow-item="true"
-              data-motion-behavior={motionBehavior}
-              data-reveal-offset={getRevealOffset({
-                count: visualItems,
-                direction,
-                index: visualItems - 1,
-                motionBehavior,
-                reveal,
-                size,
-              })}
-              data-slot="avatar-group-overflow"
-              data-stack-index={visualItems}
-              data-state={revealState}
-              style={getItemStyle(visualItems - 1)}
-              className={avatarGroupItemClasses}
-              variants={{
-                collapsed: { x: 0 },
-                revealed: {
-                  x: getRevealOffset({
-                    count: visualItems,
-                    direction,
-                    index: visualItems - 1,
-                    motionBehavior,
-                    reveal,
-                    size,
-                  }),
-                },
-              }}
-              transition={transition}
-            >
-              <Avatar
-                decorative
-                className={avatarGroupOverflowClasses}
-                initials={getOverflowDisplay(overflowCount)}
-                motion="none"
-                name={overflowAccessibleLabel}
-                ring={ring}
-                shape={shape}
-                size={size}
-                tone="neutral"
-              />
-              {reveal === "spread" && overflowAccessibleLabel ? (
-                <motionElement.span
-                  aria-hidden="true"
-                  data-slot="avatar-group-reveal-label"
-                  data-state={revealState}
-                  className={avatarGroupRevealLabelClasses}
-                  variants={labelVariants}
-                  transition={labelTransition}
-                >
-                  {overflowAccessibleLabel}
-                </motionElement.span>
-              ) : null}
-            </motionElement.li>
-          ) : null}
+          {overflowCount > 0
+            ? (() => {
+                const spreadOffset = getRevealOffset({
+                  count: visualItems,
+                  direction,
+                  index: visualItems - 1,
+                  motionBehavior,
+                  reveal,
+                  size,
+                });
+                const overflowActive =
+                  magnifyMode && hovered && activeKey === "overflow";
+
+                return (
+                  <AvatarGroupItem
+                    active={overflowActive}
+                    expandTransition={expandTransition}
+                    label={overflowAccessibleLabel}
+                    labelActive={magnifyMode ? overflowActive : revealActive}
+                    labelTransition={labelTransition}
+                    motionBehavior={motionBehavior}
+                    reducedMotion={reducedMotion}
+                    revealOffset={magnifyMode ? 0 : spreadOffset}
+                    revealState={revealState}
+                    showLabel={
+                      reveal === "spread" && Boolean(overflowAccessibleLabel)
+                    }
+                    slot="overflow"
+                    stackIndex={visualItems}
+                    xTarget={
+                      magnifyMode ? (hovered ? spreadOffset : 0) : spreadOffset
+                    }
+                    zIndex={overflowActive ? visualItems + 10 : visualItems}
+                    zoomScale={zoomScale}
+                  >
+                    <Avatar
+                      decorative
+                      className={avatarGroupOverflowClasses}
+                      initials={getOverflowDisplay(overflowCount)}
+                      motion="none"
+                      name={overflowAccessibleLabel}
+                      ring={ring}
+                      shape={shape}
+                      size={size}
+                      tone="neutral"
+                    />
+                  </AvatarGroupItem>
+                );
+              })()
+            : null}
         </ul>
-        {reveal === "names" ? (
+        {showSummary ? (
           <motionElement.span
             aria-hidden="true"
             data-slot="avatar-group-reveal-summary"
-            data-state={revealState}
+            data-state={summaryVisible ? "revealed" : "collapsed"}
             className={avatarGroupRevealSummaryClasses}
-            variants={labelVariants}
+            initial={false}
+            animate={{ opacity: summaryVisible ? 1 : 0 }}
             transition={labelTransition}
           >
             {revealSummary}

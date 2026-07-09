@@ -45,9 +45,12 @@ describe("AvatarGroup SSR", () => {
 
     expect(html).toContain('data-reveal="spread"');
     expect(html).toContain('data-motion-behavior="transform-opacity"');
+    expect(html).toContain('data-magnify="true"');
     expect(html).toContain('data-state="collapsed"');
     expect(html).toContain('tabindex="0"');
-    expect(html).toContain('data-reveal-offset="-14"');
+    // The dock wave magnifies in place, so the server emits a neutral offset
+    // instead of a fanned-out layout that would shift on hydration.
+    expect(html).toContain('data-reveal-offset="0"');
     expect(html).toContain('data-slot="avatar-group-reveal-label"');
     expect(html).toContain('aria-hidden="true"');
     expect(html).toContain("Ada Lovelace");

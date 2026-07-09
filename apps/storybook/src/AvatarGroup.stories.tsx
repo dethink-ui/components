@@ -309,6 +309,10 @@ export const LargerGroupWithOverflow: Story = {
 };
 
 export const SpreadReveal: Story = {
+  args: {
+    size: "xs",
+  },
+
   render: () => (
     <DethinkProvider
       theme="light"
@@ -349,6 +353,52 @@ export const SpreadReveal: Story = {
       </div>
     </DethinkProvider>
   ),
+};
+
+export const DockWaveReveal: Story = {
+  render: () => (
+    <DethinkProvider
+      theme="light"
+      className="border-border grid max-w-2xl gap-6 rounded-lg border p-8"
+    >
+      <div className="grid gap-1">
+        <p className="text-foreground text-sm font-medium">
+          Hover to expand the roster
+        </p>
+        <p className="text-muted-foreground text-xs">
+          The stack fans apart on hover; only the avatar under the pointer zooms
+          and reveals its name, and moving to the next one resets the previous.
+        </p>
+      </div>
+      <div className="flex items-end justify-center py-4">
+        <AvatarGroup
+          label="Dock wave reviewers"
+          max={5}
+          members={reviewers}
+          reveal="spread"
+          ring="ring"
+          size="lg"
+        />
+      </div>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const group = canvas.getByRole("group", { name: "Dock wave reviewers" });
+
+    await expect(group).toHaveAttribute("data-magnify", "true");
+    await expect(group).toHaveAttribute("data-state", "collapsed");
+
+    await userEvent.hover(group);
+    await waitFor(() =>
+      expect(group).toHaveAttribute("data-state", "revealed"),
+    );
+
+    await userEvent.unhover(group);
+    await waitFor(() =>
+      expect(group).toHaveAttribute("data-state", "collapsed"),
+    );
+  },
 };
 
 export const KeyboardFocusReveal: Story = {
