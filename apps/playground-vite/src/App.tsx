@@ -9,6 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Accordion,
   Box,
   Button,
   Card,
@@ -348,6 +349,33 @@ export function App() {
               </CardContent>
             </Card>
           </CardStack>
+          <Accordion
+            aria-label="Playground accordion"
+            defaultValue="setup"
+            motionPreset="none"
+          >
+            <Accordion.Item value="setup">
+              <Accordion.Blade>
+                <Accordion.BladeText>Accordion smoke</Accordion.BladeText>
+              </Accordion.Blade>
+              <Accordion.Content>
+                <Text size="sm" tone="muted">
+                  Accordion smoke: a rounded vertical blade keeps content inside
+                  the opened item and verifies the package export path.
+                </Text>
+              </Accordion.Content>
+            </Accordion.Item>
+            <Accordion.Item value="details">
+              <Accordion.Blade>
+                <Accordion.BladeText>Details</Accordion.BladeText>
+              </Accordion.Blade>
+              <Accordion.Content>
+                <Text size="sm" tone="muted">
+                  Multiple and single open modes are covered by component tests.
+                </Text>
+              </Accordion.Content>
+            </Accordion.Item>
+          </Accordion>
           <HorizontalAccordion
             aria-label="Playground horizontal accordion"
             className="border-border rounded-lg border"

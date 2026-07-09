@@ -119,6 +119,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "layout",
   },
   {
+    slug: "accordion",
+    name: "Accordion",
+    description:
+      "Reveal rounded vertical blades with single or multiple open modes, arbitrary in-blade content, and Motion choreography.",
+    type: "disclosure",
+  },
+  {
     slug: "horizontal-accordion",
     name: "HorizontalAccordion",
     description:

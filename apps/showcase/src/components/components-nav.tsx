@@ -49,6 +49,7 @@ import {
 import { componentGroups } from "@/lib/components-meta";
 
 const componentIcons: Record<string, LucideIcon> = {
+  accordion: ListCollapse,
   "async-select": Search,
   avatar: CircleUserRound,
   "avatar-group": UsersRound,
