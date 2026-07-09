@@ -132,6 +132,40 @@ export const recipesCatalog: RecipeMeta[] = [
       "The bento grid collapses into a single-column story and the navigation remains usable without flyout-only discovery.",
   },
   {
+    slug: "dethink-labs-security",
+    title: "Security platform landing",
+    category: "marketing",
+    summary:
+      "A zero-trust security product landing page composed almost entirely from interactive Dethink components: a NavigationMenu pill nav, an animated hero beside a live Tabs/Table/Switch/ProgressCircle console, a reusable Dialog+form that fires Toasts, a defense-in-depth feature bento, an incident-response Timeline, a Switch-driven pricing toggle, and an Accordion FAQ.",
+    tags: ["Landing", "Security", "Interactive", "Dashboard"],
+    components: [
+      "hero-text-animation",
+      "navigation-menu",
+      "tabs",
+      "table",
+      "dialog",
+      "timeline",
+      "accordion",
+      "switch",
+      "badge",
+      "avatar-group",
+      "tooltip",
+      "reveal-button",
+      "feedback-states",
+      "card",
+      "grid",
+    ],
+    sourceFile: "recipes/dethink-labs-security.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "HeroTextAnimation reveals the headline (blur-focus, emphasising “breach”); the hero console is a live Tabs surface with a Switch that pauses monitoring and a ProgressCircle coverage dial; RevealButtons expand on hover, the NavigationMenu Platform flyout animates open, and the radar sweep plus status pulses run only under motion-safe.",
+    accessibilityNotes:
+      "Demo CTAs open a focus-trapped Dialog whose form announces success through Toast; NavigationMenu, Tabs, Accordion, and Dialog carry their own keyboard/focus models; the monitoring Switch and pricing toggle are labelled Fields; access/endpoint states are conveyed by Badge text (granted/denied, isolated) not color alone; and the headline stays readable when motion is reduced.",
+    responsiveNotes:
+      "The pill nav collapses its links and icon controls on small screens, the feature bento folds from a six-column grid to a single story column, and the threat console stacks its feed above the score panel.",
+  },
+  {
     slug: "command-center-dashboard",
     title: "Command-center dashboard",
     category: "dashboard",
