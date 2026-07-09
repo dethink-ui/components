@@ -17,6 +17,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   Checkbox,
@@ -101,9 +102,9 @@ function LoginPanel() {
           <ShieldCheck aria-hidden="true" className="size-5" />
         </div>
         <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <p className="text-muted-foreground text-sm leading-6">
+        <CardDescription>
           Sign in to continue onboarding your workspace.
-        </p>
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="grid gap-2 sm:grid-cols-2">

@@ -146,6 +146,20 @@ html {
   scrollbar-width: thin;
 }
 
+/* Smooth in-page scrolling for the workbench dock anchors (motion-safe). */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Inky terminal surface used by the workbench hero install card. */
+.sc-terminal {
+  background: var(--sc-code-bg);
+  border-color: var(--sc-code-border);
+  color: var(--sc-code-foreground);
+}
+
 .dark,
 [data-theme="dark"] {
   --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 16%, transparent);
