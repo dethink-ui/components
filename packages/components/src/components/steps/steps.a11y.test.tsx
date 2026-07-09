@@ -24,4 +24,23 @@ describe("Steps accessibility", () => {
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });
+
+  it("has no axe violations for interactive and disabled steps", async () => {
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <Steps
+          interactive
+          aria-label="Application progress"
+          value="details"
+          items={[
+            { id: "account", label: "Account" },
+            { id: "details", label: "Details" },
+            { id: "approval", label: "Approval", disabled: true },
+          ]}
+        />
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
 });

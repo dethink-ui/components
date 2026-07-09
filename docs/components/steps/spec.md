@@ -36,6 +36,9 @@ The root supports controlled and uncontrolled current state.
 - Status derives from current position unless an exceptional item override is
   supplied.
 - Navigation is opt-in and any enabled item may be activated.
+- Interactive items are native buttons in natural document tab order. Disabled
+  items remain visible and cannot request a value change.
+- Duplicate IDs and a missing current ID produce development diagnostics.
 - Default progress is current ordinal divided by visible item count; explicit
   progress can replace the derived value.
 - Custom rendering cannot replace component-owned list, current, activation,

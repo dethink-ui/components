@@ -1,5 +1,7 @@
 import {
   forwardRef,
+  useEffect,
+  useMemo,
   useState,
   type ForwardedRef,
   type HTMLAttributes,
@@ -32,6 +34,7 @@ export interface StepRenderState {
   count: number;
   current: boolean;
   disabled: boolean;
+  interactive: boolean;
   optional: boolean;
   status: StepStatus;
   percentage: number;
@@ -42,6 +45,7 @@ export interface StepsProps<TData = unknown> extends Omit<
   "defaultValue" | "onChange"
 > {
   items: StepItemData<TData>[];
+  interactive?: boolean;
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -54,6 +58,8 @@ const listClasses = "flex min-w-max list-none items-start p-0";
 const itemClasses = "relative flex min-w-36 flex-1 items-start";
 const surfaceClasses =
   "relative z-[1] flex w-full min-w-0 flex-col items-center gap-[var(--dt-space-2)] px-[var(--dt-space-2)] text-center";
+const interactiveSurfaceClasses =
+  "rounded-lg outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 motion-safe:ease-out hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
 const indicatorClasses =
   "relative grid size-8 shrink-0 place-items-center rounded-full border text-xs font-semibold shadow-sm";
 const labelClasses = "max-w-40 text-sm font-medium leading-5 text-foreground";
@@ -106,6 +112,21 @@ function getResolvedStatus({
   return "upcoming";
 }
 
+function getDuplicateStepIds<TData>(items: StepItemData<TData>[]) {
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const item of items) {
+    if (seen.has(item.id)) {
+      duplicates.add(item.id);
+    }
+
+    seen.add(item.id);
+  }
+
+  return [...duplicates];
+}
+
 function CompleteIcon() {
   return (
     <svg
@@ -149,22 +170,56 @@ function StepsInner<TData>(
     "aria-labelledby": ariaLabelledBy,
     className,
     defaultValue,
+    interactive = false,
     items,
+    onValueChange,
     value,
     ...props
   }: StepsProps<TData>,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
-  const [uncontrolledValue] = useState(defaultValue);
+  const controlled = value !== undefined;
+  const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
   const currentValue = value ?? uncontrolledValue ?? items[0]?.id;
   const currentIndex = items.findIndex((item) => item.id === currentValue);
   const count = items.length;
+  const duplicateIds = useMemo(() => getDuplicateStepIds(items), [items]);
+  const duplicateIdSignature = duplicateIds.join(",");
+
+  useEffect(() => {
+    if (duplicateIds.length > 0) {
+      console.warn(
+        `[Steps] items must use stable unique ids. Duplicate ids: ${duplicateIds.join(", ")}.`,
+      );
+    }
+  }, [duplicateIdSignature, duplicateIds]);
+
+  useEffect(() => {
+    if (currentValue !== undefined && count > 0 && currentIndex === -1) {
+      console.warn(
+        `[Steps] current value "${currentValue}" is not present in items. Removing the current step is unsupported; keep it in the active branch until navigation changes.`,
+      );
+    }
+  }, [count, currentIndex, currentValue]);
+
+  const selectValue = (nextValue: string, disabled: boolean) => {
+    if (!interactive || disabled || nextValue === currentValue) {
+      return;
+    }
+
+    if (!controlled) {
+      setUncontrolledValue(nextValue);
+    }
+
+    onValueChange?.(nextValue);
+  };
 
   return (
     <div
       {...props}
       ref={ref}
       data-slot="steps"
+      data-interactive={interactive ? "true" : undefined}
       data-orientation="horizontal"
       className={cn(rootClasses, className)}
     >
@@ -191,6 +246,7 @@ function StepsInner<TData>(
               count,
               current,
               disabled: item.disabled === true,
+              interactive,
               optional: item.optional === true,
               status,
               percentage,
@@ -217,55 +273,79 @@ function StepsInner<TData>(
                     )}
                   />
                 ) : null}
-                <div
-                  aria-current={current ? "step" : undefined}
-                  data-slot="steps-surface"
-                  className={surfaceClasses}
-                >
-                  <span
-                    aria-hidden="true"
-                    data-slot="steps-indicator"
-                    className={cn(
-                      indicatorClasses,
-                      indicatorStatusClasses[status],
-                    )}
+                {interactive ? (
+                  <button
+                    type="button"
+                    aria-current={current ? "step" : undefined}
+                    data-slot="steps-surface"
+                    disabled={item.disabled}
+                    className={cn(surfaceClasses, interactiveSurfaceClasses)}
+                    onClick={() => selectValue(item.id, item.disabled === true)}
                   >
-                    <DefaultIndicator
+                    <StepContent
                       index={index}
                       item={item as StepItemData}
-                      status={status}
+                      state={state}
                     />
-                  </span>
-                  <span data-slot="steps-label" className={labelClasses}>
-                    {item.label}
-                  </span>
-                  {item.description ? (
-                    <span
-                      data-slot="steps-description"
-                      className={descriptionClasses}
-                    >
-                      {item.description}
-                    </span>
-                  ) : null}
-                  {item.optional ? (
-                    <span
-                      data-slot="steps-optional"
-                      className={optionalClasses}
-                    >
-                      Optional
-                    </span>
-                  ) : null}
-                  <span className="sr-only" data-slot="steps-status">
-                    {statusLabels[state.status]}
-                    {current && status !== "current" ? ", current step" : ""}
-                  </span>
-                </div>
+                  </button>
+                ) : (
+                  <div
+                    aria-current={current ? "step" : undefined}
+                    data-slot="steps-surface"
+                    className={surfaceClasses}
+                  >
+                    <StepContent
+                      index={index}
+                      item={item as StepItemData}
+                      state={state}
+                    />
+                  </div>
+                )}
               </li>
             );
           })}
         </ol>
       </div>
     </div>
+  );
+}
+
+function StepContent({
+  index,
+  item,
+  state,
+}: {
+  index: number;
+  item: StepItemData;
+  state: StepRenderState;
+}) {
+  return (
+    <>
+      <span
+        aria-hidden="true"
+        data-slot="steps-indicator"
+        className={cn(indicatorClasses, indicatorStatusClasses[state.status])}
+      >
+        <DefaultIndicator index={index} item={item} status={state.status} />
+      </span>
+      <span data-slot="steps-label" className={labelClasses}>
+        {item.label}
+      </span>
+      {item.description ? (
+        <span data-slot="steps-description" className={descriptionClasses}>
+          {item.description}
+        </span>
+      ) : null}
+      {item.optional ? (
+        <span data-slot="steps-optional" className={optionalClasses}>
+          Optional
+        </span>
+      ) : null}
+      <span className="sr-only" data-slot="steps-status">
+        {statusLabels[state.status]}
+        {state.current && state.status !== "current" ? ", current step" : ""}
+      </span>
+    </>
   );
 }
 

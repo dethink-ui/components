@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Steps, type StepItemData } from ".";
 
 const items: StepItemData[] = [
@@ -73,5 +74,115 @@ describe("Steps horizontal indicator", () => {
       screen.getByRole("list", { name: "Empty workflow" }),
     ).toBeEmptyDOMElement();
     expect(document.querySelector('[aria-current="step"]')).toBeNull();
+  });
+});
+
+describe("Steps branch and navigation behavior", () => {
+  it("activates any enabled item with a native button", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <Steps
+        interactive
+        defaultValue="account"
+        items={items}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    const profile = screen.getByRole("button", { name: /Profile/ });
+    await user.click(profile);
+
+    expect(profile).toHaveAttribute("aria-current", "step");
+    expect(onValueChange).toHaveBeenCalledOnce();
+    expect(onValueChange).toHaveBeenCalledWith("profile");
+  });
+
+  it("keeps controlled state parent-owned and blocks disabled items", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <Steps
+        interactive
+        value="account"
+        items={[items[0]!, items[1]!, { ...items[2]!, disabled: true }]}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    const profile = screen.getByRole("button", { name: /Profile/ });
+    const review = screen.getByRole("button", { name: /Review/ });
+
+    await user.click(profile);
+    await user.click(review);
+
+    expect(screen.getByRole("button", { name: /Account/ })).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
+    expect(review).toBeDisabled();
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenCalledWith("profile");
+  });
+
+  it("preserves current identity when the future branch changes", () => {
+    const { rerender } = render(
+      <Steps value="profile" items={[items[0]!, items[1]!, items[2]!]} />,
+    );
+
+    rerender(
+      <Steps
+        value="profile"
+        items={[
+          items[0]!,
+          items[1]!,
+          { id: "security", label: "Security questions" },
+          { id: "approval", label: "Approval" },
+        ]}
+      />,
+    );
+
+    expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+    expect(
+      screen.getByText("Profile").closest("[aria-current='step']"),
+    ).toBeTruthy();
+    expect(screen.queryByText("Review")).not.toBeInTheDocument();
+    expect(screen.getByText("Security questions")).toBeInTheDocument();
+  });
+
+  it("warns without selecting a fallback when current is removed", () => {
+    const consoleWarn = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
+
+    render(<Steps value="missing" items={items} />);
+
+    expect(document.querySelector('[aria-current="step"]')).toBeNull();
+    expect(consoleWarn).toHaveBeenCalledWith(
+      expect.stringContaining("Removing the current step is unsupported"),
+    );
+    consoleWarn.mockRestore();
+  });
+
+  it("warns when item ids are duplicated", () => {
+    const consoleWarn = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => undefined);
+
+    render(
+      <Steps
+        items={[
+          { id: "duplicate", label: "One" },
+          { id: "duplicate", label: "Two" },
+        ]}
+      />,
+    );
+
+    expect(consoleWarn).toHaveBeenCalledWith(
+      expect.stringContaining("Duplicate ids: duplicate"),
+    );
+    consoleWarn.mockRestore();
   });
 });

@@ -29,6 +29,8 @@ respecting reduced motion.
 - Controlled and uncontrolled current state.
 - Derived status with complete, upcoming, error, and skipped overrides.
 - Optional native-button navigation; validation stays consumer-owned.
+- Conditional branch replacement is demonstrated by changing only the next and
+  future item IDs while the current ID remains present.
 - Component-owned semantics around an optional typed `renderItem` callback.
 - Ordinal progress with an explicit override.
 - Motion through `motion/react`, with a static SSR and reduced-motion path.
