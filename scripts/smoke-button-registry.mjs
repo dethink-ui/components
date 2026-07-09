@@ -124,6 +124,7 @@ const radioGroup = await readJson(join(registryRoot, "radio-group.json"));
 const separator = await readJson(join(registryRoot, "separator.json"));
 const select = await readJson(join(registryRoot, "select.json"));
 const stack = await readJson(join(registryRoot, "stack.json"));
+const steps = await readJson(join(registryRoot, "steps.json"));
 const switchItem = await readJson(join(registryRoot, "switch.json"));
 const table = await readJson(join(registryRoot, "table.json"));
 const tabs = await readJson(join(registryRoot, "tabs.json"));
@@ -188,6 +189,7 @@ const registryItemsByName = new Map(
     separator,
     select,
     stack,
+    steps,
     switchItem,
     table,
     tabs,
@@ -291,6 +293,7 @@ assert(
 );
 assert(select.name === "select", "select registry item must be named select.");
 assert(stack.name === "stack", "stack registry item must be named stack.");
+assert(steps.name === "steps", "steps registry item must be named steps.");
 assert(
   switchItem.name === "switch",
   "switch registry item must be named switch.",
@@ -534,6 +537,10 @@ assert(
 assert(
   stack.registryDependencies?.includes("dethink-base"),
   "stack registry item must depend on dethink-base.",
+);
+assert(
+  steps.registryDependencies?.includes("dethink-base"),
+  "steps registry item must depend on dethink-base.",
 );
 assert(
   switchItem.registryDependencies?.includes("dethink-base"),
@@ -884,6 +891,10 @@ assert(
   "stack registry item must not add runtime dependencies.",
 );
 assert(
+  steps.dependencies?.includes("motion"),
+  "steps registry item must include motion for branch and progress choreography.",
+);
+assert(
   Array.isArray(switchItem.dependencies) &&
     switchItem.dependencies.length === 0,
   "switch registry item must not add runtime dependencies.",
@@ -1056,6 +1067,7 @@ for (const item of [
   separator,
   select,
   stack,
+  steps,
   switchItem,
   table,
   tabs,
@@ -1109,6 +1121,7 @@ await assertRegistryRelativeImportsResolve(radioGroup, registryItemsByName);
 await assertRegistryRelativeImportsResolve(separator, registryItemsByName);
 await assertRegistryRelativeImportsResolve(select, registryItemsByName);
 await assertRegistryRelativeImportsResolve(switchItem, registryItemsByName);
+await assertRegistryRelativeImportsResolve(steps, registryItemsByName);
 await assertRegistryRelativeImportsResolve(table, registryItemsByName);
 await assertRegistryRelativeImportsResolve(tabs, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dataTable, registryItemsByName);
@@ -1251,6 +1264,10 @@ const selectSource = await readFile(
 );
 const stackSource = await readFile(
   join(root, "packages/components/src/components/stack/stack.tsx"),
+  "utf8",
+);
+const stepsSource = await readFile(
+  join(root, "packages/components/src/components/steps/steps.tsx"),
   "utf8",
 );
 const switchSource = await readFile(
@@ -2514,6 +2531,46 @@ assert(
 assert(
   !stackSource.includes("@radix-ui"),
   "stack source must remain dependency-free.",
+);
+assert(
+  stepsSource.includes('data-slot="steps"'),
+  "steps source must expose a stable root slot.",
+);
+assert(
+  stepsSource.includes('role="list"'),
+  "steps source must preserve ordered-list semantics with a Safari-safe list role.",
+);
+assert(
+  stepsSource.includes('aria-current={current ? "step" : undefined}'),
+  "steps source must expose current-step semantics independently from status.",
+);
+assert(
+  stepsSource.includes('role="progressbar"'),
+  "steps source must expose progressbar semantics.",
+);
+assert(
+  stepsSource.includes("AnimatePresence"),
+  "steps source must animate keyed branch insertion and removal.",
+);
+assert(
+  stepsSource.includes('layout={motionEnabled ? "position" : false}'),
+  "steps source must animate surviving item positions without resizing content.",
+);
+assert(
+  stepsSource.includes("useReducedMotion"),
+  "steps source must respect reduced-motion preferences.",
+);
+assert(
+  stepsSource.includes("currentMarkerLayoutId"),
+  "steps source must namespace its shared current marker.",
+);
+assert(
+  stepsSource.includes("scaleX"),
+  "steps source must update progress with a transform.",
+);
+assert(
+  packageIndexSource.includes("StepsMotionPreset"),
+  "package index must export Steps and its public motion preset type.",
 );
 assert(
   switchSource.includes('data-slot={dataSlot ?? "switch"}'),

@@ -99,7 +99,7 @@ const surfaceOrientationClasses: Record<StepsOrientation, string> = {
 const interactiveSurfaceClasses =
   "rounded-lg outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 motion-safe:ease-out hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
 const indicatorClasses =
-  "relative grid shrink-0 place-items-center rounded-full border font-semibold shadow-sm contrast-more:border-foreground";
+  "relative isolate grid shrink-0 place-items-center rounded-full border font-semibold shadow-sm contrast-more:border-foreground";
 const indicatorSizeClasses: Record<StepsSize, string> = {
   sm: "size-7 text-[0.6875rem]",
   md: "size-8 text-xs",

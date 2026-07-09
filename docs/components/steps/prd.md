@@ -37,7 +37,7 @@ respecting reduced motion.
   logical RTL placement, and component-owned semantics around custom content.
 - Motion through `motion/react`, with a static SSR and reduced-motion path.
 - Tailwind CSS v4, semantic tokens, registry dependency on `dethink-base`, and
-  Motion dependency metadata when choreography lands.
+  a declared `motion` runtime dependency.
 
 ## Testing Decisions
 

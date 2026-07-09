@@ -75,6 +75,24 @@ describe("Steps horizontal indicator", () => {
     ).toBeEmptyDOMElement();
     expect(document.querySelector('[aria-current="step"]')).toBeNull();
   });
+
+  it("renders one current step and complete progress for a single-item array", () => {
+    const { container } = render(
+      <Steps
+        showProgress
+        aria-label="Single-step workflow"
+        items={[{ id: "launch", label: "Launch" }]}
+      />,
+    );
+
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+    expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+    expect(screen.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      "100",
+    );
+    expect(container.querySelector('[data-slot="steps-connector"]')).toBeNull();
+  });
 });
 
 describe("Steps branch and navigation behavior", () => {
@@ -125,6 +143,32 @@ describe("Steps branch and navigation behavior", () => {
     expect(review).toBeDisabled();
     expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenCalledWith("profile");
+  });
+
+  it("uses native tab order and keyboard activation", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+
+    render(
+      <Steps
+        interactive
+        defaultValue="account"
+        items={items}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    await user.tab();
+    expect(screen.getByRole("button", { name: /Account/ })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: /Profile/ })).toHaveFocus();
+    await user.keyboard("{Enter}");
+
+    expect(onValueChange).toHaveBeenCalledWith("profile");
+    expect(screen.getByRole("button", { name: /Profile/ })).toHaveAttribute(
+      "aria-current",
+      "step",
+    );
   });
 
   it("preserves current identity when the future branch changes", async () => {

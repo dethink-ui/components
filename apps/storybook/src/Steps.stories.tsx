@@ -1,7 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 import { useState, type ReactNode } from "react";
-import { DethinkProvider, Steps, type StepItemData } from "@dethink/components";
+import {
+  Button,
+  DethinkProvider,
+  Steps,
+  type StepItemData,
+  type StepsMotionPreset,
+} from "@dethink/components";
 
 const onboardingItems = [
   {
@@ -20,6 +26,19 @@ const onboardingItems = [
     description: "Choose access rules.",
   },
   { id: "review", label: "Review", optional: true },
+];
+
+const longWorkflowItems = [
+  ...onboardingItems,
+  { id: "billing", label: "Billing", description: "Choose a plan." },
+  { id: "launch", label: "Launch", description: "Open the workspace." },
+];
+
+const motionPresets: StepsMotionPreset[] = [
+  "none",
+  "subtle",
+  "standard",
+  "expressive",
 ];
 
 const meta = {
@@ -183,24 +202,38 @@ function ConditionalBranchDemo() {
       theme="light"
       className="border-border grid max-w-4xl gap-6 rounded-xl border p-6"
     >
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className="border-border rounded-md border px-3 py-2 text-sm"
-          onClick={() => setRequiresApproval(true)}
-        >
-          Manager approval
-        </button>
-        <button
-          type="button"
-          className="border-border rounded-md border px-3 py-2 text-sm"
-          onClick={() => setRequiresApproval(false)}
-        >
-          Self service
-        </button>
-      </div>
+      {value === "details" ? (
+        <div className="grid gap-2">
+          <p className="text-foreground text-sm font-semibold">
+            Does this workspace require manager approval?
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              aria-pressed={requiresApproval}
+              variant={requiresApproval ? "solid" : "outline"}
+              size="sm"
+              onClick={() => setRequiresApproval(true)}
+            >
+              Manager approval
+            </Button>
+            <Button
+              aria-pressed={!requiresApproval}
+              variant={!requiresApproval ? "solid" : "outline"}
+              size="sm"
+              onClick={() => setRequiresApproval(false)}
+            >
+              Self service
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-muted-foreground text-sm">
+          Return to Details before changing the branch answer.
+        </p>
+      )}
       <Steps
         interactive
+        showProgress
         aria-label="Conditional onboarding"
         motionPreset="expressive"
         value={value}
@@ -211,11 +244,28 @@ function ConditionalBranchDemo() {
           ...branch,
         ]}
       />
+      <section
+        aria-live="polite"
+        className="border-border bg-muted/40 grid gap-1 rounded-lg border p-4"
+      >
+        <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          Consumer-owned panel
+        </p>
+        <p className="text-foreground text-sm font-semibold">
+          {value === "details"
+            ? "Workspace details"
+            : `Current destination: ${value}`}
+        </p>
+        <p className="text-muted-foreground text-sm">
+          Changing the answer replaces only the future branch; the current
+          details step remains selected.
+        </p>
+      </section>
     </DethinkProvider>
   );
 }
 
-export const ConditionalBranch: Story = {
+export const ConditionalBranchMockWizard: Story = {
   render: () => <ConditionalBranchDemo />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -224,7 +274,9 @@ export const ConditionalBranch: Story = {
 
     await expect(canvas.getByText("Details")).toBeInTheDocument();
     await expect(canvas.getByText("Confirmation")).toBeInTheDocument();
-    await expect(canvas.queryByText("Approval")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(canvas.queryByText("Approval")).not.toBeInTheDocument();
+    });
     await expect(
       canvas.getByRole("button", { name: /Details/ }),
     ).toHaveAttribute("aria-current", "step");
@@ -245,5 +297,144 @@ export const ReducedMotion: Story = {
         items={onboardingItems}
       />
     </StoryFrame>
+  ),
+};
+
+export const ExceptionalStates: Story = {
+  render: (args) => (
+    <StoryFrame>
+      <Steps
+        {...args}
+        interactive
+        aria-label="Release workflow"
+        value="approval"
+        items={[
+          { id: "brief", label: "Brief", status: "complete" },
+          {
+            id: "approval",
+            label: "Approval",
+            description: "Legal review needs attention.",
+            status: "error",
+          },
+          { id: "security", label: "Security", status: "skipped" },
+          {
+            id: "launch",
+            label: "Launch",
+            disabled: true,
+            optional: true,
+          },
+        ]}
+      />
+    </StoryFrame>
+  ),
+};
+
+export const DarkTheme: Story = {
+  render: (args) => (
+    <StoryFrame theme="dark">
+      <Steps
+        {...args}
+        aria-label="Dark theme onboarding"
+        value="permissions"
+        items={onboardingItems}
+      />
+    </StoryFrame>
+  ),
+};
+
+export const DensityComparison: Story = {
+  render: (args) => (
+    <div className="grid gap-4">
+      <StoryFrame density="compact">
+        <Steps
+          {...args}
+          aria-label="Compact onboarding"
+          value="profile"
+          items={onboardingItems}
+          size="sm"
+        />
+      </StoryFrame>
+      <StoryFrame density="comfortable">
+        <Steps
+          {...args}
+          aria-label="Comfortable onboarding"
+          value="profile"
+          items={onboardingItems}
+          size="lg"
+        />
+      </StoryFrame>
+    </div>
+  ),
+};
+
+export const RightToLeft: Story = {
+  render: (args) => (
+    <StoryFrame dir="rtl">
+      <Steps
+        {...args}
+        aria-label="RTL onboarding"
+        value="profile"
+        items={onboardingItems}
+      />
+    </StoryFrame>
+  ),
+};
+
+export const ResponsiveOverflow: Story = {
+  render: (args) => (
+    <div className="max-w-sm">
+      <StoryFrame>
+        <Steps
+          {...args}
+          aria-label="Long onboarding"
+          value="permissions"
+          items={longWorkflowItems}
+        />
+      </StoryFrame>
+    </div>
+  ),
+};
+
+export const EmptyAndSingleStep: Story = {
+  render: () => (
+    <div className="grid gap-4">
+      <StoryFrame>
+        <p className="text-muted-foreground mb-3 text-xs font-medium">
+          Empty workflow
+        </p>
+        <Steps aria-label="Empty workflow" items={[]} />
+      </StoryFrame>
+      <StoryFrame>
+        <p className="text-muted-foreground mb-3 text-xs font-medium">
+          Single-step workflow
+        </p>
+        <Steps
+          showProgress
+          aria-label="Single-step workflow"
+          items={[{ id: "done", label: "Ready to launch" }]}
+        />
+      </StoryFrame>
+    </div>
+  ),
+};
+
+export const MotionPresets: Story = {
+  render: () => (
+    <div className="grid gap-4">
+      {motionPresets.map((motionPreset) => (
+        <StoryFrame key={motionPreset}>
+          <p className="text-muted-foreground mb-3 text-xs font-medium capitalize">
+            {motionPreset}
+          </p>
+          <Steps
+            interactive
+            aria-label={`${motionPreset} motion`}
+            defaultValue="profile"
+            items={onboardingItems}
+            motionPreset={motionPreset}
+          />
+        </StoryFrame>
+      ))}
+    </div>
   ),
 };
