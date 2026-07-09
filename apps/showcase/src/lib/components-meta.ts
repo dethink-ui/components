@@ -224,6 +224,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "advanced-inputs",
   },
   {
+    slug: "sound-input",
+    name: "SoundInput",
+    description:
+      "Request microphone input, expose a live MediaStream, and show recording or muted state through a Motion-powered waveform pill.",
+    type: "advanced-inputs",
+  },
+  {
     slug: "date-picker",
     name: "DatePicker",
     description:
