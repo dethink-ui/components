@@ -28,6 +28,7 @@
   --radius-sm: var(--dt-radius-sm);
   --radius-md: var(--dt-radius-md);
   --radius-lg: var(--dt-radius-lg);
+  --radius-xl: var(--dt-radius-xl);
   --spacing-dt-0: var(--dt-space-0);
   --spacing-dt-0-5: var(--dt-space-0-5);
   --spacing-dt-1: var(--dt-space-1);
@@ -479,6 +480,7 @@
     --dt-radius-sm: 0.25rem;
     --dt-radius-md: 0.375rem;
     --dt-radius-lg: 0.5rem;
+    --dt-radius-xl: 0.875rem;
     --dt-density-control-compact: 2rem;
     --dt-density-gap-compact: 0.375rem;
     --dt-density-control-default: 2.5rem;
