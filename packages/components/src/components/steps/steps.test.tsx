@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -127,7 +127,7 @@ describe("Steps branch and navigation behavior", () => {
     expect(onValueChange).toHaveBeenCalledWith("profile");
   });
 
-  it("preserves current identity when the future branch changes", () => {
+  it("preserves current identity when the future branch changes", async () => {
     const { rerender } = render(
       <Steps value="profile" items={[items[0]!, items[1]!, items[2]!]} />,
     );
@@ -148,7 +148,9 @@ describe("Steps branch and navigation behavior", () => {
     expect(
       screen.getByText("Profile").closest("[aria-current='step']"),
     ).toBeTruthy();
-    expect(screen.queryByText("Review")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText("Review")).not.toBeInTheDocument();
+    });
     expect(screen.getByText("Security questions")).toBeInTheDocument();
   });
 
@@ -298,5 +300,87 @@ describe("Steps layout, progress, and rendering", () => {
     expect(screen.getByText("–")).toHaveAttribute("aria-hidden", "true");
     expect(screen.getByText("Error, current step")).toHaveClass("sr-only");
     expect(screen.getByText("Skipped")).toHaveClass("sr-only");
+  });
+});
+
+describe("Steps Motion choreography", () => {
+  it("enables layout, presence, marker, and progress motion by default", () => {
+    const { container } = render(
+      <Steps showProgress value="profile" items={items} />,
+    );
+
+    const root = container.querySelector('[data-slot="steps"]');
+    const marker = container.querySelector(
+      '[data-slot="steps-current-marker"]',
+    );
+    const progress = container.querySelector(
+      '[data-slot="steps-progress-indicator"]',
+    );
+
+    expect(root).toHaveAttribute("data-motion-preset", "standard");
+    expect(root).not.toHaveAttribute("data-reduced-motion");
+    expect(
+      [...container.querySelectorAll('[data-slot="steps-item"]')].every(
+        (renderedItem) =>
+          renderedItem.getAttribute("data-motion-enabled") === "true",
+      ),
+    ).toBe(true);
+    expect(marker).toHaveAttribute("data-motion-enabled", "true");
+    expect(progress).toHaveAttribute("data-motion-enabled", "true");
+    expect(marker?.getAttribute("data-layout-id")).toBe(
+      `${root?.getAttribute("data-layout-scope")}-current`,
+    );
+  });
+
+  it("changes state immediately when motion is disabled", () => {
+    const { container } = render(
+      <Steps showProgress value="profile" items={items} motionPreset="none" />,
+    );
+
+    const root = container.querySelector('[data-slot="steps"]');
+    const marker = container.querySelector(
+      '[data-slot="steps-current-marker"]',
+    );
+    const progress = container.querySelector(
+      '[data-slot="steps-progress-indicator"]',
+    );
+
+    expect(root).toHaveAttribute("data-motion-preset", "none");
+    expect(root).toHaveAttribute("data-reduced-motion", "true");
+    expect(
+      container.querySelector('[data-slot="steps-item"]'),
+    ).not.toHaveAttribute("data-motion-enabled");
+    expect(marker).toHaveAttribute("data-reduced-motion", "true");
+    expect(marker).not.toHaveAttribute("data-motion-enabled");
+    expect(progress).toHaveAttribute("data-reduced-motion", "true");
+    expect(progress).toHaveStyle({ transform: "scaleX(0.6666666666666665)" });
+  });
+
+  it("namespaces shared layout markers for multiple instances", () => {
+    const { container } = render(
+      <>
+        <Steps aria-label="First progress" value="account" items={items} />
+        <Steps aria-label="Second progress" value="profile" items={items} />
+      </>,
+    );
+
+    const roots = container.querySelectorAll('[data-slot="steps"]');
+    const markers = container.querySelectorAll(
+      '[data-slot="steps-current-marker"]',
+    );
+    const firstScope = roots[0]?.getAttribute("data-layout-scope");
+    const secondScope = roots[1]?.getAttribute("data-layout-scope");
+
+    expect(firstScope).toBeTruthy();
+    expect(secondScope).toBeTruthy();
+    expect(firstScope).not.toBe(secondScope);
+    expect(markers[0]).toHaveAttribute(
+      "data-layout-id",
+      `${firstScope}-current`,
+    );
+    expect(markers[1]).toHaveAttribute(
+      "data-layout-id",
+      `${secondScope}-current`,
+    );
   });
 });

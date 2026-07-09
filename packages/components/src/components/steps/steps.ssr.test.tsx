@@ -28,6 +28,27 @@ describe("Steps SSR", () => {
     expect(markup).toContain('aria-current="step"');
     expect(markup).toContain("Profile");
     expect(markup).toContain("Current step");
+    expect(markup).not.toContain("opacity:0");
+    expect(markup).not.toContain("scale(0.96)");
+  });
+
+  it("renders the final visual state when motion is disabled", () => {
+    const markup = renderToString(
+      <Steps
+        showProgress
+        motionPreset="none"
+        value="profile"
+        items={[
+          { id: "account", label: "Account" },
+          { id: "profile", label: "Profile" },
+          { id: "review", label: "Review" },
+        ]}
+      />,
+    );
+
+    expect(markup).toContain('data-reduced-motion="true"');
+    expect(markup).toContain("scaleX(0.6666666666666665)");
+    expect(markup).not.toContain("opacity:0");
   });
 
   it("hydrates without mismatch warnings", async () => {

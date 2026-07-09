@@ -3,8 +3,8 @@
   "name": "steps",
   "type": "registry:ui",
   "title": "Steps",
-  "description": "Data-driven branching process indicator with semantic ordered-list structure, controlled and uncontrolled current state, horizontal and vertical layouts, derived and exceptional statuses, optional native-button navigation, percentage progress, typed custom content, RTL-safe styling, and accessible labels.",
-  "dependencies": [],
+  "description": "Data-driven branching process indicator with semantic ordered-list structure, controlled and uncontrolled current state, horizontal and vertical layouts, optional navigation, percentage progress, typed custom content, and reduced-motion-aware branch choreography.",
+  "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
   "files": [

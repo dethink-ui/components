@@ -1,6 +1,7 @@
 import {
   forwardRef,
   useEffect,
+  useId,
   useMemo,
   useState,
   type ForwardedRef,
@@ -9,6 +10,14 @@ import {
   type ReactNode,
   type RefAttributes,
 } from "react";
+import {
+  AnimatePresence,
+  LayoutGroup,
+  MotionConfig,
+  motion as motionElement,
+  useReducedMotion,
+  type Transition,
+} from "motion/react";
 import { cn } from "../../utils/cn";
 
 export type StepStatus =
@@ -48,6 +57,7 @@ export interface StepsProps<TData = unknown> extends Omit<
 > {
   items: StepItemData<TData>[];
   interactive?: boolean;
+  motionPreset?: StepsMotionPreset;
   orientation?: StepsOrientation;
   size?: StepsSize;
   showProgress?: boolean;
@@ -146,6 +156,38 @@ const statusLabels: Record<StepStatus, string> = {
   error: "Error",
   skipped: "Skipped",
 };
+
+const currentMarkerClasses =
+  "absolute -inset-1.5 -z-[1] rounded-full bg-primary/15 ring-1 ring-primary/25";
+
+const motionSettings: Record<
+  StepsMotionPreset,
+  { bounce: number; duration: number }
+> = {
+  none: { bounce: 0, duration: 0 },
+  subtle: { bounce: 0, duration: 0.16 },
+  standard: { bounce: 0.06, duration: 0.24 },
+  expressive: { bounce: 0.16, duration: 0.34 },
+};
+
+function createStepsTransition(
+  motionPreset: StepsMotionPreset,
+  reducedMotion: boolean,
+): Transition {
+  const settings = reducedMotion
+    ? motionSettings.none
+    : motionSettings[motionPreset];
+
+  if (settings.duration === 0) {
+    return { duration: 0 };
+  }
+
+  return {
+    type: "spring",
+    visualDuration: settings.duration,
+    bounce: settings.bounce,
+  };
+}
 
 function getResolvedStatus({
   currentIndex,
@@ -252,6 +294,7 @@ function StepsInner<TData>(
     formatProgress = defaultFormatProgress,
     interactive = false,
     items,
+    motionPreset = "standard",
     onValueChange,
     orientation = "horizontal",
     progressValue,
@@ -265,6 +308,17 @@ function StepsInner<TData>(
 ) {
   const controlled = value !== undefined;
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const generatedId = useId();
+  const prefersReducedMotion = useReducedMotion();
+  const reducedMotion =
+    motionPreset === "none" || prefersReducedMotion === true;
+  const motionEnabled = !reducedMotion;
+  const transition = useMemo(
+    () => createStepsTransition(motionPreset, reducedMotion),
+    [motionPreset, reducedMotion],
+  );
+  const layoutScope = `${generatedId}-steps`;
+  const currentMarkerLayoutId = `${layoutScope}-current`;
   const currentValue = value ?? uncontrolledValue ?? items[0]?.id;
   const currentIndex = items.findIndex((item) => item.id === currentValue);
   const count = items.length;
@@ -314,167 +368,232 @@ function StepsInner<TData>(
   };
 
   return (
-    <div
-      {...props}
-      ref={ref}
-      data-slot="steps"
-      data-interactive={interactive ? "true" : undefined}
-      data-orientation={orientation}
-      data-size={size}
-      className={cn(rootClasses, className)}
-    >
-      {showProgress ? (
+    <MotionConfig reducedMotion="user">
+      <LayoutGroup id={layoutScope}>
         <div
-          role="progressbar"
-          aria-label={progressLabel}
-          aria-valuemax={100}
-          aria-valuemin={0}
-          aria-valuenow={resolvedProgress}
-          aria-valuetext={progressValueText}
-          data-slot="steps-progress"
-          className={progressClasses}
-        >
-          <span
-            aria-hidden="true"
-            data-slot="steps-progress-track"
-            className={progressTrackClasses}
-          >
-            <span
-              data-slot="steps-progress-indicator"
-              className={progressIndicatorClasses}
-              style={{ transform: `scaleX(${resolvedProgress / 100})` }}
-            />
-          </span>
-          <span
-            data-slot="steps-progress-value"
-            className={progressValueClasses}
-          >
-            {progressText}
-          </span>
-        </div>
-      ) : null}
-      <div
-        data-slot="steps-viewport"
-        className={
-          orientation === "horizontal"
-            ? horizontalViewportClasses
-            : verticalViewportClasses
-        }
-      >
-        {/* Flex/list-none can suppress native list semantics in Safari. */}
-        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
-        <ol
-          aria-label={ariaLabelledBy ? undefined : ariaLabel}
-          aria-labelledby={ariaLabelledBy}
-          role="list"
-          data-slot="steps-list"
+          {...props}
+          ref={ref}
+          data-slot="steps"
+          data-interactive={interactive ? "true" : undefined}
+          data-layout-scope={layoutScope}
+          data-motion-preset={motionPreset}
           data-orientation={orientation}
-          className={cn(listBaseClasses, listOrientationClasses[orientation])}
+          data-reduced-motion={reducedMotion ? "true" : undefined}
+          data-size={size}
+          className={cn(rootClasses, className)}
         >
-          {items.map((item, index) => {
-            const current = item.id === currentValue;
-            const status = getResolvedStatus({
-              currentIndex,
-              index,
-              override: item.status,
-            });
-            const percentage = count === 0 ? 0 : ((index + 1) / count) * 100;
-            const state: StepRenderState = {
-              index,
-              count,
-              current,
-              disabled: item.disabled === true,
-              interactive,
-              optional: item.optional === true,
-              orientation,
-              size,
-              status,
-              percentage,
-            };
-
-            return (
-              <li
-                key={item.id}
-                data-slot="steps-item"
-                data-current={current ? "true" : undefined}
-                data-disabled={item.disabled ? "true" : undefined}
-                data-optional={item.optional ? "true" : undefined}
-                data-status={status}
-                className={cn(
-                  itemBaseClasses,
-                  itemOrientationClasses[orientation],
-                )}
+          {showProgress ? (
+            <div
+              role="progressbar"
+              aria-label={progressLabel}
+              aria-valuemax={100}
+              aria-valuemin={0}
+              aria-valuenow={resolvedProgress}
+              aria-valuetext={progressValueText}
+              data-slot="steps-progress"
+              className={progressClasses}
+            >
+              <span
+                aria-hidden="true"
+                data-slot="steps-progress-track"
+                className={progressTrackClasses}
               >
-                {index < count - 1 ? (
-                  <span
-                    aria-hidden="true"
-                    data-slot="steps-connector"
-                    data-complete={status === "complete" ? "true" : undefined}
-                    className={cn(
-                      connectorBaseClasses,
-                      orientation === "horizontal"
-                        ? horizontalConnectorSizeClasses[size]
-                        : verticalConnectorSizeClasses[size],
-                      status === "complete" ? "bg-success" : undefined,
-                    )}
-                  />
-                ) : null}
-                {interactive ? (
-                  <button
-                    type="button"
-                    aria-current={current ? "step" : undefined}
-                    data-slot="steps-surface"
-                    disabled={item.disabled}
-                    className={cn(
-                      surfaceClasses,
-                      surfaceOrientationClasses[orientation],
-                      interactiveSurfaceClasses,
-                    )}
-                    onClick={() => selectValue(item.id, item.disabled === true)}
-                  >
-                    <StepContent
-                      index={index}
-                      item={item}
-                      renderItem={renderItem}
-                      state={state}
-                    />
-                  </button>
-                ) : (
-                  <div
-                    aria-current={current ? "step" : undefined}
-                    data-slot="steps-surface"
-                    className={cn(
-                      surfaceClasses,
-                      surfaceOrientationClasses[orientation],
-                    )}
-                  >
-                    <StepContent
-                      index={index}
-                      item={item}
-                      renderItem={renderItem}
-                      state={state}
-                    />
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-    </div>
+                <motionElement.span
+                  initial={false}
+                  animate={
+                    motionEnabled
+                      ? { scaleX: resolvedProgress / 100 }
+                      : undefined
+                  }
+                  transition={motionEnabled ? transition : undefined}
+                  data-motion-enabled={motionEnabled ? "true" : undefined}
+                  data-motion-preset={motionPreset}
+                  data-reduced-motion={reducedMotion ? "true" : undefined}
+                  data-slot="steps-progress-indicator"
+                  className={progressIndicatorClasses}
+                  style={
+                    motionEnabled
+                      ? undefined
+                      : { transform: `scaleX(${resolvedProgress / 100})` }
+                  }
+                />
+              </span>
+              <span
+                data-slot="steps-progress-value"
+                className={progressValueClasses}
+              >
+                {progressText}
+              </span>
+            </div>
+          ) : null}
+          <div
+            data-slot="steps-viewport"
+            className={
+              orientation === "horizontal"
+                ? horizontalViewportClasses
+                : verticalViewportClasses
+            }
+          >
+            {/* Flex/list-none can suppress native list semantics in Safari. */}
+            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
+            <ol
+              aria-label={ariaLabelledBy ? undefined : ariaLabel}
+              aria-labelledby={ariaLabelledBy}
+              role="list"
+              data-slot="steps-list"
+              data-orientation={orientation}
+              className={cn(
+                listBaseClasses,
+                listOrientationClasses[orientation],
+              )}
+            >
+              <AnimatePresence initial={false} mode="popLayout">
+                {items.map((item, index) => {
+                  const current = item.id === currentValue;
+                  const status = getResolvedStatus({
+                    currentIndex,
+                    index,
+                    override: item.status,
+                  });
+                  const percentage =
+                    count === 0 ? 0 : ((index + 1) / count) * 100;
+                  const state: StepRenderState = {
+                    index,
+                    count,
+                    current,
+                    disabled: item.disabled === true,
+                    interactive,
+                    optional: item.optional === true,
+                    orientation,
+                    size,
+                    status,
+                    percentage,
+                  };
+
+                  return (
+                    <motionElement.li
+                      key={item.id}
+                      layout={motionEnabled ? "position" : false}
+                      initial={
+                        motionEnabled ? { opacity: 0, scale: 0.96 } : false
+                      }
+                      animate={
+                        motionEnabled ? { opacity: 1, scale: 1 } : undefined
+                      }
+                      exit={
+                        motionEnabled ? { opacity: 0, scale: 0.96 } : undefined
+                      }
+                      transition={motionEnabled ? transition : undefined}
+                      data-motion-enabled={motionEnabled ? "true" : undefined}
+                      data-motion-preset={motionPreset}
+                      data-reduced-motion={reducedMotion ? "true" : undefined}
+                      data-slot="steps-item"
+                      data-current={current ? "true" : undefined}
+                      data-disabled={item.disabled ? "true" : undefined}
+                      data-optional={item.optional ? "true" : undefined}
+                      data-status={status}
+                      className={cn(
+                        itemBaseClasses,
+                        itemOrientationClasses[orientation],
+                      )}
+                    >
+                      {index < count - 1 ? (
+                        <span
+                          aria-hidden="true"
+                          data-slot="steps-connector"
+                          data-complete={
+                            status === "complete" ? "true" : undefined
+                          }
+                          className={cn(
+                            connectorBaseClasses,
+                            orientation === "horizontal"
+                              ? horizontalConnectorSizeClasses[size]
+                              : verticalConnectorSizeClasses[size],
+                            status === "complete" ? "bg-success" : undefined,
+                          )}
+                        />
+                      ) : null}
+                      {interactive ? (
+                        <button
+                          type="button"
+                          aria-current={current ? "step" : undefined}
+                          data-slot="steps-surface"
+                          disabled={item.disabled}
+                          className={cn(
+                            surfaceClasses,
+                            surfaceOrientationClasses[orientation],
+                            interactiveSurfaceClasses,
+                          )}
+                          onClick={() =>
+                            selectValue(item.id, item.disabled === true)
+                          }
+                        >
+                          <StepContent
+                            currentMarkerLayoutId={currentMarkerLayoutId}
+                            index={index}
+                            item={item}
+                            motionEnabled={motionEnabled}
+                            motionPreset={motionPreset}
+                            reducedMotion={reducedMotion}
+                            renderItem={renderItem}
+                            state={state}
+                            transition={transition}
+                          />
+                        </button>
+                      ) : (
+                        <div
+                          aria-current={current ? "step" : undefined}
+                          data-slot="steps-surface"
+                          className={cn(
+                            surfaceClasses,
+                            surfaceOrientationClasses[orientation],
+                          )}
+                        >
+                          <StepContent
+                            currentMarkerLayoutId={currentMarkerLayoutId}
+                            index={index}
+                            item={item}
+                            motionEnabled={motionEnabled}
+                            motionPreset={motionPreset}
+                            reducedMotion={reducedMotion}
+                            renderItem={renderItem}
+                            state={state}
+                            transition={transition}
+                          />
+                        </div>
+                      )}
+                    </motionElement.li>
+                  );
+                })}
+              </AnimatePresence>
+            </ol>
+          </div>
+        </div>
+      </LayoutGroup>
+    </MotionConfig>
   );
 }
 
 function StepContent<TData>({
+  currentMarkerLayoutId,
   index,
   item,
+  motionEnabled,
+  motionPreset,
+  reducedMotion,
   renderItem,
   state,
+  transition,
 }: {
+  currentMarkerLayoutId: string;
   index: number;
   item: StepItemData<TData>;
+  motionEnabled: boolean;
+  motionPreset: StepsMotionPreset;
+  reducedMotion: boolean;
   renderItem?: (item: StepItemData<TData>, state: StepRenderState) => ReactNode;
   state: StepRenderState;
+  transition: Transition;
 }) {
   return (
     <>
@@ -487,6 +606,29 @@ function StepContent<TData>({
           indicatorStatusClasses[state.status],
         )}
       >
+        {state.current ? (
+          motionEnabled ? (
+            <motionElement.span
+              aria-hidden="true"
+              layoutId={currentMarkerLayoutId}
+              transition={transition}
+              data-layout-id={currentMarkerLayoutId}
+              data-motion-enabled="true"
+              data-motion-preset={motionPreset}
+              data-slot="steps-current-marker"
+              className={currentMarkerClasses}
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              data-layout-id={currentMarkerLayoutId}
+              data-motion-preset={motionPreset}
+              data-reduced-motion={reducedMotion ? "true" : undefined}
+              data-slot="steps-current-marker"
+              className={currentMarkerClasses}
+            />
+          )
+        ) : null}
         <DefaultIndicator index={index} item={item} status={state.status} />
       </span>
       <span

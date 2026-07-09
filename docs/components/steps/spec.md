@@ -69,6 +69,13 @@ class maps, and data attributes. Motion is limited to keyed future-branch
 presence, surviving-item layout, a namespaced current marker, and transform-
 based progress. The first render and reduced-motion path are static.
 
+`motionPreset="none" | "subtle" | "standard" | "expressive"` controls the
+high-level choreography and defaults to `standard`. Presence uses stable item
+IDs, surviving items animate position only, and each Steps instance namespaces
+its shared current-marker layout ID. `MotionConfig` and `useReducedMotion`
+ensure a user preference or the `none` preset applies the completed visual
+state immediately without changing status, progress, or current-step semantics.
+
 Horizontal layouts use safe inline overflow instead of silently changing
 orientation. Vertical rails use logical inline-start positioning so RTL does
 not require a second DOM order.

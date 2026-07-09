@@ -27,11 +27,16 @@ const meta = {
   component: Steps,
   args: {
     items: onboardingItems,
+    motionPreset: "standard",
     orientation: "horizontal",
     showProgress: true,
     size: "md",
   },
   argTypes: {
+    motionPreset: {
+      control: "inline-radio",
+      options: ["none", "subtle", "standard", "expressive"],
+    },
     orientation: {
       control: "inline-radio",
       options: ["horizontal", "vertical"],
@@ -197,6 +202,7 @@ function ConditionalBranchDemo() {
       <Steps
         interactive
         aria-label="Conditional onboarding"
+        motionPreset="expressive"
         value={value}
         onValueChange={setValue}
         items={[
@@ -223,4 +229,21 @@ export const ConditionalBranch: Story = {
       canvas.getByRole("button", { name: /Details/ }),
     ).toHaveAttribute("aria-current", "step");
   },
+};
+
+export const ReducedMotion: Story = {
+  args: {
+    motionPreset: "none",
+  },
+  render: (args) => (
+    <StoryFrame>
+      <Steps
+        {...args}
+        interactive
+        aria-label="Reduced-motion onboarding"
+        value="permissions"
+        items={onboardingItems}
+      />
+    </StoryFrame>
+  ),
 };
