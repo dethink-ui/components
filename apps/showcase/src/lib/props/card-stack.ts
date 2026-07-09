@@ -50,6 +50,20 @@ export const cardStackProps: PropRow[] = [
       "Force the built-in previous/next icon buttons on or off in either mode.",
   },
   {
+    prop: "showPreviousControl",
+    type: "boolean",
+    defaultValue: "showControls",
+    description:
+      "Show or hide only the previous (back) icon button. Overrides showControls for that side.",
+  },
+  {
+    prop: "showNextControl",
+    type: "boolean",
+    defaultValue: "showControls",
+    description:
+      "Show or hide only the next icon button. Overrides showControls for that side.",
+  },
+  {
     prop: "previousLabel",
     type: "string",
     defaultValue: '"Show previous card"',

@@ -69,6 +69,7 @@ export function NavDockCardStackSwitcher() {
         aria-label="Workspace panels"
         activeIndex={activeIndex}
         onActiveIndexChange={setActiveIndex}
+        showControls={false}
       >
         {panels.map((panel) => (
           <Card key={panel.value}>

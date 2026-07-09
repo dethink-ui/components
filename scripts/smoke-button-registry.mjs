@@ -125,6 +125,7 @@ const select = await readJson(join(registryRoot, "select.json"));
 const stack = await readJson(join(registryRoot, "stack.json"));
 const switchItem = await readJson(join(registryRoot, "switch.json"));
 const table = await readJson(join(registryRoot, "table.json"));
+const tabs = await readJson(join(registryRoot, "tabs.json"));
 const dataTable = await readJson(join(registryRoot, "data-table.json"));
 const calendar = await readJson(join(registryRoot, "calendar.json"));
 const datePicker = await readJson(join(registryRoot, "date-picker.json"));
@@ -187,6 +188,7 @@ const registryItemsByName = new Map(
     stack,
     switchItem,
     table,
+    tabs,
     dataTable,
     calendar,
     datePicker,
@@ -288,6 +290,7 @@ assert(
   "switch registry item must be named switch.",
 );
 assert(table.name === "table", "table registry item must be named table.");
+assert(tabs.name === "tabs", "tabs registry item must be named tabs.");
 assert(
   dataTable.name === "data-table",
   "data-table registry item must be named data-table.",
@@ -525,6 +528,10 @@ assert(
 assert(
   table.registryDependencies?.includes("dethink-base"),
   "table registry item must depend on dethink-base.",
+);
+assert(
+  tabs.registryDependencies?.includes("dethink-base"),
+  "tabs registry item must depend on dethink-base.",
 );
 assert(
   dataTable.registryDependencies?.includes("dethink-base"),
@@ -868,6 +875,10 @@ assert(
   "table registry item must not add runtime dependencies.",
 );
 assert(
+  tabs.dependencies?.includes("motion"),
+  "tabs registry item must include motion for the shared-layout active layer.",
+);
+assert(
   dataTable.dependencies?.includes("@tanstack/react-table"),
   "data-table registry item must include @tanstack/react-table.",
 );
@@ -1028,6 +1039,7 @@ for (const item of [
   stack,
   switchItem,
   table,
+  tabs,
   dataTable,
   calendar,
   datePicker,
@@ -1078,6 +1090,7 @@ await assertRegistryRelativeImportsResolve(separator, registryItemsByName);
 await assertRegistryRelativeImportsResolve(select, registryItemsByName);
 await assertRegistryRelativeImportsResolve(switchItem, registryItemsByName);
 await assertRegistryRelativeImportsResolve(table, registryItemsByName);
+await assertRegistryRelativeImportsResolve(tabs, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dataTable, registryItemsByName);
 await assertRegistryRelativeImportsResolve(calendar, registryItemsByName);
 await assertRegistryRelativeImportsResolve(datePicker, registryItemsByName);
@@ -1222,6 +1235,10 @@ const switchSource = await readFile(
 );
 const tableSource = await readFile(
   join(root, "packages/components/src/components/table/table.tsx"),
+  "utf8",
+);
+const tabsSource = await readFile(
+  join(root, "packages/components/src/components/tabs/tabs.tsx"),
   "utf8",
 );
 const dataTableSource = await readFile(
@@ -2611,6 +2628,82 @@ assert(
 assert(
   !tableSource.includes("react-aria"),
   "table source must remain dependency-free and avoid grid-style React Aria behavior.",
+);
+assert(
+  tabsSource.includes('from "motion/react"') &&
+    tabsSource.includes("MotionConfig") &&
+    tabsSource.includes("useReducedMotion"),
+  "tabs source must use Motion primitives and reduced-motion detection.",
+);
+assert(
+  tabsSource.includes('data-slot="tabs"') &&
+    tabsSource.includes('data-slot="tabs-list"') &&
+    tabsSource.includes('data-slot="tabs-trigger"') &&
+    tabsSource.includes('data-slot="tabs-panel"') &&
+    tabsSource.includes('"data-slot": "tabs-active-layer"'),
+  "tabs source must expose stable root, list, trigger, panel, and active-layer slots.",
+);
+assert(
+  tabsSource.includes('role = "tablist"') &&
+    tabsSource.includes('role="tab"') &&
+    tabsSource.includes('role="tabpanel"') &&
+    tabsSource.includes("aria-selected") &&
+    tabsSource.includes("aria-controls") &&
+    tabsSource.includes("aria-labelledby"),
+  "tabs source must implement APG tab semantics.",
+);
+assert(
+  tabsSource.includes("layoutId={layoutId}") &&
+    tabsSource.includes("data-reduced-motion") &&
+    tabsSource.includes('motionPreset === "none"'),
+  "tabs source must implement a shared-layout active layer with reduced-motion fallback.",
+);
+assert(
+  tabsSource.includes('variant="pill"') ||
+    (tabsSource.includes('variant = "pill"') && tabsSource.includes('"line"')),
+  "tabs source must default to pill tabs and expose the line variant.",
+);
+assert(
+  tabsSource.includes("activationMode") &&
+    tabsSource.includes("ArrowRight") &&
+    tabsSource.includes("ArrowLeft") &&
+    tabsSource.includes("ArrowDown") &&
+    tabsSource.includes("ArrowUp") &&
+    tabsSource.includes("Home") &&
+    tabsSource.includes("End"),
+  "tabs source must expose activation mode and APG keyboard navigation.",
+);
+assert(
+  tabsSource.includes("isRootRtl"),
+  "tabs source must resolve RTL-aware horizontal arrow behavior.",
+);
+assert(
+  tabsSource.includes("forceMount") &&
+    tabsSource.includes("hidden={hiddenProp ?? !selected}"),
+  "tabs source must support force-mounted hidden inactive panels.",
+);
+assert(
+  tabsSource.includes("bg-primary") &&
+    tabsSource.includes("text-primary-foreground") &&
+    tabsSource.includes("border-border") &&
+    tabsSource.includes("focus-visible:ring-ring") &&
+    tabsSource.includes("min-h-density-control"),
+  "tabs source must use provider tokens for active state, borders, focus, and density.",
+);
+assert(
+  packageIndexSource.includes("TabsTrigger") &&
+    packageIndexSource.includes("tabsTriggerClassNames") &&
+    packageIndexSource.includes("TabsMotionPreset") &&
+    packageIndexSource.includes("TabsPanelProps"),
+  "root package index must export tabs components, helpers, and types.",
+);
+assert(
+  !tabsSource.includes("@radix-ui"),
+  "tabs source must remain Radix-free.",
+);
+assert(
+  !tabsSource.includes("react-aria-components"),
+  "tabs source must not depend on React Aria Components for unavailable Tabs APIs.",
 );
 assert(
   dataTableSource.includes("@tanstack/react-table"),

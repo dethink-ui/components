@@ -9,6 +9,7 @@ import { PropsTable } from "@/components/props-table";
 import { CardStackBasic } from "@/examples/card-stack/basic";
 import { CardStackBoundaries } from "@/examples/card-stack/boundaries";
 import { CardStackControlled } from "@/examples/card-stack/controlled";
+import { CardStackHiddenControls } from "@/examples/card-stack/hidden-controls";
 import { CardStackOpen } from "@/examples/card-stack/open";
 import { cardStackProps } from "@/lib/props/card-stack";
 
@@ -57,6 +58,13 @@ export default function CardStackPage() {
             description="Drive the stack from external state with activeIndex and onActiveIndexChange — here a row of index buttons doubles as a pagination indicator."
           >
             <CardStackControlled />
+          </ExampleBlock>
+          <ExampleBlock
+            file="card-stack/hidden-controls.tsx"
+            title="Hidden controls"
+            description="Hide the built-in icon buttons when another element drives navigation. showControls={false} hides both, while showPreviousControl/showNextControl hide just one side — here the back chevron is hidden and custom buttons advance the deck."
+          >
+            <CardStackHiddenControls />
           </ExampleBlock>
         </div>
       </DocsSection>

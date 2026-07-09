@@ -379,6 +379,78 @@ export const ControlledActiveIndex: Story = {
   },
 };
 
+export const HiddenControls: Story = {
+  render: () => {
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    return (
+      <DethinkProvider theme="light" className="p-6">
+        <Container size="sm">
+          <Stack gap="4">
+            <Flex align="center" gap="2" wrap="wrap" justify="center">
+              {deckItems.map((item, index) => (
+                <Button
+                  key={item.title}
+                  size="sm"
+                  variant={index === activeIndex ? "solid" : "outline"}
+                  onClick={() => setActiveIndex(index)}
+                >
+                  {index + 1}
+                </Button>
+              ))}
+            </Flex>
+            <CardStack
+              activeIndex={activeIndex}
+              showControls={false}
+              onActiveIndexChange={setActiveIndex}
+            >
+              {deckItems.map((item) => createDeckCard(item))}
+            </CardStack>
+          </Stack>
+        </Container>
+      </DethinkProvider>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.queryByRole("button", { name: "Show next card" }),
+    ).toBeNull();
+    await expect(
+      canvas.queryByRole("button", { name: "Show previous card" }),
+    ).toBeNull();
+  },
+};
+
+export const NextControlOnly: Story = {
+  render: ({ angle, loop, mode, stackOffset }) => (
+    <DethinkProvider theme="light" className="p-6">
+      <Container size="sm">
+        <CardStack
+          angle={angle}
+          loop={loop}
+          mode={mode}
+          showPreviousControl={false}
+          stackOffset={stackOffset}
+        >
+          {deckItems.map((item) => createDeckCard(item))}
+        </CardStack>
+      </Container>
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole("button", { name: "Show next card" }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole("button", { name: "Show previous card" }),
+    ).toBeNull();
+  },
+};
+
 export const MediaAndIconCards: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">

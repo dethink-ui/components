@@ -34,6 +34,8 @@ export interface CardStackProps extends Omit<
   onActiveIndexChange?: (index: number) => void;
   previousLabel?: string;
   showControls?: boolean;
+  showNextControl?: boolean;
+  showPreviousControl?: boolean;
   stackOffset?: number;
 }
 
@@ -275,6 +277,8 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
       previousLabel = "Show previous card",
       role = "group",
       showControls,
+      showNextControl,
+      showPreviousControl,
       stackOffset = 8,
       tabIndex,
       ...props
@@ -300,6 +304,9 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
     const canMoveNext =
       cardCount > 1 && (loop || resolvedActiveIndex < cardCount - 1);
     const controlsVisible = showControls ?? (mode === "stack" && cardCount > 1);
+    const previousControlVisible = showPreviousControl ?? controlsVisible;
+    const nextControlVisible = showNextControl ?? controlsVisible;
+    const controlsRendered = previousControlVisible || nextControlVisible;
     const resolvedTabIndex = tabIndex ?? (cardCount > 1 ? 0 : undefined);
 
     useEffect(() => {
@@ -479,33 +486,41 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
             );
           })}
         </div>
-        {controlsVisible ? (
+        {controlsRendered ? (
           <div
             data-slot="card-stack-controls"
             className={cardStackControlsClasses}
           >
-            <IconButton
-              aria-label={previousLabel}
-              className="pointer-events-auto"
-              disabled={!canMovePrevious}
-              shape="circle"
-              size="sm"
-              variant="outline"
-              onClick={movePrevious}
-            >
-              <ChevronLeftIcon />
-            </IconButton>
-            <IconButton
-              aria-label={nextLabel}
-              className="pointer-events-auto"
-              disabled={!canMoveNext}
-              shape="circle"
-              size="sm"
-              variant="outline"
-              onClick={moveNext}
-            >
-              <ChevronRightIcon />
-            </IconButton>
+            {previousControlVisible ? (
+              <IconButton
+                aria-label={previousLabel}
+                className="pointer-events-auto"
+                disabled={!canMovePrevious}
+                shape="circle"
+                size="sm"
+                variant="outline"
+                onClick={movePrevious}
+              >
+                <ChevronLeftIcon />
+              </IconButton>
+            ) : (
+              <span aria-hidden="true" className="pointer-events-none" />
+            )}
+            {nextControlVisible ? (
+              <IconButton
+                aria-label={nextLabel}
+                className="pointer-events-auto"
+                disabled={!canMoveNext}
+                shape="circle"
+                size="sm"
+                variant="outline"
+                onClick={moveNext}
+              >
+                <ChevronRightIcon />
+              </IconButton>
+            ) : (
+              <span aria-hidden="true" className="pointer-events-none" />
+            )}
           </div>
         ) : null}
       </div>

@@ -277,6 +277,26 @@ export {
   type AccordionValue,
 } from "./components/accordion";
 export {
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTrigger,
+  tabsClassNames,
+  tabsListClassNames,
+  tabsPanelClassNames,
+  tabsTriggerClassNames,
+  type TabsActivationMode,
+  type TabsListProps,
+  type TabsMotionPreset,
+  type TabsOrientation,
+  type TabsPanelProps,
+  type TabsProps,
+  type TabsSize,
+  type TabsTriggerProps,
+  type TabsValue,
+  type TabsVariant,
+} from "./components/tabs";
+export {
   HorizontalAccordion,
   HorizontalAccordionBlade,
   HorizontalAccordionBladeIcon,

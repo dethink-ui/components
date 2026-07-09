@@ -133,6 +133,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "disclosure",
   },
   {
+    slug: "tabs",
+    name: "Tabs",
+    description:
+      "Switch in-page panels with APG semantics, roving focus, pill and line variants, and a reduced-motion-safe gliding active layer.",
+    type: "disclosure",
+  },
+  {
     slug: "form-field",
     name: "FormField",
     description:

@@ -420,9 +420,9 @@ const navDockListPlacementClasses: Record<NavDockPlacement, string> = {
   bottom:
     "max-w-[min(100%,calc(100vw-var(--dt-space-4)))] flex-row items-end [scroll-padding-inline:var(--dt-space-2)]",
   top: "max-w-[min(100%,calc(100vw-var(--dt-space-4)))] flex-row items-start [scroll-padding-inline:var(--dt-space-2)]",
-  left: "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-start [scroll-padding-block:var(--dt-space-2)]",
+  left: "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-start [scroll-padding-block:var(--dt-space-2)] group-data-[show-title=always]/navdock:items-center",
   right:
-    "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-end [scroll-padding-block:var(--dt-space-2)]",
+    "max-h-[min(100%,calc(100dvh-var(--dt-space-4)))] max-w-full flex-col items-end [scroll-padding-block:var(--dt-space-2)] group-data-[show-title=always]/navdock:items-center",
 };
 
 const navDockListOverflowClasses: Record<NavDockOverflowAxis | "none", string> =
@@ -450,8 +450,11 @@ const navDockInteractiveBaseClasses =
 const navDockInteractivePlacementClasses: Record<NavDockPlacement, string> = {
   bottom: "min-h-[var(--navdock-item-size)] flex-col",
   top: "min-h-[var(--navdock-item-size)] flex-col-reverse",
-  left: "min-h-[var(--navdock-item-size)] flex-row",
-  right: "min-h-[var(--navdock-item-size)] flex-row-reverse",
+  // Vertical docks stack the (optional) inline title below the icon, matching
+  // the top/bottom caption layout instead of crowding the label beside the icon.
+  left: "min-h-[var(--navdock-item-size)] flex-row group-data-[show-title=always]/navdock:flex-col",
+  right:
+    "min-h-[var(--navdock-item-size)] flex-row-reverse group-data-[show-title=always]/navdock:flex-col",
 };
 
 const navDockIconClasses =
@@ -538,7 +541,9 @@ const navDockPressSpringOptions: SpringOptions = {
   mass: 0.6,
 };
 
-// Icons grow away from the dock edge, macOS-style.
+// Icons grow away from the dock edge, macOS-style. In a vertical dock the title
+// (when shown) sits below the icon, so growing horizontally away from the wall
+// never overlaps the label.
 const navDockMagnifyOriginByPlacement: Record<NavDockPlacement, string> = {
   bottom: "50% 100%",
   top: "50% 0%",
