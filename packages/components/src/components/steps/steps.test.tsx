@@ -67,6 +67,16 @@ describe("Steps horizontal indicator", () => {
     expect(ref.current).toHaveClass("custom-steps");
   });
 
+  it("reserves block-axis bleed for indicator effects inside horizontal overflow", () => {
+    const { container } = render(<Steps items={items} value="profile" />);
+
+    expect(container.querySelector('[data-slot="steps-viewport"]')).toHaveClass(
+      "overflow-x-auto",
+      "-mt-[var(--dt-space-2)]",
+      "pt-[var(--dt-space-2)]",
+    );
+  });
+
   it("renders an empty labelled list without a current item", () => {
     render(<Steps items={[]} aria-label="Empty workflow" />);
 

@@ -78,7 +78,7 @@ export interface StepsProps<TData = unknown> extends Omit<
 
 const rootClasses = "grid min-w-0 gap-[var(--dt-space-3)]";
 const horizontalViewportClasses =
-  "min-w-0 overflow-x-auto overscroll-x-contain pb-[var(--dt-space-2)]";
+  "-mt-[var(--dt-space-2)] min-w-0 overflow-x-auto overscroll-x-contain pb-[var(--dt-space-2)] pt-[var(--dt-space-2)]";
 const verticalViewportClasses = "min-w-0 overflow-visible";
 const listBaseClasses = "flex list-none p-0";
 const listOrientationClasses: Record<StepsOrientation, string> = {
