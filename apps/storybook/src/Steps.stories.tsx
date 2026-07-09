@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
-import { useState } from "react";
-import { DethinkProvider, Steps } from "@dethink/components";
+import { useState, type ReactNode } from "react";
+import { DethinkProvider, Steps, type StepItemData } from "@dethink/components";
 
 const onboardingItems = [
   {
@@ -27,6 +27,19 @@ const meta = {
   component: Steps,
   args: {
     items: onboardingItems,
+    orientation: "horizontal",
+    showProgress: true,
+    size: "md",
+  },
+  argTypes: {
+    orientation: {
+      control: "inline-radio",
+      options: ["horizontal", "vertical"],
+    },
+    size: {
+      control: "inline-radio",
+      options: ["sm", "md", "lg"],
+    },
   },
 } satisfies Meta<typeof Steps>;
 
@@ -34,17 +47,113 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-  render: () => (
-    <DethinkProvider
-      theme="light"
-      className="border-border max-w-4xl rounded-xl border p-6"
-    >
+  render: (args) => (
+    <StoryFrame>
       <Steps
+        {...args}
         aria-label="Workspace onboarding"
         value="profile"
         items={onboardingItems}
       />
+    </StoryFrame>
+  ),
+};
+
+function StoryFrame({
+  children,
+  density = "default",
+  dir = "ltr",
+  theme = "light",
+}: {
+  children: ReactNode;
+  density?: "compact" | "default" | "comfortable";
+  dir?: "ltr" | "rtl";
+  theme?: "light" | "dark";
+}) {
+  return (
+    <DethinkProvider
+      density={density}
+      dir={dir}
+      theme={theme}
+      className="border-border max-w-4xl rounded-xl border p-6"
+    >
+      {children}
     </DethinkProvider>
+  );
+}
+
+export const Vertical: Story = {
+  args: {
+    orientation: "vertical",
+    size: "lg",
+  },
+  render: (args) => (
+    <StoryFrame>
+      <Steps
+        {...args}
+        aria-label="Vertical onboarding"
+        value="permissions"
+        items={onboardingItems}
+        className="max-w-md"
+      />
+    </StoryFrame>
+  ),
+};
+
+export const ProgressOverride: Story = {
+  render: (args) => (
+    <StoryFrame>
+      <Steps
+        {...args}
+        aria-label="Migration progress"
+        value="profile"
+        items={onboardingItems}
+        progressValue={82}
+        formatProgress={(percentage) => `${percentage}% migrated`}
+      />
+    </StoryFrame>
+  ),
+};
+
+type ReviewStepData = { owner: string; due: string };
+const reviewItems: StepItemData<ReviewStepData>[] = [
+  {
+    id: "brief",
+    label: "Brief",
+    data: { owner: "Mina", due: "Mon" },
+  },
+  {
+    id: "design",
+    label: "Design",
+    data: { owner: "Arun", due: "Wed" },
+  },
+  {
+    id: "approval",
+    label: "Approval",
+    data: { owner: "Leah", due: "Fri" },
+  },
+];
+
+export const CustomRendering: Story = {
+  render: () => (
+    <StoryFrame>
+      <Steps<ReviewStepData>
+        showProgress
+        aria-label="Campaign review"
+        value="design"
+        items={reviewItems}
+        renderItem={(item, state) => (
+          <span className="grid gap-0.5">
+            <span className="text-foreground text-sm font-semibold">
+              {item.label}
+            </span>
+            <span className="text-muted-foreground text-xs">
+              {item.data?.owner} · due {item.data?.due} · {state.status}
+            </span>
+          </span>
+        )}
+      />
+    </StoryFrame>
   ),
 };
 

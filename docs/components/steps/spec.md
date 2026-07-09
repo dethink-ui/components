@@ -27,6 +27,13 @@ Items require a stable unique `id` and visible `label`. Optional fields cover
 description, icon, disabled, optional, status override, and typed domain data.
 The root supports controlled and uncontrolled current state.
 
+`orientation="horizontal" | "vertical"` and `size="sm" | "md" | "lg"`
+control layout and scale. `showProgress` enables the progressbar,
+`progressValue` overrides ordinal progress, and `formatProgress` customizes its
+visible and accessible text. `renderItem` receives typed item data plus resolved
+index, count, current, disabled, optional, orientation, size, status, and
+percentage state.
+
 ## Behavioral Invariants
 
 - Consumers own conditional branch calculation and replace next/future items
@@ -52,6 +59,8 @@ The root supports controlled and uncontrolled current state.
 - Status and progress are readable without relying on color or motion.
 - Horizontal overflow, RTL, 200% zoom, reduced motion, and visible focus are
   part of acceptance.
+- The progressbar is named from the process label, clamps values to 0–100, and
+  exposes visible text plus `aria-valuenow`/`aria-valuetext`.
 
 ## Styling and Motion
 
@@ -59,3 +68,7 @@ Use Tailwind CSS v4 utilities, semantic tokens, logical properties, static
 class maps, and data attributes. Motion is limited to keyed future-branch
 presence, surviving-item layout, a namespaced current marker, and transform-
 based progress. The first render and reduced-motion path are static.
+
+Horizontal layouts use safe inline overflow instead of silently changing
+orientation. Vertical rails use logical inline-start positioning so RTL does
+not require a second DOM order.

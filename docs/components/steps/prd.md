@@ -33,6 +33,8 @@ respecting reduced motion.
   future item IDs while the current ID remains present.
 - Component-owned semantics around an optional typed `renderItem` callback.
 - Ordinal progress with an explicit override.
+- Explicit horizontal/vertical layouts, three sizes, safe horizontal overflow,
+  logical RTL placement, and component-owned semantics around custom content.
 - Motion through `motion/react`, with a static SSR and reduced-motion path.
 - Tailwind CSS v4, semantic tokens, registry dependency on `dethink-base`, and
   Motion dependency metadata when choreography lands.

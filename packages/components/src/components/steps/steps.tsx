@@ -36,6 +36,8 @@ export interface StepRenderState {
   disabled: boolean;
   interactive: boolean;
   optional: boolean;
+  orientation: StepsOrientation;
+  size: StepsSize;
   status: StepStatus;
   percentage: number;
 }
@@ -46,28 +48,85 @@ export interface StepsProps<TData = unknown> extends Omit<
 > {
   items: StepItemData<TData>[];
   interactive?: boolean;
+  orientation?: StepsOrientation;
+  size?: StepsSize;
+  showProgress?: boolean;
+  progressValue?: number;
+  formatProgress?: (
+    percentage: number,
+    context: {
+      count: number;
+      currentIndex: number;
+      currentValue: string | undefined;
+    },
+  ) => ReactNode;
+  renderItem?: (item: StepItemData<TData>, state: StepRenderState) => ReactNode;
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
 }
 
 const rootClasses = "grid min-w-0 gap-[var(--dt-space-3)]";
-const viewportClasses =
+const horizontalViewportClasses =
   "min-w-0 overflow-x-auto overscroll-x-contain pb-[var(--dt-space-2)]";
-const listClasses = "flex min-w-max list-none items-start p-0";
-const itemClasses = "relative flex min-w-36 flex-1 items-start";
+const verticalViewportClasses = "min-w-0 overflow-visible";
+const listBaseClasses = "flex list-none p-0";
+const listOrientationClasses: Record<StepsOrientation, string> = {
+  horizontal: "min-w-max items-start",
+  vertical: "min-w-0 flex-col items-stretch",
+};
+const itemBaseClasses = "relative flex flex-1 items-start";
+const itemOrientationClasses: Record<StepsOrientation, string> = {
+  horizontal: "min-w-36",
+  vertical: "w-full min-w-0 pb-[var(--dt-space-5)] last:pb-0",
+};
 const surfaceClasses =
-  "relative z-[1] flex w-full min-w-0 flex-col items-center gap-[var(--dt-space-2)] px-[var(--dt-space-2)] text-center";
+  "relative z-[1] flex w-full min-w-0 gap-[var(--dt-space-2)]";
+const surfaceOrientationClasses: Record<StepsOrientation, string> = {
+  horizontal: "flex-col items-center px-[var(--dt-space-2)] text-center",
+  vertical: "flex-row items-start px-0 text-start",
+};
 const interactiveSurfaceClasses =
   "rounded-lg outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 motion-safe:ease-out hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
 const indicatorClasses =
-  "relative grid size-8 shrink-0 place-items-center rounded-full border text-xs font-semibold shadow-sm";
-const labelClasses = "max-w-40 text-sm font-medium leading-5 text-foreground";
-const descriptionClasses = "max-w-44 text-xs leading-5 text-muted-foreground";
+  "relative grid shrink-0 place-items-center rounded-full border font-semibold shadow-sm contrast-more:border-foreground";
+const indicatorSizeClasses: Record<StepsSize, string> = {
+  sm: "size-7 text-[0.6875rem]",
+  md: "size-8 text-xs",
+  lg: "size-10 text-sm",
+};
+const bodyOrientationClasses: Record<StepsOrientation, string> = {
+  horizontal: "flex max-w-44 flex-col items-center gap-1",
+  vertical: "flex min-w-0 flex-1 flex-col items-start gap-1 pt-0.5",
+};
+const labelSizeClasses: Record<StepsSize, string> = {
+  sm: "text-xs leading-4",
+  md: "text-sm leading-5",
+  lg: "text-base leading-6",
+};
+const labelClasses = "font-medium text-foreground";
+const descriptionClasses = "text-xs leading-5 text-muted-foreground";
 const optionalClasses =
   "rounded-full bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-0-5)] text-[0.6875rem] font-medium text-muted-foreground";
-const connectorClasses =
-  "absolute start-1/2 top-4 h-0.5 w-full -translate-y-1/2 bg-border";
+const connectorBaseClasses = "absolute bg-border";
+const horizontalConnectorSizeClasses: Record<StepsSize, string> = {
+  sm: "start-1/2 top-3.5 h-0.5 w-full -translate-y-1/2",
+  md: "start-1/2 top-4 h-0.5 w-full -translate-y-1/2",
+  lg: "start-1/2 top-5 h-0.5 w-full -translate-y-1/2",
+};
+const verticalConnectorSizeClasses: Record<StepsSize, string> = {
+  sm: "bottom-0 start-3.5 top-7 w-0.5 -translate-x-1/2 rtl:translate-x-1/2",
+  md: "bottom-0 start-4 top-8 w-0.5 -translate-x-1/2 rtl:translate-x-1/2",
+  lg: "bottom-0 start-5 top-10 w-0.5 -translate-x-1/2 rtl:translate-x-1/2",
+};
+const progressClasses =
+  "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--dt-space-3)]";
+const progressTrackClasses =
+  "block h-2 min-w-0 overflow-hidden rounded-full bg-muted";
+const progressIndicatorClasses =
+  "block h-full origin-left rounded-full bg-primary rtl:origin-right";
+const progressValueClasses =
+  "min-w-10 text-end text-xs font-medium tabular-nums text-muted-foreground";
 
 const indicatorStatusClasses: Record<StepStatus, string> = {
   complete:
@@ -127,6 +186,18 @@ function getDuplicateStepIds<TData>(items: StepItemData<TData>[]) {
   return [...duplicates];
 }
 
+function clampPercentage(value: number) {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.min(Math.max(value, 0), 100);
+}
+
+function defaultFormatProgress(percentage: number) {
+  return `${Math.round(percentage)}%`;
+}
+
 function CompleteIcon() {
   return (
     <svg
@@ -161,6 +232,14 @@ function DefaultIndicator({
     return <CompleteIcon />;
   }
 
+  if (status === "error") {
+    return <span aria-hidden="true">!</span>;
+  }
+
+  if (status === "skipped") {
+    return <span aria-hidden="true">–</span>;
+  }
+
   return <span aria-hidden="true">{index + 1}</span>;
 }
 
@@ -170,9 +249,15 @@ function StepsInner<TData>(
     "aria-labelledby": ariaLabelledBy,
     className,
     defaultValue,
+    formatProgress = defaultFormatProgress,
     interactive = false,
     items,
     onValueChange,
+    orientation = "horizontal",
+    progressValue,
+    renderItem,
+    showProgress = false,
+    size = "md",
     value,
     ...props
   }: StepsProps<TData>,
@@ -185,6 +270,20 @@ function StepsInner<TData>(
   const count = items.length;
   const duplicateIds = useMemo(() => getDuplicateStepIds(items), [items]);
   const duplicateIdSignature = duplicateIds.join(",");
+  const derivedProgress =
+    currentIndex >= 0 && count > 0 ? ((currentIndex + 1) / count) * 100 : 0;
+  const resolvedProgress = clampPercentage(progressValue ?? derivedProgress);
+  const progressText = formatProgress(resolvedProgress, {
+    count,
+    currentIndex,
+    currentValue,
+  });
+  const progressValueText =
+    typeof progressText === "string" || typeof progressText === "number"
+      ? String(progressText)
+      : undefined;
+  const progressLabel =
+    typeof ariaLabel === "string" ? `${ariaLabel} progress` : "Step progress";
 
   useEffect(() => {
     if (duplicateIds.length > 0) {
@@ -220,10 +319,48 @@ function StepsInner<TData>(
       ref={ref}
       data-slot="steps"
       data-interactive={interactive ? "true" : undefined}
-      data-orientation="horizontal"
+      data-orientation={orientation}
+      data-size={size}
       className={cn(rootClasses, className)}
     >
-      <div data-slot="steps-viewport" className={viewportClasses}>
+      {showProgress ? (
+        <div
+          role="progressbar"
+          aria-label={progressLabel}
+          aria-valuemax={100}
+          aria-valuemin={0}
+          aria-valuenow={resolvedProgress}
+          aria-valuetext={progressValueText}
+          data-slot="steps-progress"
+          className={progressClasses}
+        >
+          <span
+            aria-hidden="true"
+            data-slot="steps-progress-track"
+            className={progressTrackClasses}
+          >
+            <span
+              data-slot="steps-progress-indicator"
+              className={progressIndicatorClasses}
+              style={{ transform: `scaleX(${resolvedProgress / 100})` }}
+            />
+          </span>
+          <span
+            data-slot="steps-progress-value"
+            className={progressValueClasses}
+          >
+            {progressText}
+          </span>
+        </div>
+      ) : null}
+      <div
+        data-slot="steps-viewport"
+        className={
+          orientation === "horizontal"
+            ? horizontalViewportClasses
+            : verticalViewportClasses
+        }
+      >
         {/* Flex/list-none can suppress native list semantics in Safari. */}
         {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
         <ol
@@ -231,7 +368,8 @@ function StepsInner<TData>(
           aria-labelledby={ariaLabelledBy}
           role="list"
           data-slot="steps-list"
-          className={listClasses}
+          data-orientation={orientation}
+          className={cn(listBaseClasses, listOrientationClasses[orientation])}
         >
           {items.map((item, index) => {
             const current = item.id === currentValue;
@@ -248,6 +386,8 @@ function StepsInner<TData>(
               disabled: item.disabled === true,
               interactive,
               optional: item.optional === true,
+              orientation,
+              size,
               status,
               percentage,
             };
@@ -260,7 +400,10 @@ function StepsInner<TData>(
                 data-disabled={item.disabled ? "true" : undefined}
                 data-optional={item.optional ? "true" : undefined}
                 data-status={status}
-                className={itemClasses}
+                className={cn(
+                  itemBaseClasses,
+                  itemOrientationClasses[orientation],
+                )}
               >
                 {index < count - 1 ? (
                   <span
@@ -268,7 +411,10 @@ function StepsInner<TData>(
                     data-slot="steps-connector"
                     data-complete={status === "complete" ? "true" : undefined}
                     className={cn(
-                      connectorClasses,
+                      connectorBaseClasses,
+                      orientation === "horizontal"
+                        ? horizontalConnectorSizeClasses[size]
+                        : verticalConnectorSizeClasses[size],
                       status === "complete" ? "bg-success" : undefined,
                     )}
                   />
@@ -279,12 +425,17 @@ function StepsInner<TData>(
                     aria-current={current ? "step" : undefined}
                     data-slot="steps-surface"
                     disabled={item.disabled}
-                    className={cn(surfaceClasses, interactiveSurfaceClasses)}
+                    className={cn(
+                      surfaceClasses,
+                      surfaceOrientationClasses[orientation],
+                      interactiveSurfaceClasses,
+                    )}
                     onClick={() => selectValue(item.id, item.disabled === true)}
                   >
                     <StepContent
                       index={index}
-                      item={item as StepItemData}
+                      item={item}
+                      renderItem={renderItem}
                       state={state}
                     />
                   </button>
@@ -292,11 +443,15 @@ function StepsInner<TData>(
                   <div
                     aria-current={current ? "step" : undefined}
                     data-slot="steps-surface"
-                    className={surfaceClasses}
+                    className={cn(
+                      surfaceClasses,
+                      surfaceOrientationClasses[orientation],
+                    )}
                   >
                     <StepContent
                       index={index}
-                      item={item as StepItemData}
+                      item={item}
+                      renderItem={renderItem}
                       state={state}
                     />
                   </div>
@@ -310,13 +465,15 @@ function StepsInner<TData>(
   );
 }
 
-function StepContent({
+function StepContent<TData>({
   index,
   item,
+  renderItem,
   state,
 }: {
   index: number;
-  item: StepItemData;
+  item: StepItemData<TData>;
+  renderItem?: (item: StepItemData<TData>, state: StepRenderState) => ReactNode;
   state: StepRenderState;
 }) {
   return (
@@ -324,23 +481,44 @@ function StepContent({
       <span
         aria-hidden="true"
         data-slot="steps-indicator"
-        className={cn(indicatorClasses, indicatorStatusClasses[state.status])}
+        className={cn(
+          indicatorClasses,
+          indicatorSizeClasses[state.size],
+          indicatorStatusClasses[state.status],
+        )}
       >
         <DefaultIndicator index={index} item={item} status={state.status} />
       </span>
-      <span data-slot="steps-label" className={labelClasses}>
-        {item.label}
+      <span
+        data-slot="steps-body"
+        className={bodyOrientationClasses[state.orientation]}
+      >
+        {renderItem ? (
+          renderItem(item, state)
+        ) : (
+          <>
+            <span
+              data-slot="steps-label"
+              className={cn(labelClasses, labelSizeClasses[state.size])}
+            >
+              {item.label}
+            </span>
+            {item.description ? (
+              <span
+                data-slot="steps-description"
+                className={descriptionClasses}
+              >
+                {item.description}
+              </span>
+            ) : null}
+            {item.optional ? (
+              <span data-slot="steps-optional" className={optionalClasses}>
+                Optional
+              </span>
+            ) : null}
+          </>
+        )}
       </span>
-      {item.description ? (
-        <span data-slot="steps-description" className={descriptionClasses}>
-          {item.description}
-        </span>
-      ) : null}
-      {item.optional ? (
-        <span data-slot="steps-optional" className={optionalClasses}>
-          Optional
-        </span>
-      ) : null}
       <span className="sr-only" data-slot="steps-status">
         {statusLabels[state.status]}
         {state.current && state.status !== "current" ? ", current step" : ""}

@@ -186,3 +186,117 @@ describe("Steps branch and navigation behavior", () => {
     consoleWarn.mockRestore();
   });
 });
+
+describe("Steps layout, progress, and rendering", () => {
+  it("renders an explicit vertical layout with size data", () => {
+    render(<Steps items={items} orientation="vertical" size="lg" />);
+
+    const root = screen.getByRole("list").closest('[data-slot="steps"]');
+    const list = screen.getByRole("list");
+
+    expect(root).toHaveAttribute("data-orientation", "vertical");
+    expect(root).toHaveAttribute("data-size", "lg");
+    expect(list).toHaveAttribute("data-orientation", "vertical");
+    expect(list).toHaveClass("flex-col");
+  });
+
+  it("derives and recalculates progress from the visible branch", () => {
+    const { rerender } = render(
+      <Steps showProgress value="profile" items={items} />,
+    );
+
+    expect(screen.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      "66.66666666666666",
+    );
+    expect(screen.getByText("67%")).toBeInTheDocument();
+
+    rerender(
+      <Steps
+        showProgress
+        value="profile"
+        items={[
+          items[0]!,
+          items[1]!,
+          { id: "security", label: "Security" },
+          { id: "review", label: "Review" },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      "50",
+    );
+    expect(screen.getByText("50%")).toBeInTheDocument();
+  });
+
+  it("clamps explicit progress and formats visible and accessible text", () => {
+    render(
+      <Steps
+        showProgress
+        items={items}
+        progressValue={132}
+        formatProgress={(percentage, context) =>
+          `Milestone ${context.currentIndex + 1} · ${percentage}%`
+        }
+      />,
+    );
+
+    const progress = screen.getByRole("progressbar", {
+      name: "Progress steps progress",
+    });
+    expect(progress).toHaveAttribute("aria-valuenow", "100");
+    expect(progress).toHaveAttribute("aria-valuetext", "Milestone 1 · 100%");
+    expect(screen.getByText("Milestone 1 · 100%")).toBeInTheDocument();
+  });
+
+  it("keeps semantics and activation around typed custom content", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const typedItems: StepItemData<{ owner: string }>[] = [
+      { id: "design", label: "Design", data: { owner: "Mina" } },
+      { id: "review", label: "Review", data: { owner: "Arun" } },
+    ];
+
+    render(
+      <Steps
+        interactive
+        items={typedItems}
+        onValueChange={onValueChange}
+        renderItem={(item, state) => (
+          <span>
+            {item.label} · {item.data?.owner} · {state.status}
+          </span>
+        )}
+      />,
+    );
+
+    const review = screen.getByRole("button", {
+      name: /Review · Arun · upcoming/,
+    });
+    await user.click(review);
+
+    expect(review.closest("li")).toHaveAttribute("data-status", "current");
+    expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
+    expect(onValueChange).toHaveBeenCalledWith("review");
+  });
+
+  it("uses distinct visual and readable states for error and skipped items", () => {
+    render(
+      <Steps
+        value="profile"
+        items={[
+          items[0]!,
+          { ...items[1]!, status: "error" },
+          { ...items[2]!, status: "skipped" },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("!")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByText("–")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByText("Error, current step")).toHaveClass("sr-only");
+    expect(screen.getByText("Skipped")).toHaveClass("sr-only");
+  });
+});

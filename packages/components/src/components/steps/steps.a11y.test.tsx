@@ -43,4 +43,30 @@ describe("Steps accessibility", () => {
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });
+
+  it("has no axe violations for vertical progress and custom content", async () => {
+    const { container } = render(
+      <DethinkProvider theme="light" density="compact" dir="rtl">
+        <Steps
+          showProgress
+          interactive
+          aria-label="Deployment workflow"
+          orientation="vertical"
+          value="verify"
+          items={[
+            { id: "build", label: "Build" },
+            { id: "verify", label: "Verify", status: "error" },
+            { id: "release", label: "Release", optional: true },
+          ]}
+          renderItem={(item, state) => (
+            <span>
+              {item.label} · {state.status}
+            </span>
+          )}
+        />
+      </DethinkProvider>,
+    );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
 });
