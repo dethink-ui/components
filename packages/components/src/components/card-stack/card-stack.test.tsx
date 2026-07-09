@@ -224,6 +224,46 @@ describe("CardStack", () => {
     ).toHaveAttribute("inert");
   });
 
+  it("hides both controls when showControls is false", () => {
+    renderThreeCards({ showControls: false });
+
+    expect(
+      screen.queryByRole("button", { name: "Show previous card" }),
+    ).toBeNull();
+    expect(screen.queryByRole("button", { name: "Show next card" })).toBeNull();
+  });
+
+  it("hides only the previous control when showPreviousControl is false", () => {
+    renderThreeCards({ showPreviousControl: false });
+
+    expect(
+      screen.queryByRole("button", { name: "Show previous card" }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Show next card" }),
+    ).toBeVisible();
+  });
+
+  it("hides only the next control when showNextControl is false", () => {
+    renderThreeCards({ showNextControl: false });
+
+    expect(
+      screen.getByRole("button", { name: "Show previous card" }),
+    ).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Show next card" })).toBeNull();
+  });
+
+  it("shows a control per side even in open mode when explicitly requested", () => {
+    renderThreeCards({ mode: "open", showNextControl: true });
+
+    expect(
+      screen.queryByRole("button", { name: "Show previous card" }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Show next card" }),
+    ).toBeVisible();
+  });
+
   it("handles empty and single-card stacks", () => {
     const { rerender } = render(<CardStack />);
 

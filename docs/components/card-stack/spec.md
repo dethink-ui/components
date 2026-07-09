@@ -21,6 +21,9 @@ behavior, and inactive-card accessibility.
 - `stackOffset` defaults to `8` and controls visual depth in stack mode.
 - `showControls` defaults to true in stack mode when there is more than one card
   and false in open mode.
+- `showPreviousControl` and `showNextControl` default to `showControls` and toggle
+  each arrow control independently, so the previous or next icon button can be
+  hidden on its own.
 - `previousLabel` and `nextLabel` provide accessible names for arrow controls.
 
 ## Behavior

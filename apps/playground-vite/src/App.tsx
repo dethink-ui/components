@@ -102,6 +102,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tabs,
   Text,
   Textarea,
   Tooltip,
@@ -408,6 +409,29 @@ export function App() {
               </HorizontalAccordion.Panel>
             </HorizontalAccordion.Item>
           </HorizontalAccordion>
+          <Tabs defaultValue="overview" motionPreset="none">
+            <Tabs.List aria-label="Playground tabs">
+              <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+              <Tabs.Trigger value="usage">Usage</Tabs.Trigger>
+              <Tabs.Trigger value="settings">Settings</Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Panel value="overview">
+              <Text size="sm" tone="muted">
+                Tabs smoke: APG tab semantics, package exports, and static
+                reduced-motion active layer.
+              </Text>
+            </Tabs.Panel>
+            <Tabs.Panel value="usage">
+              <Text size="sm" tone="muted">
+                Usage panel content is associated with its trigger.
+              </Text>
+            </Tabs.Panel>
+            <Tabs.Panel value="settings">
+              <Text size="sm" tone="muted">
+                Settings panel verifies additional trigger and panel wiring.
+              </Text>
+            </Tabs.Panel>
+          </Tabs>
           <Card as="section">
             <CardHeader>
               <CardTitle>Table smoke</CardTitle>
