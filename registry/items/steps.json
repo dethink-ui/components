@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "steps",
+  "type": "registry:ui",
+  "title": "Steps",
+  "description": "Data-driven multi-step process indicator with semantic ordered-list structure, controlled and uncontrolled current state, derived statuses, token-backed horizontal layout, and accessible progress labels.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/steps/steps.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/steps/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
