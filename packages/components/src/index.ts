@@ -390,6 +390,17 @@ export {
   type RevealButtonVariant,
 } from "./components/reveal-button";
 export {
+  SoundInput,
+  getSoundInputMotionState,
+  soundInputClassNames,
+  type SoundInputMotion,
+  type SoundInputProps,
+  type SoundInputSize,
+  type SoundInputState,
+  type SoundInputStopReason,
+  type SoundInputVariant,
+} from "./components/sound-input";
+export {
   CardStack,
   cardStackClassNames,
   type CardStackCardElement,
