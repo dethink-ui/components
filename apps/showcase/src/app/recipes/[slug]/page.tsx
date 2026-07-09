@@ -7,6 +7,7 @@ import { CodeBlock } from "@/components/code-block";
 import { AiWorkspaceRecipe } from "@/examples/recipes/ai-workspace";
 import { CommandCenterDashboardRecipe } from "@/examples/recipes/command-center-dashboard";
 import { CrudResourceManagerRecipe } from "@/examples/recipes/crud-resource-manager";
+import { CustomerSupportCopilotRecipe } from "@/examples/recipes/customer-support-copilot";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
 import { SaasCheckoutOrderSummaryRecipe } from "@/examples/recipes/saas-checkout-order-summary";
 import { SaasLandingPageRecipe } from "@/examples/recipes/saas-landing-page";
@@ -24,6 +25,7 @@ const recipeComponents: Record<string, ComponentType> = {
   "ai-workspace": AiWorkspaceRecipe,
   "command-center-dashboard": CommandCenterDashboardRecipe,
   "crud-resource-manager": CrudResourceManagerRecipe,
+  "customer-support-copilot": CustomerSupportCopilotRecipe,
   "login-and-onboarding": LoginAndOnboardingRecipe,
   "saas-checkout-order-summary": SaasCheckoutOrderSummaryRecipe,
   "saas-landing-page": SaasLandingPageRecipe,
