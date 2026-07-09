@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Badge as BadgeIcon,
   Box as BoxIcon,
   Calendar as CalendarIcon,
   CalendarClock,
@@ -10,6 +11,7 @@ import {
   CalendarRange,
   ChartGantt,
   ChevronsUpDown,
+  CircleUserRound,
   CircleDot,
   Clock3,
   Columns3,
@@ -41,12 +43,16 @@ import {
   TextCursorInput,
   ToggleRight,
   Type,
+  UsersRound,
   type LucideIcon,
 } from "lucide-react";
 import { componentGroups } from "@/lib/components-meta";
 
 const componentIcons: Record<string, LucideIcon> = {
   "async-select": Search,
+  avatar: CircleUserRound,
+  "avatar-group": UsersRound,
+  badge: BadgeIcon,
   box: BoxIcon,
   breadcrumb: Navigation,
   button: MousePointerClick,

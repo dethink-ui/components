@@ -49,6 +49,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "general",
   },
   {
+    slug: "badge",
+    name: "Badge",
+    description:
+      "Label statuses, counts, and metadata with tokenized variants, tones, sizes, and decorative icon slots.",
+    type: "general",
+  },
+  {
     slug: "link",
     name: "Link",
     description:
@@ -326,6 +333,20 @@ export const componentCatalog: ComponentMeta[] = [
     name: "CardStack",
     description:
       "Cycle Card children as a layered deck or fanned arc with looping, built-in controls, and a controllable index.",
+    type: "data-display",
+  },
+  {
+    slug: "avatar",
+    name: "Avatar",
+    description:
+      "Represent people, teams, and systems with generated initials, image fallbacks, tokenized shapes, rings, and motion.",
+    type: "data-display",
+  },
+  {
+    slug: "avatar-group",
+    name: "AvatarGroup",
+    description:
+      "Stack identity clusters with overlap, overflow summaries, accessible member lists, and optional reveal behavior.",
     type: "data-display",
   },
   {
