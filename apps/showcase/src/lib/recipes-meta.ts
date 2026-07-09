@@ -274,6 +274,31 @@ export const recipesCatalog: RecipeMeta[] = [
       "The dock and side content collapse into a denser operations layout on narrow screens.",
   },
   {
+    slug: "customer-support-copilot",
+    title: "Customer Support Copilot",
+    category: "ai",
+    summary:
+      "A communication-focused support inbox with a responsive app shell, selectable customer conversations, semantic message history, and an accessible text-reply workflow.",
+    tags: ["Support", "Inbox", "Copilot", "Conversations", "Reply"],
+    components: [
+      "sidebar",
+      "avatar",
+      "badge",
+      "form-field",
+      "textarea",
+      "button",
+    ],
+    sourceFile: "recipes/customer-support-copilot.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Sidebar collapse and component-native state changes provide restrained feedback; the recipe adds no page-level animation and remains clear with reduced motion.",
+    accessibilityNotes:
+      "Conversation choices are native pressed buttons inside in-page navigation, messages use a semantic list, the composer has an explicit label and linked error, and submitted replies are announced politely.",
+    responsiveNotes:
+      "The conversation queue stacks above the selected thread on narrow screens, while desktop widths keep a stable two-column inbox inside the collapsible app shell.",
+  },
+  {
     slug: "scheduler-and-booking",
     title: "Scheduler and booking",
     category: "scheduling",
