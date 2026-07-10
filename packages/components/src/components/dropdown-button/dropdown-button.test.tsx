@@ -570,6 +570,31 @@ describe("DropdownButton", () => {
     expect(busyIndicator).toHaveStyle({ transform: "none" });
   });
 
+  it("keeps busy feedback static when the Motion preset is none", () => {
+    render(
+      <DropdownButton
+        label="Saving without motion"
+        loading
+        menuLabel="More saving options"
+        mode="split"
+        motionPreset="none"
+        onPrimaryAction={() => undefined}
+      >
+        <DropdownMenuItem>Cancel save</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const primary = screen.getByRole("button", {
+      name: "Saving without motion",
+    });
+    const busyIndicator = primary.querySelector(
+      '[data-slot="dropdown-button-busy-indicator"]',
+    );
+
+    expect(primary).toHaveAttribute("aria-busy", "true");
+    expect(busyIndicator).toHaveStyle({ transform: "none" });
+  });
+
   it("inherits arrow-key opening, typeahead, and disabled-item skipping", async () => {
     const user = userEvent.setup();
     const disabledAction = vi.fn();

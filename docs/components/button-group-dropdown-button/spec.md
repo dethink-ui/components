@@ -31,7 +31,7 @@ without creating another menu system.
 - The family may provide a documented responsive handoff recipe, but it does
   not automatically measure or hide actions in v1.
 
-## Proposed Components
+## Public Components
 
 - `ButtonGroup`
 - `ButtonGroupSeparator`
@@ -42,7 +42,7 @@ item, section, label, separator, shortcut, and submenu components.
 
 ## ButtonGroup Contract
 
-Proposed props:
+Public props:
 
 | Prop          | Type                         | Default        | Purpose                                                 |
 | ------------- | ---------------------------- | -------------- | ------------------------------------------------------- |
@@ -72,7 +72,7 @@ Behavior:
 
 DropdownButton uses a discriminated `mode` contract.
 
-Shared proposed props:
+Shared public props:
 
 - `label`
 - `variant`
@@ -91,7 +91,7 @@ Shared proposed props:
 - `children`
 - `motionPreset`
 
-`motionPreset` is proposed as `"none" | "subtle" | "standard"` with
+`motionPreset` is `"none" | "subtle" | "standard"` with
 `"standard"` as the default. Every preset remains subject to the user's reduced
 motion preference.
 
@@ -167,17 +167,17 @@ The user's Motion-only constraint is normative for this family.
 
 - Import animation APIs from `motion/react`.
 - ButtonGroup has no intrinsic animation and no Motion dependency.
-- DropdownButton may animate the open-state chevron and state-preserving label
+- DropdownButton animates the open-state chevron and state-preserving label
   or busy-indicator presence.
-- The shared DropdownMenu entry/exit path used by DropdownButton should migrate
-  from Tailwind keyframes/transitions to Motion primitives so the composite does
+- The shared DropdownMenu entry/exit path used by DropdownButton uses Motion
+  primitives instead of Tailwind keyframes/transitions so the composite does
   not mix animation systems.
 - Use `AnimatePresence` only where exit presence is required, stable keys for
   changing content, and transform/opacity for performant feedback.
 - Do not scale the attached composite or animate its border geometry; this can
   distort seams and focus rings.
-- Respect reduced motion with `MotionConfig reducedMotion="user"`,
-  `useReducedMotion`, or the repository's eventual shared Motion provider.
+- Respect reduced motion with `useReducedMotion` and the explicit
+  `reducedMotion` test/documentation override.
 - Reduced motion removes transform choreography and preserves immediate open,
   busy, disabled, label, and focus states.
 - No CSS keyframes, Tailwind `animate-*`, or Tailwind `transition-*` utilities
@@ -224,7 +224,7 @@ Ship an explicit recipe for page-header and dense-toolbar actions:
   package entry point.
 - Registry smoke must prove copied-source portability in a clean consumer.
 
-## Proposed Verification
+## Verification
 
 - Rendered behavior tests for public props and state transitions.
 - Keyboard interaction tests for native group children and complete menu/split

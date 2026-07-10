@@ -1,8 +1,9 @@
-import { type ReactNode, useState } from "react";
+import { type CSSProperties, type ReactNode, useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, waitFor, within } from "storybook/test";
 import {
   Button,
+  ButtonGroup,
   Container,
   DethinkProvider,
   DropdownButton,
@@ -17,6 +18,8 @@ import {
   Stack,
   Text,
   type DropdownButtonMotionPreset,
+  type ButtonSize,
+  type ButtonVariant,
 } from "@dethink/components";
 
 const meta = {
@@ -32,7 +35,8 @@ const meta = {
   argTypes: {
     mode: {
       control: false,
-      description: "Menu mode is the only mode in this tracer slice.",
+      description:
+        "Menu mode is the default; split mode adds a primary action.",
     },
     motionPreset: {
       control: "inline-radio",
@@ -50,7 +54,7 @@ const meta = {
     },
     variant: {
       control: "select",
-      options: ["solid", "soft", "outline", "ghost", "destructive"],
+      options: ["solid", "soft", "outline", "ghost", "link", "destructive"],
     },
   },
 } satisfies Meta<typeof DropdownButton>;
@@ -94,15 +98,129 @@ function ReportMenuItems() {
   );
 }
 
+type ResponsiveActionId = "preview" | "share" | "export" | "archive";
+
+const responsiveActions: Array<{
+  destructive?: boolean;
+  disabled?: boolean;
+  id: ResponsiveActionId;
+  label: string;
+}> = [
+  { id: "preview", label: "Preview" },
+  { id: "share", label: "Share" },
+  { disabled: true, id: "export", label: "Export pending approval" },
+  { destructive: true, id: "archive", label: "Archive" },
+];
+
+const responsivePrimaryIds = new Set<ResponsiveActionId>(["preview", "share"]);
+
+const highContrastStyle = {
+  "--dt-color-background-light": "oklch(1 0 0)",
+  "--dt-color-foreground-light": "oklch(0 0 0)",
+  "--dt-color-muted-light": "oklch(0.94 0 0)",
+  "--dt-color-muted-foreground-light": "oklch(0.16 0 0)",
+  "--dt-color-border-light": "oklch(0 0 0)",
+  "--dt-color-ring-light": "oklch(0 0 0)",
+  "--dt-color-primary-light": "oklch(0.2 0.18 260)",
+  "--dt-color-primary-foreground-light": "oklch(1 0 0)",
+  "--dt-color-destructive-light": "oklch(0.4 0.22 28)",
+  "--dt-color-destructive-foreground-light": "oklch(1 0 0)",
+} as CSSProperties;
+
+function ResponsiveActionSurface({
+  label,
+  onAction,
+  width,
+}: {
+  label: string;
+  onAction: (source: "narrow" | "wide", id: ResponsiveActionId) => void;
+  width: string;
+}) {
+  return (
+    <section
+      aria-label={label}
+      data-testid={label}
+      className="border-border @container rounded-lg border p-4"
+      style={{ width }}
+    >
+      <div
+        data-layout="wide"
+        className="hidden @min-3xl:flex @min-3xl:items-center @min-3xl:justify-between @min-3xl:gap-4"
+      >
+        <Text size="sm" weight="medium">
+          Quarterly report
+        </Text>
+        <ButtonGroup aria-label={`${label} report actions`}>
+          {responsiveActions.map((action) => (
+            <Button
+              key={action.id}
+              data-action-id={action.id}
+              disabled={action.disabled}
+              onClick={() => onAction("wide", action.id)}
+              variant={action.destructive ? "destructive" : "outline"}
+            >
+              {action.label}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </div>
+      <div
+        data-layout="narrow"
+        className="flex items-center justify-between gap-3 @min-3xl:hidden"
+      >
+        <Text className="min-w-0 truncate" size="sm" weight="medium">
+          Quarterly report
+        </Text>
+        <ButtonGroup aria-label={`${label} report actions`} mode="separated">
+          {responsiveActions
+            .filter((action) => responsivePrimaryIds.has(action.id))
+            .map((action) => (
+              <Button
+                key={action.id}
+                data-action-id={action.id}
+                onClick={() => onAction("narrow", action.id)}
+                size="sm"
+                variant="outline"
+              >
+                {action.label}
+              </Button>
+            ))}
+          <DropdownButton
+            aria-label={`More ${label} report actions`}
+            label="More"
+            size="sm"
+          >
+            {responsiveActions
+              .filter((action) => !responsivePrimaryIds.has(action.id))
+              .map((action) => (
+                <DropdownMenuItem
+                  key={action.id}
+                  data-action-id={action.id}
+                  destructive={action.destructive}
+                  disabled={action.disabled}
+                  onAction={() => onAction("narrow", action.id)}
+                >
+                  {action.label}
+                </DropdownMenuItem>
+              ))}
+          </DropdownButton>
+        </ButtonGroup>
+      </div>
+    </section>
+  );
+}
+
 function StoryFrame({
   children,
   density = "default",
   dir = "ltr",
+  style,
   theme = "light",
 }: {
   children: ReactNode;
   density?: "compact" | "default" | "comfortable";
   dir?: "ltr" | "rtl";
+  style?: CSSProperties;
   theme?: "light" | "dark";
 }) {
   return (
@@ -110,6 +228,7 @@ function StoryFrame({
       className="border-border bg-background min-h-48 rounded-lg border p-6"
       density={density}
       dir={dir}
+      style={style}
       theme={theme}
     >
       {children}
@@ -447,7 +566,7 @@ export const Placement: Story = {
 
 export const ThemeDensityAndRtl: Story = {
   render: (args) => (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-3">
       <StoryFrame density="compact">
         <DropdownButton {...args} label="Compact actions">
           <ReportMenuItems />
@@ -458,7 +577,20 @@ export const ThemeDensityAndRtl: Story = {
           <ReportMenuItems />
         </DropdownButton>
       </StoryFrame>
-      <div className="md:col-span-2">
+      <StoryFrame style={highContrastStyle}>
+        <DropdownButton
+          {...args}
+          label="Approve"
+          menuLabel="More approval options"
+          mode="split"
+          onPrimaryAction={() => undefined}
+          variant="outline"
+        >
+          <DropdownMenuItem>Request changes</DropdownMenuItem>
+          <DropdownMenuItem destructive>Reject request</DropdownMenuItem>
+        </DropdownButton>
+      </StoryFrame>
+      <div className="md:col-span-3">
         <StoryFrame dir="rtl">
           <Container size="sm">
             <DropdownButton
@@ -476,6 +608,101 @@ export const ThemeDensityAndRtl: Story = {
       </div>
     </div>
   ),
+};
+
+export const VariantsAndSizes: Story = {
+  render: () => {
+    const variants: ButtonVariant[] = [
+      "solid",
+      "soft",
+      "outline",
+      "ghost",
+      "link",
+      "destructive",
+    ];
+    const sizes: ButtonSize[] = ["xs", "sm", "md", "lg", "xl"];
+
+    return (
+      <StoryFrame>
+        <Stack gap="5">
+          <div className="flex flex-wrap items-center gap-3">
+            {variants.map((variant) => (
+              <DropdownButton key={variant} label={variant} variant={variant}>
+                <DropdownMenuItem>{variant} action</DropdownMenuItem>
+              </DropdownButton>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-end gap-3">
+            {sizes.map((size) => (
+              <DropdownButton
+                key={size}
+                label={size}
+                menuLabel={`More ${size} options`}
+                mode="split"
+                onPrimaryAction={() => undefined}
+                size={size}
+              >
+                <DropdownMenuItem>{size} alternative</DropdownMenuItem>
+              </DropdownButton>
+            ))}
+          </div>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+};
+
+export const ResponsiveActionHandoff: Story = {
+  render: function ResponsiveActionHandoffStory() {
+    const [status, setStatus] = useState("No responsive action yet");
+
+    return (
+      <StoryFrame>
+        <Stack gap="4">
+          <ResponsiveActionSurface
+            label="Wide preview"
+            width="52rem"
+            onAction={(source, id) => setStatus(`${source}:${id}`)}
+          />
+          <ResponsiveActionSurface
+            label="Narrow preview"
+            width="28rem"
+            onAction={(source, id) => setStatus(`${source}:${id}`)}
+          />
+          <Text data-testid="responsive-action-status" size="sm" tone="muted">
+            {status}
+          </Text>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const wide = within(canvas.getByTestId("Wide preview"));
+    const narrow = within(canvas.getByTestId("Narrow preview"));
+
+    await userEvent.click(wide.getByRole("button", { name: "Archive" }));
+    await expect(
+      canvas.getByTestId("responsive-action-status"),
+    ).toHaveTextContent("wide:archive");
+    await expect(
+      wide.getByRole("button", { name: "Export pending approval" }),
+    ).toBeDisabled();
+
+    await userEvent.click(
+      narrow.getByRole("button", {
+        name: "More Narrow preview report actions",
+      }),
+    );
+    await expect(
+      await page.findByRole("menuitem", { name: "Export pending approval" }),
+    ).toHaveAttribute("data-disabled");
+    await userEvent.click(page.getByRole("menuitem", { name: "Archive" }));
+    await expect(
+      canvas.getByTestId("responsive-action-status"),
+    ).toHaveTextContent("narrow:archive");
+  },
 };
 
 export const MotionPresets: Story = {

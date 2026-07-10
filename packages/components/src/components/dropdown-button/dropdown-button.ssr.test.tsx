@@ -2,6 +2,9 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { DethinkProvider } from "../../foundation/dethink-provider";
+import { Button } from "../button";
+import { ButtonGroup } from "../button-group";
 import { DropdownMenuItem } from "../dropdown-menu";
 import { DropdownButton } from ".";
 
@@ -10,6 +13,29 @@ function ServerDropdownButton() {
     <DropdownButton label="Server actions" motionPreset="subtle" reducedMotion>
       <DropdownMenuItem>Archive report</DropdownMenuItem>
     </DropdownButton>
+  );
+}
+
+function ServerResponsiveFamily() {
+  return (
+    <DethinkProvider density="compact" dir="rtl" theme="dark">
+      <div className="@container">
+        <div data-layout="wide" className="hidden @min-3xl:flex">
+          <ButtonGroup aria-label="إجراءات التقرير الواسعة">
+            <Button variant="outline">معاينة</Button>
+            <Button variant="destructive">أرشفة</Button>
+          </ButtonGroup>
+        </div>
+        <div data-layout="narrow" className="flex @min-3xl:hidden">
+          <ButtonGroup aria-label="إجراءات التقرير الضيقة">
+            <Button variant="outline">معاينة</Button>
+            <DropdownButton label="المزيد من إجراءات التقرير" reducedMotion>
+              <DropdownMenuItem destructive>أرشفة</DropdownMenuItem>
+            </DropdownButton>
+          </ButtonGroup>
+        </div>
+      </div>
+    </DethinkProvider>
   );
 }
 
@@ -80,6 +106,37 @@ describe("DropdownButton SSR", () => {
     expect(html).toContain("Generating report");
     expect(html).toContain('data-slot="dropdown-button-busy-indicator"');
     expect(html).not.toContain("animate-spin");
+  });
+
+  it("renders and hydrates the responsive themed RTL fallback safely", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    const family = <ServerResponsiveFamily />;
+    const html = renderToString(family);
+
+    expect(html).toContain('data-theme="dark"');
+    expect(html).toContain('data-density="compact"');
+    expect(html).toContain('dir="rtl"');
+    expect(html).toContain('data-layout="wide"');
+    expect(html).toContain('data-layout="narrow"');
+    expect(html).toContain("@min-3xl:hidden");
+    expect(html).toContain('data-reduced-motion=""');
+
+    container.innerHTML = html;
+
+    await act(async () => {
+      hydrateRoot(container, family);
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
   });
 
   it("hydrates without mismatch warnings", async () => {

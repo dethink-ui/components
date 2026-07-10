@@ -1242,6 +1242,13 @@ const dropdownButtonSource = await readFile(
   ),
   "utf8",
 );
+const responsiveActionRecipeSource = await readFile(
+  join(
+    root,
+    "apps/showcase/src/examples/button-group/responsive-action-handoff.tsx",
+  ),
+  "utf8",
+);
 const cardSource = await readFile(
   join(root, "packages/components/src/components/card/card.tsx"),
   "utf8",
@@ -1613,6 +1620,25 @@ assert(
   "button-group source must remain context-free and usable from Server Components.",
 );
 assert(
+  responsiveActionRecipeSource.includes('className="@container') &&
+    responsiveActionRecipeSource.includes("@min-3xl:flex") &&
+    responsiveActionRecipeSource.includes("@min-3xl:hidden") &&
+    responsiveActionRecipeSource.includes("headerActions") &&
+    responsiveActionRecipeSource.includes("alwaysVisibleIds") &&
+    responsiveActionRecipeSource.includes("data-action-id") &&
+    responsiveActionRecipeSource.includes("DropdownButton"),
+  "responsive action recipe must use one declared action model and an explicit container threshold.",
+);
+assert(
+  !responsiveActionRecipeSource.includes("ResizeObserver") &&
+    !responsiveActionRecipeSource.includes("getBoundingClientRect") &&
+    !responsiveActionRecipeSource.includes("offsetWidth") &&
+    !responsiveActionRecipeSource.includes("scrollWidth") &&
+    !responsiveActionRecipeSource.includes("createContext") &&
+    !responsiveActionRecipeSource.includes("roving"),
+  "responsive action recipe must not measure, rank, hide children imperatively, or add group-owned focus semantics.",
+);
+assert(
   packageIndexSource.includes("ButtonGroup") &&
     packageIndexSource.includes("ButtonGroupSeparator") &&
     packageIndexSource.includes("ButtonGroupProps"),
@@ -1651,6 +1677,10 @@ assert(
     dropdownButtonSource.includes("motion.svg") &&
     dropdownButtonSource.includes("AnimatePresence") &&
     dropdownButtonSource.includes("dropdown-button-busy-indicator") &&
+    dropdownButtonSource.includes("motionDisabled={") &&
+    dropdownButtonSource.includes(
+      'resolvedReducedMotion || motionPreset === "none"',
+    ) &&
     dropdownButtonSource.includes("useReducedMotion") &&
     !dropdownButtonSource.includes("transition-") &&
     !dropdownButtonSource.includes("animate-"),

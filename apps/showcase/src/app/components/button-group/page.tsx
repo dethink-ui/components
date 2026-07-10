@@ -7,6 +7,7 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { ButtonGroupBasic } from "@/examples/button-group/basic";
+import { ButtonGroupResponsiveActionHandoff } from "@/examples/button-group/responsive-action-handoff";
 import {
   buttonGroupProps,
   buttonGroupSeparatorProps,
@@ -36,6 +37,26 @@ export default function ButtonGroupPage() {
         >
           <ButtonGroupBasic />
         </ExampleBlock>
+      </DocsSection>
+
+      <DocsSection
+        id="responsive-handoff"
+        title="Responsive action handoff"
+        description="The product declares one container threshold and keeps action ownership stable across representations."
+      >
+        <ExampleBlock
+          file="button-group/responsive-action-handoff.tsx"
+          title="Wide group to narrow overflow"
+          description="The narrow representation is the no-container-query fallback. At the declared container threshold, the same action definitions render in ButtonGroup; IDs, labels, disabled rules, destructive meaning, and handlers are preserved."
+        >
+          <ButtonGroupResponsiveActionHandoff />
+        </ExampleBlock>
+        <p className="text-muted-foreground mt-4 max-w-prose text-sm leading-6">
+          This is an application recipe, not automatic component behavior.
+          ButtonGroup never measures children, infers priority, hides actions,
+          installs a ResizeObserver, or becomes a Toolbar. Choose the threshold
+          and the always-visible action IDs from product requirements.
+        </p>
       </DocsSection>
 
       <DocsSection

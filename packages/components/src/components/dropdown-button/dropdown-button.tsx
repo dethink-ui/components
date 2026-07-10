@@ -261,19 +261,19 @@ function DropdownButtonPrimaryIcon({
 }
 
 function DropdownButtonBusyIndicator({
-  reducedMotion,
+  motionDisabled,
 }: {
-  reducedMotion: boolean;
+  motionDisabled: boolean;
 }) {
   return (
     <motion.span
       key="dropdown-button-busy"
-      animate={reducedMotion ? { opacity: 0.7 } : { opacity: 1, rotate: 360 }}
-      initial={reducedMotion ? false : { opacity: 0, rotate: 0 }}
+      animate={motionDisabled ? { opacity: 0.7 } : { opacity: 1, rotate: 360 }}
+      initial={motionDisabled ? false : { opacity: 0, rotate: 0 }}
       data-slot="dropdown-button-busy-indicator"
       className={dropdownButtonBusyIndicatorClasses}
       transition={
-        reducedMotion
+        motionDisabled
           ? { duration: 0 }
           : {
               duration: 0.8,
@@ -431,7 +431,9 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
                 loading={loading}
                 loadingIndicator={
                   <DropdownButtonBusyIndicator
-                    reducedMotion={resolvedReducedMotion}
+                    motionDisabled={
+                      resolvedReducedMotion || motionPreset === "none"
+                    }
                   />
                 }
                 onClick={onPrimaryAction}

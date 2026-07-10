@@ -141,7 +141,7 @@ export default function DropdownButtonPage() {
       <DocsSection
         id="props"
         title="Props"
-        description="The menu-only discriminant keeps direct primary-action props out of this slice."
+        description="The discriminated contract keeps direct-action props out of menu mode and requires an explicit handler and menu label in split mode."
       >
         <PropsTable caption="DropdownButton props" rows={dropdownButtonProps} />
       </DocsSection>
