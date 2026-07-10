@@ -3,11 +3,11 @@
 ## Status
 
 - Source: UX and design audit of the running Next.js showcase on 10 July 2026.
-- Current phase: first two approved implementation slices complete.
+- Current phase: first three approved implementation slices complete.
 - GitHub PRD: [#383 — Showcase discovery, documentation, and motion polish](https://github.com/parveshh/dethink-components/issues/383).
 - Implementation gate: complete; the PRD and nine approved tracer-bullet issues are published.
-- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384) and [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385).
-- Next queued slice: [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386).
+- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), and [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386).
+- Next queued slice: [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387).
 
 ## Outcome
 
@@ -195,3 +195,6 @@ Tests should assert public behavior and visible outcomes rather than component i
 - 2026-07-10: Kept direct loads and client navigation semantically synchronized through keyed route content, the existing `aria-current="page"` sidebar state, stable component slugs, and human-readable labels that retain API-name context where it helps discovery.
 - 2026-07-10: Applied a 240ms transform/opacity entrance to the navigation surface and disabled spatial movement for reduced-motion users; navigation itself remains immediate.
 - 2026-07-10: Verified #385 with TypeScript, ESLint, the 72-route production build, five passing Playwright cases, and desktop/mobile production-browser checks with no console errors or framework overlays.
+- 2026-07-10: Implemented #386 on `feature/issue-386-progressive-example-source` by making the shared example source disclosure native, collapsed by default, and consistent across all 233 `ExampleBlock` usages while leaving live previews visible.
+- 2026-07-10: Kept collapsed source in the document through `<details>`, added fragment-driven opening for links such as `#variants-source`, retained copy actions, and used a 240ms transform/opacity reveal with an instantaneous reduced-motion path.
+- 2026-07-10: Verified #386 with TypeScript, ESLint, the 72-route production build, four passing Playwright cases, and desktop/mobile browser checks with no console errors or framework overlays; the second mobile example now begins at 1121px instead of following a full expanded source block.
