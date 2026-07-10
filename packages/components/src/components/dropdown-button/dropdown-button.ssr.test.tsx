@@ -59,6 +59,29 @@ describe("DropdownButton SSR", () => {
     expect(html).not.toContain("Save as template");
   });
 
+  it("renders readable async and independent disabled state on the server", () => {
+    const html = renderToString(
+      <DropdownButton
+        label="Generating report"
+        loading
+        loadingBehavior="primary"
+        menuLabel="More report options"
+        mode="split"
+        onPrimaryAction={() => undefined}
+        reducedMotion
+      >
+        <DropdownMenuItem>Cancel generation</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    expect(html).toContain('data-loading=""');
+    expect(html).toContain('data-loading-behavior="primary"');
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toContain("Generating report");
+    expect(html).toContain('data-slot="dropdown-button-busy-indicator"');
+    expect(html).not.toContain("animate-spin");
+  });
+
   it("hydrates without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")

@@ -101,6 +101,33 @@ export default function DropdownButtonPage() {
         </div>
       </DocsSection>
 
+      <DocsSection
+        id="async"
+        title="Async and controlled primary actions"
+        description="Loading protects the direct action without silently changing what that action means."
+      >
+        <div className="text-muted-foreground max-w-prose space-y-3 text-sm leading-6">
+          <p>
+            <code>loading</code> keeps the primary label readable, exposes
+            <code> aria-busy</code>, and prevents duplicate primary activation.
+            The default <code>loadingBehavior=&quot;all&quot;</code> disables
+            the complete composite while work is running.
+          </p>
+          <p>
+            <code>loadingBehavior=&quot;primary&quot;</code> is an explicit
+            opt-in. Use it only when every remaining menu item is safe during
+            the running primary operation. Whole-composite, primary-only, and
+            menu-only disabled states remain separately controllable.
+          </p>
+          <p>
+            Applications may update <code>label</code>,<code> primaryIcon</code>
+            , and <code>onPrimaryAction</code>. Choosing a menu item never
+            promotes it to the primary action; last-used action persistence
+            belongs to application state.
+          </p>
+        </div>
+      </DocsSection>
+
       <InstallationSection
         registryName="dropdown-button"
         importCode={`import {

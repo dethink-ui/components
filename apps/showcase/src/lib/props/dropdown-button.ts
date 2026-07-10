@@ -15,6 +15,20 @@ export const dropdownButtonProps: PropRow[] = [
       "Required split semantics: the icon-only menu half is separately named, while the native primary side owns only the direct action and optional icon.",
   },
   {
+    prop: "loading / loadingBehavior",
+    type: 'boolean / "all" | "primary"',
+    defaultValue: 'false / "all"',
+    description:
+      "Marks the readable primary action busy and prevents duplicate activation. The safe default disables both halves; primary keeps declared-safe menu alternatives available.",
+  },
+  {
+    prop: "disabled / primaryDisabled / menuDisabled",
+    type: "boolean",
+    defaultValue: "false",
+    description:
+      "Disable the complete composite or either native half independently without changing the other control's semantics.",
+  },
+  {
     prop: "label",
     type: "ReactNode",
     description:

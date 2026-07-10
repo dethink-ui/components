@@ -1,5 +1,17 @@
-import { forwardRef, type ReactNode, useRef, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import {
+  forwardRef,
+  isValidElement,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  AnimatePresence,
+  motion,
+  useIsPresent,
+  useReducedMotion,
+} from "motion/react";
 import {
   Button,
   type ButtonProps,
@@ -18,6 +30,7 @@ import { cn } from "../../utils/cn";
 
 export type DropdownButtonMode = "menu" | "split";
 export type DropdownButtonMotionPreset = DropdownMenuMotionPreset;
+export type DropdownButtonLoadingBehavior = "all" | "primary";
 
 interface DropdownButtonSharedProps extends PositionedOverlayPositionProps {
   "aria-describedby"?: string;
@@ -61,19 +74,14 @@ export interface DropdownButtonMenuProps extends DropdownButtonSharedProps {
 }
 
 export interface DropdownButtonSplitProps extends DropdownButtonSharedProps {
+  loading?: boolean;
+  loadingBehavior?: DropdownButtonLoadingBehavior;
   menuLabel: string;
+  menuDisabled?: boolean;
   mode: "split";
   onPrimaryAction: NonNullable<ButtonProps["onClick"]>;
+  primaryDisabled?: boolean;
   primaryIcon?: ReactNode;
-
-  /** Added by the async coordination slice. */
-  loading?: never;
-  /** Added by the async coordination slice. */
-  loadingBehavior?: never;
-  /** Added by the async coordination slice. */
-  primaryDisabled?: never;
-  /** Added by the async coordination slice. */
-  menuDisabled?: never;
 }
 
 export type DropdownButtonProps =
@@ -99,6 +107,21 @@ const dropdownButtonChevronDuration: Record<
   subtle: 0.12,
   standard: 0.16,
 };
+
+const dropdownButtonBusyIndicatorClasses =
+  "size-4 rounded-full border-2 border-current border-r-transparent";
+
+function getDropdownButtonNodeKey(node: ReactNode, fallback: string) {
+  if (typeof node === "string" || typeof node === "number") {
+    return `${fallback}-${String(node)}`;
+  }
+
+  if (isValidElement(node) && node.key != null) {
+    return `${fallback}-${String(node.key)}`;
+  }
+
+  return fallback;
+}
 
 export function dropdownButtonClassNames({
   className,
@@ -145,6 +168,123 @@ function ChevronDownIcon({
   );
 }
 
+function DropdownButtonPrimaryLabel({
+  label,
+  motionPreset,
+  reducedMotion,
+}: {
+  label: ReactNode;
+  motionPreset: DropdownButtonMotionPreset;
+  reducedMotion: boolean;
+}) {
+  const motionDisabled = reducedMotion || motionPreset === "none";
+
+  return (
+    <span
+      data-slot="dropdown-button-primary-label-viewport"
+      className="inline-grid min-w-0"
+    >
+      <AnimatePresence initial={false} mode="sync">
+        <DropdownButtonPrimaryLabelItem
+          key={getDropdownButtonNodeKey(label, "primary-label")}
+          label={label}
+          motionDisabled={motionDisabled}
+          motionPreset={motionPreset}
+        />
+      </AnimatePresence>
+    </span>
+  );
+}
+
+function DropdownButtonPrimaryLabelItem({
+  label,
+  motionDisabled,
+  motionPreset,
+}: {
+  label: ReactNode;
+  motionDisabled: boolean;
+  motionPreset: DropdownButtonMotionPreset;
+}) {
+  const isPresent = useIsPresent();
+
+  return (
+    <motion.span
+      animate={motionDisabled ? { opacity: 1 } : { opacity: 1, y: 0 }}
+      initial={motionDisabled ? false : { opacity: 0, y: -2 }}
+      exit={motionDisabled ? { opacity: 1 } : { opacity: 0, y: 2 }}
+      aria-hidden={isPresent ? undefined : true}
+      data-slot="dropdown-button-label"
+      className="col-start-1 row-start-1 min-w-0 truncate"
+      transition={{
+        duration: motionDisabled
+          ? 0
+          : dropdownButtonChevronDuration[motionPreset],
+        ease: [0.16, 1, 0.3, 1],
+      }}
+    >
+      {label}
+    </motion.span>
+  );
+}
+
+function DropdownButtonPrimaryIcon({
+  icon,
+  motionPreset,
+  reducedMotion,
+}: {
+  icon: ReactNode;
+  motionPreset: DropdownButtonMotionPreset;
+  reducedMotion: boolean;
+}) {
+  const motionDisabled = reducedMotion || motionPreset === "none";
+
+  return (
+    <AnimatePresence initial={false} mode="sync">
+      <motion.span
+        key={getDropdownButtonNodeKey(icon, "primary-icon")}
+        animate={motionDisabled ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+        initial={motionDisabled ? false : { opacity: 0, scale: 0.9 }}
+        exit={motionDisabled ? { opacity: 1 } : { opacity: 0, scale: 0.9 }}
+        data-slot="dropdown-button-primary-icon"
+        className="inline-flex size-4 items-center justify-center"
+        transition={{
+          duration: motionDisabled
+            ? 0
+            : dropdownButtonChevronDuration[motionPreset],
+          ease: [0.16, 1, 0.3, 1],
+        }}
+      >
+        {icon}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
+
+function DropdownButtonBusyIndicator({
+  reducedMotion,
+}: {
+  reducedMotion: boolean;
+}) {
+  return (
+    <motion.span
+      key="dropdown-button-busy"
+      animate={reducedMotion ? { opacity: 0.7 } : { opacity: 1, rotate: 360 }}
+      initial={reducedMotion ? false : { opacity: 0, rotate: 0 }}
+      data-slot="dropdown-button-busy-indicator"
+      className={dropdownButtonBusyIndicatorClasses}
+      transition={
+        reducedMotion
+          ? { duration: 0 }
+          : {
+              duration: 0.8,
+              ease: "linear",
+              repeat: Number.POSITIVE_INFINITY,
+            }
+      }
+    />
+  );
+}
+
 export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
   (
     {
@@ -161,7 +301,10 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
       disabled = false,
       groupClassName,
       label,
+      loading = false,
+      loadingBehavior = "all",
       menuClassName,
+      menuDisabled = false,
       menuLabel,
       mode = "menu",
       motionPreset = "standard",
@@ -170,6 +313,7 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
       onPrimaryAction,
       open,
       placement,
+      primaryDisabled = false,
       primaryIcon,
       reducedMotion,
       shouldFlip,
@@ -182,26 +326,59 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
   ) => {
     const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
     const compositeRef = useRef<HTMLDivElement>(null);
+    const primaryRef = useRef<HTMLElement>(null);
     const prefersReducedMotion = useReducedMotion();
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
     const resolvedReducedMotion =
       reducedMotion ?? prefersReducedMotion === true;
     const isSplit = mode === "split";
+    const primaryUnavailable = disabled || primaryDisabled || loading;
+    const menuUnavailable =
+      disabled || menuDisabled || (loading && loadingBehavior === "all");
+    const effectiveOpen = resolvedOpen && !menuUnavailable;
     const groupLabel = ariaLabelledBy
       ? undefined
       : (ariaLabel ?? (typeof label === "string" ? label : undefined));
     const handleOpenChange = (nextOpen: boolean) => {
+      if (nextOpen && menuUnavailable) {
+        return;
+      }
+
       if (!isControlled) {
         setUncontrolledOpen(nextOpen);
       }
 
       onOpenChange?.(nextOpen);
     };
+    useEffect(() => {
+      if (!resolvedOpen || !menuUnavailable) {
+        return undefined;
+      }
+
+      if (!isControlled) {
+        setUncontrolledOpen(false);
+      }
+      onOpenChange?.(false);
+
+      if (isSplit && !primaryUnavailable) {
+        const frame = requestAnimationFrame(() => primaryRef.current?.focus());
+        return () => cancelAnimationFrame(frame);
+      }
+
+      return undefined;
+    }, [
+      isControlled,
+      isSplit,
+      menuUnavailable,
+      onOpenChange,
+      primaryUnavailable,
+      resolvedOpen,
+    ]);
     const chevron = (
       <ChevronDownIcon
         motionPreset={motionPreset}
-        open={resolvedOpen}
+        open={effectiveOpen}
         reducedMotion={resolvedReducedMotion}
       />
     );
@@ -210,12 +387,16 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
       <div
         ref={ref}
         data-disabled={disabled ? "" : undefined}
+        data-loading={loading ? "" : undefined}
+        data-loading-behavior={isSplit ? loadingBehavior : undefined}
+        data-menu-disabled={menuUnavailable ? "" : undefined}
         data-mode={mode}
         data-motion={motionPreset}
-        data-open={resolvedOpen ? "" : undefined}
+        data-open={effectiveOpen ? "" : undefined}
+        data-primary-disabled={primaryUnavailable ? "" : undefined}
         data-reduced-motion={resolvedReducedMotion ? "" : undefined}
         data-slot="dropdown-button"
-        data-state={resolvedOpen ? "open" : "closed"}
+        data-state={effectiveOpen ? "open" : "closed"}
         className={dropdownButtonClassNames({ className })}
       >
         <DropdownMenu
@@ -223,7 +404,7 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
           data-slot="dropdown-button-menu-anchor"
           motionPreset={motionPreset}
           onOpenChange={handleOpenChange}
-          open={resolvedOpen}
+          open={effectiveOpen}
           reducedMotion={resolvedReducedMotion}
         >
           <ButtonGroup
@@ -235,20 +416,33 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
           >
             {isSplit ? (
               <Button
+                ref={primaryRef}
                 data-slot="dropdown-button-primary"
-                disabled={disabled}
+                disabled={disabled || primaryDisabled}
                 leftIcon={
                   primaryIcon ? (
-                    <span data-slot="dropdown-button-primary-icon">
-                      {primaryIcon}
-                    </span>
+                    <DropdownButtonPrimaryIcon
+                      icon={primaryIcon}
+                      motionPreset={motionPreset}
+                      reducedMotion={resolvedReducedMotion}
+                    />
                   ) : undefined
+                }
+                loading={loading}
+                loadingIndicator={
+                  <DropdownButtonBusyIndicator
+                    reducedMotion={resolvedReducedMotion}
+                  />
                 }
                 onClick={onPrimaryAction}
                 size={size}
                 variant={variant}
               >
-                <span data-slot="dropdown-button-label">{label}</span>
+                <DropdownButtonPrimaryLabel
+                  label={label}
+                  motionPreset={motionPreset}
+                  reducedMotion={resolvedReducedMotion}
+                />
               </Button>
             ) : null}
             <DropdownMenuTrigger
@@ -264,7 +458,7 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
                   ? "dropdown-button-menu-trigger"
                   : "dropdown-button-trigger"
               }
-              disabled={disabled}
+              disabled={menuUnavailable}
               size={isSplit ? "icon" : size}
               variant={variant}
             >

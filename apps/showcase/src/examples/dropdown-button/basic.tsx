@@ -114,6 +114,39 @@ export function DropdownButtonBasic() {
           Controlled state: {controlledOpen ? "open" : "closed"}
         </p>
       </div>
+
+      <div className="space-y-3">
+        <p className="text-muted-foreground text-sm font-medium">
+          Explicit async policies
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <DropdownButton
+            label="Publishing"
+            loading
+            menuLabel="More publish options"
+            mode="split"
+            onPrimaryAction={() => undefined}
+          >
+            <DropdownMenuItem>Schedule publish</DropdownMenuItem>
+          </DropdownButton>
+          <DropdownButton
+            label="Generating report"
+            loading
+            loadingBehavior="primary"
+            menuLabel="More report options"
+            mode="split"
+            onPrimaryAction={() => undefined}
+            reducedMotion
+          >
+            <DropdownMenuItem>Cancel generation</DropdownMenuItem>
+          </DropdownButton>
+        </div>
+        <p className="text-muted-foreground max-w-prose text-sm">
+          Whole-composite loading is the safe default. Primary-only loading is
+          opt-in for alternatives that the product has explicitly declared safe
+          while the primary action runs.
+        </p>
+      </div>
     </div>
   );
 }

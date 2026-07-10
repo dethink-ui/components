@@ -221,6 +221,149 @@ export const SplitLongLabelAndRtl: Story = {
   ),
 };
 
+export const AsyncPolicies: Story = {
+  render: () => (
+    <StoryFrame>
+      <div className="grid gap-6 sm:grid-cols-2">
+        <Stack gap="2" align="start">
+          <Text size="sm" weight="medium">
+            Whole composite loading
+          </Text>
+          <DropdownButton
+            label="Publishing"
+            loading
+            menuLabel="More publish options"
+            mode="split"
+            onPrimaryAction={() => undefined}
+          >
+            <DropdownMenuItem>Schedule publish</DropdownMenuItem>
+          </DropdownButton>
+          <Text size="sm" tone="muted">
+            Both controls are unavailable by default.
+          </Text>
+        </Stack>
+        <Stack gap="2" align="start">
+          <Text size="sm" weight="medium">
+            Primary-only loading
+          </Text>
+          <DropdownButton
+            label="Generating report"
+            loading
+            loadingBehavior="primary"
+            menuLabel="More report options"
+            mode="split"
+            onPrimaryAction={() => undefined}
+          >
+            <DropdownMenuItem>Cancel generation</DropdownMenuItem>
+            <DropdownMenuItem>Open previous report</DropdownMenuItem>
+          </DropdownButton>
+          <Text size="sm" tone="muted">
+            The menu stays available for declared-safe alternatives.
+          </Text>
+        </Stack>
+      </div>
+    </StoryFrame>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+
+    await expect(
+      canvas.getByRole("button", { name: "Publishing" }),
+    ).toBeDisabled();
+    await expect(
+      canvas.getByRole("button", { name: "More publish options" }),
+    ).toBeDisabled();
+
+    const safeMenu = canvas.getByRole("button", {
+      name: "More report options",
+    });
+    await expect(safeMenu).toBeEnabled();
+    await userEvent.click(safeMenu);
+    await expect(
+      await page.findByRole("menuitem", { name: "Cancel generation" }),
+    ).toBeVisible();
+  },
+};
+
+export const IndependentDisabledStates: Story = {
+  render: () => (
+    <StoryFrame>
+      <div className="flex flex-wrap gap-4">
+        <DropdownButton
+          label="Primary unavailable"
+          menuLabel="Alternatives for unavailable primary"
+          mode="split"
+          onPrimaryAction={() => undefined}
+          primaryDisabled
+        >
+          <DropdownMenuItem>Request approval</DropdownMenuItem>
+        </DropdownButton>
+        <DropdownButton
+          label="Primary available"
+          menuDisabled
+          menuLabel="Unavailable alternatives"
+          mode="split"
+          onPrimaryAction={() => undefined}
+        >
+          <DropdownMenuItem>Hidden while unavailable</DropdownMenuItem>
+        </DropdownButton>
+      </div>
+    </StoryFrame>
+  ),
+};
+
+export const ControlledPrimaryAction: Story = {
+  render: function ControlledPrimaryActionStory() {
+    const [publish, setPublish] = useState(false);
+    const [status, setStatus] = useState("No direct action yet");
+
+    return (
+      <StoryFrame>
+        <Stack gap="3" align="start">
+          <Button variant="soft" onClick={() => setPublish((value) => !value)}>
+            Change controlled primary
+          </Button>
+          <DropdownButton
+            label={publish ? "Publish" : "Save"}
+            menuLabel={publish ? "More publish options" : "More save options"}
+            mode="split"
+            onPrimaryAction={() =>
+              setStatus(publish ? "Published directly" : "Saved directly")
+            }
+            primaryIcon={
+              <span key={publish ? "publish" : "save"} aria-hidden="true">
+                {publish ? "P" : "S"}
+              </span>
+            }
+          >
+            <DropdownMenuItem>Export a copy</DropdownMenuItem>
+          </DropdownButton>
+          <Text data-testid="controlled-primary-status" size="sm" tone="muted">
+            {status}
+          </Text>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole("button", { name: "Save" }));
+    await expect(
+      canvas.getByTestId("controlled-primary-status"),
+    ).toHaveTextContent("Saved directly");
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Change controlled primary" }),
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Publish" }));
+    await expect(
+      canvas.getByTestId("controlled-primary-status"),
+    ).toHaveTextContent("Published directly");
+  },
+};
+
 export const ControlledOpen: Story = {
   render: function ControlledOpenStory(args) {
     const [open, setOpen] = useState(false);

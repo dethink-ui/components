@@ -309,11 +309,265 @@ describe("DropdownButton", () => {
 
     expect(await screen.findByRole("menu")).toBeInTheDocument();
     expect(icon).toHaveAttribute("data-open");
-    expect(icon).toHaveStyle({ transform: "none" });
     expect(trigger.closest('[data-slot="dropdown-button"]')).toHaveAttribute(
       "data-state",
       "open",
     );
+  });
+
+  it("disables the complete split composite during loading by default", async () => {
+    const user = userEvent.setup();
+    const onPrimaryAction = vi.fn();
+
+    render(
+      <DropdownButton
+        label="Publish"
+        loading
+        menuLabel="More publish options"
+        mode="split"
+        onPrimaryAction={onPrimaryAction}
+      >
+        <DropdownMenuItem>Schedule publish</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const primary = screen.getByRole("button", { name: "Publish" });
+    const menuTrigger = screen.getByRole("button", {
+      name: "More publish options",
+    });
+    const root = primary.closest('[data-slot="dropdown-button"]');
+
+    expect(primary).toBeDisabled();
+    expect(primary).toHaveAttribute("aria-busy", "true");
+    expect(primary).toHaveTextContent("Publish");
+    expect(menuTrigger).toBeDisabled();
+    expect(root).toHaveAttribute("data-loading");
+    expect(root).toHaveAttribute("data-loading-behavior", "all");
+    expect(
+      primary.querySelector('[data-slot="dropdown-button-busy-indicator"]'),
+    ).toBeInTheDocument();
+    expect(
+      primary.querySelector('[data-slot="button-spinner"]'),
+    ).not.toHaveClass("animate-spin");
+
+    await user.click(primary);
+    await user.click(menuTrigger);
+    expect(onPrimaryAction).not.toHaveBeenCalled();
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+
+  it("keeps safe menu alternatives available under primary-only loading", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DropdownButton
+        label="Generate report"
+        loading
+        loadingBehavior="primary"
+        menuLabel="More report options"
+        mode="split"
+        onPrimaryAction={() => undefined}
+      >
+        <DropdownMenuItem>Cancel generation</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const primary = screen.getByRole("button", { name: "Generate report" });
+    const menuTrigger = screen.getByRole("button", {
+      name: "More report options",
+    });
+
+    expect(primary).toBeDisabled();
+    expect(menuTrigger).toBeEnabled();
+    expect(primary.closest('[data-slot="dropdown-button"]')).toHaveAttribute(
+      "data-loading-behavior",
+      "primary",
+    );
+
+    await user.click(menuTrigger);
+    expect(
+      await screen.findByRole("menuitem", { name: "Cancel generation" }),
+    ).toBeInTheDocument();
+  });
+
+  it.each([
+    {
+      disabled: true,
+      menuDisabled: false,
+      menuEnabled: false,
+      primaryDisabled: false,
+      primaryEnabled: false,
+      title: "whole composite disabled",
+    },
+    {
+      disabled: false,
+      menuDisabled: false,
+      menuEnabled: true,
+      primaryDisabled: true,
+      primaryEnabled: false,
+      title: "primary disabled independently",
+    },
+    {
+      disabled: false,
+      menuDisabled: true,
+      menuEnabled: false,
+      primaryDisabled: false,
+      primaryEnabled: true,
+      title: "menu disabled independently",
+    },
+  ])(
+    "supports $title",
+    ({
+      disabled,
+      menuDisabled,
+      menuEnabled,
+      primaryDisabled,
+      primaryEnabled,
+    }) => {
+      render(
+        <DropdownButton
+          disabled={disabled}
+          label="Deploy"
+          menuDisabled={menuDisabled}
+          menuLabel="More deployment options"
+          mode="split"
+          onPrimaryAction={() => undefined}
+          primaryDisabled={primaryDisabled}
+        >
+          <DropdownMenuItem>Deploy later</DropdownMenuItem>
+        </DropdownButton>,
+      );
+
+      expect(screen.getByRole("button", { name: "Deploy" })).toHaveProperty(
+        "disabled",
+        !primaryEnabled,
+      );
+      expect(
+        screen.getByRole("button", { name: "More deployment options" }),
+      ).toHaveProperty("disabled", !menuEnabled);
+    },
+  );
+
+  it("closes controlled content and moves focus when the menu becomes unavailable", async () => {
+    const onOpenChange = vi.fn();
+    const { rerender } = render(
+      <DropdownButton
+        label="Approve"
+        menuLabel="More approval options"
+        mode="split"
+        onOpenChange={onOpenChange}
+        onPrimaryAction={() => undefined}
+        open
+      >
+        <DropdownMenuItem>Approve with note</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+
+    rerender(
+      <DropdownButton
+        label="Approve"
+        menuDisabled
+        menuLabel="More approval options"
+        mode="split"
+        onOpenChange={onOpenChange}
+        onPrimaryAction={() => undefined}
+        open
+      >
+        <DropdownMenuItem>Approve with note</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Approve" })).toHaveFocus();
+    });
+  });
+
+  it("uses controlled primary label, icon, and handler without promoting menu actions", async () => {
+    const user = userEvent.setup();
+    const firstAction = vi.fn();
+    const nextAction = vi.fn();
+    const menuAction = vi.fn();
+    const { rerender } = render(
+      <DropdownButton
+        label="Save"
+        menuLabel="More save options"
+        mode="split"
+        onPrimaryAction={firstAction}
+        primaryIcon={<span key="save-icon">S</span>}
+      >
+        <DropdownMenuItem onAction={menuAction}>
+          Save as template
+        </DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(firstAction).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole("button", { name: "More save options" }));
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Save as template" }),
+    );
+    expect(menuAction).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+
+    rerender(
+      <DropdownButton
+        label="Publish"
+        menuLabel="More publish options"
+        mode="split"
+        onPrimaryAction={nextAction}
+        primaryIcon={<span key="publish-icon">P</span>}
+      >
+        <DropdownMenuItem>Schedule publish</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const updatedPrimary = screen.getByRole("button", { name: "Publish" });
+    expect(
+      screen.queryByRole("button", { name: "Save" }),
+    ).not.toBeInTheDocument();
+    expect(
+      Array.from(
+        updatedPrimary.querySelectorAll(
+          '[data-slot="dropdown-button-primary-icon"]',
+        ),
+      ).some((icon) => icon.textContent === "P"),
+    ).toBe(true);
+
+    await user.click(updatedPrimary);
+    expect(nextAction).toHaveBeenCalledTimes(1);
+    expect(firstAction).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps reduced-motion busy feedback static and readable", () => {
+    render(
+      <DropdownButton
+        label="Saving changes"
+        loading
+        menuLabel="More saving options"
+        mode="split"
+        onPrimaryAction={() => undefined}
+        reducedMotion
+      >
+        <DropdownMenuItem>Cancel save</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const primary = screen.getByRole("button", { name: "Saving changes" });
+    const busyIndicator = primary.querySelector(
+      '[data-slot="dropdown-button-busy-indicator"]',
+    );
+
+    expect(primary).toHaveTextContent("Saving changes");
+    expect(primary).toHaveAttribute("aria-busy", "true");
+    expect(busyIndicator).toHaveStyle({ transform: "none" });
   });
 
   it("inherits arrow-key opening, typeahead, and disabled-item skipping", async () => {

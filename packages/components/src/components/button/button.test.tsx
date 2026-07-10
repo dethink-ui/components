@@ -178,6 +178,24 @@ describe("Button", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
+  it("supports a custom loading indicator without the default CSS spinner", () => {
+    render(
+      <Button
+        loading
+        loadingIndicator={<span data-testid="custom-loading">Busy</span>}
+      >
+        Saving
+      </Button>,
+    );
+
+    const indicator = screen
+      .getByTestId("custom-loading")
+      .closest('[data-slot="button-spinner"]');
+
+    expect(indicator).toBeInTheDocument();
+    expect(indicator).not.toHaveClass("animate-spin");
+  });
+
   it("renders left and right icon affordances as decorative slots", () => {
     render(
       <Button leftIcon={<PlusIcon />} rightIcon={<ArrowRightIcon />}>

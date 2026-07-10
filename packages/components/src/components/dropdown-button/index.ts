@@ -1,6 +1,7 @@
 export {
   DropdownButton,
   dropdownButtonClassNames,
+  type DropdownButtonLoadingBehavior,
   type DropdownButtonMenuProps,
   type DropdownButtonMode,
   type DropdownButtonMotionPreset,

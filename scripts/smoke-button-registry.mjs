@@ -1622,7 +1622,7 @@ assert(
   dropdownButtonSource.includes('data-slot="dropdown-button"') &&
     dropdownButtonSource.includes("data-mode={mode}") &&
     dropdownButtonSource.includes(
-      'data-state={resolvedOpen ? "open" : "closed"}',
+      'data-state={effectiveOpen ? "open" : "closed"}',
     ) &&
     dropdownButtonSource.includes("ButtonGroup") &&
     dropdownButtonSource.includes("DropdownMenu") &&
@@ -1639,12 +1639,18 @@ assert(
     dropdownButtonSource.includes('"dropdown-button-menu-trigger"') &&
     dropdownButtonSource.includes(
       "anchorRef={isSplit ? compositeRef : undefined}",
-    ),
-  "dropdown-button must discriminate menu and split modes with stable controls and full-composite anchoring.",
+    ) &&
+    dropdownButtonSource.includes('loadingBehavior = "all"') &&
+    dropdownButtonSource.includes("primaryDisabled") &&
+    dropdownButtonSource.includes("menuDisabled") &&
+    buttonSource.includes("loadingIndicator"),
+  "dropdown-button must discriminate menu and split modes with stable controls, full-composite anchoring, and Button-backed async policies.",
 );
 assert(
   dropdownButtonSource.includes('from "motion/react"') &&
     dropdownButtonSource.includes("motion.svg") &&
+    dropdownButtonSource.includes("AnimatePresence") &&
+    dropdownButtonSource.includes("dropdown-button-busy-indicator") &&
     dropdownButtonSource.includes("useReducedMotion") &&
     !dropdownButtonSource.includes("transition-") &&
     !dropdownButtonSource.includes("animate-"),
@@ -1653,7 +1659,8 @@ assert(
 assert(
   packageIndexSource.includes("DropdownButton") &&
     packageIndexSource.includes("DropdownButtonProps") &&
-    packageIndexSource.includes("DropdownButtonMotionPreset"),
+    packageIndexSource.includes("DropdownButtonMotionPreset") &&
+    packageIndexSource.includes("DropdownButtonLoadingBehavior"),
   "root package index must export DropdownButton and its public types.",
 );
 assert(

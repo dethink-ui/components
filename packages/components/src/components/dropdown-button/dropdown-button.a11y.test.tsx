@@ -69,4 +69,29 @@ describe("DropdownButton accessibility", () => {
       axe(container.ownerDocument.body),
     ).resolves.toHaveNoViolations();
   });
+
+  it("has no axe violations for readable split loading state", async () => {
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <main>
+          <DropdownButton
+            label="Generating report"
+            loading
+            loadingBehavior="primary"
+            menuLabel="More report options"
+            mode="split"
+            onPrimaryAction={() => undefined}
+            reducedMotion
+          >
+            <DropdownMenuItem>Cancel generation</DropdownMenuItem>
+          </DropdownButton>
+        </main>
+      </DethinkProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Generating report" }),
+    ).toHaveAttribute("aria-busy", "true");
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
 });
