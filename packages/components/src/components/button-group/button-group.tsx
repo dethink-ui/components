@@ -9,6 +9,7 @@ export interface ButtonGroupProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "role"
 > {
+  "data-slot"?: string;
   mode?: ButtonGroupMode;
   orientation?: ButtonGroupOrientation;
 }
@@ -89,6 +90,7 @@ export function buttonGroupSeparatorClassNames({
 export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
   (
     {
+      "data-slot": dataSlot = "button-group",
       children,
       className,
       mode = "attached",
@@ -101,7 +103,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
       {...props}
       ref={ref}
       role="group"
-      data-slot="button-group"
+      data-slot={dataSlot}
       data-mode={mode}
       data-orientation={orientation}
       className={buttonGroupClassNames({ className, mode, orientation })}

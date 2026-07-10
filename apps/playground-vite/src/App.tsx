@@ -47,6 +47,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  DropdownButton,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -689,6 +690,32 @@ export function App() {
           </Card>
           <Card as="section">
             <CardHeader>
+              <CardTitle>DropdownButton smoke</CardTitle>
+              <CardDescription>
+                Verifies the package export, one-button menu composition,
+                controlled-ready state, positioning, and Motion-backed shared
+                menu path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DropdownButton
+                label="Create item"
+                motionPreset="subtle"
+                placement="bottom end"
+                showArrow
+              >
+                <DropdownMenuSection>
+                  <DropdownMenuLabel>Create</DropdownMenuLabel>
+                  <DropdownMenuItem>Project</DropdownMenuItem>
+                  <DropdownMenuItem>Workspace</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem disabled>Template</DropdownMenuItem>
+                </DropdownMenuSection>
+              </DropdownButton>
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
               <CardTitle>DropdownMenu smoke</CardTitle>
               <CardDescription>
                 Verifies action-menu exports, menu semantics, shortcuts, and the
@@ -696,7 +723,7 @@ export function App() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DropdownMenu>
+              <DropdownMenu motionPreset="standard">
                 <DropdownMenuTrigger variant="outline">
                   Open action menu
                 </DropdownMenuTrigger>

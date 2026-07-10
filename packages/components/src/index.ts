@@ -774,6 +774,7 @@ export {
   type DropdownMenuItemProps,
   type DropdownMenuItemShortcutProps,
   type DropdownMenuLabelProps,
+  type DropdownMenuMotionPreset,
   type DropdownMenuProps,
   type DropdownMenuSectionProps,
   type DropdownMenuSeparatorProps,
@@ -781,6 +782,14 @@ export {
   type DropdownMenuSubmenuProps,
   type DropdownMenuTriggerProps,
 } from "./components/dropdown-menu";
+export {
+  DropdownButton,
+  dropdownButtonClassNames,
+  type DropdownButtonMenuProps,
+  type DropdownButtonMode,
+  type DropdownButtonMotionPreset,
+  type DropdownButtonProps,
+} from "./components/dropdown-button";
 export {
   Combobox,
   ComboboxItem,

@@ -18,6 +18,7 @@ export interface PositionedOverlayPositionProps {
 }
 
 export interface PositionedOverlaySurfaceClassNameOptions {
+  animation?: "css" | "none";
   className?: string;
 }
 
@@ -69,7 +70,10 @@ export const positionedOverlayDropdownSubmenuDefaults = {
 } satisfies Required<PositionedOverlayPositionProps>;
 
 const positionedOverlaySurfaceBaseClasses =
-  "z-50 max-h-[min(var(--dt-overlay-max-height,18rem),calc(100dvh_-_var(--dt-space-4)))] min-w-[var(--dt-overlay-min-width,12rem)] overflow-auto rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [--dt-overlay-motion-x:0px] [--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=bottom]:[--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))] data-[placement=top]:[--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-x:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-y:0px] data-[placement=right]:[--dt-overlay-motion-x:calc(0px_-_var(--dt-space-1))] data-[placement=right]:[--dt-overlay-motion-y:0px] origin-center data-[placement=top]:origin-bottom data-[placement=bottom]:origin-top data-[placement=left]:origin-right data-[placement=right]:origin-left motion-safe:data-[entering]:animate-overlay-in motion-safe:data-[exiting]:animate-overlay-out motion-reduce:animate-none";
+  "z-50 max-h-[min(var(--dt-overlay-max-height,18rem),calc(100dvh_-_var(--dt-space-4)))] min-w-[var(--dt-overlay-min-width,12rem)] overflow-auto rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring [--dt-overlay-motion-x:0px] [--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=bottom]:[--dt-overlay-motion-y:calc(0px_-_var(--dt-space-1))] data-[placement=top]:[--dt-overlay-motion-y:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-x:var(--dt-space-1)] data-[placement=left]:[--dt-overlay-motion-y:0px] data-[placement=right]:[--dt-overlay-motion-x:calc(0px_-_var(--dt-space-1))] data-[placement=right]:[--dt-overlay-motion-y:0px] origin-center data-[placement=top]:origin-bottom data-[placement=bottom]:origin-top data-[placement=left]:origin-right data-[placement=right]:origin-left";
+
+const positionedOverlaySurfaceCssAnimationClasses =
+  "motion-safe:data-[entering]:animate-overlay-in motion-safe:data-[exiting]:animate-overlay-out motion-reduce:animate-none";
 
 const positionedOverlayArrowBaseClasses =
   "group z-50 flex size-3 items-center justify-center text-background [filter:drop-shadow(0_1px_0.5px_rgb(0_0_0_/_0.06))]";
@@ -93,9 +97,14 @@ export function resolvePositionedOverlayPositionProps(
 }
 
 export function positionedOverlaySurfaceClassNames({
+  animation = "css",
   className,
 }: PositionedOverlaySurfaceClassNameOptions = {}) {
-  return cn(positionedOverlaySurfaceBaseClasses, className);
+  return cn(
+    positionedOverlaySurfaceBaseClasses,
+    animation === "css" && positionedOverlaySurfaceCssAnimationClasses,
+    className,
+  );
 }
 
 export function positionedOverlayArrowClassNames({

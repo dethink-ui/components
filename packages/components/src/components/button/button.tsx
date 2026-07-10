@@ -18,6 +18,7 @@ export type ButtonVariant =
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "icon";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  "data-slot"?: string;
   asChild?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
@@ -152,6 +153,7 @@ function getChildRef(child: ReactElement<ButtonSlotProps>) {
 export const Button = forwardRef<HTMLElement, ButtonProps>(
   (
     {
+      "data-slot": dataSlot = "button",
       "aria-busy": ariaBusy,
       asChild = false,
       children,
@@ -198,7 +200,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
           ref: composeRefs(ref, childRef),
           "aria-busy": loading ? true : ariaBusy,
           "aria-disabled": isDisabled ? true : child.props["aria-disabled"],
-          "data-slot": "button",
+          "data-slot": dataSlot,
           "data-variant": variant,
           "data-size": size,
           "data-disabled": isDisabled ? "true" : undefined,
@@ -222,7 +224,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
         type={type}
         disabled={isDisabled}
         aria-busy={loading ? true : ariaBusy}
-        data-slot="button"
+        data-slot={dataSlot}
         data-variant={variant}
         data-size={size}
         data-disabled={isDisabled ? "true" : undefined}

@@ -365,9 +365,8 @@ describe("DropdownMenu", () => {
       dropdownMenuContentClassNames({ className: "custom-content" }),
     ).toContain("custom-content");
     expect(dropdownMenuContentClassNames()).toContain("bg-background");
-    expect(dropdownMenuContentClassNames()).toContain(
-      "motion-safe:data-[entering]:animate-overlay-in",
-    );
+    expect(dropdownMenuContentClassNames()).not.toContain("animate-overlay");
+    expect(dropdownMenuContentClassNames()).not.toContain("transition-");
     expect(dropdownMenuMenuClassNames({ className: "custom-menu" })).toContain(
       "custom-menu",
     );

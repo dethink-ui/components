@@ -80,6 +80,22 @@ export default function DropdownMenuPage() {
       >
         <PropsTable caption="DropdownMenu anatomy" rows={dropdownMenuProps} />
       </DocsSection>
+
+      <DocsSection
+        id="motion-migration"
+        title="Motion migration"
+        description="DropdownMenu now has one animation owner."
+      >
+        <p className="text-muted-foreground max-w-prose text-sm leading-6">
+          Surface entry and exit presence plus changed item feedback use
+          primitives from <code>motion/react</code>. Registry installs now
+          declare Motion as a runtime dependency. Tailwind overlay keyframes and
+          transition utilities no longer run on the DropdownMenu path; the
+          <code> reducedMotion</code> prop or user preference removes transform
+          choreography without changing roles, focus, placement, portals, or
+          submenu behavior.
+        </p>
+      </DocsSection>
     </DocsPage>
   );
 }

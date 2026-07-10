@@ -6,6 +6,7 @@ import {
   MenuItem as AriaMenuItem,
   MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
+  OverlayTriggerStateContext,
   Popover as AriaPopover,
   Separator as AriaSeparator,
   SubmenuTrigger as AriaSubmenuTrigger,
@@ -21,17 +22,28 @@ import {
   type SubmenuTriggerProps as AriaSubmenuTriggerProps,
   type TextProps as AriaTextProps,
 } from "react-aria-components";
+import { useIsSSR } from "react-aria";
+import {
+  AnimatePresence,
+  motion,
+  usePresence,
+  useReducedMotion,
+  type Transition,
+} from "motion/react";
 import {
   Children,
+  createContext,
   forwardRef,
   type ForwardedRef,
   type HTMLAttributes,
   type ReactElement,
   type ReactNode,
+  useContext,
   useMemo,
   useState,
 } from "react";
 import {
+  Button,
   buttonClassNames,
   type ButtonSize,
   type ButtonVariant,
@@ -59,14 +71,19 @@ export interface DropdownMenuProps extends Omit<
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
+  motionPreset?: DropdownMenuMotionPreset;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
+  reducedMotion?: boolean;
 }
+
+export type DropdownMenuMotionPreset = "none" | "subtle" | "standard";
 
 export interface DropdownMenuTriggerProps extends Omit<
   AriaButtonProps,
   "children" | "className" | "isDisabled"
 > {
+  "data-slot"?: string;
   children?: ReactNode;
   className?: string;
   disabled?: boolean;
@@ -76,6 +93,7 @@ export interface DropdownMenuTriggerProps extends Omit<
 
 export interface DropdownMenuContentProps<T extends object = object>
   extends Omit<AriaMenuProps<T>, "className">, PositionedOverlayPositionProps {
+  "data-slot"?: string;
   arrowClassName?: string;
   arrowShapeClassName?: string;
   className?: string;
@@ -148,6 +166,8 @@ export interface DropdownMenuItemShortcutProps extends HTMLAttributes<HTMLElemen
 
 const dropdownMenuRootClasses = "contents";
 
+const dropdownMenuPositionerClasses = "z-50 overflow-visible outline-none";
+
 const dropdownMenuContentClasses =
   "min-w-[var(--dt-dropdown-menu-min-width,13rem)] max-w-[min(var(--dt-dropdown-menu-max-width,18rem),calc(100vw_-_var(--dt-space-4)))] overflow-visible p-[var(--dt-space-1)]";
 
@@ -155,7 +175,7 @@ const dropdownMenuMenuClasses =
   "grid max-h-[min(var(--dt-dropdown-menu-max-height,20rem),calc(100dvh_-_var(--dt-space-4)))] gap-0 overflow-auto outline-none";
 
 const dropdownMenuItemClasses =
-  "group/dropdown-menu-item grid min-h-8 cursor-default grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm leading-5 text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-150 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[open]:bg-muted data-[pressed]:bg-muted/80 data-[destructive=true]:text-destructive data-[destructive=true]:data-[focused]:bg-destructive/10 data-[destructive=true]:data-[hovered]:bg-destructive/10 data-[destructive=true]:data-[pressed]:bg-destructive/15";
+  "group/dropdown-menu-item grid min-h-8 cursor-default grid-cols-[1rem_minmax(0,1fr)_auto] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm leading-5 text-foreground outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[open]:bg-muted data-[pressed]:bg-muted/80 data-[destructive=true]:text-destructive data-[destructive=true]:data-[focused]:bg-destructive/10 data-[destructive=true]:data-[hovered]:bg-destructive/10 data-[destructive=true]:data-[pressed]:bg-destructive/15";
 
 const dropdownMenuItemIconClasses =
   "flex size-4 shrink-0 items-center justify-center text-muted-foreground group-data-[destructive=true]/dropdown-menu-item:text-destructive [&>svg]:size-4";
@@ -179,6 +199,68 @@ const dropdownMenuSectionClasses = "grid gap-0";
 const dropdownMenuSubmenuIconClasses =
   "ms-[var(--dt-space-2)] size-4 justify-self-end text-muted-foreground rtl:rotate-180";
 
+interface DropdownMenuMotionContextValue {
+  motionPreset: DropdownMenuMotionPreset;
+  reducedMotion: boolean;
+}
+
+const DropdownMenuMotionContext = createContext<DropdownMenuMotionContextValue>(
+  {
+    motionPreset: "standard",
+    reducedMotion: false,
+  },
+);
+
+const dropdownMenuMotionSettings: Record<
+  DropdownMenuMotionPreset,
+  {
+    distance: number;
+    duration: number;
+    itemFocusScale: number;
+    itemPressScale: number;
+    surfaceScale: number;
+  }
+> = {
+  none: {
+    distance: 0,
+    duration: 0,
+    itemFocusScale: 1,
+    itemPressScale: 1,
+    surfaceScale: 1,
+  },
+  subtle: {
+    distance: 2,
+    duration: 0.12,
+    itemFocusScale: 1.002,
+    itemPressScale: 0.99,
+    surfaceScale: 0.995,
+  },
+  standard: {
+    distance: 4,
+    duration: 0.16,
+    itemFocusScale: 1.004,
+    itemPressScale: 0.985,
+    surfaceScale: 0.985,
+  },
+};
+
+const dropdownMenuMotionEase = [0.16, 1, 0.3, 1] as const;
+
+function getDropdownMenuSurfaceOffset(placement: string, distance: number) {
+  const side = placement.split(" ")[0];
+
+  switch (side) {
+    case "top":
+      return { x: 0, y: distance };
+    case "left":
+      return { x: distance, y: 0 };
+    case "right":
+      return { x: -distance, y: 0 };
+    default:
+      return { x: 0, y: -distance };
+  }
+}
+
 export function dropdownMenuClassNames({
   className,
 }: Pick<DropdownMenuProps, "className"> = {}) {
@@ -197,7 +279,7 @@ export function dropdownMenuContentClassNames({
   className,
 }: Pick<DropdownMenuContentProps, "className"> = {}) {
   return cn(
-    positionedOverlaySurfaceClassNames(),
+    positionedOverlaySurfaceClassNames({ animation: "none" }),
     dropdownMenuContentClasses,
     className,
   );
@@ -312,8 +394,107 @@ function renderMenuItemChildren(
   );
 }
 
+interface DropdownMenuMotionPopoverProps<T extends object = object> {
+  arrowClassName?: string;
+  arrowShapeClassName?: string;
+  children: DropdownMenuContentProps<T>["children"];
+  className?: string;
+  contentSlot: string;
+  menuClassName?: string;
+  menuProps: Omit<AriaMenuProps<T>, "children" | "className">;
+  positionProps: Required<PositionedOverlayPositionProps>;
+  showArrow: boolean;
+  surfaceRef: ForwardedRef<HTMLElement>;
+}
+
+function DropdownMenuMotionPopover<T extends object = object>({
+  arrowClassName,
+  arrowShapeClassName,
+  children,
+  className,
+  contentSlot,
+  menuClassName,
+  menuProps,
+  positionProps,
+  showArrow,
+  surfaceRef,
+}: DropdownMenuMotionPopoverProps<T>) {
+  const [isPresent, safeToRemove] = usePresence();
+  const { motionPreset, reducedMotion } = useContext(DropdownMenuMotionContext);
+  const settings = dropdownMenuMotionSettings[motionPreset];
+  const motionDisabled = motionPreset === "none";
+  const transition: Transition = {
+    duration: reducedMotion ? 0.08 : settings.duration,
+    ease: dropdownMenuMotionEase,
+  };
+
+  return (
+    <AriaPopover
+      {...positionProps}
+      isExiting={!isPresent}
+      className={dropdownMenuPositionerClasses}
+    >
+      {({ placement }) => {
+        const offset = getDropdownMenuSurfaceOffset(
+          placement ?? "bottom",
+          settings.distance,
+        );
+        const hidden = reducedMotion
+          ? { opacity: 0 }
+          : {
+              opacity: 0,
+              scale: settings.surfaceScale,
+              x: offset.x,
+              y: offset.y,
+            };
+        const visible = reducedMotion
+          ? { opacity: 1 }
+          : { opacity: 1, scale: 1, x: 0, y: 0 };
+
+        return (
+          <motion.div
+            ref={surfaceRef as ForwardedRef<HTMLDivElement>}
+            animate={visible}
+            initial={motionDisabled ? false : hidden}
+            exit={motionDisabled ? visible : hidden}
+            data-motion={motionPreset}
+            data-placement={placement}
+            data-reduced-motion={reducedMotion ? "" : undefined}
+            data-slot={contentSlot}
+            data-state={isPresent ? "open" : "closed"}
+            className={dropdownMenuContentClassNames({ className })}
+            transition={motionDisabled ? { duration: 0 } : transition}
+            onAnimationComplete={() => {
+              if (!isPresent) {
+                safeToRemove?.();
+              }
+            }}
+          >
+            {showArrow ? (
+              <DropdownMenuArrow
+                className={arrowClassName}
+                shapeClassName={arrowShapeClassName}
+              />
+            ) : null}
+            <AriaMenu
+              {...menuProps}
+              data-slot="dropdown-menu-menu"
+              className={dropdownMenuMenuClassNames({
+                className: menuClassName,
+              })}
+            >
+              {children}
+            </AriaMenu>
+          </motion.div>
+        );
+      }}
+    </AriaPopover>
+  );
+}
+
 function DropdownMenuContentRoot<T extends object = object>(
   {
+    "data-slot": dataSlot,
     arrowBoundaryOffset,
     arrowClassName,
     arrowShapeClassName,
@@ -343,28 +524,29 @@ function DropdownMenuContentRoot<T extends object = object>(
     },
     defaults,
   );
+  const isSSR = useIsSSR();
+  const overlayState = useContext(OverlayTriggerStateContext);
+  const isOpen = (overlayState?.isOpen ?? false) && !isSSR;
 
   return (
-    <AriaPopover
-      {...positionProps}
-      ref={ref}
-      data-slot={contentSlot}
-      className={dropdownMenuContentClassNames({ className })}
-    >
-      {showArrow ? (
-        <DropdownMenuArrow
-          className={arrowClassName}
-          shapeClassName={arrowShapeClassName}
-        />
+    <AnimatePresence initial={false}>
+      {isOpen ? (
+        <DropdownMenuMotionPopover
+          key={dataSlot ?? contentSlot}
+          arrowClassName={arrowClassName}
+          arrowShapeClassName={arrowShapeClassName}
+          className={className}
+          contentSlot={dataSlot ?? contentSlot}
+          menuClassName={menuClassName}
+          menuProps={props}
+          positionProps={positionProps}
+          showArrow={showArrow}
+          surfaceRef={ref}
+        >
+          {children}
+        </DropdownMenuMotionPopover>
       ) : null}
-      <AriaMenu
-        {...props}
-        data-slot="dropdown-menu-menu"
-        className={dropdownMenuMenuClassNames({ className: menuClassName })}
-      >
-        {children}
-      </AriaMenu>
-    </AriaPopover>
+    </AnimatePresence>
   );
 }
 
@@ -375,8 +557,10 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
       children,
       className,
       defaultOpen,
+      motionPreset = "standard",
       onOpenChange,
       open,
+      reducedMotion,
       ...props
     },
     ref,
@@ -386,6 +570,9 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
     );
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
+    const prefersReducedMotion = useReducedMotion();
+    const resolvedReducedMotion =
+      reducedMotion ?? prefersReducedMotion === true;
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "dropdown-menu-portal-container",
@@ -402,18 +589,27 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
       <div
         ref={rootRef}
         data-slot={dataSlot ?? "dropdown-menu"}
+        data-motion={motionPreset}
         data-open={resolvedOpen ? "" : undefined}
+        data-reduced-motion={resolvedReducedMotion ? "" : undefined}
         className={dropdownMenuClassNames({ className })}
       >
-        <DethinkPortalProvider container={portalContainer}>
-          <AriaMenuTrigger
-            {...props}
-            isOpen={resolvedOpen}
-            onOpenChange={handleOpenChange}
-          >
-            {children}
-          </AriaMenuTrigger>
-        </DethinkPortalProvider>
+        <DropdownMenuMotionContext.Provider
+          value={{
+            motionPreset,
+            reducedMotion: resolvedReducedMotion,
+          }}
+        >
+          <DethinkPortalProvider container={portalContainer}>
+            <AriaMenuTrigger
+              {...props}
+              isOpen={resolvedOpen}
+              onOpenChange={handleOpenChange}
+            >
+              {children}
+            </AriaMenuTrigger>
+          </DethinkPortalProvider>
+        </DropdownMenuMotionContext.Provider>
       </div>
     );
   },
@@ -427,6 +623,7 @@ export const DropdownMenuTrigger = forwardRef<
 >(
   (
     {
+      "data-slot": dataSlot = "dropdown-menu-trigger",
       children,
       className,
       disabled = false,
@@ -436,15 +633,18 @@ export const DropdownMenuTrigger = forwardRef<
     },
     ref,
   ) => (
-    <AriaButton
-      {...props}
-      ref={ref}
-      data-slot="dropdown-menu-trigger"
-      isDisabled={disabled}
-      className={dropdownMenuTriggerClassNames({ className, size, variant })}
+    <Button
+      asChild
+      className={className}
+      data-slot={dataSlot}
+      disabled={disabled}
+      size={size}
+      variant={variant}
     >
-      {children}
-    </AriaButton>
+      <AriaButton {...props} ref={ref} isDisabled={disabled}>
+        {children}
+      </AriaButton>
+    </Button>
   ),
 );
 
@@ -492,6 +692,12 @@ export const DropdownMenuItem = forwardRef<
         ? String(children)
         : undefined);
 
+    const { motionPreset, reducedMotion } = useContext(
+      DropdownMenuMotionContext,
+    );
+    const motionSettings = dropdownMenuMotionSettings[motionPreset];
+    const motionDisabled = reducedMotion || motionPreset === "none";
+
     return (
       <AriaMenuItem
         {...props}
@@ -502,7 +708,34 @@ export const DropdownMenuItem = forwardRef<
         textValue={resolvedTextValue}
         className={dropdownMenuItemClassNames({ className })}
       >
-        {(opts) => renderMenuItemChildren(children, opts)}
+        {(opts) => {
+          const itemScale = opts.isPressed
+            ? motionSettings.itemPressScale
+            : opts.isFocused || opts.isHovered
+              ? motionSettings.itemFocusScale
+              : 1;
+
+          return (
+            <motion.div
+              animate={
+                motionDisabled
+                  ? { opacity: 1 }
+                  : {
+                      opacity: opts.isPressed ? 0.82 : 1,
+                      scale: itemScale,
+                    }
+              }
+              data-slot="dropdown-menu-item-feedback"
+              className="col-span-full grid min-w-0 grid-cols-subgrid items-center gap-[var(--dt-space-2)]"
+              transition={{
+                duration: motionDisabled ? 0 : motionSettings.duration,
+                ease: dropdownMenuMotionEase,
+              }}
+            >
+              {renderMenuItemChildren(children, opts)}
+            </motion.div>
+          );
+        }}
       </AriaMenuItem>
     );
   },

@@ -3,8 +3,8 @@
   "name": "dropdown-menu",
   "type": "registry:ui",
   "title": "DropdownMenu",
-  "description": "React Aria backed action menu primitive with provider-aware portals, controlled open state, menu sections, shortcuts, disabled and destructive items, submenus, token-backed styling, reduced-motion transitions, and positioning props.",
-  "dependencies": ["react-aria", "react-aria-components"],
+  "description": "React Aria backed action menu primitive with provider-aware portals, controlled open state, menu sections, shortcuts, disabled and destructive items, submenus, Motion-only presence and item feedback, reduced-motion handling, and positioning props.",
+  "dependencies": ["motion", "react-aria", "react-aria-components"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "button"],
   "files": [

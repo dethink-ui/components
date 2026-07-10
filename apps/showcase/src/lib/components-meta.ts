@@ -49,6 +49,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "general",
   },
   {
+    slug: "dropdown-button",
+    name: "DropdownButton",
+    description:
+      "Open a related action menu from one Button-styled trigger with controlled state, positioning, and Motion-only menu presence.",
+    type: "general",
+  },
+  {
     slug: "reveal-button",
     name: "RevealButton",
     description:
