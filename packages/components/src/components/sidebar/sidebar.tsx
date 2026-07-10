@@ -25,6 +25,13 @@ import {
   type TransitionEventHandler,
 } from "react";
 import { createPortal } from "react-dom";
+import {
+  motion as motionElement,
+  useReducedMotion,
+  type HTMLMotionProps,
+  type Transition,
+  type Variants,
+} from "motion/react";
 import { cn } from "../../utils/cn";
 
 export type SidebarSide = "left" | "right";
@@ -217,7 +224,10 @@ const sidebarProviderClasses =
   "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width-ease:cubic-bezier(0.2,0,0,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
 
 const sidebarClasses =
-  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-hidden border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-width-ease,var(--sidebar-motion-ease))] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
+  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-visible border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-width-ease,var(--sidebar-motion-ease))] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
+
+const sidebarViewportClasses =
+  "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit]";
 
 const sidebarVariantClasses: Record<SidebarVariant, string> = {
   default: "shadow-none",
@@ -298,7 +308,27 @@ const sidebarTriggerClasses =
   "inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground active:scale-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0";
 
 const sidebarRailClasses =
-  "absolute inset-y-0 z-10 hidden w-3 -translate-x-1/2 rounded-full outline-none before:absolute before:inset-y-0 before:start-1/2 before:w-0.5 before:-translate-x-1/2 before:rounded-full before:bg-ring before:opacity-0 motion-safe:before:transition-opacity motion-safe:before:duration-[var(--sidebar-motion-duration)] motion-reduce:before:transition-none hover:before:opacity-60 focus-visible:before:opacity-100 focus-visible:ring-2 focus-visible:ring-ring rtl:before:translate-x-1/2 data-[side=left]:start-full data-[side=right]:end-full data-[side=right]:translate-x-1/2 data-[collapsed=false]:data-[side=left]:cursor-w-resize data-[collapsed=true]:data-[side=left]:cursor-e-resize data-[collapsed=false]:data-[side=right]:cursor-e-resize data-[collapsed=true]:data-[side=right]:cursor-w-resize rtl:data-[collapsed=false]:data-[side=left]:cursor-e-resize rtl:data-[collapsed=true]:data-[side=left]:cursor-w-resize rtl:data-[collapsed=false]:data-[side=right]:cursor-w-resize rtl:data-[collapsed=true]:data-[side=right]:cursor-e-resize md:block";
+  "group/sidebar-rail absolute top-[var(--dt-space-3)] z-20 hidden h-10 w-6 cursor-pointer items-center justify-center outline-none disabled:pointer-events-none disabled:opacity-50 data-[side=left]:left-full data-[side=left]:-translate-x-2 data-[side=right]:right-full data-[side=right]:translate-x-2 md:flex";
+
+const sidebarRailHandleClasses =
+  "relative flex h-8 w-5 items-center justify-center rounded-md border border-border bg-background text-muted-foreground shadow-sm ring-offset-background group-hover/sidebar-rail:bg-muted group-hover/sidebar-rail:text-foreground group-focus-visible/sidebar-rail:ring-2 group-focus-visible/sidebar-rail:ring-ring group-focus-visible/sidebar-rail:ring-offset-2 contrast-more:border-current [&>span]:flex [&>span]:items-center [&>span]:justify-center [&_svg]:size-2.5 [&_svg]:shrink-0";
+
+const sidebarRailMotionTransitions: Record<
+  Exclude<SidebarMotion, "none">,
+  Transition
+> = {
+  subtle: { type: "spring", stiffness: 520, damping: 40, mass: 0.65 },
+  standard: { type: "spring", stiffness: 460, damping: 34, mass: 0.7 },
+  expressive: { type: "spring", stiffness: 420, damping: 27, mass: 0.75 },
+};
+
+const sidebarRailStaticTransition: Transition = { duration: 0 };
+
+const sidebarRailHandleVariants: Variants = {
+  rest: { scale: 1 },
+  hover: { scale: 1.03 },
+  tap: { scale: 0.96 },
+};
 
 const sidebarMenuActionRevealClasses =
   "absolute end-[var(--dt-space-1)] top-1/2 size-7 -translate-y-1/2 border-0 bg-transparent opacity-0 motion-safe:transition-[opacity,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] focus-visible:opacity-100 group-focus-within/sidebar-menu-item:opacity-100 group-hover/sidebar-menu-item:opacity-100 group-data-[collapsed=true]:hidden";
@@ -558,12 +588,34 @@ function CloseIcon() {
   );
 }
 
-function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
+function getTriggerDirection(collapsed: boolean, side: SidebarSide) {
   if (side === "right") {
-    return collapsed ? <ChevronLeftIcon /> : <ChevronRightIcon />;
+    return collapsed ? "left" : "right";
   }
 
-  return collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />;
+  return collapsed ? "right" : "left";
+}
+
+function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
+  return getTriggerDirection(collapsed, side) === "right" ? (
+    <ChevronRightIcon />
+  ) : (
+    <ChevronLeftIcon />
+  );
+}
+
+function isSidebarRailChild(child: ReactNode) {
+  if (!isValidElement(child) || typeof child.type === "string") {
+    return false;
+  }
+
+  return (
+    (
+      child.type as unknown as {
+        displayName?: string;
+      }
+    ).displayName === "SidebarRail"
+  );
 }
 
 function renderMenuContent({
@@ -891,6 +943,11 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
       }),
       [side, surfaceCollapsed, variant],
     );
+    const resolvedChildren = Children.toArray(children);
+    const railChildren = resolvedChildren.filter(isSidebarRailChild);
+    const viewportChildren = resolvedChildren.filter(
+      (child) => !isSidebarRailChild(child),
+    );
 
     return (
       <SidebarSurfaceContext.Provider value={surfaceContext}>
@@ -906,7 +963,10 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
           data-variant={variant}
           className={sidebarClassNames({ className, variant })}
         >
-          {children}
+          <div data-slot="sidebar-viewport" className={sidebarViewportClasses}>
+            {viewportChildren}
+          </div>
+          {railChildren}
         </nav>
       </SidebarSurfaceContext.Provider>
     );
@@ -1771,8 +1831,8 @@ export const SidebarRail = forwardRef<HTMLButtonElement, SidebarRailProps>(
     {
       children,
       className,
-      collapseLabel = "Collapse sidebar rail",
-      expandLabel = "Expand sidebar rail",
+      collapseLabel = "Collapse sidebar",
+      expandLabel = "Expand sidebar",
       onClick,
       side: sideProp,
       type = "button",
@@ -1785,26 +1845,62 @@ export const SidebarRail = forwardRef<HTMLButtonElement, SidebarRailProps>(
     const collapsed = surfaceContext?.collapsed ?? context.collapsed;
     const side = sideProp ?? surfaceContext?.side ?? context.side;
     const label = collapsed ? expandLabel : collapseLabel;
+    const shouldReduceMotion = useReducedMotion();
+    const motionDisabled =
+      context.motion === "none" || shouldReduceMotion === true;
+    const motionTransition =
+      motionDisabled || context.motion === "none"
+        ? sidebarRailStaticTransition
+        : sidebarRailMotionTransitions[context.motion];
     const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+      if (props.disabled) {
+        return;
+      }
+
       context.toggleCollapsed();
       onClick?.(event);
     };
 
     return (
-      <button
-        {...props}
+      <motionElement.button
+        {...(props as HTMLMotionProps<"button">)}
         ref={ref}
         type={type}
+        animate="rest"
         aria-expanded={!collapsed}
         aria-label={props["aria-label"] ?? label}
         data-collapsed={collapsed ? "true" : "false"}
+        data-motion={context.motion}
+        data-motion-behavior="transform"
+        data-reduced-motion={motionDisabled ? "true" : "false"}
         data-side={side}
         data-slot="sidebar-rail"
+        initial={false}
         className={sidebarRailClassNames({ className })}
         onClick={handleClick}
+        whileHover={motionDisabled || props.disabled ? undefined : "hover"}
+        whileTap={motionDisabled || props.disabled ? undefined : "tap"}
       >
-        {children}
-      </button>
+        <motionElement.span
+          aria-hidden="true"
+          data-slot="sidebar-rail-handle"
+          className={sidebarRailHandleClasses}
+          transition={motionTransition}
+          variants={sidebarRailHandleVariants}
+        >
+          {children ?? (
+            <motionElement.span
+              data-direction={getTriggerDirection(collapsed, side)}
+              data-slot="sidebar-rail-chevron"
+              initial={false}
+              animate={{ rotate: collapsed ? 180 : 0 }}
+              transition={motionTransition}
+            >
+              {side === "right" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </motionElement.span>
+          )}
+        </motionElement.span>
+      </motionElement.button>
     );
   },
 );

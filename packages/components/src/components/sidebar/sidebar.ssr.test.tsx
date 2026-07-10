@@ -11,14 +11,13 @@ import {
   SidebarMenuItem,
   SidebarMenuLink,
   SidebarProvider,
-  SidebarTrigger,
+  SidebarRail,
 } from ".";
 
 function SidebarExample({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <SidebarProvider defaultCollapsed={collapsed}>
       <Sidebar aria-label="SSR navigation">
-        <SidebarTrigger />
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -28,6 +27,7 @@ function SidebarExample({ collapsed = false }: { collapsed?: boolean }) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
+        <SidebarRail />
       </Sidebar>
     </SidebarProvider>
   );
@@ -39,6 +39,8 @@ describe("Sidebar SSR", () => {
     const collapsedMarkup = renderToString(<SidebarExample collapsed />);
 
     expect(expandedMarkup).toContain('data-slot="sidebar"');
+    expect(expandedMarkup).toContain('data-slot="sidebar-viewport"');
+    expect(expandedMarkup).toContain('data-slot="sidebar-rail-handle"');
     expect(expandedMarkup).toContain('data-collapsed="false"');
     expect(expandedMarkup).toContain('aria-current="page"');
     expect(collapsedMarkup).toContain('data-collapsed="true"');

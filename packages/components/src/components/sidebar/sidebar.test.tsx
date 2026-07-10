@@ -25,6 +25,7 @@ import {
   SidebarSkipLink,
   SidebarTrigger,
   sidebarClassNames,
+  sidebarRailClassNames,
 } from ".";
 
 function stubMatchMedia() {
@@ -84,9 +85,7 @@ function renderSidebar({
       onCollapsedChange={onCollapsedChange}
     >
       <Sidebar aria-label="Workspace navigation">
-        <SidebarHeader>
-          <SidebarTrigger />
-        </SidebarHeader>
+        <SidebarHeader>Workspace</SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -149,6 +148,15 @@ describe("Sidebar", () => {
     expect(sidebar).toHaveAttribute("data-collapsed", "false");
     expect(sidebar).toHaveAttribute("data-side", "left");
     expect(sidebar).toHaveAttribute("data-variant", "default");
+    expect(
+      sidebar.querySelector(':scope > [data-slot="sidebar-viewport"]'),
+    ).not.toBeNull();
+    expect(
+      sidebar.querySelector(':scope > [data-slot="sidebar-rail"]'),
+    ).not.toBeNull();
+    expect(
+      sidebar.querySelector('[data-slot="sidebar-rail-handle"]'),
+    ).not.toBeNull();
     expect(screen.getByText("Platform")).toHaveAttribute(
       "data-slot",
       "sidebar-group-label",
@@ -317,7 +325,7 @@ describe("Sidebar", () => {
     );
   });
 
-  it("supports uncontrolled collapsed state from trigger and rail", async () => {
+  it("supports uncontrolled collapsed state from the edge rail", async () => {
     const user = userEvent.setup();
 
     renderSidebar();
@@ -326,6 +334,9 @@ describe("Sidebar", () => {
       name: "Workspace navigation",
     });
     const trigger = screen.getByRole("button", { name: "Collapse sidebar" });
+    const chevron = trigger.querySelector('[data-slot="sidebar-rail-chevron"]');
+
+    expect(chevron).toHaveAttribute("data-direction", "left");
 
     await user.click(trigger);
 
@@ -333,19 +344,104 @@ describe("Sidebar", () => {
     expect(
       screen.getByRole("button", { name: "Expand sidebar" }),
     ).toHaveAttribute("data-collapsed", "true");
+    expect(chevron).toHaveAttribute("data-direction", "right");
 
     await user.click(screen.getByRole("button", { name: "Expand sidebar" }));
 
     expect(sidebar).toHaveAttribute("data-collapsed", "false");
   });
 
+  it("keeps the inline trigger available without requiring the edge rail", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <SidebarProvider>
+        <Sidebar aria-label="Inline trigger navigation">
+          <SidebarHeader>
+            <SidebarTrigger />
+          </SidebarHeader>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Collapse sidebar" }));
+
+    expect(
+      screen.getByRole("navigation", { name: "Inline trigger navigation" }),
+    ).toHaveAttribute("data-collapsed", "true");
+  });
+
+  it("renders a Motion-ready default rail handle and preserves custom children", () => {
+    render(
+      <SidebarProvider motion="expressive">
+        <Sidebar aria-label="Default rail navigation">
+          <SidebarRail />
+        </Sidebar>
+        <Sidebar aria-label="Custom rail navigation" side="right">
+          <SidebarRail>
+            <span data-testid="custom-rail-icon">Custom</span>
+          </SidebarRail>
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    const rails = screen.getAllByRole("button", {
+      name: "Collapse sidebar",
+    });
+    const defaultRail = rails.find(
+      (rail) => rail.getAttribute("data-side") === "left",
+    )!;
+    const customRail = rails.find(
+      (rail) => rail.getAttribute("data-side") === "right",
+    )!;
+    const defaultHandle = defaultRail.querySelector(
+      '[data-slot="sidebar-rail-handle"]',
+    );
+
+    expect(defaultRail).toHaveAttribute("data-motion", "expressive");
+    expect(defaultRail).toHaveAttribute("data-motion-behavior", "transform");
+    expect(sidebarRailClassNames()).toContain("h-10");
+    expect(sidebarRailClassNames()).toContain("w-6");
+    expect(sidebarRailClassNames()).not.toContain("before:");
+    expect(sidebarRailClassNames()).not.toMatch(/cursor-[ew]-resize/u);
+    expect(defaultHandle).not.toBeNull();
+    expect(defaultHandle).toHaveClass("h-8", "w-5", "rounded-md");
+    expect(defaultHandle).not.toHaveClass("rounded-full", "size-7");
+    expect(
+      defaultHandle?.querySelector('[data-slot="sidebar-rail-chevron"]'),
+    ).not.toBeNull();
+    expect(
+      screen
+        .getByTestId("custom-rail-icon")
+        .closest('[data-slot="sidebar-rail-handle"]'),
+    ).not.toBeNull();
+    expect(customRail).toHaveAttribute("data-side", "right");
+    expect(
+      defaultHandle?.querySelector('[data-slot="sidebar-rail-chevron"]'),
+    ).toHaveAttribute("data-direction", "left");
+  });
+
+  it("resolves the edge handle to static behavior when Sidebar motion is disabled", () => {
+    render(
+      <SidebarProvider animate={false}>
+        <Sidebar aria-label="Static rail navigation">
+          <SidebarRail />
+        </Sidebar>
+      </SidebarProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Collapse sidebar" }),
+    ).toHaveAttribute("data-reduced-motion", "true");
+    expect(
+      screen.getByRole("button", { name: "Collapse sidebar" }),
+    ).toHaveAttribute("data-motion", "none");
+  });
+
   it("uses local sidebar side override for nested controls", () => {
     render(
       <SidebarProvider side="left">
         <Sidebar aria-label="Right navigation" side="right">
-          <SidebarHeader>
-            <SidebarTrigger />
-          </SidebarHeader>
           <SidebarRail />
         </Sidebar>
       </SidebarProvider>,
@@ -358,17 +454,16 @@ describe("Sidebar", () => {
       screen.getByRole("button", { name: "Collapse sidebar" }),
     ).toHaveAttribute("data-side", "right");
     expect(
-      screen.getByRole("button", { name: "Collapse sidebar rail" }),
-    ).toHaveAttribute("data-side", "right");
+      screen
+        .getByRole("button", { name: "Collapse sidebar" })
+        .querySelector('[data-slot="sidebar-rail-chevron"]'),
+    ).toHaveAttribute("data-direction", "right");
   });
 
   it("treats the rail variant as visually collapsed", () => {
     render(
       <SidebarProvider>
         <Sidebar aria-label="Rail variant navigation" variant="rail">
-          <SidebarHeader>
-            <SidebarTrigger />
-          </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -378,6 +473,7 @@ describe("Sidebar", () => {
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
+          <SidebarRail />
         </Sidebar>
       </SidebarProvider>,
     );

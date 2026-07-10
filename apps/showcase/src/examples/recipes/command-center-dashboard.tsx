@@ -9,7 +9,6 @@ import {
   FileText,
   Gauge,
   LayoutDashboard,
-  PanelLeftClose,
   Radio,
   Search,
   Settings2,
@@ -49,7 +48,6 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
   type CommandPaletteCommand,
   type DataTableColumnDef,
   type ProgressTone,
@@ -143,10 +141,7 @@ const severityMeta: Record<
   sev3: { label: "SEV3", cls: "bg-info/15 text-info ring-info/25" },
 };
 
-const statusMeta: Record<
-  Incident["status"],
-  { label: string; dot: string }
-> = {
+const statusMeta: Record<Incident["status"], { label: string; dot: string }> = {
   open: { label: "Open", dot: "bg-destructive" },
   investigating: {
     label: "Investigating",
@@ -425,9 +420,6 @@ export function CommandCenterDashboardRecipe() {
                   </div>
                 </div>
               </div>
-              <SidebarTrigger>
-                <PanelLeftClose aria-hidden="true" />
-              </SidebarTrigger>
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -609,7 +601,10 @@ export function CommandCenterDashboardRecipe() {
             </div>
 
             <output className="border-border bg-background/70 text-muted-foreground flex items-center gap-2 rounded-md border px-3 py-2 text-sm shadow-sm backdrop-blur">
-              <Command className="text-primary size-4 shrink-0" aria-hidden="true" />
+              <Command
+                className="text-primary size-4 shrink-0"
+                aria-hidden="true"
+              />
               {lastCommand}
             </output>
 
@@ -626,7 +621,7 @@ export function CommandCenterDashboardRecipe() {
                   <Card
                     key={kpi.label}
                     shadow="sm"
-                    className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:shadow-md hover:motion-safe:-translate-y-0.5"
+                    className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm hover:shadow-md motion-safe:transition-all motion-safe:duration-300 hover:motion-safe:-translate-y-0.5"
                   >
                     <CardContent className="space-y-3 p-4">
                       <div className="flex items-start justify-between gap-2">

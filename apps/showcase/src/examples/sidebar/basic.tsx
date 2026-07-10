@@ -13,9 +13,8 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
 } from "@dethink/components";
-import { BarChart3, LayoutDashboard, PanelLeftClose } from "lucide-react";
+import { BarChart3, LayoutDashboard } from "lucide-react";
 
 export function SidebarBasic() {
   return (
@@ -32,9 +31,6 @@ export function SidebarBasic() {
                   Operations
                 </div>
               </div>
-              <SidebarTrigger>
-                <PanelLeftClose aria-hidden="true" />
-              </SidebarTrigger>
             </div>
           </SidebarHeader>
           <SidebarContent>

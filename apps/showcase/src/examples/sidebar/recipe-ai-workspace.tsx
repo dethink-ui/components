@@ -15,15 +15,8 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
 } from "@dethink/components";
-import {
-  Activity,
-  Gauge,
-  PanelLeftClose,
-  Settings2,
-  Sparkles,
-} from "lucide-react";
+import { Activity, Gauge, Settings2, Sparkles } from "lucide-react";
 
 export function SidebarRecipeAiWorkspace() {
   return (
@@ -40,9 +33,6 @@ export function SidebarRecipeAiWorkspace() {
                   Model operations
                 </div>
               </div>
-              <SidebarTrigger>
-                <PanelLeftClose aria-hidden="true" />
-              </SidebarTrigger>
             </div>
           </SidebarHeader>
           <SidebarContent>

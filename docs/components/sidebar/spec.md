@@ -69,6 +69,15 @@ and state hooks when they make composition clearer.
   a full Dashboard Shell layout.
 - `SidebarSkipLink` targets the app main content region and becomes visible on
   focus.
+- `SidebarRail` is the standard visible desktop collapse control. Render it as
+  a direct child of `Sidebar` so its compact handle can straddle the outer edge
+  while normal Sidebar content remains clipped inside the internal viewport.
+- The default rail affordance is a 20 by 32 pixel rounded-rectangle chevron
+  inside a 24 by 40 pixel native button target. It uses a normal pointer cursor
+  and does not expose a resize line, resize cursor, or drag gesture.
+- `SidebarTrigger` remains available for intentional inline or toolbar
+  placement. Standard compositions use either `SidebarRail` or
+  `SidebarTrigger`, not both for the same desktop Sidebar.
 
 ## Item Contract
 
@@ -141,12 +150,12 @@ Built-in choreography may include:
 - optional staggered item entrance
 - hover and focus micro-interactions
 
-Sidebar v1 uses CSS transitions for color, opacity, background, border,
-transform, mounted menu/drawer entrance, and fixed-width state changes. The
-`animate` provider prop disables animation globally by resolving all Sidebar
-surfaces to `motion="none"`. It does not import Motion. If a later slice
-introduces Motion for layout or exit choreography, registry metadata must declare
-it at the same time.
+Sidebar uses CSS transitions for color, opacity, background, border, mounted
+menu/drawer entrance, and fixed-width state changes. The visible edge handle
+uses `motion/react` primitives for transform-only hover/tap feedback and
+direction-aware chevron rotation. The `animate` provider prop disables animation
+globally by resolving all Sidebar surfaces to `motion="none"`; the edge handle
+also respects `prefers-reduced-motion`. Registry metadata declares Motion.
 
 Reduced-motion mode should remove transform-heavy movement, layout morphing,
 and staggered effects while preserving visible state changes.
@@ -187,6 +196,7 @@ Sidebar should expose stable data attributes:
 
 - `data-slot="sidebar-provider"`
 - `data-slot="sidebar"`
+- `data-slot="sidebar-viewport"`
 - `data-slot="sidebar-header"`
 - `data-slot="sidebar-footer"`
 - `data-slot="sidebar-content"`
@@ -201,6 +211,8 @@ Sidebar should expose stable data attributes:
 - `data-slot="sidebar-menu-action"`
 - `data-slot="sidebar-trigger"`
 - `data-slot="sidebar-rail"`
+- `data-slot="sidebar-rail-handle"`
+- `data-slot="sidebar-rail-chevron"`
 - `data-slot="sidebar-mobile"`
 - `data-slot="sidebar-inset"`
 - `data-slot="sidebar-skip-link"`
@@ -215,6 +227,8 @@ Sidebar should expose stable data attributes:
 - `data-current`
 - `data-disabled`
 - `data-motion`
+- `data-motion-behavior`
+- `data-reduced-motion`
 
 ## Registry Requirements
 

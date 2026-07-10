@@ -155,7 +155,6 @@ function SidebarExample({
                 Production workspace
               </div>
             </div>
-            <SidebarTrigger />
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -378,6 +377,73 @@ export const CollapsedRail: Story = {
   ),
 };
 
+export const EdgeHandleStates: Story = {
+  render: () => (
+    <div className="grid gap-4 lg:grid-cols-3">
+      {(
+        [
+          { collapsed: false, label: "Left expanded", side: "left" },
+          { collapsed: true, label: "Left collapsed", side: "left" },
+          { collapsed: false, label: "Right expanded", side: "right" },
+        ] as const
+      ).map(({ collapsed, label, side }) => {
+        const sidebar = (
+          <Sidebar aria-label={`${label} navigation`} side={side}>
+            <SidebarHeader>
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="bg-primary/10 text-primary grid size-8 shrink-0 place-items-center rounded-md">
+                  <OverviewIcon className="size-4" />
+                </span>
+                <span className="truncate text-sm font-semibold">
+                  Dethink Ops
+                </span>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuLink
+                    current
+                    href={`/${side}/${String(collapsed)}`}
+                    icon={<WorkflowIcon />}
+                  >
+                    Pipelines
+                  </SidebarMenuLink>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarContent>
+            <SidebarRail />
+          </Sidebar>
+        );
+        const inset = (
+          <SidebarInset className="bg-muted/20 p-4">
+            <Text size="xs" tone="muted">
+              {label}
+            </Text>
+          </SidebarInset>
+        );
+
+        return (
+          <DethinkProvider
+            key={label}
+            theme="light"
+            className="border-border h-56 overflow-hidden rounded-lg border"
+          >
+            <SidebarProvider
+              defaultCollapsed={collapsed}
+              motion="expressive"
+              side={side}
+            >
+              {side === "right" ? inset : sidebar}
+              {side === "right" ? sidebar : inset}
+            </SidebarProvider>
+          </DethinkProvider>
+        );
+      })}
+    </div>
+  ),
+};
+
 export const ControlledState: Story = {
   render: () => (
     <DethinkProvider
@@ -484,9 +550,6 @@ export const MotionPresets: Story = {
             motion={motion}
           >
             <Sidebar aria-label={`${label} motion navigation`}>
-              <SidebarHeader>
-                <SidebarTrigger />
-              </SidebarHeader>
               <SidebarContent>
                 <SidebarGroup>
                   <SidebarGroupLabel>{label}</SidebarGroupLabel>
@@ -505,11 +568,12 @@ export const MotionPresets: Story = {
                   </SidebarGroupContent>
                 </SidebarGroup>
               </SidebarContent>
+              <SidebarRail />
             </Sidebar>
             <SidebarInset className="p-5">
               <Text size="sm" tone="muted">
-                The preset and animate flag are exposed through data attributes
-                and CSS classes.
+                The preset and animate flag coordinate the Motion edge handle
+                with the Sidebar&apos;s CSS choreography.
               </Text>
             </SidebarInset>
           </SidebarProvider>
@@ -555,9 +619,6 @@ export const ThemeDensityAndRtl: Story = {
       >
         <SidebarProvider side="right" variant="bordered">
           <Sidebar aria-label="RTL navigation">
-            <SidebarHeader>
-              <SidebarTrigger />
-            </SidebarHeader>
             <SidebarContent>
               <SidebarMenu>
                 <SidebarMenuItem>

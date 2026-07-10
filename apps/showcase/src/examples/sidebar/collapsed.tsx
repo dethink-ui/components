@@ -12,9 +12,8 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
 } from "@dethink/components";
-import { FileBarChart, FolderKanban, Inbox, PanelLeftOpen } from "lucide-react";
+import { FileBarChart, FolderKanban, Inbox } from "lucide-react";
 
 const collapsedItems = [
   { href: "/inbox", icon: Inbox, label: "Inbox" },
@@ -27,11 +26,6 @@ export function SidebarCollapsed() {
     <SidebarProvider defaultCollapsed motion="subtle">
       <div className="border-border bg-background flex h-72 overflow-hidden rounded-lg border">
         <Sidebar aria-label="Collapsed navigation" variant="bordered">
-          <div className="px-2 py-2">
-            <SidebarTrigger>
-              <PanelLeftOpen aria-hidden="true" />
-            </SidebarTrigger>
-          </div>
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupLabel>Rail</SidebarGroupLabel>

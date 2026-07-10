@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
   SidebarMenuLink,
   SidebarProvider,
-  SidebarTrigger,
+  SidebarRail,
 } from ".";
 
 expect.extend(toHaveNoViolations);
@@ -26,9 +26,7 @@ describe("Sidebar accessibility", () => {
       <DethinkProvider theme="light">
         <SidebarProvider defaultCollapsed>
           <Sidebar aria-label="Product navigation">
-            <SidebarHeader>
-              <SidebarTrigger />
-            </SidebarHeader>
+            <SidebarHeader>Product</SidebarHeader>
             <SidebarContent>
               <SidebarGroup>
                 <SidebarGroupLabel>Workspace</SidebarGroupLabel>
@@ -53,6 +51,7 @@ describe("Sidebar accessibility", () => {
                 </SidebarGroupContent>
               </SidebarGroup>
             </SidebarContent>
+            <SidebarRail />
           </Sidebar>
         </SidebarProvider>
       </DethinkProvider>,

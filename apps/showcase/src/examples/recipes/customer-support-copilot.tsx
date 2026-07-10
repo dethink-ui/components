@@ -11,7 +11,6 @@ import {
   Mail,
   MessageCircle,
   MessageSquareText,
-  PanelLeftClose,
   Send,
   Sparkles,
   Users,
@@ -39,7 +38,6 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarSkipLink,
-  SidebarTrigger,
   Textarea,
 } from "@dethink/components";
 
@@ -322,9 +320,6 @@ export function CustomerSupportCopilotRecipe() {
                   </p>
                 </div>
               </div>
-              <SidebarTrigger>
-                <PanelLeftClose aria-hidden="true" />
-              </SidebarTrigger>
             </div>
           </SidebarHeader>
 

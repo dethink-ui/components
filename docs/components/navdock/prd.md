@@ -113,7 +113,7 @@ dismissal, predictable touch behavior, and reduced-motion-safe state.
 - When inline titles are visible, scale the active item's title down to `0.92x` and immediate neighboring titles down to `0.8x` during hover/focus handoff.
 - Keyboard focus triggers the same magnification and title reveal behavior as pointer hover.
 - Press/tap state should briefly scale the active icon down before returning to its hover/focus target scale.
-- NavDock requires `motion/react` as a runtime dependency. ADR 0001 records this deliberate departure from the CSS-only motion precedent in NavigationMenu and Sidebar.
+- NavDock requires `motion/react` as a runtime dependency. ADR 0001 records the original departure from the CSS-only navigation precedent; Sidebar later adopted Motion narrowly for its edge-mounted collapse handle in #347.
 - Use Motion for dock magnification, adjacent-item handoff, title presence, submenu presence, and press/tap interaction. Use transform and opacity as the primary animated properties.
 - Expose `motion="none" | "subtle" | "standard" | "expressive"` to align with existing navigation component APIs.
 - NavDock must guarantee reduced-motion-safe behavior without requiring consumers to provide a top-level Motion configuration. It should still respect any outer Motion configuration where compatible.

@@ -47,7 +47,7 @@ export const sidebarProps: PropRow[] = [
     type: "button props",
     defaultValue: "toggle collapse",
     description:
-      "Desktop collapse controls with distinct accessible names and aria-expanded state.",
+      "Alternative desktop collapse controls with aria-expanded state. SidebarRail is the standard compact edge tab with a small Motion-powered chevron; it is a binary toggle, not a resize or drag handle. Use SidebarTrigger only when an inline control is intentional, not alongside the rail.",
   },
   {
     prop: "SidebarMobile / SidebarMobileTrigger",
@@ -68,13 +68,13 @@ export const sidebarProps: PropRow[] = [
     type: "boolean",
     defaultValue: "true",
     description:
-      "Enables CSS-only spring-like transitions. Set false to resolve every sidebar surface to motion none.",
+      "Enables the CSS choreography and Motion edge-handle feedback. Set false to resolve every sidebar surface to motion none.",
   },
   {
     prop: "motion",
     type: '"none" | "subtle" | "standard" | "expressive"',
     defaultValue: '"standard"',
     description:
-      "CSS-only transition preset for width, disclosure, drawer, and menu-open animations. v1 does not add a Motion runtime dependency.",
+      "Coordinates CSS width, disclosure, drawer, and menu transitions with the Motion-powered edge handle. Reduced-motion preferences disable transform-heavy handle movement.",
   },
 ];

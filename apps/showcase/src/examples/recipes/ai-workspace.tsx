@@ -12,7 +12,6 @@ import {
   FileSearch,
   Gauge,
   MessageSquareText,
-  PanelLeftClose,
   Route,
   Search,
   Send,
@@ -56,7 +55,6 @@ import {
   SidebarMenuLink,
   SidebarProvider,
   SidebarRail,
-  SidebarTrigger,
   SkeletonText,
   Textarea,
   Timeline,
@@ -160,7 +158,10 @@ const barTone: Record<string, { solid: string; soft: string }> = {
 const snapshotTone: Record<string, { text: string; dot: string }> = {
   info: { text: "text-info", dot: "bg-info" },
   success: { text: "text-success", dot: "bg-success" },
-  warning: { text: "text-warning", dot: "bg-warning motion-safe:animate-pulse" },
+  warning: {
+    text: "text-warning",
+    dot: "bg-warning motion-safe:animate-pulse",
+  },
 };
 
 function MiniBars({
@@ -210,7 +211,7 @@ function MetricTile({
   return (
     <Card
       shadow="sm"
-      className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:shadow-md hover:motion-safe:-translate-y-0.5"
+      className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm hover:shadow-md motion-safe:transition-all motion-safe:duration-300 hover:motion-safe:-translate-y-0.5"
     >
       <CardContent className="space-y-3 p-4">
         <div className="flex items-center justify-between gap-2">
@@ -288,9 +289,6 @@ export function AiWorkspaceRecipe() {
                   </div>
                 </div>
               </div>
-              <SidebarTrigger>
-                <PanelLeftClose aria-hidden="true" />
-              </SidebarTrigger>
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -436,7 +434,10 @@ export function AiWorkspaceRecipe() {
               </div>
 
               <output className="border-border bg-background/70 text-muted-foreground flex items-center gap-2 rounded-md border px-3 py-2 text-sm shadow-sm backdrop-blur">
-                <Activity className="text-primary size-4 shrink-0" aria-hidden="true" />
+                <Activity
+                  className="text-primary size-4 shrink-0"
+                  aria-hidden="true"
+                />
                 {status}
               </output>
 
@@ -451,8 +452,8 @@ export function AiWorkspaceRecipe() {
                     Run transcript
                   </CardTitle>
                   <CardDescription>
-                    A chat-like log assembled from primitives — no dedicated chat
-                    component required.
+                    A chat-like log assembled from primitives — no dedicated
+                    chat component required.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -475,7 +476,9 @@ export function AiWorkspaceRecipe() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="text-muted-foreground mb-1 flex items-center gap-2 text-xs">
-                          <span className="text-foreground font-medium">You</span>
+                          <span className="text-foreground font-medium">
+                            You
+                          </span>
                           <span aria-hidden="true">·</span>
                           <span>2m ago</span>
                         </div>
@@ -510,8 +513,8 @@ export function AiWorkspaceRecipe() {
                             <FileSearch className="size-3.5" />
                           </span>
                           <span className="text-foreground/90 min-w-0 flex-1 truncate text-xs">
-                            <span className="font-mono">retrieval.search</span> ·
-                            8 documents
+                            <span className="font-mono">retrieval.search</span>{" "}
+                            · 8 documents
                           </span>
                           <span className="text-success inline-flex items-center gap-1.5 text-[0.7rem] font-semibold">
                             <span
@@ -623,7 +626,10 @@ export function AiWorkspaceRecipe() {
                     aria-hidden="true"
                     className="bg-muted/50 flex h-2 w-full overflow-hidden rounded-full"
                   >
-                    <span className="bg-primary h-full" style={{ width: "92%" }} />
+                    <span
+                      className="bg-primary h-full"
+                      style={{ width: "92%" }}
+                    />
                     <span className="bg-info h-full" style={{ width: "8%" }} />
                   </div>
                   <div className="text-muted-foreground flex items-center justify-between text-[0.7rem]">
@@ -660,7 +666,10 @@ export function AiWorkspaceRecipe() {
                     aria-hidden="true"
                     className="bg-muted/50 flex h-2 w-full overflow-hidden rounded-full"
                   >
-                    <span className="bg-primary h-full" style={{ width: "62%" }} />
+                    <span
+                      className="bg-primary h-full"
+                      style={{ width: "62%" }}
+                    />
                     <span className="bg-info h-full" style={{ width: "38%" }} />
                   </div>
                   <div className="text-muted-foreground flex items-center justify-between text-[0.7rem]">
@@ -733,8 +742,8 @@ export function AiWorkspaceRecipe() {
                   <CardHeader>
                     <CardTitle className="text-base">Prompt</CardTitle>
                     <CardDescription>
-                      Textarea gives prompt input room without pretending to be a
-                      full chat component.
+                      Textarea gives prompt input room without pretending to be
+                      a full chat component.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -831,7 +840,9 @@ export function AiWorkspaceRecipe() {
                         title="Evals"
                         value="evals"
                       >
-                        <NavDockButton onAction={() => setActiveTool("evals")} />
+                        <NavDockButton
+                          onAction={() => setActiveTool("evals")}
+                        />
                       </NavDockItem>
                       <NavDockSeparator />
                       <NavDockItem
@@ -851,7 +862,10 @@ export function AiWorkspaceRecipe() {
               <Card shadow="sm" className="ring-border/60 ring-1">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
-                    <Sparkles className="text-primary size-4" aria-hidden="true" />
+                    <Sparkles
+                      className="text-primary size-4"
+                      aria-hidden="true"
+                    />
                     Streaming summary
                   </CardTitle>
                   <CardDescription>
