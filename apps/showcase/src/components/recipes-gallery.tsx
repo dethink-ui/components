@@ -1,20 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Bot,
-  CalendarDays,
-  CheckCircle2,
-  CreditCard,
-  LayoutDashboard,
-  LockKeyhole,
-  Search,
-  Settings2,
-  Sparkles,
-  Table2,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, Search } from "lucide-react";
 import {
   Button,
   Card,
@@ -25,7 +14,6 @@ import {
   CardTitle,
   EmptyState,
   Input,
-  Progress,
 } from "@dethink/components";
 import {
   AnimatePresence,
@@ -46,72 +34,21 @@ type ActiveCategory = "all" | RecipeCategory;
 
 const motionEase = [0.2, 0, 0, 1] as const;
 
-const previewIcons: Record<RecipeCategory, React.ElementType> = {
-  ai: Bot,
-  auth: LockKeyhole,
-  billing: CreditCard,
-  dashboard: LayoutDashboard,
-  data: Table2,
-  marketing: Sparkles,
-  scheduling: CalendarDays,
-  settings: Settings2,
-};
-
 function RecipeThumbnail({ recipe }: { recipe: RecipeMeta }) {
-  const Icon = previewIcons[recipe.category];
-  const metrics =
-    recipe.category === "marketing"
-      ? ["Hero", "Bento", "Pricing"]
-      : recipe.category === "auth"
-        ? ["SSO", "Form", "Toast"]
-        : recipe.category === "data"
-          ? ["Rows", "Drawer", "Actions"]
-          : ["Shell", "Filters", "Status"];
-
   return (
     <div
       aria-hidden="true"
-      className="sc-recipe-thumb border-border bg-background relative min-h-44 overflow-hidden rounded-lg border p-4"
+      className="sc-recipe-thumb border-border bg-muted relative aspect-video overflow-hidden rounded-lg border"
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="bg-primary/10 text-primary grid size-9 place-items-center rounded-md">
-            <Icon className="size-4" />
-          </span>
-          <div className="space-y-1">
-            <span className="bg-foreground/80 block h-2.5 w-24 rounded-full" />
-            <span className="bg-muted-foreground/30 block h-2 w-16 rounded-full" />
-          </div>
-        </div>
-        <span className="border-border bg-muted h-7 w-16 rounded-full border" />
-      </div>
-      <div className="mt-5 grid grid-cols-3 gap-2">
-        {metrics.map((metric, index) => (
-          <div
-            key={metric}
-            className="border-border bg-muted/45 rounded-md border p-2"
-          >
-            <span className="text-muted-foreground block text-[0.625rem] font-medium">
-              {metric}
-            </span>
-            <span
-              className="bg-primary/70 mt-2 block h-2 rounded-full"
-              style={{ inlineSize: `${64 + index * 12}%` }}
-            />
-          </div>
-        ))}
-      </div>
-      <div className="mt-5 space-y-2">
-        <Progress
-          aria-label={`${recipe.title} preview progress`}
-          value={recipe.featured ? 82 : 64}
-          tone={recipe.featured ? "success" : "info"}
-        />
-        <div className="grid grid-cols-[1fr_auto] items-center gap-3">
-          <span className="bg-muted block h-8 rounded-md" />
-          <span className="bg-primary/80 block h-8 w-20 rounded-md" />
-        </div>
-      </div>
+      <Image
+        src={`/recipe-captures/${recipe.slug}--teal-light-default@1x.png`}
+        alt=""
+        width={1200}
+        height={675}
+        sizes="(min-width: 1280px) 30vw, (min-width: 768px) 45vw, calc(100vw - 3rem)"
+        className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transition-none"
+        draggable={false}
+      />
     </div>
   );
 }

@@ -3,11 +3,11 @@
 ## Status
 
 - Source: UX and design audit of the running Next.js showcase on 10 July 2026.
-- Current phase: first four approved implementation slices complete.
+- Current phase: first five approved implementation slices complete.
 - GitHub PRD: [#383 — Showcase discovery, documentation, and motion polish](https://github.com/parveshh/dethink-components/issues/383).
 - Implementation gate: complete; the PRD and nine approved tracer-bullet issues are published.
-- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386), and [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387).
-- Next gated slice: [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388); representative captures require visual approval before the full catalog is finalized.
+- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386), [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387), and [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388).
+- Next slice: [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389). Correct the interaction promise and improve static state-preview legibility without adding nested interactive content.
 
 ## Outcome
 
@@ -135,7 +135,7 @@ Implementation direction:
 2. [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385) — AFK; blocked by #384. Reuses catalog matching/metadata, adds mobile component discovery plus previous/next navigation, and verifies current-page behavior.
 3. [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386) — AFK; no blockers. Changes the default preview/source hierarchy and verifies keyboard, copy, deep-link, Motion, and mobile behavior.
 4. [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387) — AFK; no blockers. Aligns total/featured language, simplifies the hero, brings filters forward, and adds restrained filter transitions.
-5. [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388) — HITL; blocked by #387. Defines the capture contract, produces initial imagery, and pauses for visual approval before finalizing all recipes.
+5. [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388) — complete. Defines the capture contract, passes representative visual approval, and integrates maintained imagery for all ten recipes.
 6. [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389) — AFK; no blockers. Corrects the interaction promise and improves teaser legibility without introducing nested interactive content.
 7. [#390 — Tighten the mobile homepage hero](https://github.com/parveshh/dethink-components/issues/390) — AFK; blocked by #389. Improves CTA hierarchy, first-viewport density, and coordinated entrance motion while preserving the workbench identity.
 8. [#391 — Strengthen dark-theme legibility and focus states](https://github.com/parveshh/dethink-components/issues/391) — AFK; no blockers. Measures and updates semantic tokens, then verifies affected showcase surfaces across brand themes.
@@ -201,3 +201,7 @@ Tests should assert public behavior and visible outcomes rather than component i
 - 2026-07-10: Implemented #387 on `feature/issue-387-recipe-discovery`: canonicalized the homepage and recipe-page language to 10 total recipes, 6 featured recipes, and 8 categories; removed the registry-mode statistic; compressed the hero; and moved search/category controls to 527px in the 1440×900 audit viewport.
 - 2026-07-10: Added a visible and debounced accessible result count, pressed-state semantics, resettable filters, semantic empty-state heading, and stable keyed Motion transitions with a bounded 125ms maximum stagger and instantaneous reduced-motion layout changes.
 - 2026-07-10: Verified #387 with TypeScript, ESLint, the 72-route production build, five passing Playwright cases, all ten recipe routes, and settled desktop/mobile browser captures with no console errors or framework overlays.
+- 2026-07-10: Started #388 on `feature/issue-388-recipe-captures`; documented a fixed 1440×1200 viewport and 1200×675 teal/light/default-density capture contract, added a canonical `data-recipe-preview` seam, and added `pnpm capture:recipes` with representative and `--all` modes.
+- 2026-07-10: Generated exact 1200×675 representative captures for `command-center-dashboard`, `saas-landing-page`, and `login-and-onboarding`. Reviewed them at 400×225 gallery-card scale and paused before the full catalog, as required by the HITL approval gate.
+- 2026-07-10: Received human approval for the representative capture treatment, generated the remaining seven captures, and verified the complete set at exactly 1200×675.
+- 2026-07-10: Replaced the generic category skeletons with responsive, top-aligned `next/image` captures. The adjacent recipe title and summary carry the accessible name, so the duplicate thumbnail imagery remains decorative with empty alternative text.

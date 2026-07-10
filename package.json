@@ -21,6 +21,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
+    "capture:recipes": "node scripts/capture-recipe-thumbnails.mjs",
     "changeset": "changeset"
   },
   "devDependencies": {
