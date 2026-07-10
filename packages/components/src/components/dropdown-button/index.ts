@@ -5,4 +5,5 @@ export {
   type DropdownButtonMode,
   type DropdownButtonMotionPreset,
   type DropdownButtonProps,
+  type DropdownButtonSplitProps,
 } from "./dropdown-button";

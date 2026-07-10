@@ -39,6 +39,26 @@ describe("DropdownButton SSR", () => {
     expect(html).not.toContain("Archive report");
   });
 
+  it("renders two stable split-button controls on the server", () => {
+    const html = renderToString(
+      <DropdownButton
+        label="Save"
+        menuLabel="More save options"
+        mode="split"
+        onPrimaryAction={() => undefined}
+      >
+        <DropdownMenuItem>Save as template</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    expect(html).toContain('data-mode="split"');
+    expect(html).toContain('data-slot="dropdown-button-primary"');
+    expect(html).toContain('data-slot="dropdown-button-menu-trigger"');
+    expect(html).toContain('aria-label="More save options"');
+    expect(html.match(/<button/g)).toHaveLength(2);
+    expect(html).not.toContain("Save as template");
+  });
+
   it("hydrates without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")

@@ -62,6 +62,32 @@ export function DropdownButtonBasic() {
 
       <div className="space-y-3">
         <p className="text-muted-foreground text-sm font-medium">
+          Split primary action and alternatives
+        </p>
+        <DropdownButton
+          label="Save"
+          menuLabel="More save options"
+          mode="split"
+          onPrimaryAction={() => setLastAction("Saved directly.")}
+          primaryIcon={<span aria-hidden="true">✓</span>}
+        >
+          <DropdownMenuItem
+            onAction={() => setLastAction("Saved as template.")}
+          >
+            Save as template
+          </DropdownMenuItem>
+          <DropdownMenuItem onAction={() => setLastAction("Saved and closed.")}>
+            Save and close
+          </DropdownMenuItem>
+        </DropdownButton>
+        <p className="text-muted-foreground max-w-prose text-sm">
+          The primary side runs only Save. The separately named chevron opens
+          alternatives; both controls remain normal Tab stops.
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-muted-foreground text-sm font-medium">
           Controlled open state and destructive action
         </p>
         <DropdownButton

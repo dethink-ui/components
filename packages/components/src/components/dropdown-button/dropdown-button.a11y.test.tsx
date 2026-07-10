@@ -38,4 +38,35 @@ describe("DropdownButton accessibility", () => {
       axe(container.ownerDocument.body),
     ).resolves.toHaveNoViolations();
   });
+
+  it("has no axe violations for separately named split controls", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <main>
+          <DropdownButton
+            label="Publish"
+            menuLabel="More publish options"
+            mode="split"
+            onPrimaryAction={() => undefined}
+          >
+            <DropdownMenuItem>Schedule publish</DropdownMenuItem>
+            <DropdownMenuItem destructive>Discard draft</DropdownMenuItem>
+          </DropdownButton>
+        </main>
+      </DethinkProvider>,
+    );
+
+    const primary = screen.getByRole("button", { name: "Publish" });
+    const menuTrigger = screen.getByRole("button", {
+      name: "More publish options",
+    });
+
+    expect(primary).not.toHaveAttribute("aria-haspopup");
+    await user.click(menuTrigger);
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
+  });
 });

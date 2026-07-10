@@ -1,5 +1,11 @@
-import { forwardRef, type ReactNode, useState } from "react";
-import type { ButtonSize, ButtonVariant } from "../button";
+import { forwardRef, type ReactNode, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import {
+  Button,
+  type ButtonProps,
+  type ButtonSize,
+  type ButtonVariant,
+} from "../button";
 import { ButtonGroup } from "../button-group";
 import {
   DropdownMenu,
@@ -10,10 +16,10 @@ import {
 import type { PositionedOverlayPositionProps } from "../../utils/positioned-overlay";
 import { cn } from "../../utils/cn";
 
-export type DropdownButtonMode = "menu";
+export type DropdownButtonMode = "menu" | "split";
 export type DropdownButtonMotionPreset = DropdownMenuMotionPreset;
 
-export interface DropdownButtonMenuProps extends PositionedOverlayPositionProps {
+interface DropdownButtonSharedProps extends PositionedOverlayPositionProps {
   "aria-describedby"?: string;
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -25,7 +31,6 @@ export interface DropdownButtonMenuProps extends PositionedOverlayPositionProps 
   groupClassName?: string;
   label: ReactNode;
   menuClassName?: string;
-  mode?: "menu";
   motionPreset?: DropdownButtonMotionPreset;
   onOpenChange?: (open: boolean) => void;
   open?: boolean;
@@ -34,11 +39,17 @@ export interface DropdownButtonMenuProps extends PositionedOverlayPositionProps 
   size?: ButtonSize;
   triggerClassName?: string;
   variant?: ButtonVariant;
+}
+
+export interface DropdownButtonMenuProps extends DropdownButtonSharedProps {
+  mode?: "menu";
 
   /** Reserved for split mode. Direct primary actions are invalid in menu mode. */
   onPrimaryAction?: never;
   /** Reserved for split mode's separately named icon trigger. */
   menuLabel?: never;
+  /** Reserved for split mode's primary icon. */
+  primaryIcon?: never;
   /** Reserved for split mode's async primary action. */
   loading?: never;
   /** Reserved for split mode's async policy. */
@@ -49,11 +60,45 @@ export interface DropdownButtonMenuProps extends PositionedOverlayPositionProps 
   menuDisabled?: never;
 }
 
-export type DropdownButtonProps = DropdownButtonMenuProps;
+export interface DropdownButtonSplitProps extends DropdownButtonSharedProps {
+  menuLabel: string;
+  mode: "split";
+  onPrimaryAction: NonNullable<ButtonProps["onClick"]>;
+  primaryIcon?: ReactNode;
+
+  /** Added by the async coordination slice. */
+  loading?: never;
+  /** Added by the async coordination slice. */
+  loadingBehavior?: never;
+  /** Added by the async coordination slice. */
+  primaryDisabled?: never;
+  /** Added by the async coordination slice. */
+  menuDisabled?: never;
+}
+
+export type DropdownButtonProps =
+  DropdownButtonMenuProps | DropdownButtonSplitProps;
 
 const dropdownButtonRootClasses = "inline-flex w-fit max-w-full";
-const dropdownButtonTriggerIconClasses =
-  "pointer-events-none ms-[var(--dt-space-1)] size-4 shrink-0";
+const dropdownButtonTriggerIconClasses = "pointer-events-none size-4 shrink-0";
+
+const dropdownButtonSplitTriggerSizeClasses: Record<ButtonSize, string> = {
+  xs: "h-7 w-7 p-0",
+  sm: "h-8 w-8 p-0",
+  md: "h-density-control w-density-control p-0",
+  lg: "h-11 w-11 p-0",
+  xl: "h-12 w-12 p-0",
+  icon: "h-density-control w-density-control p-0",
+};
+
+const dropdownButtonChevronDuration: Record<
+  DropdownButtonMotionPreset,
+  number
+> = {
+  none: 0,
+  subtle: 0.12,
+  standard: 0.16,
+};
 
 export function dropdownButtonClassNames({
   className,
@@ -61,14 +106,32 @@ export function dropdownButtonClassNames({
   return cn(dropdownButtonRootClasses, className);
 }
 
-function ChevronDownIcon() {
+function ChevronDownIcon({
+  motionPreset,
+  open,
+  reducedMotion,
+}: {
+  motionPreset: DropdownButtonMotionPreset;
+  open: boolean;
+  reducedMotion: boolean;
+}) {
   return (
-    <svg
+    <motion.svg
       aria-hidden="true"
+      animate={{ rotate: open ? 180 : 0 }}
+      data-open={open ? "" : undefined}
       data-slot="dropdown-button-trigger-icon"
       className={dropdownButtonTriggerIconClasses}
       fill="none"
       focusable="false"
+      initial={false}
+      transition={{
+        duration:
+          reducedMotion || motionPreset === "none"
+            ? 0
+            : dropdownButtonChevronDuration[motionPreset],
+        ease: [0.16, 1, 0.3, 1],
+      }}
       viewBox="0 0 16 16"
     >
       <path
@@ -78,7 +141,7 @@ function ChevronDownIcon() {
         strokeLinejoin="round"
         strokeWidth="1.75"
       />
-    </svg>
+    </motion.svg>
   );
 }
 
@@ -99,12 +162,15 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
       groupClassName,
       label,
       menuClassName,
+      menuLabel,
       mode = "menu",
       motionPreset = "standard",
       offset,
       onOpenChange,
+      onPrimaryAction,
       open,
       placement,
+      primaryIcon,
       reducedMotion,
       shouldFlip,
       showArrow = false,
@@ -115,8 +181,13 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
     ref,
   ) => {
     const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+    const compositeRef = useRef<HTMLDivElement>(null);
+    const prefersReducedMotion = useReducedMotion();
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
+    const resolvedReducedMotion =
+      reducedMotion ?? prefersReducedMotion === true;
+    const isSplit = mode === "split";
     const groupLabel = ariaLabelledBy
       ? undefined
       : (ariaLabel ?? (typeof label === "string" ? label : undefined));
@@ -127,6 +198,13 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
 
       onOpenChange?.(nextOpen);
     };
+    const chevron = (
+      <ChevronDownIcon
+        motionPreset={motionPreset}
+        open={resolvedOpen}
+        reducedMotion={resolvedReducedMotion}
+      />
+    );
 
     return (
       <div
@@ -135,7 +213,7 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
         data-mode={mode}
         data-motion={motionPreset}
         data-open={resolvedOpen ? "" : undefined}
-        data-reduced-motion={reducedMotion ? "" : undefined}
+        data-reduced-motion={resolvedReducedMotion ? "" : undefined}
         data-slot="dropdown-button"
         data-state={resolvedOpen ? "open" : "closed"}
         className={dropdownButtonClassNames({ className })}
@@ -146,29 +224,62 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
           motionPreset={motionPreset}
           onOpenChange={handleOpenChange}
           open={resolvedOpen}
-          reducedMotion={reducedMotion}
+          reducedMotion={resolvedReducedMotion}
         >
           <ButtonGroup
+            ref={compositeRef}
             aria-label={groupLabel}
             aria-labelledby={ariaLabelledBy}
             className={groupClassName}
             data-slot="dropdown-button-composite"
           >
+            {isSplit ? (
+              <Button
+                data-slot="dropdown-button-primary"
+                disabled={disabled}
+                leftIcon={
+                  primaryIcon ? (
+                    <span data-slot="dropdown-button-primary-icon">
+                      {primaryIcon}
+                    </span>
+                  ) : undefined
+                }
+                onClick={onPrimaryAction}
+                size={size}
+                variant={variant}
+              >
+                <span data-slot="dropdown-button-label">{label}</span>
+              </Button>
+            ) : null}
             <DropdownMenuTrigger
               aria-describedby={ariaDescribedBy}
-              aria-label={ariaLabel}
-              aria-labelledby={ariaLabelledBy}
-              className={triggerClassName}
-              data-slot="dropdown-button-trigger"
+              aria-label={isSplit ? menuLabel : ariaLabel}
+              aria-labelledby={isSplit ? undefined : ariaLabelledBy}
+              className={cn(
+                isSplit && dropdownButtonSplitTriggerSizeClasses[size],
+                triggerClassName,
+              )}
+              data-slot={
+                isSplit
+                  ? "dropdown-button-menu-trigger"
+                  : "dropdown-button-trigger"
+              }
               disabled={disabled}
-              size={size}
+              size={isSplit ? "icon" : size}
               variant={variant}
             >
-              <span data-slot="dropdown-button-label">{label}</span>
-              <ChevronDownIcon />
+              {isSplit ? (
+                chevron
+              ) : (
+                <>
+                  <span data-slot="dropdown-button-label">{label}</span>
+                  {chevron}
+                </>
+              )}
             </DropdownMenuTrigger>
           </ButtonGroup>
           <DropdownMenuContent
+            anchorRef={isSplit ? compositeRef : undefined}
             arrowBoundaryOffset={arrowBoundaryOffset}
             className={cn("min-w-[var(--trigger-width)]", contentClassName)}
             containerPadding={containerPadding}

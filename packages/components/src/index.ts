@@ -789,6 +789,7 @@ export {
   type DropdownButtonMode,
   type DropdownButtonMotionPreset,
   type DropdownButtonProps,
+  type DropdownButtonSplitProps,
 } from "./components/dropdown-button";
 export {
   Combobox,

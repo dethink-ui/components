@@ -699,8 +699,11 @@ export function App() {
             </CardHeader>
             <CardContent>
               <DropdownButton
-                label="Create item"
+                label="Create project"
+                menuLabel="More create options"
+                mode="split"
                 motionPreset="subtle"
+                onPrimaryAction={() => undefined}
                 placement="bottom end"
                 showArrow
               >

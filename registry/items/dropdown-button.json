@@ -3,8 +3,8 @@
   "name": "dropdown-button",
   "type": "registry:ui",
   "title": "DropdownButton",
-  "description": "Menu-button composition with one accessible trigger, controlled or uncontrolled open state, Button variants and sizes, existing DropdownMenu content anatomy, positioning controls, and reduced-motion-safe Motion presence.",
-  "dependencies": [],
+  "description": "Menu and split-button composition with native primary and menu controls, controlled or uncontrolled open state, full-composite anchoring, Button variants and sizes, existing DropdownMenu content anatomy, and reduced-motion-safe Motion feedback.",
+  "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": [
     "dethink-base",

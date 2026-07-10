@@ -18,6 +18,7 @@ import {
   type MenuProps as AriaMenuProps,
   type MenuSectionProps as AriaMenuSectionProps,
   type MenuTriggerProps as AriaMenuTriggerProps,
+  type PopoverProps as AriaPopoverProps,
   type SeparatorProps as AriaSeparatorProps,
   type SubmenuTriggerProps as AriaSubmenuTriggerProps,
   type TextProps as AriaTextProps,
@@ -94,6 +95,7 @@ export interface DropdownMenuTriggerProps extends Omit<
 export interface DropdownMenuContentProps<T extends object = object>
   extends Omit<AriaMenuProps<T>, "className">, PositionedOverlayPositionProps {
   "data-slot"?: string;
+  anchorRef?: AriaPopoverProps["triggerRef"];
   arrowClassName?: string;
   arrowShapeClassName?: string;
   className?: string;
@@ -395,6 +397,7 @@ function renderMenuItemChildren(
 }
 
 interface DropdownMenuMotionPopoverProps<T extends object = object> {
+  anchorRef?: AriaPopoverProps["triggerRef"];
   arrowClassName?: string;
   arrowShapeClassName?: string;
   children: DropdownMenuContentProps<T>["children"];
@@ -408,6 +411,7 @@ interface DropdownMenuMotionPopoverProps<T extends object = object> {
 }
 
 function DropdownMenuMotionPopover<T extends object = object>({
+  anchorRef,
   arrowClassName,
   arrowShapeClassName,
   children,
@@ -432,6 +436,7 @@ function DropdownMenuMotionPopover<T extends object = object>({
     <AriaPopover
       {...positionProps}
       isExiting={!isPresent}
+      triggerRef={anchorRef}
       className={dropdownMenuPositionerClasses}
     >
       {({ placement }) => {
@@ -495,6 +500,7 @@ function DropdownMenuMotionPopover<T extends object = object>({
 function DropdownMenuContentRoot<T extends object = object>(
   {
     "data-slot": dataSlot,
+    anchorRef,
     arrowBoundaryOffset,
     arrowClassName,
     arrowShapeClassName,
@@ -533,6 +539,7 @@ function DropdownMenuContentRoot<T extends object = object>(
       {isOpen ? (
         <DropdownMenuMotionPopover
           key={dataSlot ?? contentSlot}
+          anchorRef={anchorRef}
           arrowClassName={arrowClassName}
           arrowShapeClassName={arrowShapeClassName}
           className={className}

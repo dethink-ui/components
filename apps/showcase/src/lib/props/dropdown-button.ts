@@ -3,10 +3,16 @@ import type { PropRow } from "@/components/props-table";
 export const dropdownButtonProps: PropRow[] = [
   {
     prop: "mode",
-    type: '"menu"',
+    type: '"menu" | "split"',
     defaultValue: '"menu"',
     description:
-      "This slice exposes one menu button and rejects split-only primary action props. Split mode arrives in its own implementation slice.",
+      "Menu mode renders one trigger and rejects direct-action props. Split mode requires onPrimaryAction and a localizable menuLabel.",
+  },
+  {
+    prop: "menuLabel / onPrimaryAction / primaryIcon",
+    type: "string / Button onClick / ReactNode",
+    description:
+      "Required split semantics: the icon-only menu half is separately named, while the native primary side owns only the direct action and optional icon.",
   },
   {
     prop: "label",
@@ -31,7 +37,7 @@ export const dropdownButtonProps: PropRow[] = [
     type: "DropdownMenu positioning props",
     defaultValue: '"bottom start" / 8 / 0 / 12 / true',
     description:
-      "Delegates logical placement and collision handling to the existing positioned DropdownMenu path.",
+      "Delegates logical placement and collision handling to DropdownMenu. Split mode anchors and sizes from the complete composite.",
   },
   {
     prop: "motionPreset",

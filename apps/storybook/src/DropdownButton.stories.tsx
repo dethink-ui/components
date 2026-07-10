@@ -143,6 +143,84 @@ export const Base: Story = {
   },
 };
 
+export const SplitButton: Story = {
+  render: function SplitButtonStory(args) {
+    const [status, setStatus] = useState("No action yet");
+
+    return (
+      <StoryFrame>
+        <Stack gap="3" align="start">
+          <DropdownButton
+            {...args}
+            label="Save"
+            menuLabel="More save options"
+            mode="split"
+            onPrimaryAction={() => setStatus("Saved directly")}
+          >
+            <DropdownMenuItem onAction={() => setStatus("Saved as template")}>
+              Save as template
+            </DropdownMenuItem>
+            <DropdownMenuItem onAction={() => setStatus("Saved and closed")}>
+              Save and close
+            </DropdownMenuItem>
+          </DropdownButton>
+          <Text data-testid="split-status" size="sm" tone="muted">
+            {status}
+          </Text>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const primary = canvas.getByRole("button", { name: "Save" });
+    const menuTrigger = canvas.getByRole("button", {
+      name: "More save options",
+    });
+
+    await userEvent.click(primary);
+    await expect(canvas.getByTestId("split-status")).toHaveTextContent(
+      "Saved directly",
+    );
+    await expect(page.queryByRole("menu")).not.toBeInTheDocument();
+
+    primary.focus();
+    await userEvent.tab();
+    await expect(menuTrigger).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    await expect(await page.findByRole("menu")).toBeVisible();
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(page.queryByRole("menu")).not.toBeInTheDocument(),
+    );
+    await expect(menuTrigger).toHaveFocus();
+  },
+};
+
+export const SplitLongLabelAndRtl: Story = {
+  render: (args) => (
+    <StoryFrame dir="rtl">
+      <div className="grid min-h-56 place-items-center px-4">
+        <DropdownButton
+          {...args}
+          defaultOpen
+          className="max-w-full"
+          label="حفظ التقرير والتحليلات ذات التسمية الطويلة"
+          menuLabel="المزيد من خيارات الحفظ"
+          mode="split"
+          onPrimaryAction={() => undefined}
+          placement="bottom start"
+          showArrow
+        >
+          <DropdownMenuItem>حفظ كقالب</DropdownMenuItem>
+          <DropdownMenuItem>حفظ وإغلاق</DropdownMenuItem>
+        </DropdownButton>
+      </div>
+    </StoryFrame>
+  ),
+};
+
 export const ControlledOpen: Story = {
   render: function ControlledOpenStory(args) {
     const [open, setOpen] = useState(false);

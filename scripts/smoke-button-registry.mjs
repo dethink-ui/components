@@ -1008,9 +1008,8 @@ assert(
   "dropdown-menu registry item must include Motion for surface presence and item feedback.",
 );
 assert(
-  Array.isArray(dropdownButton.dependencies) &&
-    dropdownButton.dependencies.length === 0,
-  "dropdown-button must receive Motion and menu dependencies through its registry dependencies.",
+  dropdownButton.dependencies?.includes("motion"),
+  "dropdown-button must include Motion for open-state chevron feedback.",
 );
 assert(
   Array.isArray(typography.dependencies) &&
@@ -1633,14 +1632,23 @@ assert(
 );
 assert(
   dropdownButtonSource.includes("onPrimaryAction?: never") &&
-    dropdownButtonSource.includes('mode?: "menu"'),
-  "dropdown-button menu mode must reject split-only primary action props.",
+    dropdownButtonSource.includes('mode?: "menu"') &&
+    dropdownButtonSource.includes('mode: "split"') &&
+    dropdownButtonSource.includes("menuLabel: string") &&
+    dropdownButtonSource.includes('data-slot="dropdown-button-primary"') &&
+    dropdownButtonSource.includes('"dropdown-button-menu-trigger"') &&
+    dropdownButtonSource.includes(
+      "anchorRef={isSplit ? compositeRef : undefined}",
+    ),
+  "dropdown-button must discriminate menu and split modes with stable controls and full-composite anchoring.",
 );
 assert(
-  !dropdownButtonSource.includes('from "motion/react"') &&
+  dropdownButtonSource.includes('from "motion/react"') &&
+    dropdownButtonSource.includes("motion.svg") &&
+    dropdownButtonSource.includes("useReducedMotion") &&
     !dropdownButtonSource.includes("transition-") &&
     !dropdownButtonSource.includes("animate-"),
-  "dropdown-button must delegate shared presence to DropdownMenu without adding a parallel animation path.",
+  "dropdown-button must use Motion-only chevron feedback without CSS animation utilities.",
 );
 assert(
   packageIndexSource.includes("DropdownButton") &&

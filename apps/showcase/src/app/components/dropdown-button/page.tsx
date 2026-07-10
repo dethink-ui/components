@@ -19,17 +19,17 @@ export default function DropdownButtonPage() {
   return (
     <DocsPage
       name="DropdownButton"
-      description="A policy composition for one visible button that opens a menu of related actions. It reuses the existing Button visuals, ButtonGroup anatomy, and React Aria-backed DropdownMenu behavior instead of creating another menu model."
+      description="A policy composition for either one menu button or a dominant primary action beside a separately named alternatives trigger. It reuses Button visuals, ButtonGroup anatomy, and the React Aria-backed DropdownMenu instead of creating another menu model."
     >
       <DocsSection
         id="examples"
         title="Examples"
-        description="Menu mode performs no direct action: the visible button only opens the action menu."
+        description="Menu mode performs no direct action. Split mode keeps one dominant action beside a separately named alternatives trigger."
       >
         <ExampleBlock
           file="dropdown-button/basic.tsx"
           title="Menu button"
-          description="Uncontrolled and controlled examples with grouped, descriptive, disabled, destructive, placed, and Motion-configured menu content."
+          description="Menu, controlled, and split examples with grouped, descriptive, disabled, destructive, placed, and Motion-configured menu content."
         >
           <DropdownButtonBasic />
         </ExampleBlock>
@@ -60,7 +60,7 @@ export default function DropdownButtonPage() {
             ],
             [
               "Split button",
-              "Use only when a dominant direct action must remain beside a separate alternatives trigger. Split semantics are intentionally outside this menu-only slice.",
+              "Use when a dominant direct action must remain beside a separately named alternatives trigger. The primary side never opens the menu, and both native buttons stay in normal Tab order.",
             ],
           ].map(([term, description]) => (
             <div key={term} className="border-border rounded-lg border p-4">
@@ -84,6 +84,12 @@ export default function DropdownButtonPage() {
             Arrow keys, Home/End, typeahead, disabled-item skipping, and item
             activation operate inside it. Escape closes the menu and returns
             focus to the trigger.
+          </p>
+          <p>
+            In split mode, Enter and Space on the primary side run only the
+            direct action. The icon-only menu half requires a localizable
+            <code> menuLabel</code>. Tab and Shift+Tab visit both native buttons
+            in document order; Left/Right Arrow does not move between them.
           </p>
           <p>
             Menu surface presence and changed item feedback use primitives from

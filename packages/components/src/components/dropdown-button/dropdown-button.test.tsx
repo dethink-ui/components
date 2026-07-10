@@ -143,6 +143,179 @@ describe("DropdownButton", () => {
     await waitFor(() => expect(trigger).toHaveFocus());
   });
 
+  it("keeps split primary and menu activation unambiguous", async () => {
+    const user = userEvent.setup();
+    const onPrimaryAction = vi.fn();
+    const onMenuAction = vi.fn();
+
+    render(
+      <DropdownButton
+        label="Save"
+        menuLabel="More save options"
+        mode="split"
+        onPrimaryAction={onPrimaryAction}
+      >
+        <DropdownMenuItem onAction={onMenuAction}>
+          Save as template
+        </DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const primary = screen.getByRole("button", { name: "Save" });
+    const menuTrigger = screen.getByRole("button", {
+      name: "More save options",
+    });
+
+    expect(screen.getAllByRole("button")).toHaveLength(2);
+    expect(primary).toHaveAttribute("data-slot", "dropdown-button-primary");
+    expect(primary).not.toHaveAttribute("aria-haspopup");
+    expect(menuTrigger).toHaveAttribute(
+      "data-slot",
+      "dropdown-button-menu-trigger",
+    );
+    expect(menuTrigger).toHaveAttribute("aria-haspopup", "true");
+
+    await user.click(primary);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+
+    primary.focus();
+    await user.keyboard("{Enter}");
+    await user.keyboard(" ");
+    expect(onPrimaryAction).toHaveBeenCalledTimes(3);
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+
+    await user.click(menuTrigger);
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+    expect(onPrimaryAction).toHaveBeenCalledTimes(3);
+
+    await user.click(
+      screen.getByRole("menuitem", { name: "Save as template" }),
+    );
+    expect(onMenuAction).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(menuTrigger).toHaveFocus());
+  });
+
+  it("keeps both split controls in normal document Tab order", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DropdownButton
+        label="Publish"
+        menuLabel="More publish options"
+        mode="split"
+        onPrimaryAction={() => undefined}
+      >
+        <DropdownMenuItem>Schedule publish</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const primary = screen.getByRole("button", { name: "Publish" });
+    const menuTrigger = screen.getByRole("button", {
+      name: "More publish options",
+    });
+
+    await user.tab();
+    expect(primary).toHaveFocus();
+    await user.tab();
+    expect(menuTrigger).toHaveFocus();
+    await user.tab({ shift: true });
+    expect(primary).toHaveFocus();
+
+    await user.keyboard("{ArrowRight}");
+    expect(primary).toHaveFocus();
+  });
+
+  it("anchors split content width and positioning to the full composite", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DropdownButton
+        contentClassName="split-content"
+        label="A deliberately long primary action"
+        menuLabel="More long-label options"
+        mode="split"
+        onPrimaryAction={() => undefined}
+        placement="bottom end"
+      >
+        <DropdownMenuItem>Alternative action</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const composite = document.querySelector<HTMLElement>(
+      '[data-slot="dropdown-button-composite"]',
+    );
+    const menuTrigger = screen.getByRole("button", {
+      name: "More long-label options",
+    });
+
+    if (!composite) {
+      throw new Error("Expected the split composite anchor.");
+    }
+
+    vi.spyOn(composite, "getBoundingClientRect").mockReturnValue({
+      bottom: 40,
+      height: 40,
+      left: 0,
+      right: 248,
+      top: 0,
+      width: 248,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+
+    await user.click(menuTrigger);
+
+    const content = (await screen.findByRole("menu")).closest<HTMLElement>(
+      '[data-slot="dropdown-button-content"]',
+    );
+    const positioner = content?.parentElement;
+
+    expect(content).toHaveClass("split-content");
+    expect(content).toHaveClass("min-w-[var(--trigger-width)]");
+    await waitFor(() => {
+      expect(positioner?.style.getPropertyValue("--trigger-width")).toBe(
+        "248px",
+      );
+    });
+  });
+
+  it("uses Motion for open chevron state and resolves reduced motion immediately", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DropdownButton
+        label="Export"
+        menuLabel="More export options"
+        mode="split"
+        motionPreset="standard"
+        onPrimaryAction={() => undefined}
+        reducedMotion
+      >
+        <DropdownMenuItem>Export CSV</DropdownMenuItem>
+      </DropdownButton>,
+    );
+
+    const trigger = screen.getByRole("button", {
+      name: "More export options",
+    });
+    const icon = trigger.querySelector(
+      '[data-slot="dropdown-button-trigger-icon"]',
+    );
+
+    expect(icon).not.toHaveAttribute("data-open");
+    await user.click(trigger);
+
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+    expect(icon).toHaveAttribute("data-open");
+    expect(icon).toHaveStyle({ transform: "none" });
+    expect(trigger.closest('[data-slot="dropdown-button"]')).toHaveAttribute(
+      "data-state",
+      "open",
+    );
+  });
+
   it("inherits arrow-key opening, typeahead, and disabled-item skipping", async () => {
     const user = userEvent.setup();
     const disabledAction = vi.fn();
@@ -263,10 +436,18 @@ describe("DropdownButton", () => {
   );
 });
 
+// @ts-expect-error Menu mode rejects split-only primary action props.
 const invalidMenuModeProps: DropdownButtonProps = {
   label: "Invalid direct action",
-  // @ts-expect-error Menu mode rejects split-only primary action props.
+  onPrimaryAction: () => undefined,
+};
+
+// @ts-expect-error Split mode requires a localizable menuLabel.
+const invalidSplitModeProps: DropdownButtonProps = {
+  label: "Missing menu label",
+  mode: "split",
   onPrimaryAction: () => undefined,
 };
 
 void invalidMenuModeProps;
+void invalidSplitModeProps;
