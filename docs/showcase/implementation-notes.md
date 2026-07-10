@@ -3,11 +3,11 @@
 ## Status
 
 - Source: UX and design audit of the running Next.js showcase on 10 July 2026.
-- Current phase: first approved implementation slice complete.
+- Current phase: first two approved implementation slices complete.
 - GitHub PRD: [#383 — Showcase discovery, documentation, and motion polish](https://github.com/parveshh/dethink-components/issues/383).
 - Implementation gate: complete; the PRD and nine approved tracer-bullet issues are published.
-- Completed slice: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384).
-- Next queued slice: [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385).
+- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384) and [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385).
+- Next queued slice: [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386).
 
 ## Outcome
 
@@ -191,3 +191,7 @@ Tests should assert public behavior and visible outcomes rather than component i
 - 2026-07-10: Verified #384 with direct TypeScript and ESLint checks, a successful Next.js production build covering all 72 routes, and five passing Playwright cases for group spacing, name/purpose/group search, empty-state recovery, result navigation, keyboard order, mobile layout, and reduced motion.
 - 2026-07-10: Completed a production-browser visual check at 1440×1000 and 390×844. Both pages rendered meaningful content with no framework error overlay; filtered desktop and mobile states settled to one expected group and one expected result, and home-route navigation remained intact.
 - 2026-07-10: Corrected the catalog group rhythm after visual review by restoring a consistent 48px gap between animated sections; added a layout-level regression assertion and confirmed the measured General-to-Layout gap is 48px.
+- 2026-07-10: Implemented #385 on `feature/issue-385-component-detail-switching` through the shared `DocsPage` seam, giving all 57 component pages a searchable canonical switcher plus previous/next links derived from catalog order without editing individual routes.
+- 2026-07-10: Kept direct loads and client navigation semantically synchronized through keyed route content, the existing `aria-current="page"` sidebar state, stable component slugs, and human-readable labels that retain API-name context where it helps discovery.
+- 2026-07-10: Applied a 240ms transform/opacity entrance to the navigation surface and disabled spatial movement for reduced-motion users; navigation itself remains immediate.
+- 2026-07-10: Verified #385 with TypeScript, ESLint, the 72-route production build, five passing Playwright cases, and desktop/mobile production-browser checks with no console errors or framework overlays.

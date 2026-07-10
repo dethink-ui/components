@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { CodeBlock } from "@/components/code-block";
+import { ComponentDocNavigation } from "@/components/component-doc-navigation";
+import { getComponentMetaByName } from "@/lib/components-meta";
 
 interface DocsPageProps {
   name: string;
@@ -8,6 +10,8 @@ interface DocsPageProps {
 }
 
 export function DocsPage({ name, description, children }: DocsPageProps) {
+  const component = getComponentMetaByName(name);
+
   return (
     <article className="min-w-0 space-y-12 pb-8">
       <header className="space-y-3">
@@ -21,6 +25,12 @@ export function DocsPage({ name, description, children }: DocsPageProps) {
           {description}
         </p>
       </header>
+      {component ? (
+        <ComponentDocNavigation
+          key={component.slug}
+          currentSlug={component.slug}
+        />
+      ) : null}
       {children}
     </article>
   );

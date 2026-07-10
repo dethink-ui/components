@@ -553,3 +553,15 @@ export function filterComponentGroups(query: string): ComponentGroup[] {
 export function getComponentMeta(slug: string): ComponentMeta | undefined {
   return componentCatalog.find((component) => component.slug === slug);
 }
+
+export function getComponentMetaByName(
+  name: string,
+): ComponentMeta | undefined {
+  const normalizedName = normalizeComponentSearchValue(name);
+
+  return componentCatalog.find((component) =>
+    [component.name, getComponentDisplayName(component)]
+      .map(normalizeComponentSearchValue)
+      .includes(normalizedName),
+  );
+}
