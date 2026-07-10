@@ -1685,7 +1685,8 @@ assert(
 );
 assert(
   dropdownButtonSource.includes('from "motion/react"') &&
-    dropdownButtonSource.includes("motion.svg") &&
+    dropdownButtonSource.includes("motion.span") &&
+    dropdownButtonSource.includes("ChevronDown") &&
     dropdownButtonSource.includes("AnimatePresence") &&
     dropdownButtonSource.includes("dropdown-button-busy-indicator") &&
     dropdownButtonSource.includes("motionDisabled={") &&
@@ -1695,7 +1696,7 @@ assert(
     dropdownButtonSource.includes("useReducedMotion") &&
     !dropdownButtonSource.includes("transition-") &&
     !dropdownButtonSource.includes("animate-"),
-  "dropdown-button must use Motion-only chevron feedback without CSS animation utilities.",
+  "dropdown-button must use a Lucide chevron with Motion-only feedback and no CSS animation utilities.",
 );
 assert(
   packageIndexSource.includes("DropdownButton") &&

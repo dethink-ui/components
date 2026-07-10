@@ -1,8 +1,11 @@
 # ButtonGroup And DropdownButton Component Spec
 
-Status: Approved; published under GitHub PRD #371.
+Status: Approved; base family published under GitHub PRD #371 and selectable
+primary-action mode under PRD #378.
 
 Tracker issue: https://github.com/parveshh/dethink-components/issues/371
+
+Selectable-mode tracker: https://github.com/parveshh/dethink-components/issues/378
 
 Source: `react_component_library_prd.docx`, current Button and DropdownMenu
 implementation, and `research.md` in this folder.
@@ -14,10 +17,10 @@ Package target: `@dethink/components`.
 ButtonGroup visually and semantically groups a small set of related native
 actions without changing the behavior of those actions.
 
-DropdownButton provides a trustworthy menu button or split button by composing
-Button, ButtonGroup, and DropdownMenu. It owns action hierarchy, accessible
-anatomy, coordinated async state, menu anchoring, and Motion-based state polish
-without creating another menu system.
+DropdownButton provides a trustworthy menu button, fixed split button, or
+selectable-primary action by composing Button, ButtonGroup, and DropdownMenu.
+It owns action hierarchy, accessible anatomy, coordinated async state, menu
+anchoring, and Motion-based state polish without creating another menu system.
 
 ## Product Boundaries
 
@@ -74,7 +77,6 @@ DropdownButton uses a discriminated `mode` contract.
 
 Shared public props:
 
-- `label`
 - `variant`
 - `size`
 - `open`
@@ -88,7 +90,6 @@ Shared public props:
 - `shouldFlip`
 - `className`
 - `menuClassName`
-- `children`
 - `motionPreset`
 
 `motionPreset` is `"none" | "subtle" | "standard"` with
@@ -98,6 +99,7 @@ motion preference.
 Menu mode:
 
 - `mode="menu"` is the default.
+- `label` and existing DropdownMenu `children` define the trigger and commands.
 - The visible button only opens the menu.
 - Direct-action props are rejected by the TypeScript union.
 - The visible label supplies the accessible name unless an explicit label is
@@ -106,6 +108,8 @@ Menu mode:
 Split mode:
 
 - `mode="split"` requires `onPrimaryAction` and `menuLabel`.
+- `label` and existing DropdownMenu `children` define the fixed primary and its
+  alternatives.
 - The primary side is a native Button that performs the dominant action.
 - The secondary side is an icon-only menu button. `menuLabel` provides its
   accessible name and must be localizable.
@@ -122,9 +126,40 @@ Split mode:
 - A consumer may control the visible primary label and handler, but the
   component does not persist or promote the last selected menu action.
 
+Selectable mode:
+
+- `mode="selectable"` requires `actions` and a separately localizable
+  `menuLabel`; arbitrary menu children, fixed `label`, `primaryIcon`, and
+  `onPrimaryAction` props are rejected by the TypeScript union.
+- Every `DropdownButtonSelectableAction` owns a stable unique `id`, textual
+  `label`, execution handler, and optional description, icon, disabled state,
+  and destructive state.
+- Controlled state requires `selectedActionId` and
+  `onSelectedActionChange`. Uncontrolled state requires
+  `defaultSelectedActionId` and may observe changes through
+  `onSelectedActionChange`.
+- Choosing a menu item updates only the selected action. It does not invoke the
+  action handler. A later primary click, Enter, or Space runs the current
+  selected action handler.
+- The choice menu uses single-selection semantics (`menuitemradio` and
+  `aria-checked`) plus a visible checkmark that does not replace the semantic
+  announcement.
+- Selection stays stable when descriptors update. The current label, icon,
+  handler, disabled state, and destructive state are resolved by stable action
+  ID on every render, so stale handler or presentation data is not retained.
+- A disabled selected action remains selected and visible but disables the
+  primary half. The menu remains available unless the complete composite or
+  menu half is disabled.
+- Loading and independent disabled policies match fixed split mode. A
+  destructive selected action applies the existing destructive Button recipe
+  to the complete attached composite.
+- The component does not persist selection between sessions, choose an initial
+  action implicitly, or invoke an action during selection.
+
 ## Overlay Geometry
 
-- DropdownButton uses the complete composite root as the positioning reference.
+- Split and selectable DropdownButton use the complete composite root as the
+  positioning reference.
 - Menu content defaults to logical `bottom start` placement and collision
   flipping through the existing positioned-overlay foundation.
 - The menu minimum width matches the full composite width and may expand to the
@@ -145,6 +180,10 @@ Split mode:
 | Split primary      | `Enter` / `Space`                    | Performs the primary action and does not open the menu.                                        |
 | Split menu trigger | `Enter` / `Space`                    | Opens the menu.                                                                                |
 | Split menu trigger | `Down Arrow` / `Up Arrow`            | Opens and focuses the first/last item where supported.                                         |
+| Selectable primary | `Enter` / `Space`                    | Invokes the currently selected action without opening the menu.                                |
+| Selectable trigger | `Enter` / `Space`                    | Opens the single-selection menu without invoking an action.                                    |
+| Selectable menu    | Arrow keys, `Home`, `End`, typeahead | Moves through declared choices; disabled choices cannot be selected.                           |
+| Selectable choice  | `Enter` / `Space`                    | Changes selection, closes the menu, and returns focus without executing the chosen action.     |
 | Open menu          | Arrow keys, `Home`, `End`, typeahead | Uses existing DropdownMenu behavior.                                                           |
 | Open menu          | `Escape`                             | Closes the menu and returns focus to its menu trigger.                                         |
 
@@ -153,6 +192,8 @@ Additional requirements:
 - ButtonGroup is labelled with `aria-label` or `aria-labelledby` in docs and
   complex examples.
 - The split menu trigger always has an explicit accessible name.
+- The selectable menu trigger always has an explicit accessible name; selected
+  state is announced semantically and reinforced by the checkmark.
 - The primary action and menu trigger expose independent disabled state.
 - Busy state uses `aria-busy` on the primary button and retains readable text.
 - Focus-visible treatment is visible around each actionable half, including at
@@ -168,7 +209,8 @@ The user's Motion-only constraint is normative for this family.
 - Import animation APIs from `motion/react`.
 - ButtonGroup has no intrinsic animation and no Motion dependency.
 - DropdownButton animates the open-state chevron and state-preserving label
-  or busy-indicator presence.
+  or busy-indicator presence. Selectable mode keys primary label/icon feedback
+  to the stable action ID and uses Motion for selected-check presence.
 - The shared DropdownMenu entry/exit path used by DropdownButton uses Motion
   primitives instead of Tailwind keyframes/transitions so the composite does
   not mix animation systems.
@@ -192,7 +234,7 @@ The user's Motion-only constraint is normative for this family.
 - Expose stable slots for the group root, separator, dropdown root, primary
   button, menu trigger, trigger icon, and menu anchor.
 - Expose stable states including mode, orientation, open, disabled, loading,
-  and loading behavior through data attributes.
+  loading behavior, and selected action ID through data attributes.
 - Support light, dark, high-contrast, density, responsive, and RTL stories.
 - Do not add component-level theme props, CSS-in-JS, or runtime-generated
   Tailwind class fragments.
@@ -217,6 +259,8 @@ Ship an explicit recipe for page-header and dense-toolbar actions:
 - `dropdown-button` declares registry dependencies on Button, ButtonGroup,
   DropdownMenu, the positioned-overlay/provider path, and any shared Motion
   configuration required by the implementation.
+- Selectable mode declares the Lucide selected-indicator dependency used by the
+  copied source; custom action icons remain consumer-owned React nodes.
 - Motion is declared only by registry items whose copied source imports it.
 - If the shared DropdownMenu animation path migrates to Motion, update its
   registry metadata and migration notes in the same approved issue slice.
@@ -226,7 +270,8 @@ Ship an explicit recipe for page-header and dense-toolbar actions:
 
 ## Verification
 
-- Rendered behavior tests for public props and state transitions.
+- Rendered behavior tests for public props, choose-versus-execute delivery,
+  controlled/uncontrolled selection, descriptor updates, and state transitions.
 - Keyboard interaction tests for native group children and complete menu/split
   flows.
 - Automated axe coverage and documented manual keyboard/screen-reader checks.
@@ -242,8 +287,9 @@ Ship an explicit recipe for page-header and dense-toolbar actions:
 
 - ToggleGroup and Toolbar implementation.
 - Automatic responsive overflow or action-priority algorithms.
-- Built-in last-used action persistence.
-- Selection menus, checkbox/radio menu public API changes, or async menu data.
+- Built-in last-used action persistence or implicit initial-action selection.
+- General-purpose DropdownMenu checkbox/radio public API changes, multi-select,
+  or async menu data.
 - New portal, positioning, collection, or focus-management systems.
 - Broad Button or DropdownMenu redesign outside the animation migration and
   composition seams required by this family.

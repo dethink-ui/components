@@ -24,7 +24,7 @@ export const dropdownButtonProps: PropRow[] = [
     prop: "menuLabel / onPrimaryAction / primaryIcon",
     type: "string / Button onClick / ReactNode",
     description:
-      "Required split semantics: the icon-only menu half is separately named, while the native primary side owns only the direct action and optional icon.",
+      "menuLabel separately names the split/selectable menu half. onPrimaryAction and primaryIcon belong only to fixed split mode; selectable mode derives them from the chosen descriptor.",
   },
   {
     prop: "loading / loadingBehavior",
@@ -38,7 +38,7 @@ export const dropdownButtonProps: PropRow[] = [
     type: "boolean",
     defaultValue: "false",
     description:
-      "Disable the complete composite or either native half independently without changing the other control's semantics.",
+      "Disable the complete composite or either native half independently. A disabled selected descriptor disables the selectable primary while leaving its menu available.",
   },
   {
     prop: "label",
@@ -76,7 +76,7 @@ export const dropdownButtonProps: PropRow[] = [
     prop: "children",
     type: "ReactNode",
     description:
-      "Existing DropdownMenuItem, Section, Label, Separator, Shortcut, and Submenu components; no parallel item schema is introduced.",
+      "Menu and fixed split modes accept existing DropdownMenu item anatomy. Selectable mode rejects children because its action descriptors own selection and execution together.",
   },
   {
     prop: "className / groupClassName / triggerClassName / contentClassName / menuClassName",

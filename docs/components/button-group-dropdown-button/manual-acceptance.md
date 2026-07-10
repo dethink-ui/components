@@ -34,6 +34,33 @@ and RTL, forced/high contrast, 200% zoom, and reduced motion.
   and RTL, including long labels and narrow containers.
 - Escape returns focus to the menu half, not the primary half.
 
+## DropdownButton Selectable Mode
+
+- The selected primary and separately named menu trigger are two native Tab
+  stops. The primary name always matches the selected action label.
+- Opening the menu announces a single-selection action menu. Each choice is a
+  `menuitemradio`; the selected choice is announced as checked and also shows a
+  visible checkmark.
+- Pointer, Enter, or Space selection updates the primary label and selected
+  checkmark, closes the menu, and returns focus to the menu trigger without
+  invoking the action handler.
+- A later pointer, Enter, or Space activation on the primary half invokes only
+  the currently selected handler.
+- Arrow keys, Home/End, and typeahead move through choices. Disabled choices
+  remain discoverable, are skipped by keyboard navigation where expected, and
+  cannot replace the selected action.
+- Escape cancels an open menu without changing selection and returns focus to
+  the menu trigger. Reopening retains the current selected announcement.
+- Controlled selection follows application state. Uncontrolled selection does
+  not reset when `defaultSelectedActionId` changes after mount.
+- A disabled selected action remains named and checked, disables only the
+  primary half, and leaves the menu available for choosing an enabled action.
+- A destructive selected action uses the destructive composite treatment; the
+  action label and context communicate risk without relying on color.
+- The menu aligns to and is at least as wide as the complete composite in LTR
+  and RTL. Long labels/descriptions wrap without clipping at narrow widths and
+  200% zoom.
+
 ## Loading And Disabled State
 
 - `loading` retains the primary text, announces busy state, and prevents repeat
@@ -43,10 +70,14 @@ and RTL, forced/high contrast, 200% zoom, and reduced motion.
   alternatives remain operable.
 - `disabled`, `primaryDisabled`, and `menuDisabled` produce the documented
   combinations without corrupting open state.
+- Selectable mode resolves current label, icon, handler, disabled, and
+  destructive state by stable action ID when descriptors update; no stale
+  action can execute during Motion exit.
 - If an open menu becomes unavailable, it closes; focus moves to an available
   primary action when possible.
-- Controlled label/icon/handler updates do not retain an old accessible name
-  during Motion exit and do not promote selected menu items.
+- Fixed split controlled label/icon/handler updates do not retain an old
+  accessible name during Motion exit. Fixed split menu items are never
+  promoted; selectable mode promotes only through its explicit selection API.
 
 ## Visual And Motion
 
@@ -58,7 +89,7 @@ and RTL, forced/high contrast, 200% zoom, and reduced motion.
 - Reduced motion removes transform choreography; label and busy state remain
   immediately readable, and the menu surface uses only brief opacity feedback.
 - `motionPreset="none"` leaves the busy indicator static as well as disabling
-  label, chevron, and menu-surface animation.
+  label, icon, selected-check, chevron, and menu-surface animation.
 - No state is communicated by motion alone.
 
 ## Responsive Recipe
@@ -76,7 +107,8 @@ and RTL, forced/high contrast, 200% zoom, and reduced motion.
 
 - Verify with VoiceOver/Safari and one Windows pairing such as NVDA/Firefox.
 - The group relationship, split primary name, menu trigger name, busy state,
-  menu item count/labels, disabled state, submenu expansion, and Escape focus
-  return are announced without duplicate names.
+  selectable primary name, checked choice, menu item count/labels, disabled
+  state, submenu expansion, and Escape focus return are announced without
+  duplicate names.
 - Portal content remains associated with the trigger and does not lose the
   provider theme/direction context.

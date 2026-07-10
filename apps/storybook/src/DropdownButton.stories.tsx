@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   Stack,
   Text,
+  type DropdownButtonSelectableAction,
   type DropdownButtonMenuProps,
   type DropdownButtonMotionPreset,
   type ButtonSize,
@@ -114,6 +115,36 @@ const responsiveActions: Array<{
 ];
 
 const responsivePrimaryIds = new Set<ResponsiveActionId>(["preview", "share"]);
+
+type MergeActionId = "merge" | "squash" | "rebase";
+
+function createMergeActions(
+  onAction: (actionId: MergeActionId) => void = () => undefined,
+): DropdownButtonSelectableAction[] {
+  return [
+    {
+      description:
+        "All commits from this branch will be added to the base branch via a merge commit.",
+      id: "merge",
+      label: "Create a merge commit",
+      onAction: () => onAction("merge"),
+    },
+    {
+      description:
+        "The commits from this branch will be combined into one commit in the base branch.",
+      id: "squash",
+      label: "Squash and merge",
+      onAction: () => onAction("squash"),
+    },
+    {
+      description:
+        "The commits from this branch will be rebased and added to the base branch.",
+      id: "rebase",
+      label: "Rebase and merge",
+      onAction: () => onAction("rebase"),
+    },
+  ];
+}
 
 const highContrastStyle = {
   "--dt-color-background-light": "oklch(1 0 0)",
@@ -388,6 +419,99 @@ export const SelectablePrimaryAction: Story = {
     await expect(canvas.getByTestId("selectable-status")).toHaveTextContent(
       "Squash executed",
     );
+  },
+};
+
+export const SelectableReferenceClosed: Story = {
+  render: () => (
+    <StoryFrame theme="dark">
+      <div className="grid min-h-32 place-items-center">
+        <DropdownButton
+          actions={createMergeActions()}
+          defaultSelectedActionId="squash"
+          menuLabel="Choose merge method"
+          mode="selectable"
+          size="lg"
+          variant="solid"
+        />
+      </div>
+    </StoryFrame>
+  ),
+};
+
+export const SelectableReferenceOpen: Story = {
+  render: () => (
+    <StoryFrame theme="dark">
+      <div className="flex min-h-[27rem] items-start justify-center pt-8">
+        <DropdownButton
+          actions={createMergeActions()}
+          contentClassName="max-w-[min(25rem,calc(100vw-1.5rem))]"
+          defaultOpen
+          defaultSelectedActionId="merge"
+          menuClassName="min-w-96"
+          menuLabel="Choose merge method"
+          mode="selectable"
+          size="lg"
+          variant="solid"
+        />
+      </div>
+    </StoryFrame>
+  ),
+};
+
+export const SelectableKeyboardPolicies: Story = {
+  render: function SelectableKeyboardPoliciesStory() {
+    const [status, setStatus] = useState("No action executed");
+
+    return (
+      <StoryFrame>
+        <Stack gap="3" align="start">
+          <DropdownButton
+            actions={[
+              ...createMergeActions((actionId) =>
+                setStatus(`${actionId} executed`),
+              ),
+              {
+                disabled: true,
+                id: "protected",
+                label: "Merge after approval",
+                onAction: () => setStatus("protected executed"),
+              },
+            ]}
+            defaultSelectedActionId="merge"
+            menuLabel="Choose guarded merge method"
+            mode="selectable"
+          />
+          <Text data-testid="selectable-policy-status" size="sm" tone="muted">
+            {status}
+          </Text>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole("button", {
+      name: "Choose guarded merge method",
+    });
+    const root = trigger.closest('[data-slot="dropdown-button"]');
+
+    await userEvent.click(trigger);
+    const disabledChoice = await page.findByRole("menuitemradio", {
+      name: "Merge after approval",
+    });
+    await expect(disabledChoice).toHaveAttribute("data-disabled");
+    await expect(root).toHaveAttribute("data-selected-action-id", "merge");
+    await expect(
+      canvas.getByTestId("selectable-policy-status"),
+    ).toHaveTextContent("No action executed");
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() =>
+      expect(page.queryByRole("menu")).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 
@@ -836,6 +960,104 @@ export const ThemeDensityAndRtl: Story = {
   ),
 };
 
+export const SelectableThemeDensityAndRtl: Story = {
+  render: () => (
+    <div className="grid gap-4 md:grid-cols-2">
+      <StoryFrame density="compact">
+        <DropdownButton
+          actions={createMergeActions()}
+          defaultSelectedActionId="merge"
+          menuLabel="Choose compact merge method"
+          mode="selectable"
+          size="sm"
+        />
+      </StoryFrame>
+      <StoryFrame density="comfortable" theme="dark">
+        <DropdownButton
+          actions={createMergeActions()}
+          defaultSelectedActionId="squash"
+          menuLabel="Choose comfortable merge method"
+          mode="selectable"
+          size="lg"
+          variant="solid"
+        />
+      </StoryFrame>
+      <StoryFrame density="comfortable" style={highContrastStyle}>
+        <DropdownButton
+          actions={createMergeActions()}
+          defaultSelectedActionId="rebase"
+          menuLabel="Choose high contrast merge method"
+          mode="selectable"
+          variant="outline"
+        />
+      </StoryFrame>
+      <StoryFrame density="default" dir="rtl">
+        <div className="flex min-h-80 justify-center pt-4">
+          <DropdownButton
+            actions={[
+              {
+                description: "إضافة جميع الالتزامات باستخدام التزام دمج.",
+                id: "merge",
+                label: "إنشاء التزام دمج",
+                onAction: () => undefined,
+              },
+              {
+                description: "دمج التزامات الفرع في التزام واحد.",
+                id: "squash",
+                label: "دمج مضغوط",
+                onAction: () => undefined,
+              },
+              {
+                description: "إعادة تأسيس الالتزامات على الفرع الأساسي.",
+                id: "rebase",
+                label: "إعادة التأسيس والدمج",
+                onAction: () => undefined,
+              },
+            ]}
+            defaultOpen
+            defaultSelectedActionId="merge"
+            menuLabel="اختيار طريقة الدمج"
+            mode="selectable"
+          />
+        </div>
+      </StoryFrame>
+    </div>
+  ),
+};
+
+export const SelectableLongLabelsAndNarrowContainer: Story = {
+  render: () => (
+    <StoryFrame>
+      <div className="flex min-h-[28rem] w-80 max-w-full items-start justify-center overflow-visible pt-4">
+        <DropdownButton
+          actions={[
+            {
+              description:
+                "Preserve the complete branch history by adding every commit through a merge commit.",
+              id: "merge",
+              label: "Create a merge commit and preserve branch history",
+              onAction: () => undefined,
+            },
+            {
+              description:
+                "Combine all branch commits into one concise commit before adding it to the base branch.",
+              id: "squash",
+              label: "Squash every commit and merge into the base branch",
+              onAction: () => undefined,
+            },
+          ]}
+          className="max-w-80"
+          defaultOpen
+          defaultSelectedActionId="merge"
+          menuClassName="max-w-[min(22rem,calc(100vw-1.5rem))]"
+          menuLabel="Choose a long-form merge method"
+          mode="selectable"
+        />
+      </div>
+    </StoryFrame>
+  ),
+};
+
 export const VariantsAndSizes: Story = {
   render: () => {
     const variants: ButtonVariant[] = [
@@ -870,6 +1092,30 @@ export const VariantsAndSizes: Story = {
               >
                 <DropdownMenuItem>{size} alternative</DropdownMenuItem>
               </DropdownButton>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            {variants.map((variant) => (
+              <DropdownButton
+                key={`selectable-${variant}`}
+                actions={createMergeActions()}
+                defaultSelectedActionId="squash"
+                menuLabel={`Choose ${variant} merge method`}
+                mode="selectable"
+                variant={variant}
+              />
+            ))}
+          </div>
+          <div className="flex flex-wrap items-end gap-3">
+            {sizes.map((size) => (
+              <DropdownButton
+                key={`selectable-${size}`}
+                actions={createMergeActions()}
+                defaultSelectedActionId="merge"
+                menuLabel={`Choose ${size} merge method`}
+                mode="selectable"
+                size={size}
+              />
             ))}
           </div>
         </Stack>
@@ -950,6 +1196,18 @@ export const MotionPresets: Story = {
             >
               <DropdownMenuItem>{motionPreset} action</DropdownMenuItem>
             </DropdownButton>
+          ))}
+        </div>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {presets.map((motionPreset) => (
+            <DropdownButton
+              key={`selectable-${motionPreset}`}
+              actions={createMergeActions()}
+              defaultSelectedActionId="squash"
+              menuLabel={`Choose ${motionPreset} selectable action`}
+              mode="selectable"
+              motionPreset={motionPreset}
+            />
           ))}
         </div>
       </StoryFrame>

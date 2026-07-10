@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GitCommitHorizontal, GitMerge, ListRestart } from "lucide-react";
 import {
   DropdownButton,
   DropdownMenuItem,
@@ -19,6 +20,53 @@ export function DropdownButtonBasic() {
 
   return (
     <div className="space-y-8">
+      <div className="space-y-3">
+        <p className="text-muted-foreground text-sm font-medium">
+          Choose now, run from the primary action later
+        </p>
+        <DropdownButton
+          actions={[
+            {
+              description:
+                "Add every commit from this branch through a merge commit.",
+              icon: <GitMerge aria-hidden="true" />,
+              id: "merge",
+              label: "Create a merge commit",
+              onAction: () => setLastAction("Merge commit executed."),
+            },
+            {
+              description: "Combine this branch into one commit.",
+              icon: <GitCommitHorizontal aria-hidden="true" />,
+              id: "squash",
+              label: "Squash and merge",
+              onAction: () => setLastAction("Squash and merge executed."),
+            },
+            {
+              description: "Replay every commit onto the base branch.",
+              icon: <ListRestart aria-hidden="true" />,
+              id: "rebase",
+              label: "Rebase and merge",
+              onAction: () => setLastAction("Rebase and merge executed."),
+            },
+          ]}
+          defaultSelectedActionId="merge"
+          menuLabel="Choose merge method"
+          mode="selectable"
+          onSelectedActionChange={(actionId) =>
+            setLastAction(`${actionId} selected; no action executed yet.`)
+          }
+          size="lg"
+          variant="solid"
+        />
+        <p aria-live="polite" className="text-muted-foreground text-sm">
+          {lastAction}
+        </p>
+        <p className="text-muted-foreground max-w-prose text-sm">
+          Choosing a menu item updates the selected label and checkmark. Only a
+          later press of the primary half invokes that action&apos;s handler.
+        </p>
+      </div>
+
       <div className="space-y-3">
         <p className="text-muted-foreground text-sm font-medium">
           One trigger, related actions
@@ -55,9 +103,6 @@ export function DropdownButtonBasic() {
             </DropdownMenuItem>
           </DropdownMenuSection>
         </DropdownButton>
-        <p aria-live="polite" className="text-muted-foreground text-sm">
-          {lastAction}
-        </p>
       </div>
 
       <div className="space-y-3">

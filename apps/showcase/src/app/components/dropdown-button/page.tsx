@@ -12,24 +12,24 @@ import { dropdownButtonProps } from "@/lib/props/dropdown-button";
 export const metadata: Metadata = {
   title: "DropdownButton",
   description:
-    "A menu button composition for related actions, built from Button, ButtonGroup, and DropdownMenu with Motion-only menu presence.",
+    "A menu, fixed-split, or selectable-primary action composition built from Button, ButtonGroup, and DropdownMenu with Motion-only state feedback.",
 };
 
 export default function DropdownButtonPage() {
   return (
     <DocsPage
       name="DropdownButton"
-      description="A policy composition for either one menu button or a dominant primary action beside a separately named alternatives trigger. It reuses Button visuals, ButtonGroup anatomy, and the React Aria-backed DropdownMenu instead of creating another menu model."
+      description="A policy composition for one menu button, a fixed dominant action, or a selected action that becomes the next primary command. It reuses Button visuals, ButtonGroup anatomy, and the React Aria-backed DropdownMenu instead of creating another menu model."
     >
       <DocsSection
         id="examples"
         title="Examples"
-        description="Menu mode performs no direct action. Split mode keeps one dominant action beside a separately named alternatives trigger."
+        description="Menu mode performs no direct action. Split mode keeps one fixed dominant action. Selectable mode deliberately separates choosing the next action from executing it."
       >
         <ExampleBlock
           file="dropdown-button/basic.tsx"
           title="Menu button"
-          description="Menu, controlled, and split examples with grouped, descriptive, disabled, destructive, placed, and Motion-configured menu content."
+          description="Selectable, menu, controlled, split, disabled, loading, destructive, placed, and Motion-configured action examples."
         >
           <DropdownButtonBasic />
         </ExampleBlock>
@@ -62,6 +62,14 @@ export default function DropdownButtonPage() {
               "Split button",
               "Use when a dominant direct action must remain beside a separately named alternatives trigger. The primary side never opens the menu, and both native buttons stay in normal Tab order.",
             ],
+            [
+              "DropdownButton (selectable)",
+              "Use when choosing one declared command should make it the later primary action. Choosing updates selection only; a separate primary activation runs the selected handler.",
+            ],
+            [
+              "ToggleGroup",
+              "Use for persistent pressed state across peer controls. Selectable DropdownButton chooses one future command; it is not a compact toggle surface.",
+            ],
           ].map(([term, description]) => (
             <div key={term} className="border-border rounded-lg border p-4">
               <dt className="font-semibold">{term}</dt>
@@ -92,6 +100,14 @@ export default function DropdownButtonPage() {
             in document order; Left/Right Arrow does not move between them.
           </p>
           <p>
+            Selectable mode keeps the same two-button anatomy. The menu uses
+            single-selection <code>menuitemradio</code> semantics and a visible
+            checkmark. Choosing with pointer or keyboard changes the selected
+            action, closes the menu, and returns focus to the menu trigger
+            without executing the handler. The primary half runs the selected
+            handler on a later activation.
+          </p>
+          <p>
             Menu surface presence and changed item feedback use primitives from
             <code> motion/react</code>. The <code>none</code> preset disables
             choreography; reduced motion keeps a short opacity affordance while
@@ -120,10 +136,11 @@ export default function DropdownButtonPage() {
             menu-only disabled states remain separately controllable.
           </p>
           <p>
-            Applications may update <code>label</code>,<code> primaryIcon</code>
-            , and <code>onPrimaryAction</code>. Choosing a menu item never
-            promotes it to the primary action; last-used action persistence
-            belongs to application state.
+            Fixed split applications may update <code>label</code>,
+            <code> primaryIcon</code>, and <code>onPrimaryAction</code> without
+            changing the menu. Selectable mode instead derives all three from
+            the chosen action descriptor. Persisting that choice across sessions
+            remains application-owned.
           </p>
         </div>
       </DocsSection>
@@ -132,6 +149,7 @@ export default function DropdownButtonPage() {
         registryName="dropdown-button"
         importCode={`import {
   DropdownButton,
+  type DropdownButtonSelectableAction,
   DropdownMenuItem,
   DropdownMenuSection,
   DropdownMenuSeparator,
@@ -141,7 +159,7 @@ export default function DropdownButtonPage() {
       <DocsSection
         id="props"
         title="Props"
-        description="The discriminated contract keeps direct-action props out of menu mode and requires an explicit handler and menu label in split mode."
+        description="The discriminated contract separates menu children, fixed split props, and selectable action descriptors so choosing and execution cannot be conflated accidentally."
       >
         <PropsTable caption="DropdownButton props" rows={dropdownButtonProps} />
       </DocsSection>

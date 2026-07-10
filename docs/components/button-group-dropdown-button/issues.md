@@ -1,6 +1,7 @@
 # ButtonGroup And DropdownButton Issue Breakdown
 
-Status: Published to GitHub issue tracker.
+Status: Published to GitHub issue tracker, including the selectable-primary
+extension under PRD #378.
 
 This uses the `to-issues` tracer-bullet format.
 
@@ -16,6 +17,23 @@ Package target: `@dethink/components`.
 - AFK DropdownButton split semantics and group-anchored overlay tracer: https://github.com/parveshh/dethink-components/issues/374
 - AFK DropdownButton async coordination and controlled primary action tracer: https://github.com/parveshh/dethink-components/issues/375
 - AFK ButtonGroup DropdownButton responsive recipes and final verification: https://github.com/parveshh/dethink-components/issues/376
+- Selectable-primary PRD: https://github.com/parveshh/dethink-components/issues/378
+- AFK selectable baseline: https://github.com/parveshh/dethink-components/issues/379
+- AFK selectable state and Motion coordination: https://github.com/parveshh/dethink-components/issues/380
+- AFK selectable integration and visual verification: https://github.com/parveshh/dethink-components/issues/381
+
+## Selectable-Primary Extension (#378–#381)
+
+The approved extension adds an explicit `mode="selectable"` contract. Issue
+#379 establishes the installable choose-then-execute baseline, #380 coordinates
+controlled/uncontrolled selection and descriptor-driven Motion/async policies,
+and #381 completes showcase, documentation, visual coverage, design QA, and
+repository verification. The stacked branches are:
+
+1. `feature/prd-378-dropdown-button-selectable`
+2. `feature/issue-379-dropdown-button-selectable-baseline`
+3. `feature/issue-380-dropdown-button-selectable-state-motion`
+4. `feature/issue-381-dropdown-button-selectable-integration`
 
 ## Proposed Breakdown
 

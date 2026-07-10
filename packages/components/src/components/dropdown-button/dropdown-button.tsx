@@ -13,7 +13,7 @@ import {
   useIsPresent,
   useReducedMotion,
 } from "motion/react";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import type { Selection } from "react-aria-components";
 import {
   Button,
@@ -149,7 +149,8 @@ export type DropdownButtonProps =
   | DropdownButtonSelectableProps;
 
 const dropdownButtonRootClasses = "inline-flex w-fit max-w-full";
-const dropdownButtonTriggerIconClasses = "pointer-events-none size-4 shrink-0";
+const dropdownButtonTriggerIconClasses =
+  "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center";
 
 const dropdownButtonSplitTriggerSizeClasses: Record<ButtonSize, string> = {
   xs: "h-7 w-7 p-0",
@@ -238,14 +239,12 @@ function ChevronDownIcon({
   reducedMotion: boolean;
 }) {
   return (
-    <motion.svg
+    <motion.span
       aria-hidden="true"
       animate={{ rotate: open ? 180 : 0 }}
       data-open={open ? "" : undefined}
       data-slot="dropdown-button-trigger-icon"
       className={dropdownButtonTriggerIconClasses}
-      fill="none"
-      focusable="false"
       initial={false}
       transition={{
         duration:
@@ -254,16 +253,9 @@ function ChevronDownIcon({
             : dropdownButtonChevronDuration[motionPreset],
         ease: [0.16, 1, 0.3, 1],
       }}
-      viewBox="0 0 16 16"
     >
-      <path
-        d="m4 6 4 4 4-4"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.75"
-      />
-    </motion.svg>
+      <ChevronDown className="size-full" strokeWidth={1.75} />
+    </motion.span>
   );
 }
 
@@ -614,9 +606,11 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
                     action.icon
                   )}
                 </DropdownMenuItemIcon>
-                <DropdownMenuItemLabel>{action.label}</DropdownMenuItemLabel>
+                <DropdownMenuItemLabel className="font-semibold">
+                  {action.label}
+                </DropdownMenuItemLabel>
                 {action.description ? (
-                  <DropdownMenuItemDescription>
+                  <DropdownMenuItemDescription className="text-sm leading-5">
                     {action.description}
                   </DropdownMenuItemDescription>
                 ) : null}
