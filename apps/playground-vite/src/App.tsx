@@ -697,7 +697,7 @@ export function App() {
                 menu path.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-wrap gap-3">
               <DropdownButton
                 label="Create project"
                 menuLabel="More create options"
@@ -715,6 +715,26 @@ export function App() {
                   <DropdownMenuItem disabled>Template</DropdownMenuItem>
                 </DropdownMenuSection>
               </DropdownButton>
+              <DropdownButton
+                actions={[
+                  {
+                    description: "Add every commit through a merge commit.",
+                    id: "merge",
+                    label: "Create a merge commit",
+                    onAction: () => undefined,
+                  },
+                  {
+                    description: "Combine this branch into one commit.",
+                    id: "squash",
+                    label: "Squash and merge",
+                    onAction: () => undefined,
+                  },
+                ]}
+                defaultSelectedActionId="merge"
+                menuLabel="Choose merge method"
+                mode="selectable"
+                motionPreset="subtle"
+              />
             </CardContent>
           </Card>
           <Card as="section">

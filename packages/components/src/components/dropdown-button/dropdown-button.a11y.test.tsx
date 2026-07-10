@@ -14,6 +14,48 @@ import { DropdownButton } from ".";
 expect.extend(toHaveNoViolations);
 
 describe("DropdownButton accessibility", () => {
+  it("has no axe violations for a selected action and described choices", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <DethinkProvider theme="dark">
+        <main>
+          <DropdownButton
+            actions={[
+              {
+                description: "Add every commit through a merge commit.",
+                id: "merge",
+                label: "Create a merge commit",
+                onAction: () => undefined,
+              },
+              {
+                description: "Combine this branch into one commit.",
+                id: "squash",
+                label: "Squash and merge",
+                onAction: () => undefined,
+              },
+            ]}
+            defaultSelectedActionId="merge"
+            menuLabel="Choose merge method"
+            mode="selectable"
+          />
+        </main>
+      </DethinkProvider>,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Choose merge method" }),
+    );
+
+    expect(
+      await screen.findByRole("menuitemradio", {
+        name: "Create a merge commit",
+      }),
+    ).toHaveAttribute("aria-checked", "true");
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
+  });
+
   it("has no axe violations for a labelled menu button and action menu", async () => {
     const user = userEvent.setup();
     const { container } = render(

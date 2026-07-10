@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   Stack,
   Text,
+  type DropdownButtonMenuProps,
   type DropdownButtonMotionPreset,
   type ButtonSize,
   type ButtonVariant,
@@ -36,7 +37,7 @@ const meta = {
     mode: {
       control: false,
       description:
-        "Menu mode is the default; split mode adds a primary action.",
+        "Menu mode is the default; split fixes a primary action; selectable promotes a chosen action without invoking it.",
     },
     motionPreset: {
       control: "inline-radio",
@@ -57,11 +58,11 @@ const meta = {
       options: ["solid", "soft", "outline", "ghost", "link", "destructive"],
     },
   },
-} satisfies Meta<typeof DropdownButton>;
+} satisfies Meta<DropdownButtonMenuProps>;
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<DropdownButtonMenuProps>;
 
 function ItemIcon({ children }: { children: string }) {
   return (
@@ -314,6 +315,79 @@ export const SplitButton: Story = {
       expect(page.queryByRole("menu")).not.toBeInTheDocument(),
     );
     await expect(menuTrigger).toHaveFocus();
+  },
+};
+
+export const SelectablePrimaryAction: Story = {
+  render: function SelectablePrimaryActionStory() {
+    const [status, setStatus] = useState("No merge executed");
+
+    return (
+      <StoryFrame>
+        <Stack gap="3" align="start">
+          <DropdownButton
+            actions={[
+              {
+                description:
+                  "Add every commit from this branch through a merge commit.",
+                id: "merge",
+                label: "Create a merge commit",
+                onAction: () => setStatus("Merge commit executed"),
+              },
+              {
+                description: "Combine this branch into one commit.",
+                id: "squash",
+                label: "Squash and merge",
+                onAction: () => setStatus("Squash executed"),
+              },
+              {
+                description: "Replay every commit onto the base branch.",
+                id: "rebase",
+                label: "Rebase and merge",
+                onAction: () => setStatus("Rebase executed"),
+              },
+            ]}
+            defaultSelectedActionId="merge"
+            menuLabel="Choose merge method"
+            mode="selectable"
+          />
+          <Text data-testid="selectable-status" size="sm" tone="muted">
+            {status}
+          </Text>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Choose merge method" }),
+    );
+
+    await expect(
+      await page.findByRole("menuitemradio", {
+        name: "Create a merge commit",
+      }),
+    ).toHaveAttribute("aria-checked", "true");
+    await expect(
+      page.getByText("Combine this branch into one commit."),
+    ).toBeVisible();
+
+    await userEvent.click(
+      page.getByRole("menuitemradio", { name: "Squash and merge" }),
+    );
+
+    await expect(canvas.getByTestId("selectable-status")).toHaveTextContent(
+      "No merge executed",
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Squash and merge" }),
+    );
+    await expect(canvas.getByTestId("selectable-status")).toHaveTextContent(
+      "Squash executed",
+    );
   },
 };
 

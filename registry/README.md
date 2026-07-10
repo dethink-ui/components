@@ -18,8 +18,8 @@ Install only the action-composition surface the consumer needs:
 - `button-group` installs Button, IconButton, and the shared base. It has no
   Motion or menu runtime dependency.
 - `dropdown-button` installs ButtonGroup, Button, DropdownMenu, and the shared
-  base. It declares `motion` because its copied source uses Motion for
-  stateful chevron, label, and busy feedback.
+  base. It declares `motion` for stateful chevron, selected-label, indicator,
+  and busy feedback, plus `lucide-react` for the selected-action check icon.
 - `dropdown-menu` remains independently installable for custom overflow and
   context-menu compositions. Its copied surface and changed-item feedback also
   import `motion/react`, so the registry item declares `motion` alongside the

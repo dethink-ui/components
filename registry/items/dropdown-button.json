@@ -3,8 +3,8 @@
   "name": "dropdown-button",
   "type": "registry:ui",
   "title": "DropdownButton",
-  "description": "Menu and split-button composition with native primary and menu controls, controlled or uncontrolled open state, full-composite anchoring, Button variants and sizes, existing DropdownMenu content anatomy, and reduced-motion-safe Motion feedback.",
-  "dependencies": ["motion"],
+  "description": "Menu, fixed split, and selectable-primary action composition with native controls, controlled or uncontrolled state, full-composite anchoring, existing DropdownMenu behavior, and reduced-motion-safe Motion feedback.",
+  "dependencies": ["lucide-react", "motion"],
   "devDependencies": [],
   "registryDependencies": [
     "dethink-base",

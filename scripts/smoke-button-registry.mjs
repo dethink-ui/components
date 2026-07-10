@@ -1012,6 +1012,10 @@ assert(
   "dropdown-button must include Motion for open-state chevron feedback.",
 );
 assert(
+  dropdownButton.dependencies?.includes("lucide-react"),
+  "dropdown-button must include lucide-react for its selected-action check indicator.",
+);
+assert(
   Array.isArray(typography.dependencies) &&
     typography.dependencies.length === 0,
   "typography registry item must not add runtime dependencies.",
@@ -1660,17 +1664,24 @@ assert(
   dropdownButtonSource.includes("onPrimaryAction?: never") &&
     dropdownButtonSource.includes('mode?: "menu"') &&
     dropdownButtonSource.includes('mode: "split"') &&
+    dropdownButtonSource.includes('mode: "selectable"') &&
+    dropdownButtonSource.includes("DropdownButtonSelectableAction") &&
+    dropdownButtonSource.includes("defaultSelectedActionId") &&
+    dropdownButtonSource.includes("selectedActionId") &&
+    dropdownButtonSource.includes('selectionMode={isSelectable ? "single"') &&
+    dropdownButtonSource.includes("DropdownButtonSelectionIndicator") &&
+    dropdownButtonSource.includes('from "lucide-react"') &&
     dropdownButtonSource.includes("menuLabel: string") &&
     dropdownButtonSource.includes('data-slot="dropdown-button-primary"') &&
     dropdownButtonSource.includes('"dropdown-button-menu-trigger"') &&
     dropdownButtonSource.includes(
-      "anchorRef={isSplit ? compositeRef : undefined}",
+      "anchorRef={hasPrimary ? compositeRef : undefined}",
     ) &&
     dropdownButtonSource.includes('loadingBehavior = "all"') &&
     dropdownButtonSource.includes("primaryDisabled") &&
     dropdownButtonSource.includes("menuDisabled") &&
     buttonSource.includes("loadingIndicator"),
-  "dropdown-button must discriminate menu and split modes with stable controls, full-composite anchoring, and Button-backed async policies.",
+  "dropdown-button must discriminate menu, split, and selectable modes with stable controls, full-composite anchoring, and Button-backed async policies.",
 );
 assert(
   dropdownButtonSource.includes('from "motion/react"') &&
@@ -1688,6 +1699,8 @@ assert(
 );
 assert(
   packageIndexSource.includes("DropdownButton") &&
+    packageIndexSource.includes("DropdownButtonSelectableAction") &&
+    packageIndexSource.includes("DropdownButtonSelectableProps") &&
     packageIndexSource.includes("DropdownButtonProps") &&
     packageIndexSource.includes("DropdownButtonMotionPreset") &&
     packageIndexSource.includes("DropdownButtonLoadingBehavior"),

@@ -98,7 +98,21 @@ Async split props are:
 | Input addons participating in field semantics             | InputGroup                   |
 
 DropdownButton menu items are commands. They do not become the trigger value,
-and selecting one never promotes it to the split primary action.
+and selecting one never promotes it to the fixed split primary action. Use
+selectable mode only when choosing a declared action should change the later
+primary execution target.
+
+Selectable mode requires:
+
+- `mode="selectable"` and a separately named `menuLabel`;
+- `actions` with stable IDs, labels, optional descriptions/icons,
+  disabled/destructive state, and one execution handler each;
+- either controlled `selectedActionId` plus `onSelectedActionChange`, or
+  uncontrolled `defaultSelectedActionId` with an optional change callback.
+
+Choosing a menu item changes the selected primary action without invoking its
+handler. The handler runs only when the primary half is activated. The menu
+uses accessible single-selection semantics and a redundant visual checkmark.
 
 ## Keyboard And Focus
 

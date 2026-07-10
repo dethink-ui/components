@@ -790,6 +790,10 @@ export {
   type DropdownButtonMode,
   type DropdownButtonMotionPreset,
   type DropdownButtonProps,
+  type DropdownButtonSelectableAction,
+  type DropdownButtonSelectableControlledProps,
+  type DropdownButtonSelectableProps,
+  type DropdownButtonSelectableUncontrolledProps,
   type DropdownButtonSplitProps,
 } from "./components/dropdown-button";
 export {

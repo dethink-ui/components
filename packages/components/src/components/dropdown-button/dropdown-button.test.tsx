@@ -32,7 +32,187 @@ function ControlledFixture() {
   );
 }
 
+function ControlledSelectableFixture({
+  onMerge,
+  onSelectedActionChange,
+  onSquash,
+}: {
+  onMerge: () => void;
+  onSelectedActionChange: (actionId: string) => void;
+  onSquash: () => void;
+}) {
+  const [selectedActionId, setSelectedActionId] = useState("merge");
+
+  return (
+    <DropdownButton
+      actions={[
+        {
+          description: "Add every commit through a merge commit.",
+          id: "merge",
+          label: "Create a merge commit",
+          onAction: onMerge,
+        },
+        {
+          description: "Combine this branch into one commit.",
+          id: "squash",
+          label: "Squash and merge",
+          onAction: onSquash,
+        },
+      ]}
+      menuLabel="Choose merge method"
+      mode="selectable"
+      onSelectedActionChange={(actionId) => {
+        setSelectedActionId(actionId);
+        onSelectedActionChange(actionId);
+      }}
+      selectedActionId={selectedActionId}
+    />
+  );
+}
+
 describe("DropdownButton", () => {
+  it("selects an action without invoking it, then invokes it from the primary button", async () => {
+    const user = userEvent.setup();
+    const onMerge = vi.fn();
+    const onSquash = vi.fn();
+    const onSelectedActionChange = vi.fn();
+
+    render(
+      <DropdownButton
+        actions={[
+          {
+            description: "Add every commit through a merge commit.",
+            id: "merge",
+            label: "Create a merge commit",
+            onAction: onMerge,
+          },
+          {
+            description: "Combine this branch into one commit.",
+            id: "squash",
+            label: "Squash and merge",
+            onAction: onSquash,
+          },
+        ]}
+        defaultSelectedActionId="merge"
+        menuLabel="Choose merge method"
+        mode="selectable"
+        onSelectedActionChange={onSelectedActionChange}
+      />,
+    );
+
+    const menuTrigger = screen.getByRole("button", {
+      name: "Choose merge method",
+    });
+
+    expect(
+      screen.getByRole("button", { name: "Create a merge commit" }),
+    ).toHaveAttribute("data-slot", "dropdown-button-primary");
+    expect(
+      document.querySelector('[data-slot="dropdown-button"]'),
+    ).toHaveAttribute("data-selected-action-id", "merge");
+
+    await user.click(menuTrigger);
+
+    const mergeChoice = await screen.findByRole("menuitemradio", {
+      name: "Create a merge commit",
+    });
+    const squashChoice = screen.getByRole("menuitemradio", {
+      name: "Squash and merge",
+    });
+
+    expect(mergeChoice).toHaveAttribute("aria-checked", "true");
+    expect(mergeChoice).toHaveAttribute("data-selected");
+    expect(
+      mergeChoice.querySelector(
+        '[data-slot="dropdown-button-selection-indicator"]',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Combine this branch into one commit."),
+    ).toBeInTheDocument();
+
+    await user.click(squashChoice);
+
+    expect(onSelectedActionChange).toHaveBeenCalledWith("squash");
+    expect(onMerge).not.toHaveBeenCalled();
+    expect(onSquash).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(menuTrigger).toHaveFocus());
+    expect(
+      document.querySelector('[data-slot="dropdown-button"]'),
+    ).toHaveAttribute("data-selected-action-id", "squash");
+
+    await user.click(screen.getByRole("button", { name: "Squash and merge" }));
+
+    expect(onSquash).toHaveBeenCalledTimes(1);
+    expect(onMerge).not.toHaveBeenCalled();
+  });
+
+  it("supports application-controlled selected action state", async () => {
+    const user = userEvent.setup();
+    const onMerge = vi.fn();
+    const onSquash = vi.fn();
+    const onSelectedActionChange = vi.fn();
+
+    render(
+      <ControlledSelectableFixture
+        onMerge={onMerge}
+        onSelectedActionChange={onSelectedActionChange}
+        onSquash={onSquash}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Choose merge method" }),
+    );
+    await user.click(
+      await screen.findByRole("menuitemradio", {
+        name: "Squash and merge",
+      }),
+    );
+
+    expect(onSelectedActionChange).toHaveBeenCalledWith("squash");
+    expect(onMerge).not.toHaveBeenCalled();
+    expect(onSquash).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Squash and merge" }));
+    expect(onSquash).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    {
+      actions: [],
+      selectedActionId: "merge",
+      title: "an empty action collection",
+    },
+    {
+      actions: [
+        { id: "merge", label: "Merge", onAction: () => undefined },
+        { id: "merge", label: "Merge again", onAction: () => undefined },
+      ],
+      selectedActionId: "merge",
+      title: "duplicate action IDs",
+    },
+    {
+      actions: [{ id: "merge", label: "Merge", onAction: () => undefined }],
+      selectedActionId: "missing",
+      title: "a missing selected action ID",
+    },
+  ])("fails clearly for $title", ({ actions, selectedActionId }) => {
+    expect(() =>
+      render(
+        <DropdownButton
+          actions={actions}
+          defaultSelectedActionId={selectedActionId}
+          menuLabel="Choose merge method"
+          mode="selectable"
+        />,
+      ),
+    ).toThrow(/DropdownButton selectable/);
+  });
+
   it("renders one accessible menu button and reuses DropdownMenu actions", async () => {
     const user = userEvent.setup();
     const onArchive = vi.fn();
@@ -728,5 +908,35 @@ const invalidSplitModeProps: DropdownButtonProps = {
   onPrimaryAction: () => undefined,
 };
 
+// @ts-expect-error Controlled selectable mode requires a change callback.
+const invalidControlledSelectableProps: DropdownButtonProps = {
+  actions: [{ id: "merge", label: "Merge", onAction: () => undefined }],
+  menuLabel: "Choose merge method",
+  mode: "selectable",
+  selectedActionId: "merge",
+};
+
+// @ts-expect-error Selectable mode derives its primary label from actions.
+const invalidSelectableLabelProps: DropdownButtonProps = {
+  actions: [{ id: "merge", label: "Merge", onAction: () => undefined }],
+  defaultSelectedActionId: "merge",
+  label: "Do not accept a separate label",
+  menuLabel: "Choose merge method",
+  mode: "selectable",
+};
+
+// @ts-expect-error Selectable mode rejects mixed controlled and uncontrolled state.
+const invalidMixedSelectableProps: DropdownButtonProps = {
+  actions: [{ id: "merge", label: "Merge", onAction: () => undefined }],
+  defaultSelectedActionId: "merge",
+  menuLabel: "Choose merge method",
+  mode: "selectable",
+  onSelectedActionChange: () => undefined,
+  selectedActionId: "merge",
+};
+
 void invalidMenuModeProps;
 void invalidSplitModeProps;
+void invalidControlledSelectableProps;
+void invalidSelectableLabelProps;
+void invalidMixedSelectableProps;

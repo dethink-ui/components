@@ -3,10 +3,22 @@ import type { PropRow } from "@/components/props-table";
 export const dropdownButtonProps: PropRow[] = [
   {
     prop: "mode",
-    type: '"menu" | "split"',
+    type: '"menu" | "split" | "selectable"',
     defaultValue: '"menu"',
     description:
-      "Menu mode renders one trigger and rejects direct-action props. Split mode requires onPrimaryAction and a localizable menuLabel.",
+      "Menu mode renders one trigger. Split mode fixes a primary action. Selectable mode derives the later primary action from one chosen action descriptor.",
+  },
+  {
+    prop: "actions",
+    type: "readonly DropdownButtonSelectableAction[]",
+    description:
+      "Selectable-mode action ownership: stable ID, label, optional description/icon, disabled/destructive state, and execution handler.",
+  },
+  {
+    prop: "selectedActionId / defaultSelectedActionId / onSelectedActionChange",
+    type: "string / string / (actionId) => void",
+    description:
+      "Controlled or uncontrolled selectable state. Choosing updates the primary action but never invokes its handler.",
   },
   {
     prop: "menuLabel / onPrimaryAction / primaryIcon",

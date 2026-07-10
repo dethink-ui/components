@@ -16,6 +16,31 @@ function ServerDropdownButton() {
   );
 }
 
+function ServerSelectableDropdownButton() {
+  return (
+    <DropdownButton
+      actions={[
+        {
+          description: "Add every commit through a merge commit.",
+          id: "merge",
+          label: "Create a merge commit",
+          onAction: () => undefined,
+        },
+        {
+          description: "Combine this branch into one commit.",
+          id: "squash",
+          label: "Squash and merge",
+          onAction: () => undefined,
+        },
+      ]}
+      defaultSelectedActionId="squash"
+      menuLabel="Choose merge method"
+      mode="selectable"
+      reducedMotion
+    />
+  );
+}
+
 function ServerResponsiveFamily() {
   return (
     <DethinkProvider density="compact" dir="rtl" theme="dark">
@@ -40,6 +65,36 @@ function ServerResponsiveFamily() {
 }
 
 describe("DropdownButton SSR", () => {
+  it("renders and hydrates deterministic selectable primary state", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    const dropdownButton = <ServerSelectableDropdownButton />;
+    const html = renderToString(dropdownButton);
+
+    expect(html).toContain('data-mode="selectable"');
+    expect(html).toContain('data-slot="dropdown-button-primary"');
+    expect(html).toContain('aria-label="Choose merge method"');
+    expect(html).toContain("Squash and merge");
+    expect(html).not.toContain("Create a merge commit");
+    expect(html.match(/<button/g)).toHaveLength(2);
+
+    container.innerHTML = html;
+
+    await act(async () => {
+      hydrateRoot(container, dropdownButton);
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
+
   it("renders stable closed trigger markup without menu content", () => {
     const html = renderToString(<ServerDropdownButton />);
 
