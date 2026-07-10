@@ -1,22 +1,9 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { ReactNode } from "react";
-import {
-  ButtonTeaser,
-  CardTeaser,
-  CheckboxTeaser,
-  ComboboxTeaser,
-  DataTableTeaser,
-  InputTeaser,
-  LinkTeaser,
-  NumberInputTeaser,
-  SelectTeaser,
-  SwitchTeaser,
-  TimelineTeaser,
-} from "@/components/component-teasers";
+import { ComponentMatrix } from "@/components/component-matrix";
 import { WorkbenchDock } from "@/components/workbench-dock";
 import { WorkbenchHero } from "@/components/workbench-hero";
-import { componentCatalog, getComponentMeta } from "@/lib/components-meta";
+import { componentCatalog } from "@/lib/components-meta";
 import {
   featuredRecipes,
   getRecipeCategoryMeta,
@@ -28,37 +15,8 @@ import {
  * The landing page is a "component workbench": a token-themed console that
  * doubles as the marketing surface. It leans on real @dethink/components
  * (NavDock for section nav, RevealButton for hero actions) and reuses the
- * showcase's live component teasers, so nothing here is a static mock.
+ * showcase's real component states as non-interactive previews.
  */
-
-// A curated matrix of components whose teasers read well at card size.
-const matrixSlugs = [
-  "button",
-  "input",
-  "switch",
-  "data-table",
-  "select",
-  "checkbox",
-  "timeline",
-  "combobox",
-  "link",
-  "card",
-  "number-input",
-] as const;
-
-const matrixTeasers: Record<string, ReactNode> = {
-  button: <ButtonTeaser />,
-  input: <InputTeaser />,
-  switch: <SwitchTeaser />,
-  "data-table": <DataTableTeaser />,
-  select: <SelectTeaser />,
-  checkbox: <CheckboxTeaser />,
-  timeline: <TimelineTeaser />,
-  combobox: <ComboboxTeaser />,
-  link: <LinkTeaser />,
-  card: <CardTeaser />,
-  "number-input": <NumberInputTeaser />,
-};
 
 const colorTokens = [
   { name: "background", token: "--dt-color-background" },
@@ -145,65 +103,16 @@ export default function HomePage() {
                 Component matrix
               </h2>
             </div>
-            <span className="text-muted-foreground font-mono text-[11px] tracking-[0.12em] uppercase">
-              Hover = live preview
+            <span className="text-muted-foreground flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] uppercase">
+              <span
+                aria-hidden="true"
+                className="bg-primary size-1.5 rounded-full"
+              />
+              State previews · open docs to interact
             </span>
           </div>
 
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {matrixSlugs.map((slug) => {
-              const meta = getComponentMeta(slug);
-              if (!meta) return null;
-
-              return (
-                <li key={slug}>
-                  {/*
-                   * The teaser is a decorative sibling of the link — never a
-                   * child of the anchor — so the interactive elements inside
-                   * each teaser don't nest inside an <a> (invalid HTML that
-                   * causes hydration mismatches). A stretched link keeps the
-                   * whole card clickable.
-                   */}
-                  <article className="group border-border bg-background hover:border-primary/50 hover:bg-primary/[0.04] relative flex h-full flex-col gap-3 rounded-md border p-4 transition-colors">
-                    <span
-                      aria-hidden="true"
-                      inert
-                      className="pointer-events-none flex h-14 origin-left scale-[0.62] items-center [&>*]:w-full"
-                    >
-                      {matrixTeasers[slug]}
-                    </span>
-                    <h3 className="font-heading flex items-center justify-between text-sm font-semibold">
-                      <Link
-                        href={`/components/${slug}`}
-                        className="focus-visible:ring-ring rounded-sm outline-none after:absolute after:inset-0 after:rounded-md focus-visible:ring-2"
-                      >
-                        {meta.name}
-                      </Link>
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="text-muted-foreground group-hover:text-primary size-3.5 transition-transform group-hover:translate-x-0.5"
-                      />
-                    </h3>
-                  </article>
-                </li>
-              );
-            })}
-
-            <li>
-              <Link
-                href="/components"
-                className="group border-border bg-muted/30 hover:border-primary/50 hover:bg-primary/[0.06] focus-visible:ring-ring focus-visible:ring-offset-background flex h-full flex-col justify-between gap-3 rounded-md border p-4 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-              >
-                <span className="text-primary font-mono text-[11px] font-semibold">
-                  +{componentCount - matrixSlugs.length}
-                </span>
-                <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1 text-sm font-medium transition-colors">
-                  View all
-                  <ArrowRight aria-hidden="true" className="size-3.5" />
-                </span>
-              </Link>
-            </li>
-          </ul>
+          <ComponentMatrix componentCount={componentCount} />
         </div>
       </section>
 

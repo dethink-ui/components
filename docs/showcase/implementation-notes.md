@@ -3,11 +3,11 @@
 ## Status
 
 - Source: UX and design audit of the running Next.js showcase on 10 July 2026.
-- Current phase: first five approved implementation slices complete.
+- Current phase: first six approved implementation slices complete.
 - GitHub PRD: [#383 — Showcase discovery, documentation, and motion polish](https://github.com/parveshh/dethink-components/issues/383).
 - Implementation gate: complete; the PRD and nine approved tracer-bullet issues are published.
-- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386), [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387), and [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388).
-- Next slice: [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389). Correct the interaction promise and improve static state-preview legibility without adding nested interactive content.
+- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386), [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387), [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388), and [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389).
+- Next slice: [#390 — Tighten the mobile homepage hero](https://github.com/parveshh/dethink-components/issues/390). Improve CTA hierarchy, first-viewport density, and coordinated entrance motion while preserving the workbench identity.
 
 ## Outcome
 
@@ -136,7 +136,7 @@ Implementation direction:
 3. [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386) — AFK; no blockers. Changes the default preview/source hierarchy and verifies keyboard, copy, deep-link, Motion, and mobile behavior.
 4. [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387) — AFK; no blockers. Aligns total/featured language, simplifies the hero, brings filters forward, and adds restrained filter transitions.
 5. [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388) — complete. Defines the capture contract, passes representative visual approval, and integrates maintained imagery for all ten recipes.
-6. [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389) — AFK; no blockers. Corrects the interaction promise and improves teaser legibility without introducing nested interactive content.
+6. [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389) — complete. Corrects the interaction promise, improves teaser legibility, and preserves one clear documentation action per card.
 7. [#390 — Tighten the mobile homepage hero](https://github.com/parveshh/dethink-components/issues/390) — AFK; blocked by #389. Improves CTA hierarchy, first-viewport density, and coordinated entrance motion while preserving the workbench identity.
 8. [#391 — Strengthen dark-theme legibility and focus states](https://github.com/parveshh/dethink-components/issues/391) — AFK; no blockers. Measures and updates semantic tokens, then verifies affected showcase surfaces across brand themes.
 9. [#392 — Run final showcase journey verification](https://github.com/parveshh/dethink-components/issues/392) — AFK; blocked by #384–#391. Covers the complete user journey, final screenshots, accessibility checks, Motion budgets, typecheck, build, and documentation updates.
@@ -205,3 +205,7 @@ Tests should assert public behavior and visible outcomes rather than component i
 - 2026-07-10: Generated exact 1200×675 representative captures for `command-center-dashboard`, `saas-landing-page`, and `login-and-onboarding`. Reviewed them at 400×225 gallery-card scale and paused before the full catalog, as required by the HITL approval gate.
 - 2026-07-10: Received human approval for the representative capture treatment, generated the remaining seven captures, and verified the complete set at exactly 1200×675.
 - 2026-07-10: Replaced the generic category skeletons with responsive, top-aligned `next/image` captures. The adjacent recipe title and summary carry the accessible name, so the duplicate thumbnail imagery remains decorative with empty alternative text.
+- 2026-07-10: Implemented #389 on `feature/issue-389-component-matrix-clarity`: replaced the false hover-live promise with truthful state-preview guidance, moved the matrix from six to four desktop columns, and gave every real component preview a framed 96px surface with more legible component names.
+- 2026-07-10: Kept each matrix card to one available documentation link while retaining the real teaser controls inside an inert visual-only subtree; focus now rings the full card for a clearer keyboard state.
+- 2026-07-10: Added a bounded 240ms transform/opacity viewport entrance with a 200ms maximum stagger and stable component keys. Reduced-motion users receive the complete hierarchy without spatial movement.
+- 2026-07-10: Verified #389 with TypeScript, ESLint, the 72-route production build, all 24 showcase Playwright cases, and accepted desktop/mobile light/dark captures with no console errors or framework overlays.
