@@ -21,6 +21,7 @@ import {
   featuredRecipes,
   getRecipeCategoryMeta,
   getRecipeComponentMetas,
+  recipesCatalog,
 } from "@/lib/recipes-meta";
 
 /*
@@ -102,7 +103,7 @@ const radii = [
 
 export default function HomePage() {
   const componentCount = componentCatalog.length;
-  const recipeCount = featuredRecipes.length;
+  const recipeCount = recipesCatalog.length;
 
   return (
     <div className="flex flex-col">
@@ -191,7 +192,7 @@ export default function HomePage() {
             <li>
               <Link
                 href="/components"
-                className="group border-border bg-muted/30 hover:border-primary/50 hover:bg-primary/[0.06] focus-visible:ring-ring focus-visible:ring-offset-background flex h-full flex-col justify-between gap-3 rounded-md border p-4 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+                className="group border-border bg-muted/30 hover:border-primary/50 hover:bg-primary/[0.06] focus-visible:ring-ring focus-visible:ring-offset-background flex h-full flex-col justify-between gap-3 rounded-md border p-4 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               >
                 <span className="text-primary font-mono text-[11px] font-semibold">
                   +{componentCount - matrixSlugs.length}
@@ -216,7 +217,7 @@ export default function HomePage() {
           <div className="mb-7 flex flex-wrap items-end justify-between gap-3">
             <div className="space-y-2">
               <p className="text-primary font-mono text-[11px] font-medium tracking-[0.14em] uppercase">
-                Recipes
+                {featuredRecipes.length} featured recipes
               </p>
               <h2
                 id="recipes-heading"
@@ -258,8 +259,10 @@ export default function HomePage() {
                         <span className="font-heading block text-lg font-semibold">
                           {recipe.title}
                         </span>
-                        <span className="text-muted-foreground font-mono block text-[10px] tracking-wide uppercase">
-                          {components.map((component) => component.name).join(" · ")}
+                        <span className="text-muted-foreground block font-mono text-[10px] tracking-wide uppercase">
+                          {components
+                            .map((component) => component.name)
+                            .join(" · ")}
                         </span>
                       </span>
                       <ArrowRight
@@ -294,8 +297,8 @@ export default function HomePage() {
             </h2>
             <p className="text-muted-foreground max-w-xl text-sm leading-6">
               One console pattern, two themes. Every surface, border, and text
-              color below is a token — flip the theme in the header and the whole
-              system restyles.
+              color below is a token — flip the theme in the header and the
+              whole system restyles.
             </p>
           </div>
 
@@ -313,10 +316,10 @@ export default function HomePage() {
                   style={{ background: `var(${swatch.token})` }}
                 />
                 <span className="block px-3 py-2.5">
-                  <span className="font-mono block text-xs font-semibold">
+                  <span className="block font-mono text-xs font-semibold">
                     {swatch.name}
                   </span>
-                  <span className="text-muted-foreground font-mono mt-0.5 block text-[10px]">
+                  <span className="text-muted-foreground mt-0.5 block font-mono text-[10px]">
                     {swatch.token}
                   </span>
                 </span>
@@ -332,7 +335,7 @@ export default function HomePage() {
                 key={row.label}
                 className="flex flex-wrap items-baseline gap-4"
               >
-                <span className="text-muted-foreground font-mono w-32 shrink-0 text-[11px]">
+                <span className="text-muted-foreground w-32 shrink-0 font-mono text-[11px]">
                   {row.label}
                 </span>
                 <span className={row.className}>{row.sample}</span>
@@ -348,7 +351,7 @@ export default function HomePage() {
             {radii.map((radius) => (
               <li
                 key={radius.label}
-                className={`border-border bg-background text-muted-foreground font-mono grid h-20 w-28 place-items-center border text-[11px] shadow-sm ${radius.className}`}
+                className={`border-border bg-background text-muted-foreground grid h-20 w-28 place-items-center border font-mono text-[11px] shadow-sm ${radius.className}`}
               >
                 {radius.label}
               </li>

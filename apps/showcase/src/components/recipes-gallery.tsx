@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -28,6 +28,12 @@ import {
   Progress,
 } from "@dethink/components";
 import {
+  AnimatePresence,
+  motion,
+  MotionConfig,
+  useReducedMotion,
+} from "motion/react";
+import {
   getRecipeCategoryMeta,
   getRecipeComponentMetas,
   recipeCategories,
@@ -37,6 +43,8 @@ import {
 } from "@/lib/recipes-meta";
 
 type ActiveCategory = "all" | RecipeCategory;
+
+const motionEase = [0.2, 0, 0, 1] as const;
 
 const previewIcons: Record<RecipeCategory, React.ElementType> = {
   ai: Bot,
@@ -152,7 +160,7 @@ function RecipeCard({ recipe }: { recipe: RecipeMeta }) {
           ))}
         </div>
         <div className="space-y-2">
-          <p className="text-muted-foreground text-xs font-medium uppercase tracking-[0.12em]">
+          <p className="text-muted-foreground text-xs font-medium tracking-[0.12em] uppercase">
             Components
           </p>
           <ul className="flex flex-wrap gap-1.5">
@@ -173,103 +181,200 @@ function RecipeCard({ recipe }: { recipe: RecipeMeta }) {
 export function RecipesGallery() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ActiveCategory>("all");
+  const [announcedCount, setAnnouncedCount] = useState(recipesCatalog.length);
+  const shouldReduceMotion = useReducedMotion();
 
-  const filteredRecipes = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase();
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const filteredRecipes = recipesCatalog.filter((recipe) => {
+    if (category !== "all" && recipe.category !== category) {
+      return false;
+    }
 
-    return recipesCatalog.filter((recipe) => {
-      if (category !== "all" && recipe.category !== category) {
-        return false;
-      }
+    if (!normalizedQuery) {
+      return true;
+    }
 
-      if (!normalizedQuery) {
-        return true;
-      }
+    const searchable = [
+      recipe.title,
+      recipe.summary,
+      recipe.category,
+      recipe.complexity,
+      ...recipe.tags,
+      ...getRecipeComponentMetas(recipe).map((component) => component.name),
+    ]
+      .join(" ")
+      .toLocaleLowerCase();
 
-      const searchable = [
-        recipe.title,
-        recipe.summary,
-        recipe.category,
-        recipe.complexity,
-        ...recipe.tags,
-        ...getRecipeComponentMetas(recipe).map((component) => component.name),
-      ]
-        .join(" ")
-        .toLocaleLowerCase();
+    return searchable.includes(normalizedQuery);
+  });
 
-      return searchable.includes(normalizedQuery);
-    });
-  }, [category, query]);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setAnnouncedCount(filteredRecipes.length);
+    }, 240);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [filteredRecipes.length]);
+
+  const clearFilters = () => {
+    setQuery("");
+    setCategory("all");
+  };
 
   return (
-    <div className="space-y-8">
-      <div className="border-border bg-background/80 rounded-xl border p-4 shadow-sm">
-        <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr] lg:items-center">
-          <div className="relative">
-            <Search
-              aria-hidden="true"
-              className="text-muted-foreground pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2"
-            />
-            <Input
-              aria-label="Search recipes"
-              className="pl-9"
-              placeholder="Search recipes, components, workflows..."
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              variant={category === "all" ? "solid" : "outline"}
-              onClick={() => setCategory("all")}
-            >
-              All
-            </Button>
-            {recipeCategories.map((item) => (
+    <MotionConfig reducedMotion="user">
+      <div className="space-y-6">
+        <search
+          aria-label="Filter recipes"
+          className="border-border bg-background/80 block rounded-xl border p-4 shadow-sm"
+        >
+          <div className="grid gap-4 lg:grid-cols-[minmax(16rem,24rem)_1fr] lg:items-center">
+            <div className="relative">
+              <Search
+                aria-hidden="true"
+                className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+              />
+              <Input
+                aria-label="Search recipes"
+                className="pl-9"
+                placeholder="Search recipes, components, workflows..."
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
               <Button
-                key={item.id}
                 size="sm"
-                variant={category === item.id ? "solid" : "outline"}
-                onClick={() => setCategory(item.id)}
+                variant={category === "all" ? "solid" : "outline"}
+                aria-pressed={category === "all"}
+                onClick={() => setCategory("all")}
               >
-                {item.name}
+                All
               </Button>
-            ))}
+              {recipeCategories.map((item) => (
+                <Button
+                  key={item.id}
+                  size="sm"
+                  variant={category === item.id ? "solid" : "outline"}
+                  aria-pressed={category === item.id}
+                  onClick={() => setCategory(item.id)}
+                >
+                  {item.name}
+                </Button>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        </search>
 
-      {filteredRecipes.length > 0 ? (
-        <ul className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filteredRecipes.map((recipe) => (
-            <li key={recipe.slug} className="h-full">
-              <RecipeCard recipe={recipe} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="border-border bg-background rounded-xl border p-8">
-          <EmptyState
-            visual={<Search />}
-            title="No recipes found"
-            description="Try a broader workflow, component name, or category."
-            primaryAction={
-              <Button
-                leftIcon={<CheckCircle2 />}
-                variant="outline"
-                onClick={() => {
-                  setQuery("");
-                  setCategory("all");
-                }}
+        <div className="text-muted-foreground flex min-h-7 items-baseline justify-between gap-4 text-sm">
+          <p aria-hidden="true" className="flex items-baseline gap-1.5">
+            Showing
+            <AnimatePresence initial={false} mode="popLayout">
+              <motion.span
+                key={filteredRecipes.length}
+                initial={shouldReduceMotion ? false : { opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={
+                  shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }
+                }
+                transition={{ duration: 0.12, ease: motionEase }}
+                className="text-foreground font-heading text-lg font-semibold tabular-nums"
               >
-                Clear filters
-              </Button>
-            }
-          />
+                {filteredRecipes.length}
+              </motion.span>
+            </AnimatePresence>
+            of {recipesCatalog.length} recipes
+          </p>
+          <p className="sr-only" aria-live="polite" aria-atomic="true">
+            {announcedCount} {announcedCount === 1 ? "recipe" : "recipes"}
+            found.
+          </p>
+          {query || category !== "all" ? (
+            <Button size="sm" variant="ghost" onClick={clearFilters}>
+              Clear filters
+            </Button>
+          ) : null}
         </div>
-      )}
-    </div>
+
+        <AnimatePresence initial={false} mode="popLayout">
+          {filteredRecipes.length > 0 ? (
+            <motion.ul
+              key="recipe-results"
+              aria-label="Recipe results"
+              layout={shouldReduceMotion ? false : "position"}
+              className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+            >
+              <AnimatePresence initial={false} mode="popLayout">
+                {filteredRecipes.map((recipe, index) => (
+                  <motion.li
+                    key={recipe.slug}
+                    layout={shouldReduceMotion ? false : "position"}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={
+                      shouldReduceMotion
+                        ? { opacity: 0 }
+                        : { opacity: 0, y: -8 }
+                    }
+                    transition={{
+                      duration: shouldReduceMotion ? 0 : 0.24,
+                      ease: motionEase,
+                      delay: shouldReduceMotion
+                        ? 0
+                        : Math.min(index * 0.025, 0.125),
+                      layout: {
+                        duration: shouldReduceMotion ? 0 : 0.24,
+                        ease: motionEase,
+                      },
+                    }}
+                    className="h-full"
+                  >
+                    <RecipeCard recipe={recipe} />
+                  </motion.li>
+                ))}
+              </AnimatePresence>
+            </motion.ul>
+          ) : (
+            <motion.div
+              key="no-recipe-results"
+              initial={
+                shouldReduceMotion ? false : { opacity: 0, y: 12, scale: 0.99 }
+              }
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={
+                shouldReduceMotion
+                  ? { opacity: 0 }
+                  : { opacity: 0, y: -8, scale: 0.99 }
+              }
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.24,
+                ease: motionEase,
+              }}
+              className="border-border bg-background rounded-xl border p-8"
+            >
+              <EmptyState
+                visual={<Search />}
+                title={
+                  <h3 className="font-heading text-lg font-semibold">
+                    No recipes found
+                  </h3>
+                }
+                description="Try a broader workflow, component name, or category."
+                primaryAction={
+                  <Button
+                    leftIcon={<CheckCircle2 />}
+                    variant="outline"
+                    onClick={clearFilters}
+                  >
+                    Clear filters
+                  </Button>
+                }
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </MotionConfig>
   );
 }
