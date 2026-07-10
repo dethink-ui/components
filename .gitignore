@@ -8,6 +8,7 @@ playwright-report/
 blob-report/
 .playwright/
 .playwright-cli/
+graphify-out/
 .turbo/
 .vite/
 *.tsbuildinfo

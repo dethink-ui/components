@@ -42,8 +42,10 @@ describe("Sidebar SSR", () => {
     expect(expandedMarkup).toContain('data-slot="sidebar-viewport"');
     expect(expandedMarkup).toContain('data-slot="sidebar-rail-handle"');
     expect(expandedMarkup).toContain('data-collapsed="false"');
+    expect(expandedMarkup).toContain("width:var(--sidebar-width)");
     expect(expandedMarkup).toContain('aria-current="page"');
     expect(collapsedMarkup).toContain('data-collapsed="true"');
+    expect(collapsedMarkup).toContain("width:var(--sidebar-width-collapsed)");
   });
 
   it("renders mobile-capable markup on the server", () => {
@@ -68,6 +70,7 @@ describe("Sidebar SSR", () => {
     expect(closedMarkup).not.toContain('role="dialog"');
     expect(openMarkup).toContain('data-slot="sidebar-mobile"');
     expect(openMarkup).toContain('role="dialog"');
+    expect(openMarkup).not.toContain("opacity:0");
   });
 
   it("hydrates without mismatch warnings", async () => {

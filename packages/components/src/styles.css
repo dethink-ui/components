@@ -49,9 +49,31 @@
      their trigger. Encoded as linear() so the spring runs on the compositor
      with no JS and honors prefers-reduced-motion via motion-reduce:animate-none. */
   --ease-spring: linear(
-    0, 0.008, 0.031, 0.069, 0.119, 0.181, 0.252 20.5%, 0.42, 0.588, 0.741 36.6%,
-    0.865, 0.958, 1.02, 1.054 51.5%, 1.07, 1.074, 1.067 61.5%, 1.04, 1.013 71.5%,
-    0.997, 0.991, 0.994, 0.999, 1.002, 1
+    0,
+    0.008,
+    0.031,
+    0.069,
+    0.119,
+    0.181,
+    0.252 20.5%,
+    0.42,
+    0.588,
+    0.741 36.6%,
+    0.865,
+    0.958,
+    1.02,
+    1.054 51.5%,
+    1.07,
+    1.074,
+    1.067 61.5%,
+    1.04,
+    1.013 71.5%,
+    0.997,
+    0.991,
+    0.994,
+    0.999,
+    1.002,
+    1
   );
   --animate-overlay-in: dt-overlay-in 200ms var(--ease-spring) both;
   --animate-overlay-out: dt-overlay-out 130ms cubic-bezier(0.4, 0, 1, 1) both;
@@ -61,15 +83,6 @@
   --animate-sidebar-menu-open: dt-sidebar-menu-open
     var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
-  --animate-sidebar-overlay-in: dt-sidebar-overlay-in
-    var(--sidebar-motion-duration, 220ms) ease-out both;
-  --animate-sidebar-overlay-out: dt-sidebar-overlay-out 150ms
-    cubic-bezier(0.4, 0, 1, 1) both;
-  --animate-sidebar-panel-in: dt-sidebar-panel-in
-    var(--sidebar-motion-duration, 220ms)
-    var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
-  --animate-sidebar-panel-out: dt-sidebar-panel-out 180ms
-    cubic-bezier(0.4, 0, 1, 1) both;
   --animate-nav-slide-in: dt-nav-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1)
     both;
   --animate-nav-slide-out: dt-nav-slide-out 160ms cubic-bezier(0.4, 0, 1, 1)
@@ -133,59 +146,6 @@
     opacity: 1;
     translate: 0 0;
     scale: 1;
-  }
-}
-
-@keyframes dt-sidebar-overlay-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes dt-sidebar-panel-in {
-  from {
-    opacity: 0;
-    translate: var(--dt-sidebar-panel-motion-x, calc(var(--dt-space-3) * -1)) 0;
-    scale: 0.985;
-  }
-
-  70% {
-    translate: 0 0;
-    scale: 1.01;
-  }
-
-  to {
-    opacity: 1;
-    translate: 0 0;
-    scale: 1;
-  }
-}
-
-@keyframes dt-sidebar-overlay-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes dt-sidebar-panel-out {
-  from {
-    opacity: 1;
-    translate: 0 0;
-    scale: 1;
-  }
-
-  to {
-    opacity: 0;
-    translate: var(--dt-sidebar-panel-motion-x, calc(var(--dt-space-3) * -1)) 0;
-    scale: 0.985;
   }
 }
 

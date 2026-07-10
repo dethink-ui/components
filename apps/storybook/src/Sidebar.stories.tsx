@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, screen, userEvent, within } from "storybook/test";
 import { useState, type SVGProps } from "react";
 import {
   DethinkProvider,
@@ -507,7 +507,7 @@ export const MobileDrawer: Story = {
 
     await userEvent.click(canvas.getByRole("button", { name: "Open sidebar" }));
     await expect(
-      canvas.getByRole("dialog", { name: "Mobile workspace navigation" }),
+      screen.getByRole("dialog", { name: "Mobile workspace navigation" }),
     ).toBeVisible();
   },
 };
