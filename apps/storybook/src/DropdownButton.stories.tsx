@@ -391,6 +391,158 @@ export const SelectablePrimaryAction: Story = {
   },
 };
 
+export const ControlledSelectableAction: Story = {
+  render: function ControlledSelectableActionStory() {
+    const [selectedActionId, setSelectedActionId] = useState("merge");
+    const [status, setStatus] = useState("No controlled action executed");
+
+    return (
+      <StoryFrame>
+        <Stack gap="3" align="start">
+          <Button variant="soft" onClick={() => setSelectedActionId("squash")}>
+            Choose squash from app state
+          </Button>
+          <DropdownButton
+            actions={[
+              {
+                id: "merge",
+                label: "Create a merge commit",
+                onAction: () => setStatus("Controlled merge executed"),
+              },
+              {
+                id: "squash",
+                label: "Squash and merge",
+                onAction: () => setStatus("Controlled squash executed"),
+              },
+            ]}
+            menuLabel="Choose controlled merge method"
+            mode="selectable"
+            onSelectedActionChange={setSelectedActionId}
+            selectedActionId={selectedActionId}
+          />
+          <Text
+            data-testid="controlled-selectable-status"
+            size="sm"
+            tone="muted"
+          >
+            {status}
+          </Text>
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Choose squash from app state" }),
+    );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Squash and merge" }),
+    );
+    await expect(
+      canvas.getByTestId("controlled-selectable-status"),
+    ).toHaveTextContent("Controlled squash executed");
+  },
+};
+
+export const SelectablePolicies: Story = {
+  render: () => (
+    <StoryFrame>
+      <div className="grid gap-6 sm:grid-cols-3">
+        <Stack gap="2" align="start">
+          <Text size="sm" weight="medium">
+            Selected action disabled
+          </Text>
+          <DropdownButton
+            actions={[
+              {
+                disabled: true,
+                id: "merge",
+                label: "Merge needs approval",
+                onAction: () => undefined,
+              },
+              {
+                id: "request",
+                label: "Request approval",
+                onAction: () => undefined,
+              },
+            ]}
+            defaultSelectedActionId="merge"
+            menuLabel="Choose approval action"
+            mode="selectable"
+          />
+        </Stack>
+        <Stack gap="2" align="start">
+          <Text size="sm" weight="medium">
+            Primary-only loading
+          </Text>
+          <DropdownButton
+            actions={[
+              {
+                id: "merge",
+                label: "Creating merge commit",
+                onAction: () => undefined,
+              },
+              {
+                id: "cancel",
+                label: "Cancel merge",
+                onAction: () => undefined,
+              },
+            ]}
+            defaultSelectedActionId="merge"
+            loading
+            loadingBehavior="primary"
+            menuLabel="Choose safe merge alternative"
+            mode="selectable"
+          />
+        </Stack>
+        <Stack gap="2" align="start">
+          <Text size="sm" weight="medium">
+            Destructive selection
+          </Text>
+          <DropdownButton
+            actions={[
+              {
+                destructive: true,
+                id: "discard",
+                label: "Discard changes",
+                onAction: () => undefined,
+              },
+              {
+                id: "save",
+                label: "Save changes",
+                onAction: () => undefined,
+              },
+            ]}
+            defaultSelectedActionId="discard"
+            menuLabel="Choose change action"
+            mode="selectable"
+          />
+        </Stack>
+      </div>
+    </StoryFrame>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+
+    await expect(
+      canvas.getByRole("button", { name: "Merge needs approval" }),
+    ).toBeDisabled();
+    await expect(
+      canvas.getByRole("button", { name: "Choose approval action" }),
+    ).toBeEnabled();
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Choose safe merge alternative" }),
+    );
+    await expect(
+      await page.findByRole("menuitemradio", { name: "Cancel merge" }),
+    ).toBeVisible();
+  },
+};
+
 export const SplitLongLabelAndRtl: Story = {
   render: (args) => (
     <StoryFrame dir="rtl">

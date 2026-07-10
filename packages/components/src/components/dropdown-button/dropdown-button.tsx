@@ -268,10 +268,12 @@ function ChevronDownIcon({
 }
 
 function DropdownButtonPrimaryLabel({
+  contentKey,
   label,
   motionPreset,
   reducedMotion,
 }: {
+  contentKey?: string;
   label: ReactNode;
   motionPreset: DropdownButtonMotionPreset;
   reducedMotion: boolean;
@@ -285,7 +287,7 @@ function DropdownButtonPrimaryLabel({
     >
       <AnimatePresence initial={false} mode="sync">
         <DropdownButtonPrimaryLabelItem
-          key={getDropdownButtonNodeKey(label, "primary-label")}
+          key={contentKey ?? getDropdownButtonNodeKey(label, "primary-label")}
           label={label}
           motionDisabled={motionDisabled}
           motionPreset={motionPreset}
@@ -327,10 +329,12 @@ function DropdownButtonPrimaryLabelItem({
 }
 
 function DropdownButtonPrimaryIcon({
+  contentKey,
   icon,
   motionPreset,
   reducedMotion,
 }: {
+  contentKey?: string;
   icon: ReactNode;
   motionPreset: DropdownButtonMotionPreset;
   reducedMotion: boolean;
@@ -339,22 +343,24 @@ function DropdownButtonPrimaryIcon({
 
   return (
     <AnimatePresence initial={false} mode="sync">
-      <motion.span
-        key={getDropdownButtonNodeKey(icon, "primary-icon")}
-        animate={motionDisabled ? { opacity: 1 } : { opacity: 1, scale: 1 }}
-        initial={motionDisabled ? false : { opacity: 0, scale: 0.9 }}
-        exit={motionDisabled ? { opacity: 1 } : { opacity: 0, scale: 0.9 }}
-        data-slot="dropdown-button-primary-icon"
-        className="inline-flex size-4 items-center justify-center"
-        transition={{
-          duration: motionDisabled
-            ? 0
-            : dropdownButtonChevronDuration[motionPreset],
-          ease: [0.16, 1, 0.3, 1],
-        }}
-      >
-        {icon}
-      </motion.span>
+      {icon ? (
+        <motion.span
+          key={contentKey ?? getDropdownButtonNodeKey(icon, "primary-icon")}
+          animate={motionDisabled ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+          initial={motionDisabled ? false : { opacity: 0, scale: 0.9 }}
+          exit={motionDisabled ? { opacity: 0 } : { opacity: 0, scale: 0.9 }}
+          data-slot="dropdown-button-primary-icon"
+          className="inline-flex size-4 items-center justify-center"
+          transition={{
+            duration: motionDisabled
+              ? 0
+              : dropdownButtonChevronDuration[motionPreset],
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        >
+          {icon}
+        </motion.span>
+      ) : null}
     </AnimatePresence>
   );
 }
@@ -664,8 +670,11 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
                   (isSelectable && selectedAction?.disabled === true)
                 }
                 leftIcon={
-                  resolvedPrimaryIcon ? (
+                  isSelectable || resolvedPrimaryIcon ? (
                     <DropdownButtonPrimaryIcon
+                      contentKey={
+                        isSelectable ? resolvedSelectedActionId : undefined
+                      }
                       icon={resolvedPrimaryIcon}
                       motionPreset={motionPreset}
                       reducedMotion={resolvedReducedMotion}
@@ -685,6 +694,9 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
                 variant={resolvedVariant}
               >
                 <DropdownButtonPrimaryLabel
+                  contentKey={
+                    isSelectable ? resolvedSelectedActionId : undefined
+                  }
                   label={resolvedLabel}
                   motionPreset={motionPreset}
                   reducedMotion={resolvedReducedMotion}

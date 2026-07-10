@@ -181,6 +181,293 @@ describe("DropdownButton", () => {
     expect(onSquash).toHaveBeenCalledTimes(1);
   });
 
+  it("reflects controlled descriptor and handler updates without stale primary state", async () => {
+    const user = userEvent.setup();
+    const firstHandler = vi.fn();
+    const nextHandler = vi.fn();
+    const onSelectedActionChange = vi.fn();
+    const { rerender } = render(
+      <DropdownButton
+        actions={[
+          {
+            icon: <span key="merge-icon">M</span>,
+            id: "merge",
+            label: "Create a merge commit",
+            onAction: firstHandler,
+          },
+        ]}
+        menuLabel="Choose merge method"
+        mode="selectable"
+        onSelectedActionChange={onSelectedActionChange}
+        selectedActionId="merge"
+      />,
+    );
+
+    rerender(
+      <DropdownButton
+        actions={[
+          {
+            destructive: true,
+            icon: <span key="updated-merge-icon">U</span>,
+            id: "merge",
+            label: "Merge with updated policy",
+            onAction: nextHandler,
+          },
+        ]}
+        menuLabel="Choose merge method"
+        mode="selectable"
+        onSelectedActionChange={onSelectedActionChange}
+        selectedActionId="merge"
+      />,
+    );
+
+    const primary = screen.getByRole("button", {
+      name: "Merge with updated policy",
+    });
+
+    expect(
+      screen.queryByRole("button", { name: "Create a merge commit" }),
+    ).not.toBeInTheDocument();
+    expect(primary).toHaveAttribute("data-variant", "destructive");
+    expect(
+      primary.querySelector('[data-slot="dropdown-button-primary-icon"]'),
+    ).toHaveTextContent("U");
+
+    rerender(
+      <DropdownButton
+        actions={[
+          {
+            destructive: true,
+            id: "merge",
+            label: "Merge with updated policy",
+            onAction: nextHandler,
+          },
+        ]}
+        menuLabel="Choose merge method"
+        mode="selectable"
+        onSelectedActionChange={onSelectedActionChange}
+        selectedActionId="merge"
+      />,
+    );
+
+    await waitFor(() =>
+      expect(
+        primary.querySelector('[data-slot="dropdown-button-primary-icon"]'),
+      ).not.toBeInTheDocument(),
+    );
+    expect(primary.querySelector('[data-slot="button-left-icon"]')).toHaveClass(
+      "empty:hidden",
+    );
+
+    await user.click(primary);
+
+    expect(nextHandler).toHaveBeenCalledTimes(1);
+    expect(firstHandler).not.toHaveBeenCalled();
+  });
+
+  it("keeps a disabled selected action explicit while allowing another choice", async () => {
+    const user = userEvent.setup();
+    const disabledHandler = vi.fn();
+    const enabledHandler = vi.fn();
+
+    render(
+      <DropdownButton
+        actions={[
+          {
+            disabled: true,
+            id: "merge",
+            label: "Create a merge commit",
+            onAction: disabledHandler,
+          },
+          {
+            id: "squash",
+            label: "Squash and merge",
+            onAction: enabledHandler,
+          },
+        ]}
+        defaultSelectedActionId="merge"
+        menuLabel="Choose merge method"
+        mode="selectable"
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Create a merge commit" }),
+    ).toBeDisabled();
+
+    const menuTrigger = screen.getByRole("button", {
+      name: "Choose merge method",
+    });
+    expect(menuTrigger).toBeEnabled();
+    await user.click(menuTrigger);
+
+    expect(
+      await screen.findByRole("menuitemradio", {
+        name: "Create a merge commit",
+      }),
+    ).toHaveAttribute("data-disabled");
+
+    await user.click(
+      screen.getByRole("menuitemradio", { name: "Squash and merge" }),
+    );
+
+    const enabledPrimary = screen.getByRole("button", {
+      name: "Squash and merge",
+    });
+    expect(enabledPrimary).toBeEnabled();
+    await user.click(enabledPrimary);
+
+    expect(enabledHandler).toHaveBeenCalledTimes(1);
+    expect(disabledHandler).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    {
+      loadingBehavior: "all" as const,
+      menuEnabled: false,
+      title: "whole-composite loading",
+    },
+    {
+      loadingBehavior: "primary" as const,
+      menuEnabled: true,
+      title: "primary-only loading",
+    },
+  ])(
+    "coordinates selectable $title",
+    async ({ loadingBehavior, menuEnabled }) => {
+      const user = userEvent.setup();
+      const onAction = vi.fn();
+
+      render(
+        <DropdownButton
+          actions={[
+            {
+              id: "merge",
+              label: "Creating merge commit",
+              onAction,
+            },
+            {
+              id: "cancel",
+              label: "Cancel merge",
+              onAction: () => undefined,
+            },
+          ]}
+          defaultSelectedActionId="merge"
+          loading
+          loadingBehavior={loadingBehavior}
+          menuLabel="Choose merge method"
+          mode="selectable"
+        />,
+      );
+
+      const primary = screen.getByRole("button", {
+        name: "Creating merge commit",
+      });
+      const menuTrigger = screen.getByRole("button", {
+        name: "Choose merge method",
+      });
+
+      expect(primary).toBeDisabled();
+      expect(primary).toHaveAttribute("aria-busy", "true");
+      expect(menuTrigger).toHaveProperty("disabled", !menuEnabled);
+
+      await user.click(primary);
+      expect(onAction).not.toHaveBeenCalled();
+
+      if (menuEnabled) {
+        await user.click(menuTrigger);
+        expect(
+          await screen.findByRole("menuitemradio", { name: "Cancel merge" }),
+        ).toBeInTheDocument();
+      }
+    },
+  );
+
+  it("keeps selectable indicators static for the none Motion preset", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DropdownButton
+        actions={[
+          {
+            id: "merge",
+            label: "Create a merge commit",
+            onAction: () => undefined,
+          },
+        ]}
+        defaultSelectedActionId="merge"
+        menuLabel="Choose merge method"
+        mode="selectable"
+        motionPreset="none"
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Choose merge method" }),
+    );
+
+    const selectedItem = await screen.findByRole("menuitemradio", {
+      name: "Create a merge commit",
+    });
+    const indicator = selectedItem.querySelector(
+      '[data-slot="dropdown-button-selection-indicator"]',
+    );
+
+    expect(indicator).toHaveStyle({ transform: "none" });
+    expect(
+      selectedItem.closest('[data-slot="dropdown-button-content"]'),
+    ).toHaveAttribute("data-motion", "none");
+  });
+
+  it("does not reset uncontrolled selection when its default prop changes", async () => {
+    const user = userEvent.setup();
+    const actions = [
+      {
+        id: "merge",
+        label: "Create a merge commit",
+        onAction: () => undefined,
+      },
+      {
+        id: "squash",
+        label: "Squash and merge",
+        onAction: () => undefined,
+      },
+      {
+        id: "rebase",
+        label: "Rebase and merge",
+        onAction: () => undefined,
+      },
+    ];
+    const { rerender } = render(
+      <DropdownButton
+        actions={actions}
+        defaultSelectedActionId="rebase"
+        menuLabel="Choose merge method"
+        mode="selectable"
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: "Choose merge method" }),
+    );
+    await user.click(
+      await screen.findByRole("menuitemradio", { name: "Squash and merge" }),
+    );
+
+    rerender(
+      <DropdownButton
+        actions={actions}
+        defaultSelectedActionId="merge"
+        menuLabel="Choose merge method"
+        mode="selectable"
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Squash and merge" }),
+    ).toBeInTheDocument();
+  });
+
   it.each([
     {
       actions: [],

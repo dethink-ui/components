@@ -53,7 +53,7 @@ const buttonSizeClasses: Record<ButtonSize, string> = {
 };
 
 const buttonIconClasses =
-  "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center [&>svg]:size-4";
+  "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center empty:hidden [&>svg]:size-4";
 
 const buttonSpinnerClasses =
   "pointer-events-none size-4 shrink-0 rounded-full border-2 border-current border-r-transparent animate-spin motion-reduce:animate-none";

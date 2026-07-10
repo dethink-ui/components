@@ -56,6 +56,49 @@ describe("DropdownButton accessibility", () => {
     ).resolves.toHaveNoViolations();
   });
 
+  it("has no axe violations when the selected primary action is disabled", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <main>
+          <DropdownButton
+            actions={[
+              {
+                disabled: true,
+                id: "merge",
+                label: "Merge needs approval",
+                onAction: () => undefined,
+              },
+              {
+                id: "request",
+                label: "Request approval",
+                onAction: () => undefined,
+              },
+            ]}
+            defaultSelectedActionId="merge"
+            menuLabel="Choose approval action"
+            mode="selectable"
+          />
+        </main>
+      </DethinkProvider>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Merge needs approval" }),
+    ).toBeDisabled();
+    await user.click(
+      screen.getByRole("button", { name: "Choose approval action" }),
+    );
+    expect(
+      await screen.findByRole("menuitemradio", {
+        name: "Merge needs approval",
+      }),
+    ).toHaveAttribute("aria-checked", "true");
+    await expect(
+      axe(container.ownerDocument.body),
+    ).resolves.toHaveNoViolations();
+  });
+
   it("has no axe violations for a labelled menu button and action menu", async () => {
     const user = userEvent.setup();
     const { container } = render(

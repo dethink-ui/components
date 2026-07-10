@@ -95,6 +95,45 @@ describe("DropdownButton SSR", () => {
     consoleError.mockRestore();
   });
 
+  it("renders controlled selectable loading state in themed RTL markup", () => {
+    const html = renderToString(
+      <DethinkProvider density="compact" dir="rtl" theme="dark">
+        <DropdownButton
+          actions={[
+            {
+              id: "merge",
+              label: "إنشاء دمج",
+              onAction: () => undefined,
+            },
+            {
+              destructive: true,
+              id: "discard",
+              label: "تجاهل التغييرات",
+              onAction: () => undefined,
+            },
+          ]}
+          loading
+          loadingBehavior="primary"
+          menuLabel="اختيار إجراء الدمج"
+          mode="selectable"
+          motionPreset="none"
+          onSelectedActionChange={() => undefined}
+          selectedActionId="discard"
+        />
+      </DethinkProvider>,
+    );
+
+    expect(html).toContain('data-theme="dark"');
+    expect(html).toContain('data-density="compact"');
+    expect(html).toContain('dir="rtl"');
+    expect(html).toContain('data-selected-action-id="discard"');
+    expect(html).toContain('data-loading-behavior="primary"');
+    expect(html).toContain('data-motion="none"');
+    expect(html).toContain('data-variant="destructive"');
+    expect(html).toContain("تجاهل التغييرات");
+    expect(html).not.toContain("animate-spin");
+  });
+
   it("renders stable closed trigger markup without menu content", () => {
     const html = renderToString(<ServerDropdownButton />);
 
