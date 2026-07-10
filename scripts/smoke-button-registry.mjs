@@ -141,6 +141,8 @@ const navigationMenu = await readJson(
   join(registryRoot, "navigation-menu.json"),
 );
 const navDock = await readJson(join(registryRoot, "navdock.json"));
+const sidebar = await readJson(join(registryRoot, "sidebar.json"));
+const sidebarShell = await readJson(join(registryRoot, "sidebar-shell.json"));
 const pagination = await readJson(join(registryRoot, "pagination.json"));
 const typography = await readJson(join(registryRoot, "typography.json"));
 const dateTimePicker = await readJson(
@@ -202,6 +204,8 @@ const registryItemsByName = new Map(
     dropdownMenu,
     navigationMenu,
     navDock,
+    sidebar,
+    sidebarShell,
     pagination,
     typography,
     dateTimePicker,
@@ -1038,6 +1042,16 @@ assert(
     feedbackStates.dependencies.length === 0,
   "feedback-states registry item should receive runtime dependencies through its child items.",
 );
+assert(
+  sidebar.dependencies?.includes("motion"),
+  "sidebar registry item must include Motion for structural choreography.",
+);
+assert(
+  sidebarShell.dependencies?.includes("motion") &&
+    sidebarShell.registryDependencies?.includes("sidebar") &&
+    sidebarShell.registryDependencies?.includes("dethink-base"),
+  "sidebar-shell registry item must include Motion and its Sidebar/base registry dependencies.",
+);
 
 for (const item of [
   base,
@@ -1080,6 +1094,8 @@ for (const item of [
   dropdownMenu,
   navigationMenu,
   navDock,
+  sidebar,
+  sidebarShell,
   pagination,
   typography,
   dateTimePicker,
@@ -1137,6 +1153,8 @@ await assertRegistryRelativeImportsResolve(dropdownMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(dateTimePicker, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navigationMenu, registryItemsByName);
 await assertRegistryRelativeImportsResolve(navDock, registryItemsByName);
+await assertRegistryRelativeImportsResolve(sidebar, registryItemsByName);
+await assertRegistryRelativeImportsResolve(sidebarShell, registryItemsByName);
 await assertRegistryRelativeImportsResolve(slotPlanner, registryItemsByName);
 await assertRegistryRelativeImportsResolve(pagination, registryItemsByName);
 await assertRegistryRelativeImportsResolve(liveRegion, registryItemsByName);
@@ -3541,6 +3559,17 @@ const navDockSource = await readFile(
   join(root, "packages/components/src/components/navdock/navdock.tsx"),
   "utf8",
 );
+const sidebarSource = await readFile(
+  join(root, "packages/components/src/components/sidebar/sidebar.tsx"),
+  "utf8",
+);
+const sidebarShellSource = await readFile(
+  join(
+    root,
+    "packages/components/src/components/sidebar-shell/sidebar-shell.tsx",
+  ),
+  "utf8",
+);
 assert(
   navigationMenuSource.includes('data-slot="navigation-menu"') &&
     navigationMenuSource.includes('data-slot="navigation-menu-list"') &&
@@ -3644,6 +3673,29 @@ assert(
 assert(
   !navDockSource.includes("floating-ui"),
   "navdock source must not add Floating UI.",
+);
+assert(
+  sidebarSource.includes("<motionElement.nav") &&
+    sidebarSource.includes("AnimatePresence") &&
+    sidebarSource.includes("useReducedMotion") &&
+    !sidebarSource.includes("transition-[width") &&
+    !sidebarSource.includes("animate-sidebar-panel") &&
+    !styles.includes("dt-sidebar-panel-in") &&
+    !styles.includes("dt-sidebar-panel-out"),
+  "sidebar source must use Motion for width and mobile presence choreography without parallel CSS structural animation.",
+);
+assert(
+  sidebarShellSource.includes('from "motion/react"') &&
+    sidebarShellSource.includes("var(--dt-density-control)") &&
+    sidebarShellSource.includes("var(--dt-density-gap)") &&
+    sidebarShellSource.includes("tabIndex = -1"),
+  "sidebar-shell source must keep Motion, provider density, and focusable skip-target contracts.",
+);
+assert(
+  packageIndexSource.includes("SidebarShell") &&
+    packageIndexSource.includes("SidebarShellMain") &&
+    packageIndexSource.includes("SidebarShellNavigation"),
+  "root package index must export the SidebarShell family.",
 );
 
 console.log("Registry smoke passed.");

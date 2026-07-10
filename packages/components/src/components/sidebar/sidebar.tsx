@@ -26,6 +26,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import {
+  AnimatePresence,
   motion as motionElement,
   useReducedMotion,
   type HTMLMotionProps,
@@ -221,10 +222,10 @@ const SidebarGroupContext = createContext<SidebarGroupContextValue | null>(
 );
 
 const sidebarProviderClasses =
-  "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width-ease:cubic-bezier(0.2,0,0,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
+  "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
 
 const sidebarClasses =
-  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-visible border-border bg-background text-foreground outline-none motion-safe:transition-[width,box-shadow] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-width-ease,var(--sidebar-motion-ease))] motion-reduce:transition-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[motion=none]:transition-none data-[side=left]:border-e data-[side=right]:border-s";
+  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-visible border-border bg-background text-foreground outline-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[side=left]:border-e data-[side=right]:border-s";
 
 const sidebarViewportClasses =
   "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit]";
@@ -262,10 +263,10 @@ const sidebarGroupContentInnerClasses =
   "grid min-h-0 min-w-0 gap-[var(--dt-space-1)] overflow-hidden";
 
 const sidebarMobileOverlayClasses =
-  "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none motion-safe:animate-sidebar-overlay-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-overlay-out";
+  "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none";
 
 const sidebarMobilePanelClasses =
-  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none motion-safe:animate-sidebar-panel-in motion-reduce:animate-none data-[motion=none]:animate-none data-[state=closing]:pointer-events-none data-[state=closing]:motion-safe:animate-sidebar-panel-out data-[side=left]:start-0 data-[side=left]:border-e data-[side=left]:[--dt-sidebar-panel-motion-x:calc(var(--dt-space-3)*-1)] data-[side=right]:end-0 data-[side=right]:border-s data-[side=right]:[--dt-sidebar-panel-motion-x:var(--dt-space-3)]";
+  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none data-[side=left]:start-0 data-[side=left]:border-e data-[side=right]:end-0 data-[side=right]:border-s";
 
 const sidebarMobileCloseClasses =
   "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
@@ -313,7 +314,7 @@ const sidebarRailClasses =
 const sidebarRailHandleClasses =
   "relative flex h-8 w-5 items-center justify-center rounded-md border border-border bg-background text-muted-foreground shadow-sm ring-offset-background group-hover/sidebar-rail:bg-muted group-hover/sidebar-rail:text-foreground group-focus-visible/sidebar-rail:ring-2 group-focus-visible/sidebar-rail:ring-ring group-focus-visible/sidebar-rail:ring-offset-2 contrast-more:border-current [&>span]:flex [&>span]:items-center [&>span]:justify-center [&_svg]:size-2.5 [&_svg]:shrink-0";
 
-const sidebarRailMotionTransitions: Record<
+const sidebarMotionTransitions: Record<
   Exclude<SidebarMotion, "none">,
   Transition
 > = {
@@ -322,7 +323,19 @@ const sidebarRailMotionTransitions: Record<
   expressive: { type: "spring", stiffness: 420, damping: 27, mass: 0.75 },
 };
 
-const sidebarRailStaticTransition: Transition = { duration: 0 };
+const sidebarStaticTransition: Transition = { duration: 0 };
+
+function getSidebarMotionTransition(motion: SidebarMotion) {
+  return motion === "none"
+    ? sidebarStaticTransition
+    : sidebarMotionTransitions[motion];
+}
+
+function useResolvedSidebarMotion(motion: SidebarMotion) {
+  const shouldReduceMotion = useReducedMotion();
+
+  return motion === "none" || shouldReduceMotion === true ? "none" : motion;
+}
 
 const sidebarRailHandleVariants: Variants = {
   rest: { scale: 1 },
@@ -935,6 +948,11 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
     const side = sideProp ?? context.side;
     const variant = variantProp ?? context.variant;
     const surfaceCollapsed = context.collapsed || variant === "rail";
+    const resolvedMotion = useResolvedSidebarMotion(context.motion);
+    const motionTransition = getSidebarMotionTransition(resolvedMotion);
+    const motionWidth = surfaceCollapsed
+      ? "var(--sidebar-width-collapsed)"
+      : "var(--sidebar-width)";
     const surfaceContext = useMemo<SidebarSurfaceContextValue>(
       () => ({
         collapsed: surfaceCollapsed,
@@ -951,23 +969,26 @@ export const Sidebar = forwardRef<HTMLElement, SidebarProps>(
 
     return (
       <SidebarSurfaceContext.Provider value={surfaceContext}>
-        <nav
-          {...props}
+        <motionElement.nav
+          {...(props as HTMLMotionProps<"nav">)}
           ref={ref as ForwardedRef<HTMLElement>}
           aria-label={ariaLabel}
+          animate={{ width: motionWidth }}
           data-slot="sidebar"
           data-collapsed={surfaceCollapsed ? "true" : "false"}
           data-mobile-open={context.mobileOpen ? "true" : "false"}
-          data-motion={context.motion}
+          data-motion={resolvedMotion}
           data-side={side}
           data-variant={variant}
           className={sidebarClassNames({ className, variant })}
+          initial={false}
+          transition={motionTransition}
         >
           <div data-slot="sidebar-viewport" className={sidebarViewportClasses}>
             {viewportChildren}
           </div>
           {railChildren}
-        </nav>
+        </motionElement.nav>
       </SidebarSurfaceContext.Provider>
     );
   },
@@ -1216,50 +1237,15 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     );
     const titleId = useId();
     const wasOpenRef = useRef(context.mobileOpen);
-    const previousOpenRef = useRef(context.mobileOpen);
-    const [closing, setClosing] = useState(false);
-
-    if (previousOpenRef.current !== context.mobileOpen) {
-      previousOpenRef.current = context.mobileOpen;
-
-      if (!context.mobileOpen && canAnimateExit(context.motion)) {
-        setClosing(true);
-      } else if (context.mobileOpen && closing) {
-        setClosing(false);
-      }
-    }
+    const resolvedMotion = useResolvedSidebarMotion(context.motion);
+    const motionDisabled = resolvedMotion === "none";
+    const motionTransition = getSidebarMotionTransition(resolvedMotion);
+    const panelOffset =
+      side === "left" ? "calc(var(--dt-space-3) * -1)" : "var(--dt-space-3)";
 
     useEffect(() => {
       setPortalElement(document.body);
     }, []);
-
-    useEffect(() => {
-      if (!closing) {
-        return undefined;
-      }
-
-      const panelElement = panelRef.current;
-      const handleAnimationEnd = (event: globalThis.AnimationEvent) => {
-        if (
-          event.target === panelElement &&
-          event.animationName === "dt-sidebar-panel-out"
-        ) {
-          setClosing(false);
-        }
-      };
-
-      panelElement?.addEventListener("animationend", handleAnimationEnd);
-
-      const fallback = window.setTimeout(
-        () => setClosing(false),
-        exitFallbackMs,
-      );
-
-      return () => {
-        panelElement?.removeEventListener("animationend", handleAnimationEnd);
-        window.clearTimeout(fallback);
-      };
-    }, [closing]);
 
     useEffect(() => {
       if (context.mobileOpen) {
@@ -1271,7 +1257,7 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
       }
 
       wasOpenRef.current = context.mobileOpen;
-    }, [context.mobileOpen, context.mobileTriggerElement]);
+    }, [context.mobileOpen, context.mobileTriggerElement, portalElement]);
 
     useEffect(() => {
       if (!context.mobileOpen || !portalElement || !overlayRef.current) {
@@ -1383,55 +1369,77 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
       onKeyDown?.(event);
     };
 
-    if (!context.mobileOpen && !closing) {
-      return null;
-    }
-
-    const state = context.mobileOpen ? "open" : "closing";
-
     const overlay = (
-      <div
-        ref={overlayRef}
-        data-slot="sidebar-mobile-overlay"
-        data-motion={context.motion}
-        data-state={state}
-        className={sidebarMobileOverlayClassNames({
-          className: overlayClassName,
-        })}
-        onClick={handleOverlayClick}
-      >
-        <div
-          {...props}
-          ref={composeRefs(ref, panelRef)}
-          role="dialog"
-          tabIndex={-1}
-          aria-labelledby={titleId}
-          aria-modal="true"
-          data-motion={context.motion}
-          data-side={side}
-          data-slot="sidebar-mobile"
-          data-state={state}
-          className={sidebarMobileClassNames({ className })}
-          onClick={handlePanelClick}
-          onKeyDown={handleKeyDown}
-        >
-          <h2 id={titleId} className="sr-only">
-            {label}
-          </h2>
-          {showCloseButton ? (
-            <button
-              type="button"
-              aria-label={closeButtonLabel}
-              data-slot="sidebar-mobile-close"
-              className={cn(sidebarTriggerClasses, sidebarMobileCloseClasses)}
-              onClick={() => context.setMobileOpen(false)}
+      <AnimatePresence initial={false}>
+        {context.mobileOpen ? (
+          <motionElement.div
+            key="sidebar-mobile-overlay"
+            ref={overlayRef}
+            animate={{ opacity: 1 }}
+            initial={motionDisabled ? false : { opacity: 0 }}
+            exit={
+              motionDisabled
+                ? { opacity: 1 }
+                : { opacity: 0, pointerEvents: "none" }
+            }
+            data-slot="sidebar-mobile-overlay"
+            data-motion={resolvedMotion}
+            data-state="open"
+            className={sidebarMobileOverlayClassNames({
+              className: overlayClassName,
+            })}
+            transition={motionTransition}
+            onClick={handleOverlayClick}
+          >
+            <motionElement.div
+              {...(props as HTMLMotionProps<"div">)}
+              ref={composeRefs(ref, panelRef)}
+              role="dialog"
+              tabIndex={-1}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              initial={
+                motionDisabled
+                  ? false
+                  : { opacity: 0, scale: 0.985, x: panelOffset }
+              }
+              exit={
+                motionDisabled
+                  ? { opacity: 1, scale: 1, x: 0 }
+                  : { opacity: 0, scale: 0.985, x: panelOffset }
+              }
+              aria-labelledby={titleId}
+              aria-modal="true"
+              data-motion={resolvedMotion}
+              data-side={side}
+              data-slot="sidebar-mobile"
+              data-state="open"
+              className={sidebarMobileClassNames({ className })}
+              transition={motionTransition}
+              onClick={handlePanelClick}
+              onKeyDown={handleKeyDown}
             >
-              <CloseIcon />
-            </button>
-          ) : null}
-          {children}
-        </div>
-      </div>
+              <h2 id={titleId} className="sr-only">
+                {label}
+              </h2>
+              {showCloseButton ? (
+                <button
+                  type="button"
+                  aria-label={closeButtonLabel}
+                  data-slot="sidebar-mobile-close"
+                  className={cn(
+                    sidebarTriggerClasses,
+                    sidebarMobileCloseClasses,
+                  )}
+                  onClick={() => context.setMobileOpen(false)}
+                >
+                  <CloseIcon />
+                </button>
+              ) : null}
+              {children}
+            </motionElement.div>
+          </motionElement.div>
+        ) : null}
+      </AnimatePresence>
     );
 
     return portalElement ? createPortal(overlay, portalElement) : overlay;
@@ -1845,13 +1853,9 @@ export const SidebarRail = forwardRef<HTMLButtonElement, SidebarRailProps>(
     const collapsed = surfaceContext?.collapsed ?? context.collapsed;
     const side = sideProp ?? surfaceContext?.side ?? context.side;
     const label = collapsed ? expandLabel : collapseLabel;
-    const shouldReduceMotion = useReducedMotion();
-    const motionDisabled =
-      context.motion === "none" || shouldReduceMotion === true;
-    const motionTransition =
-      motionDisabled || context.motion === "none"
-        ? sidebarRailStaticTransition
-        : sidebarRailMotionTransitions[context.motion];
+    const resolvedMotion = useResolvedSidebarMotion(context.motion);
+    const motionDisabled = resolvedMotion === "none";
+    const motionTransition = getSidebarMotionTransition(resolvedMotion);
     const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
       if (props.disabled) {
         return;
@@ -1870,7 +1874,7 @@ export const SidebarRail = forwardRef<HTMLButtonElement, SidebarRailProps>(
         aria-expanded={!collapsed}
         aria-label={props["aria-label"] ?? label}
         data-collapsed={collapsed ? "true" : "false"}
-        data-motion={context.motion}
+        data-motion={resolvedMotion}
         data-motion-behavior="transform"
         data-reduced-motion={motionDisabled ? "true" : "false"}
         data-side={side}

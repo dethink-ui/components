@@ -1,5 +1,11 @@
 import { createRef, forwardRef, type AnchorHTMLAttributes } from "react";
-import { createEvent, fireEvent, render, screen } from "@testing-library/react";
+import {
+  createEvent,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -323,6 +329,7 @@ describe("Sidebar", () => {
     expect(sidebarClassNames({ className: "custom-sidebar" })).toContain(
       "custom-sidebar",
     );
+    expect(sidebarClassNames()).not.toContain("transition-[width");
   });
 
   it("supports uncontrolled collapsed state from the edge rail", async () => {
@@ -653,20 +660,16 @@ describe("Sidebar", () => {
 
       await user.keyboard("{Escape}");
 
-      expect(dialog).toHaveAttribute("data-state", "closing");
+      expect(dialog).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: "Open sidebar" }),
       ).toHaveFocus();
 
-      const animationEnd = createEvent.animationEnd(dialog);
-      Object.defineProperty(animationEnd, "animationName", {
-        value: "dt-sidebar-panel-out",
+      await waitFor(() => {
+        expect(
+          screen.queryByRole("dialog", { name: "Animated mobile navigation" }),
+        ).toBeNull();
       });
-      fireEvent(dialog, animationEnd);
-
-      expect(
-        screen.queryByRole("dialog", { name: "Animated mobile navigation" }),
-      ).toBeNull();
     } finally {
       restoreMatchMedia();
     }
@@ -776,9 +779,11 @@ describe("Sidebar", () => {
 
     await user.keyboard("{Escape}");
 
-    expect(
-      screen.queryByRole("dialog", { name: "Mobile navigation" }),
-    ).toBeNull();
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Mobile navigation" }),
+      ).toBeNull();
+    });
     expect(trigger).toHaveFocus();
     expect(container).not.toHaveAttribute("inert");
   });
@@ -826,9 +831,11 @@ describe("Sidebar", () => {
     expect(link).toHaveFocus();
 
     fireEvent.keyDown(document, { key: "Escape" });
-    expect(
-      screen.queryByRole("dialog", { name: "Mobile navigation" }),
-    ).toBeNull();
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Mobile navigation" }),
+      ).toBeNull();
+    });
   });
 
   it("dismisses the mobile drawer on outside click and link activation", async () => {
@@ -854,9 +861,11 @@ describe("Sidebar", () => {
     await user.click(screen.getByRole("button", { name: "Open sidebar" }));
     await user.click(screen.getByRole("link", { name: "Mobile overview" }));
 
-    expect(
-      screen.queryByRole("dialog", { name: "Mobile navigation" }),
-    ).toBeNull();
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Mobile navigation" }),
+      ).toBeNull();
+    });
 
     await user.click(screen.getByRole("button", { name: "Open sidebar" }));
 
@@ -868,9 +877,11 @@ describe("Sidebar", () => {
 
     await user.click(overlay as HTMLElement);
 
-    expect(
-      screen.queryByRole("dialog", { name: "Mobile navigation" }),
-    ).toBeNull();
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("dialog", { name: "Mobile navigation" }),
+      ).toBeNull();
+    });
   });
 
   it("supports controlled mobile drawer state", async () => {
