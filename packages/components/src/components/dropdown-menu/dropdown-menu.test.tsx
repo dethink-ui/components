@@ -2,6 +2,7 @@ import { createRef, useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+import type { Selection } from "react-aria-components";
 import { DethinkProvider } from "../../foundation/dethink-provider";
 import {
   DropdownMenu,
@@ -47,7 +48,70 @@ function ControlledDropdownMenuFixture() {
   );
 }
 
+function SelectableDropdownMenuFixture({
+  onSelectionChange,
+}: {
+  onSelectionChange: (selection: Selection) => void;
+}) {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(
+    new Set(["merge"]),
+  );
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger>Choose merge method</DropdownMenuTrigger>
+      <DropdownMenuContent
+        disallowEmptySelection
+        onSelectionChange={(selection) => {
+          setSelectedKeys(selection);
+          onSelectionChange(selection);
+        }}
+        selectedKeys={selectedKeys}
+        selectionMode="single"
+      >
+        <DropdownMenuItem id="merge">Create a merge commit</DropdownMenuItem>
+        <DropdownMenuItem id="squash">Squash and merge</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 describe("DropdownMenu", () => {
+  it("exposes reusable single-selection roles and selected data state", async () => {
+    const user = userEvent.setup();
+    const onSelectionChange = vi.fn();
+
+    render(
+      <SelectableDropdownMenuFixture onSelectionChange={onSelectionChange} />,
+    );
+
+    const trigger = screen.getByRole("button", {
+      name: "Choose merge method",
+    });
+    await user.click(trigger);
+
+    const selectedItem = await screen.findByRole("menuitemradio", {
+      name: "Create a merge commit",
+    });
+
+    expect(selectedItem).toHaveAttribute("aria-checked", "true");
+    expect(selectedItem).toHaveAttribute("data-selected");
+
+    await user.click(
+      screen.getByRole("menuitemradio", { name: "Squash and merge" }),
+    );
+
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect([...(onSelectionChange.mock.calls[0]?.[0] as Set<string>)]).toEqual([
+      "squash",
+    ]);
+
+    await user.click(trigger);
+    expect(
+      await screen.findByRole("menuitemradio", { name: "Squash and merge" }),
+    ).toHaveAttribute("aria-checked", "true");
+  });
+
   it("renders an action menu through the provider portal and runs item actions", async () => {
     const user = userEvent.setup();
     const handleAction = vi.fn();
@@ -365,9 +429,8 @@ describe("DropdownMenu", () => {
       dropdownMenuContentClassNames({ className: "custom-content" }),
     ).toContain("custom-content");
     expect(dropdownMenuContentClassNames()).toContain("bg-background");
-    expect(dropdownMenuContentClassNames()).toContain(
-      "motion-safe:data-[entering]:animate-overlay-in",
-    );
+    expect(dropdownMenuContentClassNames()).not.toContain("animate-overlay");
+    expect(dropdownMenuContentClassNames()).not.toContain("transition-");
     expect(dropdownMenuMenuClassNames({ className: "custom-menu" })).toContain(
       "custom-menu",
     );

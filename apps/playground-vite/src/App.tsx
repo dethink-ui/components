@@ -12,6 +12,8 @@ import {
   Accordion,
   Box,
   Button,
+  ButtonGroup,
+  ButtonGroupSeparator,
   Card,
   CardContent,
   CardDescription,
@@ -45,6 +47,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  DropdownButton,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -259,6 +262,17 @@ export function App() {
             <IconButton aria-label="Refresh playground" variant="outline">
               <RefreshIcon />
             </IconButton>
+            <ButtonGroup aria-label="Playground document actions">
+              <Button variant="outline">Preview</Button>
+              <ButtonGroupSeparator />
+              <Button variant="outline">Publish</Button>
+              <IconButton
+                aria-label="Refresh grouped document"
+                variant="outline"
+              >
+                <RefreshIcon />
+              </IconButton>
+            </ButtonGroup>
           </Flex>
           <Flex
             gap="3"
@@ -676,6 +690,55 @@ export function App() {
           </Card>
           <Card as="section">
             <CardHeader>
+              <CardTitle>DropdownButton smoke</CardTitle>
+              <CardDescription>
+                Verifies the package export, one-button menu composition,
+                controlled-ready state, positioning, and Motion-backed shared
+                menu path.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-wrap gap-3">
+              <DropdownButton
+                label="Create project"
+                menuLabel="More create options"
+                mode="split"
+                motionPreset="subtle"
+                onPrimaryAction={() => undefined}
+                placement="bottom end"
+                showArrow
+              >
+                <DropdownMenuSection>
+                  <DropdownMenuLabel>Create</DropdownMenuLabel>
+                  <DropdownMenuItem>Project</DropdownMenuItem>
+                  <DropdownMenuItem>Workspace</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem disabled>Template</DropdownMenuItem>
+                </DropdownMenuSection>
+              </DropdownButton>
+              <DropdownButton
+                actions={[
+                  {
+                    description: "Add every commit through a merge commit.",
+                    id: "merge",
+                    label: "Create a merge commit",
+                    onAction: () => undefined,
+                  },
+                  {
+                    description: "Combine this branch into one commit.",
+                    id: "squash",
+                    label: "Squash and merge",
+                    onAction: () => undefined,
+                  },
+                ]}
+                defaultSelectedActionId="merge"
+                menuLabel="Choose merge method"
+                mode="selectable"
+                motionPreset="subtle"
+              />
+            </CardContent>
+          </Card>
+          <Card as="section">
+            <CardHeader>
               <CardTitle>DropdownMenu smoke</CardTitle>
               <CardDescription>
                 Verifies action-menu exports, menu semantics, shortcuts, and the
@@ -683,7 +746,7 @@ export function App() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <DropdownMenu>
+              <DropdownMenu motionPreset="standard">
                 <DropdownMenuTrigger variant="outline">
                   Open action menu
                 </DropdownMenuTrigger>

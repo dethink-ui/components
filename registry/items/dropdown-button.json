@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dropdown-button",
+  "type": "registry:ui",
+  "title": "DropdownButton",
+  "description": "Menu, fixed split, and selectable-primary action composition with native controls, controlled or uncontrolled state, full-composite anchoring, existing DropdownMenu behavior, and reduced-motion-safe Motion feedback.",
+  "dependencies": ["lucide-react", "motion"],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "button",
+    "button-group",
+    "dropdown-menu"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/dropdown-button/dropdown-button.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/dropdown-button/index.ts",
+      "type": "registry:component"
+    }
+  ]
+}

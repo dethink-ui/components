@@ -25,6 +25,17 @@ export {
   type ButtonVariant,
 } from "./components/button";
 export {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  buttonGroupClassNames,
+  buttonGroupSeparatorClassNames,
+  type ButtonGroupMode,
+  type ButtonGroupOrientation,
+  type ButtonGroupProps,
+  type ButtonGroupSeparatorOrientation,
+  type ButtonGroupSeparatorProps,
+} from "./components/button-group";
+export {
   Badge,
   badgeClassNames,
   type BadgeIconPlacement,
@@ -763,6 +774,7 @@ export {
   type DropdownMenuItemProps,
   type DropdownMenuItemShortcutProps,
   type DropdownMenuLabelProps,
+  type DropdownMenuMotionPreset,
   type DropdownMenuProps,
   type DropdownMenuSectionProps,
   type DropdownMenuSeparatorProps,
@@ -770,6 +782,20 @@ export {
   type DropdownMenuSubmenuProps,
   type DropdownMenuTriggerProps,
 } from "./components/dropdown-menu";
+export {
+  DropdownButton,
+  dropdownButtonClassNames,
+  type DropdownButtonLoadingBehavior,
+  type DropdownButtonMenuProps,
+  type DropdownButtonMode,
+  type DropdownButtonMotionPreset,
+  type DropdownButtonProps,
+  type DropdownButtonSelectableAction,
+  type DropdownButtonSelectableControlledProps,
+  type DropdownButtonSelectableProps,
+  type DropdownButtonSelectableUncontrolledProps,
+  type DropdownButtonSplitProps,
+} from "./components/dropdown-button";
 export {
   Combobox,
   ComboboxItem,

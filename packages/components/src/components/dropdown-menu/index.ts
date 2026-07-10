@@ -34,6 +34,7 @@ export {
   type DropdownMenuItemProps,
   type DropdownMenuItemShortcutProps,
   type DropdownMenuLabelProps,
+  type DropdownMenuMotionPreset,
   type DropdownMenuProps,
   type DropdownMenuSectionProps,
   type DropdownMenuSeparatorProps,

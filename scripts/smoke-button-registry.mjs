@@ -97,6 +97,10 @@ async function assertRegistryRelativeImportsResolve(item, registryItemsByName) {
 const base = await readJson(join(registryRoot, "base.json"));
 const box = await readJson(join(registryRoot, "box.json"));
 const button = await readJson(join(registryRoot, "button.json"));
+const buttonGroup = await readJson(join(registryRoot, "button-group.json"));
+const dropdownButton = await readJson(
+  join(registryRoot, "dropdown-button.json"),
+);
 const card = await readJson(join(registryRoot, "card.json"));
 const cardStack = await readJson(join(registryRoot, "card-stack.json"));
 const checkbox = await readJson(join(registryRoot, "checkbox.json"));
@@ -166,6 +170,8 @@ const registryItemsByName = new Map(
     base,
     box,
     button,
+    buttonGroup,
+    dropdownButton,
     card,
     cardStack,
     checkbox,
@@ -224,6 +230,14 @@ const registryItemsByName = new Map(
 
 assert(box.name === "box", "box registry item must be named box.");
 assert(button.name === "button", "button registry item must be named button.");
+assert(
+  buttonGroup.name === "button-group",
+  "button-group registry item must be named button-group.",
+);
+assert(
+  dropdownButton.name === "dropdown-button",
+  "dropdown-button registry item must be named dropdown-button.",
+);
 assert(card.name === "card", "card registry item must be named card.");
 assert(
   cardStack.name === "card-stack",
@@ -393,6 +407,23 @@ assert(
 assert(
   button.registryDependencies?.includes("dethink-base"),
   "button registry item must depend on dethink-base.",
+);
+assert(
+  buttonGroup.registryDependencies?.includes("dethink-base") &&
+    buttonGroup.registryDependencies?.includes("button") &&
+    buttonGroup.registryDependencies?.includes("icon-button"),
+  "button-group registry item must include base Button and IconButton dependencies.",
+);
+assert(
+  !buttonGroup.registryDependencies?.includes("dropdown-menu"),
+  "button-group registry item must not depend on dropdown-menu.",
+);
+assert(
+  dropdownButton.registryDependencies?.includes("button") &&
+    dropdownButton.registryDependencies?.includes("button-group") &&
+    dropdownButton.registryDependencies?.includes("dropdown-menu") &&
+    dropdownButton.registryDependencies?.includes("dethink-base"),
+  "dropdown-button registry item must include Button, ButtonGroup, DropdownMenu, and base dependencies.",
 );
 assert(
   card.registryDependencies?.includes("dethink-base"),
@@ -752,6 +783,11 @@ assert(
   "button registry item must not add runtime dependencies.",
 );
 assert(
+  Array.isArray(buttonGroup.dependencies) &&
+    buttonGroup.dependencies.length === 0,
+  "button-group registry item must not add runtime dependencies, including Motion.",
+);
+assert(
   Array.isArray(card.dependencies) && card.dependencies.length === 0,
   "card registry item must not add runtime dependencies.",
 );
@@ -968,6 +1004,18 @@ assert(
   "dropdown-menu registry item must include react-aria-components.",
 );
 assert(
+  dropdownMenu.dependencies?.includes("motion"),
+  "dropdown-menu registry item must include Motion for surface presence and item feedback.",
+);
+assert(
+  dropdownButton.dependencies?.includes("motion"),
+  "dropdown-button must include Motion for open-state chevron feedback.",
+);
+assert(
+  dropdownButton.dependencies?.includes("lucide-react"),
+  "dropdown-button must include lucide-react for its selected-action check indicator.",
+);
+assert(
   Array.isArray(typography.dependencies) &&
     typography.dependencies.length === 0,
   "typography registry item must not add runtime dependencies.",
@@ -1057,6 +1105,8 @@ for (const item of [
   base,
   box,
   button,
+  buttonGroup,
+  dropdownButton,
   card,
   cardStack,
   checkbox,
@@ -1116,6 +1166,8 @@ for (const item of [
 }
 
 await assertRegistryRelativeImportsResolve(container, registryItemsByName);
+await assertRegistryRelativeImportsResolve(buttonGroup, registryItemsByName);
+await assertRegistryRelativeImportsResolve(dropdownButton, registryItemsByName);
 await assertRegistryRelativeImportsResolve(card, registryItemsByName);
 await assertRegistryRelativeImportsResolve(cardStack, registryItemsByName);
 await assertRegistryRelativeImportsResolve(checkbox, registryItemsByName);
@@ -1178,6 +1230,27 @@ const boxSource = await readFile(
 );
 const buttonSource = await readFile(
   join(root, "packages/components/src/components/button/button.tsx"),
+  "utf8",
+);
+const buttonGroupSource = await readFile(
+  join(
+    root,
+    "packages/components/src/components/button-group/button-group.tsx",
+  ),
+  "utf8",
+);
+const dropdownButtonSource = await readFile(
+  join(
+    root,
+    "packages/components/src/components/dropdown-button/dropdown-button.tsx",
+  ),
+  "utf8",
+);
+const responsiveActionRecipeSource = await readFile(
+  join(
+    root,
+    "apps/showcase/src/examples/button-group/responsive-action-handoff.tsx",
+  ),
   "utf8",
 );
 const cardSource = await readFile(
@@ -1510,7 +1583,7 @@ assert(
 );
 assert(buttonSource.includes("asChild"), "button source must expose asChild.");
 assert(
-  buttonSource.includes('data-slot="button"'),
+  buttonSource.includes('dataSlot = "button"'),
   "button source must expose stable slot data.",
 );
 assert(
@@ -1520,6 +1593,119 @@ assert(
 assert(
   !buttonSource.includes("@radix-ui"),
   "button source must remain dependency-free.",
+);
+assert(
+  buttonGroupSource.includes('role="group"') &&
+    buttonGroupSource.includes('dataSlot = "button-group"') &&
+    buttonGroupSource.includes('data-slot="button-group-separator"') &&
+    buttonGroupSource.includes("data-mode") &&
+    buttonGroupSource.includes("data-orientation"),
+  "button-group source must expose semantic group and stable state anatomy.",
+);
+assert(
+  buttonGroupSource.includes("rounded-s-md") &&
+    buttonGroupSource.includes("rounded-e-md") &&
+    buttonGroupSource.includes("-ms-px") &&
+    buttonGroupSource.includes("gap-density-gap") &&
+    buttonGroupSource.includes("bg-border"),
+  "button-group source must use logical token-backed attached and separated geometry.",
+);
+assert(
+  !buttonGroupSource.includes('from "motion') &&
+    !buttonGroupSource.includes("AnimatePresence") &&
+    !buttonGroupSource.includes("DropdownMenu") &&
+    !buttonGroupSource.includes("transition-") &&
+    !buttonGroupSource.includes("animate-"),
+  "button-group source must not import Motion or DropdownMenu or add intrinsic animation.",
+);
+assert(
+  !buttonGroupSource.includes("createContext") &&
+    !buttonGroupSource.includes("useContext"),
+  "button-group source must remain context-free and usable from Server Components.",
+);
+assert(
+  responsiveActionRecipeSource.includes('className="@container') &&
+    responsiveActionRecipeSource.includes("@min-3xl:flex") &&
+    responsiveActionRecipeSource.includes("@min-3xl:hidden") &&
+    responsiveActionRecipeSource.includes("headerActions") &&
+    responsiveActionRecipeSource.includes("alwaysVisibleIds") &&
+    responsiveActionRecipeSource.includes("data-action-id") &&
+    responsiveActionRecipeSource.includes("DropdownButton"),
+  "responsive action recipe must use one declared action model and an explicit container threshold.",
+);
+assert(
+  !responsiveActionRecipeSource.includes("ResizeObserver") &&
+    !responsiveActionRecipeSource.includes("getBoundingClientRect") &&
+    !responsiveActionRecipeSource.includes("offsetWidth") &&
+    !responsiveActionRecipeSource.includes("scrollWidth") &&
+    !responsiveActionRecipeSource.includes("createContext") &&
+    !responsiveActionRecipeSource.includes("roving"),
+  "responsive action recipe must not measure, rank, hide children imperatively, or add group-owned focus semantics.",
+);
+assert(
+  packageIndexSource.includes("ButtonGroup") &&
+    packageIndexSource.includes("ButtonGroupSeparator") &&
+    packageIndexSource.includes("ButtonGroupProps"),
+  "root package index must export the ButtonGroup family and public types.",
+);
+assert(
+  dropdownButtonSource.includes('data-slot="dropdown-button"') &&
+    dropdownButtonSource.includes("data-mode={mode}") &&
+    dropdownButtonSource.includes(
+      'data-state={effectiveOpen ? "open" : "closed"}',
+    ) &&
+    dropdownButtonSource.includes("ButtonGroup") &&
+    dropdownButtonSource.includes("DropdownMenu") &&
+    dropdownButtonSource.includes("DropdownMenuContent") &&
+    dropdownButtonSource.includes("DropdownMenuTrigger"),
+  "dropdown-button source must expose menu state and compose the existing action primitives.",
+);
+assert(
+  dropdownButtonSource.includes("onPrimaryAction?: never") &&
+    dropdownButtonSource.includes('mode?: "menu"') &&
+    dropdownButtonSource.includes('mode: "split"') &&
+    dropdownButtonSource.includes('mode: "selectable"') &&
+    dropdownButtonSource.includes("DropdownButtonSelectableAction") &&
+    dropdownButtonSource.includes("defaultSelectedActionId") &&
+    dropdownButtonSource.includes("selectedActionId") &&
+    dropdownButtonSource.includes('selectionMode={isSelectable ? "single"') &&
+    dropdownButtonSource.includes("DropdownButtonSelectionIndicator") &&
+    dropdownButtonSource.includes('from "lucide-react"') &&
+    dropdownButtonSource.includes("menuLabel: string") &&
+    dropdownButtonSource.includes('data-slot="dropdown-button-primary"') &&
+    dropdownButtonSource.includes('"dropdown-button-menu-trigger"') &&
+    dropdownButtonSource.includes(
+      "anchorRef={hasPrimary ? compositeRef : undefined}",
+    ) &&
+    dropdownButtonSource.includes('loadingBehavior = "all"') &&
+    dropdownButtonSource.includes("primaryDisabled") &&
+    dropdownButtonSource.includes("menuDisabled") &&
+    buttonSource.includes("loadingIndicator"),
+  "dropdown-button must discriminate menu, split, and selectable modes with stable controls, full-composite anchoring, and Button-backed async policies.",
+);
+assert(
+  dropdownButtonSource.includes('from "motion/react"') &&
+    dropdownButtonSource.includes("motion.span") &&
+    dropdownButtonSource.includes("ChevronDown") &&
+    dropdownButtonSource.includes("AnimatePresence") &&
+    dropdownButtonSource.includes("dropdown-button-busy-indicator") &&
+    dropdownButtonSource.includes("motionDisabled={") &&
+    dropdownButtonSource.includes(
+      'resolvedReducedMotion || motionPreset === "none"',
+    ) &&
+    dropdownButtonSource.includes("useReducedMotion") &&
+    !dropdownButtonSource.includes("transition-") &&
+    !dropdownButtonSource.includes("animate-"),
+  "dropdown-button must use a Lucide chevron with Motion-only feedback and no CSS animation utilities.",
+);
+assert(
+  packageIndexSource.includes("DropdownButton") &&
+    packageIndexSource.includes("DropdownButtonSelectableAction") &&
+    packageIndexSource.includes("DropdownButtonSelectableProps") &&
+    packageIndexSource.includes("DropdownButtonProps") &&
+    packageIndexSource.includes("DropdownButtonMotionPreset") &&
+    packageIndexSource.includes("DropdownButtonLoadingBehavior"),
+  "root package index must export DropdownButton and its public types.",
 );
 assert(
   revealButtonSource.includes('data-slot="reveal-button"'),
@@ -3403,7 +3589,7 @@ assert(
 );
 assert(
   dropdownMenuSource.includes('data-slot={dataSlot ?? "dropdown-menu"}') &&
-    dropdownMenuSource.includes('data-slot="dropdown-menu-trigger"') &&
+    dropdownMenuSource.includes('dataSlot = "dropdown-menu-trigger"') &&
     dropdownMenuSource.includes('contentSlot = "dropdown-menu-content"') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-menu"') &&
     dropdownMenuSource.includes('data-slot="dropdown-menu-item"') &&
@@ -3422,8 +3608,12 @@ assert(
 assert(
   dropdownMenuSource.includes("positionedOverlaySurfaceClassNames") &&
     dropdownMenuSource.includes("text-destructive") &&
-    dropdownMenuSource.includes("motion-safe:transition"),
-  "dropdown-menu source must use provider tokens and reduced-motion-aware classes.",
+    dropdownMenuSource.includes('from "motion/react"') &&
+    dropdownMenuSource.includes("AnimatePresence") &&
+    dropdownMenuSource.includes("useReducedMotion") &&
+    !dropdownMenuSource.includes("motion-safe:transition") &&
+    !dropdownMenuSource.includes("animate-overlay"),
+  "dropdown-menu source must use provider tokens and Motion-only presence and item feedback.",
 );
 for (const [name, source] of [
   ["popover", popoverSource],

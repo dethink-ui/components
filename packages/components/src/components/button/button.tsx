@@ -18,8 +18,10 @@ export type ButtonVariant =
 export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl" | "icon";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  "data-slot"?: string;
   asChild?: boolean;
   leftIcon?: ReactNode;
+  loadingIndicator?: ReactNode;
   rightIcon?: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -51,10 +53,13 @@ const buttonSizeClasses: Record<ButtonSize, string> = {
 };
 
 const buttonIconClasses =
-  "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center [&>svg]:size-4";
+  "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center empty:hidden [&>svg]:size-4";
 
 const buttonSpinnerClasses =
   "pointer-events-none size-4 shrink-0 rounded-full border-2 border-current border-r-transparent animate-spin motion-reduce:animate-none";
+
+const buttonLoadingIndicatorClasses =
+  "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center";
 
 type ButtonSlotProps = Record<string, unknown> & {
   children?: ReactNode;
@@ -112,16 +117,26 @@ function renderButtonContent({
   children,
   leftIcon,
   loading,
+  loadingIndicator,
   rightIcon,
-}: Pick<ButtonProps, "children" | "leftIcon" | "loading" | "rightIcon">) {
+}: Pick<
+  ButtonProps,
+  "children" | "leftIcon" | "loading" | "loadingIndicator" | "rightIcon"
+>) {
   return (
     <>
       {loading ? (
         <span
           aria-hidden="true"
           data-slot="button-spinner"
-          className={buttonSpinnerClasses}
-        />
+          className={
+            loadingIndicator
+              ? buttonLoadingIndicatorClasses
+              : buttonSpinnerClasses
+          }
+        >
+          {loadingIndicator}
+        </span>
       ) : leftIcon ? (
         <span
           aria-hidden="true"
@@ -152,6 +167,7 @@ function getChildRef(child: ReactElement<ButtonSlotProps>) {
 export const Button = forwardRef<HTMLElement, ButtonProps>(
   (
     {
+      "data-slot": dataSlot = "button",
       "aria-busy": ariaBusy,
       asChild = false,
       children,
@@ -159,6 +175,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
       disabled = false,
       leftIcon,
       loading = false,
+      loadingIndicator,
       onClick,
       rightIcon,
       type = "button",
@@ -198,7 +215,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
           ref: composeRefs(ref, childRef),
           "aria-busy": loading ? true : ariaBusy,
           "aria-disabled": isDisabled ? true : child.props["aria-disabled"],
-          "data-slot": "button",
+          "data-slot": dataSlot,
           "data-variant": variant,
           "data-size": size,
           "data-disabled": isDisabled ? "true" : undefined,
@@ -210,6 +227,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
           children: child.props.children,
           leftIcon,
           loading,
+          loadingIndicator,
           rightIcon,
         }),
       );
@@ -222,7 +240,7 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
         type={type}
         disabled={isDisabled}
         aria-busy={loading ? true : ariaBusy}
-        data-slot="button"
+        data-slot={dataSlot}
         data-variant={variant}
         data-size={size}
         data-disabled={isDisabled ? "true" : undefined}
@@ -230,7 +248,13 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
         className={classes}
         onClick={handleClick as MouseEventHandler<HTMLButtonElement>}
       >
-        {renderButtonContent({ children, leftIcon, loading, rightIcon })}
+        {renderButtonContent({
+          children,
+          leftIcon,
+          loading,
+          loadingIndicator,
+          rightIcon,
+        })}
       </button>
     );
   },

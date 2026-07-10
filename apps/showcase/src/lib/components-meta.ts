@@ -42,6 +42,20 @@ export const componentCatalog: ComponentMeta[] = [
     type: "general",
   },
   {
+    slug: "button-group",
+    name: "ButtonGroup",
+    description:
+      "Compose related native actions in attached or separated horizontal and vertical groups without changing their behavior.",
+    type: "general",
+  },
+  {
+    slug: "dropdown-button",
+    name: "DropdownButton",
+    description:
+      "Open a related action menu from one Button-styled trigger with controlled state, positioning, and Motion-only menu presence.",
+    type: "general",
+  },
+  {
     slug: "reveal-button",
     name: "RevealButton",
     description:

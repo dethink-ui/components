@@ -8,6 +8,13 @@ export const dropdownMenuProps: PropRow[] = [
     description: "Controlled or uncontrolled menu visibility.",
   },
   {
+    prop: "motionPreset / reducedMotion",
+    type: '"none" | "subtle" | "standard" / boolean',
+    defaultValue: '"standard" / user preference',
+    description:
+      "Motion owns surface presence and changed item feedback. Reduced motion removes transforms while preserving immediate state styling.",
+  },
+  {
     prop: "DropdownMenuTrigger",
     type: "variant + size (Button API)",
     defaultValue: "—",

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-group",
+  "type": "registry:ui",
+  "title": "ButtonGroup",
+  "description": "Semantic action grouping with attached or separated horizontal and vertical layouts while preserving each child's native behavior.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button", "icon-button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/button-group/button-group.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/button-group/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
