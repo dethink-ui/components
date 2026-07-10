@@ -27,13 +27,28 @@ describe("Steps horizontal indicator", () => {
   });
 
   it("derives complete, current, and upcoming status from a controlled value", () => {
-    render(<Steps items={items} value="profile" />);
+    const { container } = render(<Steps items={items} value="profile" />);
 
     const renderedItems = screen.getAllByRole("listitem");
+    const completeIndicator = renderedItems[0]?.querySelector(
+      '[data-slot="steps-indicator"]',
+    );
+    const completeConnector = renderedItems[0]?.querySelector(
+      '[data-slot="steps-connector-line"]',
+    );
 
     expect(renderedItems[0]).toHaveAttribute("data-status", "complete");
     expect(renderedItems[1]).toHaveAttribute("data-status", "current");
     expect(renderedItems[2]).toHaveAttribute("data-status", "upcoming");
+    expect(completeIndicator).toHaveClass(
+      "bg-primary",
+      "text-primary-foreground",
+    );
+    expect(completeIndicator).not.toHaveClass("bg-success");
+    expect(completeConnector).toHaveClass("bg-primary/60");
+    expect(
+      container.querySelector('[data-slot="steps-connector"]'),
+    ).toHaveClass("justify-center");
     expect(document.querySelectorAll('[aria-current="step"]')).toHaveLength(1);
   });
 
@@ -257,7 +272,7 @@ describe("Steps layout, progress, and rendering", () => {
   });
 
   it("derives and recalculates progress from the visible branch", () => {
-    const { rerender } = render(
+    const { container, rerender } = render(
       <Steps showProgress value="profile" items={items} />,
     );
 
@@ -266,6 +281,16 @@ describe("Steps layout, progress, and rendering", () => {
       "66.66666666666666",
     );
     expect(screen.getByText("67%")).toBeInTheDocument();
+    expect(container.querySelector('[data-slot="steps-progress"]')).toHaveClass(
+      "mx-auto",
+      "justify-center",
+    );
+    expect(
+      container.querySelector('[data-slot="steps-progress-track"]'),
+    ).toHaveClass("h-1", "w-20", "bg-muted");
+    expect(
+      container.querySelector('[data-slot="steps-progress-indicator"]'),
+    ).toHaveClass("bg-primary");
 
     rerender(
       <Steps
@@ -358,6 +383,84 @@ describe("Steps layout, progress, and rendering", () => {
 });
 
 describe("Steps Motion choreography", () => {
+  it("glides a theme-tinted hover layer between enabled steps", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Steps interactive items={items} />);
+    const account = screen.getByRole("button", { name: /Account/ });
+    const profile = screen.getByRole("button", { name: /Profile/ });
+    const review = screen.getByRole("button", { name: /Review/ });
+
+    await user.hover(account);
+
+    const accountLayer = account.querySelector(
+      '[data-slot="steps-hover-layer"]',
+    );
+    const layoutId = accountLayer?.getAttribute("data-layout-id");
+
+    expect(account).toHaveAttribute("data-hovered", "true");
+    expect(accountLayer).toHaveClass(
+      "-inset-x-[var(--dt-space-1)]",
+      "-inset-y-[var(--dt-space-2)]",
+      "bg-primary/5",
+      "ring-primary/10",
+    );
+    expect(accountLayer).toHaveAttribute("data-motion-enabled", "true");
+    expect(layoutId).toBeTruthy();
+
+    await user.hover(profile);
+
+    const profileLayer = profile.querySelector(
+      '[data-slot="steps-hover-layer"]',
+    );
+
+    expect(account).not.toHaveAttribute("data-hovered");
+    expect(profile).toHaveAttribute("data-hovered", "true");
+    expect(profileLayer).toHaveAttribute("data-layout-id", layoutId);
+
+    await user.unhover(profile);
+
+    await waitFor(() => {
+      expect(
+        container.querySelector('[data-slot="steps-hover-layer"]'),
+      ).toBeNull();
+    });
+
+    expect(review).not.toHaveAttribute("data-hovered");
+  });
+
+  it("expands vertical hover coverage around the marker and content", async () => {
+    const user = userEvent.setup();
+
+    render(<Steps interactive items={items} orientation="vertical" />);
+
+    const profile = screen.getByRole("button", { name: /Profile/ });
+    await user.hover(profile);
+
+    expect(
+      profile.querySelector('[data-slot="steps-hover-layer"]'),
+    ).toHaveClass(
+      "-inset-x-[var(--dt-space-2)]",
+      "-inset-y-[var(--dt-space-1)]",
+    );
+  });
+
+  it("does not show the hover layer for disabled steps", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Steps
+        interactive
+        items={[items[0]!, items[1]!, { ...items[2]!, disabled: true }]}
+      />,
+    );
+
+    const review = screen.getByRole("button", { name: /Review/ });
+    await user.hover(review);
+
+    expect(review).not.toHaveAttribute("data-hovered");
+    expect(review.querySelector('[data-slot="steps-hover-layer"]')).toBeNull();
+  });
+
   it("enables layout, presence, marker, and progress motion by default", () => {
     const { container } = render(
       <Steps showProgress value="profile" items={items} />,
@@ -408,6 +511,20 @@ describe("Steps Motion choreography", () => {
     expect(marker).not.toHaveAttribute("data-motion-enabled");
     expect(progress).toHaveAttribute("data-reduced-motion", "true");
     expect(progress).toHaveStyle({ transform: "scaleX(0.6666666666666665)" });
+  });
+
+  it("shows hover feedback without movement when motion is disabled", async () => {
+    const user = userEvent.setup();
+
+    render(<Steps interactive items={items} motionPreset="none" />);
+
+    const account = screen.getByRole("button", { name: /Account/ });
+    await user.hover(account);
+
+    const hoverLayer = account.querySelector('[data-slot="steps-hover-layer"]');
+
+    expect(hoverLayer).toHaveAttribute("data-reduced-motion", "true");
+    expect(hoverLayer).not.toHaveAttribute("data-motion-enabled");
   });
 
   it("namespaces shared layout markers for multiple instances", () => {

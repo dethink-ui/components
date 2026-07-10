@@ -120,3 +120,56 @@ export const stepItemProps: PropRow[] = [
     description: "Consumer-owned typed payload passed unchanged to renderItem.",
   },
 ];
+
+export const stepsStateProps: PropRow[] = [
+  {
+    prop: "items / defaultItems",
+    type: "StepItemData<TData>[]",
+    defaultValue: "[]",
+    description:
+      "Controlled or uncontrolled visible collection shared by the provider hooks.",
+  },
+  {
+    prop: "value / defaultValue",
+    type: "string / string",
+    defaultValue: "first item",
+    description:
+      "Controlled or uncontrolled current-step identity used by indicators, panels, and controls.",
+  },
+  {
+    prop: "onItemsChange",
+    type: "(items) => void",
+    defaultValue: "—",
+    description:
+      "Receives the complete proposed collection after a guarded future-step mutation.",
+  },
+  {
+    prop: "onValueChange",
+    type: "(value) => void",
+    defaultValue: "—",
+    description: "Receives an enabled visible destination.",
+  },
+  {
+    prop: "progressValue",
+    type: "number",
+    defaultValue: "derived",
+    description:
+      "Overrides the current ordinal divided by the visible collection length.",
+  },
+];
+
+export const stepsPanelProps: PropRow[] = [
+  {
+    prop: "render",
+    type: "(context) => ReactNode",
+    defaultValue: "—",
+    description:
+      "Renders consumer-owned content for the provider's current step with step, index, count, and value.",
+  },
+  {
+    prop: "fallback",
+    type: "ReactNode",
+    defaultValue: "null",
+    description: "Shown when the provider cannot resolve a current step.",
+  },
+];

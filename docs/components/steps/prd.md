@@ -4,6 +4,9 @@ Status: Published to GitHub issue tracker.
 
 Tracker issue: https://github.com/parveshh/dethink-components/issues/349
 
+Workflow API extension:
+https://github.com/parveshh/dethink-components/issues/360
+
 Package target: `@dethink/components`.
 
 ## Problem Statement
@@ -16,15 +19,22 @@ public-behavior tests.
 
 ## Solution
 
-Ship a data-driven Steps component. Consumers calculate the active branch and
-pass keyed item data. Steps preserves the current item, derives status and
-progress, renders horizontal or vertical ordered-list content, optionally
-activates enabled items, and animates only high-level branch changes while
-respecting reduced motion.
+Ship a data-driven Steps component. Consumers can pass keyed item data directly
+or use an optional headless controller and provider to share the same branch
+and current ID across indicators, controls, and dynamic panels. Steps preserves
+the current item, derives status and progress, renders horizontal or vertical
+ordered-list content, optionally activates enabled items, and animates only
+high-level branch changes while respecting reduced motion.
 
 ## Implementation Decisions
 
-- Consumer-owned item arrays; no imperative mutation API.
+- The original prop-driven `items` API remains consumer-owned and unchanged.
+- An optional `useStepsState` controller provides guarded future-suffix
+  mutations through `useNextSteps`; it never mutates the current prefix.
+- `StepsProvider`, `useSteps`, and `useCurrentStep` share visible collection and
+  current metadata without coupling the visual indicator to workflow content.
+- `StepsPanel` resolves the current step through a consumer-owned typed panel
+  registry and adds no tab semantics.
 - Stable unique IDs for state and animation identity.
 - Controlled and uncontrolled current state.
 - Derived status with complete, upcoming, error, and skipped overrides.
@@ -48,6 +58,7 @@ package build, and TypeScript declarations.
 
 ## Out of Scope
 
-Panels, answer validation, workflow controls, branch calculation, persistence,
-router synchronization, async orchestration, drag reordering, and current-step
-removal.
+Component-authored panels, answer validation, built-in workflow controls,
+branch rules, persistence, router synchronization, async orchestration, drag
+reordering, and current-step removal. `StepsPanel` is only a typed render bridge
+to content owned by the consumer.

@@ -3,13 +3,21 @@
   "name": "steps",
   "type": "registry:ui",
   "title": "Steps",
-  "description": "Data-driven branching process indicator with semantic ordered-list structure, controlled and uncontrolled current state, horizontal and vertical layouts, optional navigation, percentage progress, typed custom content, and reduced-motion-aware branch choreography.",
+  "description": "Data-driven branching process indicator with an optional workflow controller, provider hooks, guarded future-step mutations, typed dynamic panels, semantic ordered-list structure, horizontal and vertical layouts, and reduced-motion-aware choreography.",
   "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
   "files": [
     {
       "path": "packages/components/src/components/steps/steps.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/steps/steps-state.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/steps/steps-panel.tsx",
       "type": "registry:component"
     },
     {

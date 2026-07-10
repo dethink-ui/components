@@ -1,6 +1,6 @@
 # Steps Component Spec
 
-Status: Approved through GitHub PRD #349.
+Status: Approved through GitHub PRD #349 and workflow extension PRD #360.
 
 Package target: `@dethink/components`.
 
@@ -22,10 +22,20 @@ progress, custom content, and reduced-motion-safe Motion choreography.
 - `StepsOrientation`
 - `StepsSize`
 - `StepsMotionPreset`
+- `useStepsState<TData>` and `UseStepsStateOptions<TData>`
+- `StepsProvider` and `StepsState<TData>`
+- `useSteps<TData>`, `useCurrentStep<TData>`, and `useNextSteps<TData>`
+- `StepsPanel<TData>` and `StepsPanelRenderContext<TData>`
 
 Items require a stable unique `id` and visible `label`. Optional fields cover
 description, icon, disabled, optional, status override, and typed domain data.
 The root supports controlled and uncontrolled current state.
+
+The optional controller supports controlled or uncontrolled item collections
+and current value. It exposes a `stepsProps` adapter for the visual component.
+Provider hooks expose the full workflow, focused current metadata, or the next
+suffix with add, insert, remove, replace, and clear operations. `StepsPanel`
+passes the resolved current step to a consumer-owned render callback.
 
 `orientation="horizontal" | "vertical"` and `size="sm" | "md" | "lg"`
 control layout and scale. `showProgress` enables the progressbar,
@@ -38,6 +48,12 @@ percentage state.
 
 - Consumers own conditional branch calculation and replace next/future items
   through the `items` array.
+- Controller mutations operate only after the current index, reject duplicate
+  IDs and invalid indices, and leave controlled arrays parent-owned.
+- The same provider state drives the indicator, current and future hooks, and
+  panel renderer.
+- Panel data uses a consumer-defined key/payload; `renderItem` remains scoped
+  to indicator content.
 - The current ID remains present during branch changes. Removing it is an
   unsupported programming error and never selects a fallback.
 - Status derives from current position unless an exceptional item override is

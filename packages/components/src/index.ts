@@ -298,13 +298,27 @@ export {
 } from "./components/tabs";
 export {
   Steps,
+  StepsPanel,
+  StepsProvider,
+  useCurrentStep,
+  useNextSteps,
+  useSteps,
+  useStepsState,
   type StepItemData,
   type StepRenderState,
   type StepStatus,
+  type StepsCurrentState,
+  type StepsIndicatorProps,
   type StepsMotionPreset,
+  type StepsNextState,
   type StepsOrientation,
+  type StepsPanelProps,
+  type StepsPanelRenderContext,
   type StepsProps,
+  type StepsProviderProps,
   type StepsSize,
+  type StepsState,
+  type UseStepsStateOptions,
 } from "./components/steps";
 export {
   HorizontalAccordion,

@@ -100,7 +100,7 @@ const approvalItems: StepItemData<ApprovalMeta>[] = [
 ];
 
 const statusTone: Record<StepStatus, BadgeTone> = {
-  complete: "success",
+  complete: "primary",
   current: "primary",
   upcoming: "neutral",
   error: "destructive",

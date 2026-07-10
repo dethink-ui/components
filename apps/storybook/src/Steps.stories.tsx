@@ -5,6 +5,11 @@ import {
   Button,
   DethinkProvider,
   Steps,
+  StepsPanel,
+  StepsProvider,
+  useNextSteps,
+  useSteps,
+  useStepsState,
   type StepItemData,
   type StepsMotionPreset,
 } from "@dethink/components";
@@ -181,28 +186,76 @@ export const CustomRendering: Story = {
   ),
 };
 
+const conditionalInitialItems = [
+  { id: "account", label: "Account", data: { panelKey: "account" } },
+  { id: "details", label: "Details", data: { panelKey: "details" } },
+  {
+    id: "approval",
+    label: "Approval",
+    description: "Manager review.",
+    data: { panelKey: "approval" },
+  },
+  {
+    id: "launch",
+    label: "Launch",
+    description: "Activate access.",
+    data: { panelKey: "launch" },
+  },
+];
+
 function ConditionalBranchDemo() {
+  const steps = useStepsState({
+    defaultItems: conditionalInitialItems,
+    defaultValue: "details",
+  });
+
+  return (
+    <StepsProvider state={steps}>
+      <ConditionalBranchContent />
+    </StepsProvider>
+  );
+}
+
+function ConditionalBranchContent() {
   const [requiresApproval, setRequiresApproval] = useState(true);
-  const [value, setValue] = useState("details");
-  const branch = requiresApproval
-    ? [
-        { id: "approval", label: "Approval", description: "Manager review." },
-        { id: "launch", label: "Launch", description: "Activate access." },
-      ]
-    : [
-        {
-          id: "confirmation",
-          label: "Confirmation",
-          description: "Confirm the self-service path.",
-        },
-      ];
+  const steps = useSteps<{ panelKey: string }>();
+  const { replaceNextSteps } = useNextSteps<{ panelKey: string }>();
+
+  function selectBranch(nextRequiresApproval: boolean) {
+    setRequiresApproval(nextRequiresApproval);
+    replaceNextSteps(
+      nextRequiresApproval
+        ? [
+            {
+              id: "approval",
+              label: "Approval",
+              description: "Manager review.",
+              data: { panelKey: "approval" },
+            },
+            {
+              id: "launch",
+              label: "Launch",
+              description: "Activate access.",
+              data: { panelKey: "launch" },
+            },
+          ]
+        : [
+            {
+              id: "confirmation",
+              label: "Confirmation",
+              description: "Confirm the self-service path.",
+              data: { panelKey: "confirmation" },
+            },
+          ],
+    );
+  }
 
   return (
     <DethinkProvider
       theme="light"
       className="border-border grid max-w-4xl gap-6 rounded-xl border p-6"
     >
-      {value === "details" ? (
+      {steps.value === "details" ? (
         <div className="grid gap-2">
           <p className="text-foreground text-sm font-semibold">
             Does this workspace require manager approval?
@@ -212,7 +265,7 @@ function ConditionalBranchDemo() {
               aria-pressed={requiresApproval}
               variant={requiresApproval ? "solid" : "outline"}
               size="sm"
-              onClick={() => setRequiresApproval(true)}
+              onClick={() => selectBranch(true)}
             >
               Manager approval
             </Button>
@@ -220,7 +273,7 @@ function ConditionalBranchDemo() {
               aria-pressed={!requiresApproval}
               variant={!requiresApproval ? "solid" : "outline"}
               size="sm"
-              onClick={() => setRequiresApproval(false)}
+              onClick={() => selectBranch(false)}
             >
               Self service
             </Button>
@@ -236,31 +289,28 @@ function ConditionalBranchDemo() {
         showProgress
         aria-label="Conditional onboarding"
         motionPreset="expressive"
-        value={value}
-        onValueChange={setValue}
-        items={[
-          { id: "account", label: "Account" },
-          { id: "details", label: "Details" },
-          ...branch,
-        ]}
+        {...steps.stepsProps}
       />
-      <section
+      <StepsPanel<{ panelKey: string }>
         aria-live="polite"
         className="border-border bg-muted/40 grid gap-1 rounded-lg border p-4"
-      >
-        <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-          Consumer-owned panel
-        </p>
-        <p className="text-foreground text-sm font-semibold">
-          {value === "details"
-            ? "Workspace details"
-            : `Current destination: ${value}`}
-        </p>
-        <p className="text-muted-foreground text-sm">
-          Changing the answer replaces only the future branch; the current
-          details step remains selected.
-        </p>
-      </section>
+        render={({ step }) => (
+          <>
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Registered panel · {step.data?.panelKey}
+            </p>
+            <p className="text-foreground text-sm font-semibold">
+              {step.id === "details"
+                ? "Workspace details"
+                : `Current destination: ${step.label}`}
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Changing the answer replaces only the future branch; the current
+              details step remains selected.
+            </p>
+          </>
+        )}
+      />
     </DethinkProvider>
   );
 }
@@ -280,6 +330,11 @@ export const ConditionalBranchMockWizard: Story = {
     await expect(
       canvas.getByRole("button", { name: /Details/ }),
     ).toHaveAttribute("aria-current", "step");
+
+    await userEvent.click(canvas.getByRole("button", { name: /Confirmation/ }));
+    await expect(
+      canvas.getByText("Current destination: Confirmation"),
+    ).toBeInTheDocument();
   },
 };
 

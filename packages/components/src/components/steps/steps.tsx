@@ -91,13 +91,19 @@ const itemOrientationClasses: Record<StepsOrientation, string> = {
   vertical: "w-full min-w-0 pb-[var(--dt-space-5)] last:pb-0",
 };
 const surfaceClasses =
-  "relative z-[1] flex w-full min-w-0 gap-[var(--dt-space-2)]";
+  "relative z-[1] isolate flex w-full min-w-0 gap-[var(--dt-space-2)]";
 const surfaceOrientationClasses: Record<StepsOrientation, string> = {
   horizontal: "flex-col items-center px-[var(--dt-space-2)] text-center",
   vertical: "flex-row items-start px-0 text-start",
 };
 const interactiveSurfaceClasses =
-  "rounded-lg outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 motion-safe:ease-out hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  "rounded-lg outline-none motion-safe:transition-[color,box-shadow,transform] motion-safe:duration-150 motion-safe:ease-out focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+const hoverLayerClasses =
+  "pointer-events-none absolute -z-[1] rounded-xl bg-primary/5 ring-1 ring-inset ring-primary/10";
+const hoverLayerOrientationClasses: Record<StepsOrientation, string> = {
+  horizontal: "-inset-x-[var(--dt-space-1)] -inset-y-[var(--dt-space-2)]",
+  vertical: "-inset-x-[var(--dt-space-2)] -inset-y-[var(--dt-space-1)]",
+};
 const indicatorClasses =
   "relative isolate grid shrink-0 place-items-center rounded-full border font-semibold shadow-sm contrast-more:border-foreground";
 const indicatorSizeClasses: Record<StepsSize, string> = {
@@ -118,29 +124,31 @@ const labelClasses = "font-medium text-foreground";
 const descriptionClasses = "text-xs leading-5 text-muted-foreground";
 const optionalClasses =
   "rounded-full bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-0-5)] text-[0.6875rem] font-medium text-muted-foreground";
-const connectorBaseClasses = "absolute bg-border";
+const connectorBaseClasses = "pointer-events-none absolute";
 const horizontalConnectorSizeClasses: Record<StepsSize, string> = {
-  sm: "start-1/2 top-3.5 h-0.5 w-full -translate-y-1/2",
-  md: "start-1/2 top-4 h-0.5 w-full -translate-y-1/2",
-  lg: "start-1/2 top-5 h-0.5 w-full -translate-y-1/2",
+  sm: "start-1/2 top-3.5 flex w-full -translate-y-1/2 items-center justify-center",
+  md: "start-1/2 top-4 flex w-full -translate-y-1/2 items-center justify-center",
+  lg: "start-1/2 top-5 flex w-full -translate-y-1/2 items-center justify-center",
 };
 const verticalConnectorSizeClasses: Record<StepsSize, string> = {
   sm: "bottom-0 start-3.5 top-7 w-0.5 -translate-x-1/2 rtl:translate-x-1/2",
   md: "bottom-0 start-4 top-8 w-0.5 -translate-x-1/2 rtl:translate-x-1/2",
   lg: "bottom-0 start-5 top-10 w-0.5 -translate-x-1/2 rtl:translate-x-1/2",
 };
+const horizontalConnectorLineClasses =
+  "block h-px w-[clamp(3rem,34%,5rem)] rounded-full bg-border contrast-more:h-0.5";
 const progressClasses =
-  "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-[var(--dt-space-3)]";
+  "mx-auto flex max-w-full min-w-0 items-center justify-center gap-[var(--dt-space-2-5)]";
 const progressTrackClasses =
-  "block h-2 min-w-0 overflow-hidden rounded-full bg-muted";
+  "block h-1 w-20 shrink-0 overflow-hidden rounded-full bg-muted sm:w-24 contrast-more:ring-1 contrast-more:ring-border";
 const progressIndicatorClasses =
   "block h-full origin-left rounded-full bg-primary rtl:origin-right";
 const progressValueClasses =
-  "min-w-10 text-end text-xs font-medium tabular-nums text-muted-foreground";
+  "min-w-0 text-xs font-medium leading-5 tabular-nums text-muted-foreground";
 
 const indicatorStatusClasses: Record<StepStatus, string> = {
   complete:
-    "border-success bg-success text-success-foreground ring-2 ring-success/15 ring-offset-2 ring-offset-background",
+    "border-primary bg-primary text-primary-foreground ring-2 ring-primary/15 ring-offset-2 ring-offset-background",
   current:
     "border-primary bg-primary text-primary-foreground ring-4 ring-primary/15 ring-offset-2 ring-offset-background",
   upcoming: "border-border bg-background text-muted-foreground",
@@ -170,6 +178,16 @@ const motionSettings: Record<
   expressive: { bounce: 0.16, duration: 0.34 },
 };
 
+const hoverMotionSettings: Record<
+  StepsMotionPreset,
+  { bounce: number; duration: number }
+> = {
+  none: { bounce: 0, duration: 0 },
+  subtle: { bounce: 0, duration: 0.14 },
+  standard: { bounce: 0.03, duration: 0.2 },
+  expressive: { bounce: 0.08, duration: 0.26 },
+};
+
 function createStepsTransition(
   motionPreset: StepsMotionPreset,
   reducedMotion: boolean,
@@ -177,6 +195,25 @@ function createStepsTransition(
   const settings = reducedMotion
     ? motionSettings.none
     : motionSettings[motionPreset];
+
+  if (settings.duration === 0) {
+    return { duration: 0 };
+  }
+
+  return {
+    type: "spring",
+    visualDuration: settings.duration,
+    bounce: settings.bounce,
+  };
+}
+
+function createStepsHoverTransition(
+  motionPreset: StepsMotionPreset,
+  reducedMotion: boolean,
+): Transition {
+  const settings = reducedMotion
+    ? hoverMotionSettings.none
+    : hoverMotionSettings[motionPreset];
 
   if (settings.duration === 0) {
     return { duration: 0 };
@@ -308,6 +345,7 @@ function StepsInner<TData>(
 ) {
   const controlled = value !== undefined;
   const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
+  const [hoveredValue, setHoveredValue] = useState<string>();
   const generatedId = useId();
   const prefersReducedMotion = useReducedMotion();
   const reducedMotion =
@@ -317,8 +355,13 @@ function StepsInner<TData>(
     () => createStepsTransition(motionPreset, reducedMotion),
     [motionPreset, reducedMotion],
   );
+  const hoverTransition = useMemo(
+    () => createStepsHoverTransition(motionPreset, reducedMotion),
+    [motionPreset, reducedMotion],
+  );
   const layoutScope = `${generatedId}-steps`;
   const currentMarkerLayoutId = `${layoutScope}-current`;
+  const hoverLayerLayoutId = `${layoutScope}-hover`;
   const currentValue = value ?? uncontrolledValue ?? items[0]?.id;
   const currentIndex = items.findIndex((item) => item.id === currentValue);
   const count = items.length;
@@ -435,8 +478,7 @@ function StepsInner<TData>(
             }
           >
             {/* Flex/list-none can suppress native list semantics in Safari. */}
-            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles */}
-            <ol
+            <motionElement.ol
               aria-label={ariaLabelledBy ? undefined : ariaLabel}
               aria-labelledby={ariaLabelledBy}
               role="list"
@@ -446,6 +488,7 @@ function StepsInner<TData>(
                 listBaseClasses,
                 listOrientationClasses[orientation],
               )}
+              onPointerLeave={() => setHoveredValue(undefined)}
             >
               <AnimatePresence initial={false} mode="popLayout">
                 {items.map((item, index) => {
@@ -508,15 +551,34 @@ function StepsInner<TData>(
                             connectorBaseClasses,
                             orientation === "horizontal"
                               ? horizontalConnectorSizeClasses[size]
-                              : verticalConnectorSizeClasses[size],
-                            status === "complete" ? "bg-success" : undefined,
+                              : cn(
+                                  verticalConnectorSizeClasses[size],
+                                  status === "complete"
+                                    ? "bg-primary/60"
+                                    : "bg-border",
+                                ),
                           )}
-                        />
+                        >
+                          {orientation === "horizontal" ? (
+                            <span
+                              data-slot="steps-connector-line"
+                              className={cn(
+                                horizontalConnectorLineClasses,
+                                status === "complete"
+                                  ? "bg-primary/60"
+                                  : undefined,
+                              )}
+                            />
+                          ) : null}
+                        </span>
                       ) : null}
                       {interactive ? (
-                        <button
+                        <motionElement.button
                           type="button"
                           aria-current={current ? "step" : undefined}
+                          data-hovered={
+                            hoveredValue === item.id ? "true" : undefined
+                          }
                           data-slot="steps-surface"
                           disabled={item.disabled}
                           className={cn(
@@ -527,7 +589,24 @@ function StepsInner<TData>(
                           onClick={() =>
                             selectValue(item.id, item.disabled === true)
                           }
+                          onPointerEnter={(event) => {
+                            if (event.pointerType !== "touch") {
+                              setHoveredValue(
+                                item.disabled === true ? undefined : item.id,
+                              );
+                            }
+                          }}
                         >
+                          {hoveredValue === item.id ? (
+                            <StepsHoverLayer
+                              layoutId={hoverLayerLayoutId}
+                              motionEnabled={motionEnabled}
+                              motionPreset={motionPreset}
+                              orientation={orientation}
+                              reducedMotion={reducedMotion}
+                              transition={hoverTransition}
+                            />
+                          ) : null}
                           <StepContent
                             currentMarkerLayoutId={currentMarkerLayoutId}
                             index={index}
@@ -539,7 +618,7 @@ function StepsInner<TData>(
                             state={state}
                             transition={transition}
                           />
-                        </button>
+                        </motionElement.button>
                       ) : (
                         <div
                           aria-current={current ? "step" : undefined}
@@ -566,11 +645,49 @@ function StepsInner<TData>(
                   );
                 })}
               </AnimatePresence>
-            </ol>
+            </motionElement.ol>
           </div>
         </div>
       </LayoutGroup>
     </MotionConfig>
+  );
+}
+
+function StepsHoverLayer({
+  layoutId,
+  motionEnabled,
+  motionPreset,
+  orientation,
+  reducedMotion,
+  transition,
+}: {
+  layoutId: string;
+  motionEnabled: boolean;
+  motionPreset: StepsMotionPreset;
+  orientation: StepsOrientation;
+  reducedMotion: boolean;
+  transition: Transition;
+}) {
+  const props = {
+    "aria-hidden": true,
+    "data-layout-id": layoutId,
+    "data-motion-enabled": motionEnabled ? "true" : undefined,
+    "data-motion-preset": motionPreset,
+    "data-reduced-motion": reducedMotion ? "true" : undefined,
+    "data-slot": "steps-hover-layer",
+    className: cn(hoverLayerClasses, hoverLayerOrientationClasses[orientation]),
+  } as const;
+
+  if (!motionEnabled) {
+    return <span {...props} />;
+  }
+
+  return (
+    <motionElement.span
+      {...props}
+      layoutId={layoutId}
+      transition={transition}
+    />
   );
 }
 

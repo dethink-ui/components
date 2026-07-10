@@ -1,18 +1,31 @@
 # Steps
 
-Steps is a data-driven process indicator for workflows whose next and future
-steps can change. Consumers own the branch logic and panel content; Steps owns
-the ordered-list semantics, current-step state, optional navigation, progress,
-responsive presentation, and high-level Motion choreography.
+Steps is a data-driven process indicator and optional headless workflow
+controller for flows whose next and future steps can change. Consumers own the
+branch rules and panel components; Steps owns ordered-list semantics, shared
+current-step state, guarded future-step mutations, optional navigation,
+progress, responsive presentation, and high-level Motion choreography.
 
-The component is tracked by [PRD #349](https://github.com/parveshh/dethink-components/issues/349).
+The visual component is tracked by
+[PRD #349](https://github.com/parveshh/dethink-components/issues/349). The
+provider, hooks, and dynamic panel bridge are tracked by
+[PRD #360](https://github.com/parveshh/dethink-components/issues/360).
 
 ## Installation
 
 Package import:
 
 ```tsx
-import { Steps, type StepItemData } from "@dethink/components";
+import {
+  Steps,
+  StepsPanel,
+  StepsProvider,
+  useCurrentStep,
+  useNextSteps,
+  useSteps,
+  useStepsState,
+  type StepItemData,
+} from "@dethink/components";
 import "@dethink/components/styles.css";
 ```
 
@@ -72,6 +85,93 @@ const items = requiresApproval
 Removing the current ID is unsupported. In development, Steps warns and keeps
 the missing value instead of silently selecting a fallback. Change the current
 value before removing that item from the active branch.
+
+## Workflow State and Hooks
+
+`useStepsState` is an optional headless controller. It supports controlled or
+uncontrolled items and current value, then exposes a stable `stepsProps`
+adapter for the visual indicator. `StepsProvider` makes the same controller
+available to workflow controls and panels.
+
+```tsx
+type SetupData = { panelKey: "account" | "profile" | "review" };
+
+function SetupWorkflow() {
+  const steps = useStepsState<SetupData>({
+    defaultItems: items,
+    defaultValue: "profile",
+  });
+
+  return (
+    <StepsProvider state={steps}>
+      <Steps interactive showProgress {...steps.stepsProps} />
+      <SetupControls />
+      <SetupPanel />
+    </StepsProvider>
+  );
+}
+```
+
+The focused hooks expose deliberately small views of the shared state:
+
+- `useSteps()` returns the full visible collection, current metadata,
+  progress, navigation setter, future mutations, and `stepsProps`.
+- `useCurrentStep()` returns `currentStep`, `currentIndex`, `value`,
+  `isFirstStep`, and `isLastStep`.
+- `useNextSteps()` returns the suffix after the current step plus
+  `addNextStep`, `insertNextStep`, `removeNextStep`, `replaceNextSteps`, and
+  `clearNextSteps`.
+
+Future mutations never edit the prefix or current item. `addNextStep` appends
+to the future suffix, while `insertNextStep(0, item)` inserts the immediate
+next step. Invalid indices, duplicate IDs, unknown removals, and mutations made
+while the current ID is missing are rejected with a development warning.
+Multiple mutations in one event compose against the latest accepted proposal,
+so a sequence of inserts or additions is not lost to React batching.
+
+For controlled collections, mutations call `onItemsChange` with the proposed
+array and wait for the consumer to pass it back through `items`. Uncontrolled
+collections update immediately and still call `onItemsChange` when provided.
+
+## Dynamic Panels
+
+`StepsPanel` renders consumer-owned content for the provider's current step.
+Store a serializable panel key and payload in each item's typed `data`, then
+resolve the key through your own component registry:
+
+```tsx
+type PanelKey = "account" | "profile" | "review";
+type SetupData = { panelKey: PanelKey };
+
+const panelRegistry = {
+  account: AccountPanel,
+  profile: ProfilePanel,
+  review: ReviewPanel,
+} satisfies Record<PanelKey, React.ComponentType<PanelProps>>;
+
+function SetupPanel() {
+  return (
+    <StepsPanel<SetupData>
+      fallback={<p>No active step</p>}
+      render={(context) => {
+        const key = context.step.data?.panelKey;
+        if (!key) return null;
+
+        const Panel = panelRegistry[key];
+        return <Panel {...context} />;
+      }}
+    />
+  );
+}
+```
+
+`renderItem` remains indicator-only; it does not select panel content.
+`StepsPanel` intentionally adds no tab or tabpanel roles because a sequential
+workflow is not a tabs interface. Consumers can add a heading relationship,
+live-region behavior, or route semantics appropriate to their product. Panel
+content is keyed by stable step ID, so local component state resets when the
+current step changes; persist answers in consumer workflow state when they
+must survive Back/Next navigation.
 
 ## Navigation
 
@@ -177,14 +277,21 @@ name. Do not add nested interactive controls inside an interactive step.
 - `AnimatePresence` handles keyed future-step insertion and removal.
 - Position-only layout animations move surviving steps after a branch change.
 - A namespaced shared-layout marker follows the current ID.
+- A separate namespaced hover layer glides between enabled interactive steps.
 - The progress indicator animates with `scaleX`, not width.
 - Stable step IDs are animation identity.
 - Initial presence animation is disabled for server-rendering stability.
 
 Steps uses `MotionConfig` and `useReducedMotion`. A reduced-motion preference or
 the `none` preset applies the completed visual state immediately without
-removing status, progress, or current-step information. Hover, focus, and color
-feedback remain tokenized CSS transitions.
+removing status, progress, current-step information, or hover feedback. The
+hover tint still appears, but switches steps without spatial movement. Focus
+and simple color feedback remain tokenized CSS transitions.
+
+The shared hover layer bleeds beyond the interactive surface far enough to sit
+behind marker rings and custom icons. Horizontal Steps reserve more block-axis
+coverage; vertical Steps reserve more inline-axis coverage, keeping the visual
+card complete without changing the button's hit target or marker size.
 
 ## Anatomy
 
@@ -195,7 +302,9 @@ theme selectors:
 - `steps-progress`, `steps-progress-track`, `steps-progress-indicator`, and
   `steps-progress-value`
 - `steps-viewport` and `steps-list`
-- `steps-item`, `steps-connector`, and `steps-surface`
+- `steps-item`, `steps-connector`, `steps-connector-line`, and `steps-surface`
+- `steps-hover-layer`
+- `steps-panel`
 - `steps-indicator`, `steps-current-marker`, `steps-body`, `steps-label`,
   `steps-description`, `steps-optional`, and `steps-status`
 
@@ -241,6 +350,28 @@ native `defaultValue` and `onChange` names that conflict with component state.
 `StepRenderState` exposes `index`, `count`, `current`, `disabled`,
 `interactive`, `optional`, `orientation`, `size`, `status`, and `percentage`.
 
+### UseStepsStateOptions<TData>
+
+| Option          | Type                    | Default    | Notes                                                      |
+| --------------- | ----------------------- | ---------- | ---------------------------------------------------------- |
+| `items`         | `StepItemData<TData>[]` | —          | Controlled visible collection.                             |
+| `defaultItems`  | `StepItemData<TData>[]` | `[]`       | Initial uncontrolled collection.                           |
+| `value`         | `string`                | —          | Controlled current ID.                                     |
+| `defaultValue`  | `string`                | first item | Initial uncontrolled current ID.                           |
+| `onItemsChange` | `(items) => void`       | —          | Receives the complete proposed visible collection.         |
+| `onValueChange` | `(value) => void`       | —          | Receives an enabled visible destination.                   |
+| `progressValue` | `number`                | derived    | Overrides current ordinal divided by visible branch count. |
+
+### StepsPanelProps<TData>
+
+| Prop       | Type                     | Default  | Notes                                      |
+| ---------- | ------------------------ | -------- | ------------------------------------------ |
+| `render`   | `(context) => ReactNode` | required | Renders the provider's current step.       |
+| `fallback` | `ReactNode`              | `null`   | Used when no current step can be resolved. |
+
+`StepsPanel` also accepts standard `HTMLAttributes<HTMLDivElement>`. Its render
+context contains `step`, `index`, `count`, and `value`.
+
 ## Accessibility
 
 - The visible process is an ordered list with restored `role="list"` semantics
@@ -264,10 +395,15 @@ setting.
 ## Theming
 
 Steps uses shared semantic utilities including `background`, `foreground`,
-`muted`, `border`, `ring`, `primary`, `success`, and `destructive`. It does not
-hard-code brand colors. Configure these through the `dethink-base` CSS
-variables or `DethinkProvider`; light, dark, high-contrast, and density modes
-then flow through the component.
+`muted`, `border`, `ring`, `primary`, and `destructive`. Complete and current
+steps deliberately use the active `primary` and `primary-foreground` pair so
+workflow progress follows the consumer's brand theme instead of assuming that
+completion is green. Interactive hover feedback uses a low-emphasis tint and
+inset ring from the same active `primary` token. Configure the tokens through
+the `dethink-base` CSS variables or `DethinkProvider`; light, dark,
+high-contrast, and density modes then flow through the component. The optional
+progressbar uses a compact, centered track so it supplements the ordered steps
+without becoming the dominant visual element.
 
 ## Testing Guidance
 
@@ -275,6 +411,9 @@ Prefer public behavior checks:
 
 - controlled and uncontrolled current state
 - conditional future-branch replacement while preserving the current ID
+- provider hook consistency, controlled collection proposals, and guarded
+  add/insert/remove/replace/clear future mutations
+- dynamic panel registry selection and missing-current fallback
 - enabled and disabled native-button navigation
 - empty and single-step arrays
 - ordinal progress recalculation, explicit override, clamping, and formatting
@@ -289,14 +428,16 @@ Prefer public behavior checks:
 
 Steps is a new public export. Existing products can migrate from hand-built
 steppers by moving branch computation into a stable `items` array and mapping
-their active route or workflow ID to `value`. Keep panels and Next/Back controls
-outside Steps. Replace index keys with domain IDs before enabling Motion, and
+their active route or workflow ID to `value`. Panels can remain independent or
+use the optional provider and `StepsPanel` bridge; Next/Back controls remain
+consumer-owned. Replace index keys with domain IDs before enabling Motion, and
 translate any status-only current styling into a separate `value` plus optional
 status override.
 
 ## Out of Scope
 
-Steps does not render wizard panels, validate answers, provide Next/Back or
-Complete controls, calculate branches, persist state, synchronize routers,
-orchestrate async work, support drag reordering, or recover automatically when
-the current item is removed.
+Steps does not author wizard panel content, validate answers, provide Next/Back
+or Complete controls, calculate branch rules, persist state, synchronize
+routers, orchestrate async work, support drag reordering, or recover
+automatically when the current item is removed. `StepsPanel` is only a typed
+render bridge to the consumer's panel registry.

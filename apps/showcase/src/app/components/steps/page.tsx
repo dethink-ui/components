@@ -9,7 +9,12 @@ import { PropsTable } from "@/components/props-table";
 import { StepsApprovalRouting } from "@/examples/steps/approval-routing";
 import { StepsBranchingAgentLaunch } from "@/examples/steps/branching-agent-launch";
 import { StepsDeploymentCommandCenter } from "@/examples/steps/deployment-command-center";
-import { stepItemProps, stepsProps } from "@/lib/props/steps";
+import {
+  stepItemProps,
+  stepsPanelProps,
+  stepsProps,
+  stepsStateProps,
+} from "@/lib/props/steps";
 
 export const metadata: Metadata = {
   title: "Steps",
@@ -21,7 +26,7 @@ export default function StepsPage() {
   return (
     <DocsPage
       name="Steps"
-      description="A data-driven process indicator for workflows whose next and future steps can change. You own branch calculation, panels, validation, and controls; Steps owns ordered-list semantics, current-step state, progress, navigation surfaces, responsive layouts, and high-level Motion choreography."
+      description="A data-driven process indicator with an optional provider and focused hooks for workflows whose next and future steps can change. You own branch rules and panel components; Steps keeps indicators, dynamic collections, panels, progress, and controls on one typed current-step state."
     >
       <DocsSection
         id="examples"
@@ -35,7 +40,7 @@ export default function StepsPage() {
             codeDefaultOpen={false}
             file="steps/branching-agent-launch.tsx"
             title="Branching agent launch"
-            description="Choose a guarded production rollout or a team sandbox. The policy answer replaces only future steps, keeps Policy current, and recalculates ordinal progress against the visible branch."
+            description="Choose a guarded production rollout or a team sandbox, then insert or remove an optional Privacy review. Provider hooks preserve Policy while the future suffix changes, and each step's typed panel key resolves through a consumer-owned component registry."
           >
             <StepsBranchingAgentLaunch />
           </ExampleBlock>
@@ -66,6 +71,12 @@ export default function StepsPage() {
         registryName="steps"
         importCode={`import {
   Steps,
+  StepsPanel,
+  StepsProvider,
+  useCurrentStep,
+  useNextSteps,
+  useSteps,
+  useStepsState,
   type StepItemData,
   type StepRenderState,
 } from "@dethink/components";`}
@@ -74,11 +85,13 @@ export default function StepsPage() {
       <DocsSection
         id="props"
         title="Props"
-        description="Steps accepts a typed, consumer-owned visible branch. Current identity and domain status remain separate so exceptional states never obscure which step is current."
+        description="Use the visual component alone or connect it to the optional headless controller. Current identity remains separate from domain status, and future mutations cannot remove the current prefix."
       >
         <div className="space-y-6">
           <PropsTable caption="Steps props" rows={stepsProps} />
           <PropsTable caption="StepItemData fields" rows={stepItemProps} />
+          <PropsTable caption="useStepsState options" rows={stepsStateProps} />
+          <PropsTable caption="StepsPanel props" rows={stepsPanelProps} />
         </div>
       </DocsSection>
     </DocsPage>
