@@ -1,0 +1,30 @@
+# Steps Issue Breakdown
+
+Status: Published to GitHub issue tracker.
+
+## Published Issues
+
+- Parent PRD: https://github.com/parveshh/dethink-components/issues/349
+- Horizontal semantic tracer: https://github.com/parveshh/dethink-components/issues/350
+- Conditional branch and navigation tracer: https://github.com/parveshh/dethink-components/issues/351
+- Vertical, progress, statuses, and rendering tracer: https://github.com/parveshh/dethink-components/issues/352
+- Motion branch choreography tracer: https://github.com/parveshh/dethink-components/issues/353
+- Integration documentation and verification: https://github.com/parveshh/dethink-components/issues/354
+- Workflow controller PRD: https://github.com/parveshh/dethink-components/issues/360
+- Workflow controller and hooks tracer: https://github.com/parveshh/dethink-components/issues/361
+- Dynamic panels and Showcase tracer: https://github.com/parveshh/dethink-components/issues/362
+
+## Branch Stack
+
+1. `feature/prd-349-steps`
+2. `feature/issue-350-steps-horizontal`
+3. `feature/issue-351-steps-branch-navigation`
+4. `feature/issue-352-steps-layout-progress`
+5. `feature/issue-353-steps-motion`
+6. `feature/issue-354-steps-verification`
+7. `feature/prd-360-steps-workflow`
+8. `feature/issue-361-steps-workflow-hooks`
+9. `feature/issue-362-steps-dynamic-panels`
+
+All slices are AFK and stack in the order above. The final implementation pull
+request targets the PRD branch rather than the repository default branch.

@@ -336,6 +336,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "navigation",
   },
   {
+    slug: "steps",
+    name: "Steps",
+    description:
+      "Guide branching workflows with horizontal and vertical process indicators, progress, statuses, optional navigation, and Motion choreography.",
+    type: "navigation",
+  },
+  {
     slug: "calendar",
     name: "Calendar",
     description:
