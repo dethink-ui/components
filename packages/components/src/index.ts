@@ -25,6 +25,17 @@ export {
   type ButtonVariant,
 } from "./components/button";
 export {
+  ButtonGroup,
+  ButtonGroupSeparator,
+  buttonGroupClassNames,
+  buttonGroupSeparatorClassNames,
+  type ButtonGroupMode,
+  type ButtonGroupOrientation,
+  type ButtonGroupProps,
+  type ButtonGroupSeparatorOrientation,
+  type ButtonGroupSeparatorProps,
+} from "./components/button-group";
+export {
   Badge,
   badgeClassNames,
   type BadgeIconPlacement,

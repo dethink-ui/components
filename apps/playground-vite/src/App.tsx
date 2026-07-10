@@ -12,6 +12,8 @@ import {
   Accordion,
   Box,
   Button,
+  ButtonGroup,
+  ButtonGroupSeparator,
   Card,
   CardContent,
   CardDescription,
@@ -259,6 +261,17 @@ export function App() {
             <IconButton aria-label="Refresh playground" variant="outline">
               <RefreshIcon />
             </IconButton>
+            <ButtonGroup aria-label="Playground document actions">
+              <Button variant="outline">Preview</Button>
+              <ButtonGroupSeparator />
+              <Button variant="outline">Publish</Button>
+              <IconButton
+                aria-label="Refresh grouped document"
+                variant="outline"
+              >
+                <RefreshIcon />
+              </IconButton>
+            </ButtonGroup>
           </Flex>
           <Flex
             gap="3"

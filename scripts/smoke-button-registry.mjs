@@ -97,6 +97,7 @@ async function assertRegistryRelativeImportsResolve(item, registryItemsByName) {
 const base = await readJson(join(registryRoot, "base.json"));
 const box = await readJson(join(registryRoot, "box.json"));
 const button = await readJson(join(registryRoot, "button.json"));
+const buttonGroup = await readJson(join(registryRoot, "button-group.json"));
 const card = await readJson(join(registryRoot, "card.json"));
 const cardStack = await readJson(join(registryRoot, "card-stack.json"));
 const checkbox = await readJson(join(registryRoot, "checkbox.json"));
@@ -166,6 +167,7 @@ const registryItemsByName = new Map(
     base,
     box,
     button,
+    buttonGroup,
     card,
     cardStack,
     checkbox,
@@ -224,6 +226,10 @@ const registryItemsByName = new Map(
 
 assert(box.name === "box", "box registry item must be named box.");
 assert(button.name === "button", "button registry item must be named button.");
+assert(
+  buttonGroup.name === "button-group",
+  "button-group registry item must be named button-group.",
+);
 assert(card.name === "card", "card registry item must be named card.");
 assert(
   cardStack.name === "card-stack",
@@ -393,6 +399,16 @@ assert(
 assert(
   button.registryDependencies?.includes("dethink-base"),
   "button registry item must depend on dethink-base.",
+);
+assert(
+  buttonGroup.registryDependencies?.includes("dethink-base") &&
+    buttonGroup.registryDependencies?.includes("button") &&
+    buttonGroup.registryDependencies?.includes("icon-button"),
+  "button-group registry item must include base Button and IconButton dependencies.",
+);
+assert(
+  !buttonGroup.registryDependencies?.includes("dropdown-menu"),
+  "button-group registry item must not depend on dropdown-menu.",
 );
 assert(
   card.registryDependencies?.includes("dethink-base"),
@@ -752,6 +768,11 @@ assert(
   "button registry item must not add runtime dependencies.",
 );
 assert(
+  Array.isArray(buttonGroup.dependencies) &&
+    buttonGroup.dependencies.length === 0,
+  "button-group registry item must not add runtime dependencies, including Motion.",
+);
+assert(
   Array.isArray(card.dependencies) && card.dependencies.length === 0,
   "card registry item must not add runtime dependencies.",
 );
@@ -1057,6 +1078,7 @@ for (const item of [
   base,
   box,
   button,
+  buttonGroup,
   card,
   cardStack,
   checkbox,
@@ -1116,6 +1138,7 @@ for (const item of [
 }
 
 await assertRegistryRelativeImportsResolve(container, registryItemsByName);
+await assertRegistryRelativeImportsResolve(buttonGroup, registryItemsByName);
 await assertRegistryRelativeImportsResolve(card, registryItemsByName);
 await assertRegistryRelativeImportsResolve(cardStack, registryItemsByName);
 await assertRegistryRelativeImportsResolve(checkbox, registryItemsByName);
@@ -1178,6 +1201,13 @@ const boxSource = await readFile(
 );
 const buttonSource = await readFile(
   join(root, "packages/components/src/components/button/button.tsx"),
+  "utf8",
+);
+const buttonGroupSource = await readFile(
+  join(
+    root,
+    "packages/components/src/components/button-group/button-group.tsx",
+  ),
   "utf8",
 );
 const cardSource = await readFile(
@@ -1520,6 +1550,41 @@ assert(
 assert(
   !buttonSource.includes("@radix-ui"),
   "button source must remain dependency-free.",
+);
+assert(
+  buttonGroupSource.includes('role="group"') &&
+    buttonGroupSource.includes('data-slot="button-group"') &&
+    buttonGroupSource.includes('data-slot="button-group-separator"') &&
+    buttonGroupSource.includes("data-mode") &&
+    buttonGroupSource.includes("data-orientation"),
+  "button-group source must expose semantic group and stable state anatomy.",
+);
+assert(
+  buttonGroupSource.includes("rounded-s-md") &&
+    buttonGroupSource.includes("rounded-e-md") &&
+    buttonGroupSource.includes("-ms-px") &&
+    buttonGroupSource.includes("gap-density-gap") &&
+    buttonGroupSource.includes("bg-border"),
+  "button-group source must use logical token-backed attached and separated geometry.",
+);
+assert(
+  !buttonGroupSource.includes('from "motion') &&
+    !buttonGroupSource.includes("AnimatePresence") &&
+    !buttonGroupSource.includes("DropdownMenu") &&
+    !buttonGroupSource.includes("transition-") &&
+    !buttonGroupSource.includes("animate-"),
+  "button-group source must not import Motion or DropdownMenu or add intrinsic animation.",
+);
+assert(
+  !buttonGroupSource.includes("createContext") &&
+    !buttonGroupSource.includes("useContext"),
+  "button-group source must remain context-free and usable from Server Components.",
+);
+assert(
+  packageIndexSource.includes("ButtonGroup") &&
+    packageIndexSource.includes("ButtonGroupSeparator") &&
+    packageIndexSource.includes("ButtonGroupProps"),
+  "root package index must export the ButtonGroup family and public types.",
 );
 assert(
   revealButtonSource.includes('data-slot="reveal-button"'),
