@@ -18,6 +18,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
+    baseURL: "http://127.0.0.1:3015",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
@@ -28,11 +29,11 @@ export default defineConfig({
     },
   ],
 
-  // Uncomment and pick a target app once you add specs:
-  // webServer: {
-  //   command: "pnpm --filter @dethink/storybook storybook",
-  //   url: "http://localhost:6006",
-  //   reuseExistingServer: !process.env.CI,
-  //   timeout: 120_000,
-  // },
+  webServer: {
+    command:
+      "pnpm --filter @dethink/showcase build && pnpm --filter @dethink/showcase exec next start --port 3015",
+    url: "http://127.0.0.1:3015",
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
 });
