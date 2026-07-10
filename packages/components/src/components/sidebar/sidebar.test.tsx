@@ -332,6 +332,13 @@ describe("Sidebar", () => {
     expect(sidebarClassNames()).not.toContain("transition-[width");
   });
 
+  it("keeps collapsed navigation vertically scrollable without a horizontal scrollbar", () => {
+    const { container } = renderSidebar({ defaultCollapsed: true });
+    const content = container.querySelector('[data-slot="sidebar-content"]');
+
+    expect(content).toHaveClass("overflow-y-auto", "overflow-x-hidden");
+  });
+
   it("supports uncontrolled collapsed state from the edge rail", async () => {
     const user = userEvent.setup();
 

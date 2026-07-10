@@ -336,6 +336,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "navigation",
   },
   {
+    slug: "sidebar-shell",
+    name: "SidebarShell",
+    description:
+      "Frame full application chrome around Sidebar with semantic header, main, and footer regions, skip-link targeting, and workbench or plain treatments.",
+    type: "navigation",
+  },
+  {
     slug: "steps",
     name: "Steps",
     description:

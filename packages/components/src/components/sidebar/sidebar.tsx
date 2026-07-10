@@ -243,7 +243,7 @@ const sidebarSectionClasses =
   "min-w-0 px-[var(--dt-space-2)] py-[var(--dt-space-2)]";
 
 const sidebarContentClasses =
-  "min-h-0 flex-1 overflow-y-auto overscroll-contain px-[var(--dt-space-2)] py-[var(--dt-space-2)]";
+  "min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-[var(--dt-space-2)] py-[var(--dt-space-2)]";
 
 const sidebarGroupClasses =
   "grid min-w-0 gap-[var(--dt-space-1)] py-[var(--dt-space-1)]";
