@@ -146,6 +146,19 @@ function createMergeActions(
   ];
 }
 
+const labelWidthActions: DropdownButtonSelectableAction[] = [
+  {
+    id: "short",
+    label: "Merge",
+    onAction: () => undefined,
+  },
+  {
+    id: "long",
+    label: "Create a merge commit with the complete branch history",
+    onAction: () => undefined,
+  },
+];
+
 const highContrastStyle = {
   "--dt-color-background-light": "oklch(1 0 0)",
   "--dt-color-foreground-light": "oklch(0 0 0)",
@@ -418,6 +431,60 @@ export const SelectablePrimaryAction: Story = {
     );
     await expect(canvas.getByTestId("selectable-status")).toHaveTextContent(
       "Squash executed",
+    );
+  },
+};
+
+export const SelectableLabelWidthMotion: Story = {
+  render: function SelectableLabelWidthMotionStory() {
+    const [selectedActionId, setSelectedActionId] = useState("short");
+
+    return (
+      <StoryFrame>
+        <Stack gap="3" align="start">
+          <Button
+            variant="soft"
+            onClick={() =>
+              setSelectedActionId((current) =>
+                current === "short" ? "long" : "short",
+              )
+            }
+          >
+            Change primary label width
+          </Button>
+          <DropdownButton
+            actions={labelWidthActions}
+            menuLabel="Choose merge method"
+            mode="selectable"
+            onSelectedActionChange={setSelectedActionId}
+            selectedActionId={selectedActionId}
+          />
+        </Stack>
+      </StoryFrame>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const viewport = canvasElement.querySelector<HTMLElement>(
+      '[data-slot="dropdown-button-primary-label-viewport"]',
+    );
+
+    await waitFor(() => expect(viewport?.dataset.inlineSize).toBeTruthy());
+    const initialInlineSize = Number(viewport?.dataset.inlineSize);
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Change primary label width" }),
+    );
+
+    await expect(
+      canvas.getByRole("button", {
+        name: "Create a merge commit with the complete branch history",
+      }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(Number(viewport?.dataset.inlineSize)).toBeGreaterThan(
+        initialInlineSize,
+      ),
     );
   },
 };

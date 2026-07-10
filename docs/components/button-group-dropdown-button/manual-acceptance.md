@@ -83,11 +83,16 @@ and RTL, forced/high contrast, 200% zoom, and reduced motion.
 
 - Attached borders and logical radii remain coherent for every relevant Button
   variant and size.
+- For every `xs` through `xl` split/selectable size, the primary and menu
+  trigger have the same computed height and the trigger remains square.
+- Changing between short and long controlled/selectable labels animates the
+  composite inline size without scaling or blurring the attached seam.
 - Focus, disabled, busy, destructive, and open states remain clear in forced
   colors/high contrast.
 - RTL mirrors logical seams and placements; the submenu arrow also mirrors.
 - Reduced motion removes transform choreography; label and busy state remain
-  immediately readable, and the menu surface uses only brief opacity feedback.
+  immediately readable, label width resolves immediately, and the menu surface
+  uses only brief opacity feedback.
 - `motionPreset="none"` leaves the busy indicator static as well as disabling
   label, icon, selected-check, chevron, and menu-surface animation.
 - No state is communicated by motion alone.

@@ -71,6 +71,126 @@ function ControlledSelectableFixture({
 }
 
 describe("DropdownButton", () => {
+  it.each([
+    { heightClass: "h-7", size: "xs" as const, widthClass: "w-7" },
+    { heightClass: "h-8", size: "sm" as const, widthClass: "w-8" },
+    {
+      heightClass: "h-density-control",
+      size: "md" as const,
+      widthClass: "w-density-control",
+    },
+    { heightClass: "h-11", size: "lg" as const, widthClass: "w-11" },
+    { heightClass: "h-12", size: "xl" as const, widthClass: "w-12" },
+  ])(
+    "keeps both split segments on the $size size scale",
+    ({ heightClass, size, widthClass }) => {
+      render(
+        <DropdownButton
+          label={`${size} primary`}
+          menuLabel={`More ${size} options`}
+          mode="split"
+          onPrimaryAction={() => undefined}
+          size={size}
+        >
+          <DropdownMenuItem>{size} alternative</DropdownMenuItem>
+        </DropdownButton>,
+      );
+
+      const primary = screen.getByRole("button", {
+        name: `${size} primary`,
+      });
+      const menuTrigger = screen.getByRole("button", {
+        name: `More ${size} options`,
+      });
+
+      expect(primary).toHaveAttribute("data-size", size);
+      expect(primary).toHaveClass(heightClass);
+      expect(menuTrigger).toHaveAttribute("data-size", size);
+      expect(menuTrigger).toHaveClass(heightClass, widthClass, "!p-0");
+    },
+  );
+
+  it("measures changing labels for the Motion-owned primary inline size", async () => {
+    const scrollWidthDescriptor = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      "scrollWidth",
+    );
+    const actions = [
+      {
+        id: "short",
+        label: "Merge",
+        onAction: () => undefined,
+      },
+      {
+        id: "long",
+        label: "Create a merge commit",
+        onAction: () => undefined,
+      },
+    ];
+
+    Object.defineProperty(HTMLElement.prototype, "scrollWidth", {
+      configurable: true,
+      get() {
+        return this.getAttribute("data-slot") ===
+          "dropdown-button-primary-label-measure"
+          ? (this.textContent?.length ?? 0) * 8
+          : 0;
+      },
+    });
+
+    try {
+      const { rerender } = render(
+        <DropdownButton
+          actions={actions}
+          menuLabel="Choose merge method"
+          mode="selectable"
+          motionPreset="none"
+          onSelectedActionChange={() => undefined}
+          selectedActionId="short"
+        />,
+      );
+      const viewport = document.querySelector<HTMLElement>(
+        '[data-slot="dropdown-button-primary-label-viewport"]',
+      );
+
+      expect(viewport).not.toBeNull();
+      await waitFor(() =>
+        expect(viewport).toHaveAttribute("data-inline-size", "40"),
+      );
+
+      rerender(
+        <DropdownButton
+          actions={actions}
+          menuLabel="Choose merge method"
+          mode="selectable"
+          motionPreset="none"
+          onSelectedActionChange={() => undefined}
+          selectedActionId="long"
+        />,
+      );
+
+      await waitFor(() =>
+        expect(viewport).toHaveAttribute("data-inline-size", "168"),
+      );
+      expect(
+        screen.queryByRole("button", { name: "Merge" }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Create a merge commit" }),
+      ).toBeInTheDocument();
+    } finally {
+      if (scrollWidthDescriptor) {
+        Object.defineProperty(
+          HTMLElement.prototype,
+          "scrollWidth",
+          scrollWidthDescriptor,
+        );
+      } else {
+        Reflect.deleteProperty(HTMLElement.prototype, "scrollWidth");
+      }
+    }
+  });
+
   it("selects an action without invoking it, then invokes it from the primary button", async () => {
     const user = userEvent.setup();
     const onMerge = vi.fn();

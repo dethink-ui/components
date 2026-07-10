@@ -160,6 +160,9 @@ Selectable mode:
 
 - Split and selectable DropdownButton use the complete composite root as the
   positioning reference.
+- Both attached button segments inherit the same public Button `size`. The menu
+  trigger changes only its square inline size, keeping `xs` through `xl`
+  heights and typography aligned with the primary segment.
 - Menu content defaults to logical `bottom start` placement and collision
   flipping through the existing positioned-overlay foundation.
 - The menu minimum width matches the full composite width and may expand to the
@@ -211,6 +214,8 @@ The user's Motion-only constraint is normative for this family.
 - DropdownButton animates the open-state chevron and state-preserving label
   or busy-indicator presence. Selectable mode keys primary label/icon feedback
   to the stable action ID and uses Motion for selected-check presence.
+- Controlled and selectable label-length changes animate a measured numeric
+  label-viewport width with Motion. The composite itself is not scaled.
 - The shared DropdownMenu entry/exit path used by DropdownButton uses Motion
   primitives instead of Tailwind keyframes/transitions so the composite does
   not mix animation systems.
@@ -221,7 +226,7 @@ The user's Motion-only constraint is normative for this family.
 - Respect reduced motion with `useReducedMotion` and the explicit
   `reducedMotion` test/documentation override.
 - Reduced motion removes transform choreography and preserves immediate open,
-  busy, disabled, label, and focus states.
+  busy, disabled, label, width, and focus states.
 - No CSS keyframes, Tailwind `animate-*`, or Tailwind `transition-*` utilities
   are introduced in ButtonGroup, DropdownButton, or the migrated menu paths.
 

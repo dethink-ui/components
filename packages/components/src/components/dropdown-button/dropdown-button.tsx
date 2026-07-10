@@ -153,12 +153,12 @@ const dropdownButtonTriggerIconClasses =
   "pointer-events-none inline-flex size-4 shrink-0 items-center justify-center";
 
 const dropdownButtonSplitTriggerSizeClasses: Record<ButtonSize, string> = {
-  xs: "h-7 w-7 p-0",
-  sm: "h-8 w-8 p-0",
-  md: "h-density-control w-density-control p-0",
-  lg: "h-11 w-11 p-0",
-  xl: "h-12 w-12 p-0",
-  icon: "h-density-control w-density-control p-0",
+  xs: "w-7 !p-0",
+  sm: "w-8 !p-0",
+  md: "w-density-control !p-0",
+  lg: "w-11 !p-0",
+  xl: "w-12 !p-0",
+  icon: "w-density-control !p-0",
 };
 
 const dropdownButtonChevronDuration: Record<
@@ -176,6 +176,9 @@ const dropdownButtonBusyIndicatorClasses =
 const dropdownButtonSelectionIndicatorClasses =
   "inline-flex size-4 items-center justify-center text-foreground";
 
+const dropdownButtonPrimaryLabelMeasureClasses =
+  "pointer-events-none invisible absolute inset-y-0 start-0 inline-flex w-max items-center whitespace-nowrap";
+
 function getDropdownButtonNodeKey(node: ReactNode, fallback: string) {
   if (typeof node === "string" || typeof node === "number") {
     return `${fallback}-${String(node)}`;
@@ -186,6 +189,49 @@ function getDropdownButtonNodeKey(node: ReactNode, fallback: string) {
   }
 
   return fallback;
+}
+
+function measureDropdownButtonLabelInlineSize(node: HTMLElement) {
+  return Math.ceil(node.scrollWidth || node.getBoundingClientRect().width);
+}
+
+function useDropdownButtonLabelInlineSize(
+  contentKey: string | undefined,
+  label: ReactNode,
+) {
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const [inlineSize, setInlineSize] = useState<number>();
+
+  useEffect(() => {
+    const node = measureRef.current;
+
+    if (!node) {
+      return undefined;
+    }
+
+    const measure = () => {
+      const nextInlineSize = measureDropdownButtonLabelInlineSize(node);
+
+      if (nextInlineSize > 0) {
+        setInlineSize((current) =>
+          current === nextInlineSize ? current : nextInlineSize,
+        );
+      }
+    };
+
+    measure();
+
+    if (typeof ResizeObserver === "undefined") {
+      return undefined;
+    }
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+
+    return () => observer.disconnect();
+  }, [contentKey, label]);
+
+  return [measureRef, inlineSize] as const;
 }
 
 function resolveDropdownButtonSelectableAction(
@@ -271,11 +317,30 @@ function DropdownButtonPrimaryLabel({
   reducedMotion: boolean;
 }) {
   const motionDisabled = reducedMotion || motionPreset === "none";
+  const [measureRef, measuredInlineSize] = useDropdownButtonLabelInlineSize(
+    contentKey,
+    label,
+  );
 
   return (
-    <span
+    <motion.span
+      animate={
+        measuredInlineSize === undefined
+          ? undefined
+          : { width: measuredInlineSize }
+      }
+      initial={false}
+      data-inline-size={measuredInlineSize}
       data-slot="dropdown-button-primary-label-viewport"
-      className="inline-grid min-w-0"
+      className="relative inline-grid min-w-0 overflow-hidden"
+      transition={{
+        width: {
+          duration: motionDisabled
+            ? 0
+            : dropdownButtonChevronDuration[motionPreset],
+          ease: [0.16, 1, 0.3, 1],
+        },
+      }}
     >
       <AnimatePresence initial={false} mode="sync">
         <DropdownButtonPrimaryLabelItem
@@ -285,7 +350,15 @@ function DropdownButtonPrimaryLabel({
           motionPreset={motionPreset}
         />
       </AnimatePresence>
-    </span>
+      <span
+        ref={measureRef}
+        aria-hidden="true"
+        data-slot="dropdown-button-primary-label-measure"
+        className={dropdownButtonPrimaryLabelMeasureClasses}
+      >
+        {label}
+      </span>
+    </motion.span>
   );
 }
 
@@ -711,7 +784,7 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
                   : "dropdown-button-trigger"
               }
               disabled={menuUnavailable}
-              size={hasPrimary ? "icon" : size}
+              size={size}
               variant={resolvedVariant}
             >
               {hasPrimary ? (

@@ -164,7 +164,9 @@ native buttons.
 All geometry uses existing Button and provider tokens. Stories cover light,
 dark, high-contrast tokens, compact/default/comfortable density, logical RTL
 corners, long labels, narrow containers, every relevant Button variant and
-size, and open/closed states.
+size, and open/closed states. In split and selectable modes, both native button
+segments inherit the same public `size`; the menu trigger overrides only its
+square inline size, so `xs` through `xl` remain exactly height-aligned.
 
 ## Motion And Reduced Motion
 
@@ -172,7 +174,10 @@ ButtonGroup has no intrinsic motion. DropdownButton uses Motion for chevron,
 controlled or selected primary label/icon, selected-check presence, and busy
 feedback. DropdownMenu uses Motion for surface presence and changed item
 feedback. Stable action IDs and transform/opacity are used where motion
-clarifies continuity.
+clarifies continuity. When a controlled or selected label changes length,
+DropdownButton measures the new intrinsic label width and animates the label
+viewport's numeric width with Motion. The attached buttons and border geometry
+are never scale-transformed, so seams and focus rings remain crisp.
 
 `motionPreset="none"` resolves state immediately without animation. The user's
 reduced-motion preference removes transform choreography and leaves only brief
