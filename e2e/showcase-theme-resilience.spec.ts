@@ -4,9 +4,7 @@ const brands = ["teal", "violet", "rose", "amber", "ocean", "forest"];
 const themes = ["light", "dark"] as const;
 
 type ContrastMetrics = {
-  borderBackground: number;
   destructivePair: number;
-  inputBackground: number;
   mutedTextBackground: number;
   mutedTextMuted: number;
   primaryBackground: number;
@@ -16,7 +14,7 @@ type ContrastMetrics = {
 };
 
 test.describe("showcase theme resilience", () => {
-  test("keeps semantic text and boundaries above contrast targets in every brand", async ({
+  test("keeps semantic text and focus cues above contrast targets in every brand", async ({
     page,
   }) => {
     await page.goto("/");
@@ -84,12 +82,10 @@ test.describe("showcase theme resilience", () => {
           const background = resolveToken("background");
           const muted = resolveToken("muted");
           return {
-            borderBackground: contrast(resolveToken("border"), background),
             destructivePair: contrast(
               resolveToken("destructive"),
               resolveToken("destructive-foreground"),
             ),
-            inputBackground: contrast(resolveToken("input"), background),
             mutedTextBackground: contrast(
               resolveToken("muted-foreground"),
               background,
@@ -131,19 +127,61 @@ test.describe("showcase theme resilience", () => {
           `${context} primary button`,
         ).toBeGreaterThanOrEqual(4.5);
         expect(
-          metrics.borderBackground,
-          `${context} border`,
-        ).toBeGreaterThanOrEqual(3);
-        expect(
-          metrics.inputBackground,
-          `${context} input boundary`,
-        ).toBeGreaterThanOrEqual(3);
-        expect(
           metrics.ringBackground,
           `${context} focus ring`,
         ).toBeGreaterThanOrEqual(3);
       }
     }
+  });
+
+  test("inherits component package border and input tokens", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const tokensMatch = await page.evaluate(() => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+
+      if (!context) {
+        throw new Error("Could not create token comparison context.");
+      }
+
+      const resolve = (value: string) => {
+        const sample = document.createElement("span");
+        sample.style.color = value;
+        document.body.append(sample);
+        const resolved = getComputedStyle(sample).color;
+        sample.remove();
+        return resolved;
+      };
+      const rasterize = (value: string) => {
+        context.clearRect(0, 0, 1, 1);
+        context.fillStyle = resolve(value);
+        context.fillRect(0, 0, 1, 1);
+        return [...context.getImageData(0, 0, 1, 1).data];
+      };
+      const matches = (token: string, expected: string) =>
+        rasterize(`var(--dt-color-${token})`).every(
+          (channel, index) => channel === rasterize(expected)[index],
+        );
+
+      return {
+        borderLight: matches("border-light", "oklch(0.9 0 0)"),
+        borderDark: matches("border-dark", "oklch(0.28 0 0)"),
+        inputLight: matches("input-light", "oklch(0.92 0 0)"),
+        inputDark: matches("input-dark", "oklch(0.3 0 0)"),
+      };
+    });
+
+    expect(tokensMatch).toEqual({
+      borderLight: true,
+      borderDark: true,
+      inputLight: true,
+      inputDark: true,
+    });
   });
 
   test("retains focus, current, and disabled cues in forced colors", async ({

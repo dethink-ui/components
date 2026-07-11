@@ -23,10 +23,44 @@ const navLinks = [
 function BrandMark() {
   return (
     <span
+      data-brand-logo="component-stack"
       aria-hidden="true"
-      className="sc-brand-mark font-heading text-primary-foreground grid size-7 shrink-0 place-items-center rounded-lg text-sm font-bold shadow-sm"
+      className="sc-brand-mark text-primary-foreground grid size-7 shrink-0 place-items-center rounded-lg shadow-sm"
     >
-      D
+      <svg
+        viewBox="0 0 28 28"
+        fill="none"
+        className="size-full"
+        aria-hidden="true"
+      >
+        <rect x="5.5" y="6" width="10" height="7" rx="2" fill="currentColor" />
+        <rect
+          x="17.5"
+          y="6"
+          width="5"
+          height="7"
+          rx="2"
+          fill="currentColor"
+          fillOpacity="0.72"
+        />
+        <rect
+          x="5.5"
+          y="15"
+          width="5"
+          height="7"
+          rx="2"
+          fill="currentColor"
+          fillOpacity="0.72"
+        />
+        <rect
+          x="12.5"
+          y="15"
+          width="10"
+          height="7"
+          rx="2"
+          fill="currentColor"
+        />
+      </svg>
     </span>
   );
 }
