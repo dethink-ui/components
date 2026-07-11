@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-scroller",
+  "type": "registry:ui",
+  "title": "CardScroller",
+  "description": "Selectable cards in a responsive, native horizontal scroll-snap viewport with overflow navigation controls.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "card", "icon-button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/card-scroller/card-scroller.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/card-scroller/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

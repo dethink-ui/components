@@ -18,6 +18,16 @@ export type {
 } from "./foundation/dethink-provider";
 export { cn } from "./utils/cn";
 export {
+  CardScroller,
+  CardScrollerItem,
+  cardScrollerClassNames,
+  cardScrollerItemClassNames,
+  type CardScrollerCardElement,
+  type CardScrollerItemProps,
+  type CardScrollerMaxVisibleCards,
+  type CardScrollerProps,
+} from "./components/card-scroller";
+export {
   Button,
   buttonClassNames,
   type ButtonProps,

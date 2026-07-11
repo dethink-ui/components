@@ -20,6 +20,8 @@ import {
   CardFooter,
   CardHeader,
   CardStack,
+  CardScroller,
+  CardScrollerItem,
   CardTitle,
   Calendar,
   Checkbox,
@@ -364,6 +366,39 @@ export function App() {
               </CardContent>
             </Card>
           </CardStack>
+          <CardScroller
+            aria-label="Playground card scroller"
+            defaultValue="overview"
+          >
+            <CardScrollerItem label="Overview card" value="overview">
+              <Card>
+                <CardHeader>
+                  <CardTitle>CardScroller smoke</CardTitle>
+                  <CardDescription>
+                    Verifies package selection and responsive scroll snap.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Text size="sm" tone="muted">
+                    The whole static card selects its native radio.
+                  </Text>
+                </CardContent>
+              </Card>
+            </CardScrollerItem>
+            <CardScrollerItem label="Activity card" value="activity">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Activity</CardTitle>
+                  <CardDescription>Second selectable card.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Text size="sm" tone="muted">
+                    Scrolling remains independent from selection.
+                  </Text>
+                </CardContent>
+              </Card>
+            </CardScrollerItem>
+          </CardScroller>
           <Accordion
             aria-label="Playground accordion"
             defaultValue="setup"
