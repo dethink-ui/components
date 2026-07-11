@@ -447,6 +447,7 @@ function BookingWorkflow({ presentation = "embedded" }: RecipePreviewProps) {
           <aside className="space-y-5">
             {/* Booking preview — public booking page */}
             <Card
+              data-scheduler-public-preview
               shadow="sm"
               className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm"
             >
@@ -488,7 +489,8 @@ function BookingWorkflow({ presentation = "embedded" }: RecipePreviewProps) {
               </CardHeader>
               <CardContent className="relative">
                 <SlotPicker
-                  title="Book an implementation review"
+                  title="Implementation review"
+                  className="[&_[data-slot=slot-picker-toolbar]]:grid-cols-[minmax(0,1fr)_auto] [&_[data-slot=slot-picker-toolbar]>div:nth-child(2)]:col-span-2 [&_[data-slot=slot-picker-toolbar]>div:nth-child(2)]:row-start-2 [&_[data-slot=slot-picker-toolbar]>div:nth-child(2)]:justify-start [&_[data-slot=slot-picker-view-switch]]:col-start-2 [&_[data-slot=slot-picker-view-switch]]:row-start-1"
                   slots={slots}
                   viewerTimeZone={VIEWER_ZONE}
                   defaultFocusedDate="2026-07-06"

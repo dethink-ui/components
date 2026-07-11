@@ -361,4 +361,132 @@ test.describe("showcase full-page recipe shell", () => {
       )
       .toBe(true);
   });
+
+  test("keeps Security proof text complete on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/recipes/dethink-labs-security");
+
+    const surface = page.locator(
+      '[data-recipe-surface="dethink-labs-security"]',
+    );
+    const status = page.locator("[data-security-status]");
+    const proof = page.locator("[data-security-proof]");
+    await expect(surface).toBeVisible();
+    await expect(status).toBeVisible();
+    const surfaceBounds = await surface.boundingBox();
+    const statusBounds = await status.boundingBox();
+
+    expect(surfaceBounds).not.toBeNull();
+    expect(statusBounds).not.toBeNull();
+    expect(statusBounds!.x + statusBounds!.width).toBeLessThanOrEqual(
+      surfaceBounds!.x + surfaceBounds!.width,
+    );
+    await expect(status).toHaveText(
+      "ALL SYSTEMS MONITORED · ZERO TRUST BY DEFAULT",
+    );
+    await expect
+      .poll(() =>
+        proof.evaluate((element) =>
+          element.textContent
+            ?.replace(/\s+/g, " ")
+            .includes("deployment mean time to isolate"),
+        ),
+      )
+      .toBe(true);
+  });
+
+  test("separates Checkout popularity and selection indicators", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/recipes/saas-checkout-order-summary");
+
+    const popular = page.locator("[data-checkout-popular]");
+    const selected = page.locator('[data-checkout-selected="growth"]');
+    await expect(popular).toBeVisible();
+    await expect(selected).toBeVisible();
+
+    const popularBounds = await popular.boundingBox();
+    const selectedBounds = await selected.boundingBox();
+    expect(popularBounds).not.toBeNull();
+    expect(selectedBounds).not.toBeNull();
+    expect(selectedBounds!.y).toBeGreaterThanOrEqual(
+      popularBounds!.y + popularBounds!.height,
+    );
+
+    await page.getByRole("radio", { name: "Starter" }).check();
+    await expect(
+      page.locator('[data-checkout-selected="starter"]'),
+    ).toBeVisible();
+    await expect(popular).toBeVisible();
+  });
+
+  test("keeps Scheduler public-preview controls in distinct rows", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/recipes/scheduler-and-booking");
+
+    const preview = page.locator("[data-scheduler-public-preview]");
+    const title = preview.locator('[data-slot="slot-picker-title"]');
+    const viewSwitch = preview.locator('[data-slot="slot-picker-view-switch"]');
+    const periodControls = preview
+      .getByRole("button", { name: "Previous week" })
+      .locator("..");
+    await expect(title).toBeVisible();
+    await expect(viewSwitch).toBeVisible();
+    await expect(periodControls).toBeVisible();
+
+    const titleBounds = await title.boundingBox();
+    const viewBounds = await viewSwitch.boundingBox();
+    const periodBounds = await periodControls.boundingBox();
+    expect(titleBounds).not.toBeNull();
+    expect(viewBounds).not.toBeNull();
+    expect(periodBounds).not.toBeNull();
+    expect(titleBounds!.x + titleBounds!.width).toBeLessThanOrEqual(
+      viewBounds!.x,
+    );
+    expect(periodBounds!.y).toBeGreaterThanOrEqual(
+      Math.max(
+        titleBounds!.y + titleBounds!.height,
+        viewBounds!.y + viewBounds!.height,
+      ),
+    );
+  });
+
+  test("prioritizes the Login task on mobile and preserves desktop layout", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/recipes/login-and-onboarding");
+
+    const surface = page.locator(
+      '[data-recipe-surface="login-and-onboarding"]',
+    );
+    const form = page.locator("[data-login-form]");
+    const marketing = page.locator("[data-login-marketing]");
+    await expect(form).toBeVisible();
+    await expect(marketing).toBeVisible();
+
+    const mobileFormBounds = await form.boundingBox();
+    const mobileMarketingBounds = await marketing.boundingBox();
+    expect(mobileFormBounds).not.toBeNull();
+    expect(mobileMarketingBounds).not.toBeNull();
+    expect(mobileFormBounds!.y).toBeLessThan(mobileMarketingBounds!.y);
+    expect(
+      await surface
+        .locator("button, input, a[href]")
+        .first()
+        .evaluate((node) => node.closest("[data-login-form]") !== null),
+    ).toBe(true);
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const desktopFormBounds = await form.boundingBox();
+    const desktopMarketingBounds = await marketing.boundingBox();
+    expect(desktopFormBounds).not.toBeNull();
+    expect(desktopMarketingBounds).not.toBeNull();
+    expect(desktopMarketingBounds!.x).toBeLessThan(desktopFormBounds!.x);
+    expect(desktopMarketingBounds!.y).toBe(desktopFormBounds!.y);
+  });
 });

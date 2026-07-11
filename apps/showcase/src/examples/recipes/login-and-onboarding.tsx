@@ -195,7 +195,18 @@ export function LoginAndOnboardingRecipe({
             : ""
         }`}
       >
-        <section className="border-border ring-border/50 relative overflow-hidden rounded-xl border shadow-sm ring-1 motion-safe:transition-transform motion-safe:duration-300 hover:motion-safe:-translate-y-1">
+        <section
+          data-login-form
+          aria-label="Sign in form"
+          className="flex items-center justify-center lg:col-start-2 lg:row-start-1"
+        >
+          <LoginPanel />
+        </section>
+
+        <section
+          data-login-marketing
+          className="border-border ring-border/50 relative overflow-hidden rounded-xl border shadow-sm ring-1 motion-safe:transition-transform motion-safe:duration-300 hover:motion-safe:-translate-y-1 lg:col-start-1 lg:row-start-1"
+        >
           <span
             aria-hidden="true"
             style={panelBackdropStyle}
@@ -299,13 +310,6 @@ export function LoginAndOnboardingRecipe({
               tone="info"
             />
           </div>
-        </section>
-
-        <section
-          aria-label="Sign in form"
-          className="flex items-center justify-center"
-        >
-          <LoginPanel />
         </section>
       </div>
       <ToastViewport />

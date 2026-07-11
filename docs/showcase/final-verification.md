@@ -2,6 +2,7 @@
 
 Completed on 11 July 2026 for GitHub issue [#392](https://github.com/parveshh/dethink-components/issues/392).
 The full-page recipe follow-up was completed on the same date for [#397](https://github.com/parveshh/dethink-components/issues/397).
+The remaining recipe-alignment cleanup was completed on the same date for [#405](https://github.com/parveshh/dethink-components/issues/405).
 
 ## Accepted Journey
 
@@ -43,13 +44,17 @@ Desktop captures use 1440×900. Mobile captures use 390×844. Captures use the t
 - Targeted ESLint: passed.
 - Showcase production build: passed, including all statically generated component and recipe routes.
 - Component package: 227 test files and 2,015 tests passed.
-- Showcase end-to-end: all 45 tests passed in Chromium.
+- Showcase end-to-end: all 49 tests passed in Chromium.
 - Full-page recipe contract: all ten canonical recipe routes passed desktop and mobile geometry, viewport coverage, and overflow checks.
 - Wide-monitor recipe contract: the live product canvas remains fluid through 1200px, then centers at a 1200px maximum without changing the full-width demo controls or documentation flow.
 - Full-page recipe journeys: keyboard order, gallery-to-demo-to-details-to-source-to-gallery navigation, reduced motion, 200%-equivalent reflow, and forced-colors focus passed.
 - Axe: no WCAG 2 A/AA violations on the changed homepage, catalog, Button documentation, or recipe gallery in either color scheme.
 - Recipe axe: no WCAG 2 A/AA violations on representative authentication, marketing, dashboard, and AI product surfaces in light or dark mode.
 - Settings and billing: desktop panel/header alignment, compact Form spacing, controlled plan-summary agreement, mobile panel bounds, and plan interaction passed.
+- Security landing: the monitoring status and response proof remain complete at 390×844 with reduced motion.
+- Checkout: popularity and selected-plan indicators retain distinct geometry before and after radio changes.
+- Scheduler: the 24rem public preview keeps its title, view switcher, and period controls in separate, legible rows.
+- Login: the sign-in form is first in mobile DOM and visual order while desktop retains marketing-left/form-right placement.
 - Theme resilience: all six brands in light and dark meet the documented text, boundary, focus-ring, primary, and destructive contrast targets.
 
 The detailed token measurements are recorded in [theme-contrast-audit.md](./theme-contrast-audit.md).

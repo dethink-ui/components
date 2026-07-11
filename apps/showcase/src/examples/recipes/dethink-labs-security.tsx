@@ -925,9 +925,10 @@ export function DethinkLabsSecurityRecipe({
             <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_28rem]">
               <div>
                 <Badge
+                  data-security-status
                   tone="success"
                   variant="soft"
-                  className="font-mono tracking-[0.06em]"
+                  className="w-fit max-w-full justify-start font-mono leading-4 tracking-[0.06em] whitespace-normal sm:whitespace-nowrap"
                   icon={
                     <span className="bg-success size-1.5 rounded-full motion-safe:animate-pulse" />
                   }
@@ -977,10 +978,12 @@ export function DethinkLabsSecurityRecipe({
                     ring="border"
                     size="sm"
                   />
-                  <p className="text-muted-foreground text-xs leading-5">
-                    A 24/7 response team backs every deployment
-                    <br className="hidden sm:block" />
-                    <span className="text-foreground font-medium">
+                  <p
+                    data-security-proof
+                    className="text-muted-foreground text-xs leading-5"
+                  >
+                    A 24/7 response team backs every deployment{" "}
+                    <span className="text-foreground block font-medium">
                       mean time to isolate: under 40 seconds
                     </span>
                   </p>
