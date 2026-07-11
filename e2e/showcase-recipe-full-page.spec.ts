@@ -421,4 +421,39 @@ test.describe("showcase full-page recipe shell", () => {
     ).toBeVisible();
     await expect(popular).toBeVisible();
   });
+
+  test("keeps Scheduler public-preview controls in distinct rows", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/recipes/scheduler-and-booking");
+
+    const preview = page.locator("[data-scheduler-public-preview]");
+    const title = preview.locator('[data-slot="slot-picker-title"]');
+    const viewSwitch = preview.locator(
+      '[data-slot="slot-picker-view-switch"]',
+    );
+    const periodControls = preview
+      .getByRole("button", { name: "Previous week" })
+      .locator("..");
+    await expect(title).toBeVisible();
+    await expect(viewSwitch).toBeVisible();
+    await expect(periodControls).toBeVisible();
+
+    const titleBounds = await title.boundingBox();
+    const viewBounds = await viewSwitch.boundingBox();
+    const periodBounds = await periodControls.boundingBox();
+    expect(titleBounds).not.toBeNull();
+    expect(viewBounds).not.toBeNull();
+    expect(periodBounds).not.toBeNull();
+    expect(titleBounds!.x + titleBounds!.width).toBeLessThanOrEqual(
+      viewBounds!.x,
+    );
+    expect(periodBounds!.y).toBeGreaterThanOrEqual(
+      Math.max(
+        titleBounds!.y + titleBounds!.height,
+        viewBounds!.y + viewBounds!.height,
+      ),
+    );
+  });
 });

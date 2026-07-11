@@ -23,7 +23,7 @@
 ## Local Issue 3 — Scheduler Public Preview Header
 
 - GitHub: [#408](https://github.com/parveshh/dethink-components/issues/408).
-- Status: Blocked by Local Issue 2 in the branch stack.
+- Status: Completed.
 - Keep the booking title, navigation, and Week/Day controls legible in the narrow preview rail.
 - Verify the main planner width and the public preview at desktop and mobile sizes.
 
