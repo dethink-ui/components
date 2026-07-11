@@ -361,4 +361,38 @@ test.describe("showcase full-page recipe shell", () => {
       )
       .toBe(true);
   });
+
+  test("keeps Security proof text complete on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/recipes/dethink-labs-security");
+
+    const surface = page.locator(
+      '[data-recipe-surface="dethink-labs-security"]',
+    );
+    const status = page.locator("[data-security-status]");
+    const proof = page.locator("[data-security-proof]");
+    await expect(surface).toBeVisible();
+    await expect(status).toBeVisible();
+    const surfaceBounds = await surface.boundingBox();
+    const statusBounds = await status.boundingBox();
+
+    expect(surfaceBounds).not.toBeNull();
+    expect(statusBounds).not.toBeNull();
+    expect(statusBounds!.x + statusBounds!.width).toBeLessThanOrEqual(
+      surfaceBounds!.x + surfaceBounds!.width,
+    );
+    await expect(status).toHaveText(
+      "ALL SYSTEMS MONITORED · ZERO TRUST BY DEFAULT",
+    );
+    await expect
+      .poll(() =>
+        proof.evaluate((element) =>
+          element.textContent
+            ?.replace(/\s+/g, " ")
+            .includes("deployment mean time to isolate"),
+        ),
+      )
+      .toBe(true);
+  });
 });

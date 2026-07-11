@@ -9,7 +9,7 @@
 ## Local Issue 1 — Security Mobile Proof Clipping
 
 - GitHub: [#406](https://github.com/parveshh/dethink-components/issues/406).
-- Status: Ready.
+- Status: Completed.
 - Correct the clipped monitoring badge and missing separation in the response-team proof.
 - Verify at 1440×900 and 390×844, including reduced motion and overflow.
 
