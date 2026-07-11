@@ -43,12 +43,13 @@ Desktop captures use 1440×900. Mobile captures use 390×844. Captures use the t
 - Targeted ESLint: passed.
 - Showcase production build: passed, including all statically generated component and recipe routes.
 - Component package: 227 test files and 2,015 tests passed.
-- Showcase end-to-end: all 44 tests passed in Chromium.
+- Showcase end-to-end: all 45 tests passed in Chromium.
 - Full-page recipe contract: all ten canonical recipe routes passed desktop and mobile geometry, viewport coverage, and overflow checks.
 - Wide-monitor recipe contract: the live product canvas remains fluid through 1200px, then centers at a 1200px maximum without changing the full-width demo controls or documentation flow.
 - Full-page recipe journeys: keyboard order, gallery-to-demo-to-details-to-source-to-gallery navigation, reduced motion, 200%-equivalent reflow, and forced-colors focus passed.
 - Axe: no WCAG 2 A/AA violations on the changed homepage, catalog, Button documentation, or recipe gallery in either color scheme.
 - Recipe axe: no WCAG 2 A/AA violations on representative authentication, marketing, dashboard, and AI product surfaces in light or dark mode.
+- Settings and billing: desktop panel/header alignment, compact Form spacing, controlled plan-summary agreement, mobile panel bounds, and plan interaction passed.
 - Theme resilience: all six brands in light and dark meet the documented text, boundary, focus-ring, primary, and destructive contrast targets.
 
 The detailed token measurements are recorded in [theme-contrast-audit.md](./theme-contrast-audit.md).
