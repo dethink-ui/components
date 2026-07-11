@@ -430,9 +430,7 @@ test.describe("showcase full-page recipe shell", () => {
 
     const preview = page.locator("[data-scheduler-public-preview]");
     const title = preview.locator('[data-slot="slot-picker-title"]');
-    const viewSwitch = preview.locator(
-      '[data-slot="slot-picker-view-switch"]',
-    );
+    const viewSwitch = preview.locator('[data-slot="slot-picker-view-switch"]');
     const periodControls = preview
       .getByRole("button", { name: "Previous week" })
       .locator("..");
@@ -455,5 +453,40 @@ test.describe("showcase full-page recipe shell", () => {
         viewBounds!.y + viewBounds!.height,
       ),
     );
+  });
+
+  test("prioritizes the Login task on mobile and preserves desktop layout", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/recipes/login-and-onboarding");
+
+    const surface = page.locator(
+      '[data-recipe-surface="login-and-onboarding"]',
+    );
+    const form = page.locator("[data-login-form]");
+    const marketing = page.locator("[data-login-marketing]");
+    await expect(form).toBeVisible();
+    await expect(marketing).toBeVisible();
+
+    const mobileFormBounds = await form.boundingBox();
+    const mobileMarketingBounds = await marketing.boundingBox();
+    expect(mobileFormBounds).not.toBeNull();
+    expect(mobileMarketingBounds).not.toBeNull();
+    expect(mobileFormBounds!.y).toBeLessThan(mobileMarketingBounds!.y);
+    expect(
+      await surface
+        .locator("button, input, a[href]")
+        .first()
+        .evaluate((node) => node.closest("[data-login-form]") !== null),
+    ).toBe(true);
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    const desktopFormBounds = await form.boundingBox();
+    const desktopMarketingBounds = await marketing.boundingBox();
+    expect(desktopFormBounds).not.toBeNull();
+    expect(desktopMarketingBounds).not.toBeNull();
+    expect(desktopMarketingBounds!.x).toBeLessThan(desktopFormBounds!.x);
+    expect(desktopMarketingBounds!.y).toBe(desktopFormBounds!.y);
   });
 });

@@ -30,7 +30,7 @@
 ## Local Issue 4 — Login Mobile Task Priority
 
 - GitHub: [#409](https://github.com/parveshh/dethink-components/issues/409).
-- Status: Blocked by Local Issue 3 in the branch stack.
+- Status: Completed.
 - Put the sign-in form first in mobile DOM and visual order while retaining marketing-left/form-right desktop placement.
 - Verify keyboard order, responsive geometry, and full content retention.
 
