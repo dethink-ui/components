@@ -49,6 +49,7 @@ import {
   ToastViewport,
   useToast,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 // ----------------------------------------------------------------------------
 // Decorative layers (token-only, aria-hidden, non-interactive)
@@ -94,7 +95,11 @@ const plans: Record<string, PlanMeta> = {
     label: "Enterprise",
     unit: 149,
     blurb: "For regulated organizations.",
-    features: ["SCIM & dedicated region", "99.9% uptime SLA", "Named success manager"],
+    features: [
+      "SCIM & dedicated region",
+      "99.9% uptime SLA",
+      "Named success manager",
+    ],
     popular: false,
   },
 };
@@ -187,7 +192,7 @@ function TrustChip({
 
 // ----------------------------------------------------------------------------
 
-function CheckoutFlow() {
+function CheckoutFlow({ presentation = "embedded" }: RecipePreviewProps) {
   const { toast } = useToast();
   const [plan, setPlan] = useState<Plan>("growth");
   const [seats, setSeats] = useState(12);
@@ -195,6 +200,7 @@ function CheckoutFlow() {
   const subtotal = unit * seats;
   const support = plan === "enterprise" ? 299 : 99;
   const total = subtotal + support;
+  const fullPage = presentation === "full-page";
 
   const rows = useMemo(
     () => [
@@ -205,7 +211,12 @@ function CheckoutFlow() {
   );
 
   return (
-    <div className="relative">
+    <div
+      data-recipe-surface="saas-checkout-order-summary"
+      className={`relative ${
+        fullPage ? "min-h-[calc(100dvh-7rem)] p-4 sm:p-6 lg:p-8" : ""
+      }`}
+    >
       <span
         aria-hidden="true"
         style={washStyle}
@@ -228,7 +239,10 @@ function CheckoutFlow() {
             </span>
             <div className="space-y-1.5">
               <span className="text-muted-foreground inline-flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.18em] uppercase">
-                <Sparkles className="text-primary size-3.5" aria-hidden="true" />
+                <Sparkles
+                  className="text-primary size-3.5"
+                  aria-hidden="true"
+                />
                 Checkout · Subscription
               </span>
               <h2 className="font-heading text-2xl font-semibold tracking-tight">
@@ -285,70 +299,75 @@ function CheckoutFlow() {
                     name="plan"
                   >
                     <FieldGroup className="grid gap-3 sm:grid-cols-3">
-                      {(
-                        Object.entries(plans) as [Plan, PlanMeta][]
-                      ).map(([value, item]) => {
-                        const selected = plan === value;
-                        return (
-                          <Field
-                            key={value}
-                            id={`checkout-plan-${value}`}
-                            className={`relative rounded-lg border p-4 motion-safe:transition-colors ${
-                              selected
-                                ? "border-primary ring-primary/40 bg-primary/5 ring-1"
-                                : "border-border/60 bg-background/60 hover:border-border"
-                            }`}
-                          >
-                            {item.popular ? (
-                              <span className="bg-primary/15 text-primary ring-primary/25 absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ring-1 ring-inset">
-                                <Star className="size-2.5" aria-hidden="true" />
-                                Most popular
-                              </span>
-                            ) : null}
-                            <div className="flex items-start justify-between gap-2">
-                              <FieldControl asChild>
-                                <RadioGroupItem value={value} />
-                              </FieldControl>
-                              {selected ? (
-                                <span
-                                  aria-hidden="true"
-                                  className="bg-primary text-primary-foreground grid size-5 shrink-0 place-items-center rounded-full"
-                                >
-                                  <Check className="size-3" />
+                      {(Object.entries(plans) as [Plan, PlanMeta][]).map(
+                        ([value, item]) => {
+                          const selected = plan === value;
+                          return (
+                            <Field
+                              key={value}
+                              id={`checkout-plan-${value}`}
+                              className={`relative rounded-lg border p-4 motion-safe:transition-colors ${
+                                selected
+                                  ? "border-primary ring-primary/40 bg-primary/5 ring-1"
+                                  : "border-border/60 bg-background/60 hover:border-border"
+                              }`}
+                            >
+                              {item.popular ? (
+                                <span className="bg-primary/15 text-primary ring-primary/25 absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ring-1 ring-inset">
+                                  <Star
+                                    className="size-2.5"
+                                    aria-hidden="true"
+                                  />
+                                  Most popular
                                 </span>
                               ) : null}
-                            </div>
-                            <FieldContent className="mt-2">
-                              <FieldLabel className="text-sm font-semibold">
-                                {item.label}
-                              </FieldLabel>
-                              <div className="text-foreground flex items-baseline gap-1">
-                                <span className="font-heading text-xl font-semibold tabular-nums">
-                                  {currency.format(item.unit)}
-                                </span>
-                                <span className="text-muted-foreground text-[0.7rem] font-normal">
-                                  / seat · mo
-                                </span>
-                              </div>
-                              <FieldDescription>{item.blurb}</FieldDescription>
-                              <ul className="mt-2 space-y-1.5">
-                                {item.features.map((feature) => (
-                                  <li
-                                    key={feature}
-                                    className="text-foreground/90 flex items-start gap-1.5 text-xs leading-5"
+                              <div className="flex items-start justify-between gap-2">
+                                <FieldControl asChild>
+                                  <RadioGroupItem value={value} />
+                                </FieldControl>
+                                {selected ? (
+                                  <span
+                                    aria-hidden="true"
+                                    className="bg-primary text-primary-foreground grid size-5 shrink-0 place-items-center rounded-full"
                                   >
-                                    <Check
-                                      className="text-success mt-0.5 size-3.5 shrink-0"
-                                      aria-hidden="true"
-                                    />
-                                    {feature}
-                                  </li>
-                                ))}
-                              </ul>
-                            </FieldContent>
-                          </Field>
-                        );
-                      })}
+                                    <Check className="size-3" />
+                                  </span>
+                                ) : null}
+                              </div>
+                              <FieldContent className="mt-2">
+                                <FieldLabel className="text-sm font-semibold">
+                                  {item.label}
+                                </FieldLabel>
+                                <div className="text-foreground flex items-baseline gap-1">
+                                  <span className="font-heading text-xl font-semibold tabular-nums">
+                                    {currency.format(item.unit)}
+                                  </span>
+                                  <span className="text-muted-foreground text-[0.7rem] font-normal">
+                                    / seat · mo
+                                  </span>
+                                </div>
+                                <FieldDescription>
+                                  {item.blurb}
+                                </FieldDescription>
+                                <ul className="mt-2 space-y-1.5">
+                                  {item.features.map((feature) => (
+                                    <li
+                                      key={feature}
+                                      className="text-foreground/90 flex items-start gap-1.5 text-xs leading-5"
+                                    >
+                                      <Check
+                                        className="text-success mt-0.5 size-3.5 shrink-0"
+                                        aria-hidden="true"
+                                      />
+                                      {feature}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </FieldContent>
+                            </Field>
+                          );
+                        },
+                      )}
                     </FieldGroup>
                   </RadioGroup>
                 </FieldSet>
@@ -362,7 +381,10 @@ function CheckoutFlow() {
             >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <FileText className="text-primary size-4" aria-hidden="true" />
+                  <FileText
+                    className="text-primary size-4"
+                    aria-hidden="true"
+                  />
                   Buyer details
                 </CardTitle>
                 <CardDescription>
@@ -397,19 +419,21 @@ function CheckoutFlow() {
                         value={seats}
                         onChange={(event) =>
                           setSeats(
-                            Math.max(
-                              1,
-                              Number(event.currentTarget.value) || 1,
-                            ),
+                            Math.max(1, Number(event.currentTarget.value) || 1),
                           )
                         }
                       />
                     </FieldControl>
-                    <FieldDescription>Scale now, true up later.</FieldDescription>
+                    <FieldDescription>
+                      Scale now, true up later.
+                    </FieldDescription>
                   </Field>
                 </div>
                 <div className="border-border/60 bg-muted/30 text-muted-foreground flex items-center gap-2 rounded-lg border px-3 py-2 text-xs">
-                  <CreditCard className="size-3.5 shrink-0" aria-hidden="true" />
+                  <CreditCard
+                    className="size-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
                   <span className="text-foreground/90 tabular-nums">
                     {seats} seats × {currency.format(unit)} ={" "}
                     <span className="font-semibold">
@@ -433,7 +457,11 @@ function CheckoutFlow() {
             {/* Trust chips */}
             <div className="flex flex-wrap items-center gap-2">
               {trustChips.map((chip) => (
-                <TrustChip key={chip.label} icon={chip.icon} label={chip.label} />
+                <TrustChip
+                  key={chip.label}
+                  icon={chip.icon}
+                  label={chip.label}
+                />
               ))}
             </div>
           </div>
@@ -543,7 +571,10 @@ function CheckoutFlow() {
               </CardFooter>
             </Card>
 
-            <Card shadow="sm" className="ring-border/60 ring-1 backdrop-blur-sm">
+            <Card
+              shadow="sm"
+              className="ring-border/60 ring-1 backdrop-blur-sm"
+            >
               <CardContent className="flex items-start gap-3 p-4">
                 <CheckCircle2
                   className="text-success mt-0.5 size-5 shrink-0"
@@ -562,10 +593,10 @@ function CheckoutFlow() {
   );
 }
 
-export function SaasCheckoutOrderSummaryRecipe() {
+export function SaasCheckoutOrderSummaryRecipe(props: RecipePreviewProps) {
   return (
     <ToastProvider motion="standard">
-      <CheckoutFlow />
+      <CheckoutFlow {...props} />
       <ToastViewport />
     </ToastProvider>
   );

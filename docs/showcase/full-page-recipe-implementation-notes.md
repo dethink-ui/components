@@ -3,8 +3,8 @@
 ## Status
 
 - GitHub PRD: [#394 — Full-page recipe demos](https://github.com/parveshh/dethink-components/issues/394).
-- Current slice: [#395 — Recipe full-page shell and representative dashboard](https://github.com/parveshh/dethink-components/issues/395).
-- Next slices: [#396 — Roll full-page demos across the recipe catalog](https://github.com/parveshh/dethink-components/issues/396), then [#397 — Verify full-page recipe journeys and visual quality](https://github.com/parveshh/dethink-components/issues/397).
+- Completed slices: [#395 — Recipe full-page shell and representative dashboard](https://github.com/parveshh/dethink-components/issues/395) and [#396 — Roll full-page demos across the recipe catalog](https://github.com/parveshh/dethink-components/issues/396).
+- Current slice: [#397 — Verify full-page recipe journeys and visual quality](https://github.com/parveshh/dethink-components/issues/397).
 
 ## Approved Direction
 
@@ -45,3 +45,6 @@
 - 2026-07-11: Started the shared demo-first route shell with Command Center as the representative recipe.
 - 2026-07-11: Completed the #395 representative shell: the Command Center product now begins at 113px on desktop and mobile, fills the remaining dynamic viewport, and replaces its fixed desktop sidebar with the package Sidebar mobile drawer below the `md` breakpoint.
 - 2026-07-11: Verified the representative route with TypeScript, targeted ESLint, a successful production build, retained recipe-gallery and final-journey coverage, and three focused desktop/mobile/keyboard/reduced-motion Playwright cases.
+- 2026-07-11: Completed the #396 catalog rollout. All ten recipe previews now opt into the shared `full-page` presentation contract, fill the available width and remaining dynamic viewport, and keep embed-only framing out of the canonical recipe route.
+- 2026-07-11: Added a production-route contract test for every recipe at 1440×900 and 390×844, covering route identity, preview geometry, visible product surfaces, minimum viewport coverage, and horizontal overflow. The four focused full-page tests pass across all twenty route/viewport combinations.
+- 2026-07-11: Visually reviewed representative marketing, security, CRUD, authentication, AI workspace, and support surfaces. Responsive navigation and stacked layouts remain legible, and product-internal borders continue to use the components' own border tokens.

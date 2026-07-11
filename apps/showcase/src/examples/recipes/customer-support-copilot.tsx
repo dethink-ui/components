@@ -40,6 +40,7 @@ import {
   SidebarSkipLink,
   Textarea,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 type ConversationStatus = "Open" | "Pending" | "Resolved";
 type ConversationPriority = "Priority" | "Standard";
@@ -226,7 +227,9 @@ function channelIcon(channel: SupportConversation["channel"]) {
   return channel === "Email" ? Mail : MessageCircle;
 }
 
-export function CustomerSupportCopilotRecipe() {
+export function CustomerSupportCopilotRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
   const [conversations, setConversations] = useState(initialConversations);
   const [selectedId, setSelectedId] = useState(initialConversations[0]!.id);
   const [reply, setReply] = useState("");
@@ -242,6 +245,7 @@ export function CustomerSupportCopilotRecipe() {
   );
   const replyInvalid = replyAttempted && reply.trim().length === 0;
   const StatusIcon = statusMeta[selectedConversation.status].icon;
+  const fullPage = presentation === "full-page";
 
   function selectConversation(id: string) {
     setSelectedId(id);
@@ -296,7 +300,14 @@ export function CustomerSupportCopilotRecipe() {
 
   return (
     <SidebarProvider variant="floating" motion="standard">
-      <div className="border-border bg-muted/25 flex min-h-[46rem] overflow-hidden rounded-xl border">
+      <div
+        data-recipe-surface="customer-support-copilot"
+        className={`border-border bg-muted/25 flex overflow-hidden border ${
+          fullPage
+            ? "min-h-[calc(100dvh-7rem)] rounded-none border-x-0 border-t-0"
+            : "min-h-[46rem] rounded-xl"
+        }`}
+      >
         <SidebarSkipLink targetId="support-inbox-main">
           Skip to selected conversation
         </SidebarSkipLink>

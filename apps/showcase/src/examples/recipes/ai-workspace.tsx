@@ -12,6 +12,7 @@ import {
   FileSearch,
   Gauge,
   MessageSquareText,
+  PanelLeftOpen,
   Route,
   Search,
   Send,
@@ -53,6 +54,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuLink,
+  SidebarMobile,
+  SidebarMobileTrigger,
   SidebarProvider,
   SidebarRail,
   SkeletonText,
@@ -61,6 +64,7 @@ import {
   type CommandPaletteCommand,
   type TimelineItemData,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 // ----------------------------------------------------------------------------
 // Decorative layers (token-only, aria-hidden, non-interactive)
@@ -238,9 +242,12 @@ function MetricTile({
 
 // ----------------------------------------------------------------------------
 
-export function AiWorkspaceRecipe() {
+export function AiWorkspaceRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
   const [activeTool, setActiveTool] = useState("runs");
   const [status, setStatus] = useState("Agent run is collecting evidence.");
+  const fullPage = presentation === "full-page";
 
   const commands: CommandPaletteCommand[] = [
     {
@@ -269,8 +276,18 @@ export function AiWorkspaceRecipe() {
 
   return (
     <SidebarProvider variant="floating" motion="expressive">
-      <div className="border-border bg-muted/30 flex min-h-[42rem] overflow-hidden rounded-xl border">
-        <Sidebar aria-label="AI workspace navigation">
+      <div
+        data-recipe-surface="ai-workspace"
+        className={`border-border bg-muted/30 flex overflow-hidden border ${
+          fullPage
+            ? "min-h-[calc(100dvh-7rem)] rounded-none border-x-0 border-t-0"
+            : "min-h-[42rem] rounded-xl"
+        }`}
+      >
+        <Sidebar
+          aria-label="AI workspace navigation"
+          className={fullPage ? "max-md:hidden" : undefined}
+        >
           <SidebarHeader>
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2.5">
@@ -364,6 +381,64 @@ export function AiWorkspaceRecipe() {
           <SidebarRail />
         </Sidebar>
 
+        {fullPage ? (
+          <SidebarMobile label="AI workspace navigation" className="md:hidden">
+            <SidebarHeader>
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span
+                  aria-hidden="true"
+                  className="bg-primary/10 text-primary ring-primary/20 grid size-9 shrink-0 place-items-center rounded-lg ring-1"
+                >
+                  <Sparkles className="size-4.5" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-foreground truncate text-sm font-semibold">
+                    Assist Studio
+                  </div>
+                  <div className="text-muted-foreground truncate text-xs">
+                    Agent operations
+                  </div>
+                </div>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>Workflows</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        current
+                        badge="Live"
+                        href="#runs"
+                        icon={<Sparkles aria-hidden="true" />}
+                      >
+                        Agent runs
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        href="#evals"
+                        icon={<BrainCircuit aria-hidden="true" />}
+                      >
+                        Evaluations
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        href="#prompts"
+                        icon={<MessageSquareText aria-hidden="true" />}
+                      >
+                        Prompt library
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </SidebarMobile>
+        ) : null}
+
         <SidebarInset className="relative min-w-0 overflow-hidden p-4 sm:p-6">
           <span
             aria-hidden="true"
@@ -377,6 +452,12 @@ export function AiWorkspaceRecipe() {
           />
 
           <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
+            {fullPage ? (
+              <SidebarMobileTrigger className="md:hidden">
+                <PanelLeftOpen aria-hidden="true" className="size-4" />
+              </SidebarMobileTrigger>
+            ) : null}
+
             <main className="min-w-0 space-y-5">
               {/* Header */}
               <div className="flex flex-wrap items-end justify-between gap-4">

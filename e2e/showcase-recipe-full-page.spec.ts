@@ -1,6 +1,18 @@
 import { expect, test } from "@playwright/test";
 
 const recipePath = "/recipes/command-center-dashboard";
+const recipeSlugs = [
+  "login-and-onboarding",
+  "saas-landing-page",
+  "dethink-labs-security",
+  "command-center-dashboard",
+  "crud-resource-manager",
+  "settings-and-billing",
+  "ai-workspace",
+  "customer-support-copilot",
+  "scheduler-and-booking",
+  "saas-checkout-order-summary",
+];
 
 test.describe("showcase full-page recipe shell", () => {
   test("puts the representative product in the first desktop viewport", async ({
@@ -105,5 +117,48 @@ test.describe("showcase full-page recipe shell", () => {
         ),
       )
       .toBe(true);
+  });
+
+  test("applies the full-page contract to every recipe", async ({ page }) => {
+    test.slow();
+
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(viewport);
+
+      for (const slug of recipeSlugs) {
+        await page.goto(`/recipes/${slug}`);
+
+        const preview = page.locator(`[data-recipe-preview="${slug}"]`);
+        const surface = page.locator(`[data-recipe-surface="${slug}"]`);
+        const previewBounds = await preview.boundingBox();
+        const layoutWidth = await page.evaluate(
+          () => document.body.clientWidth,
+        );
+
+        expect(previewBounds, `${slug} preview bounds`).not.toBeNull();
+        expect(previewBounds!.x, `${slug} preview start`).toBe(0);
+        expect(previewBounds!.width, `${slug} preview width`).toBe(layoutWidth);
+        expect(previewBounds!.y, `${slug} preview top`).toBeLessThanOrEqual(
+          120,
+        );
+        expect(
+          previewBounds!.y + previewBounds!.height,
+          `${slug} preview first viewport`,
+        ).toBeGreaterThanOrEqual(viewport.height);
+        await expect(surface, `${slug} full-page surface`).toBeVisible();
+        await expect
+          .poll(
+            () =>
+              page.evaluate(
+                () => document.documentElement.scrollWidth <= window.innerWidth,
+              ),
+            { message: `${slug} document overflow` },
+          )
+          .toBe(true);
+      }
+    }
   });
 });

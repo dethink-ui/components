@@ -67,6 +67,7 @@ import {
   type AsyncSelectItemData,
   type DataTableColumnDef,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 // ----------------------------------------------------------------------------
 // Decorative layers (token-only, aria-hidden, non-interactive)
@@ -186,10 +187,7 @@ const planMeta: Record<
   },
 };
 
-const statusMeta: Record<
-  Account["status"],
-  { label: string; dot: string }
-> = {
+const statusMeta: Record<Account["status"], { label: string; dot: string }> = {
   active: { label: "Active", dot: "bg-success" },
   trial: { label: "Trial", dot: "bg-warning motion-safe:animate-pulse" },
   paused: { label: "Paused", dot: "bg-muted-foreground" },
@@ -314,7 +312,11 @@ function CreateAccountDialog({
             <SelectItem value="enterprise">Enterprise</SelectItem>
           </Select>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" leftIcon={<Plus />}>
@@ -345,9 +347,7 @@ function StatTile({ stat }: { stat: Stat }) {
     stat.deltaTone === "success" ? "text-success" : "text-destructive";
   const DeltaIcon = stat.deltaDir === "up" ? TrendingUp : TrendingDown;
   return (
-    <div
-      className="border-border/70 bg-background/70 relative overflow-hidden rounded-lg border p-4 shadow-sm backdrop-blur motion-safe:transition-all motion-safe:duration-300 hover:shadow-md hover:motion-safe:-translate-y-0.5"
-    >
+    <div className="border-border/70 bg-background/70 relative overflow-hidden rounded-lg border p-4 shadow-sm backdrop-blur hover:shadow-md motion-safe:transition-all motion-safe:duration-300 hover:motion-safe:-translate-y-0.5">
       <span
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-0.5"
@@ -425,7 +425,9 @@ function useColumns(
               >
                 {initials(name)}
               </span>
-              <span className="text-foreground/90 truncate text-sm">{name}</span>
+              <span className="text-foreground/90 truncate text-sm">
+                {name}
+              </span>
             </div>
           );
         },
@@ -488,7 +490,7 @@ function useColumns(
 
 // ----------------------------------------------------------------------------
 
-function CrudWorkflow() {
+function CrudWorkflow({ presentation = "embedded" }: RecipePreviewProps) {
   const { toast } = useToast();
   const [accounts, setAccounts] = useState(initialAccounts);
   const [editing, setEditing] = useState<Account | null>(null);
@@ -535,19 +537,23 @@ function CrudWorkflow() {
     ];
   }, [accounts]);
 
-  const columns = useColumns(
-    setEditing,
-    setPendingDelete,
-    (account) =>
-      toast({
-        title: "Sync queued",
-        description: `${account.name} will refresh in the background.`,
-        tone: "info",
-      }),
+  const columns = useColumns(setEditing, setPendingDelete, (account) =>
+    toast({
+      title: "Sync queued",
+      description: `${account.name} will refresh in the background.`,
+      tone: "info",
+    }),
   );
 
+  const fullPage = presentation === "full-page";
+
   return (
-    <div className="relative">
+    <div
+      data-recipe-surface="crud-resource-manager"
+      className={`relative ${
+        fullPage ? "min-h-[calc(100dvh-7rem)] p-4 sm:p-6 lg:p-8" : ""
+      }`}
+    >
       <span
         aria-hidden="true"
         style={washStyle}
@@ -765,10 +771,10 @@ function CrudWorkflow() {
   );
 }
 
-export function CrudResourceManagerRecipe() {
+export function CrudResourceManagerRecipe(props: RecipePreviewProps) {
   return (
     <ToastProvider motion="standard">
-      <CrudWorkflow />
+      <CrudWorkflow {...props} />
       <ToastViewport />
     </ToastProvider>
   );

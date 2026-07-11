@@ -75,6 +75,7 @@ import {
   TooltipTrigger,
   useToast,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 /*
  * "Dethink Labs" — a security-platform landing page recipe that leans hard into
@@ -130,7 +131,12 @@ const platformMenu = [
 const securityTeam: AvatarGroupMember[] = [
   { id: "mira", name: "Mira Patel", tone: "primary", metadata: "SOC lead" },
   { id: "eli", name: "Eli Morgan", tone: "info", metadata: "Threat intel" },
-  { id: "june", name: "June Okafor", tone: "success", metadata: "Incident response" },
+  {
+    id: "june",
+    name: "June Okafor",
+    tone: "success",
+    metadata: "Incident response",
+  },
   { id: "sam", name: "Sam Rivera", tone: "warning", metadata: "Compliance" },
   { id: "noah", name: "Noah Reyes", tone: "destructive", metadata: "Red team" },
 ];
@@ -151,10 +157,30 @@ const threatFeed: {
   tag: string;
   tone: FeedTone;
 }[] = [
-  { time: "02:14:09", msg: "Blocked credential-stuffing attempt", tag: "AUTH", tone: "destructive" },
-  { time: "02:13:41", msg: "Endpoint isolated: finance-laptop-22", tag: "EDR", tone: "destructive" },
-  { time: "02:12:58", msg: "Anomalous data egress flagged", tag: "NET", tone: "warning" },
-  { time: "02:11:02", msg: "Policy verified: prod-cluster-eu", tag: "OK", tone: "success" },
+  {
+    time: "02:14:09",
+    msg: "Blocked credential-stuffing attempt",
+    tag: "AUTH",
+    tone: "destructive",
+  },
+  {
+    time: "02:13:41",
+    msg: "Endpoint isolated: finance-laptop-22",
+    tag: "EDR",
+    tone: "destructive",
+  },
+  {
+    time: "02:12:58",
+    msg: "Anomalous data egress flagged",
+    tag: "NET",
+    tone: "warning",
+  },
+  {
+    time: "02:11:02",
+    msg: "Policy verified: prod-cluster-eu",
+    tag: "OK",
+    tone: "success",
+  },
 ];
 
 const accessRows = [
@@ -164,37 +190,56 @@ const accessRows = [
 ];
 
 const endpoints = [
-  { name: "finance-laptop-22", coverage: 100, tone: "success" as const, status: "Monitored" },
-  { name: "eng-mbp-09", coverage: 42, tone: "destructive" as const, status: "Isolated" },
-  { name: "ops-win-14", coverage: 88, tone: "warning" as const, status: "Scanning" },
+  {
+    name: "finance-laptop-22",
+    coverage: 100,
+    tone: "success" as const,
+    status: "Monitored",
+  },
+  {
+    name: "eng-mbp-09",
+    coverage: 42,
+    tone: "destructive" as const,
+    status: "Isolated",
+  },
+  {
+    name: "ops-win-14",
+    coverage: 88,
+    tone: "warning" as const,
+    status: "Scanning",
+  },
 ];
 
 const incident: TimelineItemData[] = [
   {
     id: "detected",
     title: "Intrusion detected",
-    description: "Behavioral engine flags lateral movement from a compromised VPN session.",
+    description:
+      "Behavioral engine flags lateral movement from a compromised VPN session.",
     dateLabel: "02:11:02",
     status: "complete",
   },
   {
     id: "contained",
     title: "Automatically contained",
-    description: "Zero-trust policy revokes the session and isolates two endpoints.",
+    description:
+      "Zero-trust policy revokes the session and isolates two endpoints.",
     dateLabel: "02:11:40",
     status: "complete",
   },
   {
     id: "eradicated",
     title: "Threat eradicated",
-    description: "Malicious binaries quarantined; credentials rotated across the blast radius.",
+    description:
+      "Malicious binaries quarantined; credentials rotated across the blast radius.",
     dateLabel: "02:19:26",
     status: "current",
   },
   {
     id: "reported",
     title: "Evidence packaged",
-    description: "A signed incident report is filed to the audit trail for compliance.",
+    description:
+      "A signed incident report is filed to the audit trail for compliance.",
     dateLabel: "02:24:10",
     status: "upcoming",
   },
@@ -228,7 +273,11 @@ const plans = [
     name: "Team",
     monthly: 0,
     blurb: "For small teams standing up their first detection stack.",
-    features: ["Up to 25 endpoints", "Threat feed & access log", "Community support"],
+    features: [
+      "Up to 25 endpoints",
+      "Threat feed & access log",
+      "Community support",
+    ],
     popular: false,
   },
   {
@@ -247,7 +296,11 @@ const plans = [
     name: "Enterprise",
     monthly: null,
     blurb: "For regulated orgs with custom governance needs.",
-    features: ["Everything in Growth", "Private region & BYOK", "Dedicated response engineer"],
+    features: [
+      "Everything in Growth",
+      "Private region & BYOK",
+      "Dedicated response engineer",
+    ],
     popular: false,
   },
 ];
@@ -408,7 +461,9 @@ function SecurityConsole() {
               icon={
                 <span
                   className={`size-1.5 rounded-full ${
-                    live ? "bg-success motion-safe:animate-pulse" : "bg-muted-foreground"
+                    live
+                      ? "bg-success motion-safe:animate-pulse"
+                      : "bg-muted-foreground"
                   }`}
                 />
               }
@@ -476,7 +531,9 @@ function SecurityConsole() {
                 <TableBody>
                   {accessRows.map((row) => (
                     <TableRow key={row.id}>
-                      <TableCell className="font-mono text-xs">{row.id}</TableCell>
+                      <TableCell className="font-mono text-xs">
+                        {row.id}
+                      </TableCell>
                       <TableCell className="text-muted-foreground text-xs">
                         {row.device}
                       </TableCell>
@@ -514,7 +571,9 @@ function SecurityConsole() {
                       aria-label={`${ep.name} coverage`}
                       value={ep.coverage}
                       size="sm"
-                      tone={ep.tone === "destructive" ? "destructive" : "primary"}
+                      tone={
+                        ep.tone === "destructive" ? "destructive" : "primary"
+                      }
                     />
                   </span>
                 </li>
@@ -591,7 +650,7 @@ function FeatureCard({
       colSpan={colSpan}
       className={`max-md:col-span-full ${rowSpan ? "md:row-span-2" : ""}`}
     >
-      <Card className="ring-border/60 flex h-full flex-col gap-4 overflow-hidden p-6 ring-1 motion-safe:transition-all motion-safe:duration-200 hover:shadow-md hover:motion-safe:-translate-y-1">
+      <Card className="ring-border/60 flex h-full flex-col gap-4 overflow-hidden p-6 ring-1 hover:shadow-md motion-safe:transition-all motion-safe:duration-200 hover:motion-safe:-translate-y-1">
         <div>
           <div className="mb-2 flex items-center gap-2.5">
             <span className="bg-primary/10 text-primary grid size-9 place-items-center rounded-md">
@@ -599,7 +658,12 @@ function FeatureCard({
             </span>
             <h3 className="font-heading text-base font-semibold">{title}</h3>
             {badge ? (
-              <Badge className="ml-auto" size="xs" tone="primary" variant="soft">
+              <Badge
+                className="ml-auto"
+                size="xs"
+                tone="primary"
+                variant="soft"
+              >
                 {badge}
               </Badge>
             ) : null}
@@ -623,7 +687,11 @@ function Pricing() {
     <>
       <div className="mb-8 flex items-center justify-center gap-3">
         <span className="text-muted-foreground text-sm">Monthly</span>
-        <Field id="billing-cadence" orientation="horizontal" className="items-center">
+        <Field
+          id="billing-cadence"
+          orientation="horizontal"
+          className="items-center"
+        >
           <FieldControl asChild>
             <Switch
               checked={annual}
@@ -638,7 +706,12 @@ function Pricing() {
         </Badge>
       </div>
 
-      <Grid columns="3" gap="6" align="stretch" className="grid-cols-1 md:grid-cols-3">
+      <Grid
+        columns="3"
+        gap="6"
+        align="stretch"
+        className="grid-cols-1 md:grid-cols-3"
+      >
         {plans.map((plan) => {
           const price =
             plan.monthly === null
@@ -656,7 +729,9 @@ function Pricing() {
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <h3 className="font-heading text-lg font-semibold">{plan.name}</h3>
+                  <h3 className="font-heading text-lg font-semibold">
+                    {plan.name}
+                  </h3>
                   {plan.popular ? (
                     <Badge tone="primary" size="sm">
                       Most popular
@@ -684,7 +759,11 @@ function Pricing() {
                       className="text-foreground/90 flex items-start gap-2.5 text-sm leading-6"
                     >
                       <span className="bg-success/15 text-success mt-0.5 grid size-5 shrink-0 place-items-center rounded-full">
-                        <Check className="size-3" strokeWidth={3} aria-hidden="true" />
+                        <Check
+                          className="size-3"
+                          strokeWidth={3}
+                          aria-hidden="true"
+                        />
                       </span>
                       {feature}
                     </li>
@@ -701,11 +780,7 @@ function Pricing() {
                     }
                   />
                 ) : (
-                  <Button
-                    variant="outline"
-                    size="md"
-                    className="mt-6 w-full"
-                  >
+                  <Button variant="outline" size="md" className="mt-6 w-full">
                     {plan.monthly === null ? "Talk to sales" : "Get started"}
                   </Button>
                 )}
@@ -722,11 +797,22 @@ function Pricing() {
 /* Landing page                                                                */
 /* -------------------------------------------------------------------------- */
 
-export function DethinkLabsSecurityRecipe() {
+export function DethinkLabsSecurityRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
+  const fullPage = presentation === "full-page";
+
   return (
     <HeroTextAnimationProvider>
       <ToastProvider motion="standard">
-        <div className="border-border bg-background relative overflow-hidden rounded-xl border">
+        <div
+          data-recipe-surface="dethink-labs-security"
+          className={`border-border bg-background relative overflow-hidden border ${
+            fullPage
+              ? "min-h-[calc(100dvh-7rem)] rounded-none border-x-0 border-t-0"
+              : "rounded-xl"
+          }`}
+        >
           {/* ============================ NAVBAR ============================ */}
           <div className="sticky top-3 z-20 flex justify-center px-4 pt-4">
             <header className="border-border bg-background/80 flex items-center gap-1 rounded-full border py-1.5 pr-1.5 pl-4 shadow-lg backdrop-blur">
@@ -748,8 +834,8 @@ export function DethinkLabsSecurityRecipe() {
                       <NavigationMenuFeaturedItem href="#dethink-features">
                         Unified console
                         <NavigationMenuDescription>
-                          Detection, identity, and endpoint defense in one pane of
-                          glass.
+                          Detection, identity, and endpoint defense in one pane
+                          of glass.
                         </NavigationMenuDescription>
                       </NavigationMenuFeaturedItem>
                       <NavigationMenuSection>
@@ -786,7 +872,9 @@ export function DethinkLabsSecurityRecipe() {
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <NavigationMenuLink href="#dethink-faq">Docs</NavigationMenuLink>
+                    <NavigationMenuLink href="#dethink-faq">
+                      Docs
+                    </NavigationMenuLink>
                   </NavigationMenuItem>
                   <NavigationMenuIndicator />
                 </NavigationMenuList>
@@ -823,8 +911,16 @@ export function DethinkLabsSecurityRecipe() {
             id="dethink-hero"
             className="relative overflow-hidden px-4 pt-14 pb-16 sm:px-6 lg:px-10"
           >
-            <span aria-hidden="true" style={haloStyle} className="pointer-events-none absolute inset-0" />
-            <span aria-hidden="true" style={dottedGridStyle} className="pointer-events-none absolute inset-0" />
+            <span
+              aria-hidden="true"
+              style={haloStyle}
+              className="pointer-events-none absolute inset-0"
+            />
+            <span
+              aria-hidden="true"
+              style={dottedGridStyle}
+              className="pointer-events-none absolute inset-0"
+            />
 
             <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_28rem]">
               <div>
@@ -851,8 +947,8 @@ export function DethinkLabsSecurityRecipe() {
 
                 <p className="text-muted-foreground mt-5 max-w-lg text-base leading-7">
                   Dethink Labs unifies threat detection, identity, and endpoint
-                  defense into one console — so your team stops chasing alerts and
-                  starts stopping attackers.
+                  defense into one console — so your team stops chasing alerts
+                  and starts stopping attackers.
                 </p>
 
                 <div className="mt-7 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
@@ -906,7 +1002,11 @@ export function DethinkLabsSecurityRecipe() {
                   TRUSTED BY SECURITY TEAMS AT
                 </p>
                 <Tooltip>
-                  <TooltipTrigger aria-label="Compliance details" size="xs" variant="ghost">
+                  <TooltipTrigger
+                    aria-label="Compliance details"
+                    size="xs"
+                    variant="ghost"
+                  >
                     <Badge tone="info" variant="soft" size="xs">
                       SOC 2 Type II
                     </Badge>
@@ -930,7 +1030,10 @@ export function DethinkLabsSecurityRecipe() {
           </section>
 
           {/* ============================ FEATURES (bento) ============================ */}
-          <section id="dethink-features" className="px-4 py-14 sm:px-6 lg:px-10">
+          <section
+            id="dethink-features"
+            className="px-4 py-14 sm:px-6 lg:px-10"
+          >
             <div className="mx-auto mb-12 max-w-xl text-center">
               <p className="text-primary font-mono text-[11px] tracking-[0.14em]">
                 THE PLATFORM
@@ -977,7 +1080,12 @@ export function DethinkLabsSecurityRecipe() {
                     { label: "Context", tone: "primary" as const },
                     { label: "Unmanaged VPN", tone: "destructive" as const },
                   ].map((pill) => (
-                    <Badge key={pill.label} tone={pill.tone} variant="soft" size="sm">
+                    <Badge
+                      key={pill.label}
+                      tone={pill.tone}
+                      variant="soft"
+                      size="sm"
+                    >
                       {pill.label}
                     </Badge>
                   ))}
@@ -994,7 +1102,12 @@ export function DethinkLabsSecurityRecipe() {
                   {endpoints.slice(0, 2).map((ep) => (
                     <div key={ep.name} className="flex items-center gap-2">
                       <span className="font-mono text-[11px]">{ep.name}</span>
-                      <Badge className="ml-auto" size="xs" variant="soft" tone={ep.tone}>
+                      <Badge
+                        className="ml-auto"
+                        size="xs"
+                        variant="soft"
+                        tone={ep.tone}
+                      >
                         {ep.status}
                       </Badge>
                     </div>
@@ -1039,12 +1152,17 @@ export function DethinkLabsSecurityRecipe() {
                   From breach to contained in seconds.
                 </h2>
                 <p className="text-muted-foreground mt-3 text-[15px] leading-7">
-                  When the engine detects an intrusion, it acts — revoking access,
-                  isolating devices, and packaging the evidence before an analyst
-                  even opens the alert.
+                  When the engine detects an intrusion, it acts — revoking
+                  access, isolating devices, and packaging the evidence before
+                  an analyst even opens the alert.
                 </p>
                 <div className="mt-6 flex items-center gap-3">
-                  <ProgressCircle label="Contained" value={75} showValue tone="primary" />
+                  <ProgressCircle
+                    label="Contained"
+                    value={75}
+                    showValue
+                    tone="primary"
+                  />
                   <p className="text-muted-foreground text-xs leading-5">
                     of incidents this month were
                     <br />
@@ -1064,13 +1182,36 @@ export function DethinkLabsSecurityRecipe() {
           </section>
 
           {/* ============================ METRICS ============================ */}
-          <section aria-label="Platform metrics" className="px-4 py-14 sm:px-6 lg:px-10">
+          <section
+            aria-label="Platform metrics"
+            className="px-4 py-14 sm:px-6 lg:px-10"
+          >
             <Grid columns="4" gap="4" className="grid-cols-2 md:grid-cols-4">
               {[
-                { value: "4.2B+", label: "Threats blocked / mo", bar: 92, tone: "primary" as const },
-                { value: "99.99%", label: "Platform uptime", bar: 100, tone: "success" as const },
-                { value: "<40s", label: "Mean time to isolate", bar: 84, tone: "primary" as const },
-                { value: "2,600+", label: "Security teams", bar: 76, tone: "info" as const },
+                {
+                  value: "4.2B+",
+                  label: "Threats blocked / mo",
+                  bar: 92,
+                  tone: "primary" as const,
+                },
+                {
+                  value: "99.99%",
+                  label: "Platform uptime",
+                  bar: 100,
+                  tone: "success" as const,
+                },
+                {
+                  value: "<40s",
+                  label: "Mean time to isolate",
+                  bar: 84,
+                  tone: "primary" as const,
+                },
+                {
+                  value: "2,600+",
+                  label: "Security teams",
+                  bar: 76,
+                  tone: "info" as const,
+                },
               ].map((stat) => (
                 <GridItem key={stat.label}>
                   <Card className="ring-border/60 h-full p-5 ring-1">
@@ -1119,7 +1260,10 @@ export function DethinkLabsSecurityRecipe() {
                   Answers before you deploy.
                 </h2>
               </div>
-              <Accordion aria-label="Frequently asked questions" defaultValue="deploy">
+              <Accordion
+                aria-label="Frequently asked questions"
+                defaultValue="deploy"
+              >
                 {faqs.map((faq) => (
                   <Accordion.Item key={faq.value} value={faq.value}>
                     <Accordion.Blade>
@@ -1150,14 +1294,18 @@ export function DethinkLabsSecurityRecipe() {
             aria-label="Get started"
             className="relative overflow-hidden px-4 py-20 text-center sm:px-6"
           >
-            <span aria-hidden="true" style={haloStyle} className="pointer-events-none absolute inset-0" />
+            <span
+              aria-hidden="true"
+              style={haloStyle}
+              className="pointer-events-none absolute inset-0"
+            />
             <div className="relative mx-auto max-w-xl">
               <h2 className="font-heading text-3xl font-bold tracking-tight text-balance sm:text-4xl">
                 Ready to see your blind spots?
               </h2>
               <p className="text-muted-foreground mt-4 text-[15px] leading-7">
-                A Dethink engineer will map your attack surface in a free 30-minute
-                audit — no obligation.
+                A Dethink engineer will map your attack surface in a free
+                30-minute audit — no obligation.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <DemoDialog
@@ -1185,9 +1333,19 @@ export function DethinkLabsSecurityRecipe() {
               <BrandMark className="text-base" />
               <div className="text-muted-foreground flex flex-wrap gap-x-12 gap-y-6 text-[13px]">
                 {[
-                  { head: "PRODUCT", items: ["Threat Detection", "Endpoint", "Zero Trust Access"] },
+                  {
+                    head: "PRODUCT",
+                    items: [
+                      "Threat Detection",
+                      "Endpoint",
+                      "Zero Trust Access",
+                    ],
+                  },
                   { head: "COMPANY", items: ["About", "Research", "Careers"] },
-                  { head: "LEGAL", items: ["Privacy", "Security", "Trust Center"] },
+                  {
+                    head: "LEGAL",
+                    items: ["Privacy", "Security", "Trust Center"],
+                  },
                 ].map((col) => (
                   <div key={col.head} className="flex flex-col gap-2">
                     <span className="text-muted-foreground/70 mb-0.5 font-mono text-[10px] tracking-[0.12em]">

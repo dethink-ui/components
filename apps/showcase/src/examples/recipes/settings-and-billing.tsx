@@ -56,6 +56,7 @@ import {
   Progress,
   type ProgressTone,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 // ----------------------------------------------------------------------------
 // Decorative layers (token-only, aria-hidden, non-interactive)
@@ -75,8 +76,18 @@ const washStyle: CSSProperties = {
 // ----------------------------------------------------------------------------
 
 const invoices = [
-  { id: "INV-2026-07", date: "Jul 1, 2026", amount: "$1,248.00", status: "Paid" },
-  { id: "INV-2026-06", date: "Jun 1, 2026", amount: "$1,109.00", status: "Paid" },
+  {
+    id: "INV-2026-07",
+    date: "Jul 1, 2026",
+    amount: "$1,248.00",
+    status: "Paid",
+  },
+  {
+    id: "INV-2026-06",
+    date: "Jun 1, 2026",
+    amount: "$1,109.00",
+    status: "Paid",
+  },
   { id: "INV-2026-05", date: "May 1, 2026", amount: "$982.00", status: "Paid" },
 ];
 
@@ -181,12 +192,20 @@ function SectionHeading({
 
 // ----------------------------------------------------------------------------
 
-export function SettingsAndBillingRecipe() {
+export function SettingsAndBillingRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
   const [saved, setSaved] = useState<null | string>(null);
   const [plan, setPlan] = useState("growth");
+  const fullPage = presentation === "full-page";
 
   return (
-    <div className="relative">
+    <div
+      data-recipe-surface="settings-and-billing"
+      className={`relative ${
+        fullPage ? "min-h-[calc(100dvh-7rem)] p-4 sm:p-6 lg:p-8" : ""
+      }`}
+    >
       <span
         aria-hidden="true"
         style={washStyle}
@@ -209,7 +228,10 @@ export function SettingsAndBillingRecipe() {
             </span>
             <div className="space-y-1.5">
               <span className="text-muted-foreground inline-flex items-center gap-2 text-[0.7rem] font-semibold tracking-[0.18em] uppercase">
-                <Sparkles className="text-primary size-3.5" aria-hidden="true" />
+                <Sparkles
+                  className="text-primary size-3.5"
+                  aria-hidden="true"
+                />
                 Workspace · Settings
               </span>
               <h2 className="font-heading text-2xl font-semibold tracking-tight">
@@ -243,7 +265,10 @@ export function SettingsAndBillingRecipe() {
             >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
-                  <Building2 className="text-primary size-4" aria-hidden="true" />
+                  <Building2
+                    className="text-primary size-4"
+                    aria-hidden="true"
+                  />
                   Workspace settings
                 </CardTitle>
                 <CardDescription>
@@ -293,7 +318,9 @@ export function SettingsAndBillingRecipe() {
                       title="Feature controls"
                       description="Toggle workspace-wide capabilities."
                     />
-                    <FieldLegend className="sr-only">Feature controls</FieldLegend>
+                    <FieldLegend className="sr-only">
+                      Feature controls
+                    </FieldLegend>
                     <FieldGroup className="gap-3">
                       <Field
                         id="settings-ai"
@@ -383,7 +410,10 @@ export function SettingsAndBillingRecipe() {
             </Card>
 
             {/* Usage / billing summary */}
-            <Card shadow="sm" className="ring-border/60 ring-1 backdrop-blur-sm">
+            <Card
+              shadow="sm"
+              className="ring-border/60 ring-1 backdrop-blur-sm"
+            >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Gauge className="text-primary size-4" aria-hidden="true" />
@@ -424,7 +454,10 @@ export function SettingsAndBillingRecipe() {
             </Card>
 
             {/* Invoices */}
-            <Card shadow="sm" className="ring-border/60 ring-1 backdrop-blur-sm">
+            <Card
+              shadow="sm"
+              className="ring-border/60 ring-1 backdrop-blur-sm"
+            >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <CreditCard
@@ -494,7 +527,10 @@ export function SettingsAndBillingRecipe() {
 
           <aside className="space-y-5">
             {/* Plan selection */}
-            <Card shadow="sm" className="ring-border/60 ring-1 backdrop-blur-sm">
+            <Card
+              shadow="sm"
+              className="ring-border/60 ring-1 backdrop-blur-sm"
+            >
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <CreditCard
@@ -510,11 +546,7 @@ export function SettingsAndBillingRecipe() {
               <CardContent>
                 <FieldSet>
                   <FieldLegend className="sr-only">Billing plan</FieldLegend>
-                  <RadioGroup
-                    value={plan}
-                    onValueChange={setPlan}
-                    name="plan"
-                  >
+                  <RadioGroup value={plan} onValueChange={setPlan} name="plan">
                     <FieldGroup className="gap-3">
                       {plans.map((item) => {
                         const selected = plan === item.value;
@@ -542,7 +574,9 @@ export function SettingsAndBillingRecipe() {
                                   </span>
                                 </span>
                               </div>
-                              <FieldDescription>{item.feature}</FieldDescription>
+                              <FieldDescription>
+                                {item.feature}
+                              </FieldDescription>
                             </FieldContent>
                           </Field>
                         );
@@ -585,8 +619,8 @@ export function SettingsAndBillingRecipe() {
               </CardHeader>
               <CardContent className="relative space-y-3">
                 <p className="text-muted-foreground text-sm leading-6">
-                  Suspending removes member access immediately. Billing and audit
-                  logs remain available to owners.
+                  Suspending removes member access immediately. Billing and
+                  audit logs remain available to owners.
                 </p>
                 <AlertDialog>
                   <AlertDialogTrigger variant="destructive">

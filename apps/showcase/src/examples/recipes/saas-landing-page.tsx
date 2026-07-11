@@ -47,6 +47,7 @@ import {
   RevealButton,
   Separator,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 const heroBackdropStyle: CSSProperties = {
   backgroundImage: [
@@ -61,8 +62,7 @@ const heroGridStyle: CSSProperties = {
   backgroundImage:
     "linear-gradient(to right, color-mix(in oklab, var(--dt-color-foreground) 7%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in oklab, var(--dt-color-foreground) 7%, transparent) 1px, transparent 1px)",
   backgroundSize: "44px 44px",
-  maskImage:
-    "radial-gradient(80% 70% at 30% 12%, black, transparent 76%)",
+  maskImage: "radial-gradient(80% 70% at 30% 12%, black, transparent 76%)",
   WebkitMaskImage:
     "radial-gradient(80% 70% at 30% 12%, black, transparent 76%)",
 };
@@ -108,7 +108,12 @@ const trustedBy = [
 ];
 
 const metrics = [
-  { value: "99.98%", label: "Platform uptime", trend: "+0.04%", icon: Activity },
+  {
+    value: "99.98%",
+    label: "Platform uptime",
+    trend: "+0.04%",
+    icon: Activity,
+  },
   { value: "24k+", label: "Teams onboarded", trend: "+18%", icon: Users },
   { value: "41ms", label: "p95 render time", trend: "−12ms", icon: Gauge },
   { value: "4.9/5", label: "Operator rating", trend: "+0.3", icon: Star },
@@ -207,7 +212,7 @@ function ProductGlimpse() {
     <Card
       aria-label="Product preview"
       shadow="md"
-      className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:shadow-lg hover:motion-safe:-translate-y-1"
+      className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm hover:shadow-lg motion-safe:transition-all motion-safe:duration-300 hover:motion-safe:-translate-y-1"
     >
       <div className="border-border/70 flex items-center justify-between border-b px-4 py-3">
         <StatusDots />
@@ -240,10 +245,7 @@ function ProductGlimpse() {
             <div className="text-muted-foreground text-[0.7rem] font-medium">
               Throughput
             </div>
-            <div
-              aria-hidden="true"
-              className="mt-3 flex h-11 items-end gap-1"
-            >
+            <div aria-hidden="true" className="mt-3 flex h-11 items-end gap-1">
               {bars.map((h, i) => (
                 <span
                   key={i}
@@ -304,7 +306,7 @@ function BentoCard({
 }) {
   return (
     <GridItem colSpan={colSpan} className="max-md:col-span-full">
-      <Card className="ring-border/50 relative h-full overflow-hidden ring-1 motion-safe:transition-all motion-safe:duration-200 hover:shadow-md hover:motion-safe:-translate-y-1">
+      <Card className="ring-border/50 relative h-full overflow-hidden ring-1 hover:shadow-md motion-safe:transition-all motion-safe:duration-200 hover:motion-safe:-translate-y-1">
         <CardHeader>
           <div className="bg-primary/10 text-primary mb-3 grid size-10 place-items-center rounded-lg">
             <Icon className="size-5" aria-hidden="true" />
@@ -318,10 +320,21 @@ function BentoCard({
   );
 }
 
-export function SaasLandingPageRecipe() {
+export function SaasLandingPageRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
+  const fullPage = presentation === "full-page";
+
   return (
     <HeroTextAnimationProvider>
-      <div className="border-border bg-background overflow-hidden rounded-xl border">
+      <div
+        data-recipe-surface="saas-landing-page"
+        className={`border-border bg-background overflow-hidden border ${
+          fullPage
+            ? "min-h-[calc(100dvh-7rem)] rounded-none border-x-0 border-t-0"
+            : "rounded-xl"
+        }`}
+      >
         <header className="border-border bg-background/80 flex min-h-16 items-center gap-3 border-b px-4 backdrop-blur sm:px-6">
           <a
             href="#recipe-landing-hero"
@@ -330,7 +343,9 @@ export function SaasLandingPageRecipe() {
             <span className="bg-primary text-primary-foreground grid size-8 place-items-center rounded-md">
               <Sparkles className="size-4" aria-hidden="true" />
             </span>
-            <span className="font-heading text-sm font-semibold">Northstar</span>
+            <span className="font-heading text-sm font-semibold">
+              Northstar
+            </span>
           </a>
 
           <NavigationMenu
@@ -359,7 +374,9 @@ export function SaasLandingPageRecipe() {
                         icon={<Icon aria-hidden="true" />}
                       >
                         {title}
-                        <NavigationMenuDescription>{body}</NavigationMenuDescription>
+                        <NavigationMenuDescription>
+                          {body}
+                        </NavigationMenuDescription>
                       </NavigationMenuLink>
                     ))}
                   </NavigationMenuSection>
@@ -387,10 +404,7 @@ export function SaasLandingPageRecipe() {
           </div>
         </header>
 
-        <section
-          id="recipe-landing-hero"
-          className="relative overflow-hidden"
-        >
+        <section id="recipe-landing-hero" className="relative overflow-hidden">
           <span
             aria-hidden="true"
             style={heroBackdropStyle}
@@ -405,7 +419,10 @@ export function SaasLandingPageRecipe() {
           <div className="relative grid gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-center lg:px-10 lg:py-16">
             <div className="space-y-6">
               <div className="border-border/70 bg-background/70 text-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium shadow-sm backdrop-blur">
-                <ShieldCheck className="text-primary size-3.5" aria-hidden="true" />
+                <ShieldCheck
+                  className="text-primary size-3.5"
+                  aria-hidden="true"
+                />
                 <span className="tracking-[0.18em] uppercase">
                   Open-code SaaS components
                 </span>
@@ -480,7 +497,7 @@ export function SaasLandingPageRecipe() {
             {trustedBy.map((name) => (
               <span
                 key={name}
-                className="text-muted-foreground/80 font-heading text-base font-semibold tracking-tight opacity-80 motion-safe:transition-opacity hover:opacity-100"
+                className="text-muted-foreground/80 font-heading text-base font-semibold tracking-tight opacity-80 hover:opacity-100 motion-safe:transition-opacity"
               >
                 {name}
               </span>
@@ -575,10 +592,7 @@ export function SaasLandingPageRecipe() {
               body="Tables, progress, and timeline views keep operators oriented."
               colSpan="3"
             >
-              <div
-                aria-hidden="true"
-                className="flex h-16 items-end gap-1.5"
-              >
+              <div aria-hidden="true" className="flex h-16 items-end gap-1.5">
                 {[38, 52, 44, 66, 58, 78, 64, 88].map((h, i) => (
                   <span
                     key={i}
@@ -617,11 +631,7 @@ export function SaasLandingPageRecipe() {
           aria-label="Key metrics"
           className="border-border bg-muted/20 border-y px-4 py-10 sm:px-6 lg:px-10"
         >
-          <Grid
-            columns="4"
-            gap="4"
-            className="grid-cols-2 md:grid-cols-4"
-          >
+          <Grid columns="4" gap="4" className="grid-cols-2 md:grid-cols-4">
             {metrics.map(({ value, label, trend, icon: Icon }) => (
               <GridItem key={label}>
                 <div className="border-border/70 bg-background/60 rounded-xl border p-5 shadow-sm">
@@ -802,7 +812,9 @@ export function SaasLandingPageRecipe() {
           <div className="relative mx-auto flex max-w-2xl flex-col items-center text-center">
             <div className="border-border/70 bg-background/70 text-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium shadow-sm backdrop-blur">
               <Rocket className="text-primary size-3.5" aria-hidden="true" />
-              <span className="tracking-[0.18em] uppercase">Ship this week</span>
+              <span className="tracking-[0.18em] uppercase">
+                Ship this week
+              </span>
             </div>
             <h2 className="font-heading mt-6 max-w-xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               Copy the recipe, keep your brand, ship the surface.
