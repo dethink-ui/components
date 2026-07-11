@@ -13,6 +13,7 @@
     "@dethink/components": "workspace:*",
     "@internationalized/date": "^3.12.2",
     "lucide-react": "^1.23.0",
+    "motion": "^12.42.2",
     "next": "^16.2.10",
     "react": "^19.2.7",
     "react-aria-components": "^1.19.0",

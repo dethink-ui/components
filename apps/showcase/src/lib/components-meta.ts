@@ -485,6 +485,83 @@ export const componentGroups: ComponentGroup[] = componentTypes
   }))
   .filter((group) => group.components.length > 0);
 
+const componentDisplayNameOverrides: Partial<Record<string, string>> = {
+  "date-time-picker": "Date & Time Picker",
+  navdock: "NavDock",
+};
+
+export function getComponentDisplayName(
+  component: Pick<ComponentMeta, "name" | "slug">,
+): string {
+  return (
+    componentDisplayNameOverrides[component.slug] ??
+    component.name
+      .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+      .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+  );
+}
+
+export function normalizeComponentSearchValue(value: string): string {
+  return value
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+export function filterComponentGroups(query: string): ComponentGroup[] {
+  const normalizedQuery = normalizeComponentSearchValue(query);
+  const terms = normalizedQuery.split(" ").filter(Boolean);
+
+  if (terms.length === 0) {
+    return componentGroups;
+  }
+
+  const exactComponentSlugs = new Set(
+    componentCatalog
+      .filter((component) =>
+        [component.name, getComponentDisplayName(component)]
+          .map(normalizeComponentSearchValue)
+          .includes(normalizedQuery),
+      )
+      .map((component) => component.slug),
+  );
+
+  return componentGroups
+    .map((group) => ({
+      ...group,
+      components: group.components.filter((component) => {
+        if (exactComponentSlugs.size > 0) {
+          return exactComponentSlugs.has(component.slug);
+        }
+
+        const searchableValue = normalizeComponentSearchValue(
+          [
+            component.name,
+            getComponentDisplayName(component),
+            component.description,
+            group.name,
+            group.description,
+          ].join(" "),
+        );
+
+        return terms.every((term) => searchableValue.includes(term));
+      }),
+    }))
+    .filter((group) => group.components.length > 0);
+}
+
 export function getComponentMeta(slug: string): ComponentMeta | undefined {
   return componentCatalog.find((component) => component.slug === slug);
+}
+
+export function getComponentMetaByName(
+  name: string,
+): ComponentMeta | undefined {
+  const normalizedName = normalizeComponentSearchValue(name);
+
+  return componentCatalog.find((component) =>
+    [component.name, getComponentDisplayName(component)]
+      .map(normalizeComponentSearchValue)
+      .includes(normalizedName),
+  );
 }

@@ -1,63 +1,22 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import type { ReactNode } from "react";
-import {
-  ButtonTeaser,
-  CardTeaser,
-  CheckboxTeaser,
-  ComboboxTeaser,
-  DataTableTeaser,
-  InputTeaser,
-  LinkTeaser,
-  NumberInputTeaser,
-  SelectTeaser,
-  SwitchTeaser,
-  TimelineTeaser,
-} from "@/components/component-teasers";
+import { ComponentMatrix } from "@/components/component-matrix";
 import { WorkbenchDock } from "@/components/workbench-dock";
 import { WorkbenchHero } from "@/components/workbench-hero";
-import { componentCatalog, getComponentMeta } from "@/lib/components-meta";
+import { componentCatalog } from "@/lib/components-meta";
 import {
   featuredRecipes,
   getRecipeCategoryMeta,
   getRecipeComponentMetas,
+  recipesCatalog,
 } from "@/lib/recipes-meta";
 
 /*
  * The landing page is a "component workbench": a token-themed console that
  * doubles as the marketing surface. It leans on real @dethink/components
  * (NavDock for section nav, RevealButton for hero actions) and reuses the
- * showcase's live component teasers, so nothing here is a static mock.
+ * showcase's real component states as non-interactive previews.
  */
-
-// A curated matrix of components whose teasers read well at card size.
-const matrixSlugs = [
-  "button",
-  "input",
-  "switch",
-  "data-table",
-  "select",
-  "checkbox",
-  "timeline",
-  "combobox",
-  "link",
-  "card",
-  "number-input",
-] as const;
-
-const matrixTeasers: Record<string, ReactNode> = {
-  button: <ButtonTeaser />,
-  input: <InputTeaser />,
-  switch: <SwitchTeaser />,
-  "data-table": <DataTableTeaser />,
-  select: <SelectTeaser />,
-  checkbox: <CheckboxTeaser />,
-  timeline: <TimelineTeaser />,
-  combobox: <ComboboxTeaser />,
-  link: <LinkTeaser />,
-  card: <CardTeaser />,
-  "number-input": <NumberInputTeaser />,
-};
 
 const colorTokens = [
   { name: "background", token: "--dt-color-background" },
@@ -102,7 +61,7 @@ const radii = [
 
 export default function HomePage() {
   const componentCount = componentCatalog.length;
-  const recipeCount = featuredRecipes.length;
+  const recipeCount = recipesCatalog.length;
 
   return (
     <div className="flex flex-col">
@@ -117,7 +76,7 @@ export default function HomePage() {
         <h2 id="overview-heading" className="sr-only">
           Overview
         </h2>
-        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
           <WorkbenchHero
             componentCount={componentCount}
             recipeCount={recipeCount}
@@ -144,65 +103,16 @@ export default function HomePage() {
                 Component matrix
               </h2>
             </div>
-            <span className="text-muted-foreground font-mono text-[11px] tracking-[0.12em] uppercase">
-              Hover = live preview
+            <span className="text-muted-foreground flex items-center gap-2 font-mono text-[11px] tracking-[0.12em] uppercase">
+              <span
+                aria-hidden="true"
+                className="bg-primary size-1.5 rounded-full"
+              />
+              State previews · open docs to interact
             </span>
           </div>
 
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {matrixSlugs.map((slug) => {
-              const meta = getComponentMeta(slug);
-              if (!meta) return null;
-
-              return (
-                <li key={slug}>
-                  {/*
-                   * The teaser is a decorative sibling of the link — never a
-                   * child of the anchor — so the interactive elements inside
-                   * each teaser don't nest inside an <a> (invalid HTML that
-                   * causes hydration mismatches). A stretched link keeps the
-                   * whole card clickable.
-                   */}
-                  <article className="group border-border bg-background hover:border-primary/50 hover:bg-primary/[0.04] relative flex h-full flex-col gap-3 rounded-md border p-4 transition-colors">
-                    <span
-                      aria-hidden="true"
-                      inert
-                      className="pointer-events-none flex h-14 origin-left scale-[0.62] items-center [&>*]:w-full"
-                    >
-                      {matrixTeasers[slug]}
-                    </span>
-                    <h3 className="font-heading flex items-center justify-between text-sm font-semibold">
-                      <Link
-                        href={`/components/${slug}`}
-                        className="focus-visible:ring-ring rounded-sm outline-none after:absolute after:inset-0 after:rounded-md focus-visible:ring-2"
-                      >
-                        {meta.name}
-                      </Link>
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="text-muted-foreground group-hover:text-primary size-3.5 transition-transform group-hover:translate-x-0.5"
-                      />
-                    </h3>
-                  </article>
-                </li>
-              );
-            })}
-
-            <li>
-              <Link
-                href="/components"
-                className="group border-border bg-muted/30 hover:border-primary/50 hover:bg-primary/[0.06] focus-visible:ring-ring focus-visible:ring-offset-background flex h-full flex-col justify-between gap-3 rounded-md border p-4 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
-              >
-                <span className="text-primary font-mono text-[11px] font-semibold">
-                  +{componentCount - matrixSlugs.length}
-                </span>
-                <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1 text-sm font-medium transition-colors">
-                  View all
-                  <ArrowRight aria-hidden="true" className="size-3.5" />
-                </span>
-              </Link>
-            </li>
-          </ul>
+          <ComponentMatrix componentCount={componentCount} />
         </div>
       </section>
 
@@ -216,7 +126,7 @@ export default function HomePage() {
           <div className="mb-7 flex flex-wrap items-end justify-between gap-3">
             <div className="space-y-2">
               <p className="text-primary font-mono text-[11px] font-medium tracking-[0.14em] uppercase">
-                Recipes
+                {featuredRecipes.length} featured recipes
               </p>
               <h2
                 id="recipes-heading"
@@ -258,8 +168,10 @@ export default function HomePage() {
                         <span className="font-heading block text-lg font-semibold">
                           {recipe.title}
                         </span>
-                        <span className="text-muted-foreground font-mono block text-[10px] tracking-wide uppercase">
-                          {components.map((component) => component.name).join(" · ")}
+                        <span className="text-muted-foreground block font-mono text-[10px] tracking-wide uppercase">
+                          {components
+                            .map((component) => component.name)
+                            .join(" · ")}
                         </span>
                       </span>
                       <ArrowRight
@@ -294,8 +206,8 @@ export default function HomePage() {
             </h2>
             <p className="text-muted-foreground max-w-xl text-sm leading-6">
               One console pattern, two themes. Every surface, border, and text
-              color below is a token — flip the theme in the header and the whole
-              system restyles.
+              color below is a token — flip the theme in the header and the
+              whole system restyles.
             </p>
           </div>
 
@@ -313,10 +225,10 @@ export default function HomePage() {
                   style={{ background: `var(${swatch.token})` }}
                 />
                 <span className="block px-3 py-2.5">
-                  <span className="font-mono block text-xs font-semibold">
+                  <span className="block font-mono text-xs font-semibold">
                     {swatch.name}
                   </span>
-                  <span className="text-muted-foreground font-mono mt-0.5 block text-[10px]">
+                  <span className="text-muted-foreground mt-0.5 block font-mono text-[10px]">
                     {swatch.token}
                   </span>
                 </span>
@@ -332,7 +244,7 @@ export default function HomePage() {
                 key={row.label}
                 className="flex flex-wrap items-baseline gap-4"
               >
-                <span className="text-muted-foreground font-mono w-32 shrink-0 text-[11px]">
+                <span className="text-muted-foreground w-32 shrink-0 font-mono text-[11px]">
                   {row.label}
                 </span>
                 <span className={row.className}>{row.sample}</span>
@@ -348,7 +260,7 @@ export default function HomePage() {
             {radii.map((radius) => (
               <li
                 key={radius.label}
-                className={`border-border bg-background text-muted-foreground font-mono grid h-20 w-28 place-items-center border text-[11px] shadow-sm ${radius.className}`}
+                className={`border-border bg-background text-muted-foreground grid h-20 w-28 place-items-center border font-mono text-[11px] shadow-sm ${radius.className}`}
               >
                 {radius.label}
               </li>

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { ChevronDown, Code2 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
+import { ExampleSourceDisclosure } from "@/components/example-source-disclosure";
 import { getExampleSource } from "@/lib/example-source";
 
 interface ExampleBlockProps {
@@ -28,8 +28,8 @@ export async function ExampleBlock({
   title,
   description,
   wide = false,
-  codeCollapsible = false,
-  codeDefaultOpen = true,
+  codeCollapsible = true,
+  codeDefaultOpen = false,
   children,
 }: ExampleBlockProps) {
   const source = await getExampleSource(file);
@@ -55,30 +55,14 @@ export async function ExampleBlock({
           <div className={wide ? "w-full" : "w-full max-w-xl"}>{children}</div>
         </div>
         {codeCollapsible ? (
-          <details
-            className="group border-border bg-background border-t"
-            open={codeDefaultOpen}
+          <ExampleSourceDisclosure
+            id={`${id}-source`}
+            title={title}
+            filename={filename}
+            defaultOpen={codeDefaultOpen}
           >
-            <summary className="focus-visible:ring-ring focus-visible:ring-offset-background hover:bg-muted/60 flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
-              <Code2
-                aria-hidden="true"
-                className="text-muted-foreground size-4 shrink-0"
-              />
-              <span className="min-w-0 flex-1">
-                <span className="block">Example source</span>
-                <span className="text-muted-foreground block truncate font-mono text-xs font-normal">
-                  {filename}
-                </span>
-              </span>
-              <ChevronDown
-                aria-hidden="true"
-                className="text-muted-foreground size-4 shrink-0 transition-transform group-open:rotate-180"
-              />
-            </summary>
-            <div className="border-border bg-muted/20 border-t p-3">
-              <CodeBlock code={source} filename={filename} />
-            </div>
-          </details>
+            <CodeBlock code={source} filename={filename} />
+          </ExampleSourceDisclosure>
         ) : (
           <CodeBlock code={source} filename={filename} />
         )}

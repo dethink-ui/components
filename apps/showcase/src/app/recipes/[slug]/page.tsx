@@ -61,9 +61,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function RecipeDetailPage({
-  params,
-}: RecipePageProps) {
+export default async function RecipeDetailPage({ params }: RecipePageProps) {
   const { slug } = await params;
   const recipe = getRecipeMeta(slug);
   const RecipePreview = recipe ? recipeComponents[recipe.slug] : undefined;
@@ -78,7 +76,8 @@ export default async function RecipeDetailPage({
   const relatedRecipes = recipesCatalog
     .filter(
       (candidate) =>
-        candidate.slug !== recipe.slug && candidate.category === recipe.category,
+        candidate.slug !== recipe.slug &&
+        candidate.category === recipe.category,
     )
     .slice(0, 3);
 
@@ -130,7 +129,7 @@ export default async function RecipeDetailPage({
                 <li key={component.slug}>
                   <Link
                     href={`/components/${component.slug}`}
-                    className="bg-background hover:border-primary/50 hover:text-primary focus-visible:ring-ring focus-visible:ring-offset-background inline-flex rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted-foreground outline-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+                    className="bg-background hover:border-primary/50 hover:text-primary focus-visible:ring-ring focus-visible:ring-offset-background border-border text-muted-foreground inline-flex rounded-full border px-2.5 py-1 text-xs font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                   >
                     {component.name}
                   </Link>
@@ -151,8 +150,8 @@ export default async function RecipeDetailPage({
               Live preview
             </h2>
             <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-              This is the full interactive recipe. The source below is read
-              from the same file that renders this preview.
+              This is the full interactive recipe. The source below is read from
+              the same file that renders this preview.
             </p>
           </div>
           <a
@@ -163,7 +162,10 @@ export default async function RecipeDetailPage({
             <ArrowRight className="size-4" aria-hidden="true" />
           </a>
         </div>
-        <div className="sc-preview-surface border-border overflow-hidden rounded-xl border bg-background p-4 sm:p-6 lg:p-8">
+        <div
+          data-recipe-preview={recipe.slug}
+          className="sc-preview-surface border-border bg-background overflow-hidden rounded-xl border p-4 sm:p-6 lg:p-8"
+        >
           <RecipePreview />
         </div>
       </section>
