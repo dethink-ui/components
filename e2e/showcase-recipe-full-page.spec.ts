@@ -54,8 +54,8 @@ test.describe("showcase full-page recipe shell", () => {
       .boundingBox();
 
     expect(previewBounds).not.toBeNull();
-    expect(previewBounds!.x).toBe(0);
-    expect(previewBounds!.width).toBe(layoutWidth);
+    expect(previewBounds!.x).toBeCloseTo((layoutWidth - 1200) / 2, 0);
+    expect(previewBounds!.width).toBe(1200);
     expect(previewBounds!.y).toBeLessThanOrEqual(120);
     expect(previewBounds!.y + previewBounds!.height).toBeGreaterThanOrEqual(
       900,
@@ -150,10 +150,17 @@ test.describe("showcase full-page recipe shell", () => {
         const layoutWidth = await page.evaluate(
           () => document.body.clientWidth,
         );
+        const expectedWidth = Math.min(layoutWidth, 1200);
+        const expectedStart = (layoutWidth - expectedWidth) / 2;
 
         expect(previewBounds, `${slug} preview bounds`).not.toBeNull();
-        expect(previewBounds!.x, `${slug} preview start`).toBe(0);
-        expect(previewBounds!.width, `${slug} preview width`).toBe(layoutWidth);
+        expect(previewBounds!.x, `${slug} preview start`).toBeCloseTo(
+          expectedStart,
+          0,
+        );
+        expect(previewBounds!.width, `${slug} preview width`).toBe(
+          expectedWidth,
+        );
         expect(previewBounds!.y, `${slug} preview top`).toBeLessThanOrEqual(
           120,
         );

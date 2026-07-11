@@ -4,6 +4,7 @@
 
 - GitHub PRD: [#394 — Full-page recipe demos](https://github.com/parveshh/dethink-components/issues/394).
 - Completed slices: [#395 — Recipe full-page shell and representative dashboard](https://github.com/parveshh/dethink-components/issues/395), [#396 — Roll full-page demos across the recipe catalog](https://github.com/parveshh/dethink-components/issues/396), and [#397 — Verify full-page recipe journeys and visual quality](https://github.com/parveshh/dethink-components/issues/397).
+- Wide-monitor follow-up: [#399 — Constrain full-page recipe demos to 1200px](https://github.com/parveshh/dethink-components/issues/399) and [#400 — Center full-page recipe canvases at a 1200px maximum](https://github.com/parveshh/dethink-components/issues/400).
 
 ## Approved Direction
 
@@ -20,6 +21,7 @@
 - The compact demo bar occupies 3.5rem and stays below the global header.
 - The live product receives a minimum block size of the dynamic viewport minus both bars.
 - Full width uses the containing page width rather than `100vw`, avoiding scrollbar-induced overflow.
+- The live product canvas uses the full available width up to 1200px and centers itself on wider monitors, preserving the intended proportions of recipe compositions.
 - The outer documentation preview border, radius, maximum width, and padding do not wrap the full-page product.
 - Individual recipes may opt into the `full-page` presentation contract to remove embed-only framing without changing product content.
 
@@ -50,3 +52,4 @@
 - 2026-07-11: Completed #397 with nine focused full-page checks and the complete 44-test Chromium showcase suite. Verification covers every recipe at desktop and mobile widths, natural keyboard order, reduced motion, forced colors, 200%-equivalent reflow, and the full gallery-to-demo-to-details-to-source-to-gallery journey.
 - 2026-07-11: Axe WCAG 2 A/AA scans pass on representative authentication, marketing, dashboard, and AI product surfaces in light and dark mode. The audit also corrected low-contrast supporting labels and status text plus a missing group role in the Command Center responder cluster.
 - 2026-07-11: Added and visually accepted settled production captures for a desktop dashboard, desktop marketing page, mobile authentication flow, and mobile AI workspace. The capture script now waits for fonts and active animations before taking deterministic reduced-motion screenshots.
+- 2026-07-11: Added the #399/#400 wide-monitor refinement. The shared live product canvas is capped at 1200px with fluid width below the cap; the demo bar, viewport-height contract, and below-the-fold documentation remain unchanged.
