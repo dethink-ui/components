@@ -60,7 +60,7 @@ function SequentialLink({
 
   if (!component) {
     return (
-      <span className="border-border bg-muted/20 text-muted-foreground flex min-h-20 items-center gap-3 rounded-md border border-dashed px-3 py-2 opacity-60">
+      <span className="border-border bg-muted/20 text-muted-foreground flex min-h-20 items-center gap-3 rounded-md border border-dashed px-3 py-2">
         <Icon aria-hidden="true" className="size-4 shrink-0" />
         <span className="min-w-0">
           <span className="block text-[0.6875rem] font-semibold tracking-[0.12em] uppercase">

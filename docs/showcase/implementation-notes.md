@@ -3,11 +3,10 @@
 ## Status
 
 - Source: UX and design audit of the running Next.js showcase on 10 July 2026.
-- Current phase: first eight approved implementation slices complete.
+- Current phase: all nine approved implementation slices complete; ready for integration.
 - GitHub PRD: [#383 — Showcase discovery, documentation, and motion polish](https://github.com/parveshh/dethink-components/issues/383).
 - Implementation gate: complete; the PRD and nine approved tracer-bullet issues are published.
-- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386), [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387), [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388), [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389), [#390 — Tighten the mobile homepage hero](https://github.com/parveshh/dethink-components/issues/390), and [#391 — Strengthen dark-theme legibility and focus states](https://github.com/parveshh/dethink-components/issues/391).
-- Final slice: [#392 — Run final showcase journey verification](https://github.com/parveshh/dethink-components/issues/392). Verify the complete journey, accessibility, motion budgets, screenshots, typecheck, and build before integration.
+- Completed slices: [#384 — Showcase component catalog search and animated filtering](https://github.com/parveshh/dethink-components/issues/384), [#385 — Add component detail quick switching](https://github.com/parveshh/dethink-components/issues/385), [#386 — Make example source progressively disclosed](https://github.com/parveshh/dethink-components/issues/386), [#387 — Correct recipe totals and compress recipe discovery](https://github.com/parveshh/dethink-components/issues/387), [#388 — Replace generic recipe thumbnails with maintained captures](https://github.com/parveshh/dethink-components/issues/388), [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389), [#390 — Tighten the mobile homepage hero](https://github.com/parveshh/dethink-components/issues/390), [#391 — Strengthen dark-theme legibility and focus states](https://github.com/parveshh/dethink-components/issues/391), and [#392 — Run final showcase journey verification](https://github.com/parveshh/dethink-components/issues/392).
 
 ## Outcome
 
@@ -139,7 +138,7 @@ Implementation direction:
 6. [#389 — Clarify and improve the homepage component matrix](https://github.com/parveshh/dethink-components/issues/389) — complete. Corrects the interaction promise, improves teaser legibility, and preserves one clear documentation action per card.
 7. [#390 — Tighten the mobile homepage hero](https://github.com/parveshh/dethink-components/issues/390) — complete. Improves CTA hierarchy, first-viewport density, compact install proof, and coordinated reduced-motion-safe entrance choreography.
 8. [#391 — Strengthen dark-theme legibility and focus states](https://github.com/parveshh/dethink-components/issues/391) — complete. Measures and updates semantic tokens, then verifies affected showcase surfaces across all six brand themes.
-9. [#392 — Run final showcase journey verification](https://github.com/parveshh/dethink-components/issues/392) — AFK; blocked by #384–#391. Covers the complete user journey, final screenshots, accessibility checks, Motion budgets, typecheck, build, and documentation updates.
+9. [#392 — Run final showcase journey verification](https://github.com/parveshh/dethink-components/issues/392) — complete. Covers the complete user journey, final screenshots, accessibility checks, Motion budgets, typecheck, build, and documentation updates.
 
 Motion is part of each applicable vertical slice rather than a separate polish-only issue. Each issue must state the functional purpose of its animation, its reduced-motion behavior, and the performance-sensitive properties it changes.
 
@@ -167,7 +166,7 @@ Tests should assert public behavior and visible outcomes rather than component i
 - No animation dependency beyond the workspace-standard Motion package.
 - No rasterized implementation of interactive UI.
 - No redesign of individual recipe products during the thumbnail work.
-- No final integration pull request to the repository default branch unless explicitly requested.
+- No final integration pull request to the repository default branch unless explicitly requested; that approval was received on 11 July 2026.
 
 ## Decision Log
 
@@ -177,6 +176,7 @@ Tests should assert public behavior and visible outcomes rather than component i
 - 2026-07-10: Keep recipe imagery deterministic and sourced from the actual recipe surfaces.
 - 2026-07-10: User approved the nine tracer-bullet slices and proposed test seams.
 - 2026-07-10: User requested Motion-led animation to make the showcase impressive. Adopted a corporate-premium motion identity and made purposeful reduced-motion-safe animation a cross-cutting requirement.
+- 2026-07-11: User explicitly approved integrating the completed stack directly through a pull request to `main`, merging it, and updating local `main`.
 
 ## Work Log
 
@@ -218,3 +218,8 @@ Tests should assert public behavior and visible outcomes rather than component i
 - 2026-07-11: Strengthened brand-derived semantic border and input tokens to minimum measured ratios of 3.05:1 and 3.48:1, raised the weakest focus ring to 3.20:1, and changed dark destructive foreground contrast so the minimum destructive pair is 4.57:1.
 - 2026-07-11: Added a non-color font-weight cue for current-page links and forced-color fallbacks for focus, current/selected/checked, and disabled states.
 - 2026-07-11: Verified #391 with a rendered-color Playwright audit across teal, violet, rose, amber, ocean, and forest in light/dark modes, forced-color state checks, TypeScript, ESLint, the production build, and representative comparison captures with no console errors or framework overlays.
+- 2026-07-11: Completed #392 on `feature/issue-392-final-showcase-verification` with an end-to-end find → assess → copy → continue journey spanning component discovery, source disclosure, installation, sequential navigation, recipe filtering, and a live recipe preview.
+- 2026-07-11: Added axe WCAG A/AA coverage for the changed homepage, component catalog, Button documentation, and recipe gallery in light and dark modes. The final sweep exposed and corrected primary-text contrast in light brand themes plus a doubly dimmed non-interactive navigation card.
+- 2026-07-11: Extended the rendered-token audit so every brand/theme combination covers primary text on page and selected surfaces, primary and destructive buttons, muted text, borders, inputs, and focus rings. All normal text pairs now exceed 4.5:1 and essential boundaries exceed 3:1.
+- 2026-07-11: Added `pnpm capture:showcase` and accepted eight reproducible 1440×900 and 390×844 final captures covering the homepage, catalog, Button documentation, and recipes across light and dark schemes.
+- 2026-07-11: Final verification passed: showcase TypeScript and targeted ESLint, all 2,015 component tests across 227 files, the production build, and all 33 showcase Playwright tests.

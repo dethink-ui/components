@@ -9,6 +9,9 @@ type ContrastMetrics = {
   inputBackground: number;
   mutedTextBackground: number;
   mutedTextMuted: number;
+  primaryBackground: number;
+  primaryMuted: number;
+  primaryPair: number;
   ringBackground: number;
 };
 
@@ -92,6 +95,12 @@ test.describe("showcase theme resilience", () => {
               background,
             ),
             mutedTextMuted: contrast(resolveToken("muted-foreground"), muted),
+            primaryBackground: contrast(resolveToken("primary"), background),
+            primaryMuted: contrast(resolveToken("primary"), muted),
+            primaryPair: contrast(
+              resolveToken("primary"),
+              resolveToken("primary-foreground"),
+            ),
             ringBackground: contrast(resolveToken("ring"), background),
           };
         });
@@ -108,6 +117,18 @@ test.describe("showcase theme resilience", () => {
         expect(
           metrics.destructivePair,
           `${context} destructive button`,
+        ).toBeGreaterThanOrEqual(4.5);
+        expect(
+          metrics.primaryBackground,
+          `${context} primary text`,
+        ).toBeGreaterThanOrEqual(4.5);
+        expect(
+          metrics.primaryMuted,
+          `${context} selected primary text`,
+        ).toBeGreaterThanOrEqual(4.5);
+        expect(
+          metrics.primaryPair,
+          `${context} primary button`,
         ).toBeGreaterThanOrEqual(4.5);
         expect(
           metrics.borderBackground,

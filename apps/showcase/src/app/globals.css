@@ -20,7 +20,7 @@
 
   /* Light scheme — deep teal primary (the default brand) */
   --dt-color-ring-light: oklch(0.6 0.11 185);
-  --dt-color-primary-light: oklch(0.51 0.1 185);
+  --dt-color-primary-light: oklch(0.5 0.1 185);
   --dt-color-primary-foreground-light: oklch(0.99 0.005 180);
   --dt-color-success-light: oklch(0.56 0.13 158);
   --dt-color-info-light: oklch(0.57 0.11 215);
@@ -205,7 +205,7 @@ a[aria-current="page"] {
 }
 
 [data-brand="rose"] {
-  --dt-color-primary-light: oklch(0.55 0.19 15);
+  --dt-color-primary-light: oklch(0.54 0.19 15);
   --dt-color-primary-foreground-light: oklch(0.985 0.008 15);
   --dt-color-ring-light: oklch(0.62 0.16 15);
   --dt-color-primary-dark: oklch(0.78 0.11 12);
@@ -214,8 +214,8 @@ a[aria-current="page"] {
 }
 
 [data-brand="amber"] {
-  --dt-color-primary-light: oklch(0.75 0.15 78);
-  --dt-color-primary-foreground-light: oklch(0.26 0.05 75);
+  --dt-color-primary-light: oklch(0.52 0.15 78);
+  --dt-color-primary-foreground-light: oklch(0.985 0.008 78);
   --dt-color-ring-light: oklch(0.65 0.14 78);
   --dt-color-primary-dark: oklch(0.82 0.14 82);
   --dt-color-primary-foreground-dark: oklch(0.26 0.05 78);
@@ -255,7 +255,7 @@ a[aria-current="page"] {
 }
 
 [data-brand="forest"] {
-  --dt-color-primary-light: oklch(0.52 0.12 150);
+  --dt-color-primary-light: oklch(0.5 0.12 150);
   --dt-color-primary-foreground-light: oklch(0.98 0.01 150);
   --dt-color-ring-light: oklch(0.6 0.11 150);
   --dt-color-primary-dark: oklch(0.78 0.13 152);
