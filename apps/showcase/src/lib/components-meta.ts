@@ -378,6 +378,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "card-scroller",
+    name: "CardScroller",
+    description:
+      "Select pricing plans or feature groups in a responsive, draggable scroll-snap row with optional selected-card overlap.",
+    type: "data-display",
+  },
+  {
     slug: "card-stack",
     name: "CardStack",
     description:

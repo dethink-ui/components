@@ -16,9 +16,10 @@ import {
 const meta = {
   title: "Components/CardScroller",
   component: CardScroller,
-  args: { maxVisibleCards: 3, showControls: true },
+  args: { maxVisibleCards: 3, overlap: false, showControls: true },
   argTypes: {
     maxVisibleCards: { control: "inline-radio", options: [1, 2, 3, 4] },
+    overlap: { control: "boolean" },
     showControls: { control: "boolean" },
   },
   parameters: { layout: "padded" },
@@ -52,9 +53,11 @@ function PlanItems() {
 
 function ControlledExample({
   maxVisibleCards = 3,
+  overlap = false,
   showControls = true,
 }: {
   maxVisibleCards?: 1 | 2 | 3 | 4;
+  overlap?: boolean;
   showControls?: boolean;
 }) {
   const [value, setValue] = useState("starter");
@@ -62,6 +65,7 @@ function ControlledExample({
     <CardScroller
       aria-label="Controlled plan selection"
       maxVisibleCards={maxVisibleCards}
+      overlap={overlap}
       showControls={showControls}
       value={value}
       onValueChange={setValue}
@@ -98,8 +102,22 @@ export const Controlled: Story = {
   render: (args) => (
     <ControlledExample
       maxVisibleCards={args.maxVisibleCards}
+      overlap={args.overlap}
       showControls={args.showControls}
     />
+  ),
+};
+
+export const Overlap: Story = {
+  args: { overlap: true },
+  render: (args) => (
+    <CardScroller
+      {...args}
+      aria-label="Overlapping plan selection"
+      defaultValue="team"
+    >
+      {PlanItems()}
+    </CardScroller>
   ),
 };
 

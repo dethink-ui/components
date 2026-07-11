@@ -3,7 +3,7 @@
   "name": "card-scroller",
   "type": "registry:ui",
   "title": "CardScroller",
-  "description": "Selectable cards in a responsive, native horizontal scroll-snap viewport with overflow navigation controls.",
+  "description": "Selectable cards in a responsive, draggable horizontal scroll-snap viewport with overflow controls and optional selected-card overlap.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "card", "icon-button"],
