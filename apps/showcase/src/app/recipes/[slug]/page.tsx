@@ -93,7 +93,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
         <RecipeDemoBar title={recipe.title} />
         <div
           data-recipe-preview={recipe.slug}
-          className="sc-recipe-full-page bg-background min-h-[calc(100dvh-7rem)] w-full overflow-x-clip"
+          className="sc-recipe-full-page bg-background mx-auto min-h-[calc(100dvh-7rem)] w-full max-w-[1200px] overflow-x-clip"
         >
           <RecipePreview presentation="full-page" />
         </div>
