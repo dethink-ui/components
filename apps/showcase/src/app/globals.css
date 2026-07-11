@@ -29,6 +29,7 @@
   --dt-color-ring-dark: oklch(0.75 0.11 182);
   --dt-color-primary-dark: oklch(0.8 0.12 178);
   --dt-color-primary-foreground-dark: oklch(0.2 0.04 210);
+  --dt-color-destructive-foreground-dark: oklch(0.16 0.03 28);
   --dt-color-success-dark: oklch(0.68 0.13 158);
   --dt-color-info-dark: oklch(0.72 0.1 215);
 
@@ -61,23 +62,23 @@
   );
   --dt-color-border-light: color-mix(
     in oklch,
-    var(--dt-color-primary-light) 24%,
-    oklch(0.99 0 0)
+    var(--dt-color-primary-light) 16%,
+    oklch(0.64 0 0)
   );
   --dt-color-input-light: color-mix(
     in oklch,
-    var(--dt-color-primary-light) 26%,
-    oklch(0.99 0 0)
+    var(--dt-color-primary-light) 16%,
+    oklch(0.6 0 0)
   );
   --dt-color-timeline-border-light: color-mix(
     in oklch,
-    var(--dt-color-primary-light) 30%,
-    oklch(0.985 0 0)
+    var(--dt-color-primary-light) 16%,
+    oklch(0.62 0 0)
   );
   --dt-color-timeline-rail-light: color-mix(
     in oklch,
-    var(--dt-color-primary-light) 33%,
-    oklch(0.985 0 0)
+    var(--dt-color-primary-light) 16%,
+    oklch(0.58 0 0)
   );
 
   --dt-color-background-dark: color-mix(
@@ -102,23 +103,23 @@
   );
   --dt-color-border-dark: color-mix(
     in oklch,
-    var(--dt-color-primary-dark) 20%,
-    oklch(0.17 0 0)
+    var(--dt-color-primary-dark) 16%,
+    oklch(0.44 0 0)
   );
   --dt-color-input-dark: color-mix(
     in oklch,
-    var(--dt-color-primary-dark) 20%,
-    oklch(0.22 0 0)
+    var(--dt-color-primary-dark) 16%,
+    oklch(0.48 0 0)
   );
   --dt-color-timeline-border-dark: color-mix(
     in oklch,
-    var(--dt-color-primary-dark) 25%,
-    oklch(0.3 0 0)
+    var(--dt-color-primary-dark) 16%,
+    oklch(0.46 0 0)
   );
   --dt-color-timeline-rail-dark: color-mix(
     in oklch,
-    var(--dt-color-primary-dark) 25%,
-    oklch(0.35 0 0)
+    var(--dt-color-primary-dark) 16%,
+    oklch(0.5 0 0)
   );
 
   /*
@@ -144,6 +145,10 @@ html {
   scrollbar-color: var(--sc-scrollbar-thumb) var(--sc-scrollbar-track);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
+}
+
+a[aria-current="page"] {
+  font-weight: 600;
 }
 
 /* Smooth in-page scrolling for the workbench dock anchors (motion-safe). */
@@ -211,10 +216,33 @@ html {
 [data-brand="amber"] {
   --dt-color-primary-light: oklch(0.75 0.15 78);
   --dt-color-primary-foreground-light: oklch(0.26 0.05 75);
-  --dt-color-ring-light: oklch(0.68 0.14 78);
+  --dt-color-ring-light: oklch(0.65 0.14 78);
   --dt-color-primary-dark: oklch(0.82 0.14 82);
   --dt-color-primary-foreground-dark: oklch(0.26 0.05 78);
   --dt-color-ring-dark: oklch(0.78 0.13 80);
+}
+
+/* Preserve state boundaries when Windows forced-colors removes shadows/fills. */
+@media (forced-colors: active) {
+  :where(a[href], button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px !important;
+  }
+
+  :where(
+    [aria-current="page"],
+    [aria-selected="true"],
+    [data-state="checked"]
+  ) {
+    outline: 1px solid CanvasText;
+    outline-offset: -1px;
+    font-weight: 700;
+  }
+
+  :where(:disabled, [aria-disabled="true"], [data-disabled="true"]) {
+    border-style: dashed;
+    opacity: 0.7;
+  }
 }
 
 [data-brand="ocean"] {
