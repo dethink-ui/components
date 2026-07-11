@@ -2,7 +2,11 @@
 
 import { useMemo, useState } from "react";
 import type { CSSProperties } from "react";
-import { CalendarDate, CalendarDateTime, type DateValue } from "@internationalized/date";
+import {
+  CalendarDate,
+  CalendarDateTime,
+  type DateValue,
+} from "@internationalized/date";
 import {
   CalendarClock,
   CalendarDays,
@@ -41,6 +45,7 @@ import {
   type SlotPlannerBookRequestPayload,
   type SlotPlannerSlotData,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 // ----------------------------------------------------------------------------
 // Decorative layers (token-only, aria-hidden, non-interactive)
@@ -225,7 +230,7 @@ function StatTile({
 
 // ----------------------------------------------------------------------------
 
-function BookingWorkflow() {
+function BookingWorkflow({ presentation = "embedded" }: RecipePreviewProps) {
   const { toast } = useToast();
   const [slots, setSlots] = useState(initialSlots);
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(
@@ -248,7 +253,9 @@ function BookingWorkflow() {
   }
 
   const summary = useMemo(() => {
-    const bookable = slots.filter((s) => slotStatus(s) === "requestable").length;
+    const bookable = slots.filter(
+      (s) => slotStatus(s) === "requestable",
+    ).length;
     const blocked = slots.filter((s) => s.state === "blocked").length;
     const capacityTotal = slots.reduce(
       (sum, s) => (s.state === "blocked" ? sum : sum + (s.capacity ?? 0)),
@@ -286,9 +293,15 @@ function BookingWorkflow() {
     () => [...slots].sort((a, b) => a.date.localeCompare(b.date)),
     [slots],
   );
+  const fullPage = presentation === "full-page";
 
   return (
-    <div className="relative">
+    <div
+      data-recipe-surface="scheduler-and-booking"
+      className={`relative ${
+        fullPage ? "min-h-[calc(100dvh-7rem)] p-4 sm:p-6 lg:p-8" : ""
+      }`}
+    >
       <span
         aria-hidden="true"
         style={washStyle}
@@ -380,23 +393,23 @@ function BookingWorkflow() {
                   blocked periods from one planner.
                 </CardDescription>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-1">
-                  {(
-                    ["requestable", "at-capacity", "blocked"] as const
-                  ).map((key) => {
-                    const meta = statusMeta[key];
-                    return (
-                      <span
-                        key={key}
-                        className="text-muted-foreground inline-flex items-center gap-1.5 text-xs"
-                      >
+                  {(["requestable", "at-capacity", "blocked"] as const).map(
+                    (key) => {
+                      const meta = statusMeta[key];
+                      return (
                         <span
-                          aria-hidden="true"
-                          className={`size-2 shrink-0 rounded-full ${meta.dot}`}
-                        />
-                        {meta.label}
-                      </span>
-                    );
-                  })}
+                          key={key}
+                          className="text-muted-foreground inline-flex items-center gap-1.5 text-xs"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`size-2 shrink-0 rounded-full ${meta.dot}`}
+                          />
+                          {meta.label}
+                        </span>
+                      );
+                    },
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
@@ -668,10 +681,10 @@ function BookingWorkflow() {
   );
 }
 
-export function SchedulerAndBookingRecipe() {
+export function SchedulerAndBookingRecipe(props: RecipePreviewProps) {
   return (
     <ToastProvider motion="standard">
-      <BookingWorkflow />
+      <BookingWorkflow {...props} />
       <ToastViewport />
     </ToastProvider>
   );

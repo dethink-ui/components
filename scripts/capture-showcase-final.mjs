@@ -54,6 +54,30 @@ const captures = [
     theme: "light",
     viewport: { width: 390, height: 844 },
   },
+  {
+    name: "desktop-recipe-dashboard-light",
+    route: "/recipes/command-center-dashboard",
+    theme: "light",
+    viewport: { width: 1440, height: 900 },
+  },
+  {
+    name: "desktop-recipe-landing-dark",
+    route: "/recipes/saas-landing-page",
+    theme: "dark",
+    viewport: { width: 1440, height: 900 },
+  },
+  {
+    name: "mobile-recipe-login-light",
+    route: "/recipes/login-and-onboarding",
+    theme: "light",
+    viewport: { width: 390, height: 844 },
+  },
+  {
+    name: "mobile-recipe-ai-dark",
+    route: "/recipes/ai-workspace",
+    theme: "dark",
+    viewport: { width: 390, height: 844 },
+  },
 ];
 
 await mkdir(outputDirectory, { recursive: true });
@@ -84,6 +108,11 @@ try {
         throw new Error(`Expected ${theme} theme before capture.`);
       }
       await globalThis.document.fonts.ready;
+      await Promise.allSettled(
+        globalThis.document
+          .getAnimations({ subtree: true })
+          .map((animation) => animation.finished),
+      );
     }, capture.theme);
     await page.screenshot({
       path: join(outputDirectory, `${capture.name}.png`),

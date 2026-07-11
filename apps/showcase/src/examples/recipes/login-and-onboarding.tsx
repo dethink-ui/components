@@ -34,6 +34,7 @@ import {
   ToastViewport,
   useToast,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 import { GithubIcon } from "@/components/icons";
 
 const panelBackdropStyle: CSSProperties = {
@@ -49,8 +50,7 @@ const dotTextureStyle: CSSProperties = {
   backgroundImage:
     "radial-gradient(color-mix(in oklab, var(--dt-color-foreground) 14%, transparent) 1px, transparent 1px)",
   backgroundSize: "22px 22px",
-  maskImage:
-    "radial-gradient(80% 80% at 30% 20%, black, transparent 78%)",
+  maskImage: "radial-gradient(80% 80% at 30% 20%, black, transparent 78%)",
   WebkitMaskImage:
     "radial-gradient(80% 80% at 30% 20%, black, transparent 78%)",
 };
@@ -94,7 +94,7 @@ function LoginPanel() {
 
   return (
     <Card
-      className="ring-border/60 relative w-full max-w-md ring-1 backdrop-blur-sm motion-safe:transition-all motion-safe:duration-300 hover:shadow-lg hover:motion-safe:-translate-y-0.5"
+      className="ring-border/60 relative w-full max-w-md ring-1 backdrop-blur-sm hover:shadow-lg motion-safe:transition-all motion-safe:duration-300 hover:motion-safe:-translate-y-0.5"
       shadow="md"
     >
       <CardHeader>
@@ -180,10 +180,21 @@ function LoginPanel() {
   );
 }
 
-export function LoginAndOnboardingRecipe() {
+export function LoginAndOnboardingRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
+  const fullPage = presentation === "full-page";
+
   return (
     <ToastProvider motion="standard">
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-stretch">
+      <div
+        data-recipe-surface="login-and-onboarding"
+        className={`grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-stretch ${
+          fullPage
+            ? "bg-muted/20 min-h-[calc(100dvh-7rem)] p-4 sm:p-6 lg:p-8"
+            : ""
+        }`}
+      >
         <section className="border-border ring-border/50 relative overflow-hidden rounded-xl border shadow-sm ring-1 motion-safe:transition-transform motion-safe:duration-300 hover:motion-safe:-translate-y-1">
           <span
             aria-hidden="true"
@@ -199,7 +210,10 @@ export function LoginAndOnboardingRecipe() {
           <div className="relative flex h-full min-h-96 flex-col justify-between gap-8 p-6 sm:p-8">
             <div className="space-y-6">
               <div className="bg-background/70 text-foreground border-border/70 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium shadow-sm backdrop-blur">
-                <Sparkles className="text-primary size-3.5" aria-hidden="true" />
+                <Sparkles
+                  className="text-primary size-3.5"
+                  aria-hidden="true"
+                />
                 <span className="tracking-[0.18em] uppercase">
                   Secure onboarding
                 </span>
