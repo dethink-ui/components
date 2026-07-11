@@ -1,6 +1,9 @@
-import type { ReactNode } from "react";
+import { Children, cloneElement, isValidElement, type ReactNode } from "react";
 import { CodeBlock } from "@/components/code-block";
-import { ComponentDocNavigation } from "@/components/component-doc-navigation";
+import {
+  ComponentDocNavigation,
+  ComponentSequenceNavigation,
+} from "@/components/component-doc-navigation";
 import { getComponentMetaByName } from "@/lib/components-meta";
 
 interface DocsPageProps {
@@ -9,8 +12,17 @@ interface DocsPageProps {
   children: ReactNode;
 }
 
+interface DocsSectionProps {
+  actions?: ReactNode;
+  children: ReactNode;
+  description?: string;
+  id: string;
+  title: string;
+}
+
 export function DocsPage({ name, description, children }: DocsPageProps) {
   const component = getComponentMetaByName(name);
+  const content = Children.toArray(children);
 
   return (
     <article className="min-w-0 space-y-12 pb-8">
@@ -31,33 +43,46 @@ export function DocsPage({ name, description, children }: DocsPageProps) {
           currentSlug={component.slug}
         />
       ) : null}
-      {children}
+      {content.map((child, index) => {
+        const isElement = isValidElement<DocsSectionProps>(child);
+        const isExamplesSection = isElement && child.props.id === "examples";
+
+        if (component && isExamplesSection) {
+          return cloneElement(child, {
+            key: child.key ?? index,
+            actions: (
+              <ComponentSequenceNavigation currentSlug={component.slug} />
+            ),
+          });
+        }
+
+        return child;
+      })}
     </article>
   );
 }
 
 export function DocsSection({
+  actions,
   id,
   title,
   description,
   children,
-}: {
-  id: string;
-  title: string;
-  description?: string;
-  children: ReactNode;
-}) {
+}: DocsSectionProps) {
   return (
     <section aria-labelledby={`${id}-heading`} className="space-y-6">
       <div className="border-border space-y-1.5 border-b pb-3">
-        <h2
-          id={`${id}-heading`}
-          className="font-heading scroll-mt-20 text-2xl font-semibold tracking-tight"
-        >
-          <a href={`#${id}-heading`} className="hover:text-primary">
-            {title}
-          </a>
-        </h2>
+        <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
+          <h2
+            id={`${id}-heading`}
+            className="font-heading min-w-0 flex-1 scroll-mt-20 text-2xl font-semibold tracking-tight"
+          >
+            <a href={`#${id}-heading`} className="hover:text-primary">
+              {title}
+            </a>
+          </h2>
+          {actions ? <div className="ms-auto min-w-0">{actions}</div> : null}
+        </div>
         {description ? (
           <p className="text-muted-foreground max-w-prose text-sm leading-6">
             {description}
