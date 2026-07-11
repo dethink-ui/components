@@ -23,18 +23,31 @@ The implementation scaffold now exists and should stay aligned with the PRD:
 
 Keep future work aligned with the scaffold: TypeScript, React, Tailwind CSS, CSS variables, shadcn registry metadata, Storybook/docs, accessibility tests, visual tests, Vite/package builds, and Changesets.
 
-## GitHub PRD And Issue Workflow
+## Planning And GitHub Workflow
 
-All product and component work must move through GitHub PRDs and GitHub issues. Do not start implementation from a chat request, local note, local PRD file, or broad plan alone.
+Use the workflow that matches the scope of the change. GitHub PRDs and implementation issues are required for:
 
-For any new work:
+- new components;
+- new product or component features;
+- fundamental changes to public APIs, architecture, design-system foundations, distribution, or broad cross-cutting behavior.
+
+For work in those categories:
 
 1. Use `/Users/pm/.agents/skills/to-prd/SKILL.md` (`to-prd`) to synthesize the PRD from the current context and publish it to GitHub with the expected ready-for-agent triage label.
 2. Use `/Users/pm/.agents/skills/to-issues/SKILL.md` (`to-issues`) to break the approved PRD into GitHub issues using tracer-bullet vertical slices.
 3. Do not implement until the PRD exists on GitHub and the implementation issues exist on GitHub.
 4. Implement only the approved GitHub issues for that PRD.
 
-Branch workflow:
+The following work may proceed directly from the user request, local notes, or a local checklist without creating a GitHub PRD or GitHub issues:
+
+- bug fixes and regressions;
+- iterative visual, interaction, responsive, accessibility, documentation, and test improvements;
+- maintenance and narrow refactors that preserve the established public contract;
+- follow-up polish within an already approved feature or component scope.
+
+Create a GitHub issue for this local-work category only when the user requests it, durable tracking or external coordination is needed, or the investigation reveals that the change is actually a new feature or fundamental change. When uncertain, prefer the local workflow for narrow, reversible work that does not introduce or materially redefine public behavior.
+
+PRD branch workflow:
 
 1. Create a PRD branch from the current integration base using `feature/<work-item-name>`, for example `feature/prd-<prd-number>-<slug>`.
 2. Create stacked issue branches for the PRD in dependency order.
@@ -44,9 +57,9 @@ Branch workflow:
 6. When all issues under the PRD are complete, open the final stacked branch as a pull request targeting the PRD branch.
 7. Do not open the final PR to the repository default branch unless the user explicitly asks for that release/integration step.
 
-Branch names must be lowercase, hyphenated, and scoped to the work item, for example `feature/button-variants`, `feature/issue-123-button-a11y`, or `feature/prd-45-data-table`.
+Branch names must be lowercase, hyphenated, and scoped to the work item. PRD work may use names such as `feature/button-variants`, `feature/issue-123-button-a11y`, or `feature/prd-45-data-table`. Local bug fixes and iterations may use a focused branch such as `fix/recipe-mobile-overflow` or continue on the current task branch when appropriate.
 
-Prefer thin vertical slices that include component code, docs, registry metadata, tests, and verification together. A local `docs/components/<component>/prd.md` or `issues.md` file can support the work, but it does not replace the GitHub PRD or GitHub issues.
+For PRD work, prefer thin vertical slices that include component code, docs, registry metadata, tests, and verification together. A local `docs/components/<component>/prd.md` or `issues.md` file can support that work, but it does not replace the required GitHub PRD or GitHub issues. For local fixes and iterations, keep any implementation notes proportional to the change and verify the affected behavior directly.
 
 ## Required Skills
 
