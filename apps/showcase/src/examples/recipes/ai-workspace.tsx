@@ -160,10 +160,10 @@ const barTone: Record<string, { solid: string; soft: string }> = {
 };
 
 const snapshotTone: Record<string, { text: string; dot: string }> = {
-  info: { text: "text-info", dot: "bg-info" },
-  success: { text: "text-success", dot: "bg-success" },
+  info: { text: "text-foreground", dot: "bg-info" },
+  success: { text: "text-foreground", dot: "bg-success" },
   warning: {
-    text: "text-warning",
+    text: "text-foreground",
     dot: "bg-warning motion-safe:animate-pulse",
   },
 };
@@ -616,7 +616,7 @@ export function AiWorkspaceRecipe({
                             <span className="font-mono">reasoning.plan</span> ·
                             weighing eval deltas
                           </span>
-                          <span className="text-warning inline-flex items-center gap-1.5 text-[0.7rem] font-semibold">
+                          <span className="text-foreground inline-flex items-center gap-1.5 text-[0.7rem] font-semibold">
                             <span
                               aria-hidden="true"
                               className="bg-warning size-2 shrink-0 rounded-full motion-safe:animate-pulse"

@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const recipePath = "/recipes/command-center-dashboard";
@@ -12,6 +13,18 @@ const recipeSlugs = [
   "customer-support-copilot",
   "scheduler-and-booking",
   "saas-checkout-order-summary",
+];
+const representativeRoutes = [
+  {
+    route: "/recipes/login-and-onboarding",
+    slug: "login-and-onboarding",
+  },
+  { route: "/recipes/saas-landing-page", slug: "saas-landing-page" },
+  {
+    route: "/recipes/command-center-dashboard",
+    slug: "command-center-dashboard",
+  },
+  { route: "/recipes/ai-workspace", slug: "ai-workspace" },
 ];
 
 test.describe("showcase full-page recipe shell", () => {
@@ -160,5 +173,113 @@ test.describe("showcase full-page recipe shell", () => {
           .toBe(true);
       }
     }
+  });
+
+  for (const theme of ["light", "dark"] as const) {
+    test(`has no axe A/AA violations on representative ${theme} demos`, async ({
+      page,
+    }) => {
+      test.slow();
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.addInitScript((selectedTheme) => {
+        localStorage.setItem("dethink-theme", selectedTheme);
+      }, theme);
+
+      for (const { route, slug } of representativeRoutes) {
+        await page.goto(route);
+        await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+        await page.locator("html").evaluate(async () => {
+          await Promise.allSettled(
+            document
+              .getAnimations({ subtree: true })
+              .map((animation) => animation.finished),
+          );
+        });
+        const results = await new AxeBuilder({ page })
+          .include(`[data-recipe-preview="${slug}"]`)
+          .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+          .analyze();
+        const summary = results.violations.map((violation) => ({
+          id: violation.id,
+          impact: violation.impact,
+          nodes: violation.nodes.map((node) => node.target),
+        }));
+
+        expect(summary, `${theme} ${route} axe violations`).toEqual([]);
+      }
+    });
+  }
+
+  test("keeps the gallery, demo, details, source, and return journey intact", async ({
+    page,
+  }) => {
+    for (const viewport of [
+      { width: 1440, height: 900 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await page.goto("/recipes");
+      await page.getByRole("link", { name: "AI workspace" }).click();
+      await expect(page).toHaveURL(/\/recipes\/ai-workspace$/);
+      await expect(
+        page.locator('[data-recipe-surface="ai-workspace"]'),
+      ).toBeVisible();
+
+      const controls = page.getByRole("navigation", {
+        name: "Recipe demo controls",
+      });
+      await controls.getByRole("link", { name: "Details" }).click();
+      await expect(
+        page.getByRole("heading", { level: 2, name: "AI workspace" }),
+      ).toBeInViewport();
+      await controls.getByRole("link", { name: "Source" }).click();
+      await expect(
+        page.getByRole("heading", { level: 2, name: "Source" }),
+      ).toBeInViewport();
+      await controls.getByRole("link", { name: "Recipes" }).click();
+      await expect(page).toHaveURL(/\/recipes$/);
+    }
+  });
+
+  test("reflows the demo controls at a 200%-equivalent viewport", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 720, height: 450 });
+    await page.goto(recipePath);
+
+    const controls = page.getByRole("navigation", {
+      name: "Recipe demo controls",
+    });
+    await expect(controls.getByRole("link", { name: "Recipes" })).toBeVisible();
+    await expect(controls.getByRole("link", { name: "Details" })).toBeVisible();
+    await expect(controls.getByRole("link", { name: "Source" })).toBeVisible();
+    await expect(
+      page.locator('[data-recipe-surface="command-center-dashboard"]'),
+    ).toBeVisible();
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      )
+      .toBe(true);
+  });
+
+  test("retains visible demo navigation focus in forced colors", async ({
+    page,
+  }) => {
+    await page.emulateMedia({
+      forcedColors: "active",
+      reducedMotion: "reduce",
+    });
+    await page.goto(recipePath);
+
+    const back = page
+      .getByRole("navigation", { name: "Recipe demo controls" })
+      .getByRole("link", { name: "Recipes" });
+    await back.focus();
+    await expect(back).toBeFocused();
+    await expect(back).toHaveCSS("outline-style", "solid");
+    await expect(back).toHaveCSS("outline-width", "2px");
   });
 });

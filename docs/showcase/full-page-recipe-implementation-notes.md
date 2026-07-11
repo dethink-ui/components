@@ -3,8 +3,7 @@
 ## Status
 
 - GitHub PRD: [#394 — Full-page recipe demos](https://github.com/parveshh/dethink-components/issues/394).
-- Completed slices: [#395 — Recipe full-page shell and representative dashboard](https://github.com/parveshh/dethink-components/issues/395) and [#396 — Roll full-page demos across the recipe catalog](https://github.com/parveshh/dethink-components/issues/396).
-- Current slice: [#397 — Verify full-page recipe journeys and visual quality](https://github.com/parveshh/dethink-components/issues/397).
+- Completed slices: [#395 — Recipe full-page shell and representative dashboard](https://github.com/parveshh/dethink-components/issues/395), [#396 — Roll full-page demos across the recipe catalog](https://github.com/parveshh/dethink-components/issues/396), and [#397 — Verify full-page recipe journeys and visual quality](https://github.com/parveshh/dethink-components/issues/397).
 
 ## Approved Direction
 
@@ -48,3 +47,6 @@
 - 2026-07-11: Completed the #396 catalog rollout. All ten recipe previews now opt into the shared `full-page` presentation contract, fill the available width and remaining dynamic viewport, and keep embed-only framing out of the canonical recipe route.
 - 2026-07-11: Added a production-route contract test for every recipe at 1440×900 and 390×844, covering route identity, preview geometry, visible product surfaces, minimum viewport coverage, and horizontal overflow. The four focused full-page tests pass across all twenty route/viewport combinations.
 - 2026-07-11: Visually reviewed representative marketing, security, CRUD, authentication, AI workspace, and support surfaces. Responsive navigation and stacked layouts remain legible, and product-internal borders continue to use the components' own border tokens.
+- 2026-07-11: Completed #397 with nine focused full-page checks and the complete 44-test Chromium showcase suite. Verification covers every recipe at desktop and mobile widths, natural keyboard order, reduced motion, forced colors, 200%-equivalent reflow, and the full gallery-to-demo-to-details-to-source-to-gallery journey.
+- 2026-07-11: Axe WCAG 2 A/AA scans pass on representative authentication, marketing, dashboard, and AI product surfaces in light and dark mode. The audit also corrected low-contrast supporting labels and status text plus a missing group role in the Command Center responder cluster.
+- 2026-07-11: Added and visually accepted settled production captures for a desktop dashboard, desktop marketing page, mobile authentication flow, and mobile AI workspace. The capture script now waits for fonts and active animations before taking deterministic reduced-motion screenshots.

@@ -659,6 +659,7 @@ export function CommandCenterDashboardRecipe({
 
               <div className="flex items-center gap-3">
                 <div
+                  role="group"
                   className="flex -space-x-2"
                   aria-label={`${responders.length} responders on call`}
                 >

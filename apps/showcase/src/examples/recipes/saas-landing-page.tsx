@@ -497,7 +497,7 @@ export function SaasLandingPageRecipe({
             {trustedBy.map((name) => (
               <span
                 key={name}
-                className="text-muted-foreground/80 font-heading text-base font-semibold tracking-tight opacity-80 hover:opacity-100 motion-safe:transition-opacity"
+                className="text-muted-foreground font-heading text-base font-semibold tracking-tight"
               >
                 {name}
               </span>
@@ -571,12 +571,12 @@ export function SaasLandingPageRecipe({
                     key={pill.label}
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${
                       pill.tone === "success"
-                        ? "bg-success/15 text-success"
+                        ? "bg-success/15 text-foreground"
                         : pill.tone === "info"
-                          ? "bg-info/15 text-info"
+                          ? "bg-info/15 text-foreground"
                           : pill.tone === "warning"
-                            ? "bg-warning/15 text-warning"
-                            : "bg-primary/15 text-primary"
+                            ? "bg-warning/15 text-foreground"
+                            : "bg-primary/15 text-foreground"
                     }`}
                   >
                     <Check className="size-3" strokeWidth={3} />
@@ -637,8 +637,11 @@ export function SaasLandingPageRecipe({
                 <div className="border-border/70 bg-background/60 rounded-xl border p-5 shadow-sm">
                   <div className="text-muted-foreground flex items-center justify-between">
                     <Icon className="text-primary size-4" aria-hidden="true" />
-                    <span className="text-success inline-flex items-center gap-1 text-xs font-medium">
-                      <TrendingUp aria-hidden="true" className="size-3" />
+                    <span className="text-foreground inline-flex items-center gap-1 text-xs font-medium">
+                      <TrendingUp
+                        aria-hidden="true"
+                        className="text-success size-3"
+                      />
                       {trend}
                     </span>
                   </div>
