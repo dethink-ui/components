@@ -402,7 +402,7 @@ function DispatchConsole() {
     <Card
       id="heliogrid-dispatch"
       shadow="md"
-      className="border-border/90 bg-background/95 overflow-hidden"
+      className="border-border/90 bg-background/95 overflow-hidden lg:min-h-[35.5rem]"
     >
       <div className="border-border flex items-center gap-3 border-b px-4 py-3">
         <Activity className="text-primary size-5" aria-hidden="true" />

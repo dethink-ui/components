@@ -1,8 +1,10 @@
 import {
+  createContext,
   type ForwardedRef,
   type ReactNode,
   type RefCallback,
   useCallback,
+  useContext,
   useEffect,
   useState,
 } from "react";
@@ -32,6 +34,8 @@ export interface DethinkPortalProviderProps {
   children?: ReactNode;
   container: HTMLElement | null;
 }
+
+const DethinkPortalContext = createContext(false);
 
 function assignForwardedRef<T>(
   ref: ForwardedRef<T> | undefined,
@@ -168,9 +172,18 @@ export function DethinkPortalProvider({
   children,
   container,
 }: DethinkPortalProviderProps) {
-  return (
+  const hasDethinkPortalParent = useContext(DethinkPortalContext);
+  const content = hasDethinkPortalParent ? (
+    children
+  ) : (
     <UNSAFE_PortalProvider getContainer={() => container}>
       {children}
     </UNSAFE_PortalProvider>
+  );
+
+  return (
+    <DethinkPortalContext.Provider value>
+      {content}
+    </DethinkPortalContext.Provider>
   );
 }

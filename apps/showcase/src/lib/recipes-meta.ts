@@ -81,30 +81,21 @@ export const recipeCategories: RecipeCategoryMeta[] = [
 export const recipesCatalog: RecipeMeta[] = [
   {
     slug: "login-and-onboarding",
-    title: "Login and onboarding",
+    title: "Onboarding workspace",
     category: "auth",
     summary:
-      "A split authentication screen with SSO-style actions, form anatomy, remembered sessions, and success feedback.",
-    tags: ["Login", "Onboarding", "Forms", "Toast"],
-    components: [
-      "card",
-      "form-field",
-      "input",
-      "checkbox",
-      "button",
-      "link",
-      "separator",
-      "feedback-states",
-    ],
+      "A responsive workspace onboarding flow with a generic top navigation and a branch-aware step sequence for solo and team setups.",
+    tags: ["Onboarding", "Steps", "Navigation", "Forms"],
+    components: ["steps", "form-field", "input", "button", "link"],
     sourceFile: "recipes/login-and-onboarding.tsx",
     featured: true,
-    complexity: "Starter",
+    complexity: "Intermediate",
     motionNotes:
-      "Uses a split-panel entrance, subtle card hover, native button press states, and Toast stack presence from the feedback layer.",
+      "The Steps component uses its subtle motion preset for branch changes and progress, while its built-in reduced-motion handling preserves clear state changes.",
     accessibilityNotes:
-      "Every form control has a visible label, the remember-me checkbox remains native, and submission feedback is announced through Toast.",
+      "The navbar uses semantic navigation, each form control has a visible label, and native radios keep the dynamic path choice keyboard-accessible.",
     responsiveNotes:
-      "The visual panel stacks below the form on narrow screens and preserves the form as the first keyboard path.",
+      "Navigation remains available in a horizontally scrollable mobile row, while the onboarding preview stacks below the workflow at narrower widths.",
   },
   {
     slug: "saas-landing-page",
@@ -205,6 +196,40 @@ export const recipesCatalog: RecipeMeta[] = [
       "The dispatch console uses labelled tabs, switches, progress, and status text; the audit flow uses visible labels and native validation; navigation, FAQ, timeline, dialog focus, and feedback inherit Dethink keyboard and announcement models.",
     responsiveNotes:
       "The split hero becomes a single-column story, the dispatch table keeps deliberate horizontal overflow, navigation moves into a Dethink Dialog, and all supporting grids collapse without changing content order.",
+  },
+  {
+    slug: "hush-and-hearth",
+    title: "Curated travel landing",
+    category: "marketing",
+    summary:
+      "An editorial slow-travel landing page with a seasonal planning hero, responsive local photography, curated stay cards, a human planning flow, traveller proof, and FAQ.",
+    tags: ["Landing", "Travel", "Editorial", "Booking"],
+    components: [
+      "navigation-menu",
+      "hero-text-animation",
+      "badge",
+      "button",
+      "card",
+      "tabs",
+      "date-range-picker",
+      "select",
+      "dialog",
+      "form-field",
+      "input",
+      "avatar-group",
+      "accordion",
+      "feedback-states",
+      "separator",
+    ],
+    sourceFile: "recipes/hush-and-hearth.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "HeroTextAnimation gives the editorial headline a restrained curtain reveal, while Tabs, Dialog, Toast, image hover transforms, and focus feedback stay subtle and reduced-motion aware.",
+    accessibilityNotes:
+      "Navigation, seasonal tabs, date and guest inputs, the curator dialog, form labels, FAQ, and success feedback use Dethink keyboard and announcement models; photography includes descriptive alt text and content never relies on imagery alone.",
+    responsiveNotes:
+      "The asymmetric hero becomes a text-first single-column story, local Next.js images advertise responsive sizes, the planner and seasonal cards stack cleanly, and primary navigation moves into a Dethink Dialog.",
   },
   {
     slug: "command-center-dashboard",
