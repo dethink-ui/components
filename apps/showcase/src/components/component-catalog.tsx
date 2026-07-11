@@ -204,7 +204,7 @@ export function ComponentCatalog() {
                         <li key={component.slug}>
                           <Link
                             href={`/components/${component.slug}`}
-                            className="group border-border bg-background hover:border-primary/50 hover:bg-primary/[0.04] focus-visible:ring-ring focus-visible:ring-offset-background flex h-full min-h-40 flex-col gap-3 rounded-md border p-5 shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                            className="group border-border/70 bg-background hover:border-primary/50 hover:bg-primary/[0.04] focus-visible:ring-ring focus-visible:ring-offset-background flex h-full min-h-40 flex-col gap-3 rounded-md border p-5 shadow-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                           >
                             <span className="flex items-start justify-between gap-3">
                               <span className="min-w-0 space-y-1">

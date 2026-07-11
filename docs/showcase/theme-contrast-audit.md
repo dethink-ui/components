@@ -23,5 +23,6 @@ Measured on 11 July 2026 against the rendered CSS tokens in Chromium for teal, v
 - Amber’s light focus-ring token is lowered slightly in lightness so the weakest brand still exceeds 3:1.
 - Current-page links gain a font-weight cue in addition to color and surface treatment.
 - Forced-colors mode restores a 2px `Highlight` focus outline, outlines current/selected/checked states, and gives disabled controls a dashed boundary.
+- Component-catalog cards use a softer 70% rendering of the semantic border because their outline is decorative hierarchy rather than the sole indicator of an interactive control. Their labels, arrows, hover treatment, and 2px focus ring continue to identify and expose the link state.
 
 The automated acceptance seam is `e2e/showcase-theme-resilience.spec.ts`.
