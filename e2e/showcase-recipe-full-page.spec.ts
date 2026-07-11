@@ -289,4 +289,76 @@ test.describe("showcase full-page recipe shell", () => {
     await expect(back).toHaveCSS("outline-style", "solid");
     await expect(back).toHaveCSS("outline-width", "2px");
   });
+
+  test("keeps settings and billing spacing and plan state aligned", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    await page.goto("/recipes/settings-and-billing");
+
+    const workspacePanel = page.locator('[data-settings-panel="workspace"]');
+    const planPanel = page.locator('[data-settings-panel="plan"]');
+    const form = workspacePanel.locator('[data-slot="form"]');
+    const title = page.getByRole("heading", {
+      level: 2,
+      name: "Northstar Operations",
+    });
+    const currentPlan = page.locator("[data-settings-current-plan]");
+    const growth = page.getByRole("radio", { name: "Growth" });
+    const starter = page.getByRole("radio", { name: "Starter" });
+
+    const workspaceBounds = await workspacePanel.boundingBox();
+    const planBounds = await planPanel.boundingBox();
+    const formBounds = await form.boundingBox();
+    const titleBounds = await title.boundingBox();
+    const summaryBounds = await currentPlan.boundingBox();
+
+    expect(workspaceBounds).not.toBeNull();
+    expect(planBounds).not.toBeNull();
+    expect(workspaceBounds!.y).toBeCloseTo(planBounds!.y, 0);
+    expect(formBounds).not.toBeNull();
+    expect(formBounds!.height).toBeLessThan(700);
+    expect(titleBounds).not.toBeNull();
+    expect(summaryBounds).not.toBeNull();
+    expect(Math.abs(summaryBounds!.y - titleBounds!.y)).toBeLessThanOrEqual(2);
+
+    await expect(growth).toBeChecked();
+    await expect(currentPlan).toHaveText("Current plan · Growth");
+    await starter.check();
+    await expect(starter).toBeChecked();
+    await expect(currentPlan).toHaveText("Current plan · Starter");
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload();
+
+    const surface = page.locator(
+      '[data-recipe-surface="settings-and-billing"]',
+    );
+    const mobileSurfaceBounds = await surface.boundingBox();
+    const mobileWorkspaceBounds = await workspacePanel.boundingBox();
+    const mobilePlanBounds = await planPanel.boundingBox();
+    const mobileTitleBounds = await title.boundingBox();
+    const mobileSummaryBounds = await currentPlan.boundingBox();
+    expect(mobileSurfaceBounds).not.toBeNull();
+    expect(mobileWorkspaceBounds).not.toBeNull();
+    expect(mobilePlanBounds).not.toBeNull();
+    expect(
+      mobileWorkspaceBounds!.x + mobileWorkspaceBounds!.width,
+    ).toBeLessThanOrEqual(mobileSurfaceBounds!.x + mobileSurfaceBounds!.width);
+    expect(mobilePlanBounds!.x + mobilePlanBounds!.width).toBeLessThanOrEqual(
+      mobileSurfaceBounds!.x + mobileSurfaceBounds!.width,
+    );
+    expect(mobileTitleBounds).not.toBeNull();
+    expect(mobileSummaryBounds).not.toBeNull();
+    expect(mobileSummaryBounds!.y).toBeGreaterThan(
+      mobileTitleBounds!.y + mobileTitleBounds!.height,
+    );
+    await expect
+      .poll(() =>
+        page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      )
+      .toBe(true);
+  });
 });

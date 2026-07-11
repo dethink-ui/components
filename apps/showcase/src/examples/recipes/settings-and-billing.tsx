@@ -198,6 +198,8 @@ export function SettingsAndBillingRecipe({
   const [saved, setSaved] = useState<null | string>(null);
   const [plan, setPlan] = useState("growth");
   const fullPage = presentation === "full-page";
+  const currentPlanLabel =
+    plans.find((candidate) => candidate.value === plan)?.label ?? "Growth";
 
   return (
     <div
@@ -214,7 +216,7 @@ export function SettingsAndBillingRecipe({
 
       <div className="space-y-5">
         {/* Header band */}
-        <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <span
               aria-hidden="true"
@@ -244,10 +246,15 @@ export function SettingsAndBillingRecipe({
             </div>
           </div>
 
-          <div className="flex flex-col items-end gap-2">
-            <span className="bg-primary/15 text-primary ring-primary/25 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset">
+          <div className="flex flex-col items-start gap-2 ps-[3.875rem] sm:items-end sm:ps-0 sm:pt-6">
+            <span
+              aria-live="polite"
+              aria-atomic="true"
+              data-settings-current-plan
+              className="bg-primary/15 text-primary ring-primary/25 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset"
+            >
               <CreditCard className="size-3.5" aria-hidden="true" />
-              Current plan · Growth
+              Current plan · {currentPlanLabel}
             </span>
             <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
               <Building2 className="size-3.5" aria-hidden="true" />
@@ -256,10 +263,11 @@ export function SettingsAndBillingRecipe({
           </div>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className="space-y-5">
+        <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="min-w-0 space-y-5">
             {/* Settings card */}
             <Card
+              data-settings-panel="workspace"
               shadow="sm"
               className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm"
             >
@@ -277,7 +285,7 @@ export function SettingsAndBillingRecipe({
               </CardHeader>
               <CardContent>
                 <Form
-                  className="space-y-6"
+                  spacing="md"
                   onSubmit={(event) => {
                     event.preventDefault();
                     setSaved("All changes saved");
@@ -312,7 +320,7 @@ export function SettingsAndBillingRecipe({
                   <div className="border-border/60 border-t" />
 
                   {/* Feature controls */}
-                  <FieldSet className="space-y-4">
+                  <FieldSet className="grid gap-4">
                     <SectionHeading
                       icon={Zap}
                       title="Feature controls"
@@ -525,9 +533,10 @@ export function SettingsAndBillingRecipe({
             </Card>
           </div>
 
-          <aside className="space-y-5">
+          <aside className="min-w-0 space-y-5">
             {/* Plan selection */}
             <Card
+              data-settings-panel="plan"
               shadow="sm"
               className="ring-border/60 ring-1 backdrop-blur-sm"
             >
@@ -567,7 +576,7 @@ export function SettingsAndBillingRecipe({
                             <FieldContent>
                               <div className="flex items-baseline justify-between gap-2">
                                 <FieldLabel>{item.label}</FieldLabel>
-                                <span className="text-foreground text-sm font-semibold tabular-nums">
+                                <span className="text-foreground shrink-0 text-sm font-semibold whitespace-nowrap tabular-nums">
                                   {item.price}
                                   <span className="text-muted-foreground ml-1 text-[0.7rem] font-normal">
                                     {item.cadence}
