@@ -244,6 +244,48 @@ a[aria-current="page"] {
   --dt-color-ring-dark: oklch(0.73 0.12 150);
 }
 
+/*
+ * HelioGrid recipe theme — a local semantic-token palette that recreates the
+ * selected Signal Control direction without forking any Dethink component.
+ */
+.sc-heliogrid-theme {
+  color-scheme: dark;
+  --dt-color-background: oklch(0.105 0.012 235);
+  --dt-color-foreground: oklch(0.965 0.012 95);
+  --dt-color-muted: oklch(0.17 0.018 230);
+  --dt-color-muted-foreground: oklch(0.71 0.018 220);
+  --dt-color-border: oklch(0.31 0.025 225);
+  --dt-color-input: oklch(0.38 0.028 225);
+  --dt-color-ring: oklch(0.88 0.22 118);
+  --dt-color-primary: oklch(0.88 0.22 118);
+  --dt-color-primary-foreground: oklch(0.12 0.025 225);
+  --dt-color-destructive: oklch(0.68 0.19 28);
+  --dt-color-destructive-foreground: oklch(0.98 0.01 28);
+  --dt-color-success: oklch(0.76 0.18 145);
+  --dt-color-success-foreground: oklch(0.12 0.025 145);
+  --dt-color-warning: oklch(0.82 0.16 82);
+  --dt-color-warning-foreground: oklch(0.15 0.03 82);
+  --dt-color-info: oklch(0.78 0.13 210);
+  --dt-color-info-foreground: oklch(0.13 0.03 220);
+  --dt-color-timeline-border: oklch(0.42 0.03 220);
+  --dt-color-timeline-rail: oklch(0.52 0.045 215);
+}
+
+.sc-heliogrid-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--dt-color-border) 35%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--dt-color-border) 35%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 3.25rem 3.25rem;
+}
+
 /* Hero backdrop: radial teal glows over a faint grid */
 .sc-hero-backdrop {
   background-image:

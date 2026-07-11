@@ -10,6 +10,7 @@ import { CommandCenterDashboardRecipe } from "@/examples/recipes/command-center-
 import { CrudResourceManagerRecipe } from "@/examples/recipes/crud-resource-manager";
 import { CustomerSupportCopilotRecipe } from "@/examples/recipes/customer-support-copilot";
 import { DethinkLabsSecurityRecipe } from "@/examples/recipes/dethink-labs-security";
+import { HelioGridEnergyRecipe } from "@/examples/recipes/heliogrid-energy";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
 import { SaasCheckoutOrderSummaryRecipe } from "@/examples/recipes/saas-checkout-order-summary";
 import { SaasLandingPageRecipe } from "@/examples/recipes/saas-landing-page";
@@ -30,6 +31,7 @@ const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
   "crud-resource-manager": CrudResourceManagerRecipe,
   "customer-support-copilot": CustomerSupportCopilotRecipe,
   "dethink-labs-security": DethinkLabsSecurityRecipe,
+  "heliogrid-energy": HelioGridEnergyRecipe,
   "login-and-onboarding": LoginAndOnboardingRecipe,
   "saas-checkout-order-summary": SaasCheckoutOrderSummaryRecipe,
   "saas-landing-page": SaasLandingPageRecipe,

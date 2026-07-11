@@ -47,7 +47,8 @@ export const recipeCategories: RecipeCategoryMeta[] = [
   {
     id: "dashboard",
     name: "Dashboards",
-    description: "App shells, metrics, filters, and operational command centers.",
+    description:
+      "App shells, metrics, filters, and operational command centers.",
   },
   {
     id: "data",
@@ -62,7 +63,8 @@ export const recipeCategories: RecipeCategoryMeta[] = [
   {
     id: "ai",
     name: "AI",
-    description: "AI-native workspaces using today’s navigation and feedback primitives.",
+    description:
+      "AI-native workspaces using today’s navigation and feedback primitives.",
   },
   {
     id: "scheduling",
@@ -164,6 +166,45 @@ export const recipesCatalog: RecipeMeta[] = [
       "Demo CTAs open a focus-trapped Dialog whose form announces success through Toast; NavigationMenu, Tabs, Accordion, and Dialog carry their own keyboard/focus models; the monitoring Switch and pricing toggle are labelled Fields; access/endpoint states are conveyed by Badge text (granted/denied, isolated) not color alone; and the headline stays readable when motion is reduced.",
     responsiveNotes:
       "The pill nav collapses its links and icon controls on small screens, the feature bento folds from a six-column grid to a single story column, and the threat console stacks its feed above the score panel.",
+  },
+  {
+    slug: "heliogrid-energy",
+    title: "Energy orchestration landing",
+    category: "marketing",
+    summary:
+      "A production-grade clean-energy platform landing page with a Signal Control hero, live dispatch console, operational proof, rollout timeline, audit conversion flow, and FAQ.",
+    tags: ["Landing", "Energy", "Interactive", "Enterprise"],
+    components: [
+      "navigation-menu",
+      "hero-text-animation",
+      "badge",
+      "button",
+      "reveal-button",
+      "card",
+      "tabs",
+      "switch",
+      "progress",
+      "table",
+      "grid",
+      "dialog",
+      "form-field",
+      "input",
+      "select",
+      "timeline",
+      "avatar-group",
+      "accordion",
+      "toast",
+      "separator",
+    ],
+    sourceFile: "recipes/heliogrid-energy.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "HeroTextAnimation introduces the headline, while Dethink Tabs, Progress, Dialog, Toast, and restrained motion-safe state transitions keep product feedback clear without decorative scroll choreography.",
+    accessibilityNotes:
+      "The dispatch console uses labelled tabs, switches, progress, and status text; the audit flow uses visible labels and native validation; navigation, FAQ, timeline, dialog focus, and feedback inherit Dethink keyboard and announcement models.",
+    responsiveNotes:
+      "The split hero becomes a single-column story, the dispatch table keeps deliberate horizontal overflow, navigation moves into a Dethink Dialog, and all supporting grids collapse without changing content order.",
   },
   {
     slug: "command-center-dashboard",
@@ -352,7 +393,9 @@ export const recipesCatalog: RecipeMeta[] = [
   },
 ];
 
-export const featuredRecipes = recipesCatalog.filter((recipe) => recipe.featured);
+export const featuredRecipes = recipesCatalog.filter(
+  (recipe) => recipe.featured,
+);
 
 export function getRecipeMeta(slug: string): RecipeMeta | undefined {
   return recipesCatalog.find((recipe) => recipe.slug === slug);
@@ -362,7 +405,8 @@ export function getRecipeCategoryMeta(
   category: RecipeCategory,
 ): RecipeCategoryMeta {
   return (
-    recipeCategories.find((item) => item.id === category) ?? recipeCategories[0]!
+    recipeCategories.find((item) => item.id === category) ??
+    recipeCategories[0]!
   );
 }
 
