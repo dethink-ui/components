@@ -312,21 +312,27 @@ function CheckoutFlow({ presentation = "embedded" }: RecipePreviewProps) {
                                   : "border-border/60 bg-background/60 hover:border-border"
                               }`}
                             >
-                              {item.popular ? (
-                                <span className="bg-primary/15 text-primary ring-primary/25 absolute -top-2.5 right-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ring-1 ring-inset">
-                                  <Star
-                                    className="size-2.5"
-                                    aria-hidden="true"
-                                  />
-                                  Most popular
-                                </span>
-                              ) : null}
+                              <div className="flex min-h-5 items-center justify-end">
+                                {item.popular ? (
+                                  <span
+                                    data-checkout-popular
+                                    className="bg-primary/15 text-primary ring-primary/25 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[0.65rem] font-semibold ring-1 ring-inset"
+                                  >
+                                    <Star
+                                      className="size-2.5"
+                                      aria-hidden="true"
+                                    />
+                                    Most popular
+                                  </span>
+                                ) : null}
+                              </div>
                               <div className="flex items-start justify-between gap-2">
                                 <FieldControl asChild>
                                   <RadioGroupItem value={value} />
                                 </FieldControl>
                                 {selected ? (
                                   <span
+                                    data-checkout-selected={value}
                                     aria-hidden="true"
                                     className="bg-primary text-primary-foreground grid size-5 shrink-0 place-items-center rounded-full"
                                   >

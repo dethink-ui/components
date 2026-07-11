@@ -16,7 +16,7 @@
 ## Local Issue 2 — Checkout Plan-State Indicators
 
 - GitHub: [#407](https://github.com/parveshh/dethink-components/issues/407).
-- Status: Blocked by Local Issue 1 in the branch stack.
+- Status: Completed.
 - Give “Most popular” and the selected check distinct, non-overlapping layout positions.
 - Verify plan changes, keyboard radios, and desktop/mobile geometry.
 

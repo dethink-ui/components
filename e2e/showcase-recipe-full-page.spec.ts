@@ -395,4 +395,30 @@ test.describe("showcase full-page recipe shell", () => {
       )
       .toBe(true);
   });
+
+  test("separates Checkout popularity and selection indicators", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/recipes/saas-checkout-order-summary");
+
+    const popular = page.locator("[data-checkout-popular]");
+    const selected = page.locator('[data-checkout-selected="growth"]');
+    await expect(popular).toBeVisible();
+    await expect(selected).toBeVisible();
+
+    const popularBounds = await popular.boundingBox();
+    const selectedBounds = await selected.boundingBox();
+    expect(popularBounds).not.toBeNull();
+    expect(selectedBounds).not.toBeNull();
+    expect(selectedBounds!.y).toBeGreaterThanOrEqual(
+      popularBounds!.y + popularBounds!.height,
+    );
+
+    await page.getByRole("radio", { name: "Starter" }).check();
+    await expect(
+      page.locator('[data-checkout-selected="starter"]'),
+    ).toBeVisible();
+    await expect(popular).toBeVisible();
+  });
 });
