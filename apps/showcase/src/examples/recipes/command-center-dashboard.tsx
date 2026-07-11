@@ -9,6 +9,7 @@ import {
   FileText,
   Gauge,
   LayoutDashboard,
+  PanelLeftOpen,
   Radio,
   Search,
   Settings2,
@@ -46,12 +47,16 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuLink,
+  SidebarMobile,
+  SidebarMobileTrigger,
   SidebarProvider,
   SidebarRail,
   type CommandPaletteCommand,
   type DataTableColumnDef,
   type ProgressTone,
+  cn,
 } from "@dethink/components";
+import type { RecipePreviewProps } from "@/lib/recipe-presentation";
 
 // ----------------------------------------------------------------------------
 // Decorative layers (token-only, aria-hidden, non-interactive)
@@ -369,8 +374,11 @@ const responderStatusDot: Record<string, string> = {
 
 // ----------------------------------------------------------------------------
 
-export function CommandCenterDashboardRecipe() {
+export function CommandCenterDashboardRecipe({
+  presentation = "embedded",
+}: RecipePreviewProps) {
   const [lastCommand, setLastCommand] = useState("No command run yet.");
+  const fullPage = presentation === "full-page";
 
   const commands: CommandPaletteCommand[] = [
     {
@@ -400,8 +408,19 @@ export function CommandCenterDashboardRecipe() {
 
   return (
     <SidebarProvider variant="floating" motion="expressive">
-      <div className="border-border bg-muted/30 flex min-h-[42rem] overflow-hidden rounded-xl border">
-        <Sidebar aria-label="Command center navigation">
+      <div
+        data-recipe-surface="command-center-dashboard"
+        className={cn(
+          "border-border bg-muted/30 flex overflow-hidden border",
+          fullPage
+            ? "min-h-[calc(100dvh-7rem)] rounded-none border-x-0 border-t-0"
+            : "min-h-[42rem] rounded-xl",
+        )}
+      >
+        <Sidebar
+          aria-label="Command center navigation"
+          className={fullPage ? "max-md:hidden" : undefined}
+        >
           <SidebarHeader>
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2.5">
@@ -514,6 +533,76 @@ export function CommandCenterDashboardRecipe() {
           <SidebarRail />
         </Sidebar>
 
+        {fullPage ? (
+          <SidebarMobile
+            label="Command center navigation"
+            className="md:hidden"
+          >
+            <SidebarHeader>
+              <div className="flex min-w-0 items-center gap-2.5">
+                <span
+                  aria-hidden="true"
+                  className="bg-primary/10 text-primary ring-primary/20 grid size-9 shrink-0 place-items-center rounded-lg ring-1"
+                >
+                  <ShieldAlert className="size-4.5" />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-foreground truncate text-sm font-semibold">
+                    Northstar Ops
+                  </div>
+                  <div className="text-muted-foreground truncate text-xs">
+                    Incident command
+                  </div>
+                </div>
+              </div>
+            </SidebarHeader>
+            <SidebarContent>
+              <SidebarGroup>
+                <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        current
+                        href="#overview"
+                        icon={<LayoutDashboard aria-hidden="true" />}
+                      >
+                        Overview
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        badge="14"
+                        href="#incidents"
+                        icon={<ShieldAlert aria-hidden="true" />}
+                      >
+                        Incidents
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        badge="3"
+                        href="#team"
+                        icon={<Users aria-hidden="true" />}
+                      >
+                        Responders
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuLink
+                        href="#slo"
+                        icon={<Gauge aria-hidden="true" />}
+                      >
+                        Service levels
+                      </SidebarMenuLink>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+          </SidebarMobile>
+        ) : null}
+
         <SidebarInset className="relative min-w-0 overflow-hidden p-4 sm:p-6">
           <span
             aria-hidden="true"
@@ -527,6 +616,12 @@ export function CommandCenterDashboardRecipe() {
           />
 
           <div className="relative space-y-5">
+            {fullPage ? (
+              <SidebarMobileTrigger className="md:hidden">
+                <PanelLeftOpen aria-hidden="true" className="size-4" />
+              </SidebarMobileTrigger>
+            ) : null}
+
             {/* Header / toolbar */}
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div className="space-y-2">
