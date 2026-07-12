@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scan-grid-background",
+  "type": "registry:ui",
+  "title": "ScanGridBackground",
+  "description": "Animated landing-page background: a token-colored line grid with a scanning highlight band sweeping vertically or horizontally. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/scan-grid-background/scan-grid-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/scan-grid-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

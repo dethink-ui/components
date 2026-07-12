@@ -105,13 +105,13 @@
   /*
    * Showcase-only decorative tokens, derived from the active brand's
    * resolved tokens so every brand theme restyles the hero, grid, and
-   * gradients without extra per-theme rules.
+   * backdrop without extra per-theme rules.
    */
   --sc-code-bg: oklch(0.19 0.026 212);
   --sc-code-border: oklch(0.3 0.03 208);
   --sc-code-foreground: oklch(0.93 0.014 185);
   --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 28%, transparent);
-  --sc-glow-b: color-mix(in oklch, var(--dt-color-info) 20%, transparent);
+  --sc-glow-b: color-mix(in oklch, var(--dt-color-primary) 18%, transparent);
   --sc-grid-line: color-mix(in oklch, var(--dt-color-primary) 9%, transparent);
   --sc-scrollbar-thumb: color-mix(
     in oklch,
@@ -148,7 +148,7 @@ a[aria-current="page"] {
 .dark,
 [data-theme="dark"] {
   --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 16%, transparent);
-  --sc-glow-b: color-mix(in oklch, var(--dt-color-info) 14%, transparent);
+  --sc-glow-b: color-mix(in oklch, var(--dt-color-primary) 10%, transparent);
   --sc-grid-line: color-mix(in oklch, var(--dt-color-primary) 7%, transparent);
 }
 
@@ -156,7 +156,7 @@ a[aria-current="page"] {
   :root:not([data-theme="light"]):not([data-theme="dark"]),
   [data-theme="system"] {
     --sc-glow-a: color-mix(in oklch, var(--dt-color-primary) 16%, transparent);
-    --sc-glow-b: color-mix(in oklch, var(--dt-color-info) 14%, transparent);
+    --sc-glow-b: color-mix(in oklch, var(--dt-color-primary) 10%, transparent);
     --sc-grid-line: color-mix(
       in oklch,
       var(--dt-color-primary) 7%,
@@ -311,7 +311,7 @@ a[aria-current="page"] {
   --dt-color-info-foreground: oklch(0.985 0.01 260);
 }
 
-/* Hero backdrop: radial teal glows over a faint grid */
+/* Hero backdrop: two tonal strengths of the active brand over a faint grid. */
 .sc-hero-backdrop {
   background-image:
     radial-gradient(42rem 26rem at 82% -10%, var(--sc-glow-a), transparent 65%),
@@ -325,28 +325,15 @@ a[aria-current="page"] {
     2.75rem 2.75rem;
 }
 
-/*
- * The gradient headline and brand mark blend the resolved primary toward the
- * info hue, so they track both the active brand and the color scheme with a
- * single rule.
- */
-.sc-gradient-text {
-  background-image: linear-gradient(
-    100deg,
-    var(--dt-color-primary),
-    color-mix(in oklch, var(--dt-color-primary) 62%, var(--dt-color-info)) 55%,
-    color-mix(in oklch, var(--dt-color-primary) 38%, var(--dt-color-info))
-  );
-  background-clip: text;
-  color: transparent;
+/* Keep the hero accent and brand mark consistently solid across every theme. */
+.sc-brand-text {
+  background-image: none;
+  color: var(--dt-color-primary);
 }
 
 .sc-brand-mark {
-  background-image: linear-gradient(
-    135deg,
-    var(--dt-color-primary),
-    color-mix(in oklch, var(--dt-color-primary) 55%, var(--dt-color-info))
-  );
+  background-color: var(--dt-color-primary);
+  background-image: none;
 }
 
 /* Dotted canvas behind live example previews */

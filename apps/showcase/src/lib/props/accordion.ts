@@ -26,8 +26,7 @@ export const accordionProps: PropRow[] = [
     prop: "onValueChange",
     type: "(value: string | undefined | string[]) => void",
     defaultValue: "—",
-    description:
-      "Fires with the next open value when a blade toggles.",
+    description: "Fires with the next open value when a blade toggles.",
   },
   {
     prop: "collapsible",

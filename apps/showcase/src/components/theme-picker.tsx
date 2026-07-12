@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Check, Palette } from "lucide-react";
+import { useState, useSyncExternalStore } from "react";
+import { Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +20,8 @@ import {
   type BrandThemeId,
 } from "@/lib/brand-themes";
 
+const BRAND_CHANGE_EVENT = "dethink-brand-change";
+
 function readStoredBrand(): BrandThemeId {
   const stored = window.localStorage.getItem(BRAND_STORAGE_KEY);
   return isBrandThemeId(stored) ? stored : DEFAULT_BRAND;
@@ -33,28 +35,63 @@ function applyDocumentBrand(next: BrandThemeId) {
   }
 }
 
-export function ThemePicker() {
-  const [brand, setBrand] = useState<BrandThemeId | null>(null);
+function subscribeToBrand(onStoreChange: () => void) {
+  window.addEventListener(BRAND_CHANGE_EVENT, onStoreChange);
 
-  useEffect(() => {
-    setBrand(readStoredBrand());
-  }, []);
+  return () => {
+    window.removeEventListener(BRAND_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+export function ThemePicker() {
+  const brand = useSyncExternalStore(
+    subscribeToBrand,
+    readStoredBrand,
+    () => DEFAULT_BRAND,
+  );
+  const [open, setOpen] = useState(false);
 
   function applyBrand(next: BrandThemeId) {
-    setBrand(next);
     window.localStorage.setItem(BRAND_STORAGE_KEY, next);
     applyDocumentBrand(next);
+    window.dispatchEvent(new Event(BRAND_CHANGE_EVENT));
   }
 
+  const activeBrand =
+    brandThemes.find((theme) => theme.id === brand) ?? brandThemes[0];
+
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={setOpen}>
       <DropdownMenuTrigger
+        data-slot="theme-reveal-button"
+        aria-label={activeBrand.label}
         variant="ghost"
-        size="icon"
-        aria-label="Brand theme"
-        className="text-muted-foreground hover:text-foreground size-8 rounded-md"
+        size="sm"
+        className="group text-muted-foreground hover:text-foreground min-w-8 justify-start gap-0! overflow-hidden px-0"
       >
-        <Palette className="size-4" aria-hidden="true" />
+        <span
+          aria-hidden="true"
+          className={`inline-flex size-8 shrink-0 items-center justify-center transition-transform duration-200 motion-reduce:transform-none motion-reduce:transition-none ${
+            open
+              ? "translate-x-1"
+              : "group-hover:translate-x-1 group-focus-visible:translate-x-1"
+          }`}
+        >
+          <span
+            className="border-foreground/20 size-4 rounded-full border shadow-sm"
+            style={{ backgroundColor: activeBrand.swatch }}
+          />
+        </span>
+        <span
+          aria-hidden="true"
+          className={`overflow-hidden transition-[max-width,opacity] duration-200 motion-reduce:transition-none ${
+            open
+              ? "max-w-20 opacity-100"
+              : "max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-focus-visible:max-w-20 group-focus-visible:opacity-100"
+          }`}
+        >
+          <span className="block ps-1 pe-3">{activeBrand.label}</span>
+        </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         aria-label="Brand theme"

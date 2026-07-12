@@ -56,9 +56,7 @@ describe("Accordion single state", () => {
   it("opens one item at a time and reports value changes", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    render(
-      <BasicAccordion defaultValue="one" onValueChange={onValueChange} />,
-    );
+    render(<BasicAccordion defaultValue="one" onValueChange={onValueChange} />);
 
     await user.click(screen.getByRole("button", { name: "Two" }));
 
@@ -70,9 +68,7 @@ describe("Accordion single state", () => {
   it("closes the open item when clicked again by default", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    render(
-      <BasicAccordion defaultValue="one" onValueChange={onValueChange} />,
-    );
+    render(<BasicAccordion defaultValue="one" onValueChange={onValueChange} />);
 
     await user.click(screen.getByRole("button", { name: "One" }));
 
@@ -275,11 +271,7 @@ describe("Accordion keyboard behavior", () => {
       const [value, setValue] = useState<AccordionValue>("one");
 
       return (
-        <Accordion
-          motionPreset="none"
-          onValueChange={setValue}
-          value={value}
-        >
+        <Accordion motionPreset="none" onValueChange={setValue} value={value}>
           <Accordion.Item value="one">
             <Accordion.Blade>One</Accordion.Blade>
             <Accordion.Content>
@@ -295,7 +287,9 @@ describe("Accordion keyboard behavior", () => {
     const user = userEvent.setup();
     render(<FocusReturnHarness />);
 
-    await user.click(screen.getByRole("button", { name: "Close from content" }));
+    await user.click(
+      screen.getByRole("button", { name: "Close from content" }),
+    );
 
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "One" })).toHaveFocus(),

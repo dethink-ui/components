@@ -182,8 +182,7 @@ const heroTextAnimationTypewriterCaretClasses =
 // final letter. Resolving a character only swaps the glyph inside its slot; the
 // slot itself never changes size. That invariance is what removes every source
 // of jitter and the settle-time shift, without depending on font kerning at all.
-const heroTextAnimationScrambleMotionClasses =
-  "inline min-w-0 max-w-full";
+const heroTextAnimationScrambleMotionClasses = "inline min-w-0 max-w-full";
 const heroTextAnimationScrambleTextClasses = "inline";
 // Each word is an inline-block so a run of character slots never breaks mid-word
 // — line breaks only happen at the real spaces between words.
@@ -738,7 +737,11 @@ function getKineticEmphasisWordVariants({
   }
 
   return {
-    hidden: { opacity: 0, scale: kineticEmphasisHiddenScale, y: kineticEmphasisRise },
+    hidden: {
+      opacity: 0,
+      scale: kineticEmphasisHiddenScale,
+      y: kineticEmphasisRise,
+    },
     visible: {
       opacity: 1,
       scale: [kineticEmphasisHiddenScale, kineticEmphasisScale, 1],
@@ -2882,22 +2885,22 @@ export const HeroTextAnimation = forwardRef<
       (animation === "masked-curtain"
         ? heroTextAnimationMotionTokens.duration.maskedCurtain
         : animation === "rotating-keyword"
-        ? heroTextAnimationMotionTokens.duration.rotatingKeyword
-        : animation === "scramble-decrypt"
-          ? heroTextAnimationMotionTokens.duration.scramble
-          : animation === "gradient-highlight"
-            ? heroTextAnimationMotionTokens.duration.gradientHighlight
-            : animation === "blur-focus"
-              ? heroTextAnimationMotionTokens.duration.blurFocus
-              : animation === "kinetic-emphasis-pop"
-                ? heroTextAnimationMotionTokens.duration.kineticEmphasisPop
-                : animation === "svg-stroke-draw"
-                  ? heroTextAnimationMotionTokens.duration.svgStrokeDraw
-                  : animation === "scroll-responsive"
-                    ? heroTextAnimationMotionTokens.duration.scrollResponsive
-                    : animation === "typewriter"
-                      ? heroTextAnimationMotionTokens.duration.typewriter
-                      : heroTextAnimationMotionTokens.duration.base);
+          ? heroTextAnimationMotionTokens.duration.rotatingKeyword
+          : animation === "scramble-decrypt"
+            ? heroTextAnimationMotionTokens.duration.scramble
+            : animation === "gradient-highlight"
+              ? heroTextAnimationMotionTokens.duration.gradientHighlight
+              : animation === "blur-focus"
+                ? heroTextAnimationMotionTokens.duration.blurFocus
+                : animation === "kinetic-emphasis-pop"
+                  ? heroTextAnimationMotionTokens.duration.kineticEmphasisPop
+                  : animation === "svg-stroke-draw"
+                    ? heroTextAnimationMotionTokens.duration.svgStrokeDraw
+                    : animation === "scroll-responsive"
+                      ? heroTextAnimationMotionTokens.duration.scrollResponsive
+                      : animation === "typewriter"
+                        ? heroTextAnimationMotionTokens.duration.typewriter
+                        : heroTextAnimationMotionTokens.duration.base);
     const renderStatic =
       !hasHydrated ||
       (reducedMotion &&
@@ -2924,8 +2927,7 @@ export const HeroTextAnimation = forwardRef<
     // explicit splitBy opts into a staggered word-by-word (or line-by-line)
     // focus-in; leaving it undefined keeps the original single-phrase behavior.
     const blurFocusSegmented =
-      animation === "blur-focus" &&
-      (splitBy === "word" || splitBy === "line");
+      animation === "blur-focus" && (splitBy === "word" || splitBy === "line");
     const resolvedStagger =
       stagger ??
       (resolvedSplitBy === "line"

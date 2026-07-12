@@ -774,7 +774,11 @@ describe("HeroTextAnimation", () => {
       ),
     ).toHaveTextContent("Highlight the conversion-critical phrase.");
     expect(motion).toHaveAttribute("aria-hidden", "true");
-    expect(motion).toHaveClass("text-transparent", "bg-clip-text", "bg-no-repeat");
+    expect(motion).toHaveClass(
+      "text-transparent",
+      "bg-clip-text",
+      "bg-no-repeat",
+    );
     expect(motion?.getAttribute("style")).toContain(
       "--hero-text-animation-highlight-base: var(--dt-color-foreground)",
     );
@@ -845,10 +849,7 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-split-by", "line");
     expect(heading).toHaveAttribute("data-segment-count", "1");
     expect(visual).toHaveAttribute("aria-hidden", "true");
-    expect(motion).toHaveAttribute(
-      "data-svg-stroke-draw-mode",
-      "letter-trace",
-    );
+    expect(motion).toHaveAttribute("data-svg-stroke-draw-mode", "letter-trace");
     expect(motion).toHaveAttribute("data-svg-line-count", "1");
     expect(motion).toHaveTextContent(
       "Draw attention without replacing the headline.",

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dot-matrix-background",
+  "type": "registry:ui",
+  "title": "DotMatrixBackground",
+  "description": "Animated landing-page background: a token-colored dot grid with soft brightness pulses rolling through the field at seeded origins. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/dot-matrix-background/dot-matrix-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/dot-matrix-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

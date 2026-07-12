@@ -36,10 +36,7 @@ export type AccordionType = "single" | "multiple";
 export type AccordionValue = string | undefined;
 export type AccordionMultipleValue = string[];
 export type AccordionMotionPreset =
-  | "none"
-  | "subtle"
-  | "standard"
-  | "expressive";
+  "none" | "subtle" | "standard" | "expressive";
 export type AccordionBladeIconPosition = "start" | "end";
 
 type AccordionBaseProps = Omit<
@@ -89,14 +86,18 @@ type MotionBackedDragProps =
 
 export type AccordionProps = AccordionSingleProps | AccordionMultipleProps;
 
-export interface AccordionItemProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, MotionBackedDragProps> {
+export interface AccordionItemProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  MotionBackedDragProps
+> {
   value: string;
   disabled?: boolean;
 }
 
-export interface AccordionBladeProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, MotionBackedDragProps> {
+export interface AccordionBladeProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  MotionBackedDragProps
+> {
   iconPosition?: AccordionBladeIconPosition;
 }
 
@@ -106,8 +107,10 @@ export type AccordionBladeIconProps = Omit<
 >;
 export type AccordionBladeTextProps = HTMLAttributes<HTMLSpanElement>;
 
-export interface AccordionContentProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, MotionBackedDragProps> {
+export interface AccordionContentProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  MotionBackedDragProps
+> {
   forceMount?: boolean;
 }
 
@@ -189,7 +192,12 @@ const accordionMotionSettings: Record<
   none: { duration: 0, offset: 0, hoverScale: 1, tapScale: 1 },
   subtle: { duration: 0.18, offset: 6, hoverScale: 1.002, tapScale: 0.998 },
   standard: { duration: 0.24, offset: 10, hoverScale: 1.004, tapScale: 0.996 },
-  expressive: { duration: 0.34, offset: 14, hoverScale: 1.006, tapScale: 0.994 },
+  expressive: {
+    duration: 0.34,
+    offset: 14,
+    hoverScale: 1.006,
+    tapScale: 0.994,
+  },
 };
 
 export function accordionClassNames({
@@ -531,9 +539,10 @@ const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(
             setUncontrolledValue(next);
           }
 
-          (onValueChange as ((value: AccordionMultipleValue) => void) | undefined)?.(
-            next,
-          );
+          (
+            onValueChange as
+              ((value: AccordionMultipleValue) => void) | undefined
+          )?.(next);
           return;
         }
 
@@ -683,8 +692,13 @@ export const AccordionBlade = forwardRef<
       setFocusedValue,
       toggleValue,
     } = useAccordionContext("Accordion.Blade");
-    const { bladeId, contentId, disabled: itemDisabled, open, value } =
-      useItemContext("Accordion.Blade");
+    const {
+      bladeId,
+      contentId,
+      disabled: itemDisabled,
+      open,
+      value,
+    } = useItemContext("Accordion.Blade");
     const resolvedDisabled = itemDisabled || disabled;
 
     useEffect(
@@ -773,8 +787,9 @@ export const AccordionBladeIcon = forwardRef<
   HTMLSpanElement,
   AccordionBladeIconProps
 >(({ className, ...props }, ref) => {
-  const { motionConfig, motionPreset } =
-    useAccordionContext("Accordion.BladeIcon");
+  const { motionConfig, motionPreset } = useAccordionContext(
+    "Accordion.BladeIcon",
+  );
   const { open } = useItemContext("Accordion.BladeIcon");
 
   return (

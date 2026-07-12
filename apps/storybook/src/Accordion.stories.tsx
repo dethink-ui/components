@@ -335,7 +335,11 @@ export const ReducedMotion: Story = {
 
 export const DarkAndCompactDensity: Story = {
   render: (args) => (
-    <DethinkProvider className="bg-background rounded-xl p-6" density="compact" theme="dark">
+    <DethinkProvider
+      className="bg-background rounded-xl p-6"
+      density="compact"
+      theme="dark"
+    >
       <DemoAccordion {...getSingleStoryArgs(args)} />
     </DethinkProvider>
   ),

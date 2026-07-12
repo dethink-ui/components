@@ -91,7 +91,7 @@ export function LandingHero() {
             </p>
             <h1 className="font-heading max-w-2xl text-3xl leading-[1.1] font-bold tracking-tight lg:text-4xl">
               Production React components,
-              <span className="sc-gradient-text"> themed by tokens.</span>
+              <span className="sc-brand-text"> themed by tokens.</span>
             </h1>
             <p className="text-muted-foreground max-w-xl text-base leading-7">
               An open-code component system for SaaS dashboards, internal tools,

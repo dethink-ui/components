@@ -1,0 +1,18 @@
+export {
+  DotMatrixBackground,
+  dotMatrixBackgroundClassNames,
+  dotMatrixBackgroundContentClassNames,
+  dotMatrixBackgroundLayerClassNames,
+  getDotMatrixBackgroundGeometry,
+  getDotMatrixBackgroundMotionConfig,
+  type DotMatrixBackgroundClassNamesOptions,
+  type DotMatrixBackgroundContentClassNamesOptions,
+  type DotMatrixBackgroundDensity,
+  type DotMatrixBackgroundIntensity,
+  type DotMatrixBackgroundLayerClassNamesOptions,
+  type DotMatrixBackgroundMotionConfig,
+  type DotMatrixBackgroundProps,
+  type DotMatrixBackgroundPulse,
+  type DotMatrixBackgroundSpeed,
+  type DotMatrixBackgroundTone,
+} from "./dot-matrix-background";

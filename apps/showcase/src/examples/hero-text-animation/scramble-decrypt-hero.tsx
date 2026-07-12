@@ -52,10 +52,7 @@ export function HeroTextAnimationScrambleDecryptHero() {
         <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:px-10 lg:py-20">
           <div className="min-w-0">
             <span className="border-border bg-background/70 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-xs backdrop-blur">
-              <KeyRound
-                aria-hidden="true"
-                className="text-info size-3.5"
-              />
+              <KeyRound aria-hidden="true" className="text-info size-3.5" />
               End-to-end encrypted by default
             </span>
 

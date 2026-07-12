@@ -41,6 +41,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DotMatrixBackground,
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -73,7 +74,11 @@ import {
   FlexItem,
   Form,
   Grid,
+  GridBeamsBackground,
   GridItem,
+  LightStreaksBackground,
+  ScanGridBackground,
+  StarfieldBackground,
   Heading,
   HorizontalAccordion,
   IconButton,
@@ -309,6 +314,61 @@ export function App() {
               </GridItem>
             ))}
           </Grid>
+          <GridBeamsBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="primary"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                GridBeamsBackground smoke
+              </Text>
+            </Flex>
+          </GridBeamsBackground>
+          <ScanGridBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="primary"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                ScanGridBackground smoke
+              </Text>
+            </Flex>
+          </ScanGridBackground>
+          <DotMatrixBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="primary"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                DotMatrixBackground smoke
+              </Text>
+            </Flex>
+          </DotMatrixBackground>
+          <LightStreaksBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="primary"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                LightStreaksBackground smoke
+              </Text>
+            </Flex>
+          </LightStreaksBackground>
+          <StarfieldBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="foreground"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                StarfieldBackground smoke
+              </Text>
+            </Flex>
+          </StarfieldBackground>
           <Separator spacing="1" />
           <Flex align="center" gap="3">
             <Text size="sm" weight="medium">

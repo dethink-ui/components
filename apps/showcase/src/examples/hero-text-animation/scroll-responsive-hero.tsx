@@ -40,7 +40,12 @@ export function HeroTextAnimationScrollResponsiveHero() {
             </p>
 
             <div className="mt-8">
-              <Button asChild size="lg" variant="outline" rightIcon={<ArrowRight />}>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                rightIcon={<ArrowRight />}
+              >
                 <a href="#examples">Read the story</a>
               </Button>
             </div>

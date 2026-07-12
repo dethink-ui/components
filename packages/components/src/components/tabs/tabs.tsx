@@ -837,9 +837,15 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
             variant={variant}
           />
         ) : null}
-        <span data-slot="tabs-trigger-content" className={tabsTriggerContentClasses}>
+        <span
+          data-slot="tabs-trigger-content"
+          className={tabsTriggerContentClasses}
+        >
           {hasIcon ? (
-            <span data-slot="tabs-trigger-icon" className={tabsTriggerIconClasses}>
+            <span
+              data-slot="tabs-trigger-icon"
+              className={tabsTriggerIconClasses}
+            >
               {icon}
             </span>
           ) : null}
@@ -932,7 +938,10 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(
                 : false
             }
             animate={{ opacity: 1, [offsetAxis]: 0 }}
-            transition={{ duration: panelSettings.duration, ease: tabsPanelEase }}
+            transition={{
+              duration: panelSettings.duration,
+              ease: tabsPanelEase,
+            }}
           >
             {children}
           </motionElement.div>

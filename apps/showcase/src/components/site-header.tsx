@@ -9,6 +9,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
+  RevealButton,
 } from "@dethink/components";
 import { Menu, X } from "lucide-react";
 import { GithubIcon } from "@/components/icons";
@@ -67,15 +68,20 @@ function BrandMark() {
 
 function GithubLink() {
   return (
-    <a
-      href="https://github.com/parveshh/dethink-components"
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Dethink Components on GitHub"
-      className="text-muted-foreground hover:bg-muted hover:text-foreground grid size-8 place-items-center rounded-md transition-colors"
-    >
-      <GithubIcon className="size-4" />
-    </a>
+    <RevealButton
+      icon={<GithubIcon />}
+      label="GitHub"
+      size="sm"
+      variant="ghost"
+      className="text-muted-foreground hover:text-foreground"
+      onClick={() => {
+        window.open(
+          "https://github.com/parveshh/dethink-components",
+          "_blank",
+          "noopener,noreferrer",
+        );
+      }}
+    />
   );
 }
 

@@ -81,7 +81,7 @@ export function WorkbenchHero({
             className="font-heading mt-3 max-w-2xl text-[2rem] leading-[1.04] font-bold tracking-tight text-balance sm:mt-4 sm:text-5xl sm:leading-[1.08] lg:text-[3.25rem]"
           >
             A component workbench for{" "}
-            <span className="sc-gradient-text">token-themed</span> product UI.
+            <span className="sc-brand-text">token-themed</span> product UI.
           </motion.h1>
           <motion.p
             data-hero-motion-item

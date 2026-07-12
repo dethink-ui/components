@@ -46,8 +46,8 @@ export function HeroTextAnimationWordBlurFocusHero() {
 
           <p className="text-muted-foreground mt-7 max-w-lg text-base leading-7 sm:text-lg">
             A photography practice for brands that sweat the details. Each word
-            racks into focus the way our lenses do — deliberately, one plane at a
-            time, until the whole picture is sharp.
+            racks into focus the way our lenses do — deliberately, one plane at
+            a time, until the whole picture is sharp.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">

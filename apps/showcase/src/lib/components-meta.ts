@@ -7,7 +7,8 @@ export type ComponentTypeId =
   | "feedback"
   | "overlays"
   | "navigation"
-  | "data-display";
+  | "data-display"
+  | "effects";
 
 export interface ComponentTypeMeta {
   id: ComponentTypeId;
@@ -88,7 +89,42 @@ export const componentCatalog: ComponentMeta[] = [
     name: "HeroTextAnimation",
     description:
       "Animate hero headlines with accessible, SSR-safe staggered word and line reveals plus reduced-motion fallbacks.",
-    type: "general",
+    type: "effects",
+  },
+  {
+    slug: "grid-beams-background",
+    name: "GridBeamsBackground",
+    description:
+      "Frame hero content over a subtle token-colored line grid with seeded light beams tracing along grid lines, SSR-stable and reduced-motion safe.",
+    type: "effects",
+  },
+  {
+    slug: "scan-grid-background",
+    name: "ScanGridBackground",
+    description:
+      "Sweep a scanning highlight band across a token-colored line grid, vertically or horizontally, SSR-stable and reduced-motion safe.",
+    type: "effects",
+  },
+  {
+    slug: "dot-matrix-background",
+    name: "DotMatrixBackground",
+    description:
+      "Roll soft brightness pulses through a token-colored dot grid at seeded origins, SSR-stable and reduced-motion safe.",
+    type: "effects",
+  },
+  {
+    slug: "light-streaks-background",
+    name: "LightStreaksBackground",
+    description:
+      "Sweep blurred diagonal light streaks across hero surfaces on staggered seeded loops, SSR-stable and reduced-motion safe.",
+    type: "effects",
+  },
+  {
+    slug: "starfield-background",
+    name: "StarfieldBackground",
+    description:
+      "Drift a three-layer parallax starfield with twinkle and optional pointer parallax behind hero content, SSR-stable and reduced-motion safe.",
+    type: "effects",
   },
   {
     slug: "box",
@@ -480,6 +516,12 @@ export const componentTypes: ComponentTypeMeta[] = [
     id: "data-display",
     name: "Data Display",
     description: "Structured content, records, tables, cards, and timelines.",
+  },
+  {
+    id: "effects",
+    name: "Effects",
+    description:
+      "Animated backgrounds and decorative motion for landing pages and heroes.",
   },
 ];
 

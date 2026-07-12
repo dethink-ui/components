@@ -740,7 +740,9 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
                 showLabel={reveal === "spread"}
                 slot="item"
                 stackIndex={index + 1}
-                xTarget={magnifyMode ? (hovered ? spreadOffset : 0) : spreadOffset}
+                xTarget={
+                  magnifyMode ? (hovered ? spreadOffset : 0) : spreadOffset
+                }
                 zIndex={itemActive ? visualItems + 10 : index + 1}
                 zoomScale={zoomScale}
               >

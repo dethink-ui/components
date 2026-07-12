@@ -177,8 +177,8 @@ export function Example() {
           character must be immediately reviewable. Limit blur focus to short
           cinematic hero headings that can finish resolving before users need to
           read the copy. Use SVG stroke draw for short headings only; it renders
-          scalable letterforms that trace and fill, does not auto-wrap, and keeps
-          the real heading available to assistive technology. Use
+          scalable letterforms that trace and fill, does not auto-wrap, and
+          keeps the real heading available to assistive technology. Use
           scroll-responsive text only when the full heading is readable before
           the first scroll and the next content remains in normal document flow.
         </p>

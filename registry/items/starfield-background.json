@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "starfield-background",
+  "type": "registry:ui",
+  "title": "StarfieldBackground",
+  "description": "Animated landing-page background: a three-layer parallax starfield of seeded token-colored SVG stars with slow drift, twinkle, and optional spring-smoothed pointer parallax. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/starfield-background/starfield-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/starfield-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

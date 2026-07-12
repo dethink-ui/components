@@ -13,7 +13,10 @@ function DotIcon() {
 const checks = [
   ["Design", "Tokens, radius, dark mode, and density are inherited."],
   ["Behavior", "Each open blade stays open until the user clicks it again."],
-  ["Quality", "Keyboard, axe, SSR, registry, and Storybook checks cover the component."],
+  [
+    "Quality",
+    "Keyboard, axe, SSR, registry, and Storybook checks cover the component.",
+  ],
 ];
 
 export function AccordionMultiple() {

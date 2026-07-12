@@ -14,7 +14,12 @@ const audiences = ["Startups", "Agencies", "Product teams", "Founders"];
 // rotatingKeywordSuffix) so it rides the keyword's own text baseline instead of
 // the overflow-clipped rotating slot's synthesized baseline, which otherwise
 // dropped the "." below the line with an odd gap.
-const rotatingKeywords = ["startups.", "agencies.", "product teams.", "founders."];
+const rotatingKeywords = [
+  "startups.",
+  "agencies.",
+  "product teams.",
+  "founders.",
+];
 const rotateIntervalMs = 2000;
 
 const teamAvatars = [
@@ -56,7 +61,10 @@ export function HeroTextAnimationRotatingKeywordHero() {
       >
         <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-20">
           <span className="border-border bg-muted/50 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
-            <span aria-hidden="true" className="bg-primary size-1.5 rounded-full" />
+            <span
+              aria-hidden="true"
+              className="bg-primary size-1.5 rounded-full"
+            />
             One builder · every team
           </span>
 
@@ -69,7 +77,7 @@ export function HeroTextAnimationRotatingKeywordHero() {
             rotatingKeywordOptions={rotatingKeywords}
             rotatingKeywordPrefix="Launch pages for "
             text="Launch pages for startups, agencies, product teams, and founders."
-            className="font-heading text-foreground mx-auto mt-7 max-w-2xl text-4xl leading-[1.06] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl [&_[data-slot=hero-text-animation-motion]]:justify-center [&_[data-slot=hero-text-animation-rotating-keyword]]:text-primary"
+            className="font-heading text-foreground [&_[data-slot=hero-text-animation-rotating-keyword]]:text-primary mx-auto mt-7 max-w-2xl text-4xl leading-[1.06] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl [&_[data-slot=hero-text-animation-motion]]:justify-center"
           />
 
           <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 sm:text-lg">

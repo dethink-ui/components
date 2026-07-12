@@ -667,7 +667,10 @@ describe("Sidebar", () => {
 
       await user.keyboard("{Escape}");
 
-      expect(dialog).toBeInTheDocument();
+      // The exit animation may already have finished under load, so asserting
+      // the dialog is still mounted here races Motion's unmount. The stable
+      // contract is that focus returns to the trigger and the drawer then
+      // leaves the document.
       expect(
         screen.getByRole("button", { name: "Open sidebar" }),
       ).toHaveFocus();

@@ -275,7 +275,7 @@ export function SoundInputRecipeVoiceMemo() {
 
       {memo ? (
         <CardFooter justify="between">
-          <span className="text-muted-foreground text-xs uppercase tracking-wide">
+          <span className="text-muted-foreground text-xs tracking-wide uppercase">
             {memo.type.replace("audio/", "")}
           </span>
           <Button size="sm" variant="ghost" onClick={discard}>

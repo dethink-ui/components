@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "grid-beams-background",
+  "type": "registry:ui",
+  "title": "GridBeamsBackground",
+  "description": "Animated landing-page background: a subtle token-colored line grid with seeded light beams tracing along grid lines. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/grid-beams-background/grid-beams-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/grid-beams-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

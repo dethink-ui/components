@@ -249,7 +249,9 @@ function useWaveformMotionValues({
   useEffect(() => {
     if (!active || muted || reducedMotion) {
       levels.forEach((level, index) => {
-        level.set(muted ? soundInputWaveMutedLevel : soundInputWaveLevels[index]);
+        level.set(
+          muted ? soundInputWaveMutedLevel : soundInputWaveLevels[index],
+        );
       });
       return undefined;
     }
@@ -298,7 +300,9 @@ function useWaveformMotionValues({
       // bursts separated by silent gaps so idle-vs-active stays observable.
       const now = performance.now();
       const burst = Math.sin(now / 900);
-      return burst > 0 ? burst * (0.55 + 0.45 * Math.abs(Math.sin(now / 180))) : 0;
+      return burst > 0
+        ? burst * (0.55 + 0.45 * Math.abs(Math.sin(now / 180)))
+        : 0;
     };
 
     const readBand = (index: number) => {
@@ -316,7 +320,9 @@ function useWaveformMotionValues({
       }
 
       const now = performance.now();
-      return envelope * (0.5 + 0.5 * Math.abs(Math.sin(now / 160 + index * 1.3)));
+      return (
+        envelope * (0.5 + 0.5 * Math.abs(Math.sin(now / 160 + index * 1.3)))
+      );
     };
 
     const update = () => {

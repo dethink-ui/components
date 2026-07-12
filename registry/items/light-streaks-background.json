@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "light-streaks-background",
+  "type": "registry:ui",
+  "title": "LightStreaksBackground",
+  "description": "Animated landing-page background: blurred diagonal light streaks sweeping across the surface on staggered seeded loops. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/light-streaks-background/light-streaks-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/light-streaks-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
