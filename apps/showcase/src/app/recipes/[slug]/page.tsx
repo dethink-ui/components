@@ -9,10 +9,12 @@ import { AiWorkspaceRecipe } from "@/examples/recipes/ai-workspace";
 import { CommandCenterDashboardRecipe } from "@/examples/recipes/command-center-dashboard";
 import { CrudResourceManagerRecipe } from "@/examples/recipes/crud-resource-manager";
 import { CustomerSupportCopilotRecipe } from "@/examples/recipes/customer-support-copilot";
+import { DaymarkLandingRecipe } from "@/examples/recipes/daymark-landing";
 import { DethinkLabsSecurityRecipe } from "@/examples/recipes/dethink-labs-security";
 import { HelioGridEnergyRecipe } from "@/examples/recipes/heliogrid-energy";
 import { HushAndHearthRecipe } from "@/examples/recipes/hush-and-hearth";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
+import { LumenLandingRecipe } from "@/examples/recipes/lumen-landing";
 import { SaasCheckoutOrderSummaryRecipe } from "@/examples/recipes/saas-checkout-order-summary";
 import { SaasLandingPageRecipe } from "@/examples/recipes/saas-landing-page";
 import { SchedulerAndBookingRecipe } from "@/examples/recipes/scheduler-and-booking";
@@ -31,10 +33,12 @@ const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
   "command-center-dashboard": CommandCenterDashboardRecipe,
   "crud-resource-manager": CrudResourceManagerRecipe,
   "customer-support-copilot": CustomerSupportCopilotRecipe,
+  "daymark-landing": DaymarkLandingRecipe,
   "dethink-labs-security": DethinkLabsSecurityRecipe,
   "heliogrid-energy": HelioGridEnergyRecipe,
   "hush-and-hearth": HushAndHearthRecipe,
   "login-and-onboarding": LoginAndOnboardingRecipe,
+  "lumen-landing": LumenLandingRecipe,
   "saas-checkout-order-summary": SaasCheckoutOrderSummaryRecipe,
   "saas-landing-page": SaasLandingPageRecipe,
   "scheduler-and-booking": SchedulerAndBookingRecipe,

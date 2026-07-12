@@ -98,6 +98,64 @@ export const recipesCatalog: RecipeMeta[] = [
       "Navigation remains available in a horizontally scrollable mobile row, while the onboarding preview stacks below the workflow at narrower widths.",
   },
   {
+    slug: "daymark-landing",
+    title: "Daymark hospitality launch landing",
+    category: "marketing",
+    summary:
+      "A warm editorial launch page for hospitality, restaurant, and retail teams, with a live opening room, sunlit hero, richly styled guest-note card rail, and opening-day walkthrough.",
+    tags: ["Landing", "Hospitality", "Editorial", "Launch"],
+    components: [
+      "hero-text-animation",
+      "light-streaks-background",
+      "reveal-button",
+      "card-scroller",
+      "card-stack",
+      "progress",
+      "badge",
+      "card",
+      "button",
+      "separator",
+    ],
+    sourceFile: "recipes/daymark-landing.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "LightStreaksBackground gives the warm hero a slow, decorative sweep while HeroTextAnimation opens the message. CardScroller, CardStack, and RevealButton handle their own reduced-motion-safe interaction states.",
+    accessibilityNotes:
+      "The page has a single readable hero heading, semantic header, navigation, sections, and footer landmarks. The opening-room meters expose accessible progress values, while each guest note is a labelled, keyboard-operable radio option in the card rail.",
+    responsiveNotes:
+      "The opening-room dashboard moves from a dense desktop grid to stacked room cards, the guest-note rail becomes a one-up touch scroller at narrow widths, and the hero actions stay touch-friendly without hiding the main path.",
+  },
+  {
+    slug: "lumen-landing",
+    title: "Lumen creative operations landing",
+    category: "marketing",
+    summary:
+      "An expressive, dark-mode landing page for a fictional creative operating system, combining a kinetic hero, interactive project console, animated background layers, a narrative card rail, proof deck, and compact navigation dock.",
+    tags: ["Landing", "Creative Ops", "Motion", "Storytelling"],
+    components: [
+      "hero-text-animation",
+      "reveal-button",
+      "navdock",
+      "card-scroller",
+      "card-stack",
+      "grid-beams-background",
+      "starfield-background",
+      "card",
+      "button",
+      "separator",
+    ],
+    sourceFile: "recipes/lumen-landing.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "HeroTextAnimation gives the message its kinetic emphasis, while GridBeamsBackground and StarfieldBackground provide self-pausing decorative depth. NavDock, CardScroller, CardStack, and RevealButton each bring their own reduced-motion-aware interaction instead of relying on page-level scroll tricks.",
+    accessibilityNotes:
+      "The hero has a single readable accessible name, decorative layers stay out of the accessibility tree, the project meter exposes progress semantics, and every dock item remains a real link or button with an explicit label.",
+    responsiveNotes:
+      "The desktop studio console hides its decorative sidebar on narrow screens, the card rail becomes a touch-friendly one-up scroller, the dock auto-collapses when space is limited, and the proof section keeps its reading order when the deck stacks.",
+  },
+  {
     slug: "saas-landing-page",
     title: "SaaS landing page",
     category: "marketing",
