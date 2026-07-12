@@ -155,7 +155,9 @@ export function getAuroraBackgroundGeometry(
 
 // Each ribbon slot shifts the hue of the active tone color by a fixed number
 // of OKLCH degrees, so one semantic token yields a designed multi-hue aurora.
-export const auroraBackgroundHueShifts = [0, 40, -40, 80, -25] as const;
+// The spread is wide enough that neighboring slots land on clearly distinct
+// color families rather than tints of the same hue.
+export const auroraBackgroundHueShifts = [0, 75, -60, 145, -115] as const;
 
 const auroraBackgroundRootClasses = "relative isolate overflow-hidden";
 
@@ -168,9 +170,15 @@ const auroraBackgroundRailClasses = "absolute -inset-x-1/3 h-64";
 
 // The hue rotation is a progressive enhancement: browsers without relative
 // color syntax keep plain currentColor, which reads as a designed mono-hue
-// aurora. Blur is a static style and must never be animated.
+// aurora. The chroma floor and lightness clamp keep the rotation visible and
+// vibrant when the tone token is a near-neutral (the default theme's
+// primary/foreground tokens have zero chroma, where a bare hue rotation is a
+// no-op); tokens that already carry chroma and mid lightness pass through
+// unchanged. The alpha multiplier compensates for blur spreading the color
+// thin while preserving the tone/intensity alpha ladder proportionally. Blur
+// is a static style and must never be animated.
 const auroraBackgroundRibbonClasses =
-  "h-full w-full rounded-[100%] bg-gradient-to-r from-transparent via-current to-transparent blur-2xl supports-[color:oklch(from_red_l_c_h)]:[color:oklch(from_currentcolor_l_c_calc(h_+_var(--aurora-hue-shift,0)))]";
+  "h-full w-full rounded-[100%] bg-gradient-to-r from-transparent via-current to-transparent blur-2xl supports-[color:oklch(from_red_l_c_h)]:[color:oklch(from_currentcolor_clamp(0.65,l,0.75)_max(c,0.19)_calc(h_+_var(--aurora-hue-shift,0))/calc(alpha*1.35))]";
 
 const auroraBackgroundStaticRibbonOpacityClasses = [
   "opacity-70",

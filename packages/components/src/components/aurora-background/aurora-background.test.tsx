@@ -104,7 +104,7 @@ describe("AuroraBackground", () => {
       '[data-slot="aurora-background-ribbon"]',
     );
 
-    expect(auroraBackgroundHueShifts).toEqual([0, 40, -40, 80, -25]);
+    expect(auroraBackgroundHueShifts).toEqual([0, 75, -60, 145, -115]);
     ribbons.forEach((ribbon, slot) => {
       expect(ribbon.style.getPropertyValue("--aurora-hue-shift")).toBe(
         `${auroraBackgroundHueShifts[slot]}`,
