@@ -5,6 +5,7 @@ Five independently installable, Motion-animated background components:
 | Component | Slug | Signature effect |
 |---|---|---|
 | GridBeamsBackground | `grid-beams-background` | Line grid + seeded light beams tracing grid lines |
+| MagneticBeamsBackground | `magnetic-beams-background` | GridBeams variant: beams approach the hovering pointer (spring `magnetic` or loop-speed `follow` mode), then resume traversal from that point (PRD #428) |
 | DotMatrixBackground | `dot-matrix-background` | Dot grid + brightness ripples rolling through the field |
 | LightStreaksBackground | `light-streaks-background` | Blurred diagonal streaks sweeping periodically |
 | StarfieldBackground | `starfield-background` | 3-layer parallax starfield, twinkle, optional pointer parallax |

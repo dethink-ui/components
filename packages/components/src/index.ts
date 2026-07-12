@@ -292,6 +292,28 @@ export {
   type LightStreaksBackgroundTone,
 } from "./components/light-streaks-background";
 export {
+  MagneticBeamsBackground,
+  getMagneticBeamsBackgroundFollowDuration,
+  getMagneticBeamsBackgroundGeometry,
+  getMagneticBeamsBackgroundMotionConfig,
+  getMagneticBeamsBackgroundPointerProgress,
+  magneticBeamsBackgroundClassNames,
+  magneticBeamsBackgroundContentClassNames,
+  magneticBeamsBackgroundLayerClassNames,
+  type MagneticBeamsBackgroundBeam,
+  type MagneticBeamsBackgroundBeamAxis,
+  type MagneticBeamsBackgroundClassNamesOptions,
+  type MagneticBeamsBackgroundContentClassNamesOptions,
+  type MagneticBeamsBackgroundDensity,
+  type MagneticBeamsBackgroundIntensity,
+  type MagneticBeamsBackgroundLayerClassNamesOptions,
+  type MagneticBeamsBackgroundMode,
+  type MagneticBeamsBackgroundMotionConfig,
+  type MagneticBeamsBackgroundProps,
+  type MagneticBeamsBackgroundSpeed,
+  type MagneticBeamsBackgroundTone,
+} from "./components/magnetic-beams-background";
+export {
   StarfieldBackground,
   getStarfieldBackgroundGeometry,
   getStarfieldBackgroundMotionConfig,

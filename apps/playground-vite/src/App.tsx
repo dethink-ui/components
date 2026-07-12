@@ -77,6 +77,7 @@ import {
   GridBeamsBackground,
   GridItem,
   LightStreaksBackground,
+  MagneticBeamsBackground,
   ScanGridBackground,
   StarfieldBackground,
   Heading,
@@ -358,6 +359,29 @@ export function App() {
               </Text>
             </Flex>
           </LightStreaksBackground>
+          <MagneticBeamsBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="foreground"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                MagneticBeamsBackground smoke
+              </Text>
+            </Flex>
+          </MagneticBeamsBackground>
+          <MagneticBeamsBackground
+            className="border-border h-40 rounded-lg border"
+            mode="follow"
+            seed={2}
+            tone="foreground"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                MagneticBeamsBackground follow smoke
+              </Text>
+            </Flex>
+          </MagneticBeamsBackground>
           <StarfieldBackground
             className="border-border h-40 rounded-lg border"
             seed={2}

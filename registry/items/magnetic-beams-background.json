@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "magnetic-beams-background",
+  "type": "registry:ui",
+  "title": "MagneticBeamsBackground",
+  "description": "Animated landing-page background: the GridBeams line grid with seeded light beams that are attracted toward the pointer while it hovers, then resume their traversal from that point when it leaves. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/magnetic-beams-background/magnetic-beams-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/magnetic-beams-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

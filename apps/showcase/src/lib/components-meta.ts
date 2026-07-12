@@ -99,6 +99,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "effects",
   },
   {
+    slug: "magnetic-beams-background",
+    name: "MagneticBeamsBackground",
+    description:
+      "Frame hero content over the GridBeams line grid with light beams that spring toward the pointer while it hovers, then resume their traversal from that point, SSR-stable and reduced-motion safe.",
+    type: "effects",
+  },
+  {
     slug: "scan-grid-background",
     name: "ScanGridBackground",
     description:
