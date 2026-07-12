@@ -10,6 +10,7 @@ export {
   type DotMatrixBackgroundDensity,
   type DotMatrixBackgroundIntensity,
   type DotMatrixBackgroundLayerClassNamesOptions,
+  type DotMatrixBackgroundMode,
   type DotMatrixBackgroundMotionConfig,
   type DotMatrixBackgroundProps,
   type DotMatrixBackgroundPulse,

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
+import { expect, fireEvent, within } from "storybook/test";
 import {
   Badge,
   Button,
@@ -17,6 +17,8 @@ const meta = {
     animate: true,
     density: "normal",
     intensity: "subtle",
+    interactive: true,
+    mode: "pulse",
     seed: 1,
     speed: "normal",
     tone: "primary",
@@ -30,6 +32,11 @@ const meta = {
     intensity: {
       control: "inline-radio",
       options: ["faint", "subtle", "bold"],
+    },
+    interactive: { control: "boolean" },
+    mode: {
+      control: "inline-radio",
+      options: ["pulse", "follow"],
     },
     seed: { control: { type: "number", min: 1, step: 1 } },
     speed: {
@@ -125,6 +132,37 @@ export const SparseSlowMuted: Story = {
       <HeroContent />
     </DotMatrixBackground>
   ),
+};
+
+export const FollowMode: Story = {
+  args: {
+    mode: "follow",
+    seed: 7,
+  },
+  render: (args) => (
+    <DotMatrixBackground {...args}>
+      <HeroContent />
+    </DotMatrixBackground>
+  ),
+  play: async ({ canvasElement }) => {
+    const root = canvasElement.querySelector(
+      '[data-slot="dot-matrix-background"]',
+    );
+    await expect(root).toHaveAttribute("data-mode", "follow");
+
+    if (root) {
+      const rect = root.getBoundingClientRect();
+      await fireEvent.pointerMove(root, {
+        clientX: rect.left + rect.width * 0.3,
+        clientY: rect.top + rect.height * 0.6,
+      });
+      await fireEvent.pointerLeave(root);
+    }
+
+    await expect(
+      canvasElement.querySelector('[data-slot="dot-matrix-background-follow"]'),
+    ).toBeInTheDocument();
+  },
 };
 
 export const ReducedMotion: Story = {

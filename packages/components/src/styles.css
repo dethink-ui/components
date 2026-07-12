@@ -207,7 +207,72 @@
   }
 }
 
+/* Typed lengths so the card-scroller edge fades can transition. Browsers
+   without @property still render the fades; they just appear without the
+   soften-in animation. */
+@property --dt-card-scroller-fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --dt-card-scroller-fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @layer components {
+  /* Card-scroller edge fades: mask the viewport toward whichever edge still
+     hides cards, signalling scrollability without chrome. The JS-maintained
+     data-at-start/data-at-end attributes drive the fade widths because scroll
+     state is already tracked there and works in every engine, unlike
+     scroll-driven animations. */
+  [data-slot="card-scroller-viewport"] {
+    --dt-card-scroller-fade-start: 0px;
+    --dt-card-scroller-fade-end: 0px;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--dt-card-scroller-fade-start),
+      #000 calc(100% - var(--dt-card-scroller-fade-end)),
+      transparent
+    );
+    transition:
+      --dt-card-scroller-fade-start 240ms ease,
+      --dt-card-scroller-fade-end 240ms ease;
+  }
+
+  [data-slot="card-scroller-viewport"]:dir(rtl) {
+    mask-image: linear-gradient(
+      to left,
+      transparent,
+      #000 var(--dt-card-scroller-fade-start),
+      #000 calc(100% - var(--dt-card-scroller-fade-end)),
+      transparent
+    );
+  }
+
+  [data-slot="card-scroller-viewport"][data-at-start="false"] {
+    --dt-card-scroller-fade-start: var(--dt-space-10);
+  }
+
+  [data-slot="card-scroller-viewport"][data-at-end="false"] {
+    --dt-card-scroller-fade-end: var(--dt-space-10);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="card-scroller-viewport"] {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    [data-slot="card-scroller-viewport"] {
+      mask-image: none;
+    }
+  }
+
   /* Collapsible group open/close: grid-row interpolation drives height, with
      @starting-style providing the entry frame. The hidden attribute is applied
      by React after the exit transition completes. */

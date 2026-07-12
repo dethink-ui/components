@@ -9,6 +9,20 @@ export const dotMatrixBackgroundProps: PropRow[] = [
       "Set to false to force the static composition regardless of OS motion preference: the dot field with one soft highlight at the first seeded origin, with no animation loops mounted.",
   },
   {
+    prop: "interactive",
+    type: "boolean",
+    defaultValue: "true",
+    description:
+      "Enables the pointer-following glow when mode is follow. The enhancement only responds to a mouse pointer and is disabled for touch, reduced motion, and offscreen content. Set to false to keep the selected non-interactive composition.",
+  },
+  {
+    prop: "mode",
+    type: '"pulse" | "follow"',
+    defaultValue: '"pulse"',
+    description:
+      "pulse loops three seeded brightness ripples through the dot field. follow replaces the loop with one brighter, aligned patch that trails the mouse while it is over the background.",
+  },
+  {
     prop: "density",
     type: '"sparse" | "normal" | "dense"',
     defaultValue: '"normal"',

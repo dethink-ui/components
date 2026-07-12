@@ -9,12 +9,16 @@ import {
   type CSSProperties,
   type ForwardedRef,
   type HTMLAttributes,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
 import {
   MotionConfig,
   motion as motionElement,
+  useMotionTemplate,
+  useMotionValue,
   useReducedMotion,
+  useSpring,
   type Transition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
@@ -22,6 +26,7 @@ import { mulberry32, seededRange } from "../../utils/seeded-random";
 
 export type DotMatrixBackgroundDensity = "sparse" | "normal" | "dense";
 export type DotMatrixBackgroundIntensity = "faint" | "subtle" | "bold";
+export type DotMatrixBackgroundMode = "pulse" | "follow";
 export type DotMatrixBackgroundSpeed = "slow" | "normal" | "fast";
 export type DotMatrixBackgroundTone = "foreground" | "muted" | "primary";
 
@@ -57,6 +62,8 @@ export interface DotMatrixBackgroundProps extends MotionSafeDivProps {
   children?: ReactNode;
   density?: DotMatrixBackgroundDensity;
   intensity?: DotMatrixBackgroundIntensity;
+  interactive?: boolean;
+  mode?: DotMatrixBackgroundMode;
   seed?: number;
   speed?: DotMatrixBackgroundSpeed;
   tone?: DotMatrixBackgroundTone;
@@ -283,6 +290,10 @@ export const DotMatrixBackground = forwardRef(function DotMatrixBackground(
     className,
     density = "normal",
     intensity = "subtle",
+    interactive = true,
+    mode = "pulse",
+    onPointerLeave: onPointerLeaveProp,
+    onPointerMove: onPointerMoveProp,
     seed = 1,
     speed = "normal",
     tone = "muted",
@@ -317,6 +328,70 @@ export const DotMatrixBackground = forwardRef(function DotMatrixBackground(
   const motionConfig = getDotMatrixBackgroundMotionConfig(speed, reducedMotion);
   const pulses = useMemo(() => getDotMatrixBackgroundGeometry(seed), [seed]);
 
+  // The follow highlight is driven by Motion values rather than React state,
+  // keeping pointer movement off the render path. A spring makes the local
+  // dot glow trail the mouse without changing the underlying grid alignment.
+  const pointerX = useMotionValue(50);
+  const pointerY = useMotionValue(50);
+  const followX = useSpring(pointerX, { stiffness: 180, damping: 26 });
+  const followY = useSpring(pointerY, { stiffness: 180, damping: 26 });
+  const followMask = useMotionTemplate`radial-gradient(circle at ${followX}% ${followY}%, black 0%, black 12%, transparent 32%)`;
+  const [pointerActive, setPointerActive] = useState(false);
+  const followEnabled = running && interactive && mode === "follow";
+
+  useEffect(() => {
+    if (!followEnabled) {
+      setPointerActive(false);
+    }
+  }, [followEnabled]);
+
+  const handlePointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      onPointerMoveProp?.(event);
+
+      // This is a non-essential mouse enhancement. Touch remains free to
+      // scroll and operate the content without producing decorative motion.
+      if (!followEnabled || event.pointerType === "touch") {
+        return;
+      }
+
+      const node = localRef.current;
+
+      if (!node) {
+        return;
+      }
+
+      const rect = node.getBoundingClientRect();
+
+      if (rect.width === 0 || rect.height === 0) {
+        return;
+      }
+
+      pointerX.set(
+        Math.min(
+          100,
+          Math.max(0, ((event.clientX - rect.left) / rect.width) * 100),
+        ),
+      );
+      pointerY.set(
+        Math.min(
+          100,
+          Math.max(0, ((event.clientY - rect.top) / rect.height) * 100),
+        ),
+      );
+      setPointerActive(true);
+    },
+    [followEnabled, onPointerMoveProp, pointerX, pointerY],
+  );
+
+  const handlePointerLeave = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      onPointerLeaveProp?.(event);
+      setPointerActive(false);
+    },
+    [onPointerLeaveProp],
+  );
+
   const patternClassName = cn(
     dotMatrixBackgroundPatternClasses,
     dotMatrixBackgroundDensityClasses[density],
@@ -335,10 +410,14 @@ export const DotMatrixBackground = forwardRef(function DotMatrixBackground(
         data-animate={animate ? "true" : "false"}
         data-density={density}
         data-intensity={intensity}
+        data-interactive={interactive ? "true" : "false"}
+        data-mode={mode}
         data-speed={speed}
         data-tone={tone}
         data-reduced-motion={reducedMotion ? "true" : undefined}
         className={dotMatrixBackgroundClassNames({ className })}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
       >
         <div
           aria-hidden="true"
@@ -346,32 +425,43 @@ export const DotMatrixBackground = forwardRef(function DotMatrixBackground(
           className={dotMatrixBackgroundLayerClassNames({ intensity, tone })}
         >
           <div className={patternClassName} />
-          {running
-            ? pulses.map((pulse, index) => (
-                <motionElement.div
+          {followEnabled ? (
+            <motionElement.div
+              data-slot="dot-matrix-background-follow"
+              className={pulseClassName}
+              style={{ maskImage: followMask, WebkitMaskImage: followMask }}
+              initial={false}
+              animate={{ opacity: pointerActive ? 1 : 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            />
+          ) : running ? (
+            pulses.map((pulse, index) => (
+              <motionElement.div
+                key={index}
+                data-slot="dot-matrix-background-pulse"
+                className={pulseClassName}
+                style={pulseMaskStyle(pulse)}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{
+                  ...motionConfig.transition,
+                  delay: pulse.delay,
+                  repeatDelay: pulse.repeatDelay,
+                }}
+              />
+            ))
+          ) : (
+            pulses
+              .slice(0, 1)
+              .map((pulse, index) => (
+                <div
                   key={index}
                   data-slot="dot-matrix-background-pulse"
-                  className={pulseClassName}
+                  className={cn(pulseClassName, "opacity-50")}
                   style={pulseMaskStyle(pulse)}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: [0, 1, 0] }}
-                  transition={{
-                    ...motionConfig.transition,
-                    delay: pulse.delay,
-                    repeatDelay: pulse.repeatDelay,
-                  }}
                 />
               ))
-            : pulses
-                .slice(0, 1)
-                .map((pulse, index) => (
-                  <div
-                    key={index}
-                    data-slot="dot-matrix-background-pulse"
-                    className={cn(pulseClassName, "opacity-50")}
-                    style={pulseMaskStyle(pulse)}
-                  />
-                ))}
+          )}
         </div>
         <div
           data-slot="dot-matrix-background-content"

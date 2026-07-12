@@ -3,7 +3,7 @@
   "name": "dot-matrix-background",
   "type": "registry:ui",
   "title": "DotMatrixBackground",
-  "description": "Animated landing-page background: a token-colored dot grid with soft brightness pulses rolling through the field at seeded origins. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "description": "Animated landing-page background: a token-colored dot grid with seeded brightness pulses or an optional pointer-following local glow. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
   "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],

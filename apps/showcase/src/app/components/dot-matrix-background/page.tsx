@@ -7,6 +7,7 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { DotMatrixBackgroundBasic } from "@/examples/dot-matrix-background/basic";
+import { DotMatrixBackgroundFollow } from "@/examples/dot-matrix-background/follow";
 import { DotMatrixBackgroundStatic } from "@/examples/dot-matrix-background/static";
 import { DotMatrixBackgroundTones } from "@/examples/dot-matrix-background/tones";
 import { dotMatrixBackgroundProps } from "@/lib/props/dot-matrix-background";
@@ -14,14 +15,14 @@ import { dotMatrixBackgroundProps } from "@/lib/props/dot-matrix-background";
 export const metadata: Metadata = {
   title: "DotMatrixBackground",
   description:
-    "Roll soft brightness pulses through a token-colored dot grid at seeded origins, SSR-stable and reduced-motion safe.",
+    "Roll seeded brightness pulses through a token-colored dot grid, or follow the mouse with a local glow, SSR-stable and reduced-motion safe.",
 };
 
 export default function DotMatrixBackgroundPage() {
   return (
     <DocsPage
       name="DotMatrixBackground"
-      description="An animated landing-page background that suggests ambient computation: a faint dot grid with soft brightness pulses rolling through it at seeded origins. The pulses are masked copies of the same dot pattern, so dots brighten in place — no blob floating over the field. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a designed static frame under reduced motion."
+      description="An animated landing-page background that suggests ambient computation: a faint dot grid with soft brightness pulses rolling through it at seeded origins, or a local brightening that follows the mouse. The overlays are masked copies of the same dot pattern, so dots brighten in place — no blob floating over the field. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a designed static frame under reduced motion."
     >
       <DocsSection
         id="examples"
@@ -36,6 +37,14 @@ export default function DotMatrixBackgroundPage() {
             description="The default composition: hero copy and actions render in the content slot above the animated layer, which never intercepts pointer events."
           >
             <DotMatrixBackgroundBasic />
+          </ExampleBlock>
+          <ExampleBlock
+            wide
+            file="dot-matrix-background/follow.tsx"
+            title="Pointer-following glow"
+            description='Set mode="follow" to brighten an aligned patch of dots beneath the mouse. The enhancement is mouse-only and automatically disabled for touch, reduced motion, and offscreen content.'
+          >
+            <DotMatrixBackgroundFollow />
           </ExampleBlock>
           <ExampleBlock
             wide
@@ -64,7 +73,7 @@ export default function DotMatrixBackgroundPage() {
       <DocsSection
         id="props"
         title="Props"
-        description="DotMatrixBackground accepts div props plus the shared background contract: animate, density, intensity, speed, tone, and seed."
+        description="DotMatrixBackground accepts div props plus the shared background contract: animate, density, intensity, speed, tone, and seed — plus interactive and mode for pointer-following glow behavior."
       >
         <PropsTable
           caption="DotMatrixBackground props"

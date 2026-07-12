@@ -49,6 +49,14 @@ describe("DotMatrixBackground SSR", () => {
     expect(html).not.toContain("transform:");
   });
 
+  it("renders the static resting frame for follow mode on the server", () => {
+    const html = renderToString(<DotMatrixBackground mode="follow" />);
+
+    expect(html).toContain('data-mode="follow"');
+    expect(html).toContain('data-slot="dot-matrix-background-pulse"');
+    expect(html).not.toContain('data-slot="dot-matrix-background-follow"');
+  });
+
   it("hydrates without mismatch warnings", async () => {
     const consoleError = vi
       .spyOn(console, "error")

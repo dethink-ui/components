@@ -69,13 +69,16 @@ const viewportClasses =
   "flex min-w-0 snap-x snap-mandatory gap-[var(--card-scroller-gap)] overflow-x-auto overscroll-x-contain px-[var(--dt-space-4)] py-[var(--dt-space-4)] [-ms-overflow-style:none] [scroll-padding-inline:var(--dt-space-4)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden data-[overflow=true]:cursor-grab data-[dragging=true]:cursor-grabbing data-[dragging=true]:snap-none data-[dragging=true]:select-none motion-reduce:scroll-auto @[30rem]:snap-proximity @[30rem]:[--card-scroller-columns:var(--card-scroller-medium-visible)] @[52rem]:[--card-scroller-columns:var(--card-scroller-max-visible)]";
 
 const itemClasses =
-  "relative min-w-0 shrink-0 snap-start [flex-basis:calc((100%-(var(--card-scroller-columns)-1)*var(--card-scroller-gap))/var(--card-scroller-columns))] motion-safe:transition-[opacity,filter,transform] motion-safe:duration-200 motion-reduce:transition-none data-[selected=true]:z-20 data-[dimmed=true]:opacity-60 data-[dimmed=true]:blur-[1px] data-[dimmed=true]:scale-[0.99] data-[spotlighted=true]:z-30 data-[spotlighted=true]:scale-[1.02] motion-reduce:data-[dimmed=true]:blur-none motion-reduce:data-[dimmed=true]:scale-100 motion-reduce:data-[spotlighted=true]:scale-100 forced-colors:data-[dimmed=true]:opacity-100 forced-colors:data-[dimmed=true]:blur-none forced-colors:data-[dimmed=true]:scale-100 forced-colors:data-[spotlighted=true]:scale-100";
+  "relative min-w-0 shrink-0 snap-start [flex-basis:calc((100%-(var(--card-scroller-columns)-1)*var(--card-scroller-gap))/var(--card-scroller-columns))] scale-[calc(var(--card-scroller-pop,1)*var(--card-scroller-press,1))] motion-safe:[transition:opacity_200ms_ease,filter_200ms_ease,scale_300ms_var(--ease-spring),translate_300ms_var(--ease-spring)] motion-reduce:transition-none data-[selected=true]:z-20 data-[dimmed=true]:opacity-60 data-[dimmed=true]:blur-[1px] data-[dimmed=true]:[--card-scroller-pop:0.99] data-[spotlighted=true]:z-30 data-[spotlighted=true]:[--card-scroller-pop:1.02] data-[spotlighted=true]:-translate-y-0.5 not-data-[disabled=true]:active:[--card-scroller-press:0.98] motion-reduce:scale-100 motion-reduce:data-[spotlighted=true]:translate-y-0 motion-reduce:data-[dimmed=true]:blur-none forced-colors:scale-100 forced-colors:data-[spotlighted=true]:translate-y-0 forced-colors:data-[dimmed=true]:opacity-100 forced-colors:data-[dimmed=true]:blur-none";
 
 const cardClasses =
-  "pointer-events-none h-full cursor-pointer motion-safe:transition-[border-color,box-shadow,transform] motion-safe:duration-200 motion-reduce:transition-none data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-ring data-[selected=true]:border-primary data-[selected=true]:shadow-md data-[selected=true]:scale-[var(--card-scroller-selected-scale)] motion-reduce:data-[selected=true]:scale-100 forced-colors:shadow-none forced-colors:data-[focus-visible=true]:outline forced-colors:data-[focus-visible=true]:outline-2 forced-colors:data-[focus-visible=true]:outline-[Highlight] forced-colors:data-[selected=true]:outline forced-colors:data-[selected=true]:outline-2 forced-colors:data-[selected=true]:outline-[Highlight] forced-colors:data-[selected=true]:scale-100";
+  "pointer-events-none h-full cursor-pointer motion-safe:[transition:border-color_200ms_ease,box-shadow_200ms_ease,scale_300ms_var(--ease-spring)] motion-reduce:transition-none group-data-[spotlighted=true]/card-scroller-item:shadow-md data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-inset data-[focus-visible=true]:ring-ring data-[selected=true]:border-primary data-[selected=true]:shadow-md data-[selected=true]:scale-[var(--card-scroller-selected-scale)] motion-reduce:data-[selected=true]:scale-100 forced-colors:shadow-none forced-colors:data-[focus-visible=true]:outline forced-colors:data-[focus-visible=true]:outline-2 forced-colors:data-[focus-visible=true]:outline-[Highlight] forced-colors:data-[selected=true]:outline forced-colors:data-[selected=true]:outline-2 forced-colors:data-[selected=true]:outline-[Highlight] forced-colors:data-[selected=true]:scale-100";
 
 const controlsClasses =
-  "flex items-center justify-end gap-[var(--dt-space-2)] px-[var(--dt-space-3)] pt-[var(--dt-space-1)]";
+  "flex items-center justify-end gap-[var(--dt-space-2)] px-[var(--dt-space-3)] pt-[var(--dt-space-1)] motion-safe:transition-[opacity,translate] motion-safe:duration-200 starting:opacity-0 starting:translate-y-1";
+
+const navIconClasses =
+  "motion-safe:transition-[translate] motion-safe:duration-200";
 
 const dragThreshold = 10;
 const clickSuppressionDuration = 160;
@@ -94,7 +97,10 @@ interface DragSession {
 function ChevronLeftIcon() {
   return (
     <svg
-      className="rtl:rotate-180"
+      className={cn(
+        navIconClasses,
+        "rtl:rotate-180 ltr:group-hover/card-scroller-nav:-translate-x-0.5 rtl:group-hover/card-scroller-nav:translate-x-0.5",
+      )}
       aria-hidden="true"
       fill="none"
       viewBox="0 0 16 16"
@@ -113,7 +119,10 @@ function ChevronLeftIcon() {
 function ChevronRightIcon() {
   return (
     <svg
-      className="rtl:rotate-180"
+      className={cn(
+        navIconClasses,
+        "rtl:rotate-180 ltr:group-hover/card-scroller-nav:translate-x-0.5 rtl:group-hover/card-scroller-nav:-translate-x-0.5",
+      )}
       aria-hidden="true"
       fill="none"
       viewBox="0 0 16 16"
@@ -626,6 +635,8 @@ export const CardScroller = forwardRef<HTMLDivElement, CardScrollerProps>(
       >
         <div
           ref={viewportRef}
+          data-at-end={atEnd ? "true" : "false"}
+          data-at-start={atStart ? "true" : "false"}
           data-dragging={isDragging ? "true" : undefined}
           data-overflow={hasOverflow ? "true" : undefined}
           data-slot="card-scroller-viewport"
@@ -655,6 +666,7 @@ export const CardScroller = forwardRef<HTMLDivElement, CardScrollerProps>(
           <div data-slot="card-scroller-controls" className={controlsClasses}>
             <IconButton
               aria-label={previousLabel}
+              className="group/card-scroller-nav"
               disabled={disabled || atStart}
               onClick={() => scrollByItem(-1)}
               size="sm"
@@ -664,6 +676,7 @@ export const CardScroller = forwardRef<HTMLDivElement, CardScrollerProps>(
             </IconButton>
             <IconButton
               aria-label={nextLabel}
+              className="group/card-scroller-nav"
               disabled={disabled || atEnd}
               onClick={() => scrollByItem(1)}
               size="sm"

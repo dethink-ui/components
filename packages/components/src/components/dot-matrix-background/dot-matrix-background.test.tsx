@@ -1,6 +1,6 @@
 import { createRef } from "react";
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import {
   DotMatrixBackground,
   dotMatrixBackgroundClassNames,
@@ -40,6 +40,8 @@ describe("DotMatrixBackground", () => {
     expect(root).toHaveAttribute("data-animate", "true");
     expect(root).toHaveAttribute("data-density", "normal");
     expect(root).toHaveAttribute("data-intensity", "subtle");
+    expect(root).toHaveAttribute("data-interactive", "true");
+    expect(root).toHaveAttribute("data-mode", "pulse");
     expect(root).toHaveAttribute("data-speed", "normal");
     expect(root).toHaveAttribute("data-tone", "muted");
     expect(root).not.toHaveAttribute("data-reduced-motion");
@@ -50,6 +52,8 @@ describe("DotMatrixBackground", () => {
       <DotMatrixBackground
         density="dense"
         intensity="bold"
+        interactive={false}
+        mode="follow"
         speed="fast"
         tone="primary"
       />,
@@ -58,6 +62,8 @@ describe("DotMatrixBackground", () => {
 
     expect(root).toHaveAttribute("data-density", "dense");
     expect(root).toHaveAttribute("data-intensity", "bold");
+    expect(root).toHaveAttribute("data-interactive", "false");
+    expect(root).toHaveAttribute("data-mode", "follow");
     expect(root).toHaveAttribute("data-speed", "fast");
     expect(root).toHaveAttribute("data-tone", "primary");
   });
@@ -83,6 +89,54 @@ describe("DotMatrixBackground", () => {
     );
     expect(pulses).toHaveLength(1);
     expect(pulses[0]).toHaveClass("opacity-50");
+  });
+
+  it("renders a pointer-follow highlight in follow mode", () => {
+    const { container } = render(<DotMatrixBackground mode="follow" />);
+    const root = getRoot(container);
+
+    fireEvent.pointerMove(root, { clientX: 120, clientY: 80 });
+    fireEvent.pointerLeave(root);
+
+    expect(root).toHaveAttribute("data-mode", "follow");
+    expect(
+      container.querySelector('[data-slot="dot-matrix-background-follow"]'),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelectorAll('[data-slot="dot-matrix-background-pulse"]'),
+    ).toHaveLength(0);
+  });
+
+  it("does not enable pointer-following when interactive is false", () => {
+    const { container } = render(
+      <DotMatrixBackground interactive={false} mode="follow" />,
+    );
+
+    expect(
+      container.querySelector('[data-slot="dot-matrix-background-follow"]'),
+    ).not.toBeInTheDocument();
+    expect(
+      container.querySelectorAll('[data-slot="dot-matrix-background-pulse"]'),
+    ).toHaveLength(3);
+  });
+
+  it("still calls user-supplied pointer handlers", () => {
+    const onPointerMove = vi.fn();
+    const onPointerLeave = vi.fn();
+    const { container } = render(
+      <DotMatrixBackground
+        mode="follow"
+        onPointerLeave={onPointerLeave}
+        onPointerMove={onPointerMove}
+      />,
+    );
+    const root = getRoot(container);
+
+    fireEvent.pointerMove(root, { clientX: 10, clientY: 10 });
+    fireEvent.pointerLeave(root);
+
+    expect(onPointerMove).toHaveBeenCalledTimes(1);
+    expect(onPointerLeave).toHaveBeenCalledTimes(1);
   });
 
   it("renders identical markup for identical seeds and differing markup for different seeds", () => {

@@ -12,6 +12,7 @@ import {
   RevealButton,
 } from "@dethink/components";
 import { Menu, X } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 import { GithubIcon } from "@/components/icons";
 import { ThemePicker } from "@/components/theme-picker";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -20,51 +21,6 @@ const navLinks = [
   { href: "/components", label: "Components" },
   { href: "/recipes", label: "Recipes" },
 ];
-
-function BrandMark() {
-  return (
-    <span
-      data-brand-logo="component-stack"
-      aria-hidden="true"
-      className="sc-brand-mark text-primary-foreground grid size-7 shrink-0 place-items-center rounded-lg shadow-sm"
-    >
-      <svg
-        viewBox="0 0 28 28"
-        fill="none"
-        className="size-full"
-        aria-hidden="true"
-      >
-        <rect x="5.5" y="6" width="10" height="7" rx="2" fill="currentColor" />
-        <rect
-          x="17.5"
-          y="6"
-          width="5"
-          height="7"
-          rx="2"
-          fill="currentColor"
-          fillOpacity="0.72"
-        />
-        <rect
-          x="5.5"
-          y="15"
-          width="5"
-          height="7"
-          rx="2"
-          fill="currentColor"
-          fillOpacity="0.72"
-        />
-        <rect
-          x="12.5"
-          y="15"
-          width="10"
-          height="7"
-          rx="2"
-          fill="currentColor"
-        />
-      </svg>
-    </span>
-  );
-}
 
 function GithubLink() {
   return (
@@ -101,12 +57,8 @@ export function SiteHeader() {
   return (
     <header className="border-border/70 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="font-heading flex shrink-0 items-center gap-3 rounded-md text-[15px] font-semibold tracking-tight"
-        >
-          <BrandMark />
-          Dethink<span className="text-primary">/</span>Components
+        <Link href="/" className="shrink-0 rounded-md">
+          <BrandLogo />
         </Link>
 
         {/* Wide: inline link bar. */}

@@ -536,6 +536,49 @@ describe("CardScroller", () => {
     expect(screen.getByRole("radio", { name: "one plan" })).toBeChecked();
   });
 
+  it("exposes scroll edge state on the viewport for the edge fade styling", () => {
+    mockScrollIntoView();
+    render(
+      <CardScroller>
+        {Example({})}
+        {Example({ value: "two" })}
+        {Example({ value: "three" })}
+      </CardScroller>,
+    );
+    const viewport = document.querySelector<HTMLElement>(
+      '[data-slot="card-scroller-viewport"]',
+    )!;
+    const items = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-card-scroller-item]"),
+    );
+
+    expect(viewport).toHaveAttribute("data-at-start", "true");
+    expect(viewport).toHaveAttribute("data-at-end", "true");
+
+    Object.defineProperties(viewport, {
+      clientWidth: { configurable: true, value: 200 },
+      scrollWidth: { configurable: true, value: 600 },
+    });
+    viewport.getBoundingClientRect = () => ({ left: 0, right: 200 }) as DOMRect;
+    items.forEach((item, index) => {
+      item.getBoundingClientRect = () =>
+        ({ left: index * 200, right: (index + 1) * 200 }) as DOMRect;
+    });
+    fireEvent(window, new Event("resize"));
+
+    expect(viewport).toHaveAttribute("data-at-start", "true");
+    expect(viewport).toHaveAttribute("data-at-end", "false");
+
+    items.forEach((item, index) => {
+      item.getBoundingClientRect = () =>
+        ({ left: index * 200 - 400, right: (index + 1) * 200 - 400 }) as DOMRect;
+    });
+    fireEvent.scroll(viewport);
+
+    expect(viewport).toHaveAttribute("data-at-start", "false");
+    expect(viewport).toHaveAttribute("data-at-end", "true");
+  });
+
   it("keeps click-sized pointer movement selectable without capturing the pointer", () => {
     mockScrollIntoView();
     render(

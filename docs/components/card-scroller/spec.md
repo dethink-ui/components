@@ -59,7 +59,8 @@ The viewport uses native horizontal mandatory scroll snap in narrow containers a
 - `Tab` enters the native radio group. Arrow keys move among enabled radios according to browser behavior and skip disabled choices. `Space` selects the focused radio.
 - Keyboard focus adds an inset ring inside the Card so overflow and overlap cannot clip it; pointer selection does not add a second focus border. The selected Card keeps a primary border and persistent emphasis.
 - Previous and next controls are separately tabbable only while overflow exists and do not affect selection.
-- Fine-pointer hover and keyboard focus spotlight one card and subtly de-emphasize siblings. Touch does not depend on hover.
+- Fine-pointer hover and keyboard focus spotlight one card and subtly de-emphasize siblings. The spotlighted card lifts slightly with a soft shadow, and pressing an enabled card compresses it briefly; scale and lift settle on the shared spring easing. Touch does not depend on hover.
+- The viewport fades toward whichever edge still hides cards (the JS-maintained `data-at-start`/`data-at-end` attributes drive a mask gradient), the paging chevrons nudge in their travel direction on hover, and the controls fade in when overflow first appears. Edge fades follow the writing direction in RTL and are removed in forced-colors mode.
 
 ## Responsive styling and theming
 
