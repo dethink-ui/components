@@ -106,6 +106,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "effects",
   },
   {
+    slug: "aurora-background",
+    name: "AuroraBackground",
+    description:
+      "Frame hero content with flowing aurora ribbons of blurred gradient light, each hue rotated from one tone token via CSS relative color syntax, SSR-stable and reduced-motion safe.",
+    type: "effects",
+  },
+  {
     slug: "scan-grid-background",
     name: "ScanGridBackground",
     description:

@@ -74,6 +74,7 @@ import {
   FlexItem,
   Form,
   Grid,
+  AuroraBackground,
   GridBeamsBackground,
   GridItem,
   LightStreaksBackground,
@@ -393,6 +394,17 @@ export function App() {
               </Text>
             </Flex>
           </StarfieldBackground>
+          <AuroraBackground
+            className="border-border h-40 rounded-lg border"
+            seed={2}
+            tone="primary"
+          >
+            <Flex align="center" className="h-40" justify="center">
+              <Text size="sm" weight="medium">
+                AuroraBackground smoke
+              </Text>
+            </Flex>
+          </AuroraBackground>
           <Separator spacing="1" />
           <Flex align="center" gap="3">
             <Text size="sm" weight="medium">

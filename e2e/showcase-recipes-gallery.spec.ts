@@ -18,7 +18,7 @@ test.describe("showcase recipe discovery", () => {
     await page.goto("/");
 
     await expect(
-      page.getByText("Open code · 57 components · 10 recipes"),
+      page.getByText("Open code · 65 components · 10 recipes"),
     ).toBeVisible();
     await expect(page.getByText("6 featured recipes")).toBeVisible();
     await expect(

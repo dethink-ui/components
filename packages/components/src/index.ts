@@ -315,6 +315,25 @@ export {
   type MagneticBeamsBackgroundTone,
 } from "./components/magnetic-beams-background";
 export {
+  AuroraBackground,
+  auroraBackgroundClassNames,
+  auroraBackgroundContentClassNames,
+  auroraBackgroundHueShifts,
+  auroraBackgroundLayerClassNames,
+  getAuroraBackgroundGeometry,
+  getAuroraBackgroundMotionConfig,
+  type AuroraBackgroundClassNamesOptions,
+  type AuroraBackgroundContentClassNamesOptions,
+  type AuroraBackgroundDensity,
+  type AuroraBackgroundIntensity,
+  type AuroraBackgroundLayerClassNamesOptions,
+  type AuroraBackgroundMotionConfig,
+  type AuroraBackgroundProps,
+  type AuroraBackgroundRibbon,
+  type AuroraBackgroundSpeed,
+  type AuroraBackgroundTone,
+} from "./components/aurora-background";
+export {
   StarfieldBackground,
   getStarfieldBackgroundGeometry,
   getStarfieldBackgroundMotionConfig,

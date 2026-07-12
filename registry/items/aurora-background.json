@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "aurora-background",
+  "type": "registry:ui",
+  "title": "AuroraBackground",
+  "description": "Animated landing-page background: flowing aurora ribbons of heavily blurred, hue-shifted gradient light that drift and breathe behind hero content. Colors derive from one semantic tone token via CSS relative color syntax with a mono-hue fallback. Motion-powered, SSR-deterministic, offscreen-paused, with a designed reduced-motion static fallback.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/aurora-background/aurora-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/aurora-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/seeded-random.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
