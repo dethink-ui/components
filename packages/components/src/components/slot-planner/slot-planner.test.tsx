@@ -17,6 +17,8 @@ import {
   type SlotPlannerSlotPayload,
   type SlotPlannerUpdatePayload,
 } from ".";
+import { defaultSlotPlannerTaxonomy } from "./slot-planner-contract";
+import { SlotPlannerViolationList } from "./slot-planner-editor";
 import { slotPlannerSampleSlots } from "./slot-planner-fixtures";
 
 // Instant-anchored "now" (Z suffix): the planner-zone "today" and every
@@ -224,6 +226,33 @@ describe("SlotPlanner week view", () => {
 
     await user.keyboard("{Home}");
     expect(tabs[0]).toHaveFocus();
+  });
+
+  it("moves selection with ArrowDown and ArrowUp for the vertical rail", async () => {
+    const user = userEvent.setup();
+
+    renderPlanner();
+
+    const tabs = screen.getAllByRole("tab");
+
+    tabs[0]!.focus();
+    await user.keyboard("{ArrowDown}");
+    expect(tabs[1]).toHaveFocus();
+    expect(tabs[1]).toHaveAttribute("aria-selected", "true");
+
+    await user.keyboard("{ArrowUp}");
+    expect(tabs[0]).toHaveFocus();
+  });
+
+  it("labels the day rail and advertises its orientation", () => {
+    renderPlanner();
+
+    const tablist = screen.getByRole("tablist");
+
+    // The persistent label is a dedicated taxonomy key, not the volatile
+    // week-change announcement string.
+    expect(tablist).toHaveAttribute("aria-label", "Days of the week");
+    expect(tablist).toHaveAttribute("aria-orientation");
   });
 
   it("inverts arrow-key direction in RTL contexts", async () => {
@@ -558,6 +587,72 @@ describe("SlotPlanner slot CRUD", () => {
     expect(screen.getByText("14:15 – 15:15")).toBeInTheDocument();
   });
 
+  it("preserves per-scope duration drafts when toggling edit scope", async () => {
+    const user = userEvent.setup();
+
+    renderCrudPlanner({ onUpdateSlot: vi.fn() });
+
+    const firstCard = within(screen.getByRole("list")).getAllByRole(
+      "listitem",
+    )[0]!;
+
+    await user.click(
+      within(firstCard).getByRole("button", { name: "Edit slot" }),
+    );
+
+    const dialog = await screen.findByRole("dialog", { name: "Edit slot" });
+    const durationLabel = "Duration (minutes)";
+
+    // Type an occurrence-scope duration.
+    const occurrenceDuration = within(dialog).getByLabelText(durationLabel);
+    await user.clear(occurrenceDuration);
+    await user.type(occurrenceDuration, "90");
+
+    // Switch to series scope and type a different duration.
+    await user.click(
+      within(dialog).getByRole("radio", { name: "Entire series" }),
+    );
+    const seriesDuration = within(dialog).getByLabelText(durationLabel);
+    await user.clear(seriesDuration);
+    await user.type(seriesDuration, "120");
+
+    // Back to occurrence: the earlier 90 draft is restored, not reset.
+    await user.click(
+      within(dialog).getByRole("radio", { name: "This occurrence only" }),
+    );
+    expect(within(dialog).getByLabelText(durationLabel)).toHaveValue(90);
+
+    // And the series draft is remembered too.
+    await user.click(
+      within(dialog).getByRole("radio", { name: "Entire series" }),
+    );
+    expect(within(dialog).getByLabelText(durationLabel)).toHaveValue(120);
+  });
+
+  it("blocks saving when a numeric field is cleared instead of coercing", async () => {
+    const user = userEvent.setup();
+    const onCreateSlot = vi.fn();
+
+    renderCrudPlanner({ onCreateSlot });
+
+    await user.click(
+      screen.getByRole("button", { name: "Add slot to this day" }),
+    );
+
+    const dialog = await screen.findByRole("dialog", { name: "Add slot" });
+    const duration = within(dialog).getByLabelText("Duration (minutes)");
+
+    await user.clear(duration);
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+
+    // A cleared required field blocks the submit; nothing is created and the
+    // dialog stays open for correction.
+    expect(onCreateSlot).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("dialog", { name: "Add slot" }),
+    ).toBeInTheDocument();
+  });
+
   it("deletes a non-recurring slot after confirmation and moves focus to the next card", async () => {
     const user = userEvent.setup();
     const onDeleteOccurrence = vi.fn();
@@ -694,6 +789,13 @@ describe("SlotPlanner slot CRUD", () => {
     expect(
       within(confirm).getByText("This deletes every occurrence of this slot."),
     ).toBeInTheDocument();
+    // The step swap unmounts the "Delete series" button that had focus, so
+    // focus is moved onto the destructive confirm button rather than dropping
+    // to the document body.
+    const confirmButton = within(confirm).getByRole("button", {
+      name: "Delete",
+    });
+    await waitFor(() => expect(confirmButton).toHaveFocus());
     expect(onDeleteSeries).not.toHaveBeenCalled();
 
     await user.click(within(confirm).getByRole("button", { name: "Delete" }));
@@ -1228,6 +1330,35 @@ describe("SlotPlanner batch operations", () => {
     // Uncontrolled: the accepted copy renders on Tuesday.
     await user.click(screen.getAllByRole("tab")[1]!);
     expect(screen.getByText("09:00 – 10:00")).toBeInTheDocument();
+  });
+
+  it("disables copy-day Apply until at least one target is selected", async () => {
+    const user = userEvent.setup();
+    const onBatchChange = vi.fn();
+
+    renderCrudPlanner({
+      defaultSlots: [copySource],
+      onBatchChange,
+      generateSlotId: sequentialIds(),
+    });
+
+    await user.click(screen.getByRole("button", { name: "Copy day" }));
+
+    const dialog = await screen.findByRole("dialog", { name: "Copy day" });
+    const apply = within(dialog).getByRole("button", { name: "Apply" });
+
+    // No targets: Apply is disabled and clicking it never fires a batch.
+    expect(apply).toBeDisabled();
+    await user.click(apply);
+    expect(onBatchChange).not.toHaveBeenCalled();
+
+    await user.click(
+      within(dialog).getByRole("checkbox", { name: "Tue Jul 7" }),
+    );
+    expect(apply).toBeEnabled();
+
+    await user.click(apply);
+    expect(onBatchChange).toHaveBeenCalledTimes(1);
   });
 
   it("copies the week forward after its confirm step", async () => {
@@ -1920,5 +2051,24 @@ describe("SlotPlanner day view", () => {
       screen.getByRole("heading", { level: 3, name: "Tuesday, July 7, 2026" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Today" })).toBeEnabled();
+  });
+});
+
+describe("SlotPlannerViolationList", () => {
+  it("renders every violation, even when two share a code", () => {
+    render(
+      <SlotPlannerViolationList
+        taxonomy={defaultSlotPlannerTaxonomy}
+        violations={[
+          { code: "overlap", params: { otherSlotId: "a" } },
+          { code: "overlap", params: { otherSlotId: "b" } },
+        ]}
+      />,
+    );
+
+    // Keyed by code+index, so a duplicate code never collapses the two
+    // entries into one list item.
+    const items = within(screen.getByRole("list")).getAllByRole("listitem");
+    expect(items).toHaveLength(2);
   });
 });

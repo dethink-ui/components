@@ -307,6 +307,38 @@ describe("expandSlotOccurrences", () => {
     ).toEqual(["2026-11-01", "2026-11-08"]);
   });
 
+  it("fast-forwards to the correct occurrence phase for a distant series start", () => {
+    const biweekly: SlotPlannerSlotData = {
+      id: "distant-biweekly",
+      date: "2026-01-05",
+      startTime: "09:00",
+      durationMinutes: 60,
+      timeZone: "Europe/London",
+      state: "requestable",
+      recurrence: { frequency: "biweekly" },
+    };
+
+    // 2026-01-05 + 13×14d = 2026-07-06 is an "on" week; the prior week
+    // (2026-06-29 … 2026-07-05) has no occurrence, proving the fast-forward
+    // lands on the right phase rather than stepping onto a wrong week.
+    expect(
+      expandSlotOccurrences(biweekly, "2026-06-29", "2026-07-05", NOW).map(
+        (occurrence) => occurrence.occurrenceDate,
+      ),
+    ).toEqual([]);
+    expect(
+      expandSlotOccurrences(biweekly, "2026-07-06", "2026-07-19", NOW).map(
+        (occurrence) => occurrence.occurrenceDate,
+      ),
+    ).toEqual(["2026-07-06"]);
+    // The off-week occurrence sits at 2026-06-22, two weeks before.
+    expect(
+      expandSlotOccurrences(biweekly, "2026-06-22", "2026-07-05", NOW).map(
+        (occurrence) => occurrence.occurrenceDate,
+      ),
+    ).toEqual(["2026-06-22"]);
+  });
+
   it("keeps wall-clock time stable across the Europe/London DST end", () => {
     const slot = findSampleSlot("autumn-dst-spanning-clinic");
     const occurrences = expandSlotOccurrences(

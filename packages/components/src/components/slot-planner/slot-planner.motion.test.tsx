@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -7,8 +8,13 @@ import {
   within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useState } from "react";
 import { describe, expect, it } from "vitest";
-import { SlotPlanner, type SlotPlannerProps } from ".";
+import {
+  SlotPlanner,
+  type SlotPlannerProps,
+  type SlotPlannerSlotData,
+} from ".";
 import { slotPlannerSampleSlots } from "./slot-planner-fixtures";
 
 // Matches slot-planner.test.tsx: keeps "today" at 2026-07-06 in any zone.
@@ -90,6 +96,67 @@ describe("SlotPlanner motion layer", () => {
     const card = await screen.findByRole("listitem");
 
     expect(within(card).getByText("09:00 – 10:00")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        card.querySelector('[data-slot="slot-planner-slot-highlight"]'),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("withholds a created slot's highlight until its async create settles", async () => {
+    const user = userEvent.setup();
+    let resolveCreate!: () => void;
+    const createPromise = new Promise<void>((resolve) => {
+      resolveCreate = resolve;
+    });
+    const created: SlotPlannerSlotData = {
+      id: "created-1",
+      date: "2026-07-06",
+      startTime: "09:00",
+      durationMinutes: 60,
+      timeZone: "Europe/London",
+      state: "requestable",
+    };
+
+    function Harness() {
+      // Controlled: the app applies the slot immediately while the create is
+      // still pending, so the card is visible before the mutation settles.
+      const [slots, setSlots] = useState<SlotPlannerSlotData[]>([]);
+
+      return (
+        <SlotPlanner
+          slots={slots}
+          defaultFocusedDate="2026-07-06"
+          now={NOW}
+          title="Availability"
+          generateSlotId={() => "created-1"}
+          onCreateSlot={() => {
+            setSlots([created]);
+
+            return createPromise;
+          }}
+        />
+      );
+    }
+
+    render(<Harness />);
+    await createSlotThroughEditor(user);
+
+    const card = await screen.findByRole("listitem");
+
+    // The create key is still pending, so the highlight is withheld — the
+    // guard now matches the real `create::<date>` key rather than a
+    // reconstructed occurrence key that never appeared in pendingKeys.
+    expect(
+      card.querySelector('[data-slot="slot-planner-slot-highlight"]'),
+    ).toBeNull();
+    expect(screen.getByText("Saving")).toBeInTheDocument();
+
+    await act(async () => {
+      resolveCreate();
+      await createPromise;
+    });
+
     await waitFor(() => {
       expect(
         card.querySelector('[data-slot="slot-planner-slot-highlight"]'),

@@ -170,16 +170,22 @@ viewer-zone comparison, dark/density/RTL, and reduced motion.
   `constraints`, `taxonomy`, `now`, `locale`, `title`, `loading`, `error`,
   `reducedMotion`, `renderers`, `generateSlotId`, and the mutation callbacks
   `onCreateSlot`, `onUpdateSlot`, `onDeleteOccurrence`, `onDeleteSeries`,
-  `onBatchChange`. Callbacks may return promises to drive per-key
-  pending/error/retry affordances.
+  `onBatchChange`, and `onMutationError(key, error)`. Callbacks may return
+  promises to drive per-key pending/error/retry affordances; when one throws
+  or rejects, the thrown value is captured (see `errors` below) and forwarded
+  to `onMutationError`.
 - `SlotPicker` (`SlotPickerProps<TData>`): read-only `slots`,
   `viewerTimeZone`, `onBookRequest`, plus the shared focus/view/taxonomy/
   async-state/motion props. Draft and cancelled occurrences never surface in
   book mode.
 - `useSlotPlanner` (`UseSlotPlannerOptions` → `UseSlotPlannerReturn`): the
   non-visual subset of `SlotPlannerProps` in; resolved state, expansion,
-  validation, CRUD/batch dispatchers, pending/retry maps, and the
-  taxonomy-phrased `announcement` out.
+  validation, CRUD/batch dispatchers, `pendingKeys`/`retryByKey`/`errors`
+  maps, and the taxonomy-phrased `announcement` out. The dispatchers keep
+  stable identities across renders, and `announcementNonce` advances on every
+  announcement (including repeats) so renderers can key the live region and
+  re-announce identical messages. `errors` holds the thrown value / rejection
+  reason per failed key, cleared on retry or success.
 - Pure utilities: `validateSlotPlannerSlot(s)`,
   `countSlotPlannerPublishedOccurrences`, `expandSlotOccurrences`,
   `expandSlotsForRange`, `expandSlotsForViewerZone`,
@@ -187,7 +193,9 @@ viewer-zone comparison, dark/density/RTL, and reduced motion.
   `resolveSlotPlannerTaxonomy`, `applySlotPlannerMutation`,
   `applySlotPlannerBatch`, `createSlotFromEditorValues`,
   `updateSlotFromEditorValues`, `upsertSlotPlannerOccurrenceOverride`,
-  template formatters, and the contract types/consts.
+  `getConventionalSlotData` (the `tags`/`note` reader custom `slotCard`
+  renderers use), template formatters, and the contract types/consts
+  (including the `SlotPlannerIsoWeekday` union used by `constraints.workingDays`).
 
 Full prop and type documentation lives in the source JSDoc
 (`packages/components/src/components/slot-planner/`), which is part of the
@@ -195,8 +203,12 @@ open-code contract copied by the registry.
 
 ## Accessibility
 
-- The day rail is a `tablist` with roving tabindex; the day panel is its
-  `tabpanel`, labelled by the selected tab.
+- The day rail is a `tablist` with roving tabindex, a persistent
+  `aria-label` from the `weekRailLabel` taxonomy key, and an
+  `aria-orientation` that follows the responsive layout (horizontal below the
+  `md` breakpoint, vertical at and above it). The day panel is its
+  `tabpanel`, labelled by the selected tab, and sets `aria-busy` while
+  `loading`.
 - All actions are real buttons; there are no drag-only interactions.
 - The editor and confirm dialogs reuse the Dialog primitive's focus
   containment and restoration; after a deletion, focus recovers to the
@@ -214,9 +226,10 @@ Verified manually against the shipped component; re-check after structural
 changes:
 
 1. Day rail: `Tab` reaches the selected day tab; `ArrowRight`/`ArrowLeft`
-   move day focus and selection (reversed under RTL, wrapping at week
-   edges); `Home` selects Monday; `End` selects Sunday. `Tab` from the rail
-   lands on the day panel.
+   (and `ArrowDown`/`ArrowUp` for the vertical layout) move day focus and
+   selection (horizontal arrows reversed under RTL, wrapping at week edges);
+   `Home` selects Monday; `End` selects Sunday. `Tab` from the rail lands on
+   the day panel.
 2. Editor dialog: opening "Add slot to this day" (Enter/Space) moves focus
    into the dialog; `Tab` cycles within the dialog only; `Escape` closes it
    without saving and restores focus to the opener. Saving with violations

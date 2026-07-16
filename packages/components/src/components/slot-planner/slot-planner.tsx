@@ -63,6 +63,7 @@ import {
   slotPlannerWeekPanelContentClasses,
   TrashIcon,
   toUtcDate,
+  useSlotPlannerRailOrientation,
 } from "./slot-planner-dom-shared";
 import {
   SlotPlannerBatchConfirmDialog,
@@ -86,7 +87,12 @@ import {
   formatSlotPlannerTemplate,
   type SlotPlannerOccurrence,
 } from "./slot-planner-utils";
-import { useSlotPlanner, type SlotPlannerView } from "./use-slot-planner";
+import {
+  getSlotPlannerBatchKey,
+  getSlotPlannerCreateKey,
+  useSlotPlanner,
+  type SlotPlannerView,
+} from "./use-slot-planner";
 
 export interface SlotPlannerProps<
   TData extends SlotPlannerSlotPayload = SlotPlannerSlotPayload,
@@ -462,12 +468,24 @@ function SlotPlannerInner<
   const recentMutationsRef = useRef(
     new Map<
       string,
-      { slotId: string; occurrenceDate: string; staggerIndex: number }
+      {
+        slotId: string;
+        occurrenceDate: string;
+        staggerIndex: number;
+        /** The actual pending/error key of the CRUD op that created it. */
+        crudKey: string;
+      }
     >(),
   );
   const recordRecentMutation = useCallback(
-    (slotId: string, occurrenceDate: string, staggerIndex = 0) => {
+    (
+      slotId: string,
+      occurrenceDate: string,
+      crudKey: string,
+      staggerIndex = 0,
+    ) => {
       recentMutationsRef.current.set(`${slotId}::${occurrenceDate}`, {
+        crudKey,
         occurrenceDate,
         slotId,
         staggerIndex,
@@ -475,10 +493,18 @@ function SlotPlannerInner<
     },
     [],
   );
+  // Focused date at dispatch time, so batch (copy) highlights can be guarded
+  // against the batch's `batch:<focusedDate>` pending/error key.
+  const focusedDateRef = useRef(focusedDate ?? defaultFocusedDate ?? "");
   const handleCreateSlotWithHighlight = (
     payload: SlotPlannerCreatePayload<TData>,
   ) => {
-    recordRecentMutation(payload.slot.id, payload.slot.date);
+    // Creates are keyed `create::<date>`, not `<slotId>::<date>`.
+    recordRecentMutation(
+      payload.slot.id,
+      payload.slot.date,
+      getSlotPlannerCreateKey(payload.slot.date),
+    );
 
     return onCreateSlot?.(payload);
   };
@@ -486,12 +512,14 @@ function SlotPlannerInner<
     payload: SlotPlannerBatchChangePayload<TData>,
   ) => {
     const countsByDate = new Map<string, number>();
+    // Copy batches share one `batch:<focusedDate>` key for the whole payload.
+    const batchCrudKey = getSlotPlannerBatchKey(focusedDateRef.current);
 
     for (const slot of payload.createdSlots) {
       const staggerIndex = countsByDate.get(slot.date) ?? 0;
 
       countsByDate.set(slot.date, staggerIndex + 1);
-      recordRecentMutation(slot.id, slot.date, staggerIndex);
+      recordRecentMutation(slot.id, slot.date, batchCrudKey, staggerIndex);
     }
 
     return onBatchChange?.(payload);
@@ -520,6 +548,7 @@ function SlotPlannerInner<
   });
   const {
     announcement,
+    announcementNonce,
     batchKey,
     clearDay,
     clearError,
@@ -547,6 +576,7 @@ function SlotPlannerInner<
     weekDays,
     weeklyCap,
   } = planner;
+  focusedDateRef.current = currentFocusedDate;
   const nounTemplateTokens = {
     slot: resolvedTaxonomy.slot,
     slotPlural: resolvedTaxonomy.slotPlural,
@@ -620,6 +650,16 @@ function SlotPlannerInner<
       return;
     }
 
+    // Prune entries whose slot has since disappeared (e.g. created then
+    // deleted, or a rejected copy) so they never linger or mis-promote.
+    const liveSlotIds = new Set(planner.slots.map((slot) => slot.id));
+
+    for (const [key, entry] of recent) {
+      if (!liveSlotIds.has(entry.slotId)) {
+        recent.delete(key);
+      }
+    }
+
     const visibleKeys = new Set(
       selectedOccurrences.map(
         (occurrence) => `${occurrence.slotId}::${occurrence.occurrenceDate}`,
@@ -628,9 +668,9 @@ function SlotPlannerInner<
     const consumed: string[] = [];
 
     for (const [key, entry] of recent) {
-      const crudKey = occurrenceKey(entry);
-
-      if (pendingKeys.has(crudKey) || retryByKey.has(crudKey)) {
+      // Guard against the op's actual CRUD key (create::<date> /
+      // batch:<date> / <slotId>::<date>), not a reconstructed occurrence key.
+      if (pendingKeys.has(entry.crudKey) || retryByKey.has(entry.crudKey)) {
         continue;
       }
 
@@ -658,7 +698,7 @@ function SlotPlannerInner<
         return next;
       });
     }
-  });
+  }, [motionEnabled, pendingKeys, planner.slots, retryByKey, selectedOccurrences]);
 
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const [editorState, setEditorState] = useState<
@@ -765,10 +805,12 @@ function SlotPlannerInner<
 
       if (violations.length === 0) {
         // Created slots are recorded in the wrapped onCreateSlot (the
-        // generated id is only known there); edits are recorded here.
+        // generated id is only known there); edits are recorded here. An edit
+        // is keyed by its occurrence key (`<slotId>::<date>`).
         recordRecentMutation(
           state.occurrence.slotId,
           state.occurrence.occurrenceDate,
+          occurrenceKey(state.occurrence),
         );
       }
     }
@@ -854,6 +896,7 @@ function SlotPlannerInner<
   );
 
   const getTabId = (date: string) => `${baseId}-tab-${date}`;
+  const railOrientation = useSlotPlannerRailOrientation();
   const handleRailKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const direction = getSlotPlannerDirection(event.currentTarget);
     const forwardKey = direction === "rtl" ? "ArrowLeft" : "ArrowRight";
@@ -861,9 +904,12 @@ function SlotPlannerInner<
     const currentIndex = weekDays.indexOf(currentFocusedDate);
     let nextIndex: number;
 
-    if (event.key === forwardKey) {
+    // ArrowUp/ArrowDown mirror the vertical (`md:` and up) rail layout, and
+    // stay accepted in the horizontal layout so navigation never depends on
+    // which axis the tablist happens to render along.
+    if (event.key === forwardKey || event.key === "ArrowDown") {
       nextIndex = (currentIndex + 1) % weekDays.length;
-    } else if (event.key === backwardKey) {
+    } else if (event.key === backwardKey || event.key === "ArrowUp") {
       nextIndex = (currentIndex + weekDays.length - 1) % weekDays.length;
     } else if (event.key === "Home") {
       nextIndex = 0;
@@ -1049,6 +1095,7 @@ function SlotPlannerInner<
         currentView === "week" ? getTabId(currentFocusedDate) : undefined
       }
       tabIndex={currentView === "week" ? 0 : -1}
+      aria-busy={loading || undefined}
       data-slot="slot-planner-day-panel"
       data-past={isPastDay ? "true" : undefined}
       data-loading={loading ? "true" : undefined}
@@ -1490,10 +1537,8 @@ function SlotPlannerInner<
           >
             <div
               role="tablist"
-              aria-label={formatSlotPlannerTemplate(
-                resolvedTaxonomy.announceWeekChanged,
-                { weekStart: longDateFormatter.format(toUtcDate(weekDays[0])) },
-              )}
+              aria-label={resolvedTaxonomy.weekRailLabel}
+              aria-orientation={railOrientation}
               data-slot="slot-planner-day-rail"
               className={slotPlannerDayRailClasses}
               onKeyDown={handleRailKeyDown}
@@ -1714,7 +1759,9 @@ function SlotPlannerInner<
           data-slot="slot-planner-live-region"
           className="sr-only"
         >
-          {announcement}
+          {/* Keyed on the nonce so a repeated identical message still swaps the
+              text node and gets announced instead of being a silent no-op. */}
+          <span key={announcementNonce}>{announcement}</span>
         </div>
       </div>
     </MotionConfig>

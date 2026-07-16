@@ -49,6 +49,8 @@ type ResolvedOccurrenceFields = {
   capacity: number;
 };
 
+const MS_PER_DAY = 86_400_000;
+
 /** Merges a partial taxonomy over the defaults, nesting the record fields. */
 export function resolveSlotPlannerTaxonomy(
   input?: SlotPlannerTaxonomyInput,
@@ -181,15 +183,24 @@ export function expandSlotOccurrences<
     const lastDate =
       seriesEnd && seriesEnd.compare(rangeEnd) < 0 ? seriesEnd : rangeEnd;
     const stepDays = recurrence.frequency === "weekly" ? 7 : 14;
+    // Fast-forward to the first occurrence on/after rangeStart with modular
+    // date arithmetic instead of stepping week-by-week from a possibly-distant
+    // series start. Whole-day UTC midnights make the day delta exact.
+    const startEpochDay = Math.round(
+      seriesStart.toDate("UTC").getTime() / MS_PER_DAY,
+    );
+    const rangeStartEpochDay = Math.round(
+      rangeStart.toDate("UTC").getTime() / MS_PER_DAY,
+    );
+    const daysAhead = rangeStartEpochDay - startEpochDay;
+    const skipSteps = daysAhead > 0 ? Math.ceil(daysAhead / stepDays) : 0;
 
     for (
-      let current = seriesStart;
+      let current = seriesStart.add({ days: skipSteps * stepDays });
       current.compare(lastDate) <= 0;
       current = current.add({ days: stepDays })
     ) {
-      if (current.compare(rangeStart) >= 0) {
-        occurrenceDates.push(current.toString());
-      }
+      occurrenceDates.push(current.toString());
     }
   } else if (
     seriesStart.compare(rangeStart) >= 0 &&
@@ -351,9 +362,11 @@ export function projectSlotPlannerOccurrenceToZone<
 /**
  * A viewer-zone calendar date can differ from the provider-zone occurrence
  * date by at most this many days: real IANA offsets span UTC-12 to UTC+14,
- * so an instant can shift up to two calendar dates between zones.
+ * so an instant can shift up to two calendar dates between zones. The same
+ * bound governs how far the overlap check must look at neighboring days, so
+ * it is shared with the constraints engine.
  */
-const VIEWER_RANGE_PAD_DAYS = 2;
+export const VIEWER_RANGE_PAD_DAYS = 2;
 
 /**
  * Book-mode expansion: expands every slot, projects each occurrence into the

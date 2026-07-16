@@ -14,6 +14,7 @@ export {
   type SlotPlannerCreatePayload,
   type SlotPlannerDeleteOccurrencePayload,
   type SlotPlannerDeleteSeriesPayload,
+  type SlotPlannerIsoWeekday,
   type SlotPlannerOccurrenceOverride,
   type SlotPlannerOccurrenceRef,
   type SlotPlannerOccurrenceStatus,
@@ -64,6 +65,10 @@ export type {
   SlotPlannerToolbarRenderContext,
 } from "./slot-planner-renderers";
 export { SlotPlanner, type SlotPlannerProps } from "./slot-planner";
+// Pure, contract-typed reader for the conventional `tags`/`note` slot data,
+// exported so custom `slotCard` renderers can normalize payloads exactly like
+// the shipped default cards do.
+export { getConventionalSlotData } from "./slot-planner-dom-shared";
 // Book mode: the consumer-facing picker over the same slot collection model,
 // projecting occurrences into the viewer's time zone.
 export {

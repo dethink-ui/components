@@ -272,6 +272,118 @@ describe("useSlotPlanner", () => {
     expect(onUpdateSlot).toHaveBeenCalledTimes(2);
   });
 
+  it("applies occurrence-scope edits directly to non-recurring slots", () => {
+    const onUpdateSlot = vi.fn();
+    const single: SlotPlannerSlotData = {
+      id: "single-1",
+      date: "2026-07-06",
+      startTime: "10:00",
+      durationMinutes: 60,
+      timeZone: "Europe/London",
+      state: "requestable",
+    };
+    const { result } = renderPlannerHook({
+      defaultSlots: [single],
+      onUpdateSlot,
+    });
+
+    act(() => {
+      expect(
+        result.current.updateSlot(result.current.selectedOccurrences[0]!, {
+          scope: "occurrence",
+          startTime: "11:30",
+          durationMinutes: 45,
+        }),
+      ).toEqual([]);
+    });
+
+    // The non-recurring slot has no recurrence, so the edit must land on the
+    // slot itself rather than a silently-dropped override.
+    const updated = onUpdateSlot.mock.calls[0]![0].slot;
+    expect(updated.recurrence).toBeUndefined();
+    expect(updated.startTime).toBe("11:30");
+    expect(updated.durationMinutes).toBe(45);
+    expect(result.current.selectedOccurrences[0]!.startTime).toBe("11:30");
+    expect(result.current.selectedOccurrences[0]!.durationMinutes).toBe(45);
+    expect(result.current.announcement).toBe("slot updated");
+  });
+
+  it("keeps dispatcher identities stable across re-renders", () => {
+    const { result, rerender } = renderPlannerHook();
+    const first = result.current;
+
+    rerender();
+
+    const second = result.current;
+    const stableKeys = [
+      "validate",
+      "createSlot",
+      "updateSlot",
+      "deleteOccurrence",
+      "deleteSeries",
+      "copyDay",
+      "copyWeek",
+      "clearDay",
+      "goToNextWeek",
+      "goToPreviousWeek",
+      "goToThisWeek",
+      "occurrenceKey",
+    ] as const;
+
+    for (const key of stableKeys) {
+      expect(second[key]).toBe(first[key]);
+    }
+  });
+
+  it("captures a mutation error and forwards it to onMutationError", async () => {
+    const onMutationError = vi.fn();
+    const error = new Error("save failed");
+    const onCreateSlot = vi.fn(() => Promise.reject(error));
+    const { result } = renderPlannerHook({ onCreateSlot, onMutationError });
+    const createKey = result.current.createKey;
+
+    await act(async () => {
+      result.current.createSlot(baseEditorValues);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(onMutationError).toHaveBeenCalledWith(createKey, error);
+    expect(result.current.errors.get(createKey)).toBe(error);
+    // The retry affordance still surfaces alongside the captured error.
+    expect(result.current.retryByKey.has(createKey)).toBe(true);
+
+    // Retrying clears the captured error for that key.
+    act(() => {
+      result.current.clearError(createKey);
+    });
+    expect(result.current.errors.has(createKey)).toBe(false);
+  });
+
+  it("advances announcementNonce on every announce, including repeats", () => {
+    const { result } = renderPlannerHook();
+
+    expect(result.current.announcement).toBe("");
+    const initialNonce = result.current.announcementNonce;
+
+    act(() => {
+      result.current.createSlot(baseEditorValues);
+    });
+
+    expect(result.current.announcement).toBe("slot added");
+    const firstNonce = result.current.announcementNonce;
+    expect(firstNonce).toBeGreaterThan(initialNonce);
+
+    // An identical repeat message must still bump the nonce so the live
+    // region re-announces instead of React bailing out on the same string.
+    act(() => {
+      result.current.createSlot(baseEditorValues, { date: "2026-07-07" });
+    });
+
+    expect(result.current.announcement).toBe("slot added");
+    expect(result.current.announcementNonce).toBeGreaterThan(firstNonce);
+  });
+
   it("applies uncontrolled deletes and fires the onApplied success hook", () => {
     const onDeleteOccurrence = vi.fn();
     const onApplied = vi.fn();

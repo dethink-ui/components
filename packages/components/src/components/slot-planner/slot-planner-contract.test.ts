@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import {
   defaultSlotPlannerTaxonomy,
+  getConventionalSlotData,
   slotPlannerOccurrenceStatuses,
   slotPlannerSlotStates,
   slotPlannerViolationCodes,
   type SlotPlannerBatchChangePayload,
   type SlotPlannerBookRequestPayload,
+  type SlotPlannerIsoWeekday,
   type SlotPlannerSlotData,
   type SlotPlannerUpdatePayload,
 } from ".";
@@ -24,6 +26,21 @@ const findSlot = (id: string): SlotPlannerSlotData => {
   if (!slot) throw new Error(`missing fixture slot ${id}`);
   return slot;
 };
+
+describe("public exports", () => {
+  it("re-exports getConventionalSlotData for custom slotCard renderers", () => {
+    expect(getConventionalSlotData({ tags: ["a", 2], note: 5 })).toEqual({
+      note: "",
+      tags: ["a"],
+    });
+    expect(getConventionalSlotData(undefined)).toEqual({ note: "", tags: [] });
+  });
+
+  it("types workingDays as the ISO weekday union", () => {
+    const workingDays: SlotPlannerIsoWeekday[] = [1, 2, 3, 4, 5];
+    expect(workingDays).toHaveLength(5);
+  });
+});
 
 describe("slot planner contract JSON round-trip", () => {
   it("round-trips the canonical sample slots losslessly", () => {

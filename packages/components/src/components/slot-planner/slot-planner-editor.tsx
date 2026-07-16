@@ -1,6 +1,8 @@
 import {
+  useEffect,
   useId,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
   type ReactNode,
@@ -84,8 +86,11 @@ export function SlotPlannerViolationList({
         data-slot="slot-planner-violation-list"
         className="m-[var(--dt-space-0)] flex list-none flex-col gap-[var(--dt-space-1)] p-[var(--dt-space-0)]"
       >
-        {violations.map((violation) => (
-          <li key={violation.code} data-violation={violation.code}>
+        {violations.map((violation, index) => (
+          <li
+            key={`${violation.code}-${index}`}
+            data-violation={violation.code}
+          >
             {formatSlotPlannerTemplate(
               taxonomy.violationMessages[violation.code],
               {
@@ -202,18 +207,54 @@ export function SlotPlannerEditorDialog({
     }));
   }, [timeZone]);
 
+  // Per-scope drafts of the two shared fields (start time and duration) so
+  // toggling occurrence → series → occurrence restores what the user typed
+  // instead of resetting to the untouched base values.
+  const scopeDraftsRef = useRef<
+    Record<SlotPlannerEditorScope, { startTime: string; durationText: string }>
+  >({
+    occurrence: {
+      durationText: String(occurrenceValues.durationMinutes),
+      startTime: occurrenceValues.startTime,
+    },
+    series: {
+      durationText: String(seriesValues.durationMinutes),
+      startTime: seriesValues.startTime,
+    },
+  });
+
   const handleScopeChange = (value: string) => {
     const nextScope: SlotPlannerEditorScope =
       value === "series" ? "series" : "occurrence";
-    const base = nextScope === "occurrence" ? occurrenceValues : seriesValues;
+
+    if (nextScope === scope) {
+      return;
+    }
+
+    // Stash the current scope's in-progress edits before restoring the
+    // target scope's stashed draft.
+    scopeDraftsRef.current[scope] = { durationText, startTime };
+
+    const restored = scopeDraftsRef.current[nextScope];
 
     setScope(nextScope);
-    setStartTime(base.startTime);
-    setDurationText(String(base.durationMinutes));
+    setStartTime(restored.startTime);
+    setDurationText(restored.durationText);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Cleared or out-of-range numeric fields (duration, capacity, buffers)
+    // must not silently coerce to fallback values; the native `required`/`min`
+    // constraints surface the problem and block the save instead.
+    const form = event.currentTarget;
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+
+      return;
+    }
 
     if (scope === "occurrence") {
       onSubmit({
@@ -326,6 +367,7 @@ export function SlotPlannerEditorDialog({
                 type="number"
                 numberMode="numeric"
                 min={1}
+                required
                 value={durationText}
                 onChange={(event) => setDurationText(event.target.value)}
               />
@@ -341,6 +383,7 @@ export function SlotPlannerEditorDialog({
                   type="number"
                   numberMode="numeric"
                   min={1}
+                  required
                   value={capacityText}
                   onChange={(event) => setCapacityText(event.target.value)}
                 />
@@ -354,6 +397,7 @@ export function SlotPlannerEditorDialog({
                     type="number"
                     numberMode="numeric"
                     min={0}
+                    required
                     value={bufferBeforeText}
                     onChange={(event) =>
                       setBufferBeforeText(event.target.value)
@@ -368,6 +412,7 @@ export function SlotPlannerEditorDialog({
                     type="number"
                     numberMode="numeric"
                     min={0}
+                    required
                     value={bufferAfterText}
                     onChange={(event) => setBufferAfterText(event.target.value)}
                   />
@@ -515,6 +560,16 @@ export function SlotPlannerDeleteDialog({
 }: SlotPlannerDeleteDialogProps) {
   const [confirmingSeries, setConfirmingSeries] = useState(false);
   const tokens = { slot: taxonomy.slot, slotPlural: taxonomy.slotPlural };
+  // Advancing to the series-confirm step unmounts the button that triggered
+  // it, so focus is moved onto the destructive confirm button instead of
+  // dropping to the document body.
+  const confirmSeriesRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (confirmingSeries) {
+      confirmSeriesRef.current?.focus();
+    }
+  }, [confirmingSeries]);
 
   return (
     <AlertDialog
@@ -551,6 +606,7 @@ export function SlotPlannerDeleteDialog({
           </Button>
           {confirmingSeries ? (
             <Button
+              ref={confirmSeriesRef}
               type="button"
               variant="destructive"
               onClick={onDeleteSeries}
@@ -619,6 +675,13 @@ export function SlotPlannerCopyDayDialog({
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    // Applying with no targets is a no-op batch; the disabled Apply button is
+    // the primary guard, and this early return backs it up.
+    if (selected.size === 0) {
+      return;
+    }
+
     onApply(
       targets.map(({ date }) => date).filter((date) => selected.has(date)),
     );
@@ -675,7 +738,9 @@ export function SlotPlannerCopyDayDialog({
             <Button type="button" variant="outline" onClick={onDismiss}>
               {taxonomy.cancel}
             </Button>
-            <Button type="submit">{taxonomy.apply}</Button>
+            <Button type="submit" disabled={selected.size === 0}>
+              {taxonomy.apply}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

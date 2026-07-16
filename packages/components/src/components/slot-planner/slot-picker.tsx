@@ -46,6 +46,7 @@ import {
   slotPlannerToolbarClasses,
   slotPlannerWeekPanelContentClasses,
   toUtcDate,
+  useSlotPlannerRailOrientation,
 } from "./slot-planner-dom-shared";
 import {
   SlotPlannerDayTabContent,
@@ -293,8 +294,18 @@ function SlotPickerSlotCardContent<
           type="button"
           data-slot="slot-picker-request"
           className={slotPlannerSlotActionButtonClasses}
-          disabled={pending}
-          onClick={onRequest}
+          aria-disabled={pending || undefined}
+          data-disabled={pending || undefined}
+          onClick={() => {
+            // `aria-disabled` keeps the button focusable across the request
+            // (native `disabled` would drop keyboard focus to the body); the
+            // guard stops a second activation from firing mid-request.
+            if (pending) {
+              return;
+            }
+
+            onRequest();
+          }}
         >
           {formatSlotPlannerTemplate(taxonomy.requestSlot, {
             slot: taxonomy.slot,
@@ -440,7 +451,21 @@ function SlotPickerInner<
   // Book requests reuse the CRUD pending/error/retry machinery, keyed per
   // provider-zone occurrence identity.
   const { pendingKeys, retryByKey, run } = useSlotPlannerCrud();
-  const [announcement, setAnnouncement] = useState("");
+  // The nonce advances on every announcement so identical consecutive
+  // messages still mutate the live region's DOM (via the keyed span) instead
+  // of being dropped by React's bail-out.
+  const [announcementState, setAnnouncementState] = useState<{
+    text: string;
+    nonce: number;
+  }>(() => ({ nonce: 0, text: "" }));
+  const setAnnouncement = useCallback((text: string) => {
+    setAnnouncementState((previous) => ({
+      nonce: previous.nonce + 1,
+      text,
+    }));
+  }, []);
+  const announcement = announcementState.text;
+  const announcementNonce = announcementState.nonce;
 
   // Announces failures politely: a key newly appearing in retryByKey means
   // its book-request promise rejected.
@@ -545,6 +570,7 @@ function SlotPickerInner<
 
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const getTabId = (date: string) => `${baseId}-tab-${date}`;
+  const railOrientation = useSlotPlannerRailOrientation();
   const handleRailKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const direction = getSlotPlannerDirection(event.currentTarget);
     const forwardKey = direction === "rtl" ? "ArrowLeft" : "ArrowRight";
@@ -552,9 +578,12 @@ function SlotPickerInner<
     const currentIndex = weekDays.indexOf(currentFocusedDate);
     let nextIndex: number;
 
-    if (event.key === forwardKey) {
+    // ArrowUp/ArrowDown mirror the vertical (`md:` and up) rail layout, and
+    // stay accepted in the horizontal layout so navigation never depends on
+    // which axis the tablist happens to render along.
+    if (event.key === forwardKey || event.key === "ArrowDown") {
       nextIndex = (currentIndex + 1) % weekDays.length;
-    } else if (event.key === backwardKey) {
+    } else if (event.key === backwardKey || event.key === "ArrowUp") {
       nextIndex = (currentIndex + weekDays.length - 1) % weekDays.length;
     } else if (event.key === "Home") {
       nextIndex = 0;
@@ -595,6 +624,47 @@ function SlotPickerInner<
   const formattedFocusedDate = longDateFormatter.format(
     toUtcDate(currentFocusedDate),
   );
+
+  // Mirrors the manage-mode planner's week-change announcement: navigating to
+  // a new week (week view) or a new day (day view) is announced politely.
+  // Pure view toggles and the first mount stay silent, and switching to a
+  // week already announced by the other view never re-fires.
+  const announcedNavRef = useRef<{
+    view: SlotPlannerView;
+    anchor: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const anchor = currentView === "day" ? currentFocusedDate : weekStart;
+    const previous = announcedNavRef.current;
+
+    announcedNavRef.current = { anchor, view: currentView };
+
+    if (!previous || previous.view !== currentView) {
+      return;
+    }
+
+    if (previous.anchor === anchor) {
+      return;
+    }
+
+    setAnnouncement(
+      currentView === "day"
+        ? formattedFocusedDate
+        : formatSlotPlannerTemplate(resolvedTaxonomy.announceWeekChanged, {
+            slot: resolvedTaxonomy.slot,
+            slotPlural: resolvedTaxonomy.slotPlural,
+            weekStart,
+          }),
+    );
+  }, [
+    currentFocusedDate,
+    currentView,
+    formattedFocusedDate,
+    resolvedTaxonomy,
+    setAnnouncement,
+    weekStart,
+  ]);
 
   const defaultEmptyDay = (
     <p
@@ -878,12 +948,8 @@ function SlotPickerInner<
           >
             <div
               role="tablist"
-              aria-label={formatSlotPlannerTemplate(
-                resolvedTaxonomy.announceWeekChanged,
-                {
-                  weekStart: longDateFormatter.format(toUtcDate(weekDays[0]!)),
-                },
-              )}
+              aria-label={resolvedTaxonomy.weekRailLabel}
+              aria-orientation={railOrientation}
               data-slot="slot-picker-day-rail"
               className={slotPlannerDayRailClasses}
               onKeyDown={handleRailKeyDown}
@@ -987,7 +1053,9 @@ function SlotPickerInner<
           data-slot="slot-picker-live-region"
           className="sr-only"
         >
-          {announcement}
+          {/* Keyed on the nonce so a repeated identical message still swaps the
+              text node and gets announced instead of being a silent no-op. */}
+          <span key={announcementNonce}>{announcement}</span>
         </div>
       </div>
     </MotionConfig>

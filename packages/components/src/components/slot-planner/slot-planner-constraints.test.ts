@@ -4,6 +4,7 @@ import {
   defaultSlotPlannerTaxonomy,
   validateSlotPlannerSlot,
   validateSlotPlannerSlots,
+  type SlotPlannerConstraints,
   type SlotPlannerSlotData,
   type SlotPlannerValidationContext,
   type SlotPlannerViolation,
@@ -141,6 +142,25 @@ describe("notice and horizon constraints", () => {
     ).toEqual([]);
   });
 
+  it("skips expired occurrences when evaluating min-notice", () => {
+    const constraints = { minNoticeMinutes: 60 };
+    // The weekly series' first occurrence (2026-07-06 00:00–01:00 London,
+    // ending 00:00Z) has already expired at NOW (00:30Z); min-notice must not
+    // fire on it, and the next weekly occurrence is far beyond the window.
+    const violations = validateSlotPlannerSlot(
+      makeSlot({
+        id: "expired-first",
+        date: "2026-07-06",
+        startTime: "00:00",
+        durationMinutes: 60,
+        recurrence: { frequency: "weekly" },
+      }),
+      makeContext({ constraints }),
+    );
+
+    expect(codesOf(violations)).not.toContain("min-notice");
+  });
+
   it("violates booking-horizon for occurrences beyond the horizon", () => {
     const constraints = { bookingHorizonDays: 2 };
     const beyond = validateSlotPlannerSlot(
@@ -177,7 +197,9 @@ describe("calendar constraints", () => {
 
   it("violates non-working-day using ISO weekday numbers (1 = Monday)", () => {
     // 2026-07-12 is a Sunday (ISO weekday 7).
-    const constraints = { workingDays: [1, 2, 3, 4, 5] };
+    const constraints: SlotPlannerConstraints = {
+      workingDays: [1, 2, 3, 4, 5],
+    };
     const sunday = validateSlotPlannerSlot(
       makeSlot({ id: "sunday", date: "2026-07-12" }),
       makeContext({ constraints }),
@@ -216,6 +238,32 @@ describe("overlap", () => {
     expect(findViolation(violations, "overlap")?.params).toMatchObject({
       date: "2026-07-08",
       otherSlotId: "new-york",
+    });
+  });
+
+  it("detects a same-instant overlap two ISO dates apart across extreme zones", () => {
+    // One instant, 2026-07-07T11:00Z, lands on 2026-07-08 in UTC+14 and on
+    // 2026-07-06 in UTC-12 — two calendar dates apart. The neighbor window
+    // must span ±2 days (the shared cross-zone pad) to catch it.
+    const farWest = makeSlot({
+      id: "far-west",
+      date: "2026-07-06",
+      startTime: "23:00",
+      timeZone: "Etc/GMT+12",
+    });
+    const violations = validateSlotPlannerSlot(
+      makeSlot({
+        id: "far-east",
+        date: "2026-07-08",
+        startTime: "01:00",
+        timeZone: "Pacific/Kiritimati",
+      }),
+      makeContext({ slots: [farWest] }),
+    );
+
+    expect(codesOf(violations)).toEqual(["overlap"]);
+    expect(findViolation(violations, "overlap")?.params).toMatchObject({
+      otherSlotId: "far-west",
     });
   });
 

@@ -1,5 +1,5 @@
 import { parseDate } from "@internationalized/date";
-import { cn } from "../../utils/cn";
+import { useEffect, useState } from "react";
 import { buttonClassNames } from "../button";
 import type {
   SlotPlannerConventionalSlotData,
@@ -88,7 +88,7 @@ export function ChevronIcon({
   return (
     <svg
       aria-hidden="true"
-      className={cn("size-4", direction === "forward" && "rtl:-scale-x-100")}
+      className="size-4 rtl:-scale-x-100"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
@@ -195,6 +195,39 @@ export function TrashIcon() {
       />
     </svg>
   );
+}
+
+// The day rail stacks vertically from the `md` breakpoint up (see
+// `slotPlannerDayRailClasses`). Tailwind v4's default `md` is 48rem.
+const SLOT_PLANNER_RAIL_VERTICAL_QUERY = "(min-width: 48rem)";
+
+/**
+ * Tracks whether the day rail is laid out vertically (the `md:` and up layout)
+ * so the tablist can advertise the matching `aria-orientation`. SSR-safe: the
+ * horizontal (default) orientation is assumed until the client can read
+ * `matchMedia`.
+ */
+export function useSlotPlannerRailOrientation(): "horizontal" | "vertical" {
+  const [vertical, setVertical] = useState(false);
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      typeof window.matchMedia !== "function"
+    ) {
+      return;
+    }
+
+    const query = window.matchMedia(SLOT_PLANNER_RAIL_VERTICAL_QUERY);
+    const update = () => setVertical(query.matches);
+
+    update();
+    query.addEventListener("change", update);
+
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return vertical ? "vertical" : "horizontal";
 }
 
 export function getSlotPlannerDirection(element: HTMLElement) {

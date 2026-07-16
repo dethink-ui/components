@@ -1,6 +1,7 @@
 import { parseDate, parseDateTime, toZoned } from "@internationalized/date";
 import type {
   SlotPlannerConstraints,
+  SlotPlannerIsoWeekday,
   SlotPlannerOccurrenceStatus,
   SlotPlannerSlotData,
   SlotPlannerSlotPayload,
@@ -11,6 +12,7 @@ import {
   expandSlotOccurrences,
   getSlotPlannerIsoDateInZone,
   getSlotPlannerWeekDays,
+  VIEWER_RANGE_PAD_DAYS,
   type SlotPlannerOccurrence,
 } from "./slot-planner-utils";
 
@@ -43,8 +45,9 @@ const MS_PER_DAY = 86_400_000;
 const MAX_VALIDATION_WINDOW_DAYS = 366;
 
 /** ISO weekday number (1 = Monday … 7 = Sunday) of an ISO date. */
-function getIsoWeekday(dateIso: string): number {
-  return ((parseDate(dateIso).toDate("UTC").getUTCDay() + 6) % 7) + 1;
+function getIsoWeekday(dateIso: string): SlotPlannerIsoWeekday {
+  return (((parseDate(dateIso).toDate("UTC").getUTCDay() + 6) % 7) +
+    1) as SlotPlannerIsoWeekday;
 }
 
 function getOccurrenceStartEpoch(occurrence: {
@@ -294,12 +297,18 @@ export function validateSlotPlannerSlot<
     }
   }
 
-  if (constraints?.minNoticeMinutes !== undefined && occurrences.length > 0) {
-    const first = occurrences[0]!;
+  if (constraints?.minNoticeMinutes !== undefined) {
+    // Expired occurrences are in the past; a series whose first occurrence has
+    // already lapsed must not be blocked by min-notice, so the check applies
+    // to the earliest still-upcoming occurrence.
+    const first = occurrences.find(
+      (occurrence) => occurrence.status !== "expired",
+    );
 
     if (
+      first &&
       getOccurrenceStartEpoch(first) <
-      nowEpoch + constraints.minNoticeMinutes * MS_PER_MINUTE
+        nowEpoch + constraints.minNoticeMinutes * MS_PER_MINUTE
     ) {
       addViolation("min-notice", {
         date: first.occurrenceDate,
@@ -310,8 +319,10 @@ export function validateSlotPlannerSlot<
   }
 
   // Buffer-aware overlap, epoch-based so it works across time zones. Other
-  // slots expand over [date − 1, date + 1] because an occurrence in another
-  // zone can overlap in real time while carrying a neighboring ISO date.
+  // slots expand over [date − pad, date + pad] because an occurrence in
+  // another zone can overlap in real time while carrying an ISO date up to
+  // VIEWER_RANGE_PAD_DAYS away — the same cross-zone bound the viewer
+  // expansion uses.
   for (const occurrence of occurrences) {
     if (byCode.has("overlap")) {
       break;
@@ -319,10 +330,10 @@ export function validateSlotPlannerSlot<
 
     const candidateInterval = getBufferedInterval(occurrence);
     const neighborStart = parseDate(occurrence.occurrenceDate)
-      .subtract({ days: 1 })
+      .subtract({ days: VIEWER_RANGE_PAD_DAYS })
       .toString();
     const neighborEnd = parseDate(occurrence.occurrenceDate)
-      .add({ days: 1 })
+      .add({ days: VIEWER_RANGE_PAD_DAYS })
       .toString();
 
     for (const other of otherSlots) {

@@ -253,10 +253,34 @@ describe("SlotPicker week view", () => {
     expect(onFocusedDateChange).toHaveBeenLastCalledWith("2026-07-06");
   });
 
+  it("announces week changes politely", async () => {
+    const user = userEvent.setup();
+
+    const { container } = renderPicker();
+
+    // No announcement on first render.
+    expect(getLiveRegion(container)).toHaveTextContent("");
+
+    await user.click(screen.getByRole("button", { name: "Next week" }));
+
+    expect(getLiveRegion(container)).toHaveTextContent(
+      "Showing week of 2026-07-13",
+    );
+  });
+
+  it("labels the day rail and advertises its orientation", () => {
+    renderPicker();
+
+    const tablist = screen.getByRole("tablist");
+
+    expect(tablist).toHaveAttribute("aria-label", "Days of the week");
+    expect(tablist).toHaveAttribute("aria-orientation");
+  });
+
   it("renders the day view without a tablist and returns to today", async () => {
     const user = userEvent.setup();
 
-    renderPicker({ view: "day" });
+    const { container } = renderPicker({ view: "day" });
 
     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     expect(screen.queryByRole("tabpanel")).not.toBeInTheDocument();
@@ -286,6 +310,8 @@ describe("SlotPicker week view", () => {
       ).toBeInTheDocument();
     });
     expect(screen.getByRole("button", { name: "Today" })).toBeEnabled();
+    // Day-view navigation announces the newly focused day.
+    expect(getLiveRegion(container)).toHaveTextContent("Sunday, July 5, 2026");
 
     await user.click(screen.getByRole("button", { name: "Today" }));
 
@@ -435,14 +461,23 @@ describe("SlotPicker book requests", () => {
 
     expect(cards[0]).toHaveAttribute("data-pending", "true");
     expect(within(cards[0]!).getByText("Requesting")).toBeInTheDocument();
-    expect(
-      within(cards[0]!).getByRole("button", { name: "Request slot" }),
-    ).toBeDisabled();
+    const pendingButton = within(cards[0]!).getByRole("button", {
+      name: "Request slot",
+    });
+    // aria-disabled keeps the button focusable across the request (native
+    // `disabled` would drop focus to the body), and a repeat activation is
+    // guarded so the callback never double-fires.
+    expect(pendingButton).not.toBeDisabled();
+    expect(pendingButton).toHaveAttribute("aria-disabled", "true");
+    await user.click(pendingButton);
+    expect(onBookRequest).toHaveBeenCalledTimes(1);
     // Pending is per occurrence: the sibling card stays untouched.
     expect(cards[1]).not.toHaveAttribute("data-pending");
-    expect(
-      within(cards[1]!).getByRole("button", { name: "Request slot" }),
-    ).toBeEnabled();
+    const siblingButton = within(cards[1]!).getByRole("button", {
+      name: "Request slot",
+    });
+    expect(siblingButton).toBeEnabled();
+    expect(siblingButton).not.toHaveAttribute("aria-disabled");
     expect(getLiveRegion(container)).toHaveTextContent("Requesting");
 
     await act(async () => {

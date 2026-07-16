@@ -57,18 +57,40 @@ export type SlotPlannerCrudOperation = {
  * Tracks per-key pending and error state for CRUD callbacks. Callbacks that
  * return promises drive pending affordances and settle into success (apply)
  * or a stored retry that re-fires the identical payload. Non-promise returns
- * succeed synchronously.
+ * succeed synchronously. The thrown error / rejection reason for the latest
+ * failure of each key is captured in `errorByKey` and forwarded to the
+ * optional `onError` callback.
  */
-export function useSlotPlannerCrud() {
+export function useSlotPlannerCrud(
+  onError?: (key: string, error: unknown) => void,
+) {
   const [pendingKeys, setPendingKeys] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
   const [retryByKey, setRetryByKey] = useState<ReadonlyMap<string, () => void>>(
     () => new Map(),
   );
+  const [errorByKey, setErrorByKey] = useState<ReadonlyMap<string, unknown>>(
+    () => new Map(),
+  );
+  // Latest-ref so `run` can stay stable while still calling the freshest
+  // `onError` supplied by the consumer.
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
 
   const clearError = useCallback((key: string) => {
     setRetryByKey((previous) => {
+      if (!previous.has(key)) {
+        return previous;
+      }
+
+      const next = new Map(previous);
+
+      next.delete(key);
+
+      return next;
+    });
+    setErrorByKey((previous) => {
       if (!previous.has(key)) {
         return previous;
       }
@@ -93,7 +115,7 @@ export function useSlotPlannerCrud() {
           return next;
         });
       };
-      const storeRetry = () => {
+      const recordFailure = (error: unknown) => {
         setRetryByKey((previous) => {
           const next = new Map(previous);
 
@@ -101,6 +123,14 @@ export function useSlotPlannerCrud() {
 
           return next;
         });
+        setErrorByKey((previous) => {
+          const next = new Map(previous);
+
+          next.set(key, error);
+
+          return next;
+        });
+        onErrorRef.current?.(key, error);
       };
 
       clearError(key);
@@ -109,8 +139,8 @@ export function useSlotPlannerCrud() {
 
       try {
         result = operation.execute();
-      } catch {
-        storeRetry();
+      } catch (error) {
+        recordFailure(error);
 
         return;
       }
@@ -122,9 +152,9 @@ export function useSlotPlannerCrud() {
             removePending();
             operation.onSuccess();
           },
-          () => {
+          (reason: unknown) => {
             removePending();
-            storeRetry();
+            recordFailure(reason);
           },
         );
 
@@ -136,7 +166,7 @@ export function useSlotPlannerCrud() {
     [clearError],
   );
 
-  return { clearError, pendingKeys, retryByKey, run };
+  return { clearError, errorByKey, pendingKeys, retryByKey, run };
 }
 
 function getEnvironmentTimeZone() {
@@ -147,11 +177,13 @@ function getSlotPlannerOccurrenceKey(slotId: string, occurrenceDate: string) {
   return `${slotId}::${occurrenceDate}`;
 }
 
-function getSlotPlannerCreateKey(dateIso: string) {
+/** Pending/error key of create operations targeting a given ISO date. */
+export function getSlotPlannerCreateKey(dateIso: string) {
   return `create::${dateIso}`;
 }
 
-function getSlotPlannerBatchKey(dateIso: string) {
+/** Pending/error key of batch (copy/clear) operations fired from an ISO date. */
+export function getSlotPlannerBatchKey(dateIso: string) {
   return `batch:${dateIso}`;
 }
 
@@ -231,6 +263,13 @@ export interface UseSlotPlannerOptions<
   onBatchChange?: (
     payload: SlotPlannerBatchChangePayload<TData>,
   ) => void | Promise<void>;
+  /**
+   * Fires when a mutation callback throws or its promise rejects, with the
+   * failing operation's key and the thrown error / rejection reason. The retry
+   * affordance (`retryByKey`) still surfaces regardless; this is an additive
+   * hook for logging or toast surfaces.
+   */
+  onMutationError?: (key: string, error: unknown) => void;
   /** Ids for slots created through the editor. Defaults to crypto.randomUUID. */
   generateSlotId?: () => string;
   taxonomy?: SlotPlannerTaxonomyInput;
@@ -343,6 +382,11 @@ export interface UseSlotPlannerReturn<
   /** Retry dispatchers stored per failed key; re-fire identical payloads. */
   retryByKey: ReadonlyMap<string, () => void>;
   clearError: (key: string) => void;
+  /**
+   * Thrown error / rejection reason of the latest failure per key. An entry is
+   * present exactly while its `retryByKey` retry is; cleared on retry/success.
+   */
+  errors: ReadonlyMap<string, unknown>;
   /** Stable pending/error key of one occurrence. */
   occurrenceKey: (ref: SlotPlannerOccurrenceRef) => string;
   /** Pending/error key of create operations targeting the focused date. */
@@ -351,6 +395,12 @@ export interface UseSlotPlannerReturn<
   batchKey: string;
   /** Latest polite live-region message, phrased through the taxonomy. */
   announcement: string;
+  /**
+   * Advances on every announcement, including repeats of an identical
+   * message. Renderers key the live region on it so repeated announcements
+   * still mutate the DOM and are read out.
+   */
+  announcementNonce: number;
 }
 
 /**
@@ -376,6 +426,7 @@ export function useSlotPlanner<
     onDeleteOccurrence,
     onDeleteSeries,
     onFocusedDateChange,
+    onMutationError,
     onUpdateSlot,
     slots,
     taxonomy,
@@ -432,8 +483,25 @@ export function useSlotPlanner<
   );
   const selectedOccurrences = occurrencesByDate[currentFocusedDate] ?? [];
 
-  const { clearError, pendingKeys, retryByKey, run } = useSlotPlannerCrud();
-  const [announcement, setAnnouncement] = useState("");
+  const { clearError, errorByKey, pendingKeys, retryByKey, run } =
+    useSlotPlannerCrud(onMutationError);
+  // The nonce advances on every announcement so identical consecutive
+  // messages still change state (and, via `announcementNonce`, still mutate
+  // the live region's DOM) instead of being dropped by React's bail-out.
+  const [announcementState, setAnnouncementState] = useState<{
+    text: string;
+    nonce: number;
+  }>(() => ({ nonce: 0, text: "" }));
+  const setAnnouncement = useCallback(
+    (next: string | ((current: string) => string)) => {
+      setAnnouncementState((previous) => ({
+        nonce: previous.nonce + 1,
+        text: typeof next === "function" ? next(previous.text) : next,
+      }));
+    },
+    [],
+  );
+  const announcement = announcementState.text;
 
   const applyMutation = useCallback((mutation: SlotPlannerMutation<TData>) => {
     // Controlled collections are never self-mutated: the app owns them and
@@ -597,14 +665,17 @@ export function useSlotPlanner<
 
   const generateId = generateSlotId ?? defaultGenerateSlotId;
 
-  const validate = (candidate: SlotPlannerSlotData<TData>) =>
+  // Dispatcher bodies are re-created each render as closures over the current
+  // values, then routed through `latestRef` below so the *returned* dispatchers
+  // can be stable (empty-dependency `useCallback`) without going stale.
+  const runValidation = (candidate: SlotPlannerSlotData<TData>) =>
     validateSlotPlannerSlot(candidate, {
       constraints,
       now: resolvedNow,
       slots: resolvedSlots,
     });
 
-  const createSlot = (
+  const createSlotImpl = (
     values: SlotPlannerEditorSeriesValues,
     target?: { date?: string },
   ): SlotPlannerViolation[] => {
@@ -613,7 +684,7 @@ export function useSlotPlanner<
       id: generateId(),
       date,
     });
-    const violations = validate(slot);
+    const violations = runValidation(slot);
 
     if (violations.length > 0) {
       return violations;
@@ -633,20 +704,29 @@ export function useSlotPlanner<
     return [];
   };
 
-  const updateSlot = (
+  const updateSlotImpl = (
     occurrence: SlotPlannerOccurrence<TData>,
     result: SlotPlannerEditorResult,
   ): SlotPlannerViolation[] => {
     const previous = occurrence.slot;
     const nextSlot =
       result.scope === "occurrence"
-        ? upsertSlotPlannerOccurrenceOverride(previous, {
-            occurrenceDate: occurrence.occurrenceDate,
-            startTime: result.startTime,
-            durationMinutes: result.durationMinutes,
-          })
+        ? previous.recurrence
+          ? upsertSlotPlannerOccurrenceOverride(previous, {
+              occurrenceDate: occurrence.occurrenceDate,
+              startTime: result.startTime,
+              durationMinutes: result.durationMinutes,
+            })
+          : // Non-recurring slots have no per-occurrence overrides, so the
+            // occurrence edit applies directly to the single slot instead of
+            // writing an override that would be a silent no-op.
+            {
+              ...previous,
+              startTime: result.startTime,
+              durationMinutes: result.durationMinutes,
+            }
         : updateSlotFromEditorValues(previous, result.values);
-    const violations = validate(nextSlot);
+    const violations = runValidation(nextSlot);
 
     if (violations.length > 0) {
       return violations;
@@ -672,7 +752,7 @@ export function useSlotPlanner<
     return [];
   };
 
-  const deleteOccurrence = (
+  const deleteOccurrenceImpl = (
     occurrence: SlotPlannerOccurrence<TData>,
     actionOptions?: UseSlotPlannerActionOptions,
   ) => {
@@ -695,7 +775,7 @@ export function useSlotPlanner<
     });
   };
 
-  const deleteSeries = (
+  const deleteSeriesImpl = (
     occurrence: SlotPlannerOccurrence<TData>,
     actionOptions?: UseSlotPlannerActionOptions,
   ) => {
@@ -784,7 +864,7 @@ export function useSlotPlanner<
     };
   };
 
-  const copyDay = (targetDates: string[]) => {
+  const copyDayImpl = (targetDates: string[]) => {
     const sources = selectedOccurrences.filter((occurrence) =>
       isMutableAvailabilityStatus(occurrence.status),
     );
@@ -799,7 +879,7 @@ export function useSlotPlanner<
     runBatch(buildCopyPayload(candidates), announceBatchResult);
   };
 
-  const copyWeek = () => {
+  const copyWeekImpl = () => {
     // Day view still copies the whole focused week, so the week's
     // occurrences are expanded on demand rather than reusing the view range.
     const weekOccurrences = expandSlotsForRange(
@@ -823,7 +903,7 @@ export function useSlotPlanner<
     runBatch(buildCopyPayload(candidates), announceBatchResult);
   };
 
-  const clearDay = () => {
+  const clearDayImpl = () => {
     const deletedSlotIds: string[] = [];
     const updatedSlots: SlotPlannerSlotData<TData>[] = [];
 
@@ -858,39 +938,174 @@ export function useSlotPlanner<
     });
   };
 
-  return {
-    announcement,
-    batchKey: getSlotPlannerBatchKey(currentFocusedDate),
-    clearDay,
-    clearError,
-    copyDay,
-    copyWeek,
-    createKey: getSlotPlannerCreateKey(currentFocusedDate),
-    createSlot,
-    dailyCap,
-    deleteOccurrence,
-    deleteSeries,
-    focusedDate: currentFocusedDate,
-    goToNextWeek: () => moveWeek(1),
-    goToPreviousWeek: () => moveWeek(-1),
-    goToThisWeek: () => setFocusedDate(todayIso),
-    occurrenceKey: (occurrenceRef) =>
+  // Latest-ref of the freshly-closed-over dispatcher bodies, refreshed every
+  // render. The returned dispatchers below read through it, so their own
+  // identities stay stable while still running against current state.
+  const latestRef = useRef<{
+    clearDayImpl: () => void;
+    copyDayImpl: (targetDates: string[]) => void;
+    copyWeekImpl: () => void;
+    createSlotImpl: (
+      values: SlotPlannerEditorSeriesValues,
+      target?: { date?: string },
+    ) => SlotPlannerViolation[];
+    deleteOccurrenceImpl: (
+      occurrence: SlotPlannerOccurrence<TData>,
+      options?: UseSlotPlannerActionOptions,
+    ) => void;
+    deleteSeriesImpl: (
+      occurrence: SlotPlannerOccurrence<TData>,
+      options?: UseSlotPlannerActionOptions,
+    ) => void;
+    moveWeek: (weeks: number) => void;
+    runValidation: (
+      candidate: SlotPlannerSlotData<TData>,
+    ) => SlotPlannerViolation[];
+    setFocusedDate: (dateIso: string) => void;
+    todayIso: string;
+    updateSlotImpl: (
+      occurrence: SlotPlannerOccurrence<TData>,
+      result: SlotPlannerEditorResult,
+    ) => SlotPlannerViolation[];
+  }>(null!);
+  latestRef.current = {
+    clearDayImpl,
+    copyDayImpl,
+    copyWeekImpl,
+    createSlotImpl,
+    deleteOccurrenceImpl,
+    deleteSeriesImpl,
+    moveWeek,
+    runValidation,
+    setFocusedDate,
+    todayIso,
+    updateSlotImpl,
+  };
+
+  const validate = useCallback(
+    (candidate: SlotPlannerSlotData<TData>) =>
+      latestRef.current.runValidation(candidate),
+    [],
+  );
+  const createSlot = useCallback(
+    (values: SlotPlannerEditorSeriesValues, target?: { date?: string }) =>
+      latestRef.current.createSlotImpl(values, target),
+    [],
+  );
+  const updateSlot = useCallback(
+    (
+      occurrence: SlotPlannerOccurrence<TData>,
+      result: SlotPlannerEditorResult,
+    ) => latestRef.current.updateSlotImpl(occurrence, result),
+    [],
+  );
+  const deleteOccurrence = useCallback(
+    (
+      occurrence: SlotPlannerOccurrence<TData>,
+      actionOptions?: UseSlotPlannerActionOptions,
+    ) => latestRef.current.deleteOccurrenceImpl(occurrence, actionOptions),
+    [],
+  );
+  const deleteSeries = useCallback(
+    (
+      occurrence: SlotPlannerOccurrence<TData>,
+      actionOptions?: UseSlotPlannerActionOptions,
+    ) => latestRef.current.deleteSeriesImpl(occurrence, actionOptions),
+    [],
+  );
+  const copyDay = useCallback(
+    (targetDates: string[]) => latestRef.current.copyDayImpl(targetDates),
+    [],
+  );
+  const copyWeek = useCallback(() => latestRef.current.copyWeekImpl(), []);
+  const clearDay = useCallback(() => latestRef.current.clearDayImpl(), []);
+  const goToNextWeek = useCallback(() => latestRef.current.moveWeek(1), []);
+  const goToPreviousWeek = useCallback(
+    () => latestRef.current.moveWeek(-1),
+    [],
+  );
+  const goToThisWeek = useCallback(
+    () => latestRef.current.setFocusedDate(latestRef.current.todayIso),
+    [],
+  );
+  const occurrenceKey = useCallback(
+    (occurrenceRef: SlotPlannerOccurrenceRef) =>
       getSlotPlannerOccurrenceKey(
         occurrenceRef.slotId,
         occurrenceRef.occurrenceDate,
       ),
-    occurrencesByDate,
-    pendingKeys,
-    retryByKey,
-    selectedOccurrences,
-    setFocusedDate,
-    slots: resolvedSlots,
-    summarizeDay,
-    taxonomy: resolvedTaxonomy,
-    todayIso,
-    updateSlot,
-    validate,
-    weekDays,
-    weeklyCap,
-  };
+    [],
+  );
+
+  const batchKey = getSlotPlannerBatchKey(currentFocusedDate);
+  const createKey = getSlotPlannerCreateKey(currentFocusedDate);
+
+  return useMemo<UseSlotPlannerReturn<TData>>(
+    () => ({
+      announcement,
+      announcementNonce: announcementState.nonce,
+      batchKey,
+      clearDay,
+      clearError,
+      copyDay,
+      copyWeek,
+      createKey,
+      createSlot,
+      dailyCap,
+      deleteOccurrence,
+      deleteSeries,
+      errors: errorByKey,
+      focusedDate: currentFocusedDate,
+      goToNextWeek,
+      goToPreviousWeek,
+      goToThisWeek,
+      occurrenceKey,
+      occurrencesByDate,
+      pendingKeys,
+      retryByKey,
+      selectedOccurrences,
+      setFocusedDate,
+      slots: resolvedSlots,
+      summarizeDay,
+      taxonomy: resolvedTaxonomy,
+      todayIso,
+      updateSlot,
+      validate,
+      weekDays,
+      weeklyCap,
+    }),
+    [
+      announcement,
+      announcementState.nonce,
+      batchKey,
+      clearDay,
+      clearError,
+      copyDay,
+      copyWeek,
+      createKey,
+      createSlot,
+      dailyCap,
+      deleteOccurrence,
+      deleteSeries,
+      errorByKey,
+      currentFocusedDate,
+      goToNextWeek,
+      goToPreviousWeek,
+      goToThisWeek,
+      occurrenceKey,
+      occurrencesByDate,
+      pendingKeys,
+      retryByKey,
+      selectedOccurrences,
+      setFocusedDate,
+      resolvedSlots,
+      summarizeDay,
+      resolvedTaxonomy,
+      todayIso,
+      updateSlot,
+      validate,
+      weekDays,
+      weeklyCap,
+    ],
+  );
 }

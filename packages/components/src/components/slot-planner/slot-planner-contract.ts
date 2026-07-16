@@ -181,8 +181,11 @@ export type SlotPlannerConstraints = {
    * ISO weekday numbers (1 = Monday … 7 = Sunday) on which slots may occur.
    * All days are working days when omitted.
    */
-  workingDays?: number[];
+  workingDays?: SlotPlannerIsoWeekday[];
 };
+
+/** ISO weekday number: 1 = Monday … 7 = Sunday. */
+export type SlotPlannerIsoWeekday = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 /** Machine-readable constraint violation kinds. */
 export const slotPlannerViolationCodes = [
@@ -270,6 +273,8 @@ export type SlotPlannerTaxonomy = {
   nextDay: string;
   thisWeek: string;
   today: string;
+  /** Persistent accessible label for the day-rail tablist. */
+  weekRailLabel: string;
   /**
    * Day-card summary for one status count, e.g. "2 requestable". Tokens:
    * `{count}`, `{statusLabel}`. Plural category keyed on `{count}`.
@@ -426,6 +431,7 @@ export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
   nextDay: "Next day",
   thisWeek: "This week",
   today: "Today",
+  weekRailLabel: "Days of the week",
   statusCountSummary: {
     other: "{count} {statusLabel}",
   },
