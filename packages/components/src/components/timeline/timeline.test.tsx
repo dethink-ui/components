@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
 import { Timeline, type TimelineItemData } from ".";
 
@@ -438,5 +438,254 @@ describe("Timeline", () => {
     });
 
     expect(content.getAttribute("style")).toContain("scale(1.15)");
+  });
+});
+
+const flowItems: TimelineItemData[] = [
+  { id: "one", title: "One", status: "complete" },
+  { id: "two", title: "Two", status: "current" },
+  { id: "three", title: "Three", status: "upcoming" },
+];
+
+describe("Timeline flow presentation", () => {
+  it("renders events as a static flow list without a pan/zoom viewport", () => {
+    render(
+      <Timeline
+        data-testid="timeline-root"
+        mode="events"
+        presentation="flow"
+        items={flowItems}
+      />,
+    );
+
+    const root = screen.getByTestId("timeline-root");
+    const list = screen.getByRole("list");
+    const items = within(list).getAllByRole("listitem");
+
+    expect(root).toHaveAttribute("data-presentation", "flow");
+    expect(root).toHaveAttribute("data-mode", "events");
+    expect(items).toHaveLength(3);
+    // No canvas viewport content, no zoom controls, and no drag surface.
+    expect(
+      document.querySelector('[data-slot="timeline-viewport-content"]'),
+    ).toBeNull();
+    expect(
+      document.querySelector('[data-slot="timeline-controls"]'),
+    ).toBeNull();
+    expect(
+      screen.getByRole("region", { name: "Timeline viewport" }),
+    ).toHaveAttribute("data-presentation", "flow");
+    // Compact card styling (not story typography).
+    expect(list).toHaveClass("before:bg-timeline-rail");
+    expect(document.querySelector('[data-slot="timeline-card"]')).toHaveClass(
+      "border-timeline-border",
+    );
+    expect(
+      screen.getByRole("heading", { level: 3, name: "One" }),
+    ).not.toHaveClass("font-heading");
+  });
+
+  it("keeps keyboard navigation working in the flow presentation", async () => {
+    const user = userEvent.setup();
+
+    render(<Timeline mode="events" presentation="flow" items={flowItems} />);
+
+    const viewport = screen.getByRole("region", { name: "Timeline viewport" });
+    viewport.focus();
+
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("button", { name: "One" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    await user.keyboard("{End}");
+    expect(screen.getByRole("button", { name: "Three" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+});
+
+describe("Timeline reveal", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("does not add reveal attributes when reveal is unset (default)", () => {
+    render(<Timeline mode="events" presentation="flow" items={flowItems} />);
+
+    expect(
+      document.querySelector('[data-slot="timeline-item"][data-reveal]'),
+    ).toBeNull();
+    expect(screen.getByRole("list")).not.toHaveAttribute("data-reveal");
+  });
+
+  it("ignores reveal for the canvas presentation", () => {
+    render(
+      <Timeline
+        mode="events"
+        reveal="stagger"
+        items={flowItems}
+        viewport={{ controls: false }}
+      />,
+    );
+
+    expect(
+      document.querySelector('[data-slot="timeline-item"][data-reveal]'),
+    ).toBeNull();
+  });
+
+  it("reveals staggered items on mount and sets per-item CSS variables", () => {
+    render(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        revealOptions={{ interval: 120, duration: 300, initialDelay: 40 }}
+        items={flowItems}
+      />,
+    );
+
+    const list = screen.getByRole("list");
+    const items = document.querySelectorAll('[data-slot="timeline-item"]');
+
+    expect(list).toHaveAttribute("data-reveal", "stagger");
+    expect(list).toHaveAttribute("data-reveal-rail", "true");
+    items.forEach((item, index) => {
+      expect(item).toHaveAttribute("data-reveal", "stagger");
+      expect(item).toHaveAttribute("data-revealed", "true");
+      expect(
+        (item as HTMLElement).style.getPropertyValue("--timeline-reveal-index"),
+      ).toBe(String(index));
+      expect(
+        (item as HTMLElement).style.getPropertyValue(
+          "--timeline-reveal-interval",
+        ),
+      ).toBe("120ms");
+    });
+    expect(items[2]).toHaveAttribute("data-reveal-last", "true");
+  });
+
+  it("drives visibility from revealCount for the manual trigger", () => {
+    const { rerender } = render(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        revealOptions={{ trigger: "manual" }}
+        revealCount={2}
+        items={flowItems}
+      />,
+    );
+
+    const getItems = () =>
+      document.querySelectorAll('[data-slot="timeline-item"]');
+
+    expect(getItems()[0]).toHaveAttribute("data-revealed", "true");
+    expect(getItems()[1]).toHaveAttribute("data-revealed", "true");
+    expect(getItems()[2]).toHaveAttribute("data-revealed", "false");
+
+    rerender(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        revealOptions={{ trigger: "manual" }}
+        revealCount={3}
+        items={flowItems}
+      />,
+    );
+
+    expect(getItems()[2]).toHaveAttribute("data-revealed", "true");
+    // The newly revealed item starts a fresh batch (order 0).
+    expect(
+      (getItems()[2] as HTMLElement).style.getPropertyValue(
+        "--timeline-reveal-index",
+      ),
+    ).toBe("0");
+  });
+
+  it("only animates newly appended items and fires onItemReveal per item", () => {
+    const onItemReveal = vi.fn();
+
+    const { rerender } = render(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        onItemReveal={onItemReveal}
+        items={flowItems.slice(0, 2)}
+      />,
+    );
+
+    expect(onItemReveal.mock.calls.map((call) => call[0])).toEqual([
+      "one",
+      "two",
+    ]);
+
+    onItemReveal.mockClear();
+
+    rerender(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        onItemReveal={onItemReveal}
+        items={flowItems}
+      />,
+    );
+
+    // Only the appended item reveals; existing items are not re-announced.
+    expect(onItemReveal.mock.calls.map((call) => call[0])).toEqual(["three"]);
+    expect(onItemReveal).toHaveBeenLastCalledWith("three", 2);
+  });
+
+  it("fires onRevealComplete after the last item finishes", () => {
+    vi.useFakeTimers();
+    const onRevealComplete = vi.fn();
+
+    try {
+      render(
+        <Timeline
+          mode="events"
+          presentation="flow"
+          reveal="stagger"
+          revealOptions={{ interval: 100, duration: 200, initialDelay: 0 }}
+          onRevealComplete={onRevealComplete}
+          items={flowItems}
+        />,
+      );
+
+      expect(onRevealComplete).not.toHaveBeenCalled();
+
+      // 3 items: 0 + 2 * 100 + 200 = 400ms, plus completion buffer.
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
+      expect(onRevealComplete).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("keeps unrevealed items mounted for assistive technology", () => {
+    render(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        revealOptions={{ trigger: "manual" }}
+        revealCount={0}
+        items={flowItems}
+      />,
+    );
+
+    // Pre-reveal items remain listitems (kept in the accessibility tree).
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    document.querySelectorAll('[data-slot="timeline-item"]').forEach((item) => {
+      expect(item).toHaveAttribute("data-revealed", "false");
+    });
   });
 });

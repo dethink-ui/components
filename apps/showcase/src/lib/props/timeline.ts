@@ -42,6 +42,27 @@ export const timelineProps: PropRow[] = [
       "Controlled or uncontrolled selection; arrow keys move between items.",
   },
   {
+    prop: "presentation",
+    type: '"canvas" | "flow"',
+    defaultValue: '"canvas" ("flow" for story)',
+    description:
+      "Pannable/zoomable plane, or a static document-flow list with markers, rail, and compact cards.",
+  },
+  {
+    prop: "reveal / revealOptions",
+    type: '"none" | "stagger" | "all" / trigger, interval, duration, initialDelay',
+    defaultValue: '"none"',
+    description:
+      "Animated item entrance for the flow presentation — staggered or all at once, on mount, in view, or manually.",
+  },
+  {
+    prop: "revealCount / onItemReveal / onRevealComplete",
+    type: "number / (id, index) => void / () => void",
+    defaultValue: "—",
+    description:
+      "Controlled reveal progression for the manual trigger, plus per-item and completion callbacks. Appended items animate in as their own batch.",
+  },
+  {
     prop: "interactive",
     type: "boolean",
     defaultValue: "true",

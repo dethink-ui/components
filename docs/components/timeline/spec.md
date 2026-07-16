@@ -36,6 +36,10 @@ Timeline exports:
 - `TimelineViewportOptions`
 - `TimelineItemPayload`
 - `TimelineItemRenderer`
+- `TimelinePresentation`
+- `TimelineRevealMode`
+- `TimelineRevealOptions`
+- `TimelineRevealTrigger`
 
 ```ts
 export type TimelineItemPayload = Record<string, unknown>;
@@ -46,7 +50,8 @@ export type TimelineItemData<
   id: string;
   datetime?: string | Date;
   dateLabel?: React.ReactNode;
-  status?: "neutral" | "complete" | "current" | "upcoming" | "warning" | "error";
+  status?:
+    "neutral" | "complete" | "current" | "upcoming" | "warning" | "error";
   marker?: React.ReactNode;
   disabled?: boolean;
   title?: React.ReactNode;
@@ -67,6 +72,17 @@ export type TimelineProps<
   scale?: "auto" | "time" | "sequence";
   order?: "asc" | "desc";
   interactive?: boolean;
+  presentation?: "canvas" | "flow";
+  reveal?: "none" | "stagger" | "all";
+  revealOptions?: {
+    trigger?: "mount" | "in-view" | "manual";
+    interval?: number;
+    duration?: number;
+    initialDelay?: number;
+  };
+  revealCount?: number;
+  onItemReveal?: (id: string, index: number) => void;
+  onRevealComplete?: () => void;
   viewport?: {
     defaultZoom?: number;
     minZoom?: number;
@@ -101,6 +117,25 @@ Timeline keeps structural fields at the top level and reserves `data` for produc
 - `viewport.controlsVisibility="hover"` keeps controls visually hidden until the viewport is hovered or receives keyboard focus.
 - V1 is read-only. Drag editing, creation, removal, range resizing, grouping lanes, virtualization, and scheduler behavior are intentionally out of scope.
 
+### Presentation
+
+- `presentation` selects the renderer. It defaults to `"canvas"` for `events`/`progress` and `"flow"` for `story`, so existing usage is unchanged.
+- `presentation="canvas"` is the pannable/zoomable absolutely-positioned plane with viewport controls.
+- `presentation="flow"` renders `events`/`progress` timelines (with `layout="rail"` or `"alternating"`) in normal document flow: markers, a tokenized rail, and the compact card styling, with no pointer/drag/zoom handlers and no viewport controls. Keyboard prev/next/home/end navigation still works exactly as it does in story mode (gated by `interactive`). Flow event/progress timelines default `interactive` to `true`; story styling defaults it to `false`.
+- `presentation="canvas"` is not supported for story-styled timelines (`mode="story"` or `layout="story"`); those always render in flow and the prop is ignored for them.
+- The active renderer is reflected on the root and viewport via `data-presentation="canvas" | "flow"`.
+
+### Reveal
+
+- `reveal` animates the entrance of items. It defaults to `"none"`, which applies no reveal attributes and no animation (zero behavior change when unset).
+- Reveal applies only to the flow presentation (story and the new events/progress flow). If `reveal` is set with the canvas presentation it is ignored gracefully.
+- `reveal="stagger"` animates items in sequentially (fade + a small translate along the main axis, transform/opacity only) while the rail grows alongside (`scale` on the rail, timed to the stagger). `reveal="all"` animates every item in as one group with a single `initialDelay`.
+- `revealOptions.trigger` selects when reveal happens: `"mount"` (default), `"in-view"` (a single IntersectionObserver reveals items as they scroll into view; once revealed they stay revealed), or `"manual"` (visibility is driven entirely by `revealCount`; items with index < `revealCount` are revealed).
+- `revealOptions.interval` (default 200ms), `duration` (default 500ms), and `initialDelay` (default 0ms) control timing; negative values are clamped to 0.
+- Streaming appends: when the `items` array grows, only the new items animate in, with delays relative to their own batch. Existing items are not re-animated.
+- `onItemReveal(id, index)` fires per item as it becomes revealed. `onRevealComplete()` fires once after the last item's animation ends (via `animationend` on the last item, with a timer fallback).
+- Reveal progression is driven by React state, not animation events. Under `prefers-reduced-motion` every item is visible immediately with no motion, and the reveal callbacks still fire.
+
 ## Accessibility
 
 - Root content uses semantic landmarks and list structure.
@@ -110,12 +145,14 @@ Timeline keeps structural fields at the top level and reserves `data` for produc
 - Arrow keys move selection to previous/next enabled item; Home/End move to first/last enabled item.
 - Zoom controls are native buttons with accessible labels when the pannable viewport is used.
 - Visual status is not color-only: status is exposed with text for assistive technology and `aria-current` for the current milestone.
+- Reveal never removes content from the DOM or accessibility tree. Pre-reveal items are hidden with opacity/transform only (never `display:none` or conditional rendering), so screen readers get the full list immediately. The initial server render matches the initial client render; the hidden state and animation are applied via CSS keyed on `data-reveal`/`data-revealed` and run only after hydration.
+- All reveal motion is gated behind `motion-safe`. Under `prefers-reduced-motion` items are shown immediately with no motion, and reveal state (and callbacks) still progresses. Reveal never communicates state through animation alone.
 
 ## Styling And Theming
 
 - Use Tailwind CSS v4 utilities and semantic CSS variables from the base stylesheet.
 - Use `cn` for class merging and static class maps for variants, layout, orientation, and status.
-- Use `data-*` attributes for state: `data-mode`, `data-orientation`, `data-layout`, `data-scale`, `data-status`, `data-selected`, `data-disabled`, and `data-interactive`.
+- Use `data-*` attributes for state: `data-mode`, `data-orientation`, `data-layout`, `data-scale`, `data-status`, `data-selected`, `data-disabled`, `data-interactive`, `data-presentation`, `data-reveal`, and `data-revealed`.
 - Avoid CSS-in-JS, runtime-generated Tailwind class fragments, and hard-coded brand colors.
 - Use Timeline-specific semantic tokens for the visual rail and event-card borders so dark mode remains readable without brightening every global border.
 - Support light, dark, density, RTL, responsive, and high-contrast-friendly states through existing tokens and structural classes.

@@ -6,6 +6,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type AnimationEvent,
   type CSSProperties,
   type FocusEvent,
   type ForwardedRef,
@@ -21,17 +22,23 @@ import {
 import { cn } from "../../utils/cn";
 import {
   centerTimelinePoint,
+  clampTimelineRevealCount,
   fitTimelineTransform,
   getDefaultTimelineTransform,
   getEdgeEnabledTimelineItemId,
   getNextEnabledTimelineItemId,
   getTimelineContentSize,
+  getTimelineRevealBatchDuration,
+  isTimelineRevealActive,
   normalizeTimelineItems,
+  normalizeTimelineRevealOptions,
   normalizeViewportOptions,
   resetTimelineTransform,
+  resolveTimelinePresentation,
   timelineGeometry,
   zoomTimelineTransform,
   type NormalizedTimelineItem,
+  type NormalizedTimelineRevealOptions,
   type TimelineItemData,
   type TimelineItemPayload,
   type TimelineLayout,
@@ -39,6 +46,9 @@ import {
   type TimelineOrder,
   type TimelineOrientation,
   type TimelinePoint,
+  type TimelinePresentation,
+  type TimelineRevealMode,
+  type TimelineRevealOptions,
   type TimelineScale,
   type TimelineControlsVisibility,
   type TimelineStatus,
@@ -49,6 +59,7 @@ import {
 
 export type {
   NormalizedTimelineItem,
+  NormalizedTimelineRevealOptions,
   TimelineImage,
   TimelineItemBaseData,
   TimelineItemData,
@@ -59,6 +70,10 @@ export type {
   TimelineOrder,
   TimelineOrientation,
   TimelinePoint,
+  TimelinePresentation,
+  TimelineRevealMode,
+  TimelineRevealOptions,
+  TimelineRevealTrigger,
   TimelineScale,
   TimelineControlsVisibility,
   TimelineStatus,
@@ -82,6 +97,12 @@ export interface TimelineProps<
   scale?: TimelineScale;
   order?: TimelineOrder;
   interactive?: boolean;
+  presentation?: TimelinePresentation;
+  reveal?: TimelineRevealMode;
+  revealOptions?: TimelineRevealOptions;
+  revealCount?: number;
+  onItemReveal?: (id: string, index: number) => void;
+  onRevealComplete?: () => void;
   viewport?: TimelineViewportOptions;
   selectedId?: string | null;
   defaultSelectedId?: string | null;
@@ -96,6 +117,7 @@ export interface TimelineItemProps<
   mode?: TimelineMode;
   orientation?: TimelineOrientation;
   layout?: TimelineLayout;
+  presentation?: TimelinePresentation;
   interactive?: boolean;
   selected?: boolean;
   renderItem?: TimelineItemRenderer<TPayload>;
@@ -111,6 +133,7 @@ export interface TimelineViewportProps extends Omit<
   interactive?: boolean;
   orientation?: TimelineOrientation;
   layout?: TimelineLayout;
+  presentation?: TimelinePresentation;
   viewport?: TimelineViewportOptions;
   selectedPoint?: TimelinePoint;
   onNavigate?: (id: string | null) => void;
@@ -157,6 +180,15 @@ const timelineStoryListLayoutClasses: Record<
   alternating: "sm:before:left-1/2 sm:before:-translate-x-1/2",
 };
 
+const timelineFlowListClasses =
+  "relative m-[var(--dt-space-0)] list-none p-[var(--dt-space-0)] before:absolute before:bottom-[var(--dt-space-2)] before:left-6 before:top-[var(--dt-space-2)] before:w-px before:rounded-full before:bg-timeline-rail before:content-[''] forced-colors:before:bg-[CanvasText]";
+
+const timelineFlowListLayoutClasses: Record<"default" | "alternating", string> =
+  {
+    default: "",
+    alternating: "sm:before:left-1/2 sm:before:-translate-x-1/2",
+  };
+
 const timelineRailClasses =
   "absolute rounded-full bg-timeline-rail forced-colors:bg-[CanvasText]";
 
@@ -173,6 +205,16 @@ const timelineStoryItemLayoutClasses: Record<
   alternating: "sm:grid-cols-[minmax(0,1fr)_4.5rem_minmax(0,1fr)]",
 };
 
+const timelineFlowItemClasses =
+  "relative grid min-w-0 grid-cols-[3rem_minmax(0,1fr)] gap-x-[var(--dt-space-3)] pb-8 last:pb-0";
+
+const timelineFlowItemLayoutClasses: Record<"default" | "alternating", string> =
+  {
+    default: "",
+    alternating:
+      "sm:grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] sm:gap-x-[var(--dt-space-4)]",
+  };
+
 const timelineCardBaseClasses =
   "text-left text-foreground motion-safe:transition-[border-color,background-color,box-shadow] motion-safe:duration-200 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background data-[disabled=true]:opacity-55 data-[interactive=true]:cursor-pointer";
 
@@ -187,6 +229,14 @@ const timelineStoryCardAlternatingClasses: Record<"start" | "end", string> = {
   end: "sm:col-start-3 sm:justify-self-start sm:text-left",
 };
 
+const timelineFlowCardClasses =
+  "relative col-start-2 row-start-1 min-w-0 max-w-full rounded-md border border-timeline-border bg-background p-[var(--dt-space-4)] shadow-sm data-[interactive=true]:hover:shadow-md data-[selected=true]:border-ring data-[selected=true]:bg-muted/40 data-[selected=true]:shadow-md data-[selected=true]:ring-1 data-[selected=true]:ring-ring/35";
+
+const timelineFlowCardAlternatingClasses: Record<"start" | "end", string> = {
+  start: "sm:col-start-1 sm:justify-self-end sm:text-right",
+  end: "sm:col-start-3 sm:justify-self-start sm:text-left",
+};
+
 const timelineMarkerBaseClasses =
   "z-10 flex size-8 items-center justify-center rounded-full border-2 text-xs font-medium shadow-sm motion-safe:transition-[border-color,background-color,box-shadow,transform] motion-safe:duration-200 data-[selected=true]:scale-110 data-[selected=true]:shadow-md data-[selected=true]:ring-4 data-[selected=true]:ring-ring/20";
 
@@ -197,6 +247,11 @@ const timelineStoryMarkerClasses =
   "relative col-start-1 row-start-1 mt-[var(--dt-space-1)] size-7 justify-self-center border-background bg-background text-primary ring-1 ring-border";
 
 const timelineStoryMarkerAlternatingClasses = "sm:col-start-2";
+
+const timelineFlowMarkerClasses =
+  "relative col-start-1 row-start-1 mt-[var(--dt-space-1)] justify-self-center";
+
+const timelineFlowMarkerAlternatingClasses = "sm:col-start-2";
 
 const timelineMarkerStatusClasses: Record<TimelineStatus, string> = {
   neutral: "border-timeline-border bg-background text-muted-foreground",
@@ -532,6 +587,7 @@ function TimelineItemInner<
     mode,
     orientation = "horizontal",
     layout = "rail",
+    presentation = "canvas",
     interactive = true,
     selected = false,
     renderItem,
@@ -557,14 +613,18 @@ function TimelineItemInner<
     event.preventDefault();
     onSelect?.(item.id);
   };
-  const isStoryRenderer = mode === "story" || layout === "story";
-  const isAlternatingStoryLayout = isStoryRenderer && layout === "alternating";
+  // A "flow" presentation renders in normal document flow (marker column + rail
+  // + card). "Story" is the editorial typography variant of that flow. Compact
+  // flow reuses the flow structure with the default compact card styling.
+  const isFlow = presentation === "flow";
+  const isStory = mode === "story" || layout === "story";
+  const isAlternatingFlow = isFlow && layout === "alternating";
   const alternatingSide = item.index % 2 === 0 ? "end" : "start";
-  const contentLayout = isStoryRenderer ? "story" : layout;
+  const contentLayout = isStory ? "story" : layout;
   const cardContent = renderItem
     ? renderItem(item)
     : renderDefaultItemContent(item, titleId, contentLayout);
-  const itemStyle = isStoryRenderer
+  const itemStyle = isFlow
     ? style
     : { left: item.point.x, top: item.point.y, ...style };
 
@@ -577,13 +637,20 @@ function TimelineItemInner<
       data-selected={selected ? "true" : undefined}
       data-disabled={item.disabled ? "true" : undefined}
       className={cn(
-        isStoryRenderer
-          ? cn(
-              timelineStoryItemClasses,
-              timelineStoryItemLayoutClasses[
-                isAlternatingStoryLayout ? "alternating" : "default"
-              ],
-            )
+        isFlow
+          ? isStory
+            ? cn(
+                timelineStoryItemClasses,
+                timelineStoryItemLayoutClasses[
+                  isAlternatingFlow ? "alternating" : "default"
+                ],
+              )
+            : cn(
+                timelineFlowItemClasses,
+                timelineFlowItemLayoutClasses[
+                  isAlternatingFlow ? "alternating" : "default"
+                ],
+              )
           : timelineItemClasses,
         className,
       )}
@@ -595,11 +662,16 @@ function TimelineItemInner<
         data-selected={selected ? "true" : undefined}
         className={cn(
           timelineMarkerBaseClasses,
-          isStoryRenderer
-            ? timelineStoryMarkerClasses
+          isFlow
+            ? isStory
+              ? timelineStoryMarkerClasses
+              : timelineFlowMarkerClasses
             : timelineViewportMarkerClasses,
-          isAlternatingStoryLayout && timelineStoryMarkerAlternatingClasses,
-          isStoryRenderer
+          isAlternatingFlow &&
+            (isStory
+              ? timelineStoryMarkerAlternatingClasses
+              : timelineFlowMarkerAlternatingClasses),
+          isStory
             ? timelineStoryMarkerStatusClasses[item.status]
             : timelineMarkerStatusClasses[item.status],
         )}
@@ -608,7 +680,7 @@ function TimelineItemInner<
           <span
             className={cn(
               "rounded-full bg-current",
-              isStoryRenderer ? "size-3.5" : "size-2",
+              isStory ? "size-3.5" : "size-2",
             )}
           />
         )}
@@ -622,12 +694,16 @@ function TimelineItemInner<
         data-interactive={isInteractive ? "true" : undefined}
         className={cn(
           timelineCardBaseClasses,
-          isStoryRenderer
-            ? timelineStoryCardClasses
+          isFlow
+            ? isStory
+              ? timelineStoryCardClasses
+              : timelineFlowCardClasses
             : timelineViewportCardClasses,
-          isAlternatingStoryLayout &&
-            timelineStoryCardAlternatingClasses[alternatingSide],
-          !isStoryRenderer &&
+          isAlternatingFlow &&
+            (isStory
+              ? timelineStoryCardAlternatingClasses
+              : timelineFlowCardAlternatingClasses)[alternatingSide],
+          !isFlow &&
             getCardPositionClasses({ index: item.index, orientation, layout }),
         )}
       >
@@ -646,7 +722,7 @@ function TimelineItemInner<
           tabIndex={isInteractive ? 0 : undefined}
           className={cn(
             "block focus-visible:outline-none motion-reduce:transition-none",
-            isStoryRenderer
+            isStory
               ? "rounded-none"
               : "rounded-sm motion-safe:transition-transform motion-safe:duration-200 motion-safe:data-[interactive=true]:hover:scale-[1.01] motion-safe:data-[interactive=true]:active:scale-[0.99]",
           )}
@@ -743,6 +819,7 @@ export const TimelineViewport = forwardRef<
       interactive = true,
       orientation = "horizontal",
       layout = "rail",
+      presentation = "canvas",
       viewport,
       selectedPoint,
       onNavigate,
@@ -1056,6 +1133,7 @@ export const TimelineViewport = forwardRef<
         data-dragging={dragging ? "true" : undefined}
         data-orientation={orientation}
         data-layout={layout}
+        data-presentation={presentation}
         data-chrome={options.chrome}
         className={cn(
           timelineViewportClasses,
@@ -1102,17 +1180,18 @@ export const TimelineViewport = forwardRef<
 
 TimelineViewport.displayName = "TimelineViewport";
 
-interface TimelineStoryViewportProps extends Omit<
+interface TimelineFlowViewportProps extends Omit<
   TimelineViewportProps,
   "contentSize" | "selectedPoint"
 > {}
 
-function TimelineStoryViewport({
+function TimelineFlowViewport({
   children,
   className,
   interactive = false,
   orientation = "vertical",
   layout = "story",
+  presentation = "flow",
   viewport,
   onNavigate,
   getPreviousId,
@@ -1121,7 +1200,7 @@ function TimelineStoryViewport({
   getLastId,
   onKeyDown,
   ...props
-}: TimelineStoryViewportProps) {
+}: TimelineFlowViewportProps) {
   const options = normalizeViewportOptions(viewport);
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     onKeyDown?.(event);
@@ -1155,6 +1234,7 @@ function TimelineStoryViewport({
       data-interactive={interactive ? "true" : "false"}
       data-orientation={orientation}
       data-layout={layout}
+      data-presentation={presentation}
       data-chrome={options.chrome}
       className={cn(
         timelineStoryViewportClasses,
@@ -1166,6 +1246,293 @@ function TimelineStoryViewport({
       {children}
     </div>
   );
+}
+
+type TimelineRevealItemStyle = CSSProperties & {
+  "--timeline-reveal-index"?: number;
+  "--timeline-reveal-interval"?: string;
+  "--timeline-reveal-duration"?: string;
+  "--timeline-reveal-initial-delay"?: string;
+  "--timeline-rail-duration"?: string;
+  "--timeline-rail-delay"?: string;
+};
+
+type TimelineRevealItemProps = {
+  ref?: (node: HTMLLIElement | null) => void;
+  style?: TimelineRevealItemStyle;
+  "data-reveal"?: TimelineRevealMode;
+  "data-revealed"?: "true" | "false";
+  "data-reveal-last"?: "true";
+  "data-timeline-reveal-id"?: string;
+};
+
+type UseTimelineRevealResult = {
+  getItemRevealProps: (id: string, isLast: boolean) => TimelineRevealItemProps;
+  handleAnimationEnd: (event: AnimationEvent<HTMLElement>) => void;
+};
+
+const REVEAL_COMPLETE_BUFFER_MS = 60;
+
+// Reveal progression is driven by React state (a ref-backed revealed set), not
+// by animation events, so it stays correct under `prefers-reduced-motion` and
+// in SSR. CSS only turns that state into motion.
+function useTimelineReveal({
+  itemIds,
+  reveal,
+  active,
+  options,
+  revealCount,
+  onItemReveal,
+  onRevealComplete,
+}: {
+  itemIds: string[];
+  reveal: TimelineRevealMode;
+  active: boolean;
+  options: NormalizedTimelineRevealOptions;
+  revealCount: number | undefined;
+  onItemReveal?: (id: string, index: number) => void;
+  onRevealComplete?: () => void;
+}): UseTimelineRevealResult {
+  const revealedRef = useRef<Set<string>>(new Set());
+  const orderRef = useRef<Map<string, number>>(new Map());
+  const inViewRef = useRef<Set<string>>(new Set());
+  const nodesRef = useRef<Map<string, HTMLLIElement>>(new Map());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const completeFiredRef = useRef(false);
+  const completeTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+  const [, setRevealTick] = useState(0);
+  const forceRender = useCallback(() => setRevealTick((tick) => tick + 1), []);
+
+  const stateRef = useRef({
+    itemIds,
+    reveal,
+    active,
+    options,
+    trigger: options.trigger,
+    revealCount,
+    onItemReveal,
+    onRevealComplete,
+  });
+  // Mirror the latest props into a ref so the stable reconcile/observer
+  // callbacks always read current values without re-subscribing.
+  // eslint-disable-next-line react-hooks/refs
+  stateRef.current = {
+    itemIds,
+    reveal,
+    active,
+    options,
+    trigger: options.trigger,
+    revealCount,
+    onItemReveal,
+    onRevealComplete,
+  };
+
+  const reconcile = useCallback(() => {
+    const state = stateRef.current;
+
+    if (!state.active) {
+      return;
+    }
+
+    const total = state.itemIds.length;
+    const isTarget = (id: string, index: number) => {
+      if (state.trigger === "manual") {
+        return index < clampTimelineRevealCount(state.revealCount, total);
+      }
+
+      if (state.trigger === "in-view") {
+        return inViewRef.current.has(id);
+      }
+
+      return true;
+    };
+    const newlyRevealed = state.itemIds.filter(
+      (id, index) => isTarget(id, index) && !revealedRef.current.has(id),
+    );
+
+    if (newlyRevealed.length === 0) {
+      return;
+    }
+
+    completeFiredRef.current = false;
+    newlyRevealed.forEach((id, batchOrder) => {
+      orderRef.current.set(id, state.reveal === "stagger" ? batchOrder : 0);
+      revealedRef.current.add(id);
+
+      const node = nodesRef.current.get(id);
+      if (node && observerRef.current) {
+        observerRef.current.unobserve(node);
+      }
+    });
+    forceRender();
+
+    newlyRevealed.forEach((id) => {
+      state.onItemReveal?.(id, state.itemIds.indexOf(id));
+    });
+
+    const allRevealed = state.itemIds.every((id) =>
+      revealedRef.current.has(id),
+    );
+    if (allRevealed) {
+      const duration = getTimelineRevealBatchDuration({
+        batchSize: newlyRevealed.length,
+        reveal: state.reveal,
+        options: state.options,
+      });
+      clearTimeout(completeTimerRef.current);
+      completeTimerRef.current = setTimeout(() => {
+        const latest = stateRef.current;
+        if (
+          !completeFiredRef.current &&
+          latest.itemIds.every((id) => revealedRef.current.has(id))
+        ) {
+          completeFiredRef.current = true;
+          latest.onRevealComplete?.();
+        }
+      }, duration + REVEAL_COMPLETE_BUFFER_MS);
+    }
+  }, [forceRender]);
+
+  const itemKey = itemIds.join("|");
+
+  // Prune removed ids so re-added items animate again, then reconcile whenever
+  // the item set or reveal configuration changes.
+  useEffect(() => {
+    if (!active) {
+      return;
+    }
+
+    const idSet = new Set(itemIds);
+    for (const id of Array.from(revealedRef.current)) {
+      if (!idSet.has(id)) revealedRef.current.delete(id);
+    }
+    for (const id of Array.from(orderRef.current.keys())) {
+      if (!idSet.has(id)) orderRef.current.delete(id);
+    }
+    for (const id of Array.from(inViewRef.current)) {
+      if (!idSet.has(id)) inViewRef.current.delete(id);
+    }
+
+    reconcile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    active,
+    itemKey,
+    reveal,
+    options.trigger,
+    options.interval,
+    options.duration,
+    options.initialDelay,
+    revealCount,
+    reconcile,
+  ]);
+
+  // IntersectionObserver for the in-view trigger. A single observer watches the
+  // still-hidden item nodes and reveals them as they scroll into view.
+  useEffect(() => {
+    if (!active || options.trigger !== "in-view") {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+      return;
+    }
+
+    if (typeof IntersectionObserver === "undefined") {
+      itemIds.forEach((id) => inViewRef.current.add(id));
+      reconcile();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let changed = false;
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const id = (entry.target as HTMLElement).getAttribute(
+            "data-timeline-reveal-id",
+          );
+          if (id) {
+            inViewRef.current.add(id);
+            changed = true;
+          }
+        }
+        if (changed) reconcile();
+      },
+      { rootMargin: "0px 0px -10% 0px" },
+    );
+    observerRef.current = observer;
+    nodesRef.current.forEach((node, id) => {
+      if (!revealedRef.current.has(id)) observer.observe(node);
+    });
+
+    return () => {
+      observer.disconnect();
+      observerRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, options.trigger, itemKey, reconcile]);
+
+  useEffect(() => () => clearTimeout(completeTimerRef.current), []);
+
+  const registerNode = useCallback((id: string, node: HTMLLIElement | null) => {
+    if (node) {
+      nodesRef.current.set(id, node);
+      if (
+        observerRef.current &&
+        stateRef.current.trigger === "in-view" &&
+        !revealedRef.current.has(id)
+      ) {
+        observerRef.current.observe(node);
+      }
+    } else {
+      nodesRef.current.delete(id);
+    }
+  }, []);
+
+  const handleAnimationEnd = useCallback(
+    (event: AnimationEvent<HTMLElement>) => {
+      const state = stateRef.current;
+      if (!state.active) return;
+      if (!String(event.animationName).includes("timeline-reveal")) return;
+      const target = event.target as HTMLElement;
+      if (target.getAttribute("data-reveal-last") !== "true") return;
+      if (
+        !completeFiredRef.current &&
+        state.itemIds.every((id) => revealedRef.current.has(id))
+      ) {
+        completeFiredRef.current = true;
+        clearTimeout(completeTimerRef.current);
+        state.onRevealComplete?.();
+      }
+    },
+    [],
+  );
+
+  const getItemRevealProps = (
+    id: string,
+    isLast: boolean,
+  ): TimelineRevealItemProps => {
+    if (!active) {
+      return {};
+    }
+
+    return {
+      ref: (node) => registerNode(id, node),
+      "data-reveal": reveal,
+      "data-revealed": revealedRef.current.has(id) ? "true" : "false",
+      "data-reveal-last": isLast ? "true" : undefined,
+      "data-timeline-reveal-id": id,
+      style: {
+        "--timeline-reveal-index": orderRef.current.get(id) ?? 0,
+        "--timeline-reveal-interval": `${options.interval}ms`,
+        "--timeline-reveal-duration": `${options.duration}ms`,
+        "--timeline-reveal-initial-delay": `${options.initialDelay}ms`,
+      },
+    };
+  };
+
+  return { getItemRevealProps, handleAnimationEnd };
 }
 
 function TimelineInner<
@@ -1180,6 +1547,12 @@ function TimelineInner<
     scale,
     order = "asc",
     interactive,
+    presentation,
+    reveal = "none",
+    revealOptions,
+    revealCount,
+    onItemReveal,
+    onRevealComplete,
     viewport,
     selectedId,
     defaultSelectedId = null,
@@ -1190,17 +1563,38 @@ function TimelineInner<
   ref: ForwardedRef<HTMLElement>,
 ) {
   const isStoryMode = mode === "story";
-  const resolvedOrientation =
-    orientation ?? (isStoryMode ? "vertical" : "horizontal");
   const resolvedLayout = layout ?? (isStoryMode ? "story" : "rail");
-  const usesStoryRenderer = isStoryMode || resolvedLayout === "story";
+  const resolvedPresentation = resolveTimelinePresentation(
+    presentation,
+    mode,
+    resolvedLayout,
+  );
+  const usesFlowRenderer = resolvedPresentation === "flow";
+  // Story styling (large editorial typography) is distinct from the flow
+  // renderer: compact events/progress timelines can render in flow too.
+  const isStoryStyling = isStoryMode || resolvedLayout === "story";
+  const resolvedOrientation =
+    orientation ?? (usesFlowRenderer ? "vertical" : "horizontal");
   const resolvedScale = scale ?? (isStoryMode ? "sequence" : "auto");
-  const resolvedInteractive = interactive ?? !usesStoryRenderer;
-  const resolvedViewport = usesStoryRenderer
+  const resolvedInteractive = interactive ?? !isStoryStyling;
+  const resolvedViewport = usesFlowRenderer
     ? { controls: false, wheelZoom: false as const, ...viewport }
     : viewport;
-  const storyListLayout =
+  const flowListLayout =
     resolvedLayout === "alternating" ? "alternating" : "default";
+  const revealActive = isTimelineRevealActive(reveal, resolvedPresentation);
+  const revealOptionsNormalized = useMemo(
+    () => normalizeTimelineRevealOptions(revealOptions),
+    // Depend on the individual fields so a fresh options object literal does
+    // not re-run reveal effects on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      revealOptions?.trigger,
+      revealOptions?.interval,
+      revealOptions?.duration,
+      revealOptions?.initialDelay,
+    ],
+  );
   const rootLabel = props["aria-label"];
   const viewportLabel =
     typeof rootLabel === "string" && rootLabel.length > 0
@@ -1277,6 +1671,30 @@ function TimelineInner<
     () => getEdgeEnabledTimelineItemId(normalizedItems, "last"),
     [normalizedItems],
   );
+  const itemIds = useMemo(
+    () => normalizedItems.map((item) => item.id),
+    [normalizedItems],
+  );
+  const { getItemRevealProps, handleAnimationEnd } = useTimelineReveal({
+    itemIds,
+    reveal,
+    active: revealActive,
+    options: revealOptionsNormalized,
+    revealCount,
+    onItemReveal,
+    onRevealComplete,
+  });
+  const railRevealActive = revealActive && reveal === "stagger";
+  const railStyle: TimelineRevealItemStyle | undefined = railRevealActive
+    ? {
+        "--timeline-rail-duration": `${getTimelineRevealBatchDuration({
+          batchSize: normalizedItems.length,
+          reveal,
+          options: revealOptionsNormalized,
+        })}ms`,
+        "--timeline-rail-delay": `${revealOptionsNormalized.initialDelay}ms`,
+      }
+    : undefined;
 
   return (
     <section
@@ -1288,14 +1706,16 @@ function TimelineInner<
       data-layout={resolvedLayout}
       data-scale={dataScale}
       data-interactive={resolvedInteractive ? "true" : "false"}
+      data-presentation={resolvedPresentation}
       className={cn(timelineRootClasses, className)}
     >
-      {usesStoryRenderer ? (
-        <TimelineStoryViewport
+      {usesFlowRenderer ? (
+        <TimelineFlowViewport
           aria-label={viewportLabel}
           interactive={resolvedInteractive}
           orientation={resolvedOrientation}
           layout={resolvedLayout}
+          presentation={resolvedPresentation}
           viewport={resolvedViewport}
           onNavigate={setSelectedId}
           getPreviousId={getPreviousId}
@@ -1305,26 +1725,49 @@ function TimelineInner<
         >
           <ol
             data-slot="timeline-list"
+            data-reveal={revealActive ? reveal : undefined}
+            data-reveal-rail={railRevealActive ? "true" : undefined}
+            onAnimationEnd={revealActive ? handleAnimationEnd : undefined}
             className={cn(
-              timelineStoryListClasses,
-              timelineStoryListLayoutClasses[storyListLayout],
+              isStoryStyling
+                ? timelineStoryListClasses
+                : timelineFlowListClasses,
+              (isStoryStyling
+                ? timelineStoryListLayoutClasses
+                : timelineFlowListLayoutClasses)[flowListLayout],
             )}
+            style={railStyle}
           >
-            {normalizedItems.map((item) => (
-              <TimelineItem
-                key={item.id}
-                item={item}
-                mode={mode}
-                orientation={resolvedOrientation}
-                layout={resolvedLayout}
-                interactive={resolvedInteractive}
-                selected={item.id === currentSelectedId}
-                renderItem={renderItem}
-                onSelect={setSelectedId}
-              />
-            ))}
+            {normalizedItems.map((item, index) => {
+              const {
+                ref: revealRef,
+                style: revealStyle,
+                ...revealAttrs
+              } = getItemRevealProps(
+                item.id,
+                index === normalizedItems.length - 1,
+              );
+
+              return (
+                <TimelineItem
+                  key={item.id}
+                  ref={revealRef}
+                  style={revealStyle}
+                  item={item}
+                  mode={mode}
+                  orientation={resolvedOrientation}
+                  layout={resolvedLayout}
+                  presentation={resolvedPresentation}
+                  interactive={resolvedInteractive}
+                  selected={item.id === currentSelectedId}
+                  renderItem={renderItem}
+                  onSelect={setSelectedId}
+                  {...revealAttrs}
+                />
+              );
+            })}
           </ol>
-        </TimelineStoryViewport>
+        </TimelineFlowViewport>
       ) : (
         <TimelineViewport
           aria-label={viewportLabel}
@@ -1332,6 +1775,7 @@ function TimelineInner<
           interactive={resolvedInteractive}
           orientation={resolvedOrientation}
           layout={resolvedLayout}
+          presentation={resolvedPresentation}
           viewport={resolvedViewport}
           selectedPoint={selectedPoint}
           onNavigate={setSelectedId}
@@ -1356,6 +1800,7 @@ function TimelineInner<
                 mode={mode}
                 orientation={resolvedOrientation}
                 layout={resolvedLayout}
+                presentation={resolvedPresentation}
                 interactive={resolvedInteractive}
                 selected={item.id === currentSelectedId}
                 renderItem={renderItem}

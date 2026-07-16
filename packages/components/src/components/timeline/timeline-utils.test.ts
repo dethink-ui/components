@@ -1,14 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
   centerTimelinePoint,
+  clampTimelineRevealCount,
   fitTimelineTransform,
   getEdgeEnabledTimelineItemId,
   getNextEnabledTimelineItemId,
   getTimelineDatetimeAttribute,
   getTimelineDateValue,
+  getTimelineRevealBatchDuration,
+  getTimelineRevealItemDelay,
+  isTimelineRevealActive,
   normalizeTimelineItems,
+  normalizeTimelineRevealOptions,
   normalizeViewportOptions,
   resetTimelineTransform,
+  resolveTimelinePresentation,
   resolveTimelineScale,
   timelineGeometry,
   zoomTimelineTransform,
@@ -208,5 +214,112 @@ describe("Timeline utilities", () => {
     expect(getNextEnabledTimelineItemId(items, "three", -1)).toBe("one");
     expect(getEdgeEnabledTimelineItemId(items, "first")).toBe("one");
     expect(getEdgeEnabledTimelineItemId(items, "last")).toBe("three");
+  });
+
+  it("resolves presentation defaults and forces flow for story styling", () => {
+    expect(resolveTimelinePresentation(undefined, "events", "rail")).toBe(
+      "canvas",
+    );
+    expect(resolveTimelinePresentation(undefined, "progress", "rail")).toBe(
+      "canvas",
+    );
+    expect(resolveTimelinePresentation("flow", "events", "rail")).toBe("flow");
+    expect(resolveTimelinePresentation(undefined, "story", "story")).toBe(
+      "flow",
+    );
+    // Story styling ignores an explicit canvas request.
+    expect(resolveTimelinePresentation("canvas", "story", "story")).toBe(
+      "flow",
+    );
+    expect(resolveTimelinePresentation("canvas", "events", "story")).toBe(
+      "flow",
+    );
+  });
+
+  it("normalizes and clamps reveal options", () => {
+    expect(normalizeTimelineRevealOptions(undefined)).toEqual({
+      trigger: "mount",
+      interval: 200,
+      duration: 500,
+      initialDelay: 0,
+    });
+    expect(
+      normalizeTimelineRevealOptions({
+        trigger: "in-view",
+        interval: -50,
+        duration: -10,
+        initialDelay: -5,
+      }),
+    ).toEqual({
+      trigger: "in-view",
+      interval: 0,
+      duration: 0,
+      initialDelay: 0,
+    });
+  });
+
+  it("gates reveal to the flow presentation", () => {
+    expect(isTimelineRevealActive("none", "flow")).toBe(false);
+    expect(isTimelineRevealActive(undefined, "flow")).toBe(false);
+    expect(isTimelineRevealActive("stagger", "canvas")).toBe(false);
+    expect(isTimelineRevealActive("stagger", "flow")).toBe(true);
+    expect(isTimelineRevealActive("all", "flow")).toBe(true);
+  });
+
+  it("clamps controlled reveal counts", () => {
+    expect(clampTimelineRevealCount(undefined, 4)).toBe(0);
+    expect(clampTimelineRevealCount(2.9, 4)).toBe(2);
+    expect(clampTimelineRevealCount(-3, 4)).toBe(0);
+    expect(clampTimelineRevealCount(10, 4)).toBe(4);
+    expect(clampTimelineRevealCount(Number.POSITIVE_INFINITY, 4)).toBe(4);
+  });
+
+  it("computes per-item reveal delays for stagger and grouped modes", () => {
+    const options = normalizeTimelineRevealOptions({
+      interval: 100,
+      duration: 400,
+      initialDelay: 50,
+    });
+
+    expect(
+      getTimelineRevealItemDelay({ batchOrder: 0, reveal: "stagger", options }),
+    ).toBe(50);
+    expect(
+      getTimelineRevealItemDelay({ batchOrder: 3, reveal: "stagger", options }),
+    ).toBe(350);
+    // A fresh append batch resets ordering, so the first new item uses the
+    // initial delay again rather than continuing the previous run.
+    expect(
+      getTimelineRevealItemDelay({ batchOrder: 0, reveal: "all", options }),
+    ).toBe(50);
+    expect(
+      getTimelineRevealItemDelay({ batchOrder: 2, reveal: "all", options }),
+    ).toBe(50);
+  });
+
+  it("computes batch durations for completion timing", () => {
+    const options = normalizeTimelineRevealOptions({
+      interval: 100,
+      duration: 400,
+      initialDelay: 50,
+    });
+
+    expect(
+      getTimelineRevealBatchDuration({
+        batchSize: 0,
+        reveal: "stagger",
+        options,
+      }),
+    ).toBe(0);
+    expect(
+      getTimelineRevealBatchDuration({
+        batchSize: 3,
+        reveal: "stagger",
+        options,
+      }),
+    ).toBe(50 + 2 * 100 + 400);
+    expect(
+      getTimelineRevealBatchDuration({ batchSize: 3, reveal: "all", options }),
+    ).toBe(50 + 400);
   });
 });

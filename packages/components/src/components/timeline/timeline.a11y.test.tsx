@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
@@ -71,6 +71,59 @@ describe("Timeline accessibility", () => {
         </main>
       </DethinkProvider>,
     );
+
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
+
+  it("has no axe violations for the flow presentation with reveal enabled", async () => {
+    const { container } = render(
+      <DethinkProvider theme="light">
+        <main aria-label="Timeline reveal accessibility smoke">
+          <Timeline
+            aria-label="Release flow"
+            mode="events"
+            presentation="flow"
+            reveal="stagger"
+            revealOptions={{ trigger: "manual" }}
+            revealCount={2}
+            items={[
+              {
+                id: "kickoff",
+                title: "Kickoff",
+                description: "Project kickoff with stakeholders.",
+                datetime: "2026-01-01T09:00:00Z",
+                dateLabel: "Jan 1, 2026",
+                status: "complete",
+              },
+              {
+                id: "beta",
+                title: "Beta",
+                description: "Invite design partners.",
+                datetime: "2026-02-01T09:00:00Z",
+                dateLabel: "Feb 1, 2026",
+                status: "current",
+              },
+              {
+                id: "launch",
+                title: "Launch",
+                description: "General availability.",
+                datetime: "2026-03-01T09:00:00Z",
+                dateLabel: "Mar 1, 2026",
+                status: "upcoming",
+              },
+            ]}
+          />
+        </main>
+      </DethinkProvider>,
+    );
+
+    // All items stay in the accessibility tree even before they are revealed.
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    const items = document.querySelectorAll('[data-slot="timeline-item"]');
+    expect(items[2]).toHaveAttribute("data-revealed", "false");
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Launch" }),
+    ).toBeInTheDocument();
 
     await expect(axe(container)).resolves.toHaveNoViolations();
   });

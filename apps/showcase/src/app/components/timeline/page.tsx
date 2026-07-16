@@ -7,7 +7,9 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { TimelineBasic } from "@/examples/timeline/basic";
+import { TimelineFlowReveal } from "@/examples/timeline/flow-reveal";
 import { TimelineProgress } from "@/examples/timeline/progress";
+import { TimelineRevealStreaming } from "@/examples/timeline/reveal-streaming";
 import { TimelineRecipeDeployHistory } from "@/examples/timeline/recipe-deploy-history";
 import { TimelineRecipeOriginStory } from "@/examples/timeline/recipe-origin-story";
 import { timelineProps } from "@/lib/props/timeline";
@@ -15,7 +17,7 @@ import { timelineProps } from "@/lib/props/timeline";
 export const metadata: Metadata = {
   title: "Timeline",
   description:
-    "Present event histories and step sequences on an interactive track with statuses, selection, and zoomable viewports.",
+    "Present event histories and step sequences on an interactive track with statuses, selection, zoomable viewports, and animated flow reveals.",
 };
 
 export default function TimelinePage() {
@@ -43,6 +45,20 @@ export default function TimelinePage() {
             description="progress mode drops the dates for an evenly spaced step sequence — pipelines, wizards, order tracking."
           >
             <TimelineProgress />
+          </ExampleBlock>
+          <ExampleBlock
+            file="timeline/flow-reveal.tsx"
+            title="Flow presentation with reveal"
+            description='presentation="flow" swaps the pan/zoom viewport for a static document-flow list, and reveal="stagger" with the in-view trigger animates the items in one by one as they scroll into view. Reduced-motion users see everything immediately.'
+          >
+            <TimelineFlowReveal />
+          </ExampleBlock>
+          <ExampleBlock
+            file="timeline/reveal-streaming.tsx"
+            title="Streaming reveal"
+            description="Appending to the items array animates only the new points in — built for live sources like agent runs, deploy logs, or activity feeds."
+          >
+            <TimelineRevealStreaming />
           </ExampleBlock>
         </div>
       </DocsSection>

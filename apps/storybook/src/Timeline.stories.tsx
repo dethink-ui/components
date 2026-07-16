@@ -4,7 +4,7 @@ import {
   Timeline,
   type TimelineItemData,
 } from "@dethink/components";
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const meta = {
   title: "Components/Timeline",
@@ -824,6 +824,217 @@ export const PlanetaryPositions: Story = {
           }}
         />
       </div>
+    </DethinkProvider>
+  ),
+};
+
+export const FlowPresentation: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`presentation="flow"` renders event/progress timelines in normal document flow with a rail, markers, and the compact card styling instead of the pannable canvas. There is no drag, zoom, or viewport chrome, but keyboard prev/next/home/end navigation still works.',
+      },
+    },
+  },
+  render: () => (
+    <div className="grid gap-8 lg:grid-cols-2">
+      <DethinkProvider theme="light" className="p-6">
+        <Timeline
+          aria-label="Flow rail timeline"
+          mode="events"
+          presentation="flow"
+          items={eventItems}
+          defaultSelectedId="beta"
+        />
+      </DethinkProvider>
+      <DethinkProvider theme="light" className="p-6">
+        <Timeline
+          aria-label="Flow alternating timeline"
+          mode="events"
+          presentation="flow"
+          layout="alternating"
+          items={eventItems}
+        />
+      </DethinkProvider>
+    </div>
+  ),
+};
+
+export const RevealStaggerOnMount: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reveal="stagger"` fades and slides items in sequentially while the rail grows alongside. Animation is transform/opacity only and gated behind `motion-safe`; with `prefers-reduced-motion` every item is visible immediately and no motion runs. Reveal is a flow-presentation feature and is ignored for the canvas presentation.',
+      },
+    },
+  },
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Timeline
+        aria-label="Staggered reveal timeline"
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        revealOptions={{ interval: 180, duration: 480 }}
+        items={eventItems}
+      />
+    </DethinkProvider>
+  ),
+};
+
+export const RevealAll: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`reveal="all"` animates every item in as a single group using one shared delay (`initialDelay`).',
+      },
+    },
+  },
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <Timeline
+        aria-label="Group reveal timeline"
+        mode="events"
+        presentation="flow"
+        reveal="all"
+        revealOptions={{ duration: 520, initialDelay: 80 }}
+        items={eventItems}
+      />
+    </DethinkProvider>
+  ),
+};
+
+export const RevealInView: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'With `revealOptions.trigger="in-view"` a single IntersectionObserver reveals items as they scroll into view. Scroll the panel to reveal later milestones; once revealed they stay revealed.',
+      },
+    },
+  },
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <div className="border-timeline-border h-80 overflow-y-auto rounded-md border p-4">
+        <p className="text-muted-foreground mb-6 text-sm">
+          Scroll down to reveal milestones as they enter the viewport.
+        </p>
+        <Timeline
+          aria-label="In-view reveal timeline"
+          mode="events"
+          presentation="flow"
+          reveal="stagger"
+          revealOptions={{ trigger: "in-view", interval: 120 }}
+          items={[...eventItems, ...eventItems].map((item, index) => ({
+            ...item,
+            id: `${item.id}-${index}`,
+          }))}
+        />
+      </div>
+    </DethinkProvider>
+  ),
+};
+
+function ControlledRevealDemo() {
+  const [revealCount, setRevealCount] = useState(1);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          className="border-timeline-border bg-background hover:bg-muted rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm"
+          onClick={() =>
+            setRevealCount((count) => Math.min(count + 1, eventItems.length))
+          }
+        >
+          Reveal next
+        </button>
+        <button
+          type="button"
+          className="border-timeline-border bg-background hover:bg-muted rounded-md border px-3 py-1.5 text-sm font-medium shadow-sm"
+          onClick={() => setRevealCount(0)}
+        >
+          Reset
+        </button>
+        <span className="text-muted-foreground text-sm">
+          {revealCount} / {eventItems.length} revealed
+        </span>
+      </div>
+      <Timeline
+        aria-label="Controlled reveal timeline"
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        revealOptions={{ trigger: "manual", duration: 420 }}
+        revealCount={revealCount}
+        items={eventItems}
+      />
+    </div>
+  );
+}
+
+export const RevealControlled: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'With `revealOptions.trigger="manual"` visibility is driven entirely by `revealCount`. Items with index < `revealCount` are revealed, and newly revealed items animate in.',
+      },
+    },
+  },
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <ControlledRevealDemo />
+    </DethinkProvider>
+  ),
+};
+
+function StreamingRevealDemo() {
+  const [count, setCount] = useState(1);
+  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setCount((current) => {
+        if (current >= eventItems.length) {
+          clearInterval(timerRef.current);
+          return current;
+        }
+        return current + 1;
+      });
+    }, 1400);
+
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  return (
+    <Timeline
+      aria-label="Streaming reveal timeline"
+      mode="events"
+      presentation="flow"
+      reveal="stagger"
+      revealOptions={{ duration: 460 }}
+      items={eventItems.slice(0, count)}
+    />
+  );
+}
+
+export const RevealStreamingAppend: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "When the `items` array grows, only the newly appended items animate in; already-revealed items are never re-animated. This demo appends a milestone every 1.4s.",
+      },
+    },
+  },
+  render: () => (
+    <DethinkProvider theme="light" className="p-6">
+      <StreamingRevealDemo />
     </DethinkProvider>
   ),
 };

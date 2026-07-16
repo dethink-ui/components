@@ -13,6 +13,24 @@ export type TimelineWheelZoom = "modifier" | "always" | false;
 export type TimelineViewportChrome = "none" | "subtle" | "panel";
 export type TimelineControlsVisibility = "always" | "hover";
 
+export type TimelinePresentation = "canvas" | "flow";
+export type TimelineRevealMode = "none" | "stagger" | "all";
+export type TimelineRevealTrigger = "mount" | "in-view" | "manual";
+
+export type TimelineRevealOptions = {
+  trigger?: TimelineRevealTrigger;
+  interval?: number;
+  duration?: number;
+  initialDelay?: number;
+};
+
+export type NormalizedTimelineRevealOptions = {
+  trigger: TimelineRevealTrigger;
+  interval: number;
+  duration: number;
+  initialDelay: number;
+};
+
 export type TimelineImage = {
   src: string;
   alt: string;
@@ -94,6 +112,13 @@ export const timelineDefaultViewport = {
   wheelZoom: "modifier" as TimelineWheelZoom,
 };
 
+export const timelineDefaultRevealOptions: NormalizedTimelineRevealOptions = {
+  trigger: "mount",
+  interval: 200,
+  duration: 500,
+  initialDelay: 0,
+};
+
 export const timelineGeometry = {
   itemGap: 420,
   minimumItemGap: 360,
@@ -137,6 +162,104 @@ export function normalizeViewportOptions(
     chrome: viewport?.chrome ?? timelineDefaultViewport.chrome,
     wheelZoom: viewport?.wheelZoom ?? timelineDefaultViewport.wheelZoom,
   };
+}
+
+export function resolveTimelinePresentation(
+  presentation: TimelinePresentation | undefined,
+  mode: TimelineMode = "events",
+  layout: TimelineLayout = "rail",
+): TimelinePresentation {
+  // Story styling always renders in normal document flow. `presentation="canvas"`
+  // is intentionally not supported for story-styled timelines, so it is ignored.
+  if (mode === "story" || layout === "story") {
+    return "flow";
+  }
+
+  return presentation ?? "canvas";
+}
+
+export function normalizeTimelineRevealOptions(
+  options: TimelineRevealOptions | undefined,
+): NormalizedTimelineRevealOptions {
+  return {
+    trigger: options?.trigger ?? timelineDefaultRevealOptions.trigger,
+    interval: Math.max(
+      0,
+      options?.interval ?? timelineDefaultRevealOptions.interval,
+    ),
+    duration: Math.max(
+      0,
+      options?.duration ?? timelineDefaultRevealOptions.duration,
+    ),
+    initialDelay: Math.max(
+      0,
+      options?.initialDelay ?? timelineDefaultRevealOptions.initialDelay,
+    ),
+  };
+}
+
+export function isTimelineRevealActive(
+  reveal: TimelineRevealMode | undefined,
+  presentation: TimelinePresentation,
+): boolean {
+  return reveal !== undefined && reveal !== "none" && presentation === "flow";
+}
+
+export function clampTimelineRevealCount(
+  revealCount: number | undefined,
+  total: number,
+): number {
+  const max = Math.max(0, total);
+
+  if (revealCount === undefined) {
+    return 0;
+  }
+
+  if (!Number.isFinite(revealCount)) {
+    return max;
+  }
+
+  return clampNumber(Math.floor(revealCount), 0, max);
+}
+
+export function getTimelineRevealItemDelay({
+  batchOrder,
+  reveal,
+  options,
+}: {
+  batchOrder: number;
+  reveal: TimelineRevealMode;
+  options: NormalizedTimelineRevealOptions;
+}): number {
+  if (reveal !== "stagger") {
+    return options.initialDelay;
+  }
+
+  return options.initialDelay + Math.max(0, batchOrder) * options.interval;
+}
+
+export function getTimelineRevealBatchDuration({
+  batchSize,
+  reveal,
+  options,
+}: {
+  batchSize: number;
+  reveal: TimelineRevealMode;
+  options: NormalizedTimelineRevealOptions;
+}): number {
+  if (batchSize <= 0) {
+    return 0;
+  }
+
+  if (reveal !== "stagger") {
+    return options.initialDelay + options.duration;
+  }
+
+  return (
+    options.initialDelay +
+    Math.max(0, batchSize - 1) * options.interval +
+    options.duration
+  );
 }
 
 export function getTimelineDateValue(

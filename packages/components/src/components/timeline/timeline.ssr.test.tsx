@@ -47,4 +47,51 @@ describe("Timeline SSR", () => {
 
     consoleError.mockRestore();
   });
+
+  it("server-renders the flow presentation with reveal in the hidden state", () => {
+    const html = renderToString(
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        items={items}
+      />,
+    );
+
+    expect(html).toContain('data-presentation="flow"');
+    expect(html).toContain('data-slot="timeline-list"');
+    // Items ship in their pre-reveal state so the server and first client
+    // render match; the animation only runs after hydration.
+    expect(html).toContain('data-reveal="stagger"');
+    expect(html).toContain('data-revealed="false"');
+    expect(html).not.toContain('data-slot="timeline-viewport-content"');
+  });
+
+  it("hydrates the flow reveal timeline without mismatch warnings", async () => {
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+    const element = (
+      <Timeline
+        mode="events"
+        presentation="flow"
+        reveal="stagger"
+        items={items}
+      />
+    );
+    container.innerHTML = renderToString(element);
+
+    await act(async () => {
+      hydrateRoot(container, element);
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+
+    consoleError.mockRestore();
+  });
 });

@@ -480,7 +480,7 @@ export const componentCatalog: ComponentMeta[] = [
     slug: "timeline",
     name: "Timeline",
     description:
-      "Present event histories and step sequences on an interactive track with statuses, selection, and zoomable viewports.",
+      "Present event histories and step sequences on an interactive track with statuses, selection, zoomable viewports, and animated flow reveals.",
     type: "data-display",
   },
 ];

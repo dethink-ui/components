@@ -207,6 +207,28 @@
   }
 }
 
+@keyframes dt-timeline-reveal-y {
+  from {
+    opacity: 0;
+    translate: 0 var(--dt-space-2);
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes dt-timeline-rail-grow-y {
+  from {
+    scale: 1 0;
+  }
+
+  to {
+    scale: 1 1;
+  }
+}
+
 /* Typed lengths so the card-scroller edge fades can transition. Browsers
    without @property still render the fades; they just appear without the
    soften-in animation. */
@@ -447,6 +469,38 @@
       [data-slot="navigation-menu-section"]
       > * {
       animation: none;
+    }
+  }
+
+  /* Timeline reveal: items are kept in the DOM and accessibility tree from the
+     start. The pre-reveal hidden state and the entrance animation only exist for
+     users who allow motion, so `prefers-reduced-motion` shows everything
+     immediately (also the correct no-JS/SSR fallback). Reveal progression is
+     tracked in React state, so callbacks still fire when motion is reduced. */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-slot="timeline-item"][data-reveal][data-revealed="false"] {
+      opacity: 0;
+      translate: 0 var(--dt-space-2);
+    }
+
+    [data-slot="timeline-item"][data-reveal][data-revealed="true"] {
+      animation: dt-timeline-reveal-y var(--timeline-reveal-duration, 500ms)
+        cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: calc(
+        var(--timeline-reveal-initial-delay, 0ms) +
+          var(--timeline-reveal-index, 0) *
+          var(--timeline-reveal-interval, 200ms)
+      );
+    }
+
+    /* The rail grows alongside the staggered items. `scale` is an independent
+       property, so it does not clash with the alternating rail's translate. */
+    [data-slot="timeline-list"][data-reveal-rail="true"]::before {
+      transform-origin: top center;
+      scale: 1 0;
+      animation: dt-timeline-rail-grow-y var(--timeline-rail-duration, 500ms)
+        linear both;
+      animation-delay: var(--timeline-rail-delay, 0ms);
     }
   }
 }
