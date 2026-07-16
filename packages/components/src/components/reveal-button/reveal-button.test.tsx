@@ -11,6 +11,7 @@ import {
   type RevealButtonSize,
   type RevealButtonVariant,
 } from ".";
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "../dialog";
 
 const variants: RevealButtonVariant[] = [
   "solid",
@@ -193,6 +194,56 @@ describe("RevealButton", () => {
     await user.click(screen.getByRole("button", { name: "Create item" }));
 
     expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("acts as a keyboard-operable React Aria dialog trigger", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dialog>
+        <RevealButton icon={<PlusIcon />} label="Open details" />
+        <DialogContent>
+          <DialogTitle>Item details</DialogTitle>
+          <DialogClose>Close details</DialogClose>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Open details" });
+
+    await user.tab();
+    expect(trigger).toHaveFocus();
+
+    await user.keyboard("{Enter}");
+    expect(screen.getByRole("dialog", { name: "Item details" })).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Close details" }));
+    await waitFor(() => expect(trigger).toHaveFocus());
+
+    await user.keyboard(" ");
+    expect(screen.getByRole("dialog", { name: "Item details" })).toBeVisible();
+  });
+
+  it("does not activate a React Aria trigger while loading", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dialog>
+        <RevealButton icon={<PlusIcon />} label="Open details" loading />
+        <DialogContent>
+          <DialogTitle>Item details</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const trigger = screen.getByRole("button", { name: "Open details" });
+
+    await user.click(trigger);
+    expect(screen.queryByRole("dialog", { name: "Item details" })).toBeNull();
+
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    expect(screen.queryByRole("dialog", { name: "Item details" })).toBeNull();
   });
 
   it("does not activate when disabled", async () => {

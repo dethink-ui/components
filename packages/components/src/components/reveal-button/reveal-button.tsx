@@ -19,6 +19,7 @@ import {
   type TargetAndTransition,
   type Transition,
 } from "motion/react";
+import { Pressable } from "react-aria-components";
 import type { ButtonVariant } from "../button";
 import { cn } from "../../utils/cn";
 
@@ -411,126 +412,128 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
     };
 
     return (
-      <motionElement.button
-        {...(props as HTMLMotionProps<"button">)}
-        ref={setButtonRef}
-        type={type}
-        disabled={disabled}
-        aria-label={label}
-        aria-busy={loading ? true : ariaBusy}
-        aria-disabled={loading ? true : ariaDisabled}
-        data-slot="reveal-button"
-        data-variant={variant}
-        data-size={size}
-        data-motion={motion}
-        data-label-visibility={labelVisibility}
-        data-state={revealState}
-        data-disabled={disabled ? "true" : undefined}
-        data-loading={loading ? "true" : undefined}
-        data-reduced-motion={reducedMotion ? "true" : undefined}
-        className={revealButtonClassNames({ variant, size, className })}
-        variants={{ collapsed: {}, revealed: {} }}
-        initial={false}
-        animate={revealState}
-        whileHover={canReveal ? "revealed" : undefined}
-        whileFocus={canReveal ? "revealed" : undefined}
-        whileTap={getPressMotionTarget({
-          disabled: isActivationDisabled,
-          reducedMotion,
-        })}
-        transition={transition}
-        onBlur={handleBlur}
-        onClick={handleClick}
-        onFocus={handleFocus}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
-      >
-        {loading ? (
-          <span
-            aria-hidden="true"
-            data-slot="reveal-button-spinner"
-            className={cn(
-              revealButtonIconClasses,
-              revealButtonIconBoxClasses[size],
-            )}
-          >
-            <motionElement.span
-              data-slot="reveal-button-spinner-motion"
-              className={cn(
-                revealButtonIconMotionClasses,
-                revealButtonIconSizeClasses[size],
-              )}
-              variants={iconMotionVariants}
-              transition={transition}
-            >
-              <span
-                data-slot="reveal-button-spinner-glyph"
-                className={cn(revealButtonSpinnerClasses, "size-full")}
-              />
-            </motionElement.span>
-          </span>
-        ) : (
-          <span
-            aria-hidden="true"
-            data-slot="reveal-button-icon"
-            className={cn(
-              revealButtonIconClasses,
-              revealButtonIconBoxClasses[size],
-            )}
-          >
-            <motionElement.span
-              data-slot="reveal-button-icon-motion"
-              className={cn(
-                revealButtonIconMotionClasses,
-                revealButtonIconSizeClasses[size],
-              )}
-              variants={iconMotionVariants}
-              transition={transition}
-            >
-              {renderSizedIcon(icon)}
-            </motionElement.span>
-          </span>
-        )}
-        <motionElement.span
-          aria-hidden="true"
-          data-slot="reveal-button-label"
-          className={revealButtonLabelClasses}
-          variants={{
-            collapsed: {
-              width: labelVisibility === "always" ? labelWidth : 0,
-              opacity: labelVisibility === "always" ? 1 : 0,
-            },
-            revealed: {
-              width: labelWidth,
-              opacity: 1,
-            },
-          }}
-          transition={labelTransition}
+      <Pressable isDisabled={isActivationDisabled}>
+        <motionElement.button
+          {...(props as HTMLMotionProps<"button">)}
+          ref={setButtonRef}
+          type={type}
+          disabled={disabled}
+          aria-label={label}
+          aria-busy={loading ? true : ariaBusy}
+          aria-disabled={loading ? true : ariaDisabled}
+          data-slot="reveal-button"
+          data-variant={variant}
+          data-size={size}
+          data-motion={motion}
+          data-label-visibility={labelVisibility}
+          data-state={revealState}
+          data-disabled={disabled ? "true" : undefined}
+          data-loading={loading ? "true" : undefined}
+          data-reduced-motion={reducedMotion ? "true" : undefined}
+          className={revealButtonClassNames({ variant, size, className })}
+          variants={{ collapsed: {}, revealed: {} }}
+          initial={false}
+          animate={revealState}
+          whileHover={canReveal ? "revealed" : undefined}
+          whileFocus={canReveal ? "revealed" : undefined}
+          whileTap={getPressMotionTarget({
+            disabled: isActivationDisabled,
+            reducedMotion,
+          })}
+          transition={transition}
+          onBlur={handleBlur}
+          onClick={handleClick}
+          onFocus={handleFocus}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onPointerEnter={handlePointerEnter}
+          onPointerLeave={handlePointerLeave}
         >
+          {loading ? (
+            <span
+              aria-hidden="true"
+              data-slot="reveal-button-spinner"
+              className={cn(
+                revealButtonIconClasses,
+                revealButtonIconBoxClasses[size],
+              )}
+            >
+              <motionElement.span
+                data-slot="reveal-button-spinner-motion"
+                className={cn(
+                  revealButtonIconMotionClasses,
+                  revealButtonIconSizeClasses[size],
+                )}
+                variants={iconMotionVariants}
+                transition={transition}
+              >
+                <span
+                  data-slot="reveal-button-spinner-glyph"
+                  className={cn(revealButtonSpinnerClasses, "size-full")}
+                />
+              </motionElement.span>
+            </span>
+          ) : (
+            <span
+              aria-hidden="true"
+              data-slot="reveal-button-icon"
+              className={cn(
+                revealButtonIconClasses,
+                revealButtonIconBoxClasses[size],
+              )}
+            >
+              <motionElement.span
+                data-slot="reveal-button-icon-motion"
+                className={cn(
+                  revealButtonIconMotionClasses,
+                  revealButtonIconSizeClasses[size],
+                )}
+                variants={iconMotionVariants}
+                transition={transition}
+              >
+                {renderSizedIcon(icon)}
+              </motionElement.span>
+            </span>
+          )}
+          <motionElement.span
+            aria-hidden="true"
+            data-slot="reveal-button-label"
+            className={revealButtonLabelClasses}
+            variants={{
+              collapsed: {
+                width: labelVisibility === "always" ? labelWidth : 0,
+                opacity: labelVisibility === "always" ? 1 : 0,
+              },
+              revealed: {
+                width: labelWidth,
+                opacity: 1,
+              },
+            }}
+            transition={labelTransition}
+          >
+            <span
+              data-slot="reveal-button-label-text"
+              className={cn(
+                revealButtonLabelTextClasses,
+                revealButtonLabelPaddingClasses[size],
+              )}
+            >
+              {label}
+            </span>
+          </motionElement.span>
           <span
-            data-slot="reveal-button-label-text"
+            ref={labelRef}
+            aria-hidden="true"
+            data-slot="reveal-button-label-measure"
             className={cn(
-              revealButtonLabelTextClasses,
+              revealButtonLabelMeasureClasses,
               revealButtonLabelPaddingClasses[size],
             )}
           >
             {label}
           </span>
-        </motionElement.span>
-        <span
-          ref={labelRef}
-          aria-hidden="true"
-          data-slot="reveal-button-label-measure"
-          className={cn(
-            revealButtonLabelMeasureClasses,
-            revealButtonLabelPaddingClasses[size],
-          )}
-        >
-          {label}
-        </span>
-      </motionElement.button>
+        </motionElement.button>
+      </Pressable>
     );
   },
 );
