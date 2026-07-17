@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "carousel",
+  "type": "registry:ui",
+  "title": "Carousel",
+  "description": "A Motion-powered carousel with flat, tilt, and floor-standing 3D staging, driven by a single offset CSS variable, with drag momentum, dots, keyboard, RTL, density, and full APG accessibility.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "icon-button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/carousel/carousel.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/carousel/carousel-utils.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/carousel/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

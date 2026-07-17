@@ -505,6 +505,269 @@
   }
 }
 
+@layer components {
+  /* Carousel: one `--carousel-offset` (in float index units, written by Motion)
+     drives every visual through pure CSS `calc()`. Each item's distance from
+     the center is `item-index - offset`; the staging blocks below turn that
+     distance into translate / rotate / depth. Cards are stacked in one grid
+     cell and sized in container-query units against the root container, so the
+     center-to-center step is a resolvable length and the resting pose renders
+     correctly on the server with zero JavaScript. Containment lives on the root
+     only (never the viewport or track) so `preserve-3d` is never flattened. */
+  [data-slot="carousel"] {
+    /* Writing-direction sign: mirrors the horizontal translate and rotateY so
+       "next" (higher index) sits on the correct side in RTL. Drag sign and
+       arrow-key mapping read the computed direction in JS to match. */
+    --carousel-dir: 1;
+    --carousel-gap: var(--dt-density-gap);
+    --carousel-viewport-pad-block: var(--dt-space-4);
+    --carousel-min-height: 0px;
+    --carousel-perspective: 1200px;
+    --carousel-perspective-origin-y: 72%;
+    --carousel-rotate-x: 6deg;
+    --carousel-max-rotate-y: 28deg;
+    --carousel-max-depth: 140px;
+    --carousel-min-scale: 0.82;
+    --carousel-max-blur: 3px;
+    /* Per-staging strength multiplier: tilt is deliberately restrained, floor
+       uses the full range. Keeping the max tokens on this base selector (and
+       only varying the strength per staging) lets the reduced-motion rules
+       below zero the whole scene at base specificity. */
+    --carousel-stage-strength: 1;
+    --carousel-shadow-width: 62%;
+    --carousel-shadow-height: 12%;
+    --carousel-shadow-offset: 32%;
+    --carousel-shadow-color: oklch(0 0 0 / 0.18);
+  }
+
+  [data-slot="carousel"]:dir(rtl) {
+    --carousel-dir: -1;
+  }
+
+  .dark [data-slot="carousel"],
+  [data-theme="dark"] [data-slot="carousel"] {
+    --carousel-shadow-color: oklch(0 0 0 / 0.5);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not([data-theme="dark"])
+      [data-slot="carousel"],
+    [data-theme="system"] [data-slot="carousel"] {
+      --carousel-shadow-color: oklch(0 0 0 / 0.5);
+    }
+  }
+
+  /* Per-item distance tokens shared by every staging. `abs` is expressed with
+     max(d, -d); the far plateau clamps the distance so distant cards stop
+     receding rather than flying off. */
+  [data-slot="carousel-item"] {
+    --carousel-distance: calc(
+      var(--carousel-item-index) - var(--carousel-offset)
+    );
+    --carousel-abs-distance: max(
+      var(--carousel-distance),
+      calc(var(--carousel-distance) * -1)
+    );
+    --carousel-clamped-distance: clamp(-1.5, var(--carousel-distance), 1.5);
+    --carousel-abs-clamped: max(
+      var(--carousel-clamped-distance),
+      calc(var(--carousel-clamped-distance) * -1)
+    );
+  }
+
+  /* Contact shadow (tilt/floor only): a soft ground ellipse that is densest and
+     largest under the centered card and fades/shrinks with distance. */
+  [data-slot="carousel-item-shadow"] {
+    opacity: clamp(0, calc(0.9 - var(--carousel-abs-clamped) * 0.45), 0.9);
+    scale: clamp(0.55, calc(1 - var(--carousel-abs-clamped) * 0.16), 1);
+    transition: opacity 200ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="carousel-item-shadow"] {
+      transition: none;
+    }
+  }
+
+  /* Flat staging: a conventional centered slider. Only a horizontal translate,
+     with a soft opacity falloff so the reduced-motion crossfade (transition on
+     the item) reads as a fade between slides. */
+  [data-slot="carousel"][data-staging="flat"] {
+    --carousel-card-size: min(92cqw, 34rem);
+    --carousel-step: calc(var(--carousel-card-size) + var(--carousel-gap));
+  }
+
+  [data-slot="carousel"][data-staging="flat"] [data-slot="carousel-item"] {
+    transform: translateX(
+      calc(
+        var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+      )
+    );
+    opacity: clamp(0, calc(1.5 - var(--carousel-abs-distance)), 1);
+  }
+
+  /* Tilt staging: a restrained perspective row. Cards rotate to face the center
+     and recede slightly toward the edges; the far plateau (clamped distance)
+     stops distant cards from over-rotating. rotate/depth scale with the
+     per-staging strength and the inline intensity multiplier. */
+  [data-slot="carousel"][data-staging="tilt"] {
+    --carousel-card-size: min(62cqw, 20rem);
+    --carousel-step: calc(
+      var(--carousel-card-size) * 0.82 + var(--carousel-gap)
+    );
+    --carousel-stage-strength: 0.5;
+  }
+
+  [data-slot="carousel"][data-staging="tilt"] [data-slot="carousel-item"] {
+    /* Cards pivot and scale from their bottom edge so they stay planted on the
+       ground plane instead of lifting off as they recede. */
+    transform-origin: 50% 100%;
+    transform: translateX(
+        calc(
+          var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+        )
+      )
+      translateZ(
+        calc(
+          var(--carousel-abs-clamped) * var(--carousel-max-depth) *
+            var(--carousel-stage-strength) * var(--carousel-intensity, 1) * -1
+        )
+      )
+      rotateY(
+        calc(
+          var(--carousel-clamped-distance) * var(--carousel-max-rotate-y) *
+            var(--carousel-stage-strength) * var(--carousel-intensity, 1) *
+            var(--carousel-dir) * -1
+        )
+      )
+      scale(
+        calc(
+          1 - var(--carousel-abs-clamped) * (1 - var(--carousel-min-scale)) *
+            var(--carousel-stage-strength)
+        )
+      );
+  }
+
+  /* Floor staging: cards stand on a receding floor. The perspective and its
+     downward origin live on the VIEWPORT so every card shares one vanishing
+     point (never a per-card transformPerspective); the track carries the plane
+     tilt with preserve-3d; the cards use the full rotate/depth range plus a
+     capped, blur-enabled-gated depth blur. Containment stays on the root, and
+     the viewport clips only the inline axis (overflow-y: visible via the
+     component classes) so cards pushed toward the camera are not sliced. */
+  [data-slot="carousel"][data-staging="floor"] {
+    --carousel-card-size: min(58cqw, 19rem);
+    --carousel-step: calc(
+      var(--carousel-card-size) * 0.72 + var(--carousel-gap)
+    );
+    --carousel-viewport-pad-block: var(--dt-space-8);
+  }
+
+  [data-slot="carousel"][data-staging="floor"] [data-slot="carousel-viewport"] {
+    perspective: var(--carousel-perspective);
+    perspective-origin: 50% var(--carousel-perspective-origin-y);
+  }
+
+  [data-slot="carousel"][data-staging="floor"] [data-slot="carousel-track"] {
+    transform-style: preserve-3d;
+    transform-origin: 50% 100%;
+    transform: rotateX(var(--carousel-rotate-x));
+  }
+
+  [data-slot="carousel"][data-staging="floor"] [data-slot="carousel-item"] {
+    /* Standing cards: rotate and scale around the bottom edge so every card
+       keeps its feet on the receding floor. */
+    transform-origin: 50% 100%;
+    transform: translateX(
+        calc(
+          var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+        )
+      )
+      translateZ(
+        calc(
+          var(--carousel-abs-clamped) * var(--carousel-max-depth) *
+            var(--carousel-stage-strength) * var(--carousel-intensity, 1) * -1
+        )
+      )
+      rotateY(
+        calc(
+          var(--carousel-clamped-distance) * var(--carousel-max-rotate-y) *
+            var(--carousel-stage-strength) * var(--carousel-intensity, 1) *
+            var(--carousel-dir) * -1
+        )
+      )
+      scale(
+        calc(
+          1 - var(--carousel-abs-clamped) * (1 - var(--carousel-min-scale)) *
+            var(--carousel-stage-strength)
+        )
+      );
+    /* Depth blur is floor-only, capped by --carousel-max-blur, and switched off
+       entirely at intensity="subtle" via --carousel-blur-enabled. Blur lives on
+       the leaf card, never the track, so preserve-3d is not flattened. */
+    filter: blur(
+      calc(
+        var(--carousel-abs-clamped) * var(--carousel-max-blur) *
+          var(--carousel-blur-enabled, 1)
+      )
+    );
+    /* Safari 3D hygiene: keep back faces hidden (also set on the item class) and
+       force GPU compositing to avoid shimmering edges. */
+    -webkit-backface-visibility: hidden;
+  }
+
+  /* Reduced motion flattens every 3D staging: the motion tokens are zeroed and
+     the tilt/floor item transforms collapse to the flat horizontal translate,
+     so the active-slide change reads as an opacity crossfade (the item carries
+     a motion-reduce opacity transition) instead of depth movement. These rules
+     follow the staging blocks and match their specificity, so they win by
+     source order for both the OS preference and the JS-set attribute. */
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="carousel"] {
+      --carousel-max-rotate-y: 0deg;
+      --carousel-max-depth: 0px;
+      --carousel-max-blur: 0px;
+      --carousel-rotate-x: 0deg;
+    }
+
+    [data-slot="carousel"][data-staging="tilt"] [data-slot="carousel-item"],
+    [data-slot="carousel"][data-staging="floor"] [data-slot="carousel-item"] {
+      transform: translateX(
+        calc(
+          var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+        )
+      );
+      /* All stagings crossfade under reduced motion: the same distance-driven
+         opacity falloff flat uses, transitioned so an instant offset jump reads
+         as a fade between slides rather than a horizontal teleport. */
+      opacity: clamp(0, calc(1.5 - var(--carousel-abs-distance)), 1);
+      filter: none;
+      transition: opacity 200ms ease;
+    }
+  }
+
+  [data-slot="carousel"][data-reduced-motion="true"] {
+    --carousel-max-rotate-y: 0deg;
+    --carousel-max-depth: 0px;
+    --carousel-max-blur: 0px;
+    --carousel-rotate-x: 0deg;
+  }
+
+  [data-slot="carousel"][data-reduced-motion="true"][data-staging="tilt"]
+    [data-slot="carousel-item"],
+  [data-slot="carousel"][data-reduced-motion="true"][data-staging="floor"]
+    [data-slot="carousel-item"] {
+    transform: translateX(
+      calc(
+        var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+      )
+    );
+    opacity: clamp(0, calc(1.5 - var(--carousel-abs-distance)), 1);
+    filter: none;
+    transition: opacity 200ms ease;
+  }
+}
+
 @layer base {
   :root {
     color-scheme: light dark;
