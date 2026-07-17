@@ -428,6 +428,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "carousel",
+    name: "Carousel",
+    description:
+      "Stage feature cards, media, plans, and customer stories with accessible controls, drag interaction, and reduced-motion-safe depth.",
+    type: "data-display",
+  },
+  {
     slug: "card-scroller",
     name: "CardScroller",
     description:
