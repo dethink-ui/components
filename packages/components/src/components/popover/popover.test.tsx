@@ -1,4 +1,4 @@
-import { createRef, useState } from "react";
+import { createRef, useRef, useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -44,6 +44,31 @@ function ControlledPopoverFixture() {
       </PopoverContent>
       <span data-testid="controlled-state">{open ? "open" : "closed"}</span>
     </Popover>
+  );
+}
+
+function AnchoredPopoverFixture() {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef<HTMLButtonElement>(null);
+
+  return (
+    <>
+      <button ref={anchorRef} type="button" onClick={() => setOpen(true)}>
+        Open anchored popover
+      </button>
+      <Popover anchorRef={anchorRef} open={open} onOpenChange={setOpen}>
+        <PopoverContent isNonModal>
+          <PopoverHeader>
+            <PopoverTitle>Anchored route details</PopoverTitle>
+            <PopoverDescription>
+              Details can follow an independently interactive anchor.
+            </PopoverDescription>
+          </PopoverHeader>
+          <PopoverClose>Close anchored popover</PopoverClose>
+        </PopoverContent>
+      </Popover>
+      <span data-testid="anchored-state">{open ? "open" : "closed"}</span>
+    </>
   );
 }
 
@@ -186,6 +211,38 @@ describe("Popover", () => {
         "closed",
       );
     });
+  });
+
+  it("supports a custom anchor without turning it into a dialog trigger", async () => {
+    const user = userEvent.setup();
+
+    render(<AnchoredPopoverFixture />);
+
+    const anchor = screen.getByRole("button", {
+      name: "Open anchored popover",
+    });
+
+    expect(anchor).not.toHaveAttribute("aria-expanded");
+    expect(screen.getByTestId("anchored-state")).toHaveTextContent("closed");
+
+    await user.click(anchor);
+
+    expect(screen.getByTestId("anchored-state")).toHaveTextContent("open");
+    expect(
+      await screen.findByRole("dialog", { name: "Anchored route details" }),
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: "Close anchored popover" }),
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("anchored-state")).toHaveTextContent("closed");
+      expect(
+        screen.queryByRole("dialog", { name: "Anchored route details" }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(anchor).toHaveFocus();
   });
 
   it("keeps Escape disabled only when an explicit close path exists", async () => {

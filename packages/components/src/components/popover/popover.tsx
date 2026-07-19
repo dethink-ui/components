@@ -46,6 +46,7 @@ export interface PopoverProps extends Omit<
   AriaDialogTriggerProps,
   "children" | "isOpen" | "onOpenChange"
 > {
+  anchorRef?: AriaPopoverProps["triggerRef"];
   "data-slot"?: string;
   children?: ReactNode;
   className?: string;
@@ -112,6 +113,10 @@ const PopoverContentContext = createContext<PopoverContentContextValue | null>(
 );
 
 interface PopoverRootContextValue {
+  anchorRef?: AriaPopoverProps["triggerRef"];
+  isAnchored: boolean;
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
   setTriggerElement: (element: HTMLButtonElement | null) => void;
 }
 
@@ -259,6 +264,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
   (
     {
       "data-slot": dataSlot,
+      anchorRef,
       children,
       className,
       defaultOpen,
@@ -272,6 +278,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       defaultOpen ?? false,
     );
     const isControlled = open !== undefined;
+    const isAnchored = anchorRef !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
     const previousOpenRef = useRef(resolvedOpen);
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
@@ -279,14 +286,6 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       forwardedRef: ref,
       portalSlot: "popover-portal-container",
     });
-    const rootContextValue = useMemo<PopoverRootContextValue>(
-      () => ({
-        setTriggerElement: (element) => {
-          triggerElementRef.current = element;
-        },
-      }),
-      [],
-    );
     const handleOpenChange = (isOpen: boolean) => {
       if (!isControlled) {
         setUncontrolledOpen(isOpen);
@@ -294,6 +293,18 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
       onOpenChange?.(isOpen);
     };
+    const rootContextValue = useMemo<PopoverRootContextValue>(
+      () => ({
+        anchorRef,
+        isAnchored,
+        onOpenChange: handleOpenChange,
+        open: resolvedOpen,
+        setTriggerElement: (element) => {
+          triggerElementRef.current = element;
+        },
+      }),
+      [anchorRef, handleOpenChange, isAnchored, resolvedOpen],
+    );
 
     useEffect(() => {
       const wasOpen = previousOpenRef.current;
@@ -302,6 +313,16 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
 
       if (wasOpen && !resolvedOpen && typeof window !== "undefined") {
         const restoreFocus = window.setTimeout(() => {
+          if (isAnchored) {
+            const anchorElement = anchorRef?.current;
+
+            if (anchorElement instanceof HTMLElement) {
+              anchorElement.focus();
+            }
+
+            return;
+          }
+
           triggerElementRef.current?.focus();
         }, 0);
 
@@ -311,7 +332,7 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       }
 
       return undefined;
-    }, [resolvedOpen]);
+    }, [anchorRef, isAnchored, resolvedOpen]);
 
     return (
       <div
@@ -322,13 +343,17 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       >
         <DethinkPortalProvider container={portalContainer}>
           <PopoverRootContext.Provider value={rootContextValue}>
-            <AriaDialogTrigger
-              {...props}
-              isOpen={resolvedOpen}
-              onOpenChange={handleOpenChange}
-            >
-              {children}
-            </AriaDialogTrigger>
+            {isAnchored ? (
+              children
+            ) : (
+              <AriaDialogTrigger
+                {...props}
+                isOpen={resolvedOpen}
+                onOpenChange={handleOpenChange}
+              >
+                {children}
+              </AriaDialogTrigger>
+            )}
           </PopoverRootContext.Provider>
         </DethinkPortalProvider>
       </div>
@@ -422,10 +447,21 @@ export const PopoverContent = forwardRef<HTMLElement, PopoverContentProps>(
       }),
       [defaultTitleId],
     );
+    const rootContext = useContext(PopoverRootContext);
+    const anchoredPopoverProps: Partial<
+      Pick<AriaPopoverProps, "isOpen" | "onOpenChange" | "triggerRef">
+    > = {};
+
+    if (rootContext?.isAnchored && rootContext.anchorRef) {
+      anchoredPopoverProps.isOpen = rootContext.open;
+      anchoredPopoverProps.onOpenChange = rootContext.onOpenChange;
+      anchoredPopoverProps.triggerRef = rootContext.anchorRef;
+    }
 
     return (
       <AriaPopover
         {...props}
+        {...anchoredPopoverProps}
         {...positionProps}
         ref={ref}
         data-slot="popover-content"
@@ -565,6 +601,7 @@ export const PopoverClose = forwardRef<HTMLButtonElement, PopoverCloseProps>(
       children,
       className,
       disabled = false,
+      onPress,
       size,
       variant = "ghost",
       ...props
@@ -573,6 +610,7 @@ export const PopoverClose = forwardRef<HTMLButtonElement, PopoverCloseProps>(
   ) => {
     const hasVisibleChildren = children != null;
     const resolvedSize = size ?? (hasVisibleChildren ? "md" : "icon");
+    const rootContext = useContext(PopoverRootContext);
 
     return (
       <AriaButton
@@ -582,6 +620,13 @@ export const PopoverClose = forwardRef<HTMLButtonElement, PopoverCloseProps>(
           ariaLabel ?? (hasVisibleChildren ? undefined : "Close popover")
         }
         isDisabled={disabled}
+        onPress={(event) => {
+          onPress?.(event);
+
+          if (rootContext?.isAnchored) {
+            rootContext.onOpenChange(false);
+          }
+        }}
         slot="close"
         data-slot="popover-close"
         className={popoverCloseClassNames({
