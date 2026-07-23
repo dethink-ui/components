@@ -13,6 +13,7 @@ import {
   type SelectProps as AriaSelectProps,
 } from "react-aria-components";
 import {
+  Children,
   cloneElement,
   type ForwardedRef,
   forwardRef,
@@ -25,6 +26,7 @@ import {
   useRef,
 } from "react";
 import { cn } from "../../utils/cn";
+import { toPlainText } from "../../utils/to-plain-text";
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
@@ -223,22 +225,35 @@ function CheckIcon() {
 function renderSelectChildren<T extends SelectItemData>({
   children,
   items,
-}: Pick<SelectProps<T>, "children" | "items">) {
+}: Pick<SelectProps<T>, "children" | "items">): ReactNode {
   if (items && typeof children === "function") {
     return Array.from(items, (item) => {
       const child = children(item);
 
-      if (isValidElement(child)) {
-        return cloneElement(child, {
-          key: child.key ?? item.value,
-        });
-      }
-
-      return child;
+      return withSelectItemTextValue(child, item.value);
     });
   }
 
-  return children as ReactNode;
+  return Children.map(children as ReactNode, (child) =>
+    withSelectItemTextValue(child),
+  );
+}
+
+function withSelectItemTextValue(child: ReactNode, key?: string) {
+  if (!isValidElement<SelectItemProps>(child)) {
+    return child;
+  }
+
+  const { children, textValue, value } = child.props;
+
+  if (typeof value !== "string") {
+    return child;
+  }
+
+  return cloneElement(child, {
+    key: child.key ?? key,
+    textValue: textValue || toPlainText(children) || value,
+  });
 }
 
 function SelectRoot<T extends SelectItemData = SelectItemData>(
@@ -400,9 +415,7 @@ export const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
       ref={ref}
       id={value}
       isDisabled={disabled}
-      textValue={
-        textValue ?? (typeof children === "string" ? children : undefined)
-      }
+      textValue={textValue || toPlainText(children) || value}
       data-slot="select-item"
       data-value={value}
       className={selectItemClassNames({ className })}

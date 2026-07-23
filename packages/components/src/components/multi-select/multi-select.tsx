@@ -27,6 +27,7 @@ import {
   useState,
 } from "react";
 import { cn } from "../../utils/cn";
+import { toPlainText } from "../../utils/to-plain-text";
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
@@ -194,24 +195,12 @@ function toDisabledKeys(disabledKeys: Iterable<MultiSelectValue> | undefined) {
   return disabledKeys ? Array.from(disabledKeys) : undefined;
 }
 
-function toPlainText(value: ReactNode): string {
-  if (typeof value === "string" || typeof value === "number") {
-    return String(value);
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(toPlainText).join(" ");
-  }
-
-  return "";
-}
-
 function getItemLabel(item: MultiSelectItemData) {
   return item.label ?? item.textValue ?? item.value;
 }
 
 function getItemTextValue(item: MultiSelectItemData) {
-  return item.textValue ?? (toPlainText(item.label) || item.value);
+  return item.textValue || toPlainText(item.label) || item.value;
 }
 
 function collectDataItems<T extends MultiSelectItemData>(
@@ -244,7 +233,7 @@ function collectStaticItems(children: ReactNode): MultiSelectResolvedItem[] {
 
     collected.push({
       label: itemChildren ?? textValue ?? value,
-      textValue: textValue ?? (toPlainText(itemChildren) || value),
+      textValue: textValue || toPlainText(itemChildren) || value,
       value,
     });
   });
@@ -289,7 +278,7 @@ function filterStaticChildren({
     }
 
     const { children: itemChildren, textValue, value } = child.props;
-    const candidate = textValue ?? (toPlainText(itemChildren) || value);
+    const candidate = textValue || toPlainText(itemChildren) || value;
 
     return candidate.toLocaleLowerCase().includes(query);
   });
@@ -314,6 +303,10 @@ function renderMultiSelectChildren<T extends MultiSelectItemData>({
 
         return cloneElement(typedChild, {
           key: child.key ?? item.value,
+          textValue:
+            typedChild.props.textValue ||
+            toPlainText(typedChild.props.children) ||
+            typedChild.props.value,
           onAction: () => {
             existingOnAction?.();
             onItemAction(item.value);
@@ -338,6 +331,10 @@ function renderMultiSelectChildren<T extends MultiSelectItemData>({
     const existingOnAction = child.props.onAction;
 
     return cloneElement(child, {
+      textValue:
+        child.props.textValue ||
+        toPlainText(child.props.children) ||
+        child.props.value,
       onAction: () => {
         existingOnAction?.();
         onItemAction(child.props.value);
@@ -777,9 +774,7 @@ export const MultiSelectItem = forwardRef<HTMLDivElement, MultiSelectItemProps>(
       ref={ref}
       id={value}
       isDisabled={disabled}
-      textValue={
-        textValue ?? (typeof children === "string" ? children : undefined)
-      }
+      textValue={textValue || toPlainText(children) || value}
       data-slot="multi-select-item"
       data-value={value}
       className={multiSelectItemClassNames({ className })}

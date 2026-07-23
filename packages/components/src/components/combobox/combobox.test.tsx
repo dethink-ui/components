@@ -73,6 +73,30 @@ describe("Combobox", () => {
     );
   });
 
+  it("provides typeahead text for rich static option content", async () => {
+    const user = userEvent.setup();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    try {
+      render(
+        <Combobox label="Workspace">
+          <ComboboxItem value="production">
+            <strong>Production</strong>
+            <span>Receives production deploys.</span>
+          </ComboboxItem>
+        </Combobox>,
+      );
+
+      await user.click(screen.getByRole("button", { name: /Show options/ }));
+
+      expect(warn).not.toHaveBeenCalledWith(
+        expect.stringContaining("textValue prop is required"),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
   it("supports controlled value and input changes", async () => {
     const user = userEvent.setup();
 

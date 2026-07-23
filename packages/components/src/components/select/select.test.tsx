@@ -67,6 +67,27 @@ describe("Select", () => {
     );
   });
 
+  it("provides typeahead text for rich static option content", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    try {
+      render(
+        <Select defaultOpen label="Workspace">
+          <SelectItem value="production">
+            <strong>Production</strong>
+            <span>Receives production deploys.</span>
+          </SelectItem>
+        </Select>,
+      );
+
+      expect(warn).not.toHaveBeenCalledWith(
+        expect.stringContaining("textValue prop is required"),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
   it("supports controlled value changes", async () => {
     const user = userEvent.setup();
 

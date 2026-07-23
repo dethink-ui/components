@@ -79,6 +79,30 @@ describe("MultiSelect", () => {
     );
   });
 
+  it("provides typeahead text for rich static option content", async () => {
+    const user = userEvent.setup();
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+
+    try {
+      render(
+        <MultiSelect label="Workspaces">
+          <MultiSelectItem value="production">
+            <strong>Production</strong>
+            <span>Receives production deploys.</span>
+          </MultiSelectItem>
+        </MultiSelect>,
+      );
+
+      await user.click(screen.getByRole("button", { name: /Show options/ }));
+
+      expect(warn).not.toHaveBeenCalledWith(
+        expect.stringContaining("textValue prop is required"),
+      );
+    } finally {
+      warn.mockRestore();
+    }
+  });
+
   it("supports controlled value changes and chip removal", async () => {
     const user = userEvent.setup();
 

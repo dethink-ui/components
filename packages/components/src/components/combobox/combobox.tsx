@@ -13,6 +13,7 @@ import {
   type ListBoxItemProps as AriaListBoxItemProps,
 } from "react-aria-components";
 import {
+  Children,
   cloneElement,
   type ForwardedRef,
   forwardRef,
@@ -25,6 +26,7 @@ import {
   useRef,
 } from "react";
 import { cn } from "../../utils/cn";
+import { toPlainText } from "../../utils/to-plain-text";
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
@@ -241,24 +243,37 @@ function renderComboboxChildren<T extends ComboboxItemData>({
   children,
   defaultItems,
   items,
-}: Pick<ComboboxProps<T>, "children" | "defaultItems" | "items">) {
+}: Pick<ComboboxProps<T>, "children" | "defaultItems" | "items">): ReactNode {
   const sourceItems = items ?? defaultItems;
 
   if (sourceItems && typeof children === "function") {
     return Array.from(sourceItems, (item) => {
       const child = children(item);
 
-      if (isValidElement(child)) {
-        return cloneElement(child, {
-          key: child.key ?? item.value,
-        });
-      }
-
-      return child;
+      return withComboboxItemTextValue(child, item.value);
     });
   }
 
-  return children as ReactNode;
+  return Children.map(children as ReactNode, (child) =>
+    withComboboxItemTextValue(child),
+  );
+}
+
+function withComboboxItemTextValue(child: ReactNode, key?: string) {
+  if (!isValidElement<ComboboxItemProps>(child)) {
+    return child;
+  }
+
+  const { children, textValue, value } = child.props;
+
+  if (typeof value !== "string") {
+    return child;
+  }
+
+  return cloneElement(child, {
+    key: child.key ?? key,
+    textValue: textValue || toPlainText(children) || value,
+  });
 }
 
 function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
@@ -445,9 +460,7 @@ export const ComboboxItem = forwardRef<HTMLDivElement, ComboboxItemProps>(
       ref={ref}
       id={value}
       isDisabled={disabled}
-      textValue={
-        textValue ?? (typeof children === "string" ? children : undefined)
-      }
+      textValue={textValue || toPlainText(children) || value}
       data-slot="combobox-item"
       data-value={value}
       className={comboboxItemClassNames({ className })}
