@@ -16,18 +16,27 @@ async function pixels(heading: Locator) {
     );
     let sum = 0,
       weightedX = 0,
+      leftHash = 2166136261,
+      rightHash = 2166136261,
       hash = 2166136261;
     for (let i = 0; i < data.length; i += 4) {
       const alpha = data[i + 3]!;
       sum += alpha;
       weightedX += ((i / 4) % canvas.width) * alpha;
-      for (let channel = 0; channel < 4; channel++)
+      for (let channel = 0; channel < 4; channel++) {
         hash = Math.imul(hash ^ data[i + channel]!, 16777619);
+        if ((i / 4) % canvas.width < canvas.width * 0.4)
+          leftHash = Math.imul(leftHash ^ data[i + channel]!, 16777619);
+        if ((i / 4) % canvas.width > canvas.width * 0.6)
+          rightHash = Math.imul(rightHash ^ data[i + channel]!, 16777619);
+      }
     }
     return {
       sum,
       x: weightedX / Math.max(1, sum) / canvas.width,
       hash: hash >>> 0,
+      leftHash: leftHash >>> 0,
+      rightHash: rightHash >>> 0,
     };
   });
 }
@@ -53,16 +62,30 @@ test("particles are drawn, follow the mouse, return to their exact glyph pattern
     path: "test-results/shader-particles-formed.png",
   });
   const box = (await heading.boundingBox())!;
-  await page.mouse.move(box.x + box.width * 0.85, box.y + box.height * 0.55, {
+  await page.mouse.move(box.x + box.width * 0.65, box.y + box.height * 0.25, {
     steps: 12,
   });
   await expect(heading).toHaveAttribute("data-state", "following");
   await expect
-    .poll(async () => (await pixels(heading)).x)
-    .toBeGreaterThan(formed.x + 0.15);
+    .poll(async () => (await pixels(heading)).hash)
+    .not.toBe(formed.hash);
+  await expect(heading).toHaveAttribute("data-animating", "false");
+  const following = await pixels(heading);
+  expect(following.leftHash).toBe(formed.leftHash);
+  expect(Math.abs(following.x - formed.x)).toBeLessThan(0.03);
   await heading.screenshot({
     path: "test-results/shader-particles-following.png",
   });
+  // The tail hands off to a new word without needing a pointer exit.
+  expect(following.rightHash).not.toBe(formed.rightHash);
+  await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.25, {
+    steps: 12,
+  });
+  await expect(heading).toHaveAttribute("data-state", "following");
+  await expect(heading).toHaveAttribute("data-animating", "false");
+  const redirected = await pixels(heading);
+  expect(redirected.rightHash).toBe(formed.rightHash);
+  expect(redirected.leftHash).not.toBe(formed.leftHash);
   await page.mouse.move(box.x - 25, box.y);
   await expect(heading).toHaveAttribute("data-state", "formed", {
     timeout: 2500,

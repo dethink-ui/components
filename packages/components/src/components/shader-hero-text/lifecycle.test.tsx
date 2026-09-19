@@ -14,6 +14,9 @@ vi.mock("./renderer", () => ({
             positions: new Float32Array([10, 10]),
             velocity: new Float32Array(2),
             offsets: new Float32Array(2),
+            radius: 100,
+            lastPointer: null,
+            direction: [1, 0],
             size: 1,
           }
         : null,

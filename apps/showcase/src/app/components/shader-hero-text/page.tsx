@@ -20,7 +20,7 @@ const effects = [
   [
     "particle-follow",
     "Particle follow",
-    "Letters made from individual particles. Follow the mouse, then return home.",
+    "Letters made from individual particles. Nearby dots trail the mouse, then return home as it moves away.",
   ],
   [
     "liquid-ripple",

@@ -44,7 +44,7 @@ const copy: Record<
     label: "06 / Particle follow",
     text: "A thousand points.\nOne idea.",
     description:
-      "Move your mouse over the words. The particles follow you; move away and watch them return.",
+      "Move your mouse over the words. Nearby particles form a soft tail behind your pointer; the dots you leave behind return to their letters.",
   },
 };
 

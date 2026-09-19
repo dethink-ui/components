@@ -51,6 +51,7 @@ export function createTextRenderer(
     const mask = createTextMask(
       text,
       gl.getParameter(gl.MAX_TEXTURE_SIZE) as number,
+      animation === "particle-follow" ? 1 : 0.25,
     );
     if (!mask) throw new Error("Unsupported text layout");
     canvas.width = mask.canvas.width;

@@ -11,6 +11,7 @@ export interface TextMask {
 export function createTextMask(
   element: HTMLElement,
   maxTextureSize: number,
+  paddingEm = 0.25,
 ): TextMask | null {
   const text = element.textContent ?? "";
   const node = element.firstChild;
@@ -30,7 +31,7 @@ export function createTextMask(
     return null;
 
   const fontSize = parseFloat(css.fontSize);
-  const padding = Math.ceil(fontSize * 0.25);
+  const padding = Math.ceil(fontSize * paddingEm);
   const width = box.width + padding * 2;
   const height = box.height + padding * 2;
   const scale = Math.min(

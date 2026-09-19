@@ -57,14 +57,14 @@ are useful for inspection, while application logic should use props and callback
 
 ## Effects and API
 
-| Animation              | Behavior                                    | Default duration |
-| ---------------------- | ------------------------------------------- | ---------------- |
-| `liquid-ripple`        | Radial letter distortion                    | 1.4 s            |
-| `chromatic-refraction` | Warped, separated color samples             | 1.2 s            |
-| `noise-dissolve`       | Seeded organic reveal                       | 1.6 s            |
-| `wave-distortion`      | A directional wave through the line         | 1.4 s            |
-| `liquid-metal`         | Reflective bands across letter interiors    | 1.8 s            |
-| `particle-follow`      | Mouse attraction followed by return to text | 1.2 s return     |
+| Animation              | Behavior                                      | Default duration |
+| ---------------------- | --------------------------------------------- | ---------------- |
+| `liquid-ripple`        | Radial letter distortion                      | 1.4 s            |
+| `chromatic-refraction` | Warped, separated color samples               | 1.2 s            |
+| `noise-dissolve`       | Seeded organic reveal                         | 1.6 s            |
+| `wave-distortion`      | A directional wave through the line           | 1.4 s            |
+| `liquid-metal`         | Reflective bands across letter interiors      | 1.8 s            |
+| `particle-follow`      | Local pointer tail followed by return to text | 1.2 s return     |
 
 `text` is required. `as` accepts `h1`, `h2`, `p`, or `span`. `ariaLabel` optionally
 overrides the accessible name. Native root attributes and a forwarded ref are
@@ -74,6 +74,11 @@ supported. The text must be a plain string; nested rich text is not part of this
 suspend when offscreen. Set `active={false}` to disable rendering; with a manual
 trigger, turn it on from an action. Change `replayKey` to rerun a one-shot effect or
 reset particles to their formed state. There is no automatic repeat loop.
+
+Particle follow affects only dots whose original letter positions are near the
+pointer (a font-scaled radius of 64–160 CSS pixels). They gather into a tapered tail
+behind the direction of travel, with a soft lag and seeded spacing. Distant letters stay intact.
+Moving to another word releases the previous area; leaving restores every dot.
 
 `duration` uses seconds, clamped to 0–5 for one-shots and 0–2 for particle return.
 Zero returns particles immediately. `delay` applies only to one-shots, clamped to
