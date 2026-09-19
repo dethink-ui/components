@@ -8,6 +8,7 @@ export function PaginationBasic() {
 
   return (
     <Pagination
+      aria-label="Example result pages"
       page={page}
       pageCount={12}
       showFirstLast

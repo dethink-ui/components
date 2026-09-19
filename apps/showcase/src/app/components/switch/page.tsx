@@ -8,6 +8,7 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { SwitchBasic } from "@/examples/switch/basic";
 import { SwitchRecipeSettings } from "@/examples/switch/recipe-settings";
+import { SwitchSpring } from "@/examples/switch/spring";
 import { SwitchStates } from "@/examples/switch/states";
 import { switchProps } from "@/lib/props/switch";
 
@@ -42,6 +43,13 @@ export default function SwitchPage() {
             description="On, off, disabled, invalid, and the three control sizes."
           >
             <SwitchStates />
+          </ExampleBlock>
+          <ExampleBlock
+            file="switch/spring.tsx"
+            title="Optional spring motion"
+            description="Add spring for a softly bouncing thumb. Standard motion remains the default; reduced-motion preferences are respected automatically."
+          >
+            <SwitchSpring />
           </ExampleBlock>
         </div>
       </DocsSection>

@@ -161,10 +161,10 @@ const paginationInteractiveBaseClasses =
   "inline-flex shrink-0 select-none items-center justify-center rounded-md border border-transparent bg-transparent font-medium text-muted-foreground outline-none tabular-nums no-underline motion-safe:transition-[background-color,border-color,color,box-shadow,translate] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control motion-safe:ease-out motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-safe:active:translate-y-px data-[current=true]:border-primary/20 data-[current=true]:bg-primary data-[current=true]:text-primary-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50";
 
 const paginationEllipsisClasses =
-  "inline-flex shrink-0 select-none items-center justify-center rounded-md text-muted-foreground";
+  "inline-flex shrink-0 select-none items-center justify-center rounded-md font-medium tabular-nums text-muted-foreground";
 
 const paginationStatusClasses =
-  "m-0 shrink-0 whitespace-nowrap text-sm text-muted-foreground";
+  "m-0 shrink-0 whitespace-nowrap text-sm tabular-nums text-muted-foreground";
 
 const paginationSizeClasses: Record<PaginationSize, string> = {
   sm: "h-8 min-w-8 px-[var(--dt-space-2)] text-xs",
@@ -176,6 +176,18 @@ const paginationIconSizeClasses: Record<PaginationSize, string> = {
   sm: "[&>svg]:size-3.5",
   md: "[&>svg]:size-4",
   lg: "[&>svg]:size-4",
+};
+
+const paginationSlotMinimums: Record<PaginationSize, string> = {
+  sm: "2rem",
+  md: "var(--dt-density-control)",
+  lg: "2.75rem",
+};
+
+const paginationSlotPadding: Record<PaginationSize, string> = {
+  sm: "var(--dt-space-2)",
+  md: "var(--dt-space-2-5)",
+  lg: "var(--dt-space-3)",
 };
 
 export function paginationClassNames({
@@ -323,20 +335,52 @@ export function getPaginationRenderItems({
     return [];
   }
 
+  if (safePageCount) {
+    // Fill the same number of slots at either boundary instead of shrinking
+    // the window and moving Previous/Next underneath the pointer.
+    const slotCount = 2 * safeBoundaryCount + 2 * safeSiblingCount + 3;
+    if (safePageCount <= slotCount) {
+      return numbersToRenderItems(range(1, safePageCount), currentPage);
+    }
+
+    if (safeBoundaryCount === 0) {
+      const count = 2 * safeSiblingCount + 1;
+      const start = Math.max(
+        1,
+        Math.min(currentPage - safeSiblingCount, safePageCount - count + 1),
+      );
+      return numbersToRenderItems(range(start, start + count - 1), currentPage);
+    }
+
+    const start = Math.max(
+      safeBoundaryCount + 2,
+      Math.min(
+        currentPage - safeSiblingCount,
+        safePageCount - safeBoundaryCount - 2 * safeSiblingCount - 1,
+      ),
+    );
+    const end = Math.min(
+      safePageCount - safeBoundaryCount - 1,
+      Math.max(
+        currentPage + safeSiblingCount,
+        safeBoundaryCount + 2 * safeSiblingCount + 2,
+      ),
+    );
+    return numbersToRenderItems(
+      [
+        ...range(1, safeBoundaryCount),
+        ...range(start, end),
+        ...range(safePageCount - safeBoundaryCount + 1, safePageCount),
+      ],
+      currentPage,
+    );
+  }
+
   for (const pageNumber of range(
     1,
     Math.min(safeBoundaryCount, knownLastPage),
   )) {
     visiblePages.add(pageNumber);
-  }
-
-  if (safePageCount) {
-    for (const pageNumber of range(
-      Math.max(1, safePageCount - safeBoundaryCount + 1),
-      safePageCount,
-    )) {
-      visiblePages.add(pageNumber);
-    }
   }
 
   for (
@@ -347,7 +391,7 @@ export function getPaginationRenderItems({
     visiblePages.add(pageNumber);
   }
 
-  if (!safePageCount && hasNextPage) {
+  if (hasNextPage) {
     visiblePages.add(knownLastPage);
   }
 
@@ -513,6 +557,9 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
       pageCount === undefined ? undefined : toPositiveInteger(pageCount, 1);
     const canPrevious = currentPage > 1;
     const canNext = safePageCount ? currentPage < safePageCount : hasNextPage;
+    const pageSlotWidth = safePageCount
+      ? `max(${paginationSlotMinimums[size]}, calc(${String(safePageCount).length}ch + 2 * ${paginationSlotPadding[size]} + 2px))`
+      : undefined;
     const items = getPaginationRenderItems({
       boundaryCount,
       compact,
@@ -600,7 +647,29 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             })}
           >
             {resolvedStatus ? (
-              <PaginationStatus>{resolvedStatus}</PaginationStatus>
+              <PaginationStatus
+                className={
+                  safePageCount && status === undefined ? "grid" : undefined
+                }
+              >
+                {safePageCount && status === undefined ? (
+                  <>
+                    <span
+                      aria-hidden="true"
+                      data-reserved-status={mergedLabels.status(safePageCount, {
+                        pageCount: safePageCount,
+                        hasNextPage,
+                      })}
+                      className="invisible col-start-1 row-start-1 after:content-[attr(data-reserved-status)]"
+                    />
+                    <span className="col-start-1 row-start-1">
+                      {resolvedStatus}
+                    </span>
+                  </>
+                ) : (
+                  resolvedStatus
+                )}
+              </PaginationStatus>
             ) : null}
             <PaginationList className={generatedListClassName}>
               {showFirstLast && (!hideDisabledControls || canPrevious) ? (
@@ -642,6 +711,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
                       className={smallWindowItemClassName}
                     >
                       <PaginationEllipsis
+                        style={{ inlineSize: pageSlotWidth }}
                         label={mergedLabels.ellipsis}
                         size={size}
                       />
@@ -665,6 +735,7 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
                     disabled={pageAction.disabled}
                   >
                     <PaginationPage
+                      style={{ inlineSize: pageSlotWidth }}
                       current={item.current}
                       disabled={pageAction.disabled}
                       href={pageAction.href}

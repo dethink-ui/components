@@ -1,3 +1,4 @@
+import { act } from "react";
 import { render, screen } from "@testing-library/react";
 import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it } from "vitest";
@@ -18,36 +19,40 @@ import { Switch } from ".";
 expect.extend(toHaveNoViolations);
 
 describe("Switch accessibility", () => {
-  it("has no axe violations with visible stable labels and descriptions", async () => {
-    const { container } = render(
-      <DethinkProvider theme="light">
-        <main aria-label="Switch accessibility smoke">
-          <Field id="two-factor" orientation="horizontal">
-            <FieldContent>
-              <FieldLabel>Multi-factor authentication</FieldLabel>
-              <FieldDescription>
-                Require a second verification step for sign in.
-              </FieldDescription>
-            </FieldContent>
-            <FieldControl asChild>
-              <Switch name="twoFactor" value="enabled" />
-            </FieldControl>
-          </Field>
-        </main>
-      </DethinkProvider>,
-    );
+  it.each([false, true])(
+    "has no axe violations with visible stable labels (spring=%s)",
+    async (spring) => {
+      const { container } = render(
+        <DethinkProvider theme="light">
+          <main aria-label="Switch accessibility smoke">
+            <Field id="two-factor" orientation="horizontal">
+              <FieldContent>
+                <FieldLabel>Multi-factor authentication</FieldLabel>
+                <FieldDescription>
+                  Require a second verification step for sign in.
+                </FieldDescription>
+              </FieldContent>
+              <FieldControl asChild>
+                <Switch spring={spring} name="twoFactor" value="enabled" />
+              </FieldControl>
+            </Field>
+          </main>
+        </DethinkProvider>,
+      );
 
-    const switchInput = screen.getByRole("switch", {
-      name: "Multi-factor authentication",
-    });
+      await act(async () => {});
+      const switchInput = screen.getByRole("switch", {
+        name: "Multi-factor authentication",
+      });
 
-    expect(switchInput).toHaveAttribute(
-      "aria-describedby",
-      "two-factor-description",
-    );
+      expect(switchInput).toHaveAttribute(
+        "aria-describedby",
+        "two-factor-description",
+      );
 
-    await expect(axe(container)).resolves.toHaveNoViolations();
-  });
+      await expect(axe(container)).resolves.toHaveNoViolations();
+    },
+  );
 
   it("has no axe violations for invalid grouped switch wiring", async () => {
     const { container } = render(

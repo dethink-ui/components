@@ -1,5 +1,6 @@
 import {
   now,
+  toCalendarDate,
   type CalendarDateTime,
   type DateValue,
   type ZonedDateTime,
@@ -121,6 +122,25 @@ export function getDateTimePickerTimeOptionValue(
     minute: option.minute ?? 0,
     second: option.second ?? 0,
   });
+}
+
+/** Date-only bounds include the entire day; timestamp bounds include the time. */
+export function isDateTimePickerValueUnavailable(
+  value: DateTimePickerValue,
+  minValue?: DateValue,
+  maxValue?: DateValue,
+  isDateUnavailable?: (date: DateValue) => boolean,
+) {
+  const compare = (bound: DateValue) =>
+    "hour" in bound
+      ? value.compare(bound)
+      : toCalendarDate(value).compare(bound);
+
+  return Boolean(
+    (minValue && compare(minValue) < 0) ||
+    (maxValue && compare(maxValue) > 0) ||
+    isDateUnavailable?.(value),
+  );
 }
 
 export function getDateTimePickerTimeInputStep(

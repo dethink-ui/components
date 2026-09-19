@@ -23,7 +23,7 @@ export default function DateTimePickerPage() {
   return (
     <DocsPage
       name="DateTimePicker"
-      description="One field for a full timestamp: segmented date and time input, a popover calendar, optional quick presets, and an optional time-selector grid. Values are CalendarDateTime or ZonedDateTime objects, so time zones are explicit rather than implied."
+      description="One field for a full timestamp: segmented date and time input, a calendar and time picker in one popover, with editable time segments and quick picks. Values are CalendarDateTime or ZonedDateTime objects, so time zones are explicit rather than implied."
     >
       <DocsSection
         id="examples"
@@ -34,7 +34,7 @@ export default function DateTimePickerPage() {
           <ExampleBlock
             file="date-time-picker/basic.tsx"
             title="Basic"
-            description="The uncontrolled default: date plus hours and minutes in a single segmented field."
+            description="Open the calendar to choose a date and time together, or use the clock button to jump straight to time."
           >
             <DateTimePickerBasic />
           </ExampleBlock>
@@ -62,7 +62,7 @@ export default function DateTimePickerPage() {
           <ExampleBlock
             file="date-time-picker/time-selector.tsx"
             title="Time selector"
-            description="timeSelector swaps free-form time entry for a dropdown generated at timeStep intervals, clipped by minValue and maxValue."
+            description="Quick picks every 15 minutes, with unavailable times disabled. Type any exact time using the hour and minute segments."
           >
             <DateTimePickerTimeSelector />
           </ExampleBlock>

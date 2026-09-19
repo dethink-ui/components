@@ -1,5 +1,7 @@
 import {
   forwardRef,
+  lazy,
+  Suspense,
   useRef,
   useState,
   type ChangeEventHandler,
@@ -8,6 +10,8 @@ import {
   type Ref,
 } from "react";
 import { cn } from "../../utils/cn";
+
+const SpringThumb = lazy(() => import("./switch-spring-thumb"));
 
 export type SwitchControlSize = "sm" | "md" | "lg";
 
@@ -20,6 +24,8 @@ export interface SwitchProps extends Omit<
   controlSize?: SwitchControlSize;
   defaultChecked?: boolean;
   invalid?: boolean;
+  /** Opt in to a Motion spring on the thumb. Respects reduced motion. */
+  spring?: boolean;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onCheckedChange?: (checked: boolean) => void;
 }
@@ -46,7 +52,10 @@ const switchTrackBaseClasses =
   "pointer-events-none flex size-full items-center rounded-full border border-input bg-muted p-[var(--dt-space-0-5)] shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,opacity] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control peer-disabled:opacity-60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background group-disabled/field-set:opacity-60 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[disabled=true]:opacity-60 data-[readonly=true]:bg-muted/40";
 
 const switchThumbBaseClasses =
-  "shrink-0 rounded-full bg-background text-background shadow-sm [--switch-travel:calc(var(--switch-width)-var(--switch-thumb-size)-var(--dt-space-0-5)*2-2px)] translate-x-0 motion-safe:transition-[translate,background-color] motion-safe:duration-[180ms] motion-safe:ease-control data-[state=checked]:translate-x-[var(--switch-travel)] rtl:data-[state=checked]:-translate-x-[var(--switch-travel)] data-[state=checked]:bg-primary-foreground data-[readonly=true]:bg-muted-foreground/70";
+  "shrink-0 rounded-full bg-background text-background shadow-sm data-[state=checked]:bg-primary-foreground data-[readonly=true]:bg-muted-foreground/70";
+
+const switchThumbTranslateClasses =
+  "[--switch-travel:calc(var(--switch-width)-var(--switch-thumb-size)-var(--dt-space-0-5)*2-2px)] translate-x-0 motion-safe:transition-[translate,background-color] motion-safe:duration-[180ms] motion-safe:ease-control data-[state=checked]:translate-x-[var(--switch-travel)] rtl:data-[state=checked]:-translate-x-[var(--switch-travel)] data-[state=checked]:bg-primary-foreground data-[readonly=true]:bg-muted-foreground/70";
 
 function isAriaInvalid(value: SwitchProps["aria-invalid"]) {
   return (
@@ -107,6 +116,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       onClick,
       readOnly,
       required,
+      spring = false,
       ...props
     },
     ref,
@@ -159,8 +169,26 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       onCheckedChange?.(nextChecked);
     };
 
+    const thumbProps = {
+      "data-slot": "switch-thumb",
+      "data-size": controlSize,
+      "data-state": state,
+      "data-checked": checkedState ? "true" : undefined,
+      "data-disabled": disabled ? "true" : undefined,
+      "data-invalid": resolvedInvalid ? "true" : undefined,
+      "data-readonly": readOnly ? "true" : undefined,
+      "data-required": required ? "true" : undefined,
+      className: cn(
+        switchThumbBaseClasses,
+        switchThumbSizeClasses[controlSize],
+        spring ? "translate-x-0" : switchThumbTranslateClasses,
+      ),
+    };
+    const staticThumb = <span {...thumbProps} />;
+
     return (
       <span
+        data-animation={spring ? "spring" : undefined}
         data-slot={dataSlot ?? "switch"}
         data-size={controlSize}
         data-state={state}
@@ -205,22 +233,18 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
           data-invalid={resolvedInvalid ? "true" : undefined}
           data-readonly={readOnly ? "true" : undefined}
           data-required={required ? "true" : undefined}
-          className={switchTrackBaseClasses}
+          className={cn(
+            switchTrackBaseClasses,
+            spring && "justify-start data-[state=checked]:justify-end",
+          )}
         >
-          <span
-            data-slot="switch-thumb"
-            data-size={controlSize}
-            data-state={state}
-            data-checked={checkedState ? "true" : undefined}
-            data-disabled={disabled ? "true" : undefined}
-            data-invalid={resolvedInvalid ? "true" : undefined}
-            data-readonly={readOnly ? "true" : undefined}
-            data-required={required ? "true" : undefined}
-            className={cn(
-              switchThumbBaseClasses,
-              switchThumbSizeClasses[controlSize],
-            )}
-          />
+          {spring ? (
+            <Suspense fallback={staticThumb}>
+              <SpringThumb {...thumbProps} checked={checkedState} />
+            </Suspense>
+          ) : (
+            staticThumb
+          )}
         </span>
       </span>
     );

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-autofocus -- React Aria places focus inside a dialog only after the user opens it. */
 import {
   Button as AriaButton,
   Calendar as AriaCalendar,
@@ -11,7 +12,10 @@ import {
   Label,
   Popover,
   Text,
+  TimeField,
+  useLocale,
   type DatePickerRenderProps,
+  type DateSegmentProps,
 } from "react-aria-components";
 import { forwardRef, type ReactNode, useId, useRef, useState } from "react";
 import type { DateValue } from "@internationalized/date";
@@ -23,13 +27,11 @@ import {
 import { cn } from "../../utils/cn";
 import {
   getDateTimePickerPlaceholderValue,
-  getDateTimePickerTimeInputStep,
-  getDateTimePickerTimeInputValue,
-  getDateTimePickerTimeInputValueChange,
   getDateTimePickerTimeOptionValue,
   getDateTimePickerTimeOptions,
   getDateTimePickerTimeZone,
   isDateTimePickerTimeOptionSelected,
+  isDateTimePickerValueUnavailable,
   serializeDateTimePickerValue,
   type DateTimePickerGranularity,
   type DateTimePickerTimeOption,
@@ -103,7 +105,7 @@ const dateTimePickerTriggerButtonClasses =
   "me-[var(--dt-space-1)] inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground motion-safe:transition-[background-color,color,transform] motion-safe:duration-150 hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:translate-y-px disabled:pointer-events-none disabled:opacity-40 data-[pressed]:bg-muted data-[pressed]:text-foreground";
 
 const dateTimePickerPopoverClasses =
-  "z-50 rounded-md border border-border bg-background p-[var(--dt-space-3)] text-foreground shadow-lg outline-none motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[panel=time]:w-[var(--trigger-width)] data-[entering]:opacity-100 data-[exiting]:translate-y-1 data-[exiting]:opacity-0";
+  "z-50 max-h-[min(42rem,calc(100dvh-2rem))] max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-xl border border-border bg-background p-4 text-foreground shadow-xl outline-none motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[exiting]:translate-y-1 data-[exiting]:opacity-0";
 
 const dateTimePickerDialogClasses = "grid gap-[var(--dt-space-3)] outline-none";
 
@@ -123,22 +125,22 @@ const dateTimePickerTimezoneClasses =
   "text-xs font-medium leading-5 text-muted-foreground";
 
 const dateTimePickerTimeSelectorClasses =
-  "grid min-w-0 gap-[var(--dt-space-3)] border-t border-border pt-[var(--dt-space-3)]";
+  "grid min-w-0 content-start gap-3 border-t border-border pt-4 sm:w-64 sm:border-s sm:border-t-0 sm:ps-5 sm:pt-0";
 
 const dateTimePickerTimeSelectorLabelClasses =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";
 
 const dateTimePickerTimeInputClasses =
-  "h-10 w-full min-w-0 rounded-md border border-input bg-background px-[var(--dt-space-3)] text-sm tabular-nums text-foreground shadow-sm outline-none motion-safe:transition-[border-color,box-shadow,background-color] motion-safe:duration-150 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50";
+  "flex min-h-12 min-w-0 items-center justify-center gap-1 rounded-lg border border-input bg-muted/40 px-3 text-xl font-medium tabular-nums shadow-sm data-[disabled]:opacity-50";
 
 const dateTimePickerTimeOptionsLabelClasses =
   "text-xs font-medium uppercase tracking-wide text-muted-foreground";
 
 const dateTimePickerTimeOptionsClasses =
-  "grid max-h-36 grid-cols-[repeat(3,minmax(0,1fr))] gap-[var(--dt-space-1)] overflow-y-auto pr-[var(--dt-space-1)]";
+  "relative grid max-h-44 grid-cols-[repeat(3,minmax(0,1fr))] gap-[var(--dt-space-1)] overflow-y-auto overscroll-contain pe-[var(--dt-space-1)]";
 
 const dateTimePickerTimeOptionClasses =
-  "min-w-0 rounded-md border border-border bg-background px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-center text-xs font-medium tabular-nums text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,transform] motion-safe:duration-150 hover:border-ring/50 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring active:translate-y-px disabled:pointer-events-none disabled:opacity-45 data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground";
+  "min-h-10 min-w-0 rounded-md border border-border bg-background px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-center text-xs font-medium tabular-nums text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,transform] motion-safe:duration-150 hover:border-ring/50 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring active:translate-y-px disabled:pointer-events-none disabled:opacity-45 data-[selected=true]:border-primary data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground";
 
 type DateTimePickerPanel = "calendar" | "time";
 
@@ -160,32 +162,18 @@ function isDateTimePickerTimeSegment(segmentType: string) {
   return dateTimePickerTimeSegmentTypes.has(segmentType);
 }
 
-function setDateTimePickerTimeInputValue({
-  granularity,
-  inputValue,
-  setValue,
-  value,
-}: {
-  granularity: DateTimePickerGranularity;
-  inputValue: string;
-  setValue: (value: DateTimePickerValue) => void;
-  value: DateTimePickerValue | null;
-}) {
-  if (!value) {
-    return;
-  }
-
-  const nextValue = getDateTimePickerTimeInputValueChange({
-    granularity,
-    inputValue,
-    value,
-  });
-
-  if (nextValue) {
-    if (nextValue.toString() !== value.toString()) {
-      setValue(nextValue);
-    }
-  }
+function ClockIcon() {
+  return (
+    <svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 16 16">
+      <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M8 4.5V8l2.5 1.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
 }
 
 function ClearIcon() {
@@ -241,7 +229,7 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
       required = false,
       timeZone,
       timeOptions,
-      timeSelector = false,
+      timeSelector = true,
       timeStep = 30,
       value,
       weekStartsOn,
@@ -249,8 +237,41 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
     ref,
   ) => {
     const triggerRef = useRef<HTMLButtonElement>(null);
+    const focusReturnRef = useRef<HTMLElement | null>(null);
+    const inheritedLocale = useLocale().locale;
+    const resolvedHourCycle =
+      hourCycle ??
+      (new Intl.DateTimeFormat(locale ?? inheritedLocale, {
+        hour: "numeric",
+      }).resolvedOptions().hour12
+        ? 12
+        : 24);
+    const hourFormatter = new Intl.NumberFormat(locale ?? inheritedLocale, {
+      minimumIntegerDigits: 2,
+      useGrouping: false,
+    });
+    // Intl implementations differ in 24-hour padding and space characters.
+    // Normalize these literals so server and browser field markup agree.
+    const normalizeSegment = (segment: DateSegmentProps["segment"]) => {
+      if (segment.type === "literal") {
+        return {
+          ...segment,
+          text: segment.text.replace(/[\u00a0\u202f]/g, " "),
+        };
+      }
+      if (
+        segment.type === "hour" &&
+        resolvedHourCycle === 24 &&
+        !segment.isPlaceholder &&
+        segment.value != null
+      ) {
+        return { ...segment, text: hourFormatter.format(segment.value) };
+      }
+      return segment;
+    };
     const timeSelectorLabelId = useId();
     const timeOptionsLabelId = useId();
+    const timeHelpId = useId();
     const [activePanel, setActivePanel] =
       useState<DateTimePickerPanel>("calendar");
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
@@ -281,10 +302,13 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
             timeZone,
             value,
           })}
+          shouldCloseOnSelect={!timeSelector}
           onOpenChange={(isOpen) => {
             if (!isOpen) {
               setActivePanel("calendar");
-              queueMicrotask(() => triggerRef.current?.focus());
+              queueMicrotask(() =>
+                (focusReturnRef.current ?? triggerRef.current)?.focus(),
+              );
             }
           }}
           validationBehavior="aria"
@@ -304,17 +328,19 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
               timeOptions ??
               getDateTimePickerTimeOptions({
                 granularity,
-                hourCycle: hourCycle ?? 24,
+                hourCycle: resolvedHourCycle,
                 step: timeStep,
               });
             const timeControlsDisabled =
               !currentValue || isDisabled || isReadOnly;
-            const timeInputValue = getDateTimePickerTimeInputValue({
-              granularity,
-              value: currentValue,
-            });
-            const showCalendarPanel = activePanel === "calendar";
-            const showTimeSelector = timeSelector && activePanel === "time";
+            const currentUnavailable = currentValue
+              ? isDateTimePickerValueUnavailable(
+                  currentValue,
+                  minValue,
+                  maxValue,
+                  isDateUnavailable,
+                )
+              : false;
 
             return (
               <>
@@ -345,10 +371,17 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                           segment.type,
                         );
                         const openTimeSelector = () => {
-                          if (!timeSelector || !isTimeSegment) {
+                          if (
+                            !timeSelector ||
+                            !isTimeSegment ||
+                            isDisabled ||
+                            isReadOnly
+                          ) {
                             return;
                           }
 
+                          focusReturnRef.current =
+                            document.activeElement as HTMLElement;
                           setActivePanel("time");
                           state.open();
                         };
@@ -357,7 +390,7 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                           <DateSegment
                             data-segment={segment.type}
                             data-slot="date-time-picker-segment"
-                            segment={segment}
+                            segment={normalizeSegment(segment)}
                             className={dateTimePickerSegmentClasses}
                             onPointerDownCapture={() => {
                               setActivePanel(
@@ -382,12 +415,33 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                       <ClearIcon />
                     </button>
                   ) : null}
+                  {timeSelector ? (
+                    <button
+                      type="button"
+                      aria-label="Open time picker"
+                      aria-haspopup="dialog"
+                      aria-expanded={state.isOpen}
+                      disabled={isDisabled || isReadOnly}
+                      className={dateTimePickerTriggerButtonClasses}
+                      data-slot="date-time-picker-time-trigger"
+                      onClick={(event) => {
+                        focusReturnRef.current = event.currentTarget;
+                        setActivePanel("time");
+                        state.open();
+                      }}
+                    >
+                      <ClockIcon />
+                    </button>
+                  ) : null}
                   <AriaButton
                     ref={triggerRef}
                     aria-label="Open calendar"
                     className={dateTimePickerTriggerButtonClasses}
                     data-slot="date-time-picker-trigger"
-                    onClickCapture={() => setActivePanel("calendar")}
+                    onClickCapture={() => {
+                      focusReturnRef.current = triggerRef.current;
+                      setActivePanel("calendar");
+                    }}
                   >
                     <CalendarIcon />
                   </AriaButton>
@@ -437,7 +491,7 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                     data-slot="date-time-picker-dialog"
                     className={dateTimePickerDialogClasses}
                   >
-                    {showCalendarPanel && presets.length > 0 ? (
+                    {presets.length > 0 ? (
                       <div
                         data-slot="date-time-picker-presets"
                         className={dateTimePickerPresetsClasses}
@@ -446,7 +500,16 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                           <button
                             className={dateTimePickerPresetButtonClasses}
                             data-slot="date-time-picker-preset"
-                            disabled={isDisabled || isReadOnly}
+                            disabled={
+                              isDisabled ||
+                              isReadOnly ||
+                              isDateTimePickerValueUnavailable(
+                                preset.value,
+                                minValue,
+                                maxValue,
+                                isDateUnavailable,
+                              )
+                            }
                             key={index}
                             type="button"
                             onClick={() => {
@@ -459,118 +522,194 @@ export const DateTimePicker = forwardRef<HTMLDivElement, DateTimePickerProps>(
                         ))}
                       </div>
                     ) : null}
-                    {showCalendarPanel ? (
+                    <div
+                      className={cn(
+                        "grid gap-5",
+                        timeSelector && "sm:grid-cols-[auto_auto]",
+                      )}
+                    >
                       <AriaCalendar
+                        autoFocus={
+                          activePanel === "calendar" || timeControlsDisabled
+                        }
                         data-slot="date-time-picker-calendar"
                         className={dateTimePickerCalendarClasses}
                       >
                         <DateCalendarGrid dataSlotPrefix="date-time-picker-calendar" />
                       </AriaCalendar>
-                    ) : null}
-                    {showTimeSelector ? (
-                      <div
-                        aria-labelledby={timeSelectorLabelId}
-                        data-slot="date-time-picker-time-selector"
-                        role="group"
-                        className={dateTimePickerTimeSelectorClasses}
-                      >
+                      {timeSelector ? (
                         <div
-                          id={timeSelectorLabelId}
-                          data-slot="date-time-picker-time-selector-label"
-                          className={dateTimePickerTimeSelectorLabelClasses}
+                          aria-labelledby={timeSelectorLabelId}
+                          data-slot="date-time-picker-time-selector"
+                          role="group"
+                          className={dateTimePickerTimeSelectorClasses}
                         >
-                          Time
-                        </div>
-                        <input
-                          aria-label="Exact time"
-                          className={dateTimePickerTimeInputClasses}
-                          data-slot="date-time-picker-time-input"
-                          disabled={timeControlsDisabled}
-                          step={getDateTimePickerTimeInputStep(granularity)}
-                          type="time"
-                          value={timeInputValue}
-                          onChange={(event) => {
-                            setDateTimePickerTimeInputValue({
-                              granularity,
-                              inputValue: event.currentTarget.value,
-                              setValue: state.setValue,
-                              value: currentValue,
-                            });
-                          }}
-                          onInput={(event) => {
-                            setDateTimePickerTimeInputValue({
-                              granularity,
-                              inputValue: event.currentTarget.value,
-                              setValue: state.setValue,
-                              value: currentValue,
-                            });
-                          }}
-                        />
-                        {resolvedTimeOptions.length > 0 ? (
-                          <>
-                            <div
-                              id={timeOptionsLabelId}
-                              data-slot="date-time-picker-time-options-label"
-                              className={dateTimePickerTimeOptionsLabelClasses}
-                            >
-                              Quick picks
-                            </div>
-                            <div
-                              aria-labelledby={timeOptionsLabelId}
-                              data-slot="date-time-picker-time-options"
-                              role="group"
-                              className={dateTimePickerTimeOptionsClasses}
-                            >
-                              {resolvedTimeOptions.map((option) => {
-                                const selected =
-                                  isDateTimePickerTimeOptionSelected({
-                                    granularity,
-                                    option,
-                                    value: currentValue,
-                                  });
-                                const label =
-                                  option.label ??
-                                  `${String(option.hour).padStart(
-                                    2,
-                                    "0",
-                                  )}:${String(option.minute ?? 0).padStart(
-                                    2,
-                                    "0",
-                                  )}`;
-
-                                return (
-                                  <button
-                                    aria-pressed={selected}
-                                    className={dateTimePickerTimeOptionClasses}
-                                    data-selected={
-                                      selected ? "true" : undefined
-                                    }
-                                    data-slot="date-time-picker-time-option"
-                                    disabled={timeControlsDisabled}
-                                    key={`${option.hour}:${
-                                      option.minute ?? 0
-                                    }:${option.second ?? 0}`}
-                                    type="button"
-                                    onClick={() => {
-                                      if (!currentValue) {
-                                        return;
-                                      }
-
-                                      state.setValue(
-                                        getDateTimePickerTimeOptionValue(
-                                          currentValue,
-                                          option,
-                                        ),
-                                      );
-                                    }}
-                                  >
-                                    {label}
-                                  </button>
+                          <div
+                            id={timeSelectorLabelId}
+                            data-slot="date-time-picker-time-selector-label"
+                            className={dateTimePickerTimeSelectorLabelClasses}
+                          >
+                            Time
+                          </div>
+                          <TimeField
+                            aria-label="Exact time"
+                            aria-describedby={timeHelpId}
+                            data-slot="date-time-picker-time-input"
+                            value={currentValue}
+                            isDisabled={timeControlsDisabled}
+                            isInvalid={currentUnavailable}
+                            autoFocus={
+                              activePanel === "time" && !timeControlsDisabled
+                            }
+                            granularity={granularity}
+                            hourCycle={hourCycle}
+                            hideTimeZone
+                            onChange={(next) => {
+                              if (currentValue && next) {
+                                state.setValue(
+                                  currentValue.set({
+                                    hour: next.hour,
+                                    minute: next.minute,
+                                    second: next.second,
+                                    millisecond: 0,
+                                  }),
                                 );
-                              })}
-                            </div>
-                          </>
-                        ) : null}
+                              }
+                            }}
+                          >
+                            <DateInput
+                              className={dateTimePickerTimeInputClasses}
+                            >
+                              {(segment) => (
+                                <DateSegment
+                                  segment={normalizeSegment(segment)}
+                                  className={dateTimePickerSegmentClasses}
+                                />
+                              )}
+                            </DateInput>
+                          </TimeField>
+                          <p
+                            id={timeHelpId}
+                            className={
+                              currentUnavailable
+                                ? dateTimePickerErrorClasses
+                                : dateTimePickerHelpClasses
+                            }
+                            aria-live="polite"
+                          >
+                            {!currentValue
+                              ? "Choose a date first."
+                              : currentUnavailable
+                                ? "Choose an available date and time."
+                                : "Type a time or choose a quick pick."}
+                          </p>
+                          {resolvedTimeOptions.length > 0 ? (
+                            <>
+                              <div
+                                id={timeOptionsLabelId}
+                                data-slot="date-time-picker-time-options-label"
+                                className={
+                                  dateTimePickerTimeOptionsLabelClasses
+                                }
+                              >
+                                Quick picks
+                              </div>
+                              <div
+                                aria-labelledby={timeOptionsLabelId}
+                                data-slot="date-time-picker-time-options"
+                                role="group"
+                                className={dateTimePickerTimeOptionsClasses}
+                              >
+                                {resolvedTimeOptions.map((option) => {
+                                  const selected =
+                                    isDateTimePickerTimeOptionSelected({
+                                      granularity,
+                                      option,
+                                      value: currentValue,
+                                    });
+                                  const label =
+                                    option.label ??
+                                    `${String(option.hour).padStart(
+                                      2,
+                                      "0",
+                                    )}:${String(option.minute ?? 0).padStart(
+                                      2,
+                                      "0",
+                                    )}`;
+
+                                  return (
+                                    <button
+                                      aria-pressed={selected}
+                                      className={
+                                        dateTimePickerTimeOptionClasses
+                                      }
+                                      data-selected={
+                                        selected ? "true" : undefined
+                                      }
+                                      data-slot="date-time-picker-time-option"
+                                      disabled={
+                                        timeControlsDisabled ||
+                                        Boolean(
+                                          currentValue &&
+                                          isDateTimePickerValueUnavailable(
+                                            getDateTimePickerTimeOptionValue(
+                                              currentValue,
+                                              option,
+                                            ),
+                                            minValue,
+                                            maxValue,
+                                            isDateUnavailable,
+                                          ),
+                                        )
+                                      }
+                                      ref={(node) => {
+                                        if (selected && node?.parentElement) {
+                                          const list = node.parentElement;
+                                          list.scrollTop =
+                                            node.offsetTop -
+                                            list.clientHeight / 2 +
+                                            node.clientHeight / 2;
+                                        }
+                                      }}
+                                      key={`${option.hour}:${
+                                        option.minute ?? 0
+                                      }:${option.second ?? 0}`}
+                                      type="button"
+                                      onClick={() => {
+                                        if (!currentValue) {
+                                          return;
+                                        }
+
+                                        state.setValue(
+                                          getDateTimePickerTimeOptionValue(
+                                            currentValue,
+                                            option,
+                                          ),
+                                        );
+                                      }}
+                                    >
+                                      {label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                    {timeSelector ? (
+                      <div className="border-border flex items-center justify-between gap-3 border-t pt-3">
+                        <span className={dateTimePickerHelpClasses}>
+                          {timeZoneLabel ?? "Date & time"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => state.close()}
+                          className="bg-primary text-primary-foreground focus-visible:ring-ring focus-visible:ring-offset-background min-h-10 rounded-md px-5 text-sm font-medium outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2"
+                        >
+                          Done
+                        </button>
                       </div>
                     ) : null}
                   </Dialog>

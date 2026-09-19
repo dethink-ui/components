@@ -1,4 +1,4 @@
-import { createRef, useState } from "react";
+import { act, createRef, useState } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -231,5 +231,84 @@ describe("Switch", () => {
     expect(switchInput).toHaveAttribute("aria-invalid", "true");
     expect(switchInput).toBeRequired();
     expect(root).toHaveClass(switchClassNames());
+  });
+});
+
+describe("Switch spring", () => {
+  it("keeps keyboard, form data and controlled state synchronous", async () => {
+    const user = userEvent.setup();
+    function Form() {
+      const [checked, setChecked] = useState(false);
+      return (
+        <form aria-label="Spring form">
+          <Switch
+            spring
+            aria-label="Spring setting"
+            name="setting"
+            value="on"
+            checked={checked}
+            onCheckedChange={setChecked}
+          />
+        </form>
+      );
+    }
+    await act(async () => {
+      render(<Form />);
+    });
+    const input = screen.getByRole("switch", { name: "Spring setting" });
+    expect(input).not.toHaveAttribute("spring");
+    input.focus();
+    await user.keyboard("[Space]");
+    expect(input).toBeChecked();
+    expect(input).toHaveFocus();
+    expect(
+      new FormData(screen.getByRole("form") as HTMLFormElement).get("setting"),
+    ).toBe("on");
+    await user.keyboard("[Space]");
+    expect(input).not.toBeChecked();
+  });
+
+  it("preserves read-only and disabled state with a spring", async () => {
+    const user = userEvent.setup();
+    const change = vi.fn();
+    await act(async () => {
+      render(
+        <>
+          <Switch
+            spring
+            readOnly
+            defaultChecked
+            aria-label="Read only"
+            onCheckedChange={change}
+          />
+          <Switch
+            spring
+            disabled
+            aria-label="Disabled"
+            onCheckedChange={change}
+          />
+        </>,
+      );
+    });
+    await user.click(screen.getByRole("switch", { name: "Read only" }));
+    await user.click(screen.getByRole("switch", { name: "Disabled" }));
+    expect(screen.getByRole("switch", { name: "Read only" })).toBeChecked();
+    expect(screen.getByRole("switch", { name: "Disabled" })).not.toBeChecked();
+    expect(change).not.toHaveBeenCalled();
+  });
+
+  it("preserves checked state when opting in and out at runtime", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <Switch aria-label="Motion setting" defaultChecked />,
+    );
+    await act(async () => {
+      rerender(<Switch spring aria-label="Motion setting" defaultChecked />);
+    });
+    const input = screen.getByRole("switch", { name: "Motion setting" });
+    expect(input).toBeChecked();
+    await user.click(input);
+    rerender(<Switch aria-label="Motion setting" defaultChecked />);
+    expect(input).not.toBeChecked();
   });
 });

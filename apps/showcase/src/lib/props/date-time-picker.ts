@@ -55,9 +55,9 @@ export const dateTimePickerProps: PropRow[] = [
   {
     prop: "timeSelector",
     type: "boolean",
-    defaultValue: "false",
+    defaultValue: "true",
     description:
-      "Replaces free-form time entry with a dropdown grid of time options.",
+      "Shows editable time and quick picks alongside the calendar. Set false for a calendar-only popover.",
   },
   {
     prop: "timeStep",
@@ -102,7 +102,7 @@ export const dateTimePickerProps: PropRow[] = [
     type: "DateValue",
     defaultValue: "—",
     description:
-      "Inclusive bounds enforced in the field, calendar, and time selector.",
+      "Inclusive bounds validate typed values and disable unavailable calendar dates and quick picks.",
   },
   {
     prop: "isDateUnavailable",
