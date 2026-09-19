@@ -844,7 +844,7 @@ export function RelayLandingRecipe({
                 value={faq.id}
                 className="border-border rounded-none border-x-0 border-t border-b-0 bg-transparent shadow-none"
               >
-                <Accordion.Blade iconPosition="end" className="px-0 py-5">
+                <Accordion.Blade iconPosition="end" className="py-5">
                   <Accordion.BladeText className="font-serif text-lg font-normal">
                     {faq.question}
                   </Accordion.BladeText>
@@ -852,7 +852,7 @@ export function RelayLandingRecipe({
                     <Plus aria-hidden="true" className="size-4" />
                   </Accordion.BladeIcon>
                 </Accordion.Blade>
-                <Accordion.Content className="px-0">
+                <Accordion.Content>
                   <p className="text-muted-foreground max-w-3xl pb-4 text-sm leading-7">
                     {faq.answer}
                   </p>
