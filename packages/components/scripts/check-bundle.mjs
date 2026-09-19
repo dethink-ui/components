@@ -59,7 +59,7 @@ for (const [name, budget] of [
   if (name === "Button") {
     assert(
       !retainedModules.some((id) =>
-        /framer-motion|motion-dom|motion-utils|react-aria|tanstack|shader-hero-text/.test(
+        /framer-motion|motion-dom|motion-utils|react-aria|tanstack|\/components\/(?:shader-hero-text|shader-backgrounds)\//.test(
           id,
         ),
       ),

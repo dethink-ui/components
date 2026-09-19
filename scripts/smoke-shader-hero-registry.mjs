@@ -34,7 +34,23 @@ function include(name) {
   selected.set(name, item);
   for (const dependency of item.registryDependencies ?? []) include(dependency);
 }
-include("shader-hero-text");
+const backgrounds = process.argv.includes("--backgrounds");
+const backgroundComponents = [
+  "LiquidMeshBackground",
+  "SilkFlowBackground",
+  "CausticLightBackground",
+  "ContourFieldBackground",
+  "OrbitalGlowBackground",
+];
+const backgroundSlugs = [
+  "liquid-mesh-background",
+  "silk-flow-background",
+  "caustic-light-background",
+  "contour-field-background",
+  "orbital-glow-background",
+];
+for (const name of backgrounds ? backgroundSlugs : ["shader-hero-text"])
+  include(name);
 const destination = await mkdtemp(join(tmpdir(), "dethink-shader-consumer-"));
 const deps = {
   react: manifest.devDependencies.react,
@@ -118,7 +134,13 @@ await writeFile(
 );
 await writeFile(
   join(destination, "main.tsx"),
-  `import { createRoot } from "react-dom/client";
+  backgrounds
+    ? `import { createRoot } from "react-dom/client";
+${backgroundComponents.map((name, index) => `import { ${name} } from "./src/components/${backgroundSlugs[index]}";`).join("\n")}
+import "./src/styles.css";
+createRoot(document.getElementById("root")!).render(<main>${backgroundComponents.map((name) => `<${name} animate={false}><h1>Registry installed.</h1></${name}>`).join("")}</main>);
+`
+    : `import { createRoot } from "react-dom/client";
 import { ShaderHeroText, shaderHeroTextAnimations } from "./src/components/shader-hero-text";
 import "./src/styles.css";
 createRoot(document.getElementById("root")!).render(<main>{shaderHeroTextAnimations.map(animation => <ShaderHeroText key={animation} as="h2" text="Registry installed." animation={animation} className="text-6xl" />)}</main>);
@@ -148,5 +170,5 @@ for (const [command, args] of [
   });
 }
 console.log(
-  `ShaderHeroText: ${files.size} copied files; clean installation, typecheck and Vite build passed.`,
+  `${backgrounds ? "Shader backgrounds" : "ShaderHeroText"}: ${files.size} copied files; clean installation, typecheck and Vite build passed.`,
 );

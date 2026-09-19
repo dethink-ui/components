@@ -1559,3 +1559,33 @@ export {
   type ToastTone,
   type ToastViewportProps,
 } from "./components/toast";
+
+export {
+  LiquidMeshBackground,
+  type LiquidMeshBackgroundProps,
+} from "./components/liquid-mesh-background";
+
+export {
+  SilkFlowBackground,
+  type SilkFlowBackgroundProps,
+} from "./components/silk-flow-background";
+
+export {
+  CausticLightBackground,
+  type CausticLightBackgroundProps,
+} from "./components/caustic-light-background";
+
+export {
+  ContourFieldBackground,
+  type ContourFieldBackgroundProps,
+} from "./components/contour-field-background";
+
+export {
+  OrbitalGlowBackground,
+  type OrbitalGlowBackgroundProps,
+} from "./components/orbital-glow-background";
+
+export type {
+  ShaderBackgroundProps,
+  ShaderBackgroundEffect,
+} from "./components/shader-backgrounds/types";
