@@ -14,6 +14,7 @@ import { DethinkLabsSecurityRecipe } from "@/examples/recipes/dethink-labs-secur
 import { HelioGridEnergyRecipe } from "@/examples/recipes/heliogrid-energy";
 import { HushAndHearthRecipe } from "@/examples/recipes/hush-and-hearth";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
+import { RelayLandingRecipe } from "@/examples/recipes/relay-landing";
 import { LumenLandingRecipe } from "@/examples/recipes/lumen-landing";
 import { SaasCheckoutOrderSummaryRecipe } from "@/examples/recipes/saas-checkout-order-summary";
 import { SaasLandingPageRecipe } from "@/examples/recipes/saas-landing-page";
@@ -29,6 +30,7 @@ import {
 } from "@/lib/recipes-meta";
 
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
+  "relay-landing": RelayLandingRecipe,
   "ai-workspace": AiWorkspaceRecipe,
   "command-center-dashboard": CommandCenterDashboardRecipe,
   "crud-resource-manager": CrudResourceManagerRecipe,
