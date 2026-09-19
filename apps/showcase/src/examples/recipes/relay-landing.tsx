@@ -436,9 +436,11 @@ function WorkspaceDialog({
             </div>
             <DialogFooter>
               <DialogClose variant="outline">Cancel</DialogClose>
-              <Button type="submit">
+              <Button
+                type="submit"
+                rightIcon={<ArrowRight aria-hidden="true" className="size-4" />}
+              >
                 Create sample workspace
-                <ArrowRight aria-hidden="true" className="size-4" />
               </Button>
             </DialogFooter>
           </form>
@@ -652,11 +654,12 @@ export function RelayLandingRecipe({
           <br className="hidden sm:block" /> and see what supports it.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Button asChild size="lg">
-            <a href="#relay-research">
-              Explore a sample
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </a>
+          <Button
+            asChild
+            size="lg"
+            rightIcon={<ArrowRight aria-hidden="true" className="size-4" />}
+          >
+            <a href="#relay-research">Explore a sample</a>
           </Button>
           <Button asChild variant="outline" size="lg">
             <a href="#relay-evidence">See how it works</a>
