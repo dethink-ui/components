@@ -70,3 +70,7 @@ Measured with `node packages/components/scripts/check-chat-bundle.mjs` after the
 The probe verified that core chat imports retain no AI SDK or Markdown renderer, and that ChatMessage retains neither Motion nor React Aria. PromptInput and Chat compose existing form, select, accordion, and dialog primitives, which account for their larger closures. Markdown is a separate package subpath and registry item with optional peers; the AI SDK is a showcase-only dependency.
 
 Reproduce the registry check with `node scripts/smoke-chat-registry.mjs` and the browser flows with `playwright test e2e/chat.spec.ts`. The registry script creates a fresh temporary consumer rather than using workspace aliases.
+
+## Main integration check
+
+Before the requested main push on 2026-09-19, the latest Relay landing recipe from main was retained alongside Chat Studio and the three workflow recipes. The combined tree passed 38 Chromium checks covering chat, gallery discovery, Relay, workflows, theme persistence, reduced motion, and forced colors. The showcase and component package production builds passed, and registry validation confirmed all 85 entries. The manual screen-reader acceptance limitation above remains unchanged.

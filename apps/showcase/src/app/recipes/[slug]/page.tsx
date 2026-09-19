@@ -17,6 +17,7 @@ import { HushAndHearthRecipe } from "@/examples/recipes/hush-and-hearth";
 import { IntegrationsHubRecipe } from "@/examples/recipes/integrations-hub";
 import { InvoiceApprovalDeskRecipe } from "@/examples/recipes/invoice-approval-desk";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
+import { RelayLandingRecipe } from "@/examples/recipes/relay-landing";
 import { LumenLandingRecipe } from "@/examples/recipes/lumen-landing";
 import { ReleaseReadinessRecipe } from "@/examples/recipes/release-readiness";
 import { SaasCheckoutOrderSummaryRecipe } from "@/examples/recipes/saas-checkout-order-summary";
@@ -34,6 +35,7 @@ import {
 
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
   "ai-chat-studio": AiChatStudioRecipe,
+  "relay-landing": RelayLandingRecipe,
   "ai-workspace": AiWorkspaceRecipe,
   "command-center-dashboard": CommandCenterDashboardRecipe,
   "crud-resource-manager": CrudResourceManagerRecipe,

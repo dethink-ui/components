@@ -110,6 +110,33 @@ export const recipesCatalog: RecipeMeta[] = [
       "Desktop history and context rails give way to a mobile history drawer. The transcript owns its scroll viewport and the growing composer stays within the conversation.",
   },
   {
+    slug: "relay-landing",
+    title: "Relay AI research landing",
+    category: "marketing",
+    summary:
+      "A paper-and-cobalt research landing page with an editorial hero, three explorable research samples, source-linked answers, evidence dialogs, and a guided sample workspace.",
+    tags: ["Landing", "AI", "Research", "Evidence"],
+    components: [
+      "tabs",
+      "card",
+      "badge",
+      "button",
+      "dialog",
+      "form-field",
+      "input",
+      "accordion",
+    ],
+    sourceFile: "recipes/relay-landing.tsx",
+    featured: true,
+    complexity: "Intermediate",
+    motionNotes:
+      "The page renders immediately. Research tabs and FAQ use their static motion preset; existing Dialog and button feedback respect reduced motion. No page-level animation runtime is added.",
+    accessibilityNotes:
+      "Research topics use keyboard-operable Tabs. Every source and citation opens its matching labelled Dialog and restores trigger focus. Search, workspace naming, validation, and local completion have visible labels and text feedback. Research data is fictional.",
+    responsiveNotes:
+      "The centred hero scales into short lines. The answer precedes its source list on narrow screens, topic tabs scroll within their own strip, and navigation stays visible. The local cobalt token stylesheet supplies light/dark and forced-colour support; copy relay-landing.css alongside the source.",
+  },
+  {
     slug: "login-and-onboarding",
     title: "Onboarding workspace",
     category: "auth",

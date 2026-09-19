@@ -1,0 +1,61 @@
+/* Relay's local brand uses the same semantic tokens as its Dethink controls. */
+.sc-relay-theme {
+  color-scheme: light;
+  --dt-color-background: oklch(0.995 0.001 90);
+  --dt-color-foreground: oklch(0.2 0.012 265);
+  --dt-color-muted: oklch(0.96 0.008 265);
+  --dt-color-muted-foreground: oklch(0.46 0.02 265);
+  --dt-color-border: oklch(0.86 0.009 265);
+  --dt-color-input: oklch(0.59 0.025 265);
+  --dt-color-primary: oklch(0.49 0.25 264);
+  --dt-color-primary-foreground: oklch(1 0 0);
+  --dt-color-ring: oklch(0.49 0.25 264);
+}
+
+:root[data-theme="dark"] .sc-relay-theme {
+  color-scheme: dark;
+  --dt-color-background: oklch(0.16 0.014 265);
+  --dt-color-foreground: oklch(0.97 0.003 265);
+  --dt-color-muted: oklch(0.23 0.022 265);
+  --dt-color-muted-foreground: oklch(0.74 0.016 265);
+  --dt-color-border: oklch(0.34 0.026 265);
+  --dt-color-input: oklch(0.6 0.035 265);
+  --dt-color-primary: oklch(0.77 0.14 260);
+  --dt-color-primary-foreground: oklch(0.16 0.025 265);
+  --dt-color-ring: oklch(0.77 0.14 260);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .sc-relay-theme,
+  :root[data-theme="system"] .sc-relay-theme {
+    color-scheme: dark;
+    --dt-color-background: oklch(0.16 0.014 265);
+    --dt-color-foreground: oklch(0.97 0.003 265);
+    --dt-color-muted: oklch(0.23 0.022 265);
+    --dt-color-muted-foreground: oklch(0.74 0.016 265);
+    --dt-color-border: oklch(0.34 0.026 265);
+    --dt-color-input: oklch(0.6 0.035 265);
+    --dt-color-primary: oklch(0.77 0.14 260);
+    --dt-color-primary-foreground: oklch(0.16 0.025 265);
+    --dt-color-ring: oklch(0.77 0.14 260);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-relay-theme *,
+  .sc-relay-theme *::before,
+  .sc-relay-theme *::after {
+    scroll-behavior: auto;
+    transition-duration: 0s;
+  }
+}
+
+@media (forced-colors: active) {
+  .sc-relay-theme mark {
+    outline: 1px solid Highlight;
+  }
+  .sc-relay-theme [data-slot="tabs-trigger"][aria-selected="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
