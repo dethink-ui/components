@@ -161,7 +161,8 @@ const fieldControlBaseClasses =
 const fieldDescriptionBaseClasses =
   "text-xs leading-5 text-muted-foreground data-[disabled=true]:opacity-70";
 
-const fieldErrorBaseClasses = "text-xs font-medium leading-5 text-destructive";
+const fieldErrorBaseClasses =
+  "text-xs font-medium leading-5 text-destructive motion-safe:animate-feedback-in";
 
 const fieldGroupBaseClasses = "grid min-w-0";
 

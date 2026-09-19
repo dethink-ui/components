@@ -11,7 +11,6 @@ import {
   ComboboxItem,
 } from "@dethink/components";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { motion, MotionConfig, useReducedMotion } from "motion/react";
 import {
   componentCatalog,
   componentGroups,
@@ -19,8 +18,6 @@ import {
   getComponentDisplayName,
   getComponentMeta,
 } from "@/lib/components-meta";
-
-const motionEase = [0.2, 0, 0, 1] as const;
 
 const navigationItems = componentCatalog.map((component) => {
   const displayName = getComponentDisplayName(component);
@@ -54,7 +51,6 @@ export function ComponentDocNavigation({
   currentSlug: string;
 }) {
   const router = useRouter();
-  const shouldReduceMotion = useReducedMotion();
   const currentIndex = componentCatalog.findIndex(
     (component) => component.slug === currentSlug,
   );
@@ -72,72 +68,67 @@ export function ComponentDocNavigation({
     .map((component) => navigationItemsBySlug.get(component.slug))
     .filter((component) => component !== undefined);
   return (
-    <MotionConfig reducedMotion="user">
-      <motion.nav
-        key={currentSlug}
-        aria-label="Component documentation navigation"
-        initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.24, ease: motionEase }}
-        className="max-w-md"
-      >
-        <div className="space-y-3">
-          <div className="flex items-baseline justify-between gap-4">
-            <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
-              Browse documentation
-            </p>
-            <p className="text-muted-foreground text-xs tabular-nums">
-              {currentIndex + 1} of {componentCatalog.length}
-            </p>
-          </div>
-          <Combobox
-            aria-label="Switch component"
-            placeholder="Search components"
-            menuTrigger="focus"
-            items={filteredItems}
-            value={currentSlug}
-            inputValue={inputValue}
-            onInputValueChange={setInputValue}
-            onOpenChange={(open, trigger) => {
-              setIsOpen(open);
-
-              if (open && trigger !== "input") {
-                setInputValue("");
-              } else if (!open) {
-                setInputValue(currentDisplayName);
-              }
-            }}
-            onValueChange={(value) => {
-              if (!value || value === currentSlug) {
-                setInputValue(currentDisplayName);
-                return;
-              }
-
-              const next = getComponentMeta(value);
-              setInputValue(next ? getComponentDisplayName(next) : value);
-              router.push(`/components/${value}`);
-            }}
-          >
-            {(component) => (
-              <ComboboxItem
-                key={component.value}
-                value={component.value}
-                textValue={component.textValue}
-              >
-                <span className="flex min-w-0 items-baseline gap-2">
-                  <span className="truncate">{component.displayName}</span>
-                  {component.displayName !== component.name ? (
-                    <code className="text-primary shrink-0 font-mono text-[0.6875rem]">
-                      {component.name}
-                    </code>
-                  ) : null}
-                </span>
-              </ComboboxItem>
-            )}
-          </Combobox>
+    <nav
+      key={currentSlug}
+      aria-label="Component documentation navigation"
+      className="motion-safe:animate-scrim-in max-w-md"
+    >
+      <div className="space-y-3">
+        <div className="flex items-baseline justify-between gap-4">
+          <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
+            Browse documentation
+          </p>
+          <p className="text-muted-foreground text-xs tabular-nums">
+            {currentIndex + 1} of {componentCatalog.length}
+          </p>
         </div>
-      </motion.nav>
-    </MotionConfig>
+        <Combobox
+          aria-label="Switch component"
+          placeholder="Search components"
+          menuTrigger="focus"
+          items={filteredItems}
+          value={currentSlug}
+          inputValue={inputValue}
+          onInputValueChange={setInputValue}
+          onOpenChange={(open, trigger) => {
+            setIsOpen(open);
+
+            if (open && trigger !== "input") {
+              setInputValue("");
+            } else if (!open) {
+              setInputValue(currentDisplayName);
+            }
+          }}
+          onValueChange={(value) => {
+            if (!value || value === currentSlug) {
+              setInputValue(currentDisplayName);
+              return;
+            }
+
+            const next = getComponentMeta(value);
+            setInputValue(next ? getComponentDisplayName(next) : value);
+            router.push(`/components/${value}`);
+          }}
+        >
+          {(component) => (
+            <ComboboxItem
+              key={component.value}
+              value={component.value}
+              textValue={component.textValue}
+            >
+              <span className="flex min-w-0 items-baseline gap-2">
+                <span className="truncate">{component.displayName}</span>
+                {component.displayName !== component.name ? (
+                  <code className="text-primary shrink-0 font-mono text-[0.6875rem]">
+                    {component.name}
+                  </code>
+                ) : null}
+              </span>
+            </ComboboxItem>
+          )}
+        </Combobox>
+      </div>
+    </nav>
   );
 }
 

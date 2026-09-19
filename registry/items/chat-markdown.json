@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat-markdown",
+  "type": "registry:ui",
+  "title": "MarkdownMessage",
+  "description": "MarkdownMessage for AI conversation surfaces.",
+  "dependencies": [
+    "react-markdown@^10.1.0",
+    "remark-gfm@^4.0.1",
+    "lucide-react"
+  ],
+  "devDependencies": [],
+  "registryDependencies": ["chat-core", "icon-button"],
+  "files": [
+    {
+      "path": "packages/components/src/chat-markdown.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

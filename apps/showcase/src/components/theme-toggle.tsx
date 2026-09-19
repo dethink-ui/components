@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 
 type ColorMode = "light" | "dark" | "system";
 
 const STORAGE_KEY = "dethink-theme";
+const MODE_CHANGE_EVENT = "dethink-theme-change";
 
 const modes: Array<{ value: ColorMode; label: string; icon: typeof Sun }> = [
   { value: "light", label: "Light theme", icon: Sun },
@@ -29,26 +30,37 @@ function applyDocumentMode(next: ColorMode) {
     ?.setAttribute("content", colorScheme);
 }
 
+function subscribeToMode(onStoreChange: () => void) {
+  window.addEventListener(MODE_CHANGE_EVENT, onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+  return () => {
+    window.removeEventListener(MODE_CHANGE_EVENT, onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+}
+
 export function ThemeToggle() {
-  const [mode, setMode] = useState<ColorMode | null>(null);
+  const mode = useSyncExternalStore<ColorMode | null>(
+    subscribeToMode,
+    readStoredMode,
+    () => null,
+  );
 
   useEffect(() => {
-    const storedMode = readStoredMode();
-    setMode(storedMode);
-    applyDocumentMode(storedMode);
-  }, []);
+    if (mode) applyDocumentMode(mode);
+  }, [mode]);
 
   function applyMode(next: ColorMode) {
-    setMode(next);
     window.localStorage.setItem(STORAGE_KEY, next);
     applyDocumentMode(next);
+    window.dispatchEvent(new Event(MODE_CHANGE_EVENT));
   }
 
   return (
     <div
       role="group"
       aria-label="Color mode"
-      className="border-border bg-muted/60 flex items-center gap-0.5 rounded-full border p-0.5"
+      className="border-border bg-muted/40 flex h-8 shrink-0 items-center gap-0.5 rounded-lg border p-0.5"
     >
       {modes.map(({ value, label, icon: Icon }) => {
         const active = mode === value;
@@ -57,9 +69,10 @@ export function ThemeToggle() {
             key={value}
             type="button"
             aria-label={label}
+            title={label}
             aria-pressed={active}
             onClick={() => applyMode(value)}
-            className={`focus-visible:ring-ring grid size-7 place-items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+            className={`focus-visible:ring-ring grid size-6 place-items-center rounded-md focus-visible:ring-2 focus-visible:outline-none motion-safe:transition-colors motion-safe:duration-[var(--dt-motion-fast)] ${
               active
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"

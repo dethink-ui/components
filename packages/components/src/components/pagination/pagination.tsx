@@ -158,7 +158,7 @@ const paginationItemClasses =
   "flex min-w-0 items-center data-[current=true]:z-10 data-[disabled=true]:opacity-60";
 
 const paginationInteractiveBaseClasses =
-  "inline-flex shrink-0 select-none items-center justify-center rounded-md border border-transparent bg-transparent font-medium text-muted-foreground outline-none tabular-nums no-underline motion-safe:transition-[background-color,border-color,color,box-shadow,translate] motion-safe:duration-150 motion-safe:ease-out motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-px data-[current=true]:border-primary/20 data-[current=true]:bg-primary data-[current=true]:text-primary-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50";
+  "inline-flex shrink-0 select-none items-center justify-center rounded-md border border-transparent bg-transparent font-medium text-muted-foreground outline-none tabular-nums no-underline motion-safe:transition-[background-color,border-color,color,box-shadow,translate] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control motion-safe:ease-out motion-reduce:transition-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-safe:active:translate-y-px data-[current=true]:border-primary/20 data-[current=true]:bg-primary data-[current=true]:text-primary-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50";
 
 const paginationEllipsisClasses =
   "inline-flex shrink-0 select-none items-center justify-center rounded-md text-muted-foreground";

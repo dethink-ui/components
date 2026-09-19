@@ -1,5 +1,6 @@
 import "./styles.css";
 
+export * from "./components/chat";
 export {
   DethinkProvider,
   DethinkThemeScript,

@@ -23,8 +23,14 @@ export const dialogProps: PropRow[] = [
   {
     prop: "DialogContent — dismissible",
     type: "boolean",
-    defaultValue: "true",
-    description: "Whether backdrop click and Escape close the dialog.",
+    defaultValue: "false",
+    description: "Whether clicking the backdrop closes the dialog.",
+  },
+  {
+    prop: "DialogContent — keyboardDismissDisabled",
+    type: "boolean",
+    defaultValue: "false",
+    description: "Disables Escape dismissal when true.",
   },
   {
     prop: "DialogContent — scrollBehavior",
@@ -35,7 +41,7 @@ export const dialogProps: PropRow[] = [
   {
     prop: "DialogContent — showCloseButton",
     type: "boolean",
-    defaultValue: "true",
+    defaultValue: "false",
     description: "Built-in labeled close button in the corner.",
   },
   {

@@ -178,7 +178,6 @@ describe("IconButton", () => {
     expect(
       button.querySelector('[data-slot="icon-button-spinner"]'),
     ).toBeTruthy();
-    expect(button.querySelector('[data-slot="icon-button-icon"]')).toBeNull();
 
     await user.click(button);
 

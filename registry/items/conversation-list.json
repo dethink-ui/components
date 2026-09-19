@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "conversation-list",
+  "type": "registry:ui",
+  "title": "ConversationList",
+  "description": "ConversationList for accessible AI conversation surfaces.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": [
+    "chat-core",
+    "button",
+    "icon-button",
+    "input",
+    "dialog"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/conversation-list.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

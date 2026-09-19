@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat-core",
+  "type": "registry:ui",
+  "title": "Chat types and lifecycle",
+  "description": "Chat types and lifecycle for accessible, provider-independent AI conversations.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/types.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/chat/chat-state.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/chat/use-chat-action.ts",
+      "type": "registry:component"
+    }
+  ]
+}

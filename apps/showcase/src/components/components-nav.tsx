@@ -100,6 +100,7 @@ const componentIcons: Record<string, LucideIcon> = {
   table: Table2,
   "tag-input": Tags,
   textarea: TextCursorInput,
+  chat: MessageSquareWarning,
   timeline: ChartGantt,
   tooltip: MessageSquareWarning,
   typography: Type,

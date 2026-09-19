@@ -25,6 +25,7 @@ import {
   type Transition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import { useHydrated } from "../../utils/use-hydrated";
 
 export type TabsValue = string;
 export type TabsOrientation = "horizontal" | "vertical";
@@ -493,8 +494,9 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
       : (uncontrolledValue ?? firstEnabledValue);
     const tabStopValue = focusedValue ?? selectedValue ?? firstEnabledValue;
     const prefersReducedMotion = useReducedMotion();
+    const hasHydrated = useHydrated();
     const reducedMotion =
-      motionPreset === "none" || prefersReducedMotion === true;
+      motionPreset === "none" || (hasHydrated && prefersReducedMotion === true);
     const transition = useMemo(
       () => createTabsTransition(motionPreset, reducedMotion),
       [motionPreset, reducedMotion],
@@ -928,26 +930,22 @@ export const TabsPanel = forwardRef<HTMLDivElement, TabsPanelProps>(
         tabIndex={tabIndex ?? (selected ? 0 : undefined)}
         className={tabsPanelClassNames({ className })}
       >
-        {animateContent ? (
-          <motionElement.div
-            data-slot="tabs-panel-content"
-            className={tabsPanelContentClasses}
-            initial={
-              contentMotionReady
-                ? { opacity: 0, [offsetAxis]: panelSettings.offset }
-                : false
-            }
-            animate={{ opacity: 1, [offsetAxis]: 0 }}
-            transition={{
-              duration: panelSettings.duration,
-              ease: tabsPanelEase,
-            }}
-          >
-            {children}
-          </motionElement.div>
-        ) : (
-          children
-        )}
+        <motionElement.div
+          data-slot="tabs-panel-content"
+          className={tabsPanelContentClasses}
+          initial={
+            animateContent && contentMotionReady
+              ? { opacity: 0, [offsetAxis]: panelSettings.offset }
+              : false
+          }
+          animate={{ opacity: 1, [offsetAxis]: 0 }}
+          transition={{
+            duration: animateContent ? panelSettings.duration : 0,
+            ease: tabsPanelEase,
+          }}
+        >
+          {children}
+        </motionElement.div>
       </div>
     );
   },

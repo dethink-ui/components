@@ -70,13 +70,13 @@ export interface AsyncSelectProps<
 const asyncSelectRootClasses = "grid w-full min-w-0 gap-[var(--dt-space-2)]";
 
 const asyncSelectStatusClasses =
-  "rounded-md border border-border bg-muted/40 px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm leading-5 text-muted-foreground";
+  "min-h-10 rounded-md border border-border bg-muted/40 px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm leading-5 text-muted-foreground motion-safe:animate-feedback-in";
 
 const asyncSelectErrorClasses =
-  "rounded-md border border-destructive/30 bg-destructive/10 px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm leading-5 text-destructive";
+  "min-h-10 rounded-md border border-destructive/30 bg-destructive/10 px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm leading-5 text-destructive motion-safe:animate-feedback-in";
 
 const asyncSelectRetryClasses =
-  "mt-[var(--dt-space-2)] inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-[var(--dt-space-2-5)] text-xs font-medium text-foreground outline-none motion-safe:transition-[background-color,border-color,color] motion-safe:duration-150 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  "mt-[var(--dt-space-2)] inline-flex h-8 items-center justify-center rounded-md border border-border bg-background px-[var(--dt-space-2-5)] text-xs font-medium text-foreground outline-none motion-safe:transition-[background-color,border-color,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 type AsyncSelectComponent = (<
   T extends AsyncSelectItemData = AsyncSelectItemData,

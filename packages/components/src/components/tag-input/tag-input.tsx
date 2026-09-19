@@ -65,7 +65,7 @@ const tagInputLabelClasses =
   "text-sm font-medium leading-none text-foreground data-[disabled=true]:opacity-60 data-[invalid=true]:text-destructive";
 
 const tagInputControlBaseClasses =
-  "flex w-full min-w-0 flex-wrap items-center gap-[var(--dt-space-1-5)] rounded-md border border-input bg-background text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color] motion-safe:duration-150 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-60 data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
+  "flex w-full min-w-0 flex-wrap items-center gap-[var(--dt-space-1-5)] rounded-md border border-input bg-background text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-60 data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
 
 const tagInputControlSizeClasses: Record<TagInputControlSize, string> = {
   sm: "min-h-8 px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-base sm:text-sm",
@@ -77,12 +77,12 @@ const tagInputListClasses =
   "contents outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring";
 
 const tagInputTagClasses =
-  "inline-flex min-w-0 max-w-full items-center gap-[var(--dt-space-1)] rounded-full border border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-0-5)] text-xs font-medium text-foreground outline-none motion-safe:transition-[background-color,border-color,color,box-shadow] motion-safe:duration-150 data-[disabled]:opacity-60 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[hovered]:bg-muted/80";
+  "inline-flex min-w-0 max-w-full items-center gap-[var(--dt-space-1)] motion-safe:animate-feedback-in rounded-full border border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-0-5)] text-xs font-medium text-foreground outline-none motion-safe:transition-[background-color,border-color,color,box-shadow] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control data-[disabled]:opacity-60 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[hovered]:bg-muted/80";
 
 const tagInputTagTextClasses = "min-w-0 truncate";
 
 const tagInputRemoveClasses =
-  "ms-[var(--dt-space-0-5)] inline-flex size-4 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-150 hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  "ms-[var(--dt-space-0-5)] inline-flex size-4 shrink-0 items-center justify-center rounded-full text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 const tagInputInputClasses =
   "min-w-24 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60 read-only:text-muted-foreground";

@@ -123,10 +123,10 @@ const useIsomorphicLayoutEffect =
 const dialogRootClasses = "contents";
 
 const dialogOverlayBaseClasses =
-  "fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto overscroll-contain bg-foreground/35 p-[var(--dt-space-4)] text-foreground outline-none motion-safe:transition-opacity motion-safe:duration-150 data-[entering]:opacity-100 data-[exiting]:opacity-0 sm:p-[var(--dt-space-6)]";
+  "fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto overscroll-contain bg-[var(--dt-overlay-scrim)] p-[var(--dt-space-4)] text-foreground outline-none motion-safe:data-[entering]:animate-scrim-in motion-safe:data-[exiting]:animate-scrim-out motion-reduce:animate-none sm:p-[var(--dt-space-6)]";
 
 const dialogContentBaseClasses =
-  "relative grid w-full overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-xl outline-none motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[entering]:opacity-100 data-[exiting]:translate-y-2 data-[exiting]:opacity-0 data-[exiting]:scale-[0.98]";
+  "relative grid w-full overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-xl outline-none motion-safe:data-[entering]:animate-dialog-in motion-safe:data-[exiting]:animate-dialog-out motion-reduce:animate-none";
 
 const dialogContentSizeClasses: Record<DialogSize, string> = {
   sm: "max-w-sm",
@@ -143,7 +143,9 @@ const dialogContentScrollBehaviorClasses: Record<DialogScrollBehavior, string> =
     outside: "my-[var(--dt-space-4)] overflow-visible",
   };
 
-const dialogPanelClasses = "contents";
+// The dialog itself receives initial focus from React Aria. display: contents
+// removes its focusable box in browsers, leaving Escape on the page body.
+const dialogPanelClasses = "grid min-w-0 outline-none";
 
 const dialogHeaderClasses =
   "grid gap-[var(--dt-space-1-5)] p-[var(--dt-space-6)] pb-[var(--dt-space-3)] text-start";

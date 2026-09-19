@@ -23,6 +23,7 @@ import {
   type Transition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import { useHydrated } from "../../utils/use-hydrated";
 
 declare const process:
   | {
@@ -469,9 +470,10 @@ const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(
       ...rootProps
     } = props;
     const controlled = Object.hasOwn(props, "value");
+    const hydrated = useHydrated();
     const prefersReducedMotion = useReducedMotion();
     const reducedMotion =
-      motionPreset === "none" || prefersReducedMotion === true;
+      motionPreset === "none" || (hydrated && prefersReducedMotion === true);
     const [uncontrolledValue, setUncontrolledValue] = useState<
       AccordionValue | AccordionMultipleValue
     >(

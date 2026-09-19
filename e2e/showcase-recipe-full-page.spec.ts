@@ -1,19 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { recipesCatalog } from "../apps/showcase/src/lib/recipes-meta";
 
 const recipePath = "/recipes/command-center-dashboard";
-const recipeSlugs = [
-  "login-and-onboarding",
-  "saas-landing-page",
-  "dethink-labs-security",
-  "command-center-dashboard",
-  "crud-resource-manager",
-  "settings-and-billing",
-  "ai-workspace",
-  "customer-support-copilot",
-  "scheduler-and-booking",
-  "saas-checkout-order-summary",
-];
+const recipeSlugs = recipesCatalog.map((recipe) => recipe.slug);
 const representativeRoutes = [
   {
     route: "/recipes/login-and-onboarding",
@@ -455,7 +445,7 @@ test.describe("showcase full-page recipe shell", () => {
     );
   });
 
-  test("prioritizes the Login task on mobile and preserves desktop layout", async ({
+  test("keeps onboarding before the setup preview on mobile and alongside it on desktop", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -464,29 +454,34 @@ test.describe("showcase full-page recipe shell", () => {
     const surface = page.locator(
       '[data-recipe-surface="login-and-onboarding"]',
     );
-    const form = page.locator("[data-login-form]");
-    const marketing = page.locator("[data-login-marketing]");
+    const form = surface.locator("form");
+    const workflow = form.locator("..");
+    const preview = surface.getByRole("complementary");
     await expect(form).toBeVisible();
-    await expect(marketing).toBeVisible();
+    await expect(preview).toBeVisible();
 
     const mobileFormBounds = await form.boundingBox();
-    const mobileMarketingBounds = await marketing.boundingBox();
+    const mobilePreviewBounds = await preview.boundingBox();
     expect(mobileFormBounds).not.toBeNull();
-    expect(mobileMarketingBounds).not.toBeNull();
-    expect(mobileFormBounds!.y).toBeLessThan(mobileMarketingBounds!.y);
-    expect(
-      await surface
-        .locator("button, input, a[href]")
-        .first()
-        .evaluate((node) => node.closest("[data-login-form]") !== null),
-    ).toBe(true);
+    expect(mobilePreviewBounds).not.toBeNull();
+    expect(mobileFormBounds!.y + mobileFormBounds!.height).toBeLessThanOrEqual(
+      mobilePreviewBounds!.y,
+    );
+    await expect(
+      surface.getByRole("navigation", { name: "Main navigation" }),
+    ).toBeVisible();
+    await expect(
+      form.getByRole("textbox", { name: "Workspace name" }),
+    ).toBeVisible();
 
     await page.setViewportSize({ width: 1440, height: 900 });
-    const desktopFormBounds = await form.boundingBox();
-    const desktopMarketingBounds = await marketing.boundingBox();
-    expect(desktopFormBounds).not.toBeNull();
-    expect(desktopMarketingBounds).not.toBeNull();
-    expect(desktopMarketingBounds!.x).toBeLessThan(desktopFormBounds!.x);
-    expect(desktopMarketingBounds!.y).toBe(desktopFormBounds!.y);
+    const desktopWorkflowBounds = await workflow.boundingBox();
+    const desktopPreviewBounds = await preview.boundingBox();
+    expect(desktopWorkflowBounds).not.toBeNull();
+    expect(desktopPreviewBounds).not.toBeNull();
+    expect(
+      desktopWorkflowBounds!.x + desktopWorkflowBounds!.width,
+    ).toBeLessThanOrEqual(desktopPreviewBounds!.x);
+    expect(desktopWorkflowBounds!.y).toBe(desktopPreviewBounds!.y);
   });
 });

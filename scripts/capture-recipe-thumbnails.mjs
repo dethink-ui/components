@@ -11,6 +11,10 @@ const representativeSlugs = [
 const baseUrl = process.env.SHOWCASE_BASE_URL ?? "http://127.0.0.1:3015";
 const outputDirectory = path.resolve("apps/showcase/public/recipe-captures");
 const viewport = { width: 1440, height: 1200 };
+// A shorter desktop viewport keeps the bounded chat composer in the thumbnail.
+const recipeViewports = {
+  "ai-chat-studio": { width: 1440, height: 780 },
+};
 const capture = { width: 1200, height: 675 };
 
 async function discoverRecipeSlugs(page) {
@@ -28,8 +32,14 @@ async function discoverRecipeSlugs(page) {
 }
 
 async function captureRecipe(page, slug) {
+  await page.setViewportSize(recipeViewports[slug] ?? viewport);
   await page.goto(`${baseUrl}/recipes/${slug}`, { waitUntil: "networkidle" });
   await page.evaluate(() => globalThis.document.fonts.ready);
+
+  if (slug === "ai-chat-studio") {
+    await page.locator('[data-slot="chat"][data-hydrated="true"]').waitFor();
+    await page.getByRole("button", { name: "Next response version" }).click();
+  }
 
   const preview = page.locator(`[data-recipe-preview="${slug}"]`);
   await preview.waitFor({ state: "visible" });

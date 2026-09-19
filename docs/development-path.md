@@ -270,3 +270,7 @@ The first concrete component is Button. The base scaffold is in place first; But
 - `docs/components/button/spec.md`
 - `docs/components/button/prd.md`
 - `docs/components/button/issues.md`
+
+## Approved priority adjustment — 2026-09-19
+
+[PRD #446](https://github.com/parveshh/dethink-components/issues/446) brings the AI / Chat family and workspace recipe forward from the later phase at the user’s request. The remainder of this build order is unchanged. Chat scope and implementation evidence live in `docs/components/chat/`.

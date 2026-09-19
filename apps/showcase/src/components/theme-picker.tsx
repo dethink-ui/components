@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
-import { Check } from "lucide-react";
+import { useSyncExternalStore } from "react";
+import { Check, ChevronDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,7 +49,6 @@ export function ThemePicker() {
     readStoredBrand,
     () => DEFAULT_BRAND,
   );
-  const [open, setOpen] = useState(false);
 
   function applyBrand(next: BrandThemeId) {
     window.localStorage.setItem(BRAND_STORAGE_KEY, next);
@@ -61,36 +60,25 @@ export function ThemePicker() {
     brandThemes.find((theme) => theme.id === brand) ?? brandThemes[0];
 
   return (
-    <DropdownMenu onOpenChange={setOpen}>
+    <DropdownMenu>
       <DropdownMenuTrigger
         data-slot="theme-reveal-button"
-        aria-label={activeBrand.label}
-        variant="ghost"
+        aria-label={`Brand theme: ${activeBrand.label}`}
+        variant="outline"
         size="sm"
-        className="group text-muted-foreground hover:text-foreground min-w-8 justify-start gap-0! overflow-hidden px-0"
+        className="bg-background/60 hover:bg-muted/60 h-8 w-28 rounded-lg px-2.5 shadow-none"
       >
-        <span
-          aria-hidden="true"
-          className={`inline-flex size-8 shrink-0 items-center justify-center transition-transform duration-200 motion-reduce:transform-none motion-reduce:transition-none ${
-            open
-              ? "translate-x-1"
-              : "group-hover:translate-x-1 group-focus-visible:translate-x-1"
-          }`}
-        >
+        <span className="flex items-center gap-2 text-xs">
           <span
-            className="border-foreground/20 size-4 rounded-full border shadow-sm"
+            aria-hidden="true"
+            className="border-foreground/15 size-3 shrink-0 rounded-full border"
             style={{ backgroundColor: activeBrand.swatch }}
           />
-        </span>
-        <span
-          aria-hidden="true"
-          className={`overflow-hidden transition-[max-width,opacity] duration-200 motion-reduce:transition-none ${
-            open
-              ? "max-w-20 opacity-100"
-              : "max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-focus-visible:max-w-20 group-focus-visible:opacity-100"
-          }`}
-        >
-          <span className="block ps-1 pe-3">{activeBrand.label}</span>
+          <span className="min-w-9 text-start">{activeBrand.label}</span>
+          <ChevronDown
+            aria-hidden="true"
+            className="text-muted-foreground size-3 shrink-0"
+          />
         </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent

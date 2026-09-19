@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat-message",
+  "type": "registry:ui",
+  "title": "ChatMessage",
+  "description": "ChatMessage for accessible, provider-independent AI conversations.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": [
+    "chat-core",
+    "button",
+    "icon-button",
+    "textarea",
+    "chat-attachment"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/chat-message.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+Sample launch notes
+
+Audience: 20 design partners.
+Outcome: a clear first success.
+Feedback: review activation and customer notes after one week.
+
+This file is sample content for the Dethink Components chat showcase.

@@ -16,6 +16,7 @@ import {
   type TargetAndTransition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import { useHydrated } from "../../utils/use-hydrated";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 export type AvatarShape = "circle" | "rounded" | "square";
@@ -289,10 +290,11 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
     ref,
   ) => {
     const prefersReducedMotion = useReducedMotion();
+    const hasHydrated = useHydrated();
     const reducedMotion =
       motion === "none" ||
       reducedMotionProp === true ||
-      prefersReducedMotion === true;
+      (hasHydrated && prefersReducedMotion === true);
     const [imageFailed, setImageFailed] = useState(false);
     const [motionActive, setMotionActive] = useState(false);
     const hasImage = Boolean(src);

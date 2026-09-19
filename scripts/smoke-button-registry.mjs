@@ -3353,8 +3353,10 @@ assert(
   "dialog source must use tokenized border utilities.",
 );
 assert(
-  dialogSource.includes("motion-safe:transition"),
-  "dialog source must use reduced-motion-aware transitions.",
+  dialogSource.includes("motion-safe:data-[entering]:animate-dialog-in") &&
+    dialogSource.includes("motion-safe:data-[exiting]:animate-dialog-out") &&
+    dialogSource.includes("motion-reduce:animate-none"),
+  "dialog source must use reduced-motion-aware entrance and exit animations.",
 );
 assert(
   dialogSource.includes("100dvh") &&

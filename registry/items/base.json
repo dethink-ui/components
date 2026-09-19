@@ -16,12 +16,30 @@
       "type": "registry:lib"
     },
     {
+      "path": "packages/components/src/utils/to-plain-text.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/use-hydrated.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/use-page-visible.ts",
+      "type": "registry:lib"
+    },
+    {
       "path": "packages/components/src/foundation/dethink-provider.tsx",
       "type": "registry:component"
     }
   ],
   "cssVars": {
     "theme": {
+      "ease-control": "cubic-bezier(0.16, 1, 0.3, 1)",
+      "animate-dialog-in": "dt-dialog-in var(--dt-motion-standard, 220ms) var(--ease-control) both",
+      "animate-dialog-out": "dt-dialog-out var(--dt-motion-exit, 140ms) ease-in both",
+      "animate-scrim-in": "dt-scrim-in var(--dt-motion-standard, 220ms) ease-out both",
+      "animate-scrim-out": "dt-scrim-out var(--dt-motion-exit, 140ms) ease-in both",
+      "animate-feedback-in": "dt-feedback-in var(--dt-motion-fast, 160ms) var(--ease-control) both",
       "color-background": "var(--dt-color-background)",
       "color-foreground": "var(--dt-color-foreground)",
       "color-muted": "var(--dt-color-muted)",
@@ -107,6 +125,13 @@
       "density-gap-default": "var(--dt-density-gap-default)",
       "density-control-comfortable": "var(--dt-density-control-comfortable)",
       "density-gap-comfortable": "var(--dt-density-gap-comfortable)"
+    },
+    "light": {
+      "dt-motion-press": "100ms",
+      "dt-motion-fast": "160ms",
+      "dt-motion-standard": "220ms",
+      "dt-motion-exit": "140ms",
+      "dt-overlay-scrim": "rgb(0 0 0 / 0.45)"
     }
   }
 }

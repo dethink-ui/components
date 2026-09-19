@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "model-picker",
+  "type": "registry:ui",
+  "title": "ModelPicker",
+  "description": "ModelPicker for accessible AI conversation surfaces.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": ["chat-core", "select"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/model-picker.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

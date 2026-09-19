@@ -1,45 +1,60 @@
 import { expect, test } from "@playwright/test";
+import { componentCatalog } from "../apps/showcase/src/lib/components-meta";
+import {
+  featuredRecipes,
+  recipeCategories,
+  recipesCatalog,
+} from "../apps/showcase/src/lib/recipes-meta";
 
-const recipeSlugs = [
-  "login-and-onboarding",
-  "saas-landing-page",
-  "dethink-labs-security",
-  "command-center-dashboard",
-  "crud-resource-manager",
-  "settings-and-billing",
-  "ai-workspace",
-  "customer-support-copilot",
-  "scheduler-and-booking",
-  "saas-checkout-order-summary",
-];
+const recipeSlugs = recipesCatalog.map((recipe) => recipe.slug);
+const recipeCount = recipesCatalog.length;
+const billingCount = recipesCatalog.filter(
+  (recipe) => recipe.category === "billing",
+).length;
+const aiCount = recipesCatalog.filter(
+  (recipe) => recipe.category === "ai",
+).length;
 
 test.describe("showcase recipe discovery", () => {
   test("uses canonical total and featured recipe counts", async ({ page }) => {
     await page.goto("/");
 
     await expect(
-      page.getByText("Open code · 65 components · 10 recipes"),
+      page.getByText(
+        `Open code · ${componentCatalog.length} components · ${recipeCount} recipes`,
+      ),
     ).toBeVisible();
-    await expect(page.getByText("6 featured recipes")).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "All 10 recipes" }),
+      page.getByText(`${featuredRecipes.length} featured recipes`),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: `All ${recipeCount} recipes` }),
     ).toBeVisible();
 
     await page.goto("/recipes");
     await expect(
-      page.getByText("Total recipes").locator("..").getByText("10", {
-        exact: true,
-      }),
+      page
+        .getByText("Total recipes")
+        .locator("..")
+        .getByText(String(recipeCount), {
+          exact: true,
+        }),
     ).toBeVisible();
     await expect(
-      page.getByText("Featured recipes").locator("..").getByText("6", {
-        exact: true,
-      }),
+      page
+        .getByText("Featured recipes")
+        .locator("..")
+        .getByText(String(featuredRecipes.length), {
+          exact: true,
+        }),
     ).toBeVisible();
     await expect(
-      page.getByText("Categories").locator("..").getByText("8", {
-        exact: true,
-      }),
+      page
+        .getByText("Categories")
+        .locator("..")
+        .getByText(String(recipeCategories.length), {
+          exact: true,
+        }),
     ).toBeVisible();
   });
 
@@ -65,14 +80,16 @@ test.describe("showcase recipe discovery", () => {
       'section[aria-labelledby="recipes-gallery-heading"] p[aria-hidden="true"]',
     );
 
-    await expect(results.locator(":scope > li")).toHaveCount(10);
+    await expect(results.locator(":scope > li")).toHaveCount(recipeCount);
     await page.getByRole("button", { name: "Billing" }).click();
     await expect(page.getByRole("button", { name: "Billing" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
-    await expect(results.locator(":scope > li")).toHaveCount(1);
-    await expect(resultCount).toContainText(/Showing\s*1\s*of 10 recipes/);
+    await expect(results.locator(":scope > li")).toHaveCount(billingCount);
+    await expect(resultCount).toContainText(
+      new RegExp(`Showing\\s*${billingCount}\\s*of ${recipeCount} recipes`),
+    );
 
     await page
       .getByRole("searchbox", { name: "Search recipes" })
@@ -82,7 +99,7 @@ test.describe("showcase recipe discovery", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Clear filters" }).last().click();
-    await expect(results.locator(":scope > li")).toHaveCount(10);
+    await expect(results.locator(":scope > li")).toHaveCount(recipeCount);
     await expect(page.getByRole("button", { name: "All" })).toHaveAttribute(
       "aria-pressed",
       "true",
@@ -97,16 +114,27 @@ test.describe("showcase recipe discovery", () => {
     const links = page
       .getByRole("list", { name: "Recipe results" })
       .getByRole("link");
-    await expect(links).toHaveCount(10);
+    await expect(links).toHaveCount(recipeCount);
 
     const hrefs = await links.evaluateAll((items) =>
       items.map((item) => item.getAttribute("href")),
     );
-    expect(hrefs.every((href) => href?.startsWith("/recipes/"))).toBe(true);
+    expect(hrefs.sort()).toEqual(
+      recipeSlugs.map((slug) => `/recipes/${slug}`).sort(),
+    );
 
-    await links.first().click();
+    await page
+      .getByRole("list", { name: "Recipe results" })
+      .locator('a[href="/recipes/login-and-onboarding"]')
+      .click();
     await expect(page).toHaveURL(/\/recipes\/login-and-onboarding$/);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: "Onboarding workspace",
+        exact: true,
+      }),
+    ).toBeVisible();
   });
 
   test("serves a maintained capture for every recipe", async ({
@@ -120,18 +148,17 @@ test.describe("showcase recipe discovery", () => {
       .locator("img");
     await expect(images).toHaveCount(recipeSlugs.length);
 
-    await expect
-      .poll(async () =>
-        images.evaluateAll((items) =>
-          items.every(
-            (item) =>
-              item instanceof HTMLImageElement &&
-              item.complete &&
-              item.naturalWidth > 0,
+    // Thumbnails are intentionally lazy. Scroll each into view before checking.
+    for (const image of await images.all()) {
+      await image.scrollIntoViewIfNeeded();
+      await expect
+        .poll(() =>
+          image.evaluate(
+            (item: HTMLImageElement) => item.complete && item.naturalWidth > 0,
           ),
-        ),
-      )
-      .toBe(true);
+        )
+        .toBe(true);
+    }
 
     for (const slug of recipeSlugs) {
       const response = await request.get(
@@ -186,7 +213,7 @@ test.describe("showcase recipe discovery", () => {
     await page.getByRole("button", { name: "AI", exact: true }).click();
 
     const results = page.getByRole("list", { name: "Recipe results" });
-    await expect(results.locator(":scope > li")).toHaveCount(2);
+    await expect(results.locator(":scope > li")).toHaveCount(aiCount);
     await expect(results.locator(":scope > li").first()).toHaveCSS(
       "transform",
       "none",

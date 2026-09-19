@@ -18,12 +18,17 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./chat-markdown": {
+      "types": "./dist/chat-markdown.d.ts",
+      "import": "./dist/chat-markdown.js"
+    }
   },
   "scripts": {
     "build": "vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "test:bundle": "node scripts/check-bundle.mjs",
     "test:a11y": "vitest run src/foundation/*.a11y.test.tsx src/components/*/*.a11y.test.tsx"
   },
   "dependencies": {
@@ -38,7 +43,9 @@
   },
   "peerDependencies": {
     "react": ">=18.3 <20",
-    "react-dom": ">=18.3 <20"
+    "react-dom": ">=18.3 <20",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.2",
@@ -53,10 +60,20 @@
     "jsdom": "^29.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwindcss": "^4.3.2",
     "typescript": "^6.0.3",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^5.0.3",
     "vitest": "^4.1.9"
+  },
+  "peerDependenciesMeta": {
+    "react-markdown": {
+      "optional": true
+    },
+    "remark-gfm": {
+      "optional": true
+    }
   }
 }

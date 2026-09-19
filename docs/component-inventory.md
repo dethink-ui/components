@@ -36,7 +36,7 @@ The PRD positions the library as a shadcn-compatible, open-code React component 
 | Navigation | Breadcrumb, Pagination, NavigationMenu, NavDock, Sidebar, Steps, Anchor/ScrollSpy, CommandPalette, Tabs as nav |
 | Data Display | Card, Badge, Avatar, AvatarGroup, List, DataList, Table, DataTable, DataGrid, Timeline, Stat/KPI, Chart, Calendar, Carousel, CodeBlock, QRCode |
 | Productivity | RichTextEditor, TreeView, TreeSelect, SlotPlanner, Scheduler/EventCalendar, KanbanBoard, SortableList, DragDrop, OnboardingTour |
-| AI / Chat | PromptInput, ChatMessage, MessageList, MessageScroller, ConversationList, AttachmentBubble, TypingIndicator, CitationCard, ToolCallCard, ModelPicker |
+| AI / Chat | Chat, ChatActivity, PromptInput, ChatMessage, MessageContent, MessageActions, MessageList, MessageScroller, ConversationList, AttachmentBubble, TypingIndicator, CitationCard, ToolCallCard, ModelPicker |
 | Utilities | Portal, VisuallyHidden, FocusTrap, FocusScope, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, Hotkeys, useControllableState, useMediaQuery |
 | Effects | HeroTextAnimation, GridBeamsBackground, MagneticBeamsBackground, AuroraBackground, ScanGridBackground, DotMatrixBackground, LightStreaksBackground, StarfieldBackground |
 
@@ -68,3 +68,7 @@ Rating, QueryBuilder, DataGrid, Scheduler/EventCalendar, KanbanBoard, SortableLi
 | Scheduler page | P2 | Calendar views, event drawer, filters, resource list. |
 | Rich text document page | P2 | Editor, toolbar, comments/metadata sidebar, save state. |
 | Onboarding flow | P2 | Checklist, tour, progress steps, welcome screen. |
+
+## Implementation update — 2026-09-19
+
+The AI / Chat family was brought forward at the user’s request under [PRD #446](https://github.com/parveshh/dethink-components/issues/446). See [Chat documentation](components/chat/README.md) for the public components, focused registry items, optional Markdown entry, complete recipe, and verification.

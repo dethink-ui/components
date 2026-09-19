@@ -22,6 +22,7 @@ import {
 import { Pressable } from "react-aria-components";
 import type { ButtonVariant } from "../button";
 import { cn } from "../../utils/cn";
+import { useHydrated } from "../../utils/use-hydrated";
 
 export type RevealButtonVariant = Exclude<ButtonVariant, "link">;
 export type RevealButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
@@ -258,7 +259,9 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
   ) => {
     const buttonRef = useRef<HTMLButtonElement | null>(null);
     const prefersReducedMotion = useReducedMotion();
-    const reducedMotion = motion === "none" || prefersReducedMotion === true;
+    const hasHydrated = useHydrated();
+    const reducedMotion =
+      motion === "none" || (hasHydrated && prefersReducedMotion === true);
     const isAriaDisabled = ariaDisabled === true || ariaDisabled === "true";
     const isActivationDisabled = disabled || loading || isAriaDisabled;
     const canReveal = !disabled;

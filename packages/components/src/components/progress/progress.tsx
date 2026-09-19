@@ -59,7 +59,7 @@ const progressToneClasses: Record<ProgressTone, string> = {
 };
 
 const progressIndicatorClasses =
-  "h-full rounded-full motion-safe:transition-[width,transform] motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none";
+  "h-full w-full rounded-full motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-control motion-reduce:transition-none [--progress-direction:1] rtl:[--progress-direction:-1]";
 
 const progressIndeterminateClasses =
   "absolute inset-y-0 w-1/2 animate-[dt-progress-indeterminate_1.15s_ease-in-out_infinite] motion-reduce:animate-none motion-reduce:w-full motion-reduce:opacity-60";
@@ -220,7 +220,13 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
               indeterminate,
               tone,
             })}
-            style={indeterminate ? undefined : { width: `${percent ?? 0}%` }}
+            style={
+              indeterminate
+                ? undefined
+                : {
+                    transform: `translateX(calc(${(percent ?? 0) - 100}% * var(--progress-direction)))`,
+                  }
+            }
           />
         </div>
       </div>

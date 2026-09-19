@@ -61,7 +61,7 @@ const cardStackDeckClasses =
   "relative mx-auto grid w-full max-w-[min(100%,var(--card-stack-max-width))] place-items-center overflow-visible px-[var(--dt-space-10)] py-[var(--dt-space-8)] data-[mode=open]:px-[calc(var(--dt-space-8)*2)] data-[mode=open]:py-[var(--dt-space-12)]";
 
 const cardStackItemClasses =
-  "col-start-1 row-start-1 w-full min-w-0 transform-gpu will-change-transform [rotate:var(--card-stack-rotate)] [scale:var(--card-stack-scale)] [translate:var(--card-stack-translate)] motion-safe:transition-[translate,rotate,scale,opacity] motion-safe:duration-300 motion-safe:ease-out motion-reduce:transition-none";
+  "col-start-1 row-start-1 w-full min-w-0 [rotate:var(--card-stack-rotate)] [scale:var(--card-stack-scale)] [translate:var(--card-stack-translate)] motion-safe:transition-[translate,rotate,scale,opacity] motion-safe:duration-300 motion-safe:ease-control motion-reduce:transition-none";
 
 const cardStackCardClasses =
   "relative w-full motion-safe:transition-[box-shadow,border-color,background-color] motion-safe:duration-200 motion-reduce:transition-none";

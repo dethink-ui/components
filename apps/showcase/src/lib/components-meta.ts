@@ -8,6 +8,7 @@ export type ComponentTypeId =
   | "overlays"
   | "navigation"
   | "data-display"
+  | "ai"
   | "effects";
 
 export interface ComponentTypeMeta {
@@ -28,6 +29,13 @@ export interface ComponentGroup extends ComponentTypeMeta {
 }
 
 export const componentCatalog: ComponentMeta[] = [
+  {
+    slug: "chat",
+    name: "Chat",
+    description:
+      "Complete AI conversations with thinking, tools, streaming, approvals, attachments, and history.",
+    type: "ai",
+  },
   {
     slug: "button",
     name: "Button",
@@ -537,6 +545,12 @@ export const componentTypes: ComponentTypeMeta[] = [
     id: "data-display",
     name: "Data Display",
     description: "Structured content, records, tables, cards, and timelines.",
+  },
+  {
+    id: "ai",
+    name: "AI / Chat",
+    description:
+      "Thoughtful conversation, activity, and prompt components for AI interfaces.",
   },
   {
     id: "effects",

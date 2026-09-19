@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "prompt-input",
+  "type": "registry:ui",
+  "title": "PromptInput",
+  "description": "PromptInput for accessible, provider-independent AI conversations.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": [
+    "chat-core",
+    "button",
+    "icon-button",
+    "textarea",
+    "chat-attachment",
+    "model-picker"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/prompt-input.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

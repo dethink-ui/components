@@ -23,7 +23,7 @@ const buttonGroupBaseClasses =
   "isolate inline-flex w-fit max-w-full items-stretch";
 
 const buttonGroupModeClasses: Record<ButtonGroupMode, string> = {
-  attached: "gap-0",
+  attached: "gap-0 [--dt-control-press-scale:1]",
   separated: "gap-density-gap",
 };
 

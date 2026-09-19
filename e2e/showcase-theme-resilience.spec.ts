@@ -14,6 +14,35 @@ type ContrastMetrics = {
 };
 
 test.describe("showcase theme resilience", () => {
+  test("keeps the selected mode synchronized between desktop and mobile controls", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 950 });
+    await page.goto("/recipes/ai-chat-studio");
+    await page.getByRole("button", { name: "Dark theme", exact: true }).click();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page
+      .getByRole("button", { name: "Open navigation", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Dark theme", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await page
+      .getByRole("button", { name: "Light theme", exact: true })
+      .click();
+
+    await page.setViewportSize({ width: 1440, height: 950 });
+    await expect(
+      page.getByRole("button", { name: "Light theme", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+    await expect(
+      page.getByRole("button", { name: "Light theme", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+  });
+
   test("keeps semantic text and focus cues above contrast targets in every brand", async ({
     page,
   }) => {

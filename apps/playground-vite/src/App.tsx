@@ -1,4 +1,5 @@
 import { CalendarDate, parseDateTime } from "@internationalized/date";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +26,8 @@ import {
   CardTitle,
   Calendar,
   Checkbox,
+  Chat,
+  type ChatMessageData,
   Combobox,
   ComboboxItem,
   Container,
@@ -241,6 +244,30 @@ const playgroundSlots: SlotPlannerSlotData[] = [
   },
 ];
 
+function ChatSmoke() {
+  const [messages, setMessages] = useState<ChatMessageData[]>([]);
+  return (
+    <Chat
+      conversationId="playground"
+      messages={messages}
+      className="border-border h-96 rounded-xl border"
+      emptyState={<p>Send a prompt to verify the installed chat package.</p>}
+      prompt={{
+        onSend: ({ text }) =>
+          setMessages((current) => [
+            ...current,
+            {
+              id: String(current.length),
+              conversationId: "playground",
+              role: "user",
+              parts: [{ id: "text", type: "text", text }],
+            },
+          ]),
+      }}
+    />
+  );
+}
+
 export function App() {
   return (
     <DethinkProvider className="min-h-screen p-8" theme="light">
@@ -252,6 +279,7 @@ export function App() {
           <Heading level={1} visualLevel={2}>
             Foundation scaffold is active
           </Heading>
+          <ChatSmoke />
           <Text tone="muted">
             This app verifies package imports, style imports, Tailwind tokens,
             the foundation provider, and the first wrapper, container, layout,

@@ -6,6 +6,7 @@ import { CheckCircle2 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
 import { RecipeDemoBar } from "@/components/recipe-demo-bar";
 import { AiWorkspaceRecipe } from "@/examples/recipes/ai-workspace";
+import { AiChatStudioRecipe } from "@/examples/recipes/ai-chat-studio";
 import { CommandCenterDashboardRecipe } from "@/examples/recipes/command-center-dashboard";
 import { CrudResourceManagerRecipe } from "@/examples/recipes/crud-resource-manager";
 import { CustomerSupportCopilotRecipe } from "@/examples/recipes/customer-support-copilot";
@@ -13,8 +14,11 @@ import { DaymarkLandingRecipe } from "@/examples/recipes/daymark-landing";
 import { DethinkLabsSecurityRecipe } from "@/examples/recipes/dethink-labs-security";
 import { HelioGridEnergyRecipe } from "@/examples/recipes/heliogrid-energy";
 import { HushAndHearthRecipe } from "@/examples/recipes/hush-and-hearth";
+import { IntegrationsHubRecipe } from "@/examples/recipes/integrations-hub";
+import { InvoiceApprovalDeskRecipe } from "@/examples/recipes/invoice-approval-desk";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
 import { LumenLandingRecipe } from "@/examples/recipes/lumen-landing";
+import { ReleaseReadinessRecipe } from "@/examples/recipes/release-readiness";
 import { SaasCheckoutOrderSummaryRecipe } from "@/examples/recipes/saas-checkout-order-summary";
 import { SaasLandingPageRecipe } from "@/examples/recipes/saas-landing-page";
 import { SchedulerAndBookingRecipe } from "@/examples/recipes/scheduler-and-booking";
@@ -29,6 +33,7 @@ import {
 } from "@/lib/recipes-meta";
 
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
+  "ai-chat-studio": AiChatStudioRecipe,
   "ai-workspace": AiWorkspaceRecipe,
   "command-center-dashboard": CommandCenterDashboardRecipe,
   "crud-resource-manager": CrudResourceManagerRecipe,
@@ -37,8 +42,11 @@ const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
   "dethink-labs-security": DethinkLabsSecurityRecipe,
   "heliogrid-energy": HelioGridEnergyRecipe,
   "hush-and-hearth": HushAndHearthRecipe,
+  "integrations-hub": IntegrationsHubRecipe,
+  "invoice-approval-desk": InvoiceApprovalDeskRecipe,
   "login-and-onboarding": LoginAndOnboardingRecipe,
   "lumen-landing": LumenLandingRecipe,
+  "release-readiness": ReleaseReadinessRecipe,
   "saas-checkout-order-summary": SaasCheckoutOrderSummaryRecipe,
   "saas-landing-page": SaasLandingPageRecipe,
   "scheduler-and-booking": SchedulerAndBookingRecipe,

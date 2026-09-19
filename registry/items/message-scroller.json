@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "message-scroller",
+  "type": "registry:ui",
+  "title": "MessageScroller",
+  "description": "MessageScroller for accessible, provider-independent AI conversations.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": ["chat-core", "chat-message", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/message-scroller.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

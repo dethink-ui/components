@@ -45,6 +45,14 @@
   --spacing-dt-12: var(--dt-space-12);
   --spacing-density-control: var(--dt-density-control);
   --spacing-density-gap: var(--dt-density-gap);
+  --ease-control: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dialog-in: dt-dialog-in var(--dt-motion-standard, 220ms)
+    var(--ease-control) both;
+  --animate-dialog-out: dt-dialog-out var(--dt-motion-exit, 140ms) ease-in both;
+  --animate-scrim-in: dt-scrim-in var(--dt-motion-standard, 220ms) ease-out both;
+  --animate-scrim-out: dt-scrim-out var(--dt-motion-exit, 140ms) ease-in both;
+  --animate-feedback-in: dt-feedback-in var(--dt-motion-fast, 160ms)
+    var(--ease-control) both;
   /* Underdamped spring settle (~7% overshoot) for overlays that "emerge" from
      their trigger. Encoded as linear() so the spring runs on the compositor
      with no JS and honors prefers-reduced-motion via motion-reduce:animate-none. */
@@ -75,8 +83,10 @@
     1.002,
     1
   );
-  --animate-overlay-in: dt-overlay-in 200ms var(--ease-spring) both;
-  --animate-overlay-out: dt-overlay-out 130ms cubic-bezier(0.4, 0, 1, 1) both;
+  --animate-overlay-in: dt-overlay-in var(--dt-motion-standard, 220ms)
+    var(--ease-control) both;
+  --animate-overlay-out: dt-overlay-out var(--dt-motion-exit, 140ms)
+    cubic-bezier(0.4, 0, 1, 1) both;
   --animate-sidebar-indicator-in: dt-sidebar-indicator-in
     var(--sidebar-motion-duration, 220ms)
     var(--sidebar-motion-ease, cubic-bezier(0.34, 1.24, 0.64, 1)) both;
@@ -89,12 +99,63 @@
     both;
 }
 
+@keyframes dt-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dt-dialog-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+}
+
+@keyframes dt-scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dt-scrim-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes dt-feedback-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes dt-overlay-in {
   from {
     opacity: 0;
     translate: var(--dt-overlay-motion-x, 0)
       var(--dt-overlay-motion-y, var(--dt-space-1));
-    scale: 0.94;
+    scale: var(--dt-overlay-enter-scale, 0.98);
   }
 
   to {
@@ -115,7 +176,7 @@
     opacity: 0;
     translate: var(--dt-overlay-motion-x, 0)
       var(--dt-overlay-motion-y, var(--dt-space-1));
-    scale: 0.96;
+    scale: var(--dt-overlay-enter-scale, 0.98);
   }
 }
 
@@ -770,6 +831,11 @@
 
 @layer base {
   :root {
+    --dt-motion-press: 100ms;
+    --dt-motion-fast: 160ms;
+    --dt-motion-standard: 220ms;
+    --dt-motion-exit: 140ms;
+    --dt-overlay-scrim: rgb(0 0 0 / 0.45);
     color-scheme: light dark;
     --dt-color-background-light: oklch(1 0 0);
     --dt-color-foreground-light: oklch(0.145 0 0);

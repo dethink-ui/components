@@ -29,6 +29,29 @@ function BasicTabs(props: Partial<TabsProps> = {}) {
 }
 
 describe("Tabs state and anatomy", () => {
+  it("preserves panel input and focus when motion is turned off", async () => {
+    const user = userEvent.setup();
+    function Example({ motionPreset }: Pick<TabsProps, "motionPreset">) {
+      return (
+        <Tabs defaultValue="details" motionPreset={motionPreset}>
+          <Tabs.List aria-label="Sections">
+            <Tabs.Trigger value="details">Details</Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Panel value="details">
+            <input aria-label="Draft name" defaultValue="" />
+          </Tabs.Panel>
+        </Tabs>
+      );
+    }
+    const { rerender } = render(<Example motionPreset="standard" />);
+    const input = screen.getByRole("textbox", { name: "Draft name" });
+    await user.type(input, "My draft");
+    rerender(<Example motionPreset="none" />);
+    expect(screen.getByRole("textbox", { name: "Draft name" })).toBe(input);
+    expect(input).toHaveValue("My draft");
+    expect(input).toHaveFocus();
+  });
+
   it("renders the first enabled tab as selected by default", () => {
     render(<BasicTabs />);
 

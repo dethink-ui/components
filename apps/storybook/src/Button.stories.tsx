@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button, DethinkProvider } from "@dethink/components";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
+import { expect, userEvent, within } from "storybook/test";
 
 const meta = {
   title: "Components/Button",
@@ -75,6 +76,35 @@ function ArrowRightIcon() {
 }
 
 export const Base: Story = {};
+
+function LoadingTransitionExample() {
+  const [loading, setLoading] = useState(false);
+  return (
+    <div className="flex items-center gap-4">
+      <Button loading={loading} onClick={() => setLoading(true)}>
+        {loading ? "Saving…" : "Save changes"}
+      </Button>
+      <Button variant="outline" onClick={() => setLoading(false)}>
+        Reset
+      </Button>
+    </div>
+  );
+}
+
+export const LoadingTransition: Story = {
+  render: () => <LoadingTransitionExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole("button", { name: "Save changes" });
+    const width = button.offsetWidth;
+    await userEvent.click(button);
+    await expect(button).toHaveAttribute("aria-busy", "true");
+    await expect(button).toBeDisabled();
+    await expect(Math.abs(button.offsetWidth - width)).toBeLessThanOrEqual(1);
+    await userEvent.click(canvas.getByRole("button", { name: "Reset" }));
+    await expect(button).toBeEnabled();
+  },
+};
 
 export const Variants: Story = {
   render: () => (

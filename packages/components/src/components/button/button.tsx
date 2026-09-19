@@ -3,6 +3,9 @@ import {
   cloneElement,
   forwardRef,
   isValidElement,
+  useEffect,
+  useLayoutEffect,
+  useRef,
   type ButtonHTMLAttributes,
   type ForwardedRef,
   type MouseEventHandler,
@@ -29,7 +32,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const buttonBaseClasses =
-  "inline-flex shrink-0 items-center justify-center gap-density-gap whitespace-nowrap rounded-md border border-transparent font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[loading=true]:cursor-wait data-[loading=true]:opacity-80";
+  "relative inline-flex shrink-0 items-center justify-center gap-density-gap whitespace-nowrap rounded-md border border-transparent font-medium motion-safe:transition-[color,background-color,border-color,opacity,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control motion-safe:[&:not(:disabled):not([data-disabled=true]):active]:scale-[var(--dt-control-press-scale,0.98)] motion-safe:active:duration-[var(--dt-motion-press)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[loading=true]:cursor-wait data-[loading=true]:opacity-80";
 
 const buttonVariantClasses: Record<ButtonVariant, string> = {
   solid:
@@ -113,7 +116,10 @@ function composeClickHandlers(
   };
 }
 
-function renderButtonContent({
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+function ButtonContent({
   children,
   leftIcon,
   loading,
@@ -123,19 +129,55 @@ function renderButtonContent({
   ButtonProps,
   "children" | "leftIcon" | "loading" | "loadingIndicator" | "rightIcon"
 >) {
+  const contentRef = useRef<HTMLSpanElement>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    const content = contentRef.current;
+    if (!content || loading) return;
+
+    // Measure only at rest. Parent press transforms must not affect the size
+    // reserved while a consumer swaps the label during an async action.
+    const measure = () => {
+      const width = content.offsetWidth;
+      if (width)
+        content.style.setProperty("--dt-button-idle-width", `${width}px`);
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(content);
+    return () => observer.disconnect();
+  }, [loading]);
+
+  const overlaySpinner = loading && !leftIcon;
   return (
-    <>
+    <span
+      ref={contentRef}
+      data-slot="button-content"
+      className="gap-density-gap relative inline-flex max-w-full min-w-0 items-center justify-center"
+      style={{
+        inlineSize: loading ? "var(--dt-button-idle-width, auto)" : undefined,
+      }}
+    >
       {loading ? (
         <span
           aria-hidden="true"
-          data-slot="button-spinner"
-          className={
-            loadingIndicator
-              ? buttonLoadingIndicatorClasses
-              : buttonSpinnerClasses
-          }
+          className={cn(
+            "pointer-events-none inline-flex shrink-0 items-center justify-center motion-safe:animate-[dt-scrim-in_120ms_ease-out]",
+            overlaySpinner && "absolute inset-0",
+          )}
         >
-          {loadingIndicator}
+          <span
+            aria-hidden="true"
+            data-slot="button-spinner"
+            className={
+              loadingIndicator
+                ? buttonLoadingIndicatorClasses
+                : buttonSpinnerClasses
+            }
+          >
+            {loadingIndicator}
+          </span>
         </span>
       ) : leftIcon ? (
         <span
@@ -146,17 +188,25 @@ function renderButtonContent({
           {leftIcon}
         </span>
       ) : null}
-      {children}
+      <span
+        data-slot="button-label"
+        className={cn(
+          "min-w-0 truncate motion-safe:transition-opacity motion-safe:duration-[var(--dt-motion-fast)]",
+          overlaySpinner && "opacity-0",
+        )}
+      >
+        {children}
+      </span>
       {rightIcon ? (
         <span
           aria-hidden="true"
           data-slot="button-right-icon"
-          className={buttonIconClasses}
+          className={cn(buttonIconClasses, overlaySpinner && "opacity-0")}
         >
           {rightIcon}
         </span>
       ) : null}
-    </>
+    </span>
   );
 }
 
@@ -223,13 +273,14 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
           className: cn(classes, child.props.className),
           onClick: composeClickHandlers(handleClick, child.props.onClick),
         },
-        renderButtonContent({
-          children: child.props.children,
-          leftIcon,
-          loading,
-          loadingIndicator,
-          rightIcon,
-        }),
+        <ButtonContent
+          leftIcon={leftIcon}
+          loading={loading}
+          loadingIndicator={loadingIndicator}
+          rightIcon={rightIcon}
+        >
+          {child.props.children}
+        </ButtonContent>,
       );
     }
 
@@ -248,13 +299,14 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
         className={classes}
         onClick={handleClick as MouseEventHandler<HTMLButtonElement>}
       >
-        {renderButtonContent({
-          children,
-          leftIcon,
-          loading,
-          loadingIndicator,
-          rightIcon,
-        })}
+        <ButtonContent
+          leftIcon={leftIcon}
+          loading={loading}
+          loadingIndicator={loadingIndicator}
+          rightIcon={rightIcon}
+        >
+          {children}
+        </ButtonContent>
       </button>
     );
   },

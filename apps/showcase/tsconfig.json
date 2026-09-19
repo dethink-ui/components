@@ -23,6 +23,9 @@
       "@dethink/components": ["../../packages/components/src/index.ts"],
       "@dethink/components/foundation": [
         "../../packages/components/src/foundation/dethink-provider.tsx"
+      ],
+      "@dethink/components/chat-markdown": [
+        "../../packages/components/src/chat-markdown.tsx"
       ]
     }
   },

@@ -1,4 +1,4 @@
-import { getComponentMeta, type ComponentMeta } from "@/lib/components-meta";
+import { getComponentMeta, type ComponentMeta } from "./components-meta";
 
 export type RecipeCategory =
   | "auth"
@@ -79,6 +79,36 @@ export const recipeCategories: RecipeCategoryMeta[] = [
 ];
 
 export const recipesCatalog: RecipeMeta[] = [
+  {
+    slug: "ai-chat-studio",
+    title: "AI Chat Studio",
+    category: "ai",
+    summary:
+      "A complete AI conversation workspace with thinking and tool activity, approvals, streaming, sources, attachments, recovery, and independent conversation history.",
+    tags: ["AI", "Chat", "Streaming", "Approvals", "Copilot"],
+    components: [
+      "chat",
+      "button",
+      "icon-button",
+      "avatar",
+      "badge",
+      "accordion",
+      "select",
+      "dialog",
+      "drawer",
+      "textarea",
+      "live-region",
+    ],
+    sourceFile: "recipes/ai-chat-studio.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Quiet thinking pulses, tokenized press feedback, and animated activity disclosures keep work visible without moving streamed text. Reduced motion and hidden-page preferences are respected.",
+    accessibilityNotes:
+      "Named messages, a labelled IME-aware composer, coalesced phase announcements, explicit tool approval, and focus-safe scrolling. Responses and uploads are deterministic sample data.",
+    responsiveNotes:
+      "Desktop history and context rails give way to a mobile history drawer. The transcript owns its scroll viewport and the growing composer stays within the conversation.",
+  },
   {
     slug: "login-and-onboarding",
     title: "Onboarding workspace",
@@ -369,6 +399,96 @@ export const recipesCatalog: RecipeMeta[] = [
       "Controls are grouped by purpose with visible labels, descriptions, and explicit destructive confirmation.",
     responsiveNotes:
       "Settings sections stack naturally while invoice rows keep numeric alignment and horizontal breathing room.",
+  },
+  {
+    slug: "release-readiness",
+    title: "Release readiness",
+    category: "dashboard",
+    summary:
+      "A shared release room with an owner-led checklist, live readiness meters, an activity timeline, and a final approval dialog.",
+    tags: ["Release", "Checklist", "Approval", "Timeline"],
+    components: [
+      "checkbox",
+      "feedback-states",
+      "tabs",
+      "timeline",
+      "dialog",
+      "form-field",
+      "textarea",
+      "avatar",
+      "badge",
+      "card",
+      "button",
+    ],
+    sourceFile: "recipes/release-readiness.tsx",
+    featured: true,
+    complexity: "Intermediate",
+    motionNotes:
+      "Checkbox feedback, progress transforms, the tab indicator, and the approval dialog use component-native motion. The recipe adds only motion-safe color transitions and no animation runtime.",
+    accessibilityNotes:
+      "Checks are grouped with legends and named controls, progress values expose completion, and sign-off becomes available only after all checks pass. The dialog traps focus; the activity view preserves a readable decision record.",
+    responsiveNotes:
+      "The release summary reflows on small screens and the approval panel follows the checklist in a single column. Owners and status remain visible as text.",
+  },
+  {
+    slug: "integrations-hub",
+    title: "Integrations hub",
+    category: "settings",
+    summary:
+      "A searchable connector directory with connected-tool filters, a configuration drawer, sync preferences, pending feedback, and saved local settings.",
+    tags: ["Integrations", "Settings", "Drawer", "Search"],
+    components: [
+      "tabs",
+      "drawer",
+      "input",
+      "form-field",
+      "switch",
+      "select",
+      "feedback-states",
+      "avatar",
+      "badge",
+      "card",
+      "button",
+    ],
+    sourceFile: "recipes/integrations-hub.tsx",
+    featured: true,
+    complexity: "Intermediate",
+    motionNotes:
+      "Tabs, Drawer, Switch, Select, Button, and Toast provide their own reduced-motion-aware transitions. The simulated save is bounded and cancelled when dismissed or unmounted.",
+    accessibilityNotes:
+      "Search and sync controls have accessible names, the workspace input has a visible label and native validation, and connection outcomes use status text and toast announcements. All services and settings are local demo data.",
+    responsiveNotes:
+      "Connector cards move from three columns to one, search becomes full width on small screens, and the configuration drawer stays within the viewport.",
+  },
+  {
+    slug: "invoice-approval-desk",
+    title: "Invoice approval desk",
+    category: "billing",
+    summary:
+      "A finance review queue with searchable invoices, line-item totals, approval and correction dialogs, and a persistent local decision record.",
+    tags: ["Invoices", "Approval", "Finance", "Master-detail"],
+    components: [
+      "table",
+      "select",
+      "dialog",
+      "input",
+      "textarea",
+      "form-field",
+      "feedback-states",
+      "avatar",
+      "badge",
+      "card",
+      "button",
+    ],
+    sourceFile: "recipes/invoice-approval-desk.tsx",
+    featured: true,
+    complexity: "Intermediate",
+    motionNotes:
+      "Selected invoices use motion-safe color feedback, while Select and Dialog supply focused transitions. Totals and decision labels update immediately without decorative number animation.",
+    accessibilityNotes:
+      "Invoice choices are pressed buttons, numeric line items use a semantic table, and correction requests require an explanation. Decisions are announced through a live region and never initiate real payments or messages.",
+    responsiveNotes:
+      "The desktop queue and invoice sheet stack in reading order on mobile. Metrics collapse to one column and line items scroll within their own table container.",
   },
   {
     slug: "ai-workspace",

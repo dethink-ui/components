@@ -75,7 +75,7 @@ test.describe("showcase component documentation navigation", () => {
 
     await page.keyboard.press("Tab");
     await expect(
-      page.getByRole("link", { name: "Previous component: Icon Button" }),
+      page.getByRole("link", { name: "Examples", exact: true }),
     ).toBeFocused();
   });
 

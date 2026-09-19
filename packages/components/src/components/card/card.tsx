@@ -94,7 +94,8 @@ type CardElementWithRef = ReactElement<CardSlotProps> & {
 
 type EventHandler = (...args: unknown[]) => void;
 
-const cardBaseClasses = "box-border flex min-w-0 flex-col text-foreground";
+const cardBaseClasses =
+  "box-border flex min-w-0 flex-col text-foreground motion-safe:[&:is(a,button):not(:disabled):not([aria-disabled=true])]:transition-[translate,box-shadow,border-color] motion-safe:[&:is(a,button)]:duration-[var(--dt-motion-fast)] motion-safe:[&:is(a,button)]:ease-control motion-safe:[&:is(a,button):not(:disabled):not([aria-disabled=true]):hover]:-translate-y-0.5 [&:is(a,button):not(:disabled):not([aria-disabled=true]):hover]:shadow-md [&:is(a,button):focus-visible]:outline-2 [&:is(a,button):focus-visible]:outline-offset-2 [&:is(a,button):focus-visible]:outline-ring";
 
 const cardSurfaceClasses: Record<CardSurface, string> = {
   default: "bg-background",

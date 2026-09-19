@@ -24,6 +24,7 @@ import {
   type TextProps as AriaTextProps,
 } from "react-aria-components";
 import { useIsSSR } from "react-aria";
+import { useHydrated } from "../../utils/use-hydrated";
 import {
   AnimatePresence,
   motion,
@@ -578,8 +579,9 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
     const isControlled = open !== undefined;
     const resolvedOpen = open ?? uncontrolledOpen;
     const prefersReducedMotion = useReducedMotion();
+    const hasHydrated = useHydrated();
     const resolvedReducedMotion =
-      reducedMotion ?? prefersReducedMotion === true;
+      reducedMotion ?? (hasHydrated && prefersReducedMotion === true);
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "dropdown-menu-portal-container",

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat-activity",
+  "type": "registry:ui",
+  "title": "ChatActivity",
+  "description": "ChatActivity for AI conversation surfaces.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": ["chat-core", "button", "accordion"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/chat-activity.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/chat/typing-indicator.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

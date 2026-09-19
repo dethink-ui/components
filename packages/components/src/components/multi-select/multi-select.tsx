@@ -121,7 +121,7 @@ const multiSelectLabelClasses =
   "text-sm font-medium leading-none text-foreground data-[disabled=true]:opacity-60 data-[invalid=true]:text-destructive";
 
 const multiSelectControlBaseClasses =
-  "flex w-full min-w-0 items-center gap-[var(--dt-space-2)] rounded-md border border-input bg-background text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color] motion-safe:duration-150 focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-60 data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground group-data-[open]/multi-select:border-ring";
+  "flex w-full min-w-0 items-center gap-[var(--dt-space-2)] rounded-md border border-input bg-background text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:opacity-60 data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground group-data-[open]/multi-select:border-ring";
 
 const multiSelectControlSizeClasses: Record<MultiSelectControlSize, string> = {
   sm: "min-h-8 px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-base sm:text-sm",
@@ -136,35 +136,35 @@ const multiSelectInputClasses =
   "min-w-[7rem] flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-60 read-only:text-muted-foreground";
 
 const multiSelectChipClasses =
-  "inline-flex max-w-full items-center gap-[var(--dt-space-1)] rounded-sm border border-border bg-muted px-[var(--dt-space-1-5)] py-0.5 text-xs font-medium leading-5 text-foreground";
+  "inline-flex max-w-full items-center gap-[var(--dt-space-1)] motion-safe:animate-feedback-in rounded-sm border border-border bg-muted px-[var(--dt-space-1-5)] py-0.5 text-xs font-medium leading-5 text-foreground";
 
 const multiSelectChipTextClasses = "min-w-0 truncate";
 
 const multiSelectChipRemoveClasses =
-  "inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-150 hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex size-4 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-background hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 const multiSelectTriggerClasses =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none motion-safe:transition-[background-color,color,transform] motion-safe:duration-150 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[hovered]:bg-muted data-[hovered]:text-foreground data-[pressed]:translate-y-px data-[pressed]:bg-muted";
+  "inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none motion-safe:transition-[background-color,color,translate,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[hovered]:bg-muted data-[hovered]:text-foreground data-[pressed]:translate-y-px data-[pressed]:bg-muted";
 
 const multiSelectClearClasses =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-150 hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex size-8 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 const multiSelectIconClasses =
-  "size-4 motion-safe:transition-transform motion-safe:duration-150 group-data-[open]/multi-select:rotate-180";
+  "size-4 motion-safe:transition-transform motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control group-data-[open]/multi-select:rotate-180";
 
 const multiSelectHelpClasses = "text-xs leading-5 text-muted-foreground";
 
 const multiSelectErrorClasses =
-  "text-xs font-medium leading-5 text-destructive";
+  "text-xs font-medium leading-5 text-destructive motion-safe:animate-feedback-in";
 
 const multiSelectPopoverClasses =
-  "z-50 max-h-80 min-w-[var(--trigger-width)] overflow-hidden rounded-md border border-border bg-background text-foreground shadow-lg outline-none motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[entering]:opacity-100 data-[exiting]:translate-y-1 data-[exiting]:opacity-0";
+  "z-50 max-h-80 min-w-[var(--trigger-width)] overflow-hidden rounded-md border border-border bg-background text-foreground shadow-lg outline-none origin-top data-[placement=top]:origin-bottom data-[placement=left]:origin-right data-[placement=right]:origin-left motion-safe:data-[entering]:animate-overlay-in motion-safe:data-[exiting]:animate-overlay-out motion-reduce:animate-none";
 
 const multiSelectListBoxClasses =
   "max-h-64 overflow-auto p-[var(--dt-space-1)] outline-none";
 
 const multiSelectItemBaseClasses =
-  "grid cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-150 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[pressed]:bg-muted/80 data-[selected]:bg-primary/15 data-[selected]:text-foreground";
+  "grid cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[pressed]:bg-muted/80 data-[selected]:bg-primary/15 data-[selected]:text-foreground";
 
 const multiSelectItemIndicatorClasses =
   "flex size-4 items-center justify-center text-primary";

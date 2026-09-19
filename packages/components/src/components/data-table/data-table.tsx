@@ -319,7 +319,7 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
       data-sort-state={sorted || "none"}
       focusable="false"
       viewBox="0 0 16 16"
-      className="size-4"
+      className="size-4 motion-safe:[&>path]:transition-opacity motion-safe:[&>path]:duration-[var(--dt-motion-fast)]"
     >
       <path
         d="M4.5 3 2 5.5h5L4.5 3Z"

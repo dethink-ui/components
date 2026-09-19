@@ -19,6 +19,8 @@ import {
 import {
   forwardRef,
   useContext,
+  useEffect,
+  useRef,
   useState,
   type ForwardedRef,
   type ReactElement,
@@ -97,10 +99,10 @@ const calendarHeadingGroupClasses =
   "flex min-w-0 items-center justify-center gap-0";
 
 const calendarHeadingButtonClasses =
-  "inline-flex h-8 items-center justify-center rounded-md px-[var(--dt-space-1)] text-center text-sm font-medium text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-150 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:bg-muted";
+  "inline-flex h-8 items-center justify-center rounded-md px-[var(--dt-space-1)] text-center text-sm font-medium text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[active=true]:bg-muted";
 
 const calendarButtonClasses =
-  "inline-flex size-8 items-center justify-center rounded-md text-muted-foreground outline-none motion-safe:transition-[background-color,color,transform] motion-safe:duration-150 hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring active:translate-y-px disabled:pointer-events-none disabled:opacity-40";
+  "inline-flex size-8 items-center justify-center rounded-md text-muted-foreground outline-none motion-safe:transition-[background-color,color,translate,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring motion-safe:active:translate-y-px disabled:pointer-events-none disabled:opacity-40";
 
 const calendarPickerGridClasses =
   "grid h-full w-full grid-cols-3 grid-rows-4 gap-[var(--dt-space-2)]";
@@ -108,7 +110,7 @@ const calendarPickerGridClasses =
 const calendarPanelClasses = "grid min-h-64 w-64 items-stretch";
 
 const calendarPickerOptionClasses =
-  "inline-flex h-full min-h-9 min-w-0 items-center justify-center rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-sm font-medium text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring active:translate-y-px disabled:pointer-events-none disabled:opacity-35 data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground";
+  "inline-flex h-full min-h-9 min-w-0 items-center justify-center rounded-md px-[var(--dt-space-2)] py-[var(--dt-space-1)] text-sm font-medium text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,translate,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring motion-safe:active:translate-y-px disabled:pointer-events-none disabled:opacity-35 data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground";
 
 const calendarGridClasses =
   "w-full border-separate border-spacing-[var(--dt-space-1)] text-sm";
@@ -117,10 +119,10 @@ const calendarHeaderCellClasses =
   "size-8 text-center text-xs font-medium text-muted-foreground";
 
 const calendarCellBaseClasses =
-  "flex size-8 items-center justify-center rounded-md text-center text-sm leading-none tabular-nums outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[disabled]:pointer-events-none data-[disabled]:opacity-35 data-[focused]:ring-2 data-[focused]:ring-ring data-[invalid]:text-destructive data-[outside-month]:text-muted-foreground data-[outside-month]:opacity-50 data-[pressed]:scale-95 data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[today]:font-semibold data-[unavailable]:text-destructive data-[unavailable]:line-through";
+  "flex size-8 items-center justify-center rounded-md text-center text-sm leading-none tabular-nums outline-none motion-safe:transition-[background-color,color,box-shadow,translate,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[disabled]:pointer-events-none data-[disabled]:opacity-35 data-[focused]:ring-2 data-[focused]:ring-ring data-[invalid]:text-destructive data-[outside-month]:text-muted-foreground data-[outside-month]:opacity-50 motion-safe:data-[pressed]:scale-95 data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[today]:font-semibold data-[unavailable]:text-destructive data-[unavailable]:line-through";
 
 const rangeCalendarCellBaseClasses =
-  "flex size-8 items-center justify-center rounded-md text-center text-sm leading-none tabular-nums outline-none motion-safe:transition-[background-color,color,box-shadow,transform] motion-safe:duration-150 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[disabled]:pointer-events-none data-[disabled]:opacity-35 data-[focused]:ring-2 data-[focused]:ring-ring data-[invalid]:text-destructive data-[outside-month]:text-muted-foreground data-[outside-month]:opacity-50 data-[pressed]:scale-95 data-[selected]:bg-primary/15 data-[selection-end]:bg-primary data-[selection-end]:text-primary-foreground data-[selection-start]:bg-primary data-[selection-start]:text-primary-foreground data-[today]:font-semibold data-[unavailable]:text-destructive data-[unavailable]:line-through";
+  "flex size-8 items-center justify-center rounded-md text-center text-sm leading-none tabular-nums outline-none motion-safe:transition-[background-color,color,box-shadow,translate,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring data-[disabled]:pointer-events-none data-[disabled]:opacity-35 data-[focused]:ring-2 data-[focused]:ring-ring data-[invalid]:text-destructive data-[outside-month]:text-muted-foreground data-[outside-month]:opacity-50 motion-safe:data-[pressed]:scale-95 data-[selected]:bg-primary/15 data-[selection-end]:bg-primary data-[selection-end]:text-primary-foreground data-[selection-start]:bg-primary data-[selection-start]:text-primary-foreground data-[today]:font-semibold data-[unavailable]:text-destructive data-[unavailable]:line-through";
 
 type CalendarComponent = (<T extends DateValue = DateValue>(
   props: CalendarProps<T> & RefAttributes<HTMLDivElement>,
@@ -470,6 +472,27 @@ export function DateCalendarGrid({
 }: DateCalendarGridProps) {
   const isRangeCalendar = range || dataSlotPrefix === "range-calendar";
   const [viewMode, setViewMode] = useState<CalendarViewMode>("day");
+  const state = useCalendarState();
+  const visibleMonth = state?.visibleRange.start.toString();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const panel = panelRef.current;
+    if (
+      !panel ||
+      !panel.animate ||
+      (typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+    )
+      return;
+    // Animate the existing subtree so moving between months never remounts the
+    // focused calendar cell or resets React Aria's keyboard state.
+    const animation = panel.animate([{ opacity: 0.55 }, { opacity: 1 }], {
+      duration: 160,
+      easing: "ease-out",
+    });
+    return () => animation.cancel();
+  }, [visibleMonth, viewMode]);
 
   return (
     <>
@@ -479,6 +502,7 @@ export function DateCalendarGrid({
         viewMode={viewMode}
       />
       <div
+        ref={panelRef}
         data-slot={`${dataSlotPrefix}-panel`}
         className={calendarPanelClasses}
       >

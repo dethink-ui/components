@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat-attachment",
+  "type": "registry:ui",
+  "title": "AttachmentBubble",
+  "description": "AttachmentBubble for accessible AI conversation surfaces.",
+  "dependencies": ["lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": ["chat-core", "icon-button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/chat-attachment.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

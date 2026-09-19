@@ -43,10 +43,10 @@ const switchInputClasses =
   "peer absolute inset-0 z-10 m-0 size-full cursor-pointer opacity-0 disabled:cursor-not-allowed";
 
 const switchTrackBaseClasses =
-  "pointer-events-none flex size-full items-center rounded-full border border-input bg-muted p-[var(--dt-space-0-5)] shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,opacity] motion-safe:duration-150 peer-disabled:opacity-60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background group-disabled/field-set:opacity-60 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[disabled=true]:opacity-60 data-[readonly=true]:bg-muted/40";
+  "pointer-events-none flex size-full items-center rounded-full border border-input bg-muted p-[var(--dt-space-0-5)] shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,opacity] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control peer-disabled:opacity-60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background group-disabled/field-set:opacity-60 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[disabled=true]:opacity-60 data-[readonly=true]:bg-muted/40";
 
 const switchThumbBaseClasses =
-  "rounded-full bg-background text-background shadow-sm motion-safe:transition-[margin,background-color] motion-safe:duration-150 data-[state=checked]:ms-auto data-[state=checked]:bg-primary-foreground data-[readonly=true]:bg-muted-foreground/70";
+  "shrink-0 rounded-full bg-background text-background shadow-sm [--switch-travel:calc(var(--switch-width)-var(--switch-thumb-size)-var(--dt-space-0-5)*2-2px)] translate-x-0 motion-safe:transition-[translate,background-color] motion-safe:duration-[180ms] motion-safe:ease-control data-[state=checked]:translate-x-[var(--switch-travel)] rtl:data-[state=checked]:-translate-x-[var(--switch-travel)] data-[state=checked]:bg-primary-foreground data-[readonly=true]:bg-muted-foreground/70";
 
 function isAriaInvalid(value: SwitchProps["aria-invalid"]) {
   return (

@@ -103,7 +103,7 @@ const selectLabelClasses =
   "text-sm font-medium leading-none text-foreground data-[disabled=true]:opacity-60 data-[invalid=true]:text-destructive";
 
 const selectTriggerBaseClasses =
-  "flex w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md border border-input bg-background text-start text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,transform] motion-safe:duration-150 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-60 data-[focused]:border-ring data-[focused]:ring-2 data-[focused]:ring-ring/20 data-[focus-visible]:border-ring data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring/20 data-[hovered]:border-ring/60 data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[open]:border-ring data-[pressed]:bg-muted data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
+  "flex w-full min-w-0 items-center justify-between gap-[var(--dt-space-2)] rounded-md border border-input bg-background text-start text-foreground shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,transform] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control data-[disabled]:cursor-not-allowed data-[disabled]:opacity-60 data-[focused]:border-ring data-[focused]:ring-2 data-[focused]:ring-ring/20 data-[focus-visible]:border-ring data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring/20 data-[hovered]:border-ring/60 data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[open]:border-ring data-[pressed]:bg-muted data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
 
 const selectControlSizeClasses: Record<SelectControlSize, string> = {
   sm: "h-8 px-[var(--dt-space-2-5)] text-base sm:text-sm",
@@ -115,20 +115,21 @@ const selectValueClasses =
   "min-w-0 flex-1 truncate data-[placeholder]:text-muted-foreground";
 
 const selectIconClasses =
-  "ms-[var(--dt-space-2)] size-4 shrink-0 text-muted-foreground motion-safe:transition-transform motion-safe:duration-150 group-data-[open]/select:rotate-180 group-data-[disabled]/select:opacity-60";
+  "ms-[var(--dt-space-2)] size-4 shrink-0 text-muted-foreground motion-safe:transition-transform motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control group-data-[open]/select:rotate-180 group-data-[disabled]/select:opacity-60";
 
 const selectHelpClasses = "text-xs leading-5 text-muted-foreground";
 
-const selectErrorClasses = "text-xs font-medium leading-5 text-destructive";
+const selectErrorClasses =
+  "text-xs font-medium leading-5 text-destructive motion-safe:animate-feedback-in";
 
 const selectPopoverClasses =
-  "z-50 max-h-72 min-w-[var(--trigger-width)] overflow-hidden rounded-md border border-border bg-background text-foreground shadow-lg outline-none motion-safe:transition-[opacity,transform] motion-safe:duration-150 data-[entering]:opacity-100 data-[exiting]:translate-y-1 data-[exiting]:opacity-0";
+  "z-50 max-h-72 min-w-[var(--trigger-width)] overflow-hidden rounded-md border border-border bg-background text-foreground shadow-lg outline-none origin-top data-[placement=top]:origin-bottom data-[placement=left]:origin-right data-[placement=right]:origin-left motion-safe:data-[entering]:animate-overlay-in motion-safe:data-[exiting]:animate-overlay-out motion-reduce:animate-none";
 
 const selectListBoxClasses =
   "max-h-72 overflow-auto p-[var(--dt-space-1)] outline-none";
 
 const selectItemBaseClasses =
-  "grid cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-150 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[pressed]:bg-muted/80 data-[selected]:bg-primary data-[selected]:text-primary-foreground";
+  "grid cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm text-foreground outline-none motion-safe:transition-[background-color,color,box-shadow] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[pressed]:bg-muted/80 data-[selected]:bg-primary data-[selected]:text-primary-foreground";
 
 const selectItemIndicatorClasses =
   "flex size-4 items-center justify-center text-current";

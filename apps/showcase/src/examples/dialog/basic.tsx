@@ -16,7 +16,7 @@ export function DialogBasic() {
     <div className="flex justify-center">
       <Dialog>
         <DialogTrigger>Workspace settings</DialogTrigger>
-        <DialogContent size="sm">
+        <DialogContent dismissible size="sm">
           <DialogHeader>
             <DialogTitle>Workspace settings</DialogTitle>
             <DialogDescription>
@@ -29,7 +29,7 @@ export function DialogBasic() {
           </div>
           <DialogFooter>
             <DialogClose variant="outline">Cancel</DialogClose>
-            <DialogClose>Save changes</DialogClose>
+            <DialogClose variant="solid">Save changes</DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

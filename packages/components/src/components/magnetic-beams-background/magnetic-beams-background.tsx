@@ -24,6 +24,7 @@ import {
   type Transition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import { usePageVisible } from "../../utils/use-page-visible";
 import { mulberry32, seededRange } from "../../utils/seeded-random";
 
 export type MagneticBeamsBackgroundDensity = "sparse" | "normal" | "dense";
@@ -485,7 +486,8 @@ export const MagneticBeamsBackground = forwardRef(
     // both sides and applies immediately.
     const reducedMotion =
       !animateProp || (hasHydrated && prefersReducedMotion === true);
-    const running = hasHydrated && !reducedMotion && inView;
+    const pageVisible = usePageVisible();
+    const running = hasHydrated && !reducedMotion && inView && pageVisible;
 
     const motionConfig = useMemo(
       () => getMagneticBeamsBackgroundMotionConfig(speed, reducedMotion),

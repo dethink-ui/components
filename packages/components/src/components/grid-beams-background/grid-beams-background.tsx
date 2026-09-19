@@ -18,6 +18,7 @@ import {
   type Transition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import { usePageVisible } from "../../utils/use-page-visible";
 import { mulberry32, seededRange } from "../../utils/seeded-random";
 
 export type GridBeamsBackgroundDensity = "sparse" | "normal" | "dense";
@@ -328,7 +329,8 @@ export const GridBeamsBackground = forwardRef(function GridBeamsBackground(
   // both sides and applies immediately.
   const reducedMotion =
     !animate || (hasHydrated && prefersReducedMotion === true);
-  const running = hasHydrated && !reducedMotion && inView;
+  const pageVisible = usePageVisible();
+  const running = hasHydrated && !reducedMotion && inView && pageVisible;
 
   const motionConfig = getGridBeamsBackgroundMotionConfig(speed, reducedMotion);
   const beams = useMemo(

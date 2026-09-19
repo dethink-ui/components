@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat",
+  "type": "registry:ui",
+  "title": "Chat",
+  "description": "Chat for accessible, provider-independent AI conversations.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [
+    "chat-core",
+    "prompt-input",
+    "chat-message",
+    "message-scroller",
+    "live-region",
+    "chat-activity",
+    "chat-attachment",
+    "model-picker",
+    "conversation-list"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat/chat.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/chat/index.ts",
+      "type": "registry:component"
+    }
+  ]
+}

@@ -80,7 +80,7 @@ const radioGroupItemInputClasses =
   "peer absolute inset-0 z-10 m-0 size-full cursor-pointer opacity-0 disabled:cursor-not-allowed";
 
 const radioGroupItemIndicatorBaseClasses =
-  "pointer-events-none flex size-full items-center justify-center rounded-full border border-input bg-background text-transparent shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,opacity] motion-safe:duration-150 peer-disabled:opacity-60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background group-disabled/field-set:opacity-60 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[disabled=true]:opacity-60 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
+  "pointer-events-none flex size-full items-center justify-center rounded-full border border-input bg-background text-transparent shadow-sm outline-none motion-safe:transition-[background-color,border-color,box-shadow,color,opacity] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control peer-disabled:opacity-60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background group-disabled/field-set:opacity-60 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[invalid=true]:border-destructive data-[invalid=true]:ring-2 data-[invalid=true]:ring-destructive/15 data-[disabled=true]:opacity-60 data-[readonly=true]:bg-muted/40 data-[readonly=true]:text-muted-foreground";
 
 const radioGroupItemDotClasses = "size-2 rounded-full bg-current";
 
@@ -373,12 +373,16 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
           data-value={value}
           className={radioGroupItemIndicatorBaseClasses}
         >
-          {selected ? (
-            <span
-              data-slot="radio-group-item-dot"
-              className={radioGroupItemDotClasses}
-            />
-          ) : null}
+          <span
+            data-slot="radio-group-item-dot"
+            className={cn(
+              radioGroupItemDotClasses,
+              "motion-safe:ease-control motion-safe:transition-[opacity,scale] motion-safe:duration-[var(--dt-motion-fast)]",
+              selected
+                ? "scale-100 opacity-100"
+                : "opacity-0 motion-safe:scale-50",
+            )}
+          />
         </span>
       </span>
     );

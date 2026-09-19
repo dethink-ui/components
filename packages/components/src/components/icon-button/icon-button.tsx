@@ -28,7 +28,7 @@ export type IconButtonProps = Omit<
   };
 
 const iconButtonBaseClasses =
-  "inline-flex shrink-0 items-center justify-center border border-transparent font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[loading=true]:cursor-wait data-[loading=true]:opacity-80";
+  "relative inline-flex shrink-0 items-center justify-center border border-transparent font-medium motion-safe:transition-[color,background-color,border-color,opacity,scale] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control motion-safe:enabled:active:scale-[var(--dt-control-press-scale,0.96)] motion-safe:active:duration-[var(--dt-motion-press)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[loading=true]:cursor-wait data-[loading=true]:opacity-80";
 
 const iconButtonVariantClasses: Record<IconButtonVariant, string> = {
   solid:
@@ -133,20 +133,22 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             className={cn(
               iconButtonSpinnerClasses,
               iconButtonIconSizeClasses[size],
+              "absolute",
             )}
           />
-        ) : (
-          <span
-            aria-hidden="true"
-            data-slot="icon-button-icon"
-            className={cn(
-              iconButtonIconClasses,
-              iconButtonIconSizeClasses[size],
-            )}
-          >
-            {children}
-          </span>
-        )}
+        ) : null}
+        <span
+          aria-hidden="true"
+          data-slot="icon-button-icon"
+          className={cn(
+            iconButtonIconClasses,
+            iconButtonIconSizeClasses[size],
+            "motion-safe:ease-control motion-safe:transition-[opacity,scale] motion-safe:duration-[var(--dt-motion-fast)]",
+            loading && "opacity-0 motion-safe:scale-75",
+          )}
+        >
+          {children}
+        </span>
       </button>
     );
   },

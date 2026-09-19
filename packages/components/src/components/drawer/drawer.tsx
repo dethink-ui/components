@@ -239,7 +239,7 @@ const drawerDirectionAxis: Record<DrawerDirection, "horizontal" | "vertical"> =
 const drawerRootClasses = "contents";
 
 const drawerOverlayBaseClasses =
-  "fixed inset-0 z-50 bg-foreground/30 outline-none backdrop-blur-[2px] motion-safe:transition-[opacity,backdrop-filter] data-[entering]:opacity-100 data-[exiting]:opacity-0 data-[exiting]:backdrop-blur-0";
+  "fixed inset-0 z-50 bg-[var(--dt-overlay-scrim)] outline-none backdrop-blur-[2px] motion-safe:transition-opacity data-[entering]:opacity-0 data-[exiting]:opacity-0";
 
 const drawerContentBaseClasses =
   "fixed z-50 flex flex-col border-border/80 bg-background/95 text-foreground shadow-[0_28px_90px_-44px_rgb(0_0_0/0.55),0_12px_36px_-24px_rgb(0_0_0/0.35)] outline-none backdrop-blur will-change-transform motion-safe:transition-[transform,opacity,filter] motion-safe:ease-out";
@@ -299,7 +299,8 @@ const drawerContentScrollBehaviorClasses: Record<DrawerScrollBehavior, string> =
     outside: "overflow-visible",
   };
 
-const drawerPanelClasses = "contents";
+// The dialog needs a real box so native focus and Escape dismissal work on open.
+const drawerPanelClasses = "flex min-h-0 min-w-0 flex-1 flex-col outline-none";
 
 const drawerHeaderClasses =
   "grid shrink-0 gap-[var(--dt-space-1-5)] border-b border-border/60 bg-background/95 p-[var(--dt-space-6)] pb-[var(--dt-space-3)] text-start backdrop-blur";

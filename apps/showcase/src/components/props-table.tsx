@@ -10,9 +10,15 @@ interface PropsTableProps {
   rows: PropRow[];
 }
 
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- This named horizontal scroll region needs a keyboard tab stop. */
 export function PropsTable({ caption, rows }: PropsTableProps) {
   return (
-    <div className="border-border overflow-x-auto rounded-lg border">
+    <div
+      aria-label={caption}
+      role="region"
+      tabIndex={0}
+      className="border-border focus-visible:ring-ring overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:outline-none"
+    >
       <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead>
@@ -68,3 +74,4 @@ export function PropsTable({ caption, rows }: PropsTableProps) {
     </div>
   );
 }
+/* eslint-enable jsx-a11y/no-noninteractive-tabindex */
