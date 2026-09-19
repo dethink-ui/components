@@ -59,7 +59,9 @@ for (const [name, budget] of [
   if (name === "Button") {
     assert(
       !retainedModules.some((id) =>
-        /framer-motion|motion-dom|motion-utils|react-aria|tanstack/.test(id),
+        /framer-motion|motion-dom|motion-utils|react-aria|tanstack|shader-hero-text/.test(
+          id,
+        ),
       ),
       "Button-only consumers must not include motion or complex-widget runtimes",
     );

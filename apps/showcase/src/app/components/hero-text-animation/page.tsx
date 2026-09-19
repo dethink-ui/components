@@ -37,6 +37,17 @@ export default function HeroTextAnimationPage() {
         description="Each animation is shown in a distinct, production-style hero tuned to where it fits best — SaaS, developer tools, security, editorial, luxury, and more. Expand a source panel when you need the implementation."
       >
         <div className="space-y-8">
+          <p className="text-muted-foreground text-sm">
+            For liquid, prismatic, metallic, and mouse-following particle
+            lettering, explore{" "}
+            <a
+              href="/components/shader-hero-text"
+              className="text-primary underline"
+            >
+              ShaderHeroText
+            </a>
+            .
+          </p>
           <ExampleBlock
             file="hero-text-animation/production-hero.tsx"
             title="SaaS product hero — staggered words"

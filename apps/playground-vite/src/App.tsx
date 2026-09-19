@@ -1,6 +1,7 @@
 import { CalendarDate, parseDateTime } from "@internationalized/date";
 import { useState } from "react";
 import {
+  ShaderHeroText,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -280,6 +281,23 @@ export function App() {
             Foundation scaffold is active
           </Heading>
           <ChatSmoke />
+          <section
+            aria-label="Shader hero text smoke"
+            className="border-border space-y-4 rounded-xl border p-6"
+          >
+            <ShaderHeroText
+              as="h2"
+              text="A thousand points. One idea."
+              animation="particle-follow"
+              className="text-5xl font-semibold"
+            />
+            <ShaderHeroText
+              as="h2"
+              text="Make waves."
+              animation="liquid-ripple"
+              className="text-4xl font-semibold"
+            />
+          </section>
           <Text tone="muted">
             This app verifies package imports, style imports, Tailwind tokens,
             the foundation provider, and the first wrapper, container, layout,

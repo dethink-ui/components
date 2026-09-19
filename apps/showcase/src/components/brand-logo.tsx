@@ -1,4 +1,4 @@
-import { cn } from "@dethink/components";
+import { cn } from "../../../../packages/components/src/utils/cn";
 
 /**
  * Dethink mark: a block snapping into place. Three blocks are already merged

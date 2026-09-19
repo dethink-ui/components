@@ -2,6 +2,15 @@ import "./styles.css";
 
 export * from "./components/chat";
 export {
+  ShaderHeroText,
+  shaderHeroTextAnimations,
+  type ShaderHeroTextAnimation,
+  type ShaderHeroTextElement,
+  type ShaderHeroTextTrigger,
+  type ShaderHeroTextProps,
+} from "./components/shader-hero-text";
+
+export {
   DethinkProvider,
   DethinkThemeScript,
   defaultDethinkTheme,

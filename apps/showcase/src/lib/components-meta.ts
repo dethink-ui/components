@@ -100,6 +100,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "effects",
   },
   {
+    slug: "shader-hero-text",
+    name: "ShaderHeroText",
+    description:
+      "Six WebGL headline effects, including particle lettering that follows your mouse and reforms.",
+    type: "effects",
+  },
+  {
     slug: "grid-beams-background",
     name: "GridBeamsBackground",
     description:
