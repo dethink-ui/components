@@ -62,8 +62,9 @@ export default function AccessibilityPage() {
         <ul className="text-muted-foreground list-disc space-y-3 ps-5 text-sm leading-7">
           <li>
             Axe checks tagged WCAG 2.0 and 2.1 A/AA on representative component
-            docs and recipes, in light and dark themes at desktop and mobile
-            sizes, using Chromium, Firefox, and WebKit.
+            docs and recipes, in the default brand palette's light and dark
+            themes at desktop and mobile sizes, using Chromium, Firefox, and
+            WebKit.
           </li>
           <li>
             Open dialog and menu states, plus keyboard focus trapping, Escape

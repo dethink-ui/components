@@ -436,7 +436,7 @@ SidebarShellHeader.displayName = "SidebarShellHeader";
 markSidebarShellPart(SidebarShellHeader, "Header");
 
 export const SidebarShellMain = forwardRef<HTMLElement, SidebarShellMainProps>(
-  ({ as = "main", className, id, tabIndex = -1, ...props }, ref) => {
+  ({ as = "main", className, id, tabIndex = 0, ...props }, ref) => {
     const context = useSidebarShellContext("SidebarShellMain");
     const motionConfig = context.motionConfig;
     const motionProps = {
