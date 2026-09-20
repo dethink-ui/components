@@ -15,7 +15,7 @@ export function SiteFooter() {
           </span>
         </p>
         <a
-          href="https://github.com/parveshh/dethink-components"
+          href="https://github.com/dethink-ui/components"
           target="_blank"
           rel="noreferrer"
           className="text-primary font-medium underline-offset-4 hover:underline"

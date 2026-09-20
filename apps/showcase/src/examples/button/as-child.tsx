@@ -8,7 +8,7 @@ export function ButtonAsChild() {
     <div className="flex flex-wrap items-center justify-center gap-3">
       <Button asChild rightIcon={<ExternalLink />}>
         <a
-          href="https://github.com/parveshh/dethink-components"
+          href="https://github.com/dethink-ui/components"
           target="_blank"
           rel="noreferrer"
         >

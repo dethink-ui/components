@@ -22,8 +22,8 @@ export default function InstallationPage() {
         <CodeBlock
           lang="bash"
           filename="Terminal"
-          code={`git clone https://github.com/parveshh/dethink-components.git
-cd dethink-components
+          code={`git clone https://github.com/dethink-ui/components.git
+cd components
 pnpm install
 pnpm --filter @dethink/showcase dev`}
         />

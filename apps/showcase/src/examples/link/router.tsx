@@ -16,7 +16,7 @@ export function LinkRouter() {
       </p>
       <p>
         <Link
-          href="https://github.com/parveshh/dethink-components"
+          href="https://github.com/dethink-ui/components"
           target="_blank"
           rel="noreferrer"
         >

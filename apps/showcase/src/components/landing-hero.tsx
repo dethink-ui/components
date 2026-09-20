@@ -101,7 +101,7 @@ export function LandingHero() {
             <div className="flex flex-wrap items-center gap-3">
               <PrimaryCta href="/components">Browse components</PrimaryCta>
               <a
-                href="https://github.com/parveshh/dethink-components"
+                href="https://github.com/dethink-ui/components"
                 target="_blank"
                 rel="noreferrer"
                 className="border-border bg-background hover:bg-muted focus-visible:ring-ring focus-visible:ring-offset-background inline-flex h-10 items-center gap-2 rounded-md border px-4 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"

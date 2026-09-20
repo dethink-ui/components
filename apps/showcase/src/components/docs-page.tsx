@@ -179,7 +179,7 @@ export function InstallationSection({
           first. A public npm package and registry are not available yet.
         </p>
         <a
-          href={`https://github.com/parveshh/dethink-components/blob/main/registry/items/${registryName}.json`}
+          href={`https://github.com/dethink-ui/components/blob/main/registry/items/${registryName}.json`}
           className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-4"
         >
           View registry files

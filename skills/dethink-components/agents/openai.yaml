@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dethink Components"
+  short_description: "Build React interfaces with Dethink components"
+  default_prompt: "Use $dethink-components to build this interface with the existing Dethink components and recipes."

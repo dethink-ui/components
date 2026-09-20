@@ -21,7 +21,7 @@ const focusStyles =
 function GithubLink() {
   return (
     <a
-      href="https://github.com/parveshh/dethink-components"
+      href="https://github.com/dethink-ui/components"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="GitHub repository (opens in a new tab)"

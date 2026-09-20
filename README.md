@@ -31,8 +31,8 @@ does not yet provide a public registry URL or a published npm package.
 This project uses pnpm `11.7.0`.
 
 ```sh
-git clone git@github.com:parveshh/dethink-components.git
-cd dethink-components
+git clone git@github.com:dethink-ui/components.git
+cd components
 pnpm install
 ```
 
@@ -108,6 +108,37 @@ pnpm test:e2e
 ```
 
 ## Documentation
+
+### Use with a coding agent
+
+The [Dethink Components skill](skills/dethink-components/SKILL.md) helps agents
+choose components, adapt recipes, set up styles and dependencies, and verify the
+result against the library's actual APIs.
+
+From a checkout containing the skill, install it with the
+[Skills CLI](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add ./skills/dethink-components
+```
+
+Install it from your application directory:
+
+```sh
+npx skills add dethink-ui/components --skill dethink-components
+```
+
+Choose your agent in the installer. In Codex, ask for example:
+
+> Use $dethink-components to build an operations dashboard with a collapsible
+> sidebar and a searchable incidents table.
+
+Or ask your agent to use the Dethink Components skill to adapt a recipe or theme
+an existing interface. Installing the skill provides agent instructions; it does
+not install the component package or publish the registry. The setup limitations
+in [Project status](#project-status) still apply.
+
+### Library references
 
 - [Component inventory](docs/component-inventory.md) — the full planned catalog.
 - [Development path](docs/development-path.md) — the order used to build the library.
