@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
+import { dirname, resolve } from "node:path";
 
 // Publish an explicitly reviewed snapshot, never a fabricated or partial pass.
 // Run pnpm test:accessibility:report from a clean, committed source revision first.
@@ -112,9 +113,27 @@ await writeFile(
 </main></body></html>\n`,
 );
 const archive = resolve(directory, "accessibility-report.zip");
+const reportDirectory = resolve("playwright-report/accessibility");
+const require = createRequire(import.meta.url);
+const playwrightRequire = createRequire(
+  require.resolve("@playwright/test/package.json"),
+);
+const playwrightDirectory = dirname(
+  playwrightRequire.resolve("playwright/package.json"),
+);
+for (const name of ["LICENSE", "NOTICE", "ThirdPartyNotices.txt"]) {
+  await copyFile(
+    resolve(playwrightDirectory, name),
+    resolve(reportDirectory, name),
+  );
+}
+await writeFile(
+  resolve(reportDirectory, "README.txt"),
+  `Dethink Components accessibility snapshot\nTested source: ${metadata.testedCommit}\nOpen with: npx playwright show-report <this-directory>\n\nThe HTML report viewer is provided by Playwright; its license and notices accompany this archive. Full scan attachments retain incomplete checks requiring human review. This report is automated evidence, not WCAG certification or screen-reader testing.\n`,
+);
 await rm(archive, { force: true });
 execFileSync("zip", ["-qr", archive, "."], {
-  cwd: resolve("playwright-report/accessibility"),
+  cwd: reportDirectory,
 });
 console.log(
   `Published ${scans.length} scans; ${needsReview} scans need human review. Source: ${metadata.testedCommit}`,
