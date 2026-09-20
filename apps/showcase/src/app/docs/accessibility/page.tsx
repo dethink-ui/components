@@ -40,25 +40,12 @@ export default function AccessibilityPage() {
               Download the Playwright report (ZIP)
             </a>
           </li>
-          <li>
-            <a
-              className={linkStyles}
-              href="https://github.com/dethink-ui/components/actions/workflows/browser-checks.yml"
-            >
-              View the latest test runs on GitHub
-            </a>
-          </li>
         </ul>
         <p className="text-muted-foreground text-sm leading-7">
           Download and unzip the report. Run{" "}
           <code>npx playwright show-report</code> followed by the extracted
           folder path. Select a test to view its results and axe JSON
           attachments.
-        </p>
-        <p className="text-muted-foreground text-sm leading-7">
-          To download a report from GitHub, sign in, open a completed Browser
-          checks run, and select the <code>accessibility-report</code> artifact.
-          Maintainers start these runs manually. Reports are kept for 30 days.
         </p>
       </DocsSection>
       <DocsSection id="coverage" title="What we check">
