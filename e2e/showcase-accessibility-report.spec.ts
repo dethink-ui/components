@@ -33,21 +33,13 @@ for (const theme of ["light", "dark"] as const) {
         await expect(
           page.getByRole("heading", { level: 1 }).first(),
         ).toBeVisible();
-        // Settle theme transitions before opening overlays, which can suspend
-        // animation playback in their inert background content.
-        await page.evaluate(async () => {
-          await document.fonts.ready;
-          await Promise.all(
-            document
-              .getAnimations()
-              .filter(
-                (animation) =>
-                  animation instanceof CSSTransition &&
-                  animation.playState === "running",
-              )
-              .map((animation) => animation.finished.catch(() => undefined)),
-          );
-        });
+        // These scans measure a settled theme, not the 150ms initial color
+        // transition. Animation.finished can remain pending in background tabs
+        // in Firefox, so use a bounded window for this visual measurement.
+        await expect
+          .poll(() => page.evaluate(() => document.fonts.status))
+          .toBe("loaded");
+        await page.waitForTimeout(300);
         if (state === "open dialog") {
           await page
             .getByRole("button", { name: "Workspace settings", exact: true })
@@ -80,7 +72,7 @@ for (const theme of ["light", "dark"] as const) {
               browser: testInfo.project.name,
               browserVersion: browser.version(),
               scope:
-                "Page scanned after fonts and running CSS theme transitions settle, including the visible overlay when open. Default brand palette. No rules or selectors excluded.",
+                "Page scanned after fonts load and a 300ms theme-settlement window, including the visible overlay when open. Default brand palette. No rules or selectors excluded.",
             },
             null,
             2,
