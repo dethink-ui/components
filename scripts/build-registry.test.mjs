@@ -17,6 +17,17 @@ test("hosted payloads include source and resolvable copied dependency trees", as
   );
   assert(items.has("button"));
   assert(items.has("dethink-base"));
+  const license = await readFile(
+    new URL("../LICENSE", import.meta.url),
+    "utf8",
+  );
+  const manifest = JSON.parse(
+    await readFile(
+      new URL("../packages/components/package.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  assert.equal(manifest.license, "MIT");
   assert.deepEqual(items.get("data-table").dependencies, [
     "@tanstack/react-table@8.21.3",
   ]);
@@ -42,6 +53,11 @@ test("hosted payloads include source and resolvable copied dependency trees", as
       }
     }
     include(item);
+    assert.equal(
+      files.get("~/components/dethink/LICENSE")?.content,
+      license,
+      `${item.name}: installed dependency tree must include the full MIT notice`,
+    );
     for (const file of files.values()) {
       if (!/\.tsx?$/.test(file.target)) continue;
       for (const match of file.content.matchAll(

@@ -166,7 +166,11 @@ const itemJustifyClasses: Record<GridItemJustify, string> = {
 const RouterAnchor = forwardRef<
   HTMLAnchorElement,
   React.AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }
->(({ to, ...props }, ref) => <a ref={ref} href={to} {...props} />);
+>(({ to, children, ...props }, ref) => (
+  <a ref={ref} href={to} {...props}>
+    {children}
+  </a>
+));
 RouterAnchor.displayName = "RouterAnchor";
 
 function gapClass(gap: GridGap) {

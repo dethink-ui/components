@@ -330,6 +330,7 @@ export const CardScrollerItem = forwardRef<
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- Keyboard events bubble from the native radio input; the wrapper adds no tab stop.
     <div
       {...htmlProps}
       ref={ref}

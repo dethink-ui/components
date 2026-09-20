@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ComponentMatrix } from "@/components/component-matrix";
+import { LibraryFeatures } from "@/components/library-features";
 import { WorkbenchDock } from "@/components/workbench-dock";
 import { WorkbenchHero } from "@/components/workbench-hero";
 import { componentCatalog } from "@/lib/components-meta";
@@ -33,7 +34,7 @@ const typeScale = [
   {
     label: "Display / 52",
     className: "font-heading text-5xl font-bold tracking-tight",
-    sample: "Space Grotesk",
+    sample: "Bricolage Grotesque",
   },
   {
     label: "Heading / 22",
@@ -43,7 +44,7 @@ const typeScale = [
   {
     label: "Body / 16",
     className: "font-sans text-base",
-    sample: "Inter carries every paragraph, label, and UI string.",
+    sample: "Manrope carries every paragraph, label, and UI string.",
   },
   {
     label: "Mono / 13",
@@ -83,6 +84,11 @@ export default function HomePage() {
           />
         </div>
       </section>
+
+      <LibraryFeatures
+        componentCount={componentCount}
+        recipeCount={recipeCount}
+      />
 
       {/* ============================== COMPONENT MATRIX ============================== */}
       <section

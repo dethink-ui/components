@@ -756,7 +756,6 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
       size = "md",
       snapPoints,
       velocityThreshold = DRAWER_DEFAULT_VELOCITY_THRESHOLD,
-      ...props
     },
     ref,
   ) => {
@@ -1075,6 +1074,7 @@ function DrawerPushContent(
   });
 
   const panel = (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The dialog handles bubbled Escape keys while focus remains on its controls.
     <div
       ref={panelRef}
       aria-describedby={joinIds(ariaDescribedBy, descriptionId ?? undefined)}
@@ -1108,7 +1108,9 @@ function DrawerPushContent(
     return (
       <div
         {...props}
-        ref={composeRefs(ref, outerRef)}
+        ref={(node) => {
+          composeRefs(ref, outerRef)(node);
+        }}
         data-direction={direction}
         data-drawer-receded={receded ? "true" : undefined}
         data-modal="false"
@@ -1137,7 +1139,9 @@ function DrawerPushContent(
       {...props}
       {...motionProps}
       layoutId={layoutId}
-      ref={composeRefs(ref, outerRef)}
+      ref={(node) => {
+        composeRefs(ref, outerRef)(node);
+      }}
       data-direction={direction}
       data-drawer-receded={receded ? "true" : undefined}
       data-modal="false"
@@ -1324,7 +1328,10 @@ function DrawerModalContent(
               {...props}
               {...motionProps}
               layoutId={layoutId}
-              ref={composeRefs(ref, outerRef)}
+              ref={(node: HTMLDivElement | null) => {
+                // eslint-disable-next-line react-hooks/refs -- This callback assigns refs at commit; the surrounding render IIFE confuses compiler analysis.
+                composeRefs(ref, outerRef)(node);
+              }}
               data-direction={direction}
               data-drawer-receded={receded ? "true" : undefined}
               data-modal="true"
@@ -1342,7 +1349,9 @@ function DrawerModalContent(
       ) : (
         <Modal
           {...props}
-          ref={composeRefs(ref, outerRef)}
+          ref={(node) => {
+            composeRefs(ref, outerRef)(node);
+          }}
           data-direction={direction}
           data-drawer-receded={receded ? "true" : undefined}
           data-modal="true"

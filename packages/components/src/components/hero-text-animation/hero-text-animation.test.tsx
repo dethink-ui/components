@@ -70,6 +70,7 @@ describe("HeroTextAnimation", () => {
 
   it("supports h2, paragraph, and span roots", () => {
     const { rerender } = render(
+      // eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it.
       <HeroTextAnimation as="h2" text="Ship safer hero motion." />,
     );
 

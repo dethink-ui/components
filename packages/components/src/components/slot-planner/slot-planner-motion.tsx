@@ -1,4 +1,4 @@
-import { forwardRef, useRef, type ReactNode } from "react";
+import { forwardRef, useState, type ReactNode } from "react";
 import {
   AnimatePresence,
   motion,
@@ -327,9 +327,8 @@ export const SlotPlannerSlotListItem = forwardRef<
     const isPresent = useIsPresent();
     // Entrance and stagger only apply at mount; capturing them keeps the
     // rendered stagger state stable once the parent clears its bookkeeping.
-    const mountMotionRef = useRef({ entrance, staggerIndex });
-    const { entrance: mountEntrance, staggerIndex: mountStaggerIndex } =
-      mountMotionRef.current;
+    const [{ entrance: mountEntrance, staggerIndex: mountStaggerIndex }] =
+      useState(() => ({ entrance, staggerIndex }));
 
     if (!motionEnabled) {
       return (

@@ -1101,12 +1101,20 @@ function useTypewriterInView({
   const ref = useRef<HTMLSpanElement>(null);
   const [isInView, setIsInView] = useState(trigger !== "in-view");
 
-  useEffect(() => {
-    if (trigger !== "in-view") {
-      setIsInView(true);
-      return;
-    }
+  const [previousViewOptions, setPreviousViewOptions] = useState({
+    once,
+    trigger,
+  });
+  if (
+    previousViewOptions.once !== once ||
+    previousViewOptions.trigger !== trigger
+  ) {
+    setPreviousViewOptions({ once, trigger });
+    setIsInView(trigger !== "in-view");
+  }
 
+  useEffect(() => {
+    if (trigger !== "in-view") return;
     const element = ref.current;
 
     if (
@@ -1117,8 +1125,6 @@ function useTypewriterInView({
       setIsInView(true);
       return;
     }
-
-    setIsInView(false);
 
     const observer = new window.IntersectionObserver(
       ([entry]) => {
@@ -1183,16 +1189,38 @@ function TypewriterSegments({
     reducedMotion ? characterCount : 0,
   );
 
-  useEffect(() => {
-    if (reducedMotion) {
-      setVisibleLength(characterCount);
-      return;
-    }
+  const [previousRun, setPreviousRun] = useState({
+    text,
+    delay,
+    duration,
+    reducedMotion,
+    shouldStart,
+    onAnimationStart,
+    onAnimationComplete,
+  });
+  if (
+    previousRun.text !== text ||
+    previousRun.delay !== delay ||
+    previousRun.duration !== duration ||
+    previousRun.reducedMotion !== reducedMotion ||
+    previousRun.shouldStart !== shouldStart ||
+    previousRun.onAnimationStart !== onAnimationStart ||
+    previousRun.onAnimationComplete !== onAnimationComplete
+  ) {
+    setPreviousRun({
+      text,
+      delay,
+      duration,
+      reducedMotion,
+      shouldStart,
+      onAnimationStart,
+      onAnimationComplete,
+    });
+    setVisibleLength(reducedMotion ? characterCount : 0);
+  }
 
-    if (!shouldStart || characterCount === 0) {
-      setVisibleLength(0);
-      return;
-    }
+  useEffect(() => {
+    if (reducedMotion || !shouldStart || characterCount === 0) return;
 
     const { charactersPerTick, intervalMs } = getTypewriterTiming({
       characterCount,
@@ -1201,8 +1229,6 @@ function TypewriterSegments({
     let cancelled = false;
     let nextVisibleLength = 0;
     let intervalId: number | undefined;
-
-    setVisibleLength(0);
 
     const delayId = window.setTimeout(
       () => {
@@ -3084,6 +3110,7 @@ export const HeroTextAnimation = forwardRef<
 
     return createElement(
       as,
+      // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
       {
         ...props,
         ref,

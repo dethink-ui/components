@@ -158,5 +158,16 @@ For new components or larger public API changes, read the project workflow in
 
 ## License
 
-This repository does not yet include a license file. Please contact the
-maintainers before reusing the code outside this project.
+The component and recipe code, tooling, and documentation are licensed under the
+[MIT License](LICENSE). You can use and modify them in commercial and closed-source
+applications. Keep the copyright and license notice with copies or substantial
+portions of the code; visible UI attribution is not required.
+
+Registry installs include `components/dethink/LICENSE`, and the package includes
+its own `LICENSE`. Preserve that notice when copying files manually as well.
+
+Third-party dependencies and fonts retain their own licenses. Showcase photography,
+avatars, generated concept images, screenshots, and brand artwork are not covered
+by the code's MIT license unless separately identified as such. The license does
+not grant trademark rights to the Dethink name or logo. See
+[third-party and asset notices](THIRD_PARTY_NOTICES.md).

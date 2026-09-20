@@ -1,6 +1,7 @@
 {
   "name": "dethink-components-workspace",
   "version": "0.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.7.0",
@@ -11,8 +12,8 @@
     "check": "pnpm docs:dependencies:check && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test",
     "format": "prettier --write \".github/**/*.{yml,yaml}\" \"apps/**/*.{css,js,jsx,json,md,mdx,mjs,cjs,ts,tsx}\" \"packages/**/*.{css,js,jsx,json,md,mdx,mjs,cjs,ts,tsx}\" \"registry/**/*.json\" \"scripts/**/*.{js,mjs,cjs,ts}\" \"*.{js,json,mjs,cjs,ts}\" \"tsconfig*.json\" \"pnpm-workspace.yaml\"",
     "format:check": "prettier --check \".github/**/*.{yml,yaml}\" \"apps/**/*.{css,js,jsx,json,md,mdx,mjs,cjs,ts,tsx}\" \"packages/**/*.{css,js,jsx,json,md,mdx,mjs,cjs,ts,tsx}\" \"registry/**/*.json\" \"scripts/**/*.{js,mjs,cjs,ts}\" \"*.{js,json,mjs,cjs,ts}\" \"tsconfig*.json\" \"pnpm-workspace.yaml\"",
-    "lint": "eslint \"**/*.{js,mjs,cjs,ts,tsx}\"",
-    "lint:fix": "eslint \"**/*.{js,mjs,cjs,ts,tsx}\" --fix",
+    "lint": "eslint \"**/*.{js,mjs,cjs,ts,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint \"**/*.{js,mjs,cjs,ts,tsx}\" --fix --max-warnings 0",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "test:a11y": "pnpm -r --if-present test:a11y",

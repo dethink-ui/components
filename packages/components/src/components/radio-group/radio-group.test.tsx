@@ -146,7 +146,8 @@ describe("RadioGroup", () => {
     expect(radio).toBeRequired();
     expect(radio).toHaveAttribute("readonly");
     expect(radio).toHaveAttribute("aria-invalid", "true");
-    expect(radio).toHaveAttribute("aria-readonly", "true");
+    expect(group).toHaveAttribute("aria-readonly", "true");
+    expect(radio).toHaveAttribute("aria-disabled", "true");
     expect(root).toHaveAttribute("data-disabled", "true");
     expect(root).toHaveAttribute("data-invalid", "true");
     expect(root).toHaveAttribute("data-readonly", "true");

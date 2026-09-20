@@ -2284,11 +2284,13 @@ export const CommandPalette = forwardRef<HTMLDivElement, CommandPaletteProps>(
                       {description}
                     </p>
                   ) : null}
+                  {/* eslint-disable jsx-a11y/no-autofocus -- Initial focus belongs in this newly opened modal. */}
                   <CommandPaletteInput
                     aria-label={label ? undefined : resolvedAriaLabel}
                     autoFocus={dialogActionContext ? true : undefined}
                     placeholder={placeholder}
                   />
+                  {/* eslint-enable jsx-a11y/no-autofocus */}
                 </div>
                 <CommandPalettePageStack
                   data-page={activePageId ?? "root"}
@@ -2701,7 +2703,6 @@ export const CommandPaletteItem = forwardRef<
         );
       }
 
-      const childRef = getChildRef(child);
       const resolvedHref = child.props.href ?? resolvedCommand.href;
       const resolvedTarget = child.props.target ?? resolvedCommand.target;
       const resolvedRel = mergeRelForTarget(
@@ -2712,7 +2713,9 @@ export const CommandPaletteItem = forwardRef<
       const clonedProps: CommandPaletteItemSlotProps = {
         ...commonProps,
         ...child.props,
-        ref: composeRefs(composedRef, childRef),
+        ref: (node) => {
+          composeRefs(composedRef, getChildRef(child))(node);
+        },
         className: cn(classes, child.props.className),
         onClick: composeEventHandlers(child.props.onClick, handleClick),
         onFocus: composeEventHandlers(child.props.onFocus, handleFocus),

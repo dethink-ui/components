@@ -10,9 +10,7 @@ import {
   useEffect,
   useId,
   useMemo,
-  useRef,
   useState,
-  type ForwardedRef,
   type FieldsetHTMLAttributes,
   type FormHTMLAttributes,
   type HTMLAttributes,
@@ -120,11 +118,6 @@ type FieldControlSlotProps = Record<string, unknown> & {
 };
 
 type FieldContextValue = {
-  allocateDescriptionId: (
-    id: string | undefined,
-    hasContent: boolean,
-  ) => string;
-  allocateErrorId: (id: string | undefined, hasContent: boolean) => string;
   controlId: string;
   descriptionIds: string[];
   disabled: boolean;
@@ -292,56 +285,43 @@ function getErrorContent({
 function collectFieldRelationshipIds(children: ReactNode, controlId: string) {
   const descriptionIds: string[] = [];
   const errorIds: string[] = [];
-  let descriptionIndex = 0;
-  let errorIndex = 0;
-
-  function visit(node: ReactNode) {
-    Children.forEach(node, (child) => {
+  function visit(node: ReactNode): ReactNode {
+    return Children.map(node, (child) => {
       if (
         !isValidElement<{
           children?: ReactNode;
           errors?: FieldErrorItem[];
           id?: string;
         }>(child)
+      )
+        return child;
+      if (
+        child.type === FieldDescription &&
+        hasRenderableContent(child.props.children)
       ) {
-        return;
+        const id =
+          child.props.id ??
+          getDefaultDescriptionId(controlId, descriptionIds.length);
+        descriptionIds.push(id);
+        return cloneElement(child, { id });
       }
-
-      if (child.type === FieldDescription) {
-        if (hasRenderableContent(child.props.children)) {
-          descriptionIds.push(
-            child.props.id ??
-              getDefaultDescriptionId(controlId, descriptionIndex),
-          );
-          descriptionIndex += 1;
-        }
-
-        return;
+      if (
+        child.type === FieldError &&
+        hasRenderableContent(getErrorContent(child.props).content)
+      ) {
+        const id =
+          child.props.id ?? getDefaultErrorId(controlId, errorIds.length);
+        errorIds.push(id);
+        return cloneElement(child, { id });
       }
-
-      if (child.type === FieldError) {
-        if (hasRenderableContent(getErrorContent(child.props).content)) {
-          errorIds.push(
-            child.props.id ?? getDefaultErrorId(controlId, errorIndex),
-          );
-          errorIndex += 1;
-        }
-
-        return;
+      if (child.type !== Field && child.props.children !== undefined) {
+        return cloneElement(child, { children: visit(child.props.children) });
       }
-
-      if (child.type !== Field) {
-        visit(child.props.children);
-      }
+      return child;
     });
   }
-
-  visit(children);
-
-  return {
-    descriptionIds,
-    errorIds,
-  };
+  const resolvedChildren = visit(children);
+  return { descriptionIds, errorIds, children: resolvedChildren };
 }
 
 function mergeIdLists(...lists: string[][]) {
@@ -481,10 +461,6 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
   ) => {
     const generatedId = useId();
     const controlId = id ?? generatedId;
-    const descriptionIndexRef = useRef(0);
-    const errorIndexRef = useRef(0);
-    descriptionIndexRef.current = 0;
-    errorIndexRef.current = 0;
     const staticRelationshipIds = useMemo(
       () => collectFieldRelationshipIds(children, controlId),
       [children, controlId],
@@ -505,32 +481,6 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
       () => mergeIdLists(staticRelationshipIds.errorIds, registeredErrorIds),
       [registeredErrorIds, staticRelationshipIds.errorIds],
     );
-    const allocateDescriptionId = useCallback(
-      (descriptionId: string | undefined, hasContent: boolean) => {
-        if (!hasContent) {
-          return descriptionId ?? getDefaultDescriptionId(controlId, 0);
-        }
-
-        const index = descriptionIndexRef.current;
-        descriptionIndexRef.current += 1;
-
-        return descriptionId ?? getDefaultDescriptionId(controlId, index);
-      },
-      [controlId],
-    );
-    const allocateErrorId = useCallback(
-      (errorId: string | undefined, hasContent: boolean) => {
-        if (!hasContent) {
-          return errorId ?? getDefaultErrorId(controlId, 0);
-        }
-
-        const index = errorIndexRef.current;
-        errorIndexRef.current += 1;
-
-        return errorId ?? getDefaultErrorId(controlId, index);
-      },
-      [controlId],
-    );
     const registerDescription = useCallback((descriptionId: string) => {
       setRegisteredDescriptionIds((ids) => addUniqueId(ids, descriptionId));
 
@@ -547,8 +497,6 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
     }, []);
     const contextValue = useMemo<FieldContextValue>(
       () => ({
-        allocateDescriptionId,
-        allocateErrorId,
         controlId,
         descriptionIds,
         disabled,
@@ -561,8 +509,6 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
         required,
       }),
       [
-        allocateDescriptionId,
-        allocateErrorId,
         controlId,
         descriptionIds,
         disabled,
@@ -591,7 +537,7 @@ export const Field = forwardRef<HTMLElement, FieldProps>(
             "data-required": required ? "true" : undefined,
             className: fieldClassNames({ className }),
           },
-          children,
+          staticRelationshipIds.children,
         )}
       </FieldContext.Provider>
     );
@@ -662,7 +608,6 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
       : ariaErrorMessage;
     const controlProps = {
       ...props,
-      ref,
       id: resolvedId,
       "aria-describedby": describedBy,
       "aria-errormessage": errorMessage,
@@ -699,10 +644,13 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
           )
         : mergeIds(child.props["aria-errormessage"], ariaErrorMessage);
 
+      // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
       return cloneElement(child, {
         ...controlProps,
         ...child.props,
-        ref: composeRefs(ref, getChildRef(child)),
+        ref: (node) => {
+          composeRefs(ref, getChildRef(child))(node);
+        },
         id: controlProps.id ?? child.props.id,
         "aria-describedby": childDescribedBy,
         "aria-errormessage": childErrorMessage,
@@ -721,7 +669,8 @@ export const FieldControl = forwardRef<HTMLElement, FieldControlProps>(
       } as Partial<FieldControlSlotProps>);
     }
 
-    return createElement("div", controlProps, children);
+    // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
+    return createElement("div", { ...controlProps, ref }, children);
   },
 );
 
@@ -732,10 +681,7 @@ export const FieldDescription = forwardRef<HTMLElement, FieldDescriptionProps>(
     const field = useFieldContext();
     const generatedId = useId();
     const hasContent = hasRenderableContent(children);
-    const resolvedId =
-      field?.allocateDescriptionId(id, hasContent) ??
-      id ??
-      `field-${generatedId}-description`;
+    const resolvedId = id ?? `field-${generatedId}-description`;
 
     useRegisteredId({
       id: resolvedId,
@@ -749,6 +695,7 @@ export const FieldDescription = forwardRef<HTMLElement, FieldDescriptionProps>(
 
     return createElement(
       Element,
+      // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
       {
         ...props,
         ref,
@@ -770,10 +717,7 @@ export const FieldError = forwardRef<HTMLElement, FieldErrorProps>(
     const generatedId = useId();
     const { content } = getErrorContent({ children, errors });
     const hasContent = hasRenderableContent(content);
-    const resolvedId =
-      field?.allocateErrorId(id, hasContent) ??
-      id ??
-      `field-${generatedId}-error`;
+    const resolvedId = id ?? `field-${generatedId}-error`;
 
     useRegisteredId({
       id: resolvedId,
@@ -787,6 +731,7 @@ export const FieldError = forwardRef<HTMLElement, FieldErrorProps>(
 
     return createElement(
       Element,
+      // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
       {
         ...props,
         ref,

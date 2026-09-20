@@ -393,7 +393,6 @@ function normalizeOverflowItems(
 function addTrailingIndexes({
   count,
   indexes,
-  items,
   startIndex,
 }: {
   count: number;
@@ -935,7 +934,13 @@ export const BreadcrumbOverflow = forwardRef<
   BreadcrumbOverflowProps
 >(
   (
-    { className, items, label = "Show breadcrumb path", size = "md", ...props },
+    {
+      className,
+      items,
+      label = "Show breadcrumb path",
+      size: _size = "md",
+      ...props
+    },
     ref,
   ) => {
     const normalizedItems = normalizeOverflowItems(items);

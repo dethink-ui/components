@@ -229,6 +229,7 @@ describe("Card", () => {
     // @ts-expect-error Card spacing uses constrained token values.
     const invalidSpacing = <Card spacing="xl" />;
     // @ts-expect-error CardTitle supports only heading-safe element choices.
+    // eslint-disable-next-line jsx-a11y/anchor-is-valid -- An anchor without href is the deliberate fixture for non-interactive Card behavior.
     const invalidTitle = <CardTitle as="a">Title</CardTitle>;
     // @ts-expect-error Card does not expose arbitrary CSS prop parsing.
     const invalidStyleProp = <Card backgroundColor="red" />;

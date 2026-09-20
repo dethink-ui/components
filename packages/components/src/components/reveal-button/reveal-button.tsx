@@ -351,12 +351,10 @@ export const RevealButton = forwardRef<HTMLButtonElement, RevealButtonProps>(
       };
     }, [canReveal]);
 
-    useEffect(() => {
-      if (disabled) {
-        setHovered(false);
-        setFocused(false);
-      }
-    }, [disabled]);
+    if (disabled && (hovered || focused)) {
+      setHovered(false);
+      setFocused(false);
+    }
 
     const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
       if (isActivationDisabled) {

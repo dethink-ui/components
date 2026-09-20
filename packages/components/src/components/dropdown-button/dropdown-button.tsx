@@ -632,6 +632,7 @@ export const DropdownButton = forwardRef<HTMLDivElement, DropdownButtonProps>(
       }
 
       if (!isControlled) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- An unavailable open menu must publish onOpenChange and restore focus after commit; this closes its local state too.
         setUncontrolledOpen(false);
       }
       onOpenChange?.(false);

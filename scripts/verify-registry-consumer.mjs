@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtemp, mkdir, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { verifyRegistryRuntime } from "./verify-registry-runtime.mjs";
@@ -169,6 +169,11 @@ await run("npx", [
   "--yes",
   ...components.map((name) => new URL(`/r/${name}.json`, origin).href),
 ]);
+assert.equal(
+  await readFile(join(root, "components/dethink/LICENSE"), "utf8"),
+  await readFile(new URL("../LICENSE", import.meta.url), "utf8"),
+  "The actual registry installation must preserve the complete MIT notice",
+);
 await run("npm", ["run", "build"]);
 await verifyRegistryRuntime(root, framework);
 console.log(

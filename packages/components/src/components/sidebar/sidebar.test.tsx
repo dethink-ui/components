@@ -64,7 +64,11 @@ function stubMatchMedia() {
 const RouterLink = forwardRef<
   HTMLAnchorElement,
   AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }
->(({ to, ...props }, ref) => <a ref={ref} href={to} {...props} />);
+>(({ to, children, ...props }, ref) => (
+  <a ref={ref} href={to} {...props}>
+    {children}
+  </a>
+));
 RouterLink.displayName = "RouterLink";
 
 function DashboardIcon() {
@@ -536,8 +540,6 @@ describe("Sidebar", () => {
 
   it("supports uncontrolled collapsible groups", async () => {
     const user = userEvent.setup();
-
-    const routerLinkRef = createRef<HTMLAnchorElement>();
 
     render(
       <SidebarProvider>

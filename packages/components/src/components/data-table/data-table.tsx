@@ -476,6 +476,7 @@ export function DataTable<TData extends RowData>({
   const hasRowSelection = selectionMode !== "none";
   const hasRowActions = renderRowActions !== undefined;
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table v8 returns mutable table methods; keep this call outside React Compiler memoization.
   const table = useReactTable({
     autoResetPageIndex: !manualPagination,
     columnResizeMode: "onChange",

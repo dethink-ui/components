@@ -24,12 +24,21 @@ const fontMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://components.dethink.co.uk"),
   title: {
     default: "Dethink Components — open-code React components",
     template: "%s · Dethink Components",
   },
   description:
     "Token-themed, accessible, open-code React components for production dashboards, internal tools, and AI-native applications.",
+  openGraph: {
+    type: "website",
+    siteName: "Dethink Components",
+    locale: "en_GB",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export const viewport: Viewport = {

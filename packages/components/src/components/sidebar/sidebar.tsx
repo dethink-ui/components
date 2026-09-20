@@ -11,6 +11,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type AnchorHTMLAttributes,
   type ButtonHTMLAttributes,
   type CSSProperties,
@@ -34,6 +35,10 @@ import {
   type Variants,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+
+const subscribePortal = () => () => {};
+const getPortalSnapshot = () => document.body;
+const getServerPortalSnapshot = () => null;
 
 export type SidebarSide = "left" | "right";
 export type SidebarVariant =
@@ -1176,16 +1181,13 @@ export const SidebarGroupContent = forwardRef<
   const isOpen = context?.collapsible ? context.open : true;
   const [present, setPresent] = useState(isOpen);
 
+  const [previousOpen, setPreviousOpen] = useState(isOpen);
+  if (previousOpen !== isOpen) {
+    setPreviousOpen(isOpen);
+    if (isOpen || !canAnimateExit(motion)) setPresent(isOpen);
+  }
   useEffect(() => {
-    if (isOpen) {
-      setPresent(true);
-      return undefined;
-    }
-
-    if (!canAnimateExit(motion)) {
-      setPresent(false);
-      return undefined;
-    }
+    if (isOpen || !canAnimateExit(motion)) return undefined;
 
     const fallback = window.setTimeout(() => setPresent(false), exitFallbackMs);
 
@@ -1207,7 +1209,10 @@ export const SidebarGroupContent = forwardRef<
   };
 
   const isHidden =
-    hidden ?? (context?.collapsible ? !isOpen && !present : undefined);
+    hidden ??
+    (context?.collapsible
+      ? !isOpen && (!present || !canAnimateExit(motion))
+      : undefined);
 
   return (
     <div
@@ -1253,8 +1258,10 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     const side = sideProp ?? surfaceContext?.side ?? context.side;
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const panelRef = useRef<HTMLDivElement | null>(null);
-    const [portalElement, setPortalElement] = useState<HTMLElement | null>(
-      null,
+    const portalElement = useSyncExternalStore(
+      subscribePortal,
+      getPortalSnapshot,
+      getServerPortalSnapshot,
     );
     const titleId = useId();
     const wasOpenRef = useRef(context.mobileOpen);
@@ -1263,10 +1270,6 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     const motionTransition = getSidebarMotionTransition(resolvedMotion);
     const panelOffset =
       side === "left" ? "calc(var(--dt-space-3) * -1)" : "var(--dt-space-3)";
-
-    useEffect(() => {
-      setPortalElement(document.body);
-    }, []);
 
     useEffect(() => {
       if (context.mobileOpen) {
@@ -1595,7 +1598,6 @@ export const SidebarMenuLink = forwardRef<
         );
       }
 
-      const childRef = getChildRef(child);
       const childTarget = child.props.target ?? resolvedTarget;
       const childRel = mergeRelForTarget(
         child.props.rel ?? resolvedRel,
@@ -1612,7 +1614,9 @@ export const SidebarMenuLink = forwardRef<
       const clonedProps: SidebarMenuLinkSlotProps = {
         ...props,
         ...child.props,
-        ref: composeRefs(ref as Ref<HTMLElement>, childRef),
+        ref: (node) => {
+          composeRefs(ref as Ref<HTMLElement>, getChildRef(child))(node);
+        },
         style: tooltipAnchorStyle(tooltipAnchorName, childTooltip, childStyle),
         "aria-current": childAriaCurrent,
         "aria-disabled": disabled ? true : child.props["aria-disabled"],
@@ -1640,6 +1644,7 @@ export const SidebarMenuLink = forwardRef<
 
       return cloneElement(
         child,
+        // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
         clonedProps,
         renderMenuContent({
           badge,

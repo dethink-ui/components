@@ -307,12 +307,14 @@ export function App() {
             aria-label="Shader hero text smoke"
             className="border-border space-y-4 rounded-xl border p-6"
           >
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <ShaderHeroText
               as="h2"
               text="A thousand points. One idea."
               animation="particle-follow"
               className="text-5xl font-semibold"
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <ShaderHeroText
               as="h2"
               text="Make waves."
@@ -1026,7 +1028,11 @@ export function App() {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel autoFocus>Cancel</AlertDialogCancel>
+                    {/* eslint-disable jsx-a11y/no-autofocus -- Initial focus belongs in this newly opened modal. */}
+                    <AlertDialogCancel autoFocus={true}>
+                      {/* eslint-enable jsx-a11y/no-autofocus */}
+                      Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction variant="destructive">
                       Delete report
                     </AlertDialogAction>

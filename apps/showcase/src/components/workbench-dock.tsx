@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NavDock, type NavDockItemData } from "@dethink/components";
-import { Blocks, LayoutGrid, Layers, Palette } from "lucide-react";
+import { Blocks, LayoutGrid, Layers, Palette, Sparkles } from "lucide-react";
 
 /*
  * The workbench dock mirrors the design's sidebar sections as a floating,
@@ -13,6 +13,7 @@ import { Blocks, LayoutGrid, Layers, Palette } from "lucide-react";
  */
 const sections = [
   { value: "overview", title: "Overview", icon: <LayoutGrid /> },
+  { value: "features", title: "Features", icon: <Sparkles /> },
   { value: "matrix", title: "Components", icon: <Blocks /> },
   { value: "recipes", title: "Recipes", icon: <Layers /> },
   { value: "foundations", title: "Foundations", icon: <Palette /> },

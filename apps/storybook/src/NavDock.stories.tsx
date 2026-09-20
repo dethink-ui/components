@@ -118,7 +118,11 @@ const navDockIconProps = {
 const RouterLink = forwardRef<
   HTMLAnchorElement,
   AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }
->(({ to, ...props }, ref) => <a ref={ref} href={to} {...props} />);
+>(({ to, children, ...props }, ref) => (
+  <a ref={ref} href={to} {...props}>
+    {children}
+  </a>
+));
 RouterLink.displayName = "RouterLink";
 
 function getItems(onAction: () => void = () => undefined): NavDockItemData[] {

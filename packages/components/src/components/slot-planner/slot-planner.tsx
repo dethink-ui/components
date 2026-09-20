@@ -4,6 +4,7 @@ import {
   forwardRef,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useId,
   useMemo,
   useRef,
@@ -58,7 +59,6 @@ import {
   slotPlannerSlotCardClasses,
   slotPlannerStatusBadgeClasses,
   slotPlannerStatusDotClasses,
-  slotPlannerToolbarButtonClasses,
   slotPlannerToolbarClasses,
   slotPlannerWeekPanelContentClasses,
   TrashIcon,
@@ -93,6 +93,9 @@ import {
   useSlotPlanner,
   type SlotPlannerView,
 } from "./use-slot-planner";
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export interface SlotPlannerProps<
   TData extends SlotPlannerSlotPayload = SlotPlannerSlotPayload,
@@ -465,17 +468,18 @@ function SlotPlannerInner<
   // settled successfully and the occurrence renders on the focused day, the
   // entry is promoted to a highlight pulse; batch entries also carry the
   // stagger index of their entrance.
-  const recentMutationsRef = useRef(
-    new Map<
-      string,
-      {
-        slotId: string;
-        occurrenceDate: string;
-        staggerIndex: number;
-        /** The actual pending/error key of the CRUD op that created it. */
-        crudKey: string;
-      }
-    >(),
+  const [recentMutations, setRecentMutations] = useState(
+    () =>
+      new Map<
+        string,
+        {
+          slotId: string;
+          occurrenceDate: string;
+          staggerIndex: number;
+          /** The actual pending/error key of the CRUD op that created it. */
+          crudKey: string;
+        }
+      >(),
   );
   const recordRecentMutation = useCallback(
     (
@@ -484,12 +488,14 @@ function SlotPlannerInner<
       crudKey: string,
       staggerIndex = 0,
     ) => {
-      recentMutationsRef.current.set(`${slotId}::${occurrenceDate}`, {
-        crudKey,
-        occurrenceDate,
-        slotId,
-        staggerIndex,
-      });
+      setRecentMutations((previous) =>
+        new Map(previous).set(`${slotId}::${occurrenceDate}`, {
+          crudKey,
+          occurrenceDate,
+          slotId,
+          staggerIndex,
+        }),
+      );
     },
     [],
   );
@@ -576,7 +582,9 @@ function SlotPlannerInner<
     weekDays,
     weeklyCap,
   } = planner;
-  focusedDateRef.current = currentFocusedDate;
+  useIsomorphicLayoutEffect(() => {
+    focusedDateRef.current = currentFocusedDate;
+  }, [currentFocusedDate]);
   const nounTemplateTokens = {
     slot: resolvedTaxonomy.slot,
     slotPlural: resolvedTaxonomy.slotPlural,
@@ -601,16 +609,19 @@ function SlotPlannerInner<
   // controlled and uncontrolled focus updates both animate. The RTL factor
   // inverts the slide axis; ISO dates compare lexicographically.
   const weekStart = weekDays[0]!;
-  const previousWeekStartRef = useRef(weekStart);
-  const weekDirectionRef = useRef<0 | 1 | -1>(0);
-
-  if (previousWeekStartRef.current !== weekStart) {
-    weekDirectionRef.current =
-      weekStart > previousWeekStartRef.current ? 1 : -1;
-    previousWeekStartRef.current = weekStart;
+  const [weekNavigation, setWeekNavigation] = useState<{
+    start: string;
+    direction: -1 | 0 | 1;
+  }>({ start: weekStart, direction: 0 });
+  const weekDirection =
+    weekNavigation.start === weekStart
+      ? weekNavigation.direction
+      : weekStart > weekNavigation.start
+        ? 1
+        : -1;
+  if (weekNavigation.start !== weekStart) {
+    setWeekNavigation({ start: weekStart, direction: weekDirection });
   }
-
-  const weekDirection = weekDirectionRef.current;
   const [isRtl, setIsRtl] = useState(false);
 
   useEffect(() => {
@@ -644,7 +655,7 @@ function SlotPlannerInner<
   // rendered on the focused day — including slots from copy batches, which
   // are consumed when navigation makes them visible.
   useEffect(() => {
-    const recent = recentMutationsRef.current;
+    const recent = new Map(recentMutations);
 
     if (recent.size === 0) {
       return;
@@ -679,7 +690,7 @@ function SlotPlannerInner<
       }
     }
 
-    if (consumed.length === 0) {
+    if (consumed.length === 0 && recent.size === recentMutations.size) {
       return;
     }
 
@@ -687,7 +698,10 @@ function SlotPlannerInner<
       recent.delete(key);
     }
 
-    if (motionEnabled) {
+    // Consume only after the entrance has committed, then pulse settled CRUD results.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Consume queued CRUD entrances only after they commit, then highlight successfully settled visible occurrences.
+    setRecentMutations(recent);
+    if (motionEnabled && consumed.length > 0) {
       setHighlightNonces((previous) => {
         const next = new Map(previous);
 
@@ -699,6 +713,7 @@ function SlotPlannerInner<
       });
     }
   }, [
+    recentMutations,
     motionEnabled,
     pendingKeys,
     planner.slots,
@@ -1263,6 +1278,7 @@ function SlotPlannerInner<
           // The list is keyed by the focused date so switching days swaps the
           // whole list instantly; enter/exit animations only run for slots
           // appearing or disappearing within the visible day.
+          // eslint-disable-next-line jsx-a11y/no-redundant-roles -- Explicit list semantics preserve VoiceOver support when CSS removes list styling.
           <ul
             key={currentFocusedDate}
             role="list"
@@ -1307,7 +1323,7 @@ function SlotPlannerInner<
                   />
                 );
 
-                const recentEntry = recentMutationsRef.current.get(key);
+                const recentEntry = recentMutations.get(key);
 
                 return (
                   // The <li> wrapper and its data attributes are structural; it
@@ -1541,6 +1557,7 @@ function SlotPlannerInner<
             data-slot="slot-planner-week-layout"
             className="grid min-w-0 gap-[var(--dt-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
           >
+            {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- The tablist delegates keyboard events to its roving, focusable tab buttons. */}
             <div
               role="tablist"
               aria-label={resolvedTaxonomy.weekRailLabel}

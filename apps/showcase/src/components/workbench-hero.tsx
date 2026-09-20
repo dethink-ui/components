@@ -144,7 +144,9 @@ export function WorkbenchHero({
                 variant="ghost"
                 size="xs"
                 className="text-[color:var(--sc-code-foreground)]"
-                onClick={copyInstall}
+                onClick={() => {
+                  void copyInstall();
+                }}
               />
             </span>
           </div>

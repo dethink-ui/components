@@ -1,4 +1,4 @@
-import { createRef } from "react";
+import { createRef, StrictMode, useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
@@ -19,6 +19,55 @@ import {
 } from ".";
 
 describe("Field", () => {
+  it("keeps independent description IDs stable through child and parent rerenders", async () => {
+    const user = userEvent.setup();
+    function DynamicDescription() {
+      const [expanded, setExpanded] = useState(false);
+      return (
+        <>
+          <FieldDescription>
+            {expanded ? "Expanded help" : "Short help"}
+          </FieldDescription>
+          <button type="button" onClick={() => setExpanded(!expanded)}>
+            Toggle help
+          </button>
+        </>
+      );
+    }
+    const fixture = (label: string) => (
+      <StrictMode>
+        <Field invalid>
+          <FieldLabel>{label}</FieldLabel>
+          <FieldControl asChild>
+            <input />
+          </FieldControl>
+          <FieldDescription>Permanent help</FieldDescription>
+          <DynamicDescription />
+          <FieldError>Required value</FieldError>
+        </Field>
+      </StrictMode>
+    );
+    const { rerender } = render(fixture("Name"));
+    const input = screen.getByRole("textbox");
+    const permanentId = screen.getByText("Permanent help").id;
+    const dynamicId = screen.getByText("Short help").id;
+    const errorId = screen.getByText("Required value").id;
+    expect(new Set([permanentId, dynamicId, errorId]).size).toBe(3);
+    await user.click(screen.getByRole("button", { name: "Toggle help" }));
+    expect(screen.getByText("Expanded help")).toHaveAttribute("id", dynamicId);
+    rerender(fixture("Full name"));
+    expect(screen.getByText("Permanent help")).toHaveAttribute(
+      "id",
+      permanentId,
+    );
+    expect(screen.getByText("Expanded help")).toHaveAttribute("id", dynamicId);
+    expect(screen.getByText("Required value")).toHaveAttribute("id", errorId);
+    for (const id of [permanentId, dynamicId, errorId]) {
+      expect(input.getAttribute("aria-describedby")?.split(" ")).toContain(id);
+    }
+    expect(input).toHaveAttribute("aria-errormessage", errorId);
+  });
+
   it("renders a native form with native attributes and spacing", () => {
     const ref = createRef<HTMLFormElement>();
 

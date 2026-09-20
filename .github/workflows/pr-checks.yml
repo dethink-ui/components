@@ -56,7 +56,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Showcase production and browser smoke checks
-        run: pnpm exec playwright test e2e/showcase-recipes-gallery.spec.ts --reporter=line
+        run: pnpm exec playwright test e2e/showcase-recipes-gallery.spec.ts e2e/showcase-release-acceptance.spec.ts --reporter=line
 
       - name: Verify clean registry consumers
         shell: bash

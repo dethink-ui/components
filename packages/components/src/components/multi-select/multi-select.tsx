@@ -481,10 +481,13 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
         : collectStaticItems(children as ReactNode),
     [children],
   );
-  const resolvedItems = [
-    ...(dataItems.length > 0 ? dataItems : staticItems),
-    ...selectedDataItems,
-  ];
+  const resolvedItems = useMemo(
+    () => [
+      ...(dataItems.length > 0 ? dataItems : staticItems),
+      ...selectedDataItems,
+    ],
+    [dataItems, staticItems, selectedDataItems],
+  );
   const itemLookup = useMemo(() => {
     const map = new Map<MultiSelectValue, MultiSelectResolvedItem>();
 

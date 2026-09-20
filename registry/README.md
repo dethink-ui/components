@@ -83,3 +83,11 @@ be inside a client component boundary. npm package publication is separate.
   installation locally. Production builds use the documentation domain by default.
 
 Generated payloads are ignored by Git; edit the source and registry metadata.
+
+### License
+
+The code is [MIT licensed](../LICENSE). The shared `dethink-base` item installs
+the full notice at `components/dethink/LICENSE` alongside the copied source.
+Keep it when redistributing components or substantial portions of their code.
+Third-party dependencies keep their own licenses; showcase images are not part
+of the component registry. See [third-party notices](../THIRD_PARTY_NOTICES.md).

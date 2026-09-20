@@ -1,6 +1,7 @@
 {
   "name": "@dethink/components",
   "version": "0.0.0",
+  "license": "MIT",
   "description": "Open-code React components for production dashboards, internal tools, and AI-native applications.",
   "homepage": "https://components.dethink.co.uk",
   "repository": {
@@ -17,7 +18,8 @@
     "./src/styles.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",

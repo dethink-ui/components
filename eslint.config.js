@@ -73,7 +73,7 @@ export default tseslint.config(
       },
     },
     linterOptions: {
-      reportUnusedDisableDirectives: "warn",
+      reportUnusedDisableDirectives: "error",
     },
   },
   js.configs.recommended,
@@ -90,7 +90,12 @@ export default tseslint.config(
           prefer: "type-imports",
         },
       ],
-      "@typescript-eslint/no-empty-object-type": "warn",
+      // Public prop interfaces intentionally extend native/primitive props and
+      // remain augmentable. Bare {} and interfaces without a base are errors.
+      "@typescript-eslint/no-empty-object-type": [
+        "error",
+        { allowInterfaces: "with-single-extends" },
+      ],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
@@ -129,6 +134,23 @@ export default tseslint.config(
       ...warnOnly(reactHooks.configs.flat.recommended.rules),
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+    },
+  },
+  {
+    files: [
+      "packages/components/src/**/*.{ts,tsx}",
+      "apps/showcase/src/**/*.{ts,tsx}",
+    ],
+    ignores: ["**/*.test.{ts,tsx}", "**/*.stories.tsx"],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": "error",
     },
   },
   {
@@ -177,6 +199,16 @@ export default tseslint.config(
     ...reactRefresh.configs.next,
   },
   ...storybook.configs["flat/recommended"],
+  {
+    files: ["apps/showcase/src/app/**/opengraph-image.tsx"],
+    rules: {
+      // These are Next.js image-route exports, not client component exports.
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowExportNames: ["alt", "size", "contentType"] },
+      ],
+    },
+  },
   {
     files: ["apps/storybook/.storybook/main.{js,mjs,cjs,ts}"],
     rules: {

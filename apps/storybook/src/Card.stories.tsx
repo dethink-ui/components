@@ -735,6 +735,7 @@ export const ElementModes: Story = {
             </Card>
           ))}
         </Grid>
+        {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- Explicit list semantics preserve VoiceOver support when CSS removes list styling. */}
         <Grid
           as="ul"
           role="list"

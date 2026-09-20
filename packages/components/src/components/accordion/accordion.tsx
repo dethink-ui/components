@@ -482,9 +482,10 @@ const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(
     );
     const currentValue = controlled ? value : uncontrolledValue;
     const itemValues = useMemo(() => getDirectItemValues(children), [children]);
-    const [focusedValue, setFocusedValue] = useState<AccordionValue>();
-    const bladeRegistryRef = useRef(new Map<string, BladeRegistryEntry>());
-    const [bladeRegistryVersion, setBladeRegistryVersion] = useState(0);
+    const [, setFocusedValue] = useState<AccordionValue>();
+    const [bladeRegistry, setBladeRegistry] = useState(
+      () => new Map<string, BladeRegistryEntry>(),
+    );
     const motionConfig = useMemo(
       () => createMotionConfig(motionPreset, reducedMotion),
       [motionPreset, reducedMotion],
@@ -492,29 +493,26 @@ const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(
 
     validateRootComposition(children);
 
-    const registerBlade = useCallback(
-      (nextValue: string, nextDisabled: boolean) => {
-        const current = bladeRegistryRef.current.get(nextValue);
-
-        if (!current || current.disabled !== nextDisabled) {
-          bladeRegistryRef.current.set(nextValue, { disabled: nextDisabled });
-          setBladeRegistryVersion((version) => version + 1);
-        }
-
-        return () => {
-          bladeRegistryRef.current.delete(nextValue);
-          setBladeRegistryVersion((version) => version + 1);
-        };
-      },
-      [],
-    );
+    const registerBlade = useCallback((value: string, disabled: boolean) => {
+      setBladeRegistry((current) => {
+        if (current.get(value)?.disabled === disabled) return current;
+        return new Map(current).set(value, { disabled });
+      });
+      return () =>
+        setBladeRegistry((current) => {
+          if (!current.has(value)) return current;
+          const next = new Map(current);
+          next.delete(value);
+          return next;
+        });
+    }, []);
 
     const enabledItemValues = useMemo(
       () =>
         itemValues.filter(
-          (itemValue) => !bladeRegistryRef.current.get(itemValue)?.disabled,
+          (itemValue) => !bladeRegistry.get(itemValue)?.disabled,
         ),
-      [bladeRegistryVersion, itemValues],
+      [bladeRegistry, itemValues],
     );
 
     const isOpen = useCallback(
@@ -843,7 +841,7 @@ export const AccordionContent = forwardRef<
   const { bladeId, contentId, disabled, open } =
     useItemContext("Accordion.Content");
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const previousOpenRef = useRef(open);
+  const [previousOpen, setPreviousOpen] = useState(open);
   const shouldReturnFocusRef = useRef(false);
   const [contentSettled, setContentSettled] = useState(!open);
   const { contentEnabled, contentEnterTransition, contentExitTransition } =
@@ -861,29 +859,16 @@ export const AccordionContent = forwardRef<
     [ref],
   );
 
-  if (
-    previousOpenRef.current &&
-    !open &&
-    contentRef.current &&
-    typeof document !== "undefined" &&
-    contentRef.current.contains(document.activeElement)
-  ) {
-    shouldReturnFocusRef.current = true;
+  if (previousOpen !== open) {
+    setPreviousOpen(open);
+    if (open) setContentSettled(false);
   }
-
-  useEffect(() => {
-    if (open) {
-      setContentSettled(false);
-    }
-  }, [open]);
 
   useLayoutEffect(() => {
     if (shouldReturnFocusRef.current && !open) {
       document.getElementById(bladeId)?.focus();
       shouldReturnFocusRef.current = false;
     }
-
-    previousOpenRef.current = open;
   }, [bladeId, open]);
 
   const hidden = contentEnabled ? !open && contentSettled : !open;
@@ -932,6 +917,16 @@ export const AccordionContent = forwardRef<
     <motion.div
       {...props}
       ref={mergedRef}
+      onFocusCapture={(event) => {
+        shouldReturnFocusRef.current = true;
+        props.onFocusCapture?.(event);
+      }}
+      onBlurCapture={(event) => {
+        shouldReturnFocusRef.current = event.currentTarget.contains(
+          event.relatedTarget,
+        );
+        props.onBlurCapture?.(event);
+      }}
       id={contentId}
       role="region"
       aria-labelledby={bladeId}

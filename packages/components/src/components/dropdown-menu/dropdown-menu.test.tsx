@@ -336,12 +336,14 @@ describe("DropdownMenu", () => {
 
     await user.keyboard("{ArrowDown}{ArrowRight}");
 
-    const inboxItem = await screen.findByText("Inbox");
+    // React Aria can mount collection text before its positioned submenu is
+    // visible. Wait for the accessible item, not just the hidden label text.
+    const inboxItem = await screen.findByRole("menuitem", { name: "Inbox" });
     const submenuContent = inboxItem.closest(
       '[data-slot="dropdown-menu-submenu-content"]',
     );
 
-    expect(inboxItem).toBeVisible();
+    await waitFor(() => expect(inboxItem).toBeVisible());
     expect(submenuContent).toBeInTheDocument();
     expect(submenuItem).toHaveAttribute("data-open");
   });

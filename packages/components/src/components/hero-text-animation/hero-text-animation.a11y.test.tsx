@@ -13,16 +13,19 @@ describe("HeroTextAnimation accessibility", () => {
         <HeroTextAnimationProvider reducedMotion="always">
           <main aria-label="Hero text animation accessibility smoke">
             <HeroTextAnimation text="Build production-ready landing pages faster." />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               as="h2"
               splitBy="line"
               text={"Launch faster.\nLearn from every release."}
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="masked-curtain"
               as="h2"
               text={"Reveal clearly.\nStay readable."}
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="typewriter"
               as="h2"
@@ -33,6 +36,7 @@ describe("HeroTextAnimation accessibility", () => {
               as="p"
               text="Decrypt concise launch copy once."
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="rotating-keyword"
               as="h2"
@@ -41,27 +45,32 @@ describe("HeroTextAnimation accessibility", () => {
               rotatingKeywordSuffix=" teams."
               text="Build dashboards for every revenue team."
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="gradient-highlight"
               as="h2"
               text="Highlight the most important launch promise."
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="blur-focus"
               as="h2"
               text="Bring the launch promise into focus."
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="kinetic-emphasis-pop"
               as="h2"
               emphasisWords={["handoffs", "risk"]}
               text="Make handoffs and risk impossible to miss."
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="svg-stroke-draw"
               as="h2"
               text="Draw a clear path under the hero promise."
             />
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The text prop renders an accessible text span inside this polymorphic heading; axe coverage verifies it. */}
             <HeroTextAnimation
               animation="scroll-responsive"
               as="h2"

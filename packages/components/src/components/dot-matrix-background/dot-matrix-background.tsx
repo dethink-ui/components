@@ -341,11 +341,9 @@ export const DotMatrixBackground = forwardRef(function DotMatrixBackground(
   const [pointerActive, setPointerActive] = useState(false);
   const followEnabled = running && interactive && mode === "follow";
 
-  useEffect(() => {
-    if (!followEnabled) {
-      setPointerActive(false);
-    }
-  }, [followEnabled]);
+  if (!followEnabled && pointerActive) {
+    setPointerActive(false);
+  }
 
   const handlePointerMove = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {

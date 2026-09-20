@@ -1,6 +1,5 @@
 import {
   forwardRef,
-  useEffect,
   useState,
   type FocusEventHandler,
   type HTMLAttributes,
@@ -295,7 +294,11 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
       motion === "none" ||
       reducedMotionProp === true ||
       (hasHydrated && prefersReducedMotion === true);
-    const [imageFailed, setImageFailed] = useState(false);
+    const [imageResult, setImageResult] = useState({ src, failed: false });
+    const imageFailed = imageResult.src === src && imageResult.failed;
+    if (imageResult.src !== src) {
+      setImageResult({ src, failed: false });
+    }
     const [motionActive, setMotionActive] = useState(false);
     const hasImage = Boolean(src);
     const showImage = hasImage && !imageFailed;
@@ -322,14 +325,10 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
     const motionTarget = getMotionTarget({ motion, reducedMotion });
     const motionBehavior = getMotionBehavior({ motion, reducedMotion });
 
-    useEffect(() => {
-      setImageFailed(false);
-    }, [src]);
-
     const handleImageError: ImgHTMLAttributes<HTMLImageElement>["onError"] = (
       event,
     ) => {
-      setImageFailed(true);
+      setImageResult({ src, failed: true });
       onImageError?.(event);
     };
 
