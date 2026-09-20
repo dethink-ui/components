@@ -52,11 +52,25 @@ jobs:
       - name: Audit dependencies
         run: pnpm audit --audit-level=moderate
 
-      - name: Install browser
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Install browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Showcase production and browser smoke checks
         run: pnpm exec playwright test e2e/showcase-recipes-gallery.spec.ts e2e/showcase-release-acceptance.spec.ts --reporter=line
+
+      - name: Accessibility evidence across browser engines
+        run: pnpm test:accessibility:report
+
+      - name: Upload accessibility report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: |
+            playwright-report/accessibility/
+            test-results/accessibility-results.json
+          retention-days: 30
+          if-no-files-found: warn
 
       - name: Verify clean registry consumers
         shell: bash
