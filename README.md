@@ -23,8 +23,10 @@ Input, Select, Dialog, DataTable, Calendar, Sidebar, Toast, and more.
 ## Project status
 
 Dethink Components is in active development. The package is currently version
-`0.0.0`, so its APIs may change. The repository includes registry files, but it
-does not yet provide a public registry URL or a published npm package.
+`0.0.0`, so its APIs may change. Component source is available from the
+[public registry](https://components.dethink.co.uk/r/registry.json). Follow the
+[registry installation guide](registry/README.md#public-registry) to copy it into
+your app. The npm package is not published yet.
 
 ## Quick start for this repository
 

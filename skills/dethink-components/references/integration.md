@@ -1,11 +1,28 @@
 # Installation and styling
 
 Check the current installation documentation and the consumer's existing setup
-before changing dependencies. At the time this skill was authored, the package
-was `0.0.0` and the library documented both its npm package and public registry as
-unpublished. Installing this skill does not install the component library.
-Do not invent an npm install command, registry URL, or `@dethink` registry alias.
-If a public distribution becomes available, use its verified instructions.
+before changing dependencies. The public registry serves component source; the
+npm package is not published yet. Installing this skill does not install components.
+
+## Public registry
+
+For an existing React + Tailwind CSS v4 app configured for shadcn, use a verified
+item from `https://components.dethink.co.uk/r/registry.json`:
+
+```sh
+npx shadcn@latest add https://components.dethink.co.uk/r/button.json
+```
+
+The installer copies files into `components/dethink/` at the project root and
+installs the declared dependencies. Import from these copied paths, import the
+copied `styles.css` once, and use the copied `DethinkProvider`. Preserve a client
+component boundary for interactive Next.js usage. Do not use workspace package
+imports in an app that only has copied source.
+
+The optional `@dethink` shorthand requires this entry in the consumer's
+`components.json` registries map:
+`"@dethink": "https://components.dethink.co.uk/r/{name}.json"`.
+Do not assume this namespace has already been configured.
 
 ## App inside the Dethink pnpm workspace
 

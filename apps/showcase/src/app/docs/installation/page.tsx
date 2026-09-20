@@ -5,14 +5,15 @@ import { DocsPage, DocsSection } from "@/components/docs-page";
 
 export const metadata: Metadata = {
   title: "Installation",
-  description: "Run Dethink locally and use the components in a workspace app.",
+  description:
+    "Install component source from the public registry or use the local workspace package.",
 };
 
 export default function InstallationPage() {
   return (
     <DocsPage
       name="Installation"
-      description="Start with the local workspace. The public npm package and shadcn registry are not published yet."
+      description="Install component source from the public registry, or run the local workspace below. The npm package is not published yet."
     >
       <DocsSection
         id="run-locally"
@@ -84,17 +85,26 @@ export function App() {
           to change colors or density.
         </p>
       </DocsSection>
-      <DocsSection id="registry" title="About the registry">
+      <DocsSection id="registry" title="Install from the public registry">
         <p className="text-muted-foreground text-sm leading-6">
-          The repository includes shadcn-compatible registry metadata. A public
-          registry URL and namespace are still in progress. Use the workspace
-          setup above for now.
+          In an existing React and Tailwind CSS v4 project configured for
+          shadcn, add a component by its registry URL. Its dependencies and
+          shared setup files are included.
         </p>
+        <CodeBlock
+          lang="bash"
+          filename="Terminal · your app"
+          code="npx shadcn@latest add https://components.dethink.co.uk/r/button.json"
+        />
         <p className="text-muted-foreground text-sm leading-6">
           Component examples use imports from <code>@dethink/components</code>.
-          If you copy source files into another project, update the imports to
-          match their new location and include their dependencies and shared
-          styles.
+          Registry files are copied into <code>components/dethink/</code> at
+          your project root. Update example imports to these copied paths,
+          import
+          <code> components/dethink/styles.css</code> once in your global
+          stylesheet entry, and wrap your app with the copied{" "}
+          <code>DethinkProvider</code>. In Next.js, use interactive components
+          inside a client component boundary.
         </p>
         <Link
           href="/components/button"

@@ -169,17 +169,18 @@ export function InstallationSection({
     <>
       <DocsSection id="installation" title="Installation">
         <p className="text-muted-foreground text-sm leading-6">
-          Use this component from the local workspace package. Follow the{" "}
+          Install component source from the public registry, or use the local
+          workspace package. Follow the{" "}
           <Link
             href="/docs/installation"
             className="text-foreground underline underline-offset-4"
           >
             setup guide
           </Link>{" "}
-          first. A public npm package and registry are not available yet.
+          first. The npm package is not published yet.
         </p>
         <a
-          href={`https://github.com/dethink-ui/components/blob/main/registry/items/${registryName}.json`}
+          href={`https://components.dethink.co.uk/r/${registryName}.json`}
           className="text-muted-foreground hover:text-foreground text-sm underline underline-offset-4"
         >
           View registry files
