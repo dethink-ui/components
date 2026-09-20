@@ -18,6 +18,65 @@ const representativeRoutes = [
 ];
 
 test.describe("showcase full-page recipe shell", () => {
+  test("command center sidebar keeps collapsed controls inside its rail while scrolling", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(recipePath);
+    const sidebar = page.getByRole("navigation", {
+      name: "Command center navigation",
+      exact: true,
+    });
+    await sidebar
+      .getByRole("button", { name: "Collapse sidebar", exact: true })
+      .click();
+    await expect(sidebar).toHaveAttribute("data-collapsed", "true");
+    const settings = sidebar.getByRole("button", {
+      name: "Settings",
+      exact: true,
+    });
+    await expect(settings).toBeVisible();
+    await page
+      .locator('[data-recipe-surface="command-center-dashboard"]')
+      .evaluate((surface) => {
+        window.scrollTo(
+          0,
+          window.scrollY +
+            surface.getBoundingClientRect().bottom -
+            window.innerHeight,
+        );
+      });
+    const rail = (await sidebar.boundingBox())!;
+    const control = (await settings.boundingBox())!;
+    expect(control.x).toBeGreaterThanOrEqual(rail.x);
+    expect(control.x + control.width).toBeLessThanOrEqual(rail.x + rail.width);
+    expect(rail.y).toBeGreaterThanOrEqual(144);
+    expect(control.y + control.height).toBeLessThanOrEqual(900);
+    await sidebar
+      .getByRole("button", { name: "Expand sidebar", exact: true })
+      .click();
+    await expect(sidebar).toHaveAttribute("data-collapsed", "false");
+    await expect(sidebar.getByText("Northstar Ops")).toBeVisible();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobileTrigger = page.getByRole("button", {
+      name: "Open sidebar",
+      exact: true,
+    });
+    await mobileTrigger.click();
+    const drawer = page.getByRole("dialog", {
+      name: "Command center navigation",
+    });
+    await expect(drawer).toBeVisible();
+    await expect(
+      drawer.getByRole("link", { name: "Overview", exact: true }),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(drawer).not.toBeVisible();
+    await expect(mobileTrigger).toBeFocused();
+  });
+
   test("puts the representative product in the first desktop viewport", async ({
     page,
   }) => {

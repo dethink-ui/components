@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import {
   Breadcrumb,
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -45,12 +44,13 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuLink,
   SidebarMobile,
   SidebarMobileTrigger,
   SidebarProvider,
-  SidebarRail,
+  SidebarTrigger,
   type CommandPaletteCommand,
   type DataTableColumnDef,
   type ProgressTone,
@@ -411,18 +411,22 @@ export function CommandCenterDashboardRecipe({
       <div
         data-recipe-surface="command-center-dashboard"
         className={cn(
-          "border-border bg-muted/30 flex overflow-hidden border",
+          "border-border bg-muted/30 flex w-full min-w-0 border",
           fullPage
-            ? "min-h-[calc(100dvh-7rem)] rounded-none border-x-0 border-t-0"
-            : "min-h-[42rem] rounded-xl",
+            ? "min-h-[calc(100dvh-7rem)] overflow-clip rounded-none border-x-0 border-t-0"
+            : "min-h-[42rem] overflow-hidden rounded-xl",
         )}
       >
         <Sidebar
           aria-label="Command center navigation"
-          className={fullPage ? "max-md:hidden" : undefined}
+          className={
+            fullPage
+              ? "sticky top-[calc(var(--site-header-height)+4rem)] z-20 h-[calc(100dvh-var(--site-header-height)-4.5rem)] self-start max-md:hidden"
+              : "z-20"
+          }
         >
           <SidebarHeader>
-            <div className="flex min-w-0 items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center justify-between gap-2 group-data-[collapsed=true]/sidebar:flex-col">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span
                   aria-hidden="true"
@@ -430,7 +434,7 @@ export function CommandCenterDashboardRecipe({
                 >
                   <ShieldAlert className="size-4.5" />
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 group-data-[collapsed=true]/sidebar:hidden">
                   <div className="text-foreground truncate text-sm font-semibold">
                     Northstar Ops
                   </div>
@@ -439,6 +443,7 @@ export function CommandCenterDashboardRecipe({
                   </div>
                 </div>
               </div>
+              <SidebarTrigger className="shrink-0" />
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -492,7 +497,8 @@ export function CommandCenterDashboardRecipe({
                   {responders.map((person) => (
                     <li
                       key={person.name}
-                      className="flex items-center gap-2.5 rounded-md px-1.5 py-1"
+                      className="flex items-center gap-2.5 rounded-md px-1.5 py-1 group-data-[collapsed=true]/sidebar:justify-center group-data-[collapsed=true]/sidebar:px-0"
+                      title={`${person.name} · ${person.role} · ${person.status}`}
                     >
                       <span className="relative shrink-0">
                         <span
@@ -511,7 +517,7 @@ export function CommandCenterDashboardRecipe({
                           }`}
                         />
                       </span>
-                      <span className="min-w-0 flex-1">
+                      <span className="min-w-0 flex-1 group-data-[collapsed=true]/sidebar:sr-only">
                         <span className="text-foreground block truncate text-xs font-medium">
                           {person.name}
                         </span>
@@ -525,20 +531,23 @@ export function CommandCenterDashboardRecipe({
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarFooter>
-            <Button size="sm" variant="outline" leftIcon={<Settings2 />}>
-              Settings
-            </Button>
+          <SidebarFooter className="border-border border-t">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton icon={<Settings2 aria-hidden="true" />}>
+                  Settings
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarFooter>
-          <SidebarRail />
         </Sidebar>
 
         {fullPage ? (
           <SidebarMobile
             label="Command center navigation"
-            className="md:hidden"
+            className="w-[min(20rem,calc(100vw-2rem))] md:hidden"
           >
-            <SidebarHeader>
+            <SidebarHeader className="pr-14">
               <div className="flex min-w-0 items-center gap-2.5">
                 <span
                   aria-hidden="true"
