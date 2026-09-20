@@ -47,12 +47,21 @@ for (const theme of ["light", "dark"] as const) {
           await expect(
             page.getByRole("dialog", { name: "Workspace settings" }),
           ).toBeVisible();
+          await expect(page.locator('[data-slot="dialog-content"]')).toHaveCSS(
+            "opacity",
+            "1",
+          );
         }
         if (state === "open menu") {
           await page
             .getByRole("button", { name: "Report actions", exact: true })
             .click();
           await expect(page.getByRole("menu")).toBeVisible();
+          // Visibility includes partially transparent content. Measure contrast
+          // only after the menu's entrance animation reaches its final state.
+          await expect(
+            page.locator('[data-slot="dropdown-menu-content"]'),
+          ).toHaveCSS("opacity", "1");
         }
         const results = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -72,7 +81,7 @@ for (const theme of ["light", "dark"] as const) {
               browser: testInfo.project.name,
               browserVersion: browser.version(),
               scope:
-                "Page scanned after fonts load and a 300ms theme-settlement window, including the visible overlay when open. Default brand palette. No rules or selectors excluded.",
+                "Page scanned after fonts load and a 300ms theme-settlement window, with open overlays at full opacity. Default brand palette. No rules or selectors excluded.",
             },
             null,
             2,
