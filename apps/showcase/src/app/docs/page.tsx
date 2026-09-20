@@ -92,8 +92,15 @@ export default function IntroductionPage() {
         <p className="text-muted-foreground text-sm leading-6">
           You will need a React project with TypeScript. Dethink uses Tailwind
           CSS v4 and shared CSS variables for styling. The components include
-          keyboard and screen reader support; your app still needs clear labels
-          and a sensible focus order.
+          keyboard behavior and accessibility semantics; your app still needs
+          clear labels and a sensible focus order. See the{" "}
+          <Link
+            href="/docs/accessibility"
+            className="underline underline-offset-4"
+          >
+            accessibility evidence and testing scope
+          </Link>
+          .
         </p>
         <p className="text-muted-foreground text-sm leading-6">
           Dethink is in active development. You can use it in this repository

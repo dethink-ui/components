@@ -64,6 +64,27 @@ function ShellFixture({
 }
 
 describe("SidebarShell", () => {
+  it("includes the content pane in keyboard navigation without interactive children", async () => {
+    const user = userEvent.setup();
+    render(
+      <SidebarShell aria-label="Workspace">
+        <SidebarShellHeader>
+          <button type="button">Before content</button>
+        </SidebarShellHeader>
+        <SidebarShellMain>Scrollable text content</SidebarShellMain>
+        <SidebarShellFooter>
+          <button type="button">After content</button>
+        </SidebarShellFooter>
+      </SidebarShell>,
+    );
+    expect(screen.getByRole("group", { name: "Workspace" })).toBeVisible();
+    screen.getByRole("button", { name: "Before content" }).focus();
+    await user.tab();
+    expect(screen.getByRole("main")).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "After content" })).toHaveFocus();
+  });
+
   it("renders semantic shell anatomy with an automatic first skip link", () => {
     const { container } = render(<ShellFixture />);
     const shell = container.querySelector('[data-slot="sidebar-shell"]');
@@ -83,7 +104,7 @@ describe("SidebarShell", () => {
     expect(shell).toHaveAttribute("data-motion", "standard");
     expect(shell?.firstElementChild).toBe(skipLink);
     expect(skipLink).toHaveAttribute("href", `#${main.id}`);
-    expect(main).toHaveAttribute("tabindex", "-1");
+    expect(main).toHaveAttribute("tabindex", "0");
     expect(navigation.parentElement).toBe(shell);
     expect(frame?.parentElement).toBe(shell);
     expect(frame).toContainElement(header);

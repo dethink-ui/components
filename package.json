@@ -26,6 +26,7 @@
     "registry:test": "node --test scripts/build-registry.test.mjs",
     "registry:smoke": "node scripts/smoke-button-registry.mjs",
     "test:e2e": "playwright test",
+    "test:accessibility:report": "playwright test --config=e2e/accessibility-report.config.ts",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "capture:showcase": "node scripts/capture-showcase-final.mjs",

@@ -22,6 +22,14 @@ For showcase or interaction changes, also run `pnpm test:e2e`; install Playwrigh
 browsers first. Describe verification and known limitations in the pull request.
 Do not include credentials, generated build output, or private customer data.
 
+Pull requests run unit tests, lint, formatting, type checks, builds, registry
+validation, and the dependency audit. Browser tests run manually: open GitHub
+Actions, choose **Browser checks**, select **Run workflow**, and choose a branch.
+This runs showcase smoke checks, the three-browser accessibility suite, and
+clean registry consumer checks. Download `accessibility-report` from the run's
+artifacts to inspect the results; artifacts are kept for 30 days. You can also
+generate the accessibility report locally with `pnpm test:accessibility:report`.
+
 `pnpm lint` and `pnpm lint:fix` require zero warnings. Unused lint suppressions
 also fail CI. Fix the underlying behavior first; when a rule cannot understand
 a valid component pattern, keep any exception scoped to that code and explain

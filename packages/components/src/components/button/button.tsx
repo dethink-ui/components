@@ -37,7 +37,7 @@ const buttonBaseClasses =
 const buttonVariantClasses: Record<ButtonVariant, string> = {
   solid:
     "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-  soft: "bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/20",
+  soft: "bg-primary/10 text-foreground hover:bg-primary/15 active:bg-primary/20",
   outline:
     "border-border bg-background text-foreground hover:bg-muted active:bg-muted/80",
   ghost: "bg-transparent text-foreground hover:bg-muted active:bg-muted/80",
