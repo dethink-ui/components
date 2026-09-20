@@ -213,6 +213,11 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
           aria-orientation={resolvedAriaOrientation}
+          aria-readonly={
+            resolvedRole === "radiogroup" && readOnly
+              ? true
+              : props["aria-readonly"]
+          }
           aria-required={
             resolvedRole === "radiogroup" ? resolvedAriaRequired : ariaRequired
           }
@@ -335,11 +340,12 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
           controlSize: itemControlSize,
         })}
       >
+        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid remains a global ARIA attribute for native radio error announcements and Field compatibility. */}
         <input
           {...props}
           ref={composeRefs(inputRef, ref)}
           aria-invalid={itemAriaInvalid}
-          aria-readonly={itemReadOnly ? true : undefined}
+          aria-disabled={itemReadOnly ? true : props["aria-disabled"]}
           checked={selected}
           className={radioGroupItemInputClasses}
           data-slot="radio-group-item-input"

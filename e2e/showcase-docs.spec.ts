@@ -18,6 +18,7 @@ test("takes a new reader from setup to a component and its props", async ({
   await expect(page).toHaveURL(/\/components\/button$/);
   await expect(page.locator("article h2")).toHaveText([
     "Installation",
+    "Built with",
     "Usage",
     "Examples",
     "Props",
@@ -90,9 +91,13 @@ test("has valid section links and accessible getting-started pages", async ({
   }
 });
 
-test("lets keyboard users skip repeated navigation", async ({ page }) => {
+test("lets keyboard users skip repeated navigation", async ({
+  page,
+  browserName,
+}) => {
   await page.goto("/docs");
-  await page.keyboard.press("Tab");
+  // WebKit on macOS follows the native Option-Tab shortcut for all links.
+  await page.keyboard.press(browserName === "webkit" ? "Alt+Tab" : "Tab");
   await expect(
     page.getByRole("link", { name: "Skip to content" }),
   ).toBeFocused();

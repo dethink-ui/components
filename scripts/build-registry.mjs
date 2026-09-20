@@ -70,12 +70,15 @@ export async function createRegistry({
       );
       const files = await Promise.all(
         (item.files ?? []).map(async (file) => {
+          const isLicense = file.path === "packages/components/LICENSE";
           assert(
-            file.path.startsWith(sourcePrefix) &&
+            (isLicense || file.path.startsWith(sourcePrefix)) &&
               posix.normalize(file.path) === file.path,
             `${item.name}: source must be inside the component package`,
           );
-          const relative = file.path.slice(sourcePrefix.length);
+          const relative = isLicense
+            ? "LICENSE"
+            : file.path.slice(sourcePrefix.length);
           assert(
             relative && !relative.startsWith("../"),
             "Invalid source path",

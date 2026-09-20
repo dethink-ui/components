@@ -62,18 +62,20 @@ export function CommandPaletteAiCommandMenu() {
   const [retryCount, setRetryCount] = useState(0);
   const [lastRun, setLastRun] = useState("Ready for an AI command.");
 
+  const handleQueryChange = (next: string) => {
+    setQuery(next);
+    setLoading(next.trim().length >= 2);
+    setError(null);
+    if (next.trim().length < 2) setResults([]);
+  };
+  const retrySearch = () => {
+    setRetryCount((count) => count + 1);
+    setLoading(query.trim().length >= 2);
+    setError(null);
+  };
   useEffect(() => {
     const normalizedQuery = query.trim().toLowerCase();
-
-    if (normalizedQuery.length < 2) {
-      setResults([]);
-      setLoading(false);
-      setError(null);
-      return undefined;
-    }
-
-    setLoading(true);
-    setError(null);
+    if (normalizedQuery.length < 2) return undefined;
 
     const timeout = window.setTimeout(() => {
       if (normalizedQuery.includes("fail")) {
@@ -118,10 +120,10 @@ export function CommandPaletteAiCommandMenu() {
         commands={baseCommands}
         asyncCommands={results}
         query={query}
-        onQueryChange={setQuery}
+        onQueryChange={handleQueryChange}
         loading={loading}
         error={error}
-        onRetry={() => setRetryCount((count) => count + 1)}
+        onRetry={retrySearch}
         retryLabel="Retry search"
         minimumQueryLength={2}
         minimumQueryMessage="Type 2 or more characters to search AI commands."

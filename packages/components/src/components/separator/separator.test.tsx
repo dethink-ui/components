@@ -274,6 +274,7 @@ describe("Separator", () => {
       <>
         <Separator data-testid="native" {...splitterProps} />
         <Separator asChild data-testid="child" {...splitterProps}>
+          {/* eslint-disable jsx-a11y/role-supports-aria-props, jsx-a11y/no-noninteractive-tabindex -- Deliberately invalid child props verify Separator sanitization. */}
           <span
             aria-valuemax={90}
             aria-valuemin={10}
@@ -282,6 +283,7 @@ describe("Separator", () => {
             role="presentation"
             tabIndex={0}
           />
+          {/* eslint-enable jsx-a11y/role-supports-aria-props, jsx-a11y/no-noninteractive-tabindex */}
         </Separator>
       </>,
     );

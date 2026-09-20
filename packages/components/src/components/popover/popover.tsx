@@ -17,6 +17,7 @@ import {
   type ReactNode,
   type Ref,
   useContext,
+  useCallback,
   useEffect,
   useId,
   useMemo,
@@ -286,13 +287,16 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
       forwardedRef: ref,
       portalSlot: "popover-portal-container",
     });
-    const handleOpenChange = (isOpen: boolean) => {
-      if (!isControlled) {
-        setUncontrolledOpen(isOpen);
-      }
+    const handleOpenChange = useCallback(
+      (isOpen: boolean) => {
+        if (!isControlled) {
+          setUncontrolledOpen(isOpen);
+        }
 
-      onOpenChange?.(isOpen);
-    };
+        onOpenChange?.(isOpen);
+      },
+      [isControlled, onOpenChange],
+    );
     const rootContextValue = useMemo<PopoverRootContextValue>(
       () => ({
         anchorRef,

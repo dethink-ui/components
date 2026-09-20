@@ -4,6 +4,7 @@ dist/
 storybook-static/
 coverage/
 test-results/
+test-results-cross-browser/
 playwright-report/
 blob-report/
 .playwright/

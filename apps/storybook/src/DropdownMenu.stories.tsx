@@ -117,12 +117,6 @@ function CopyIcon() {
   );
 }
 
-function ArchiveIcon() {
-  return (
-    <IconPath d="M3 5.25h10M4.25 5.25v6A1.75 1.75 0 0 0 6 13h4a1.75 1.75 0 0 0 1.75-1.75v-6M3.75 3h8.5l.75 2.25H3L3.75 3Zm2.75 5h3" />
-  );
-}
-
 function TrashIcon() {
   return (
     <IconPath d="M3.5 4.5h9M6.25 4.5V3.25A1.25 1.25 0 0 1 7.5 2h1A1.25 1.25 0 0 1 9.75 3.25V4.5m1.5 0-.45 7.25A1.75 1.75 0 0 1 9.06 13.5H6.94a1.75 1.75 0 0 1-1.74-1.75L4.75 4.5" />

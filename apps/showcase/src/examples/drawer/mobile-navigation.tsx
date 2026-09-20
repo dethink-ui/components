@@ -8,6 +8,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@dethink/components";
+import { useState } from "react";
 import { Gauge, LayoutDashboard, Settings2, Users } from "lucide-react";
 
 const navLinks = [
@@ -18,9 +19,19 @@ const navLinks = [
 ];
 
 export function DrawerMobileNavigation() {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState("Overview");
   return (
-    <div className="flex justify-center">
-      <Drawer direction="left" edgeSwipeToOpen>
+    <div className="flex flex-col items-center gap-3">
+      <p aria-live="polite" className="text-muted-foreground text-sm">
+        Current view: {selected}
+      </p>
+      <Drawer
+        direction="left"
+        edgeSwipeToOpen
+        open={open}
+        onOpenChange={setOpen}
+      >
         <DrawerTrigger variant="outline">Open menu</DrawerTrigger>
         <DrawerContent
           dismissible
@@ -41,16 +52,21 @@ export function DrawerMobileNavigation() {
             <ul className="grid gap-[var(--dt-space-1)]">
               {navLinks.map(({ icon: Icon, label }) => (
                 <li key={label}>
-                  <a
+                  <button
                     className="text-foreground hover:bg-muted flex items-center gap-[var(--dt-space-3)] rounded-md px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm font-medium"
-                    href="#"
+                    type="button"
+                    aria-current={selected === label ? "page" : undefined}
+                    onClick={() => {
+                      setSelected(label);
+                      setOpen(false);
+                    }}
                   >
                     <Icon
                       aria-hidden="true"
                       className="text-muted-foreground size-4"
                     />
                     {label}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>

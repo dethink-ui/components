@@ -15,8 +15,8 @@ export function MagneticBeamsBackgroundStatic() {
         </h3>
         <p className="text-muted-foreground max-w-sm text-sm leading-6">
           animate={"{false}"} renders the same frame reduced-motion users see:
-          the grid plus two frozen beam segments, no loops or pointer
-          attraction mounted.
+          the grid plus two frozen beam segments, no loops or pointer attraction
+          mounted.
         </p>
       </div>
     </MagneticBeamsBackground>

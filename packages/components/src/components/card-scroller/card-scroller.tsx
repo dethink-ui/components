@@ -99,7 +99,7 @@ function ChevronLeftIcon() {
     <svg
       className={cn(
         navIconClasses,
-        "rtl:rotate-180 ltr:group-hover/card-scroller-nav:-translate-x-0.5 rtl:group-hover/card-scroller-nav:translate-x-0.5",
+        "ltr:group-hover/card-scroller-nav:-translate-x-0.5 rtl:rotate-180 rtl:group-hover/card-scroller-nav:translate-x-0.5",
       )}
       aria-hidden="true"
       fill="none"
@@ -121,7 +121,7 @@ function ChevronRightIcon() {
     <svg
       className={cn(
         navIconClasses,
-        "rtl:rotate-180 ltr:group-hover/card-scroller-nav:translate-x-0.5 rtl:group-hover/card-scroller-nav:-translate-x-0.5",
+        "ltr:group-hover/card-scroller-nav:translate-x-0.5 rtl:rotate-180 rtl:group-hover/card-scroller-nav:-translate-x-0.5",
       )}
       aria-hidden="true"
       fill="none"
@@ -330,6 +330,7 @@ export const CardScrollerItem = forwardRef<
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- Keyboard events bubble from the native radio input; the wrapper adds no tab stop.
     <div
       {...htmlProps}
       ref={ref}

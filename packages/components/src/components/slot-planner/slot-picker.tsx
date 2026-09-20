@@ -489,7 +489,7 @@ function SlotPickerInner<
         return;
       }
     }
-  }, [resolvedTaxonomy, retryByKey]);
+  }, [resolvedTaxonomy, retryByKey, setAnnouncement]);
 
   const requestOccurrence = (occurrence: SlotPickerOccurrence<TData>) => {
     const payload: SlotPlannerBookRequestPayload = {
@@ -541,16 +541,19 @@ function SlotPickerInner<
   // Logical week-navigation direction, mirrored from the manage-mode
   // SlotPlanner so both modes animate week changes identically.
   const weekStart = weekDays[0]!;
-  const previousWeekStartRef = useRef(weekStart);
-  const weekDirectionRef = useRef<0 | 1 | -1>(0);
-
-  if (previousWeekStartRef.current !== weekStart) {
-    weekDirectionRef.current =
-      weekStart > previousWeekStartRef.current ? 1 : -1;
-    previousWeekStartRef.current = weekStart;
+  const [weekNavigation, setWeekNavigation] = useState<{
+    start: string;
+    direction: -1 | 0 | 1;
+  }>({ start: weekStart, direction: 0 });
+  const weekDirection =
+    weekNavigation.start === weekStart
+      ? weekNavigation.direction
+      : weekStart > weekNavigation.start
+        ? 1
+        : -1;
+  if (weekNavigation.start !== weekStart) {
+    setWeekNavigation({ start: weekStart, direction: weekDirection });
   }
-
-  const weekDirection = weekDirectionRef.current;
   const [isRtl, setIsRtl] = useState(false);
 
   useEffect(() => {
@@ -782,6 +785,7 @@ function SlotPickerInner<
                 )}
               </p>
             ) : null}
+            {/* eslint-disable-next-line jsx-a11y/no-redundant-roles -- Explicit list semantics preserve VoiceOver support when CSS removes list styling. */}
             <ul
               role="list"
               data-slot="slot-picker-slot-list"
@@ -946,6 +950,7 @@ function SlotPickerInner<
             data-slot="slot-picker-week-layout"
             className="grid min-w-0 gap-[var(--dt-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
           >
+            {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- The tablist delegates keyboard events to its roving, focusable tab buttons. */}
             <div
               role="tablist"
               aria-label={resolvedTaxonomy.weekRailLabel}

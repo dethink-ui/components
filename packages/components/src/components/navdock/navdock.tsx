@@ -12,10 +12,10 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type AnchorHTMLAttributes,
   type CSSProperties,
   type FocusEventHandler,
-  type ForwardedRef,
   type HTMLAttributes,
   type KeyboardEventHandler,
   type LiHTMLAttributes,
@@ -24,7 +24,6 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
-  type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -297,7 +296,7 @@ type NavDockContextValue = {
   collapsed: boolean;
   collapseModeActive: boolean;
   collapseMode: NavDockCollapseMode;
-  collapseTriggerRef: RefObject<HTMLButtonElement | null>;
+  collapseTriggerRef: { current: HTMLButtonElement | null };
   currentValue?: string;
   isItemCurrent?: NavDockCurrentMatcher;
   itemValues: string[];
@@ -779,7 +778,7 @@ function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
   }
 
   if (ref) {
-    ref.current = node;
+    (ref as { current: T | null }).current = node;
   }
 }
 
@@ -889,51 +888,29 @@ function getAutoCollapseMediaQueryList() {
   return window.matchMedia(NavDockAutoCollapseMediaQuery);
 }
 
+function subscribeAutoCollapse(onChange: () => void) {
+  const query = getAutoCollapseMediaQueryList();
+  if (!query) return () => {};
+  if (typeof query.addEventListener === "function") {
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }
+  query.addListener(onChange);
+  return () => query.removeListener(onChange);
+}
+function getAutoCollapseSnapshot() {
+  return getAutoCollapseMediaQueryList()?.matches ?? false;
+}
+function getAutoCollapseServerSnapshot() {
+  return false;
+}
 function useAutoCollapseActive(collapseMode: NavDockCollapseMode) {
-  const [autoCollapseActive, setAutoCollapseActive] = useState(
-    () => collapseMode === "always",
+  const matches = useSyncExternalStore(
+    subscribeAutoCollapse,
+    getAutoCollapseSnapshot,
+    getAutoCollapseServerSnapshot,
   );
-
-  useEffect(() => {
-    if (collapseMode === "always") {
-      setAutoCollapseActive(true);
-      return undefined;
-    }
-
-    if (collapseMode === "none") {
-      setAutoCollapseActive(false);
-      return undefined;
-    }
-
-    const mediaQueryList = getAutoCollapseMediaQueryList();
-
-    if (!mediaQueryList) {
-      setAutoCollapseActive(false);
-      return undefined;
-    }
-
-    const updateAutoCollapse = () => {
-      setAutoCollapseActive(mediaQueryList.matches);
-    };
-
-    updateAutoCollapse();
-
-    if (typeof mediaQueryList.addEventListener === "function") {
-      mediaQueryList.addEventListener("change", updateAutoCollapse);
-
-      return () => {
-        mediaQueryList.removeEventListener("change", updateAutoCollapse);
-      };
-    }
-
-    mediaQueryList.addListener(updateAutoCollapse);
-
-    return () => {
-      mediaQueryList.removeListener(updateAutoCollapse);
-    };
-  }, [collapseMode]);
-
-  return autoCollapseActive;
+  return collapseMode === "always" || (collapseMode !== "none" && matches);
 }
 
 function useCollapsedShellHeight({
@@ -1238,6 +1215,7 @@ function useAnchoredLayerStyle({
 
   useEffect(() => {
     if (!open || !anchorElement || typeof window === "undefined") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Discard committed DOM measurements when hidden so reopening uses the anchor's current position.
       setStyle(undefined);
       return undefined;
     }
@@ -2091,7 +2069,9 @@ export const CollapseDock = forwardRef<HTMLDivElement, CollapseDockProps>(
             ) : null}
           </AnimatePresence>
           <motionElement.button
-            ref={context.collapseTriggerRef}
+            ref={(node) => {
+              setRef(context.collapseTriggerRef, node);
+            }}
             type="button"
             aria-controls={context.renderedListId}
             aria-expanded={!context.collapsed}
@@ -2552,6 +2532,7 @@ export const NavDock = forwardRef<HTMLElement, NavDockProps>(
     return (
       <MotionConfig reducedMotion={motion === "none" ? "always" : "user"}>
         <NavDockContext.Provider value={context}>
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Keyboard and pointer events delegate to the dock’s focusable links and buttons. */}
           <nav
             {...props}
             {...navLabelProps}
@@ -2746,6 +2727,7 @@ export const NavDockList = forwardRef<HTMLUListElement, NavDockListProps>(
 
     return (
       <NavDockListContext.Provider value={listContext}>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Keyboard and pointer events delegate to the dock’s focusable links and buttons. */}
         <ul
           {...props}
           ref={composeRefs(ref, listRef)}
@@ -2939,7 +2921,13 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
     const context = useNavDockContext();
     const item = useNavDockItemContext();
     const listContext = useNavDockListContext();
-    const interactiveRef = useRef<HTMLElement | null>(null);
+    const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(
+      null,
+    );
+    const interactiveRef = useCallback(
+      (node: HTMLElement | null) => setAnchorElement(node),
+      [],
+    );
     const prefersReducedMotion = useReducedMotion();
     const resolvedDisabled = disabled ?? item?.disabled ?? false;
     const reducedMotion = shouldReduceNavDockMotion(
@@ -2986,7 +2974,7 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
     };
     const content = getInteractiveContent({
       active: isActive,
-      anchorElement: interactiveRef.current,
+      anchorElement,
       badge,
       children: asChild ? undefined : children,
       description,
@@ -3011,7 +2999,6 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
         );
       }
 
-      const childRef = getChildRef(child);
       const childTarget = child.props.target ?? resolvedTarget;
       const childRel = mergeRelForTarget(
         child.props.rel ?? resolvedRel,
@@ -3026,7 +3013,13 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
       const clonedProps: NavDockLinkSlotProps = {
         ...props,
         ...child.props,
-        ref: composeRefs(ref as Ref<HTMLElement>, childRef, interactiveRef),
+        ref: (node) => {
+          composeRefs(
+            ref as Ref<HTMLElement>,
+            getChildRef(child),
+            interactiveRef,
+          )(node);
+        },
         "aria-current": childAriaCurrent,
         "aria-describedby": childDescribedBy,
         "aria-disabled": resolvedDisabled ? true : child.props["aria-disabled"],
@@ -3060,6 +3053,7 @@ export const NavDockLink = forwardRef<HTMLAnchorElement, NavDockLinkProps>(
 
       return (
         <>
+          {/* eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current. */}
           {cloneElement(child, clonedProps, content)}
           <DisabledReason
             id={resolvedDisabledReasonId}
@@ -3142,7 +3136,12 @@ export const NavDockButton = forwardRef<HTMLButtonElement, NavDockButtonProps>(
     const context = useNavDockContext();
     const item = useNavDockItemContext();
     const listContext = useNavDockListContext();
-    const interactiveRef = useRef<HTMLButtonElement | null>(null);
+    const [anchorElement, setAnchorElement] =
+      useState<HTMLButtonElement | null>(null);
+    const interactiveRef = useCallback(
+      (node: HTMLButtonElement | null) => setAnchorElement(node),
+      [],
+    );
     const prefersReducedMotion = useReducedMotion();
     const resolvedDisabled = disabled ?? item?.disabled ?? false;
     const reducedMotion = shouldReduceNavDockMotion(
@@ -3218,7 +3217,7 @@ export const NavDockButton = forwardRef<HTMLButtonElement, NavDockButtonProps>(
         >
           {getInteractiveContent({
             active: isActive,
-            anchorElement: interactiveRef.current,
+            anchorElement,
             badge,
             children,
             description,
@@ -3404,6 +3403,7 @@ export const NavDockSubmenu = forwardRef<HTMLDivElement, NavDockSubmenuProps>(
 
     return (
       <NavDockSubmenuContext.Provider value={submenuContext}>
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- Keyboard and pointer events delegate to the dock’s focusable links and buttons. */}
         <div
           {...props}
           ref={ref}
@@ -3477,7 +3477,12 @@ export const NavDockSubmenuTrigger = forwardRef<
     const item = useNavDockItemContext();
     const listContext = useNavDockListContext();
     const submenu = useNavDockSubmenuContext();
-    const interactiveRef = useRef<HTMLButtonElement | null>(null);
+    const [anchorElement, setAnchorElement] =
+      useState<HTMLButtonElement | null>(null);
+    const interactiveRef = useCallback(
+      (node: HTMLButtonElement | null) => setAnchorElement(node),
+      [],
+    );
     const prefersReducedMotion = useReducedMotion();
     const resolvedDisabled = disabled ?? item?.disabled ?? false;
     const reducedMotion = shouldReduceNavDockMotion(
@@ -3553,7 +3558,7 @@ export const NavDockSubmenuTrigger = forwardRef<
         >
           {getInteractiveContent({
             active: isActive,
-            anchorElement: interactiveRef.current,
+            anchorElement,
             badge,
             children,
             description,

@@ -38,6 +38,35 @@ function renderThreeCards(
 }
 
 describe("CardStack", () => {
+  it("waits for Space release before activating an open card", async () => {
+    const user = userEvent.setup();
+    renderThreeCards({ mode: "open" });
+    screen.getByRole("button", { name: "Show card 2" }).focus();
+    await user.keyboard("[Space>]");
+    expect(screen.getByRole("group", { name: "Card stack" })).toHaveAttribute(
+      "data-active-index",
+      "0",
+    );
+    await user.keyboard("[/Space]");
+    expect(screen.getByRole("group", { name: "Card stack" })).toHaveAttribute(
+      "data-active-index",
+      "1",
+    );
+  });
+
+  it.each(["{Enter}", " "])("activates an open card with %s", async (key) => {
+    const user = userEvent.setup();
+    renderThreeCards({ mode: "open" });
+    const card = screen.getByRole("button", { name: "Show card 2" });
+    card.focus();
+    await user.keyboard(key);
+    expect(screen.getByRole("group", { name: "Card stack" })).toHaveAttribute(
+      "data-active-index",
+      "1",
+    );
+    expect(screen.getByRole("heading", { name: "Second" })).toBeVisible();
+  });
+
   it("renders stack mode with safe defaults and controls", () => {
     renderThreeCards();
 

@@ -91,7 +91,7 @@ function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
   }
 
   if (ref) {
-    ref.current = node;
+    (ref as { current: T | null }).current = node;
   }
 }
 
@@ -255,14 +255,15 @@ export const Button = forwardRef<HTMLElement, ButtonProps>(
         );
       }
 
-      const childRef = getChildRef(child);
-
       return cloneElement(
         child,
+        // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
         {
           ...props,
           ...child.props,
-          ref: composeRefs(ref, childRef),
+          ref: (node) => {
+            composeRefs(ref, getChildRef(child))(node);
+          },
           "aria-busy": loading ? true : ariaBusy,
           "aria-disabled": isDisabled ? true : child.props["aria-disabled"],
           "data-slot": dataSlot,

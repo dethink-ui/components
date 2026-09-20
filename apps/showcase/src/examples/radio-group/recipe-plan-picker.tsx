@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@dethink/components";
 
 const plans = [
@@ -30,6 +30,7 @@ const plans = [
  * so keyboard behavior is native RadioGroup behavior.
  */
 export function RadioGroupRecipePlanPicker() {
+  const id = useId();
   const [plan, setPlan] = useState("team");
 
   return (
@@ -44,13 +45,18 @@ export function RadioGroupRecipePlanPicker() {
         {plans.map((entry) => (
           <label
             key={entry.value}
+            htmlFor={`${id}-${entry.value}`}
             className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${
               plan === entry.value
                 ? "border-primary bg-primary/[0.06]"
                 : "border-border hover:border-primary/40"
             }`}
           >
-            <RadioGroupItem value={entry.value} className="mt-1" />
+            <RadioGroupItem
+              id={`${id}-${entry.value}`}
+              value={entry.value}
+              className="mt-1"
+            />
             <span className="flex-1">
               <span className="flex items-baseline justify-between">
                 <span className="font-heading font-semibold">{entry.name}</span>

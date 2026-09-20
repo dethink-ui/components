@@ -4,7 +4,6 @@ import {
   forwardRef,
   isValidElement,
   useCallback,
-  useEffect,
   useMemo,
   useState,
   type CSSProperties,
@@ -309,26 +308,17 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
     const controlsRendered = previousControlVisible || nextControlVisible;
     const resolvedTabIndex = tabIndex ?? (cardCount > 1 ? 0 : undefined);
 
-    useEffect(() => {
-      if (isControlled || cardCount === 0) {
-        return;
-      }
-
-      const normalizedIndex =
+    if (!isControlled && cardCount > 0) {
+      const normalizedIndex = normalizeIndex(
         uncontrolledActiveIndex === -1
-          ? normalizeIndex(defaultActiveIndex, cardCount, loop)
-          : normalizeIndex(uncontrolledActiveIndex, cardCount, loop);
-
-      if (normalizedIndex !== uncontrolledActiveIndex) {
+          ? defaultActiveIndex
+          : uncontrolledActiveIndex,
+        cardCount,
+        loop,
+      );
+      if (normalizedIndex !== uncontrolledActiveIndex)
         setUncontrolledActiveIndex(normalizedIndex);
-      }
-    }, [
-      cardCount,
-      defaultActiveIndex,
-      isControlled,
-      loop,
-      uncontrolledActiveIndex,
-    ]);
+    }
 
     const setActiveIndex = useCallback(
       (nextIndex: number) => {
@@ -479,6 +469,28 @@ export const CardStack = forwardRef<HTMLDivElement, CardStackProps>(
                   inactiveOpenCard && "cursor-pointer",
                 )}
                 style={style}
+                role={inactiveOpenCard ? "button" : undefined}
+                tabIndex={inactiveOpenCard ? 0 : undefined}
+                aria-label={
+                  inactiveOpenCard ? `Show card ${index + 1}` : undefined
+                }
+                onKeyDown={(event) => {
+                  if (
+                    inactiveOpenCard &&
+                    (event.key === "Enter" || event.key === " ")
+                  ) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    if (event.key === "Enter") setActiveIndex(index);
+                  }
+                }}
+                onKeyUp={(event) => {
+                  if (inactiveOpenCard && event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setActiveIndex(index);
+                  }
+                }}
                 onClick={handleInactiveClick}
               >
                 {clonedCard}

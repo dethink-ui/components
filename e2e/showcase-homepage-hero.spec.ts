@@ -11,11 +11,12 @@ test.describe("showcase homepage hero", () => {
       name: "Dethink Components",
       exact: true,
     });
-    const logo = homeLink.locator('[data-brand-logo="angled-notch"]');
+    const logo = homeLink.locator("svg");
 
     await expect(homeLink).toHaveAttribute("href", "/");
     await expect(logo).toBeVisible();
-    await expect(logo.locator("svg")).toHaveAttribute("aria-hidden", "true");
+    await expect(logo).toHaveAttribute("aria-hidden", "true");
+    await expect(logo.locator("path")).toHaveCount(3);
 
     const logoBounds = await logo.boundingBox();
     expect(logoBounds).not.toBeNull();

@@ -78,10 +78,12 @@ When the user wants source copying and has access to the library source:
 5. Rewrite example imports from `@dethink/components` to the actual copied exports.
    Verify a small component renders with styles before composing a full screen.
 
-The repository's root README describes reuse/license status. Follow that status;
-the skill itself does not grant rights to reuse component source. If source is
-unavailable, ask for access or a supported installation path rather than claiming
-the external app is integrated.
+The component and recipe code is MIT licensed. Preserve the repository's `LICENSE`
+when copying code manually; registry installs include it at
+`components/dethink/LICENSE`. Third-party dependencies retain their own terms.
+Showcase images and brand artwork are outside the code license; follow the root
+README and `THIRD_PARTY_NOTICES.md` for asset scope. If source is unavailable, ask
+for access or a supported installation path rather than claiming integration.
 
 ## Theme and dependency details
 

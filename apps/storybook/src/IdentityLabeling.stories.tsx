@@ -8,7 +8,6 @@ import {
   Database,
   ShieldCheck,
   Sparkles,
-  UserRound,
   Users,
 } from "lucide-react";
 import {

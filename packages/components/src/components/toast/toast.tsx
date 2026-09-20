@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -24,6 +25,9 @@ import {
   type LiveRegionPoliteness,
 } from "../live-region";
 import type { FeedbackTone } from "../alert";
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 export type ToastTone = Exclude<FeedbackTone, "neutral"> | "neutral";
 export type ToastPlacement =
@@ -199,7 +203,9 @@ function useControlledToasts({
   const latestToastsRef = useRef(resolvedToasts);
   const pendingUncontrolledChangeRef = useRef<ToastRecord[] | null>(null);
 
-  latestToastsRef.current = resolvedToasts;
+  useIsomorphicLayoutEffect(() => {
+    latestToastsRef.current = resolvedToasts;
+  }, [resolvedToasts]);
 
   const setToasts = useCallback(
     (updater: (current: ToastRecord[]) => ToastRecord[]) => {
@@ -448,6 +454,7 @@ export const Toast = forwardRef<HTMLDivElement, ToastProps>(
     };
 
     return (
+      // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- Focus/pointer events pause dismissal and bubbled Escape dismisses the toast; actions retain native semantics.
       <div
         {...props}
         ref={ref}

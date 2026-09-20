@@ -398,15 +398,19 @@ const HorizontalAccordionRoot = forwardRef<
   const itemValues = useMemo(() => getDirectItemValues(children), [children]);
   const [focusedValue, setFocusedValue] =
     useState<HorizontalAccordionValue>(defaultValue);
-  const bladeRegistryRef = useRef(new Map<string, BladeRegistryEntry>());
-  const [bladeRegistryVersion, setBladeRegistryVersion] = useState(0);
+  const [bladeRegistry, setBladeRegistry] = useState(
+    () => new Map<string, BladeRegistryEntry>(),
+  );
   const layoutGroupId = useId();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [layout, setLayout] = useState<HorizontalAccordionLayout>("default");
-  const mergedAnimation = { ...DEFAULT_ANIMATION, ...animation };
+  const mergedAnimation = useMemo(
+    () => ({ ...DEFAULT_ANIMATION, ...animation }),
+    [animation],
+  );
   const motionConfig = useMemo(
     () => createMotionConfig(mergedAnimation),
-    [mergedAnimation.content, mergedAnimation.duration, mergedAnimation.easing],
+    [mergedAnimation],
   );
   const mergedRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -469,27 +473,24 @@ const HorizontalAccordionRoot = forwardRef<
 
   validateRootComposition(children);
 
-  const registerBlade = useCallback((nextValue: string, disabled: boolean) => {
-    const current = bladeRegistryRef.current.get(nextValue);
-
-    if (!current || current.disabled !== disabled) {
-      bladeRegistryRef.current.set(nextValue, { disabled });
-      setBladeRegistryVersion((version) => version + 1);
-    }
-
-    return () => {
-      bladeRegistryRef.current.delete(nextValue);
-      setBladeRegistryVersion((version) => version + 1);
-    };
+  const registerBlade = useCallback((value: string, disabled: boolean) => {
+    setBladeRegistry((current) => {
+      if (current.get(value)?.disabled === disabled) return current;
+      return new Map(current).set(value, { disabled });
+    });
+    return () =>
+      setBladeRegistry((current) => {
+        if (!current.has(value)) return current;
+        const next = new Map(current);
+        next.delete(value);
+        return next;
+      });
   }, []);
 
   const enabledItemValues = useMemo(
     () =>
-      itemValues.filter(
-        (itemValue) => !bladeRegistryRef.current.get(itemValue)?.disabled,
-      ),
-    // bladeRegistryVersion invalidates the ref-backed registry
-    [bladeRegistryVersion, itemValues],
+      itemValues.filter((itemValue) => !bladeRegistry.get(itemValue)?.disabled),
+    [bladeRegistry, itemValues],
   );
 
   const tabStopValue =
@@ -844,11 +845,11 @@ export const HorizontalAccordionPanel = forwardRef<
     motionConfig;
   const [contentSettled, setContentSettled] = useState(!active);
 
-  useEffect(() => {
-    if (active) {
-      setContentSettled(false);
-    }
-  }, [active]);
+  const [previousActive, setPreviousActive] = useState(active);
+  if (previousActive !== active) {
+    setPreviousActive(active);
+    if (active) setContentSettled(false);
+  }
 
   const hidden = contentEnabled ? !active && contentSettled : !active;
   let content: ReactNode;

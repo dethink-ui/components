@@ -22,7 +22,6 @@ import {
   type AvatarRing,
   type AvatarShape,
   type AvatarSize,
-  type AvatarTone,
 } from "../avatar";
 import { cn } from "../../utils/cn";
 

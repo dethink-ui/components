@@ -571,7 +571,10 @@ describe("CardScroller", () => {
 
     items.forEach((item, index) => {
       item.getBoundingClientRect = () =>
-        ({ left: index * 200 - 400, right: (index + 1) * 200 - 400 }) as DOMRect;
+        ({
+          left: index * 200 - 400,
+          right: (index + 1) * 200 - 400,
+        }) as DOMRect;
     });
     fireEvent.scroll(viewport);
 

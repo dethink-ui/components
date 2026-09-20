@@ -17,7 +17,11 @@ import { getBreadcrumbRenderItems } from "./breadcrumb";
 const RouterLink = forwardRef<
   HTMLAnchorElement,
   React.AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }
->(({ to, ...props }, ref) => <a ref={ref} href={to} {...props} />);
+>(({ to, children, ...props }, ref) => (
+  <a ref={ref} href={to} {...props}>
+    {children}
+  </a>
+));
 RouterLink.displayName = "RouterLink";
 
 const longPath = [

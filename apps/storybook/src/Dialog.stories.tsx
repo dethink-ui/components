@@ -558,7 +558,11 @@ export const DestructiveAlert: Story = {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel autoFocus>Keep report</AlertDialogCancel>
+                  {/* eslint-disable jsx-a11y/no-autofocus -- Initial focus belongs in this newly opened modal. */}
+                  <AlertDialogCancel autoFocus={true}>
+                    {/* eslint-enable jsx-a11y/no-autofocus */}
+                    Keep report
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     variant="destructive"
                     onPress={() => setStatus("Report deleted")}
@@ -876,7 +880,11 @@ export const AdminRowAlert: Story = {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel autoFocus>Keep enabled</AlertDialogCancel>
+                  {/* eslint-disable jsx-a11y/no-autofocus -- Initial focus belongs in this newly opened modal. */}
+                  <AlertDialogCancel autoFocus={true}>
+                    {/* eslint-enable jsx-a11y/no-autofocus */}
+                    Keep enabled
+                  </AlertDialogCancel>
                   <AlertDialogAction variant="destructive">
                     Disable export
                   </AlertDialogAction>

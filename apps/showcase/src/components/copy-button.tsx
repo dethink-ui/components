@@ -31,7 +31,9 @@ export function CopyButton({ text }: { text: string }) {
   return (
     <button
       type="button"
-      onClick={copy}
+      onClick={() => {
+        void copy();
+      }}
       aria-label={copied ? "Copied" : "Copy code"}
       className="focus-visible:ring-ring grid size-7 place-items-center rounded-md text-[oklch(0.72_0.03_200)] transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:outline-none"
     >

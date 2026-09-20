@@ -3,10 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * Root Playwright config for the Dethink Components workspace.
  *
- * Intentionally minimal: no `webServer` or `baseURL` is bound yet. Point tests
- * at an app when you add specs — e.g. Storybook (`http://localhost:6006`),
- * the Next.js showcase (`http://localhost:3005`), or playground-vite — either
- * by uncommenting the `webServer` block below or with `page.goto(url)` calls.
+ * Builds and serves the production showcase. Local runs can reuse an existing
+ * server on port 3015; CI always starts a fresh production server.
  *
  * Docs: https://playwright.dev/docs/test-configuration
  */
@@ -25,7 +23,10 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        launchOptions: { args: ["--enable-unsafe-swiftshader"] },
+      },
     },
   ],
 

@@ -190,14 +190,16 @@ test("optional pointer parallax, resizing and composition controls update render
 
 test("mobile foreground remains usable and the collection has no overflow", async ({
   browser,
+  baseURL,
 }) => {
   const context = await browser.newContext({
+    baseURL,
     viewport: { width: 390, height: 844 },
     hasTouch: true,
     reducedMotion: "no-preference",
   });
   const page = await context.newPage();
-  await page.goto("http://localhost:5280/components/shader-backgrounds");
+  await page.goto("/components/shader-backgrounds");
   for (const effect of effects) {
     const root = page.locator(`[data-effect="${effect}"]`);
     await root.scrollIntoViewIfNeeded();
@@ -216,6 +218,7 @@ test("mobile foreground remains usable and the collection has no overflow", asyn
 test("no WebGL and no JavaScript preserve every foreground", async ({
   browser,
   page,
+  baseURL,
 }) => {
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
@@ -235,9 +238,12 @@ test("no WebGL and no JavaScript preserve every foreground", async ({
     await expect(root.locator("canvas")).toHaveCount(0);
     await expect(root.getByRole("heading")).toBeVisible();
   }
-  const context = await browser.newContext({ javaScriptEnabled: false }),
+  const context = await browser.newContext({
+      javaScriptEnabled: false,
+      baseURL,
+    }),
     staticPage = await context.newPage();
-  await staticPage.goto("http://localhost:5280/components/shader-backgrounds");
+  await staticPage.goto("/components/shader-backgrounds");
   await expect(
     staticPage.locator('[data-slot="shader-background-content"]'),
   ).toHaveCount(5);

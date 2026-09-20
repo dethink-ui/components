@@ -8,6 +8,11 @@
   "registryDependencies": [],
   "files": [
     {
+      "path": "packages/components/LICENSE",
+      "type": "registry:file",
+      "target": "~/components/dethink/LICENSE"
+    },
+    {
       "path": "packages/components/src/styles.css",
       "type": "registry:style"
     },

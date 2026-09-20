@@ -45,7 +45,7 @@ export const ShaderHeroText = forwardRef<HTMLElement, ShaderHeroTextProps>(
     },
     forwardedRef,
   ) {
-    const rootRef = useRef<HTMLElement>(null);
+    const rootRef = useRef<HTMLElement | null>(null);
     const textRef = useRef<HTMLSpanElement>(null);
     const visualRef = useRef<HTMLSpanElement>(null);
     const callbacks = useRef({ onAnimationStart, onAnimationComplete });
@@ -378,7 +378,7 @@ export const ShaderHeroText = forwardRef<HTMLElement, ShaderHeroTextProps>(
       as,
       {
         ...props,
-        ref: (node: HTMLElement | null) => {
+        ref: (node: HTMLElement | null): void => {
           rootRef.current = node;
           if (typeof forwardedRef === "function") forwardedRef(node);
           else if (forwardedRef) forwardedRef.current = node;

@@ -1,0 +1,23 @@
+name: Bug report
+description: Report a reproducible component or documentation issue.
+body:
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Include a small example or steps, component name, and source revision or installation date. Do not include credentials or private data.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, React version, framework, and registry or workspace installation.
+    validations:
+      required: true

@@ -331,18 +331,20 @@ function AsyncCommandSearchExample() {
   const [retryCount, setRetryCount] = useState(0);
   const [lastRun, setLastRun] = useState("");
 
+  const handleQueryChange = (next: string) => {
+    setQuery(next);
+    setLoading(next.trim().length >= 2);
+    setError(null);
+    if (next.trim().length < 2) setResults([]);
+  };
+  const retrySearch = () => {
+    setRetryCount((count) => count + 1);
+    setLoading(query.trim().length >= 2);
+    setError(null);
+  };
   useEffect(() => {
     const normalizedQuery = query.trim().toLowerCase();
-
-    if (normalizedQuery.length < 2) {
-      setResults([]);
-      setLoading(false);
-      setError(null);
-      return undefined;
-    }
-
-    setLoading(true);
-    setError(null);
+    if (normalizedQuery.length < 2) return undefined;
 
     const timeout = window.setTimeout(() => {
       if (normalizedQuery.includes("err")) {
@@ -398,11 +400,11 @@ function AsyncCommandSearchExample() {
           suggestedCommands={suggestedCommands}
           asyncCommands={results}
           query={query}
-          onQueryChange={setQuery}
+          onQueryChange={handleQueryChange}
           loading={loading}
           loadingMessage="Searching workspace resources..."
           error={error}
-          onRetry={() => setRetryCount((count) => count + 1)}
+          onRetry={retrySearch}
           retryLabel="Retry search"
           minimumQueryLength={2}
           minimumQueryMessage="Type 2 or more characters to search resources."

@@ -285,13 +285,13 @@ export function useDrawerDrag({
     const controls = animate(translateMotionValue, target, springTransition);
 
     return () => controls.stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     open,
     resolvedSnapPoint,
     axis,
     closingSign,
     fallbackContentSize,
+    translateMotionValue,
     springTransition,
   ]);
 
@@ -303,8 +303,7 @@ export function useDrawerDrag({
     );
 
     return () => controls.stop();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [receded, recedeScale]);
+  }, [receded, recedeScale, scaleMotionValue, springTransition]);
 
   function commitSnapPoint(nextSnapPoint: number) {
     if (!isControlled) {

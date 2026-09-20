@@ -641,6 +641,7 @@ export const CarouselContent = forwardRef<HTMLDivElement, CarouselContentProps>(
     };
 
     return (
+      /* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex -- This focusable viewport supports keyboard navigation and pointer gestures. */
       <div
         {...props}
         ref={(node) => {
@@ -661,6 +662,7 @@ export const CarouselContent = forwardRef<HTMLDivElement, CarouselContentProps>(
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
       >
+        {/* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         <span
           ref={probeRef}
           aria-hidden="true"

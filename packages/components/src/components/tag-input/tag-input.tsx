@@ -393,6 +393,7 @@ function TagInputRoot(
           {required ? <span aria-hidden="true"> *</span> : null}
         </span>
       ) : null}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- Clicking the surrounding field focuses its native input, which already supports keyboard entry. */}
       <div
         aria-invalid={resolvedInvalid ? true : ariaInvalid}
         data-slot="tag-input-control"

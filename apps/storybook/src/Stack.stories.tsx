@@ -107,7 +107,11 @@ const wraps: StackWrap[] = ["nowrap", "wrap"];
 const RouterAnchor = forwardRef<
   HTMLAnchorElement,
   AnchorHTMLAttributes<HTMLAnchorElement> & { to: string }
->(({ to, ...props }, ref) => <a ref={ref} href={to} {...props} />);
+>(({ to, children, ...props }, ref) => (
+  <a ref={ref} href={to} {...props}>
+    {children}
+  </a>
+));
 RouterAnchor.displayName = "RouterAnchor";
 
 function MetricCard({

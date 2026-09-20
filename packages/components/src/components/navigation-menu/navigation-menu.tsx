@@ -658,6 +658,7 @@ function usePresence(open: boolean) {
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Presence tracks committed open content so CSS exit animations can finish before unmounting.
       setExitPresent(true);
       return undefined;
     }
@@ -994,6 +995,7 @@ export const NavigationMenu = forwardRef<HTMLElement, NavigationMenuProps>(
       ariaLabel ?? (ariaLabelledby === undefined ? "Main" : undefined);
 
     return (
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Keyboard events delegate to the navigation’s roving links and triggers.
       <nav
         {...props}
         ref={composeRefs(ref, rootRef)}
@@ -1567,7 +1569,6 @@ export const NavigationMenuLink = forwardRef<
         );
       }
 
-      const childRef = getChildRef(child);
       const resolvedHref = child.props.href ?? href;
       const resolvedTarget =
         child.props.target ?? target ?? (external ? "_blank" : undefined);
@@ -1584,7 +1585,9 @@ export const NavigationMenuLink = forwardRef<
       const clonedProps: NavigationMenuLinkSlotProps = {
         ...props,
         ...child.props,
-        ref: composeRefs(ref as Ref<HTMLElement>, childRef),
+        ref: (node) => {
+          composeRefs(ref as Ref<HTMLElement>, getChildRef(child))(node);
+        },
         "data-slot": "navigation-menu-link",
         "data-variant": variant,
         "data-size": size,
@@ -1616,11 +1619,13 @@ export const NavigationMenuLink = forwardRef<
       }
 
       if (!icon && !inPanel) {
+        // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
         return cloneElement(child, clonedProps);
       }
 
       return cloneElement(
         child,
+        // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
         clonedProps,
         renderLinkContent({ children: child.props.children, icon, inPanel }),
       );
@@ -1695,7 +1700,6 @@ export const NavigationMenuFeaturedItem = forwardRef<
         );
       }
 
-      const childRef = getChildRef(child);
       const resolvedHref = child.props.href ?? href;
       const resolvedTarget =
         child.props.target ?? target ?? (external ? "_blank" : undefined);
@@ -1707,7 +1711,9 @@ export const NavigationMenuFeaturedItem = forwardRef<
       const clonedProps: NavigationMenuLinkSlotProps = {
         ...props,
         ...child.props,
-        ref: composeRefs(ref as Ref<HTMLElement>, childRef),
+        ref: (node) => {
+          composeRefs(ref as Ref<HTMLElement>, getChildRef(child))(node);
+        },
         "data-slot": "navigation-menu-featured-item",
         "data-disabled": disabled ? "true" : undefined,
         "data-external": external ? "true" : undefined,
@@ -1730,6 +1736,7 @@ export const NavigationMenuFeaturedItem = forwardRef<
         clonedProps.rel = resolvedRel;
       }
 
+      // eslint-disable-next-line react-hooks/refs -- React forwards this ref during commit; createElement/cloneElement does not read ref.current.
       return cloneElement(child, clonedProps);
     }
 

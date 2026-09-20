@@ -907,12 +907,11 @@ export const TimelineViewport = forwardRef<
       );
     }, [contentSize, getViewportSize, options.maxZoom, options.minZoom]);
 
-    useEffect(() => {
-      setTransform((current) => ({
-        ...current,
-        zoom: normalizeViewportOptions(viewport).defaultZoom,
-      }));
-    }, [viewport]);
+    const [previousViewport, setPreviousViewport] = useState(viewport);
+    if (previousViewport !== viewport) {
+      setPreviousViewport(viewport);
+      setTransform((current) => ({ ...current, zoom: options.defaultZoom }));
+    }
 
     useEffect(() => {
       if (!didHandleInitialSelectionRef.current) {
@@ -930,6 +929,7 @@ export const TimelineViewport = forwardRef<
         return;
       }
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Centering a selected point requires the committed viewport dimensions from getViewportSize().
       setTransform((current) =>
         centerTimelinePoint({
           point: selectedPoint,
@@ -1122,6 +1122,7 @@ export const TimelineViewport = forwardRef<
     };
 
     return (
+      /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- This focusable viewport supports keyboard navigation and pointer gestures. */
       <div
         {...props}
         ref={mergedRef}
@@ -1151,6 +1152,7 @@ export const TimelineViewport = forwardRef<
         onBlur={handleBlur}
         onWheel={handleWheel}
       >
+        {/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
         {interactive && options.controls ? (
           <TimelineControls
             zoom={transform.zoom}
@@ -1225,6 +1227,7 @@ function TimelineFlowViewport({
   };
 
   return (
+    /* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex -- This focusable viewport supports keyboard navigation and pointer gestures. */
     <div
       {...props}
       role="region"
@@ -1243,6 +1246,7 @@ function TimelineFlowViewport({
       )}
       onKeyDown={handleKeyDown}
     >
+      {/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
       {children}
     </div>
   );

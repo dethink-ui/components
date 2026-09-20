@@ -5,7 +5,6 @@ import {
   isValidElement,
   useCallback,
   useContext,
-  useEffect,
   useId,
   useMemo,
   useRef,
@@ -488,13 +487,13 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
     // first client render show the initial panel content statically and visible.
     // The entrance then plays on user-driven tab changes without an SSR flash of
     // invisible content or a hydration mismatch.
-    const [contentMotionReady, setContentMotionReady] = useState(false);
     const selectedValue = controlled
       ? value
       : (uncontrolledValue ?? firstEnabledValue);
     const tabStopValue = focusedValue ?? selectedValue ?? firstEnabledValue;
     const prefersReducedMotion = useReducedMotion();
     const hasHydrated = useHydrated();
+    const contentMotionReady = hasHydrated;
     const reducedMotion =
       motionPreset === "none" || (hasHydrated && prefersReducedMotion === true);
     const transition = useMemo(
@@ -502,10 +501,6 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
       [motionPreset, reducedMotion],
     );
     const rootId = `tabs-${generatedId}`;
-
-    useEffect(() => {
-      setContentMotionReady(true);
-    }, []);
 
     const getTabId = useCallback(
       (tabValue: TabsValue) => `${rootId}-trigger-${getIdPart(tabValue)}`,
