@@ -97,7 +97,8 @@ export default function IntroductionPage() {
         </p>
         <p className="text-muted-foreground text-sm leading-6">
           Dethink is in active development. You can use it in this repository
-          today. The npm package and public registry are not published yet.
+          today, or copy components from the public registry. The npm package is
+          not published yet.
         </p>
       </DocsSection>
     </DocsPage>

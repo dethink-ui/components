@@ -20,3 +20,6 @@ yarn-error.log*
 .next/
 .agents/worktrees/
 .pnpm-store/
+.vercel/
+apps/showcase/public/r/
+.env*

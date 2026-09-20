@@ -21,6 +21,8 @@
     "docs:dependencies": "node scripts/generate-component-dependencies.mjs",
     "docs:dependencies:check": "node scripts/generate-component-dependencies.mjs --check",
     "registry:validate": "node scripts/validate-registry.mjs",
+    "registry:build": "node scripts/build-registry.mjs",
+    "registry:test": "node --test scripts/build-registry.test.mjs",
     "registry:smoke": "node scripts/smoke-button-registry.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
