@@ -155,3 +155,11 @@ mount-time entrance replay during SSR hydration.
 - Opt-in persisted compact preference and SSR restoration policy (#368).
 - Final package/registry smoke, showcase recipes, comprehensive docs, and full
   verification (#369).
+
+## Default navigation toggle
+
+Place one `SidebarTrigger` at the start of `SidebarShellHeader`, before the
+breadcrumb or title. It stays visible when desktop navigation collapses. The
+optional `SidebarRail` should not accompany it in default compositions. Mobile
+uses `SidebarMobileTrigger` with its independent drawer state and close button.
+Use subtle motion for routine navigation and preserve reduced-motion behavior.

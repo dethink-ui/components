@@ -1,0 +1,301 @@
+{
+  "accordion": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "alert": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "async-select": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "aurora-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "avatar": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "avatar-group": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "badge": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "box": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "breadcrumb": {
+    "direct": ["react", "react-aria-components"],
+    "shared": ["clsx", "react-aria", "tailwind-merge"]
+  },
+  "button": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "button-group": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "calendar": {
+    "direct": ["@internationalized/date", "react", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "card": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "card-scroller": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "card-stack": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "carousel": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "caustic-light-background": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "chat": {
+    "direct": ["react"],
+    "shared": [
+      "clsx",
+      "lucide-react",
+      "motion",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
+  "chat-activity": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "motion", "tailwind-merge"]
+  },
+  "chat-attachment": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "chat-core": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "chat-markdown": {
+    "direct": ["lucide-react", "react", "react-markdown", "remark-gfm"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "chat-message": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "checkbox": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "combobox": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "command-palette": {
+    "direct": ["motion", "react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "container": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "contour-field-background": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "conversation-list": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
+  },
+  "data-table": {
+    "direct": ["@tanstack/react-table", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "date-picker": {
+    "direct": [
+      "@internationalized/date",
+      "react",
+      "react-aria",
+      "react-aria-components"
+    ],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "date-range-picker": {
+    "direct": [
+      "@internationalized/date",
+      "react",
+      "react-aria",
+      "react-aria-components"
+    ],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "date-time-picker": {
+    "direct": [
+      "@internationalized/date",
+      "react",
+      "react-aria",
+      "react-aria-components"
+    ],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "dethink-base": {
+    "direct": ["clsx", "react", "tailwind-merge"],
+    "shared": []
+  },
+  "dialog": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "dot-matrix-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "drawer": {
+    "direct": ["motion", "react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "dropdown-button": {
+    "direct": ["lucide-react", "motion", "react", "react-aria-components"],
+    "shared": ["clsx", "react-aria", "tailwind-merge"]
+  },
+  "dropdown-menu": {
+    "direct": ["motion", "react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "empty-state": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "feedback-states": {
+    "direct": [],
+    "shared": ["clsx", "motion", "react", "tailwind-merge"]
+  },
+  "flex": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "form-field": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "grid": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "grid-beams-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "hero-text-animation": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "horizontal-accordion": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "icon-button": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "input": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "label": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "light-streaks-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "link": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "liquid-mesh-background": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "live-region": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "magnetic-beams-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "message-scroller": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "model-picker": {
+    "direct": ["lucide-react"],
+    "shared": [
+      "clsx",
+      "react",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
+  "multi-select": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "navdock": {
+    "direct": ["motion", "react", "react-dom"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "navigation-menu": {
+    "direct": ["react", "react-dom"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "number-input": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "orbital-glow-background": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "pagination": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "popover": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "progress": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "prompt-input": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
+  },
+  "radio-group": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "reveal-button": {
+    "direct": ["motion", "react", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "scan-grid-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "select": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "separator": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "shader-hero-text": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "sidebar": {
+    "direct": ["motion", "react", "react-dom"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "sidebar-shell": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "react-dom", "tailwind-merge"]
+  },
+  "silk-flow-background": {
+    "direct": ["react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "skeleton": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "slot-planner": {
+    "direct": ["@internationalized/date", "motion", "react"],
+    "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
+  },
+  "sound-input": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "spinner": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "stack": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "starfield-background": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "steps": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "switch": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "table": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "tabs": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "tag-input": {
+    "direct": ["react", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "textarea": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "timeline": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "toast": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "tooltip": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "typography": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] }
+}

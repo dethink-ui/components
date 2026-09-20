@@ -461,7 +461,7 @@ const navDockIconClasses =
   "inline-flex size-[var(--navdock-icon-size)] shrink-0 transform-gpu items-center justify-center will-change-transform data-[reduced-motion=true]:will-change-auto [&>svg]:size-[var(--navdock-icon-size)] [&>svg]:shrink-0";
 
 const navDockCollapseTriggerClasses =
-  "group/navdock-collapse-trigger data-[state=open]:text-foreground";
+  "group/navdock-collapse-trigger shrink-0 data-[state=open]:text-foreground";
 
 const navDockCollapseTriggerIconClasses =
   "pointer-events-none inline-flex size-[var(--navdock-icon-size)] items-center justify-center [&>svg]:size-[var(--navdock-icon-size)] [&>svg]:shrink-0";
@@ -475,10 +475,9 @@ const navDockCollapsedPlaceholderClasses =
   "pointer-events-none block min-h-[calc(var(--navdock-item-size)+var(--dt-space-4))] min-w-[calc(var(--navdock-item-size)+var(--dt-space-4))] shrink-0";
 
 const navDockCollapsedShellBaseClasses =
-  "absolute bottom-0 left-0 z-20 inline-flex h-fit w-fit min-w-[calc(var(--navdock-item-size)+var(--dt-space-4))] flex-col items-center gap-[var(--dt-space-1)] overflow-visible p-[var(--dt-space-2)] text-foreground";
+  "absolute bottom-0 left-0 z-20 inline-flex h-fit w-fit min-w-[calc(var(--navdock-item-size)+var(--dt-space-4))] flex-col items-center justify-end gap-[var(--dt-space-1)] overflow-visible p-[var(--dt-space-2)] text-foreground";
 
-const navDockCollapsedContentClasses =
-  "min-w-0 max-w-full origin-bottom transform-gpu will-change-transform data-[reduced-motion=true]:will-change-auto";
+const navDockCollapsedContentClasses = "min-w-0 max-w-full shrink-0";
 
 const navDockCollapsedListClasses = "items-center p-0";
 
@@ -531,8 +530,8 @@ const navDockMagnifyScale: Record<NavDockMotion, number> = {
 const navDockMagnifySpringOptions: Record<NavDockMotion, SpringOptions> = {
   none: { stiffness: 1200, damping: 120, mass: 1 },
   subtle: { stiffness: 480, damping: 44, mass: 0.7 },
-  standard: { stiffness: 400, damping: 30, mass: 0.7 },
-  expressive: { stiffness: 320, damping: 21, mass: 0.7 },
+  standard: { stiffness: 400, damping: 34, mass: 0.7 },
+  expressive: { stiffness: 320, damping: 31, mass: 0.7 },
 };
 
 const navDockPressSpringOptions: SpringOptions = {
@@ -541,14 +540,13 @@ const navDockPressSpringOptions: SpringOptions = {
   mass: 0.6,
 };
 
-// Icons grow away from the dock edge, macOS-style. In a vertical dock the title
-// (when shown) sits below the icon, so growing horizontally away from the wall
-// never overlaps the label.
+// Horizontal docks lift from their shelf. Vertical docks magnify around the
+// rail centerline so the icon does not drift sideways as the pointer moves.
 const navDockMagnifyOriginByPlacement: Record<NavDockPlacement, string> = {
   bottom: "50% 100%",
   top: "50% 0%",
-  left: "0% 50%",
-  right: "100% 50%",
+  left: "50% 50%",
+  right: "50% 50%",
 };
 
 const navDockSubmenuTransitions: Record<NavDockMotion, Transition> = {
@@ -567,15 +565,15 @@ const navDockCollapsedShellSpringOptions: Record<NavDockMotion, SpringOptions> =
   {
     none: { stiffness: 1200, damping: 120, mass: 1 },
     subtle: { stiffness: 420, damping: 42, mass: 1 },
-    standard: { stiffness: 340, damping: 32, mass: 1 },
-    expressive: { stiffness: 300, damping: 24, mass: 1 },
+    standard: { stiffness: 340, damping: 38, mass: 1 },
+    expressive: { stiffness: 300, damping: 36, mass: 1 },
   };
 
 const navDockCollapsedContentTransitions: Record<NavDockMotion, Transition> = {
   none: { duration: 0 },
-  subtle: { type: "spring", stiffness: 420, damping: 42, mass: 0.9 },
-  standard: { type: "spring", stiffness: 340, damping: 32, mass: 0.9 },
-  expressive: { type: "spring", stiffness: 300, damping: 24, mass: 0.9 },
+  subtle: { duration: 0.12, ease: "easeOut" },
+  standard: { duration: 0.16, ease: "easeOut" },
+  expressive: { duration: 0.2, ease: "easeOut" },
 };
 
 const navDockCollapsedContentExitTransition: Transition = {
@@ -956,7 +954,7 @@ function useCollapsedShellHeight({
     navDockCollapsedShellSpringOptions[motion],
   );
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const shell = shellRef.current;
 
     if (!shell) {
@@ -974,7 +972,16 @@ function useCollapsedShellHeight({
         return;
       }
 
-      const nextHeight = Math.ceil(shell.scrollHeight);
+      const content = shell.querySelector<HTMLElement>(
+        '[data-slot="navdock-collapsed-content"]',
+      );
+      const gap = Number.parseFloat(window.getComputedStyle(shell).rowGap) || 0;
+      // Measure intrinsic children, never the shell whose height we animate.
+      // scrollHeight includes the animated box and feeds its overshoot back in.
+      const nextHeight =
+        content && nextClosedHeight !== null
+          ? nextClosedHeight + content.offsetHeight + gap
+          : 0;
 
       if (nextHeight > 0) {
         setOpenHeight(nextHeight);
@@ -989,7 +996,7 @@ function useCollapsedShellHeight({
 
     const observer = new ResizeObserver(measure);
 
-    observer.observe(shell);
+    for (const child of shell.children) observer.observe(child);
 
     return () => {
       observer.disconnect();
@@ -998,7 +1005,7 @@ function useCollapsedShellHeight({
 
   const hasSyncedHeightRef = useRef(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const nextHeight = open
       ? (openHeight ?? closedHeight)
       : (closedHeight ?? openHeight);
@@ -1012,11 +1019,12 @@ function useCollapsedShellHeight({
     if (!hasSyncedHeightRef.current) {
       hasSyncedHeightRef.current = true;
       heightValue.jump(nextHeight);
+      springHeight.jump(nextHeight);
       return;
     }
 
     heightValue.set(nextHeight);
-  }, [closedHeight, heightValue, open, openHeight]);
+  }, [closedHeight, heightValue, open, openHeight, springHeight]);
 
   const staticHeight = open
     ? (openHeight ?? closedHeight ?? undefined)
@@ -1026,7 +1034,11 @@ function useCollapsedShellHeight({
     shellRef,
     {
       closedHeight,
-      height: reducedMotion ? staticHeight : springHeight,
+      height: reducedMotion
+        ? staticHeight
+        : closedHeight === null
+          ? undefined
+          : springHeight,
       openHeight,
     },
   ] as const;
@@ -1448,7 +1460,7 @@ function getNavDockMagnifiedScale({
   }
 
   // Cosine falloff peaks smoothly at the pointer and fades over `radius`.
-  const falloff = Math.cos((distance / radius) * Math.PI * 0.5);
+  const falloff = (1 + Math.cos((distance / radius) * Math.PI)) / 2;
 
   return 1 + (magnifyScale - 1) * falloff;
 }
@@ -1580,7 +1592,7 @@ function getCollapsedContentClosedMotionState({
     return { opacity: 0 };
   }
 
-  return { opacity: 0, scale: 0.92, y: 18 };
+  return { opacity: 0 };
 }
 
 function getCollapsedContentExitMotionState({
@@ -1592,18 +1604,15 @@ function getCollapsedContentExitMotionState({
     return { opacity: 0 };
   }
 
-  // Exit is a quick tween so the content clears before the shell height
-  // spring settles, instead of wobbling behind it.
+  // Keep the list anchored above the trigger while the shell contracts.
   return {
     opacity: 0,
-    scale: 0.95,
-    y: 14,
     transition: navDockCollapsedContentExitTransition,
   };
 }
 
 function getCollapsedContentOpenMotionState(): TargetAndTransition {
-  return { opacity: 1, scale: 1, y: 0 };
+  return { opacity: 1 };
 }
 
 function getItemCurrent(
@@ -1746,7 +1755,7 @@ function NavDockItemIcon({
       const center = horizontal
         ? bounds.left + bounds.width / 2
         : bounds.top + bounds.height / 2;
-      const radius = (horizontal ? bounds.width : bounds.height) * 1.5;
+      const radius = (horizontal ? bounds.width : bounds.height) * 2;
 
       return getNavDockMagnifiedScale({
         distance: Math.abs(pointer - center),
@@ -1784,7 +1793,7 @@ function NavDockItemIcon({
       return undefined;
     }
 
-    const handlePress = () => pressTarget.set(0.88);
+    const handlePress = () => pressTarget.set(0.94);
     const releasePress = () => pressTarget.set(1);
 
     anchor.addEventListener("pointerdown", handlePress);

@@ -7,9 +7,9 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuLink,
-  SidebarRail,
   SidebarShell,
   SidebarShellHeader,
+  SidebarTrigger,
   SidebarShellMain,
 } from "@dethink/components";
 import { BookOpen, FileText, Home } from "lucide-react";
@@ -60,9 +60,9 @@ export function SidebarShellPlain() {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-        <SidebarRail />
       </Sidebar>
       <SidebarShellHeader>
+        <SidebarTrigger />
         <div className="text-foreground truncate text-sm font-semibold">
           Writing pages
         </div>

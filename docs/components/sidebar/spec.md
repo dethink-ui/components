@@ -69,15 +69,17 @@ and state hooks when they make composition clearer.
   a full Dashboard Shell layout.
 - `SidebarSkipLink` targets the app main content region and becomes visible on
   focus.
-- `SidebarRail` is the standard visible desktop collapse control. Render it as
-  a direct child of `Sidebar` so its compact handle can straddle the outer edge
-  while normal Sidebar content remains clipped inside the internal viewport.
-- The default rail affordance is a 20 by 32 pixel rounded-rectangle chevron
-  inside a 24 by 40 pixel native button target. It uses a normal pointer cursor
-  and does not expose a resize line, resize cursor, or drag gesture.
-- `SidebarTrigger` remains available for intentional inline or toolbar
-  placement. Standard compositions use either `SidebarRail` or
-  `SidebarTrigger`, not both for the same desktop Sidebar.
+- `SidebarTrigger` is the default desktop collapse control: a visible 40px
+  panel-icon button with action-specific label, native tooltip and focus ring.
+  Place it in the Sidebar header for standalone navigation, or at the start of
+  SidebarShellHeader before the page title/breadcrumb for a shell.
+- Keep one primary desktop toggle visible in expanded and collapsed states.
+  Hide branding text when the standalone header collapses; retain the button.
+- `SidebarRail` remains an optional edge control for existing consumers. Render
+  it as a direct child of Sidebar when intentionally choosing that alternative.
+  Do not combine it with the primary header trigger in standard compositions.
+- Mobile uses SidebarMobileTrigger and the drawer close button. Its open state
+  stays separate from the desktop collapse preference.
 
 ## Item Contract
 

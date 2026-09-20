@@ -15,10 +15,10 @@ import {
   SidebarMenuAction,
   SidebarMenuItem,
   SidebarMenuLink,
-  SidebarRail,
   SidebarShell,
   SidebarShellFooter,
   SidebarShellHeader,
+  SidebarTrigger,
   SidebarShellMain,
 } from "@dethink/components";
 import {
@@ -63,7 +63,7 @@ export function SidebarShellRecipeOpsConsole() {
   return (
     <SidebarShell
       aria-label="AI operations console"
-      motion="expressive"
+      motion="subtle"
       className="border-border h-[34rem] rounded-xl border"
     >
       <Sidebar aria-label="Console navigation">
@@ -156,9 +156,9 @@ export function SidebarShellRecipeOpsConsole() {
             </SidebarMenuAction>
           </div>
         </SidebarFooter>
-        <SidebarRail />
       </Sidebar>
       <SidebarShellHeader>
+        <SidebarTrigger />
         <div className="flex min-w-0 items-center gap-2">
           <span className="text-foreground truncate text-sm font-semibold">
             Fleet overview

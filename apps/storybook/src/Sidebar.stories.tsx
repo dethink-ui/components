@@ -147,7 +147,7 @@ function SidebarExample({
       <Sidebar aria-label="Workspace navigation">
         <SidebarHeader>
           <div className="flex min-w-0 items-center justify-between gap-2">
-            <div className="min-w-0">
+            <div className="min-w-0 group-data-[collapsed=true]/sidebar:hidden">
               <div className="text-foreground truncate text-sm font-semibold">
                 Dethink Ops
               </div>
@@ -155,6 +155,7 @@ function SidebarExample({
                 Production workspace
               </div>
             </div>
+            <SidebarTrigger />
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -228,7 +229,6 @@ function SidebarExample({
             </SidebarMenuAction>
           </div>
         </SidebarFooter>
-        <SidebarRail />
       </Sidebar>
       <SidebarInset id="storybook-sidebar-content" className="p-6">
         <div className="border-border bg-muted/30 rounded-lg border p-5">

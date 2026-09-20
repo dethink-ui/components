@@ -47,7 +47,7 @@ export const sidebarProps: PropRow[] = [
     type: "button props",
     defaultValue: "toggle collapse",
     description:
-      "Alternative desktop collapse controls with aria-expanded state. SidebarRail is the standard compact edge tab with a small Motion-powered chevron; it is a binary toggle, not a resize or drag handle. Use SidebarTrigger only when an inline control is intentional, not alongside the rail.",
+      "Desktop collapse controls with aria-expanded state. SidebarTrigger is the default 40px panel-icon button: place it in the sidebar header or the shell header. SidebarRail is an optional edge alternative for existing consumers. Use one primary desktop toggle.",
   },
   {
     prop: "SidebarMobile / SidebarMobileTrigger",

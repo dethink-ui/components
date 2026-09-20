@@ -9,7 +9,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuLink,
-  SidebarRail,
   SidebarShell,
   SidebarShellFooter,
   SidebarShellHeader,
@@ -23,6 +22,7 @@ export function SidebarShellControlled() {
 
   return (
     <SidebarShell
+      motion="subtle"
       aria-label="Controlled shell demo"
       collapsed={collapsed}
       onCollapsedChange={setCollapsed}
@@ -72,7 +72,6 @@ export function SidebarShellControlled() {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-        <SidebarRail />
       </Sidebar>
       <SidebarShellHeader>
         <SidebarTrigger />

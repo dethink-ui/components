@@ -306,7 +306,7 @@ const sidebarMenuShortcutClasses =
   "rounded-sm bg-muted px-[var(--dt-space-1)] py-0.5 font-mono text-[0.6875rem] leading-4 text-muted-foreground";
 
 const sidebarTriggerClasses =
-  "inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground active:scale-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0";
+  "inline-flex size-10 shrink-0 items-center justify-center rounded-md border-0 bg-transparent text-muted-foreground outline-none motion-safe:transition-[background-color,color,box-shadow,scale] motion-safe:duration-[var(--sidebar-motion-duration)] motion-safe:ease-[var(--sidebar-motion-ease)] hover:bg-muted hover:text-foreground active:scale-95 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-[18px] [&>svg]:shrink-0";
 
 const sidebarRailClasses =
   "group/sidebar-rail absolute top-[var(--dt-space-3)] z-20 hidden h-10 w-6 cursor-pointer items-center justify-center outline-none disabled:pointer-events-none disabled:opacity-50 data-[side=left]:left-full data-[side=left]:-translate-x-2 data-[side=right]:right-full data-[side=right]:translate-x-2 md:flex";
@@ -610,10 +610,31 @@ function getTriggerDirection(collapsed: boolean, side: SidebarSide) {
 }
 
 function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
-  return getTriggerDirection(collapsed, side) === "right" ? (
-    <ChevronRightIcon />
-  ) : (
-    <ChevronLeftIcon />
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d={side === "left" ? "M9 4v16" : "M15 4v16"} />
+      {!collapsed && (
+        <path
+          d={
+            side === "left"
+              ? "M5 5h3v14H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"
+              : "M16 5h3a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3Z"
+          }
+          fill="currentColor"
+          fillOpacity="0.15"
+          stroke="none"
+        />
+      )}
+    </svg>
   );
 }
 
@@ -1820,6 +1841,7 @@ export const SidebarTrigger = forwardRef<
         type={type}
         aria-expanded={!collapsed}
         aria-label={props["aria-label"] ?? label}
+        title={props.title ?? props["aria-label"] ?? label}
         data-collapsed={collapsed ? "true" : "false"}
         data-side={side}
         data-slot="sidebar-trigger"

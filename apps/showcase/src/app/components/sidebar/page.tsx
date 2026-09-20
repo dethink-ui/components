@@ -41,7 +41,7 @@ export default function SidebarPage() {
           <ExampleBlock
             file="sidebar/basic.tsx"
             title="Dashboard navigation"
-            description="A labelled nav landmark with grouped links, current route state, badges, shortcuts, trigger, rail, and content inset."
+            description="A labelled nav landmark with grouped links, current route state, badges, shortcuts, a visible header toggle, and content inset."
           >
             <SidebarBasic />
           </ExampleBlock>

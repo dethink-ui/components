@@ -253,18 +253,21 @@ Required behaviors:
 - pointer proximity drives continuous, spring-smoothed icon magnification: the
   icon under the pointer magnifies to the preset maximum (`1.3` subtle, `1.45`
   standard, `1.6` expressive) and nearby icons follow a smooth cosine falloff
-  within roughly 1.5 item widths, so handoff between items is continuous rather
+  within roughly two item widths with zero slope at the falloff boundary, so handoff between items is continuous rather
   than stepped
 - keyboard focus magnifies the focused icon to the preset maximum without
   requiring a pointer
-- icons magnify away from the dock edge (bottom placement grows upward, left
-  placement grows rightward, and so on) so labels and the dock surface stay
-  stationary
+- horizontal icons magnify away from their shelf (bottom grows upward, top
+  grows downward); vertical icons grow around the rail centerline without
+  drifting sideways. Labels and the dock surface stay stationary.
 - press/tap state briefly scales the icon down before returning to the
   hover/focus target
 - title reveal animates for `showTitle="hover"`
 - submenu enter/exit uses Motion presence
-- collapsed-mode expansion/collapse uses reduced-motion-safe animation
+- collapsed-mode expansion/collapse measures intrinsic content rather than the
+  animated shell. The trigger stays anchored at the bottom while the shell
+  changes height without overshoot; content fades without a second spatial
+  animation. Reduced motion removes spatial movement.
 
 Reduced-motion behavior:
 

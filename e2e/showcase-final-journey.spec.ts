@@ -51,7 +51,8 @@ test.describe("showcase final journey", () => {
       .toBe("npx shadcn@latest add @dethink/button");
 
     await page
-      .getByRole("link", { name: /Next component: Icon Button/ })
+      .getByRole("navigation", { name: "Components", exact: true })
+      .getByRole("link", { name: "Icon Button", exact: true })
       .click();
     await expect(page).toHaveURL(/\/components\/icon-button$/);
     await expect(

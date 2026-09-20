@@ -12,18 +12,18 @@ import {
   SidebarMenuItem,
   SidebarMenuLink,
   SidebarProvider,
-  SidebarRail,
+  SidebarTrigger,
 } from "@dethink/components";
 import { BarChart3, LayoutDashboard } from "lucide-react";
 
 export function SidebarBasic() {
   return (
-    <SidebarProvider>
+    <SidebarProvider motion="subtle">
       <div className="border-border bg-background flex h-80 overflow-hidden rounded-lg border">
         <Sidebar aria-label="Product navigation">
           <SidebarHeader>
             <div className="flex min-w-0 items-center justify-between gap-2">
-              <div className="min-w-0">
+              <div className="min-w-0 group-data-[collapsed=true]/sidebar:hidden">
                 <div className="text-foreground truncate text-sm font-semibold">
                   Dethink Cloud
                 </div>
@@ -31,6 +31,7 @@ export function SidebarBasic() {
                   Operations
                 </div>
               </div>
+              <SidebarTrigger />
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -61,7 +62,6 @@ export function SidebarBasic() {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarRail />
         </Sidebar>
         <SidebarInset className="p-6">
           <div className="border-border bg-muted/30 text-muted-foreground rounded-md border p-4 text-sm">

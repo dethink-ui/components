@@ -378,11 +378,18 @@ describe("Sidebar", () => {
       </SidebarProvider>,
     );
 
-    await user.click(screen.getByRole("button", { name: "Collapse sidebar" }));
-
-    expect(
-      screen.getByRole("navigation", { name: "Inline trigger navigation" }),
-    ).toHaveAttribute("data-collapsed", "true");
+    const trigger = screen.getByRole("button", { name: "Collapse sidebar" });
+    expect(trigger).toHaveAttribute("title", "Collapse sidebar");
+    await user.tab();
+    expect(trigger).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveAccessibleName("Expand sidebar");
+    expect(trigger).toHaveAttribute("title", "Expand sidebar");
+    expect(trigger).toHaveFocus();
+    await user.keyboard(" ");
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(trigger).toHaveFocus();
   });
 
   it("renders a Motion-ready default rail handle and preserves custom children", () => {

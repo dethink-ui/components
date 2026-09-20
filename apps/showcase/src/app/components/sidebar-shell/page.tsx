@@ -60,7 +60,7 @@ export default function SidebarShellPage() {
             wide
             file="sidebar-shell/controlled.tsx"
             title="Controlled collapse"
-            description="Collapse state lifted into your component. The header trigger, the edge rail, and every region's data attributes stay in agreement, so you can persist the preference or drive it from a server."
+            description="Collapse state lifted into your component. The single header trigger and every region's data attributes stay in agreement, so you can persist the preference or drive it from a server."
           >
             <SidebarShellControlled />
           </ExampleBlock>

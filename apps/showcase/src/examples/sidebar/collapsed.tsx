@@ -3,6 +3,7 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarHeader,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -11,7 +12,7 @@ import {
   SidebarMenuItem,
   SidebarMenuLink,
   SidebarProvider,
-  SidebarRail,
+  SidebarTrigger,
 } from "@dethink/components";
 import { FileBarChart, FolderKanban, Inbox } from "lucide-react";
 
@@ -26,6 +27,9 @@ export function SidebarCollapsed() {
     <SidebarProvider defaultCollapsed motion="subtle">
       <div className="border-border bg-background flex h-72 overflow-hidden rounded-lg border">
         <Sidebar aria-label="Collapsed navigation" variant="bordered">
+          <SidebarHeader>
+            <SidebarTrigger />
+          </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupLabel>Rail</SidebarGroupLabel>
@@ -50,7 +54,6 @@ export function SidebarCollapsed() {
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          <SidebarRail />
         </Sidebar>
         <SidebarInset className="text-muted-foreground p-5 text-sm">
           Collapsed labels remain in the accessibility tree while visual space

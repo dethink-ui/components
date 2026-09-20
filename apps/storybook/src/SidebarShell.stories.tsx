@@ -28,7 +28,7 @@ import {
   SidebarMenuBadge,
   SidebarMenuItem,
   SidebarMenuLink,
-  SidebarRail,
+  SidebarTrigger,
   SidebarShell,
   SidebarShellFooter,
   SidebarShellHeader,
@@ -124,7 +124,7 @@ function ShellNavigation() {
           <span className="bg-primary text-primary-foreground inline-flex size-8 shrink-0 items-center justify-center rounded-lg">
             <Blocks aria-hidden="true" className="size-4" />
           </span>
-          <span className="min-w-0">
+          <span className="min-w-0 group-data-[collapsed=true]/sidebar:sr-only">
             <span className="text-foreground block truncate text-sm font-semibold">
               Dethink Ops
             </span>
@@ -186,7 +186,6 @@ function ShellNavigation() {
           </span>
         </div>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }
@@ -305,6 +304,7 @@ function ShellExample(props: SidebarShellProps) {
         <ShellNavigation />
       </SidebarShellNavigation>
       <SidebarShellHeader>
+        <SidebarTrigger />
         <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-foreground truncate text-sm font-semibold">

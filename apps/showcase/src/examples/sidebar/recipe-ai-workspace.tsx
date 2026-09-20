@@ -14,18 +14,18 @@ import {
   SidebarMenuItem,
   SidebarMenuLink,
   SidebarProvider,
-  SidebarRail,
+  SidebarTrigger,
 } from "@dethink/components";
 import { Activity, Gauge, Settings2, Sparkles } from "lucide-react";
 
 export function SidebarRecipeAiWorkspace() {
   return (
-    <SidebarProvider variant="floating" motion="expressive">
+    <SidebarProvider variant="floating" motion="subtle">
       <div className="border-border bg-muted/30 flex h-[28rem] overflow-hidden rounded-lg border">
         <Sidebar aria-label="AI workspace navigation">
           <SidebarHeader>
             <div className="flex min-w-0 items-center justify-between gap-2">
-              <div className="min-w-0">
+              <div className="min-w-0 group-data-[collapsed=true]/sidebar:hidden">
                 <div className="text-foreground truncate text-sm font-semibold">
                   Assist Studio
                 </div>
@@ -33,6 +33,7 @@ export function SidebarRecipeAiWorkspace() {
                   Model operations
                 </div>
               </div>
+              <SidebarTrigger />
             </div>
           </SidebarHeader>
           <SidebarContent>
@@ -82,7 +83,6 @@ export function SidebarRecipeAiWorkspace() {
               </SidebarMenuAction>
             </div>
           </SidebarFooter>
-          <SidebarRail />
         </Sidebar>
         <SidebarInset className="p-6">
           <div className="grid gap-4 md:grid-cols-2">

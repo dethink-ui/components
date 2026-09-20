@@ -13,10 +13,10 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuLink,
-  SidebarRail,
   SidebarShell,
   SidebarShellFooter,
   SidebarShellHeader,
+  SidebarTrigger,
   SidebarShellMain,
 } from "@dethink/components";
 import {
@@ -31,6 +31,7 @@ import {
 export function SidebarShellBasic() {
   return (
     <SidebarShell
+      motion="subtle"
       aria-label="Workbench shell demo"
       className="border-border h-[30rem] rounded-xl border"
     >
@@ -103,9 +104,9 @@ export function SidebarShellBasic() {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarRail />
       </Sidebar>
       <SidebarShellHeader>
+        <SidebarTrigger />
         <div className="min-w-0">
           <div className="text-foreground truncate text-sm font-semibold">
             Overview

@@ -1,10 +1,7 @@
 import { Children, isValidElement, type ReactNode } from "react";
 import Link from "next/link";
 import { CodeBlock } from "@/components/code-block";
-import {
-  ComponentDocNavigation,
-  ComponentSequenceNavigation,
-} from "@/components/component-doc-navigation";
+import { ComponentDependencies } from "@/components/component-dependencies";
 import { getComponentMetaByName } from "@/lib/components-meta";
 
 interface DocsPageProps {
@@ -28,6 +25,7 @@ function getSections(children: ReactNode): { id: string; title: string }[] {
     if (child.type === InstallationSection) {
       return [
         { id: "installation", title: "Installation" },
+        { id: "built-with", title: "Built with" },
         { id: "usage", title: "Usage" },
       ];
     }
@@ -69,16 +67,7 @@ export function DocsPage({
           <p className="text-muted-foreground max-w-prose text-base leading-7">
             {description}
           </p>
-          {component ? (
-            <ComponentSequenceNavigation currentSlug={component.slug} />
-          ) : null}
         </header>
-        {component ? (
-          <ComponentDocNavigation
-            key={component.slug}
-            currentSlug={component.slug}
-          />
-        ) : null}
         {sections.length ? (
           <details className="border-border rounded-lg border px-4 py-3 xl:hidden">
             <summary className="cursor-pointer text-sm font-medium">
@@ -195,6 +184,9 @@ export function InstallationSection({
         >
           View registry files
         </a>
+      </DocsSection>
+      <DocsSection id="built-with" title="Built with">
+        <ComponentDependencies registryName={registryName} />
       </DocsSection>
       <DocsSection
         id="usage"
