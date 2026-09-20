@@ -233,7 +233,7 @@ export function SidebarShellRecipeOpsConsole() {
           className="bg-success size-2 shrink-0 rounded-full"
         />
         <span className="truncate">All systems operational</span>
-        <span className="text-muted-foreground/70 ml-auto shrink-0 text-xs">
+        <span className="text-muted-foreground ml-auto shrink-0 text-xs">
           us-east · 840ms p95
         </span>
       </SidebarShellFooter>
