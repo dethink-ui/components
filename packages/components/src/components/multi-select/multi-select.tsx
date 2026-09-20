@@ -616,6 +616,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
           )}
         >
           <div
+            role="group"
             aria-label={resolvedSelectedLabel}
             data-slot="multi-select-value"
             className={multiSelectValueClasses}
