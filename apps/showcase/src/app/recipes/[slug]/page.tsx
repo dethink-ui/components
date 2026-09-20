@@ -106,7 +106,7 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
       <section
         aria-labelledby="recipe-demo-title"
         data-recipe-demo={recipe.slug}
-        className="bg-background min-h-[calc(100dvh-3.5rem)]"
+        className="bg-background min-h-[calc(100dvh-var(--site-header-height))]"
       >
         <RecipeDemoBar title={recipe.title} />
         <div

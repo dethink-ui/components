@@ -1,23 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { Bricolage_Grotesque, JetBrains_Mono, Manrope } from "next/font/google";
 import { ShowcaseProviders } from "@/components/showcase-providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
-const fontBody = Inter({
+const fontBody = Manrope({
   subsets: ["latin"],
   variable: "--font-body",
+  display: "swap",
 });
 
-const fontHeading = Space_Grotesk({
+const fontHeading = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-heading",
+  display: "swap",
 });
 
 const fontMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

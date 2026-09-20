@@ -43,20 +43,22 @@ export function BrandMark({ className }: { className?: string }) {
   );
 }
 
-/** Stacked wordmark: the brand leads, with the product category beneath it. */
+/** Parent brand wordmark with a quiet, inline product label. */
 export function BrandLogo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-2 whitespace-nowrap",
+        className,
+      )}
+    >
       <span className="sr-only">Dethink Components</span>
-      <BrandMark className="h-9 w-7" />
-      <span
-        aria-hidden="true"
-        className="flex flex-col gap-1 whitespace-nowrap"
-      >
-        <span className="font-heading text-[22px] leading-5 font-semibold tracking-[-0.06em]">
+      <BrandGlyph className="h-9 w-7 shrink-0" />
+      <span aria-hidden="true" className="flex items-center gap-3">
+        <span className="text-[22px] leading-none font-semibold tracking-[-0.06em]">
           dethink
         </span>
-        <span className="text-muted-foreground text-[9px] leading-3 font-medium tracking-[0.2em] uppercase">
+        <span className="border-border text-muted-foreground border-l pl-3 text-[11px] leading-5 font-medium">
           Components
         </span>
       </span>

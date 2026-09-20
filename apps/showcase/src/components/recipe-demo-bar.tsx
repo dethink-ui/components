@@ -15,7 +15,7 @@ export function RecipeDemoBar({ title }: RecipeDemoBarProps) {
     <nav
       aria-label="Recipe demo controls"
       data-recipe-demo-bar
-      className="border-border bg-background/90 motion-safe:animate-scrim-in sticky top-14 z-30 flex min-h-14 items-center gap-2 border-b px-2 backdrop-blur-md sm:gap-3 sm:px-4"
+      className="border-border bg-background/90 motion-safe:animate-scrim-in sticky top-[var(--site-header-height)] z-30 flex min-h-14 items-center gap-2 border-b px-2 backdrop-blur-md sm:gap-3 sm:px-4"
     >
       <Link href="/recipes" className={actionClassName}>
         <ArrowLeft aria-hidden="true" className="size-4" />

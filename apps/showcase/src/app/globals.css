@@ -7,6 +7,7 @@
  * documented --dt-* token contract. No component styles are forked.
  */
 :root {
+  --site-header-height: 74px;
   /* Typography (variables provided by next/font in the root layout) */
   --dt-font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --dt-font-heading: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
@@ -125,6 +126,29 @@ html {
   scrollbar-color: var(--sc-scrollbar-thumb) var(--sc-scrollbar-track);
   scrollbar-gutter: stable;
   scrollbar-width: thin;
+  scroll-padding-top: calc(var(--site-header-height) + 1rem);
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --site-header-height: 88px;
+  }
+}
+
+@layer base {
+  body {
+    font-weight: 500;
+    font-size-adjust: from-font;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--dt-font-heading);
+  }
 }
 
 a[aria-current="page"] {

@@ -17,7 +17,7 @@ export function DocsLayout({ children }: { children: ReactNode }) {
       <div className="lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">
         <aside
           aria-label="Documentation navigation"
-          className="border-border/70 sticky top-14 hidden max-h-[calc(100svh-3.5rem)] self-start border-r py-10 pr-4 lg:block"
+          className="border-border/70 sticky top-[var(--site-header-height)] hidden max-h-[calc(100svh-var(--site-header-height))] self-start border-r py-10 pr-4 lg:block"
         >
           <div className="sc-components-nav-scroll max-h-[calc(100svh-8.5rem)] overflow-y-auto pr-1 pb-12">
             <ComponentsNav />

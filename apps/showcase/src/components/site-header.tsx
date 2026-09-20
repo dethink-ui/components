@@ -1,17 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  IconButton,
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  RevealButton,
-} from "@dethink/components";
-import { Menu, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { GithubIcon } from "@/components/icons";
 import { ThemePicker } from "@/components/theme-picker";
@@ -23,115 +15,138 @@ const navLinks = [
   { href: "/recipes", label: "Recipes" },
 ];
 
+const focusStyles =
+  "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring";
+
 function GithubLink() {
   return (
-    <RevealButton
-      icon={<GithubIcon />}
-      label="GitHub"
-      size="sm"
-      variant="ghost"
-      className="text-muted-foreground hover:text-foreground"
-      onClick={() => {
-        window.open(
-          "https://github.com/parveshh/dethink-components",
-          "_blank",
-          "noopener,noreferrer",
-        );
-      }}
-    />
+    <a
+      href="https://github.com/parveshh/dethink-components"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="GitHub repository (opens in a new tab)"
+      className={`text-muted-foreground hover:text-foreground inline-flex size-9 items-center justify-center rounded-md ${focusStyles}`}
+    >
+      <GithubIcon className="size-4" />
+    </a>
+  );
+}
+
+function ParentSiteLink() {
+  return (
+    <a
+      href="https://dethink.co.uk"
+      className={`bg-foreground text-background hover:bg-foreground/90 inline-flex min-h-10 items-center justify-center gap-4 rounded-md px-4 text-xs font-semibold ${focusStyles}`}
+    >
+      Dethink studio <ArrowUpRight className="size-4" aria-hidden="true" />
+    </a>
   );
 }
 
 export function SiteHeader() {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  return <SiteHeaderContent key={pathname} pathname={pathname} />;
+}
 
-  // Close the mobile panel after a navigation; the sticky header persists
-  // across route changes, so the panel would otherwise stay expanded.
+function SiteHeaderContent({ pathname }: { pathname: string }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+    if (!mobileOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !event.defaultPrevented) {
+        setMobileOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [mobileOpen]);
 
   const isCurrent = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="border-border/70 bg-background/80 sticky top-0 z-40 border-b backdrop-blur-md">
-      <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="shrink-0 rounded-md">
+    <header className="border-border/70 bg-background/95 sticky top-0 z-40 border-b backdrop-blur-md">
+      <div className="mx-auto flex h-[calc(var(--site-header-height)-1px)] w-full max-w-7xl items-center gap-8 px-5 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className={`mr-auto shrink-0 rounded-md ${focusStyles}`}
+          onClick={() => setMobileOpen(false)}
+        >
           <BrandLogo />
         </Link>
 
-        {/* Wide: inline link bar. */}
-        <NavigationMenu
-          aria-label="Main"
-          size="md"
-          className="flex-1 max-md:hidden"
-        >
-          <NavigationMenuList>
+        <nav aria-label="Main" className="max-lg:hidden">
+          <ul className="flex items-center gap-8">
             {navLinks.map((link) => (
-              <NavigationMenuItem key={link.href}>
-                <NavigationMenuLink asChild current={isCurrent(link.href)}>
-                  <Link href={link.href}>{link.label}</Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={isCurrent(link.href) ? "page" : undefined}
+                  className={`text-muted-foreground hover:text-foreground aria-[current=page]:text-foreground inline-flex min-h-11 items-center rounded-sm text-xs font-medium ${focusStyles}`}
+                >
+                  {link.label}
+                </Link>
+              </li>
             ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+          </ul>
+        </nav>
 
-        <div className="ml-auto flex items-center gap-2 max-md:hidden">
-          <GithubLink />
-          <ThemePicker />
-          <ThemeToggle />
+        <div className="flex items-center gap-4 max-lg:hidden">
+          <div className="border-border flex items-center gap-2 border-l pl-4">
+            <GithubLink />
+            <ThemePicker />
+            <ThemeToggle />
+          </div>
+          <ParentSiteLink />
         </div>
 
-        {/* Narrow: the burger expands an integrated panel below the bar. */}
-        <IconButton
+        <button
+          ref={toggleRef}
+          type="button"
           aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
           aria-expanded={mobileOpen}
           aria-controls="site-header-mobile-panel"
-          variant="ghost"
-          size="sm"
-          className="ml-auto md:hidden"
+          className={`hover:bg-muted grid size-11 shrink-0 place-items-center rounded-md lg:hidden ${focusStyles}`}
           onClick={() => setMobileOpen((previous) => !previous)}
         >
           {mobileOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-        </IconButton>
+        </button>
       </div>
 
       <div
         id="site-header-mobile-panel"
         hidden={!mobileOpen}
-        className="border-border/70 border-t md:hidden"
+        className="border-border/70 max-h-[calc(100svh-var(--site-header-height))] overflow-y-auto border-t lg:hidden"
       >
-        <div className="space-y-3 px-4 py-3">
-          <NavigationMenu
-            aria-label="Main"
-            orientation="vertical"
-            variant="quiet"
-            className="w-full"
-          >
-            <NavigationMenuList className="w-full">
+        <div className="space-y-4 px-5 pt-2 pb-5 sm:px-6">
+          <nav aria-label="Main">
+            <ul className="divide-border/60 divide-y">
               {navLinks.map((link) => (
-                <NavigationMenuItem key={link.href} className="w-full">
-                  <NavigationMenuLink
-                    asChild
-                    current={isCurrent(link.href)}
-                    className="w-full"
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-muted-foreground hover:text-foreground aria-[current=page]:text-foreground flex min-h-12 items-center justify-between gap-4 rounded-sm text-sm ${focusStyles}`}
                   >
-                    <Link href={link.href}>{link.label}</Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
+                    {link.label}
+                    <ArrowUpRight className="size-4" aria-hidden="true" />
+                  </Link>
+                </li>
               ))}
-            </NavigationMenuList>
-          </NavigationMenu>
-          <div className="border-border/70 flex items-center justify-between gap-2 border-t pt-3">
+            </ul>
+          </nav>
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <GithubLink />
             <div className="flex items-center gap-2">
               <ThemePicker />
               <ThemeToggle />
             </div>
           </div>
+          <ParentSiteLink />
         </div>
       </div>
     </header>
