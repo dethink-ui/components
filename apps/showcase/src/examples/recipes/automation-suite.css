@@ -1,0 +1,85 @@
+/* Copy alongside either Automation recipe. Brand colors stay in semantic tokens. */
+.sc-automation {
+  color-scheme: light;
+  --dt-color-background: oklch(0.98 0.007 165);
+  --dt-color-foreground: oklch(0.22 0.025 175);
+  --dt-color-muted: oklch(0.94 0.012 165);
+  --dt-color-muted-foreground: oklch(0.43 0.025 175);
+  --dt-color-border: oklch(0.84 0.02 165);
+  --dt-color-input: oklch(0.57 0.035 165);
+  --dt-color-primary: oklch(0.4 0.09 165);
+  --dt-color-primary-foreground: oklch(0.99 0.005 165);
+  --dt-color-ring: oklch(0.43 0.1 165);
+  background: var(--dt-color-background);
+  color: var(--dt-color-foreground);
+}
+:root[data-theme="dark"] .sc-automation,
+.sc-automation-dark,
+.sc-automation .automation-ink {
+  color-scheme: dark;
+  --dt-color-background: oklch(0.17 0.018 180);
+  --dt-color-foreground: oklch(0.96 0.009 150);
+  --dt-color-muted: oklch(0.23 0.022 175);
+  --dt-color-muted-foreground: oklch(0.76 0.021 165);
+  --dt-color-border: oklch(0.34 0.024 175);
+  --dt-color-input: oklch(0.57 0.03 165);
+  --dt-color-primary: oklch(0.9 0.17 125);
+  --dt-color-primary-foreground: oklch(0.19 0.03 165);
+  --dt-color-ring: oklch(0.9 0.17 125);
+  background: var(--dt-color-background);
+  color: var(--dt-color-foreground);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .sc-automation {
+    color-scheme: dark;
+    --dt-color-background: oklch(0.17 0.018 180);
+    --dt-color-foreground: oklch(0.96 0.009 150);
+    --dt-color-muted: oklch(0.23 0.022 175);
+    --dt-color-muted-foreground: oklch(0.76 0.021 165);
+    --dt-color-border: oklch(0.34 0.024 175);
+    --dt-color-input: oklch(0.57 0.03 165);
+    --dt-color-primary: oklch(0.9 0.17 125);
+    --dt-color-primary-foreground: oklch(0.19 0.03 165);
+    --dt-color-ring: oklch(0.9 0.17 125);
+  }
+}
+.sc-automation [data-effect] {
+  --shader-background-base: oklch(0.17 0.018 180) !important;
+  --shader-background-accent: oklch(0.65 0.15 165) !important;
+  --shader-background-secondary: oklch(0.45 0.095 190) !important;
+}
+.sc-automation a:focus-visible {
+  outline: 2px solid var(--dt-color-ring);
+  outline-offset: 5px;
+}
+.sc-automation [data-slot="button-label"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+/* Canvas text masks cannot reproduce the showcase's inherited font-size-adjust. */
+.sc-automation [data-slot="shader-hero-text"] {
+  font-size-adjust: none;
+}
+.sc-automation section[id] {
+  scroll-margin-top: 8rem;
+}
+@media (forced-colors: active) {
+  .sc-automation,
+  .sc-automation .automation-ink {
+    background: Canvas;
+    color: CanvasText;
+    --dt-color-background: Canvas;
+    --dt-color-foreground: CanvasText;
+    --dt-color-muted: Canvas;
+    --dt-color-muted-foreground: CanvasText;
+    --dt-color-border: ButtonText;
+    --dt-color-primary: Highlight;
+    --dt-color-primary-foreground: HighlightText;
+    --dt-color-ring: Highlight;
+  }
+  .sc-automation [data-effect] {
+    visibility: hidden;
+  }
+}

@@ -80,6 +80,61 @@ export const recipeCategories: RecipeCategoryMeta[] = [
 
 export const recipesCatalog: RecipeMeta[] = [
   {
+    slug: "automation-landing",
+    title: "Automation software landing",
+    category: "marketing",
+    summary:
+      "A shader-led software automation company landing with three runnable workflow samples, activity history, pricing, FAQ, and a matching social login.",
+    tags: ["Landing", "Automation", "Shaders", "Workflows"],
+    components: [
+      "silk-flow-background",
+      "shader-hero-text",
+      "tabs",
+      "card",
+      "button",
+      "badge",
+      "avatar-group",
+      "progress",
+      "table",
+      "accordion",
+    ],
+    sourceFile: "recipes/automation-landing.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "SilkFlowBackground runs at its fast preset for visible flowing folds. ShaderHeroText uses particle-follow for pointer-reactive headlines. A reactive reduced-motion preference disables the shader enhancements when requested. Workflow timers are cancelled on tab changes.",
+    accessibilityNotes:
+      "Keyboard-operable tabs, labelled progress, semantic tables and FAQ, and polite run announcements. Pricing and all workflows are fictional; the conversion actions open the matching login demo.",
+    responsiveNotes:
+      "The workflow steps stack on mobile and only the activity table scrolls horizontally. Copy automation-suite.css and automation-motion.ts alongside the source for theme tokens, shader-compatible typography, and reactive reduced motion. The entire landing stays dark in both showcase themes.",
+  },
+  {
+    slug: "automation-login",
+    title: "Automation social login",
+    category: "auth",
+    summary:
+      "A split-layout sign-in page with a silk shader panel, Google and GitHub demos, email validation, password visibility, recovery, and retryable feedback.",
+    tags: ["Login", "Social", "Automation", "Shaders"],
+    components: [
+      "silk-flow-background",
+      "shader-hero-text",
+      "button",
+      "badge",
+      "form-field",
+      "input",
+      "dialog",
+    ],
+    sourceFile: "recipes/automation-login.tsx",
+    featured: true,
+    complexity: "Intermediate",
+    motionNotes:
+      "SilkFlowBackground uses its fast preset and ShaderHeroText adds particle-follow to the desktop illustration headline. Reduced-motion preferences disable both enhancements. Pending demo timers are cleaned up on unmount.",
+    accessibilityNotes:
+      "Labelled required fields with autocomplete, linked validation errors, password visibility control, focus-managed dialogs and success heading. Google/GitHub and recovery are local simulations: no credentials are stored or transmitted. About this sign-in demo exposes a one-shot error scenario.",
+    responsiveNotes:
+      "The decorative panel yields to a focused single-column form on mobile. Copy automation-suite.css and automation-motion.ts alongside the source for local tokens, shader-compatible typography, and reactive reduced motion. Point the landing links at your own route when copying.",
+  },
+  {
     slug: "ai-chat-studio",
     title: "AI Chat Studio",
     category: "ai",

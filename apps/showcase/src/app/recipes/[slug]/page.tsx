@@ -6,6 +6,8 @@ import { CheckCircle2 } from "lucide-react";
 import { CodeBlock } from "@/components/code-block";
 import { RecipeDemoBar } from "@/components/recipe-demo-bar";
 import { AiWorkspaceRecipe } from "@/examples/recipes/ai-workspace";
+import { AutomationLandingRecipe } from "@/examples/recipes/automation-landing";
+import { AutomationLoginRecipe } from "@/examples/recipes/automation-login";
 import { AiChatStudioRecipe } from "@/examples/recipes/ai-chat-studio";
 import { CommandCenterDashboardRecipe } from "@/examples/recipes/command-center-dashboard";
 import { CrudResourceManagerRecipe } from "@/examples/recipes/crud-resource-manager";
@@ -34,6 +36,8 @@ import {
 } from "@/lib/recipes-meta";
 
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
+  "automation-landing": AutomationLandingRecipe,
+  "automation-login": AutomationLoginRecipe,
   "ai-chat-studio": AiChatStudioRecipe,
   "relay-landing": RelayLandingRecipe,
   "ai-workspace": AiWorkspaceRecipe,
