@@ -36,12 +36,12 @@ const features = [
   },
   {
     icon: Keyboard,
-    title: "Interaction beyond the mouse",
+    title: "Accessible components",
     description:
-      "Keyboard navigation, focus management, labels, and state announcements are part of component behavior. Explore documented accessibility patterns and limitations.",
-    detail: "Keyboard support · Reduced motion",
-    href: "/components/dialog",
-    link: "Explore accessible overlays",
+      "Built with keyboard navigation, focus management, and accessible labels. Automated axe scans and browser interaction tests check representative examples; explore the evidence and its scope.",
+    detail: "Keyboard support · Accessibility checks",
+    href: "/docs/accessibility",
+    link: "View accessibility reports",
   },
   {
     icon: Blocks,

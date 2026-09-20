@@ -12,6 +12,7 @@ export function DocsLayout({ children }: { children: ReactNode }) {
         <Link href="/docs">Introduction</Link>
         <Link href="/docs/installation">Installation</Link>
         <Link href="/docs/theming">Theming</Link>
+        <Link href="/docs/accessibility">Accessibility</Link>
         <Link href="/components">Components</Link>
       </nav>
       <div className="lg:grid lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">

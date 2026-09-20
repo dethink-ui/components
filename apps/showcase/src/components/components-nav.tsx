@@ -113,6 +113,7 @@ const guides = [
   { href: "/docs", name: "Introduction" },
   { href: "/docs/installation", name: "Installation" },
   { href: "/docs/theming", name: "Theming" },
+  { href: "/docs/accessibility", name: "Accessibility" },
   { href: "/components", name: "All components" },
 ];
 
