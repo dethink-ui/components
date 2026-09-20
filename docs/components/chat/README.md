@@ -2,8 +2,6 @@
 
 A provider-independent conversation UI for full AI workspaces and embedded copilots. The app owns messages, runs, uploads, authorization, transport, and persistence. Components own presentation and local interaction feedback.
 
-Approved scope: [PRD #446](https://github.com/parveshh/dethink-components/issues/446), implemented through [#447–#454](https://github.com/parveshh/dethink-components/issues/447).
-
 ## Installation
 
 Use the `chat` registry item for the full family, or install `prompt-input`, `chat-message`, `chat-activity`, `message-scroller`, `chat-attachment`, `model-picker`, or `conversation-list` separately. The shared `chat-core` item supplies types and lifecycle helpers. Install the existing `dethink-base` styles/tokens as for other components.
@@ -90,7 +88,7 @@ Markdown disables raw HTML, unsafe URL schemes, and automatic remote image loadi
 
 The transcript follows only near the bottom. Scrolling away detaches following; Jump to latest explicitly resumes it. Visible-row anchors preserve position when history is prepended or content resizes. Each scroller owns and cleans up its ResizeObserver/animation frames. Virtualized lists use measured row heights, prefix sums, binary search, overscan, and a pinned focused row.
 
-Keep completed message references and renderer/action callbacks stable. Stream into the active message, preferably in bounded batches. Avoid per-character elements or layout animation across the transcript. Pagination is useful even with windowing. The showcase includes 500-message/30-update-per-second and 5,000-message fixtures at `/components/chat/performance`; measurements are recorded in `verification.md`.
+Keep completed message references and renderer/action callbacks stable. Stream into the active message, preferably in bounded batches. Avoid per-character elements or layout animation across the transcript. Pagination is useful even with windowing. The showcase includes 500-message/30-update-per-second and 5,000-message fixtures at `/components/chat/performance`.
 
 ## Theming and motion
 

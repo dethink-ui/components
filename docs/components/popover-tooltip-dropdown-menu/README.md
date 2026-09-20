@@ -360,7 +360,7 @@ Submenu:
 
 ## Testing
 
-Required verification for this PRD:
+Component verification covers:
 
 - Component tests for public props, slots, class composition, controlled and
   uncontrolled state, provider portal inheritance, dark mode, density, RTL,

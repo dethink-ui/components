@@ -10,6 +10,6 @@ import { LiquidMeshBackground } from "@dethink/components";
 </LiquidMeshBackground>;
 ```
 
-Install the `liquid-mesh-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md), [research](../shader-backgrounds/research.md), and [verification](../shader-backgrounds/verification.md).
+Install the `liquid-mesh-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md).
 
 Showcase: `/components/liquid-mesh-background`. Storybook: `Backgrounds/LiquidMeshBackground`.

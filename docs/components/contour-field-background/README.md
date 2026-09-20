@@ -10,6 +10,6 @@ import { ContourFieldBackground } from "@dethink/components";
 </ContourFieldBackground>;
 ```
 
-Install the `contour-field-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md), [research](../shader-backgrounds/research.md), and [verification](../shader-backgrounds/verification.md).
+Install the `contour-field-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md).
 
 Showcase: `/components/contour-field-background`. Storybook: `Backgrounds/ContourFieldBackground`.

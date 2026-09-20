@@ -10,6 +10,6 @@ import { SilkFlowBackground } from "@dethink/components";
 </SilkFlowBackground>;
 ```
 
-Install the `silk-flow-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md), [research](../shader-backgrounds/research.md), and [verification](../shader-backgrounds/verification.md).
+Install the `silk-flow-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md).
 
 Showcase: `/components/silk-flow-background`. Storybook: `Backgrounds/SilkFlowBackground`.

@@ -214,9 +214,6 @@ SSR/hydration, package declarations/builds, registry validation, registry
 dependency smoke, Storybook interactions/builds, and showcase/playground
 consumer builds.
 
-See the [final verification record](./verification.md) for passing gates and the
-one unrelated repository-suite blocker.
-
 ## Migration Notes
 
 DropdownMenu surface entry/exit and changed item feedback migrated from
@@ -235,12 +232,11 @@ overridden by policy compositions. Button also accepts `loadingIndicator` so a
 composition can provide Motion-owned busy feedback while retaining Button's
 busy and disabled semantics.
 
-## Known Limitations And Follow-Ups
+## Known Limitations
 
 - No Toolbar or ToggleGroup semantics are included.
 - No automatic responsive overflow, child measurement, or priority inference
-  is included. A future ResponsiveActionGroup requires separate product
-  evidence and a new PRD.
+  is included.
 - No built-in last-used-action persistence is included.
 - No multi-selection, implicit first-action selection, automatic persistence,
   or action invocation during menu selection is included.
@@ -248,7 +244,3 @@ busy and disabled semantics.
   `loading` and the primary label/icon/handler.
 - Menu checkbox/radio selection and async menu data remain DropdownMenu or
   application concerns.
-
-See [separate follow-up opportunities](./follow-ups.md) for the product evidence
-required before proposing ResponsiveActionGroup, Toolbar, ToggleGroup, or
-automatic overflow work.

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { chromium } from "@playwright/test";
 
 const baseUrl = process.env.SHOWCASE_URL ?? "http://127.0.0.1:3015";
-const outputDirectory = join(process.cwd(), "docs/showcase/final-captures");
+const outputDirectory = join(process.cwd(), "test-results/showcase-captures");
 
 const captures = [
   {

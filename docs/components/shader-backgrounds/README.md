@@ -104,8 +104,5 @@ Component tests cover deterministic SSR/hydration, refs, foreground events, axe 
 drawing-buffer limits. Browser tests inspect pixels during real draws and exercise
 all five individual pages, pause/resume, themes, context recovery, resizing, mouse
 parallax, mobile input, reduced motion, print and missing WebGL/JavaScript.
-See [verification](./verification.md) for measured results and limitations.
 
 No migration or new dependencies are required for existing background components.
-Planning: [PRD #469](https://github.com/parveshh/dethink-components/issues/469) and
-[implementation issues](./issues.md). Sources: [research](./research.md).

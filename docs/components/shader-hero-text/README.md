@@ -4,14 +4,6 @@ Six WebGL headline treatments with a real HTML heading underneath. The five
 one-shot effects resolve to ordinary text; particle follow leaves the words formed
 from dots, attracts those dots to the mouse, and returns them home on pointer exit.
 
-Planning: [PRD #462](https://github.com/parveshh/dethink-components/issues/462).
-Implementation: [#463](https://github.com/parveshh/dethink-components/issues/463),
-[#464](https://github.com/parveshh/dethink-components/issues/464),
-[#465](https://github.com/parveshh/dethink-components/issues/465),
-[#466](https://github.com/parveshh/dethink-components/issues/466),
-[#467](https://github.com/parveshh/dethink-components/issues/467),
-[#468](https://github.com/parveshh/dethink-components/issues/468).
-
 ## Installation
 
 Install the `shader-hero-text` registry item with the Dethink registry configured:
@@ -161,8 +153,7 @@ effects, static/reduced motion, dark, wrapping, RTL and manual replay.
 
 The browser tests inspect actual rendered pixels, verify attraction and exact return
 to the original glyph pattern, count idle GPU draws, and exercise context recovery,
-live copy/font changes, themes, mobile, reduced motion and forced colors. Check the
-companion verification notes for the tested environment and results.
+live copy/font changes, themes, mobile, reduced motion and forced colors.
 
 No migration is required for HeroTextAnimation. Adopt ShaderHeroText explicitly on
 headlines that benefit from GPU effects; existing DOM/SVG effects remain available.

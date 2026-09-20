@@ -10,6 +10,6 @@ import { CausticLightBackground } from "@dethink/components";
 </CausticLightBackground>;
 ```
 
-Install the `caustic-light-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md), [research](../shader-backgrounds/research.md), and [verification](../shader-backgrounds/verification.md).
+Install the `caustic-light-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md).
 
 Showcase: `/components/caustic-light-background`. Storybook: `Backgrounds/CausticLightBackground`.

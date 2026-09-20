@@ -39,18 +39,24 @@ layer is CSS-first and does not pull in Motion.
 <NavigationMenu aria-label="Product">
   <NavigationMenuList>
     <NavigationMenuItem>
-      <NavigationMenuLink current href="/overview">Overview</NavigationMenuLink>
+      <NavigationMenuLink current href="/overview">
+        Overview
+      </NavigationMenuLink>
     </NavigationMenuItem>
     <NavigationMenuItem value="platform">
       <NavigationMenuTrigger>Platform</NavigationMenuTrigger>
       <NavigationMenuContent>
-        <NavigationMenuFeaturedItem href="/platform">…</NavigationMenuFeaturedItem>
+        <NavigationMenuFeaturedItem href="/platform">
+          …
+        </NavigationMenuFeaturedItem>
         <NavigationMenuSeparator orientation="vertical" />
         <NavigationMenuSection>
           <NavigationMenuLabel>Products</NavigationMenuLabel>
           <NavigationMenuLink href="/analytics" icon={<ChartIcon />}>
             Analytics
-            <NavigationMenuDescription>Usage dashboards.</NavigationMenuDescription>
+            <NavigationMenuDescription>
+              Usage dashboards.
+            </NavigationMenuDescription>
           </NavigationMenuLink>
         </NavigationMenuSection>
       </NavigationMenuContent>
@@ -116,7 +122,7 @@ component-specific setup. Panel width can be tuned with
 
 ## Animation and Reduced Motion
 
-The motion layer is CSS-first (see `spec.md` → Motion Dependency Decision):
+The motion layer is CSS-first:
 
 - `motion` presets: `none` (static), `subtle` (fades), `standard` (fades +
   directional slides + indicator/viewport movement, default), `expressive`
@@ -132,8 +138,7 @@ The motion layer is CSS-first (see `spec.md` → Motion Dependency Decision):
 
 ## Responsive Composition
 
-See `spec.md` → Responsive Composition for the v1 API decision and recipes:
-compact topbar (`size="sm" variant="quiet"`), mobile Dialog handoff
+Responsive examples include a compact topbar (`size="sm" variant="quiet"`), mobile Dialog handoff
 (`max-md:hidden` nav + `md:hidden` Dialog with a vertical NavigationMenu),
 overflow "More" collapse, and compact wrap. Full Sidebar, Dashboard Shell,
 auth/account menus, and notification menus are out of scope.

@@ -6,11 +6,6 @@ branch rules and panel components; Steps owns ordered-list semantics, shared
 current-step state, guarded future-step mutations, optional navigation,
 progress, responsive presentation, and high-level Motion choreography.
 
-The visual component is tracked by
-[PRD #349](https://github.com/parveshh/dethink-components/issues/349). The
-provider, hooks, and dynamic panel bridge are tracked by
-[PRD #360](https://github.com/parveshh/dethink-components/issues/360).
-
 ## Installation
 
 Package import:

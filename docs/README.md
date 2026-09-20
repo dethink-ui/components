@@ -1,32 +1,37 @@
-# Dethink Components Planning Docs
+# Dethink Components documentation
 
-This folder contains implementation planning derived from `react_component_library_prd.docx`.
+Start with the [component catalog](https://components.dethink.co.uk/components)
+for live examples, usage, props, and dependency details. The
+[recipes](https://components.dethink.co.uk/recipes) combine components into complete
+interfaces. See the [repository setup guide](../README.md#quick-start-for-this-repository)
+to run the library locally.
 
-## Files
+## Shared foundations
 
-- `component-inventory.md` lists the full component, foundation, utility, and block inventory from the PRD.
-- `development-path.md` defines the component-by-component build order and the repeated PRD-to-issues workflow.
-- `high-impact-component-priority.md` records the current demand-weighted component priority overlay used to choose the next PRD candidate.
-- `provider-theming.md` documents provider-level theme configuration, CSS variable cascade behavior, nested providers, and the optional no-flash script.
-- `components/button/spec.md` is the first concrete component specification.
-- `components/button/prd.md` is the first component PRD drafted with the `to-prd` template.
-- `components/button/issues.md` is the first component issue breakdown drafted with the `to-issues` template. It is not published yet because the issue breakdown needs approval first.
+- [Provider and theming](provider-theming.md): theme configuration, nested providers,
+  CSS variables, and the optional no-flash script.
+- [Component motion](component-motion.md): motion tokens, interaction behavior,
+  and reduced-motion support.
+- [Dependency attribution](dependency-attribution.md): how component dependencies
+  are documented and kept aligned with source.
+- [Registry notes](../registry/README.md): shared setup and component dependencies.
+- [Agent skill](../skills/dethink-components/SKILL.md): using Dethink with a coding agent.
 
-## Source Notes
+## Component guides
 
-- Source PRD: `react_component_library_prd.docx`
-- Source date in PRD: 29 June 2026
-- Current product working name in PRD: TBD UI
-- Package name: `@dethink/components`
-- Primary distribution model: custom shadcn-style registry first, optional npm package second.
-- Styling model: Tailwind CSS v4 by default, using CSS-first theme variables, token-backed utilities, and registry-compatible `cssVars`.
-- Documentation lookup model: use logged-in `ctx7` before web search for library, framework, SDK, API, CLI, and cloud-service documentation. `npx ctx7 whoami` was checked while creating these docs and reported an active login.
-- Current shadcn registry docs checked through `ctx7`: registry items support metadata such as `name`, `type`, `title`, `description`, `dependencies`, `devDependencies`, `registryDependencies`, `files`, and `cssVars`. Tailwind v4-oriented registry work should prefer `cssVars.theme` over deprecated Tailwind config extension fields where possible.
+The [component guides](components/) cover usage, accessibility, composition, and
+migration details. The full API reference and runnable examples live in the
+showcase; their source is in
+[`apps/showcase/src/app/components`](../apps/showcase/src/app/components) and
+[`apps/showcase/src/examples`](../apps/showcase/src/examples).
 
-## Scaffold Notes
+## Maintaining examples
 
-- `packages/components` is the public React package.
-- `apps/storybook` is the Storybook documentation and visual/a11y surface.
-- `apps/playground-vite` is the smoke-test app for package and stylesheet imports.
-- `registry/items/base.json` is the first registry metadata placeholder.
-- `scripts/validate-registry.mjs` validates registry item shape.
+- [Recipe thumbnail capture settings](showcase/recipe-capture-contract.md).
+- [NavDock motion dependency](adr/0001-navdock-requires-motion.md).
+- [Logo assets](brand/logo/README.md).
+
+Run `pnpm capture:showcase` against a running showcase to produce local review
+screenshots in `test-results/showcase-captures/`. These generated review files
+are ignored by Git. Recipe thumbnails used by the site remain in
+`apps/showcase/public/recipe-captures/`.

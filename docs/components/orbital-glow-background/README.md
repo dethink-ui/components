@@ -10,6 +10,6 @@ import { OrbitalGlowBackground } from "@dethink/components";
 </OrbitalGlowBackground>;
 ```
 
-Install the `orbital-glow-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md), [research](../shader-backgrounds/research.md), and [verification](../shader-backgrounds/verification.md).
+Install the `orbital-glow-background` registry item. See the [shared API and accessibility guide](../shader-backgrounds/README.md).
 
 Showcase: `/components/orbital-glow-background`. Storybook: `Backgrounds/OrbitalGlowBackground`.

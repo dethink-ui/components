@@ -85,7 +85,7 @@ Inside this monorepo, depend on the package with `"@dethink/components":
 | [`apps/storybook`](apps/storybook)             | Component stories, examples, and accessibility checks.         |
 | [`apps/playground-vite`](apps/playground-vite) | A Vite app used to smoke-test package imports.                 |
 | [`apps/showcase`](apps/showcase)               | A Next.js site with live component examples and recipes.       |
-| [`docs`](docs)                                 | Component plans, specifications, PRDs, and build order.        |
+| [`docs`](docs)                                 | Component usage guides, theming, motion, and dependencies.     |
 
 ## Useful commands
 
@@ -140,9 +140,9 @@ in [Project status](#project-status) still apply.
 
 ### Library references
 
-- [Component inventory](docs/component-inventory.md) — the full planned catalog.
-- [Development path](docs/development-path.md) — the order used to build the library.
-- [Component documentation](docs/components) — specifications, examples, and implementation notes.
+- [Component catalog](https://components.dethink.co.uk/components) — live examples and API reference.
+- [Recipes](https://components.dethink.co.uk/recipes) — complete interfaces built with the library.
+- [Documentation](docs/README.md) — component usage, theming, motion, and dependencies.
 - [Registry notes](registry/README.md) — how registry items are organised.
 
 ## Contributing

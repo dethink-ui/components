@@ -24,21 +24,19 @@ Recipe thumbnails must show the real runnable recipe surface rather than a gener
 
 The crop intentionally prioritises the first task-defining portion of the real surface. It must not be recomposed, retouched, or replaced with a mockup.
 
-## Representative Approval Set
+## Representative Capture Set
 
-Before applying the capture treatment across the catalog, review these three surfaces:
+The default capture set covers three representative surfaces:
 
 1. `command-center-dashboard` — dashboard-like density and navigation.
 2. `saas-landing-page` — marketing hierarchy and visual rhythm.
 3. `login-and-onboarding` — form structure and validation affordances.
 
-The full ten-recipe set must not be finalized until this representative treatment is approved.
-
 ## Refresh Workflow
 
 1. Build and start the showcase at `http://127.0.0.1:3015`.
-2. Run `pnpm capture:recipes` for the representative approval set.
-3. Run `pnpm capture:recipes -- --all` after the representative treatment is approved.
+2. Run `pnpm capture:recipes` for the representative set.
+3. Run `pnpm capture:recipes -- --all` to refresh the full gallery.
 4. Confirm every output is exactly 1200×675 and has no loading, focus, caret, animation, or error-overlay artefacts.
 5. Review at both the desktop three-column card size and the mobile single-column card size.
 6. Run the recipe-gallery Playwright coverage and the production build before committing refreshed captures.

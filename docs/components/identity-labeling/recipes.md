@@ -1,10 +1,5 @@
 # Identity Labeling Recipes And Verification
 
-Status: Issue #320 implementation companion for the completed Badge, Label,
-Avatar, and AvatarGroup family.
-
-Parent PRD: https://github.com/parveshh/dethink-components/issues/313.
-
 Suite Storybook surface:
 `apps/storybook/src/IdentityLabeling.stories.tsx`.
 

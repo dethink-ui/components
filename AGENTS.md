@@ -2,19 +2,16 @@
 
 ## Project Context
 
-This repository is for Dethink Components, a React component library derived from `react_component_library_prd.docx`.
+This repository is for Dethink Components, a React component library.
 
 The product direction is a shadcn-compatible, open-code component system for production SaaS dashboards, internal tools, B2B applications, and AI-native React interfaces. The primary distribution model is a custom shadcn-style registry, with optional npm package exports after the registry path is stable.
 
-Current planning artifacts may be mirrored in `docs/`, but GitHub is the source of truth for planned work:
+GitHub issues are the source of truth for planned work. Keep the public `docs/`
+folder focused on usage and maintained technical reference; historical PRDs,
+issue breakdowns, design explorations, and audit captures are not published there.
+The live component catalog and examples are maintained in `apps/showcase/src`.
 
-- `docs/component-inventory.md` contains the full component, foundation, utility, and block inventory.
-- `docs/development-path.md` defines the component-by-component build order.
-- `docs/components/<component>/spec.md` contains the component specification.
-- `docs/components/<component>/prd.md` contains the component PRD.
-- `docs/components/<component>/issues.md` contains the tracer-bullet implementation issue breakdown.
-
-The implementation scaffold now exists and should stay aligned with the PRD:
+The implementation scaffold consists of:
 
 - `packages/components` contains the public `@dethink/components` package.
 - `apps/storybook` contains component docs, visual states, interaction tests, and a11y checks.
@@ -33,8 +30,8 @@ Use the workflow that matches the scope of the change. GitHub PRDs and implement
 
 For work in those categories:
 
-1. Use `/Users/pm/.agents/skills/to-prd/SKILL.md` (`to-prd`) to synthesize the PRD from the current context and publish it to GitHub with the expected ready-for-agent triage label.
-2. Use `/Users/pm/.agents/skills/to-issues/SKILL.md` (`to-issues`) to break the approved PRD into GitHub issues using tracer-bullet vertical slices.
+1. Use the `to-prd` skill to synthesize the PRD from the current context and publish it to GitHub with the expected ready-for-agent triage label.
+2. Use the `to-issues` skill to break the approved PRD into GitHub issues using tracer-bullet vertical slices.
 3. Do not implement until the PRD exists on GitHub and the implementation issues exist on GitHub.
 4. Implement only the approved GitHub issues for that PRD.
 
@@ -59,7 +56,7 @@ PRD branch workflow:
 
 Branch names must be lowercase, hyphenated, and scoped to the work item. PRD work may use names such as `feature/button-variants`, `feature/issue-123-button-a11y`, or `feature/prd-45-data-table`. Local bug fixes and iterations may use a focused branch such as `fix/recipe-mobile-overflow` or continue on the current task branch when appropriate.
 
-For PRD work, prefer thin vertical slices that include component code, docs, registry metadata, tests, and verification together. A local `docs/components/<component>/prd.md` or `issues.md` file can support that work, but it does not replace the required GitHub PRD or GitHub issues. For local fixes and iterations, keep any implementation notes proportional to the change and verify the affected behavior directly.
+For PRD work, prefer thin vertical slices that include component code, docs, registry metadata, tests, and verification together. Keep planning in GitHub issues and consumer documentation in the repository. For local fixes and iterations, keep any implementation notes proportional to the change and verify the affected behavior directly.
 
 ## Required Skills
 
@@ -103,7 +100,7 @@ Motion rules for this repo:
 
 ### Image Generation / Mockups
 
-Use `/Users/pm/.codex/skills/.system/imagegen/SKILL.md` when a component task benefits from generated raster visuals such as high-quality mockups, state boards, theme explorations, or product-style component previews.
+Use the `imagegen` skill when a component task benefits from generated raster visuals such as high-quality mockups, state boards, theme explorations, or product-style component previews.
 
 Image generation rules for this repo:
 
@@ -112,8 +109,7 @@ Image generation rules for this repo:
 - Treat generated mockups as reference material, not as implementation assets for the component itself.
 - Implement final components with React, Tailwind CSS, tokens, and registry files rather than rasterizing UI into the product.
 - Do not use imagegen for deterministic SVG icons, code-native diagrams, simple shapes, or visuals that should be built directly in HTML/CSS/canvas.
-- If a generated image is project-bound, copy the selected output from `$CODEX_HOME/generated_images/...` into the workspace before referencing it in docs.
-- Keep mockups under the relevant component docs folder, for example `docs/components/button/mockups/`.
+- Keep generated design references and mockups in the ignored `test-results/design-references/` folder. Publish only assets actually used by the library or showcase.
 - Do not use the imagegen CLI fallback unless the user explicitly asks for CLI/API/model control or confirms a true native-transparency fallback that requires `OPENAI_API_KEY`.
 
 ## Tailwind CSS
