@@ -14,14 +14,13 @@ export default function AccessibilityPage() {
   return (
     <DocsPage
       name="Accessibility"
-      description="Accessible components, backed by inspectable evidence. Keyboard behavior, focus management, labels, and reduced-motion preferences are part of the design."
+      description="Accessible components with keyboard navigation, focus management, accessible labels, and reduced-motion support. Explore the test results below."
     >
-      <DocsSection id="evidence" title="Download the evidence">
+      <DocsSection id="evidence" title="Download the report">
         <p className="text-muted-foreground text-sm leading-7">
-          The public report is a recorded snapshot, not a live score. It
-          includes its date, tested source revision, browser engines, viewport
-          sizes, themes, page states, and test outcomes. Full axe results retain
-          both violations and incomplete checks that need human review.
+          The report includes the test date, code revision, browsers, screen
+          sizes, themes, and results. Each accessibility scan includes its axe
+          results, with any detected issues and checks that need manual review.
         </p>
         <ul className="space-y-2 text-sm">
           <li>
@@ -46,16 +45,20 @@ export default function AccessibilityPage() {
               className={linkStyles}
               href="https://github.com/dethink-ui/components/actions/workflows/pr-checks.yml"
             >
-              View current CI runs and report artifacts on GitHub
+              View the latest test runs on GitHub
             </a>
           </li>
         </ul>
         <p className="text-muted-foreground text-sm leading-7">
-          Unzip the download, then run <code>npx playwright show-report</code>{" "}
-          followed by the extracted report directory. Open an individual test to
-          inspect its axe JSON attachments. GitHub CI artifacts require sign-in
-          and are retained for 30 days; the public snapshot is downloadable
-          without an account.
+          Download and unzip the report. Run{" "}
+          <code>npx playwright show-report</code> followed by the extracted
+          folder path. Select a test to view its results and axe JSON
+          attachments.
+        </p>
+        <p className="text-muted-foreground text-sm leading-7">
+          To download a report from GitHub, sign in, open a test run, and select
+          the <code>accessibility-report</code> artifact. These reports are kept
+          for 30 days.
         </p>
       </DocsSection>
       <DocsSection id="coverage" title="What we check">
@@ -82,16 +85,15 @@ export default function AccessibilityPage() {
       </DocsSection>
       <DocsSection id="scope" title="What the results mean">
         <p className="text-muted-foreground text-sm leading-7">
-          A passing scan means no violations were detected by the selected rules
-          in that rendered state. It does not establish WCAG conformance, cover
-          every component variant or theme, or certify an application assembled
-          from these components. Incomplete axe results are not passes.
+          A passing scan means the selected rules found no violations on the
+          tested page. Results apply to the listed examples, themes, and states.
+          Checks marked incomplete need manual review. WCAG conformance requires
+          a full accessibility assessment.
         </p>
         <p className="text-muted-foreground text-sm leading-7">
-          Real VoiceOver and NVDA testing has not been completed for this
-          release. Automated semantics and keyboard checks cannot replace
-          assistive technology testing or evaluation with disabled users. WebKit
-          automation is not a native Safari screen-reader test.
+          VoiceOver, NVDA, and testing with disabled users remain to be
+          completed. The report covers automated browser, semantics, and
+          keyboard checks.
         </p>
         <p className="text-muted-foreground text-sm leading-7">
           When adapting components, verify your labels, content, color contrast,
