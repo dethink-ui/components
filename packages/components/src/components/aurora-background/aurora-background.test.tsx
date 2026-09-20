@@ -138,9 +138,7 @@ describe("AuroraBackground", () => {
   });
 
   it("exposes classNames helpers that merge custom classes", () => {
-    expect(auroraBackgroundClassNames({ className: "h-96" })).toContain(
-      "h-96",
-    );
+    expect(auroraBackgroundClassNames({ className: "h-96" })).toContain("h-96");
     expect(auroraBackgroundClassNames({ className: "h-96" })).toContain(
       "relative",
     );

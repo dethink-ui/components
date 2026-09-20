@@ -63,8 +63,8 @@ function HeroContent() {
         Soft light for bold launches
       </h1>
       <p className="text-muted-foreground max-w-md text-sm leading-6">
-        Flowing ribbons of blurred, hue-shifted gradient light drift and
-        breathe behind your hero — every hue derived from one tone token.
+        Flowing ribbons of blurred, hue-shifted gradient light drift and breathe
+        behind your hero — every hue derived from one tone token.
       </p>
       <div className="flex gap-3">
         <Button>Get started</Button>

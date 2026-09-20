@@ -698,7 +698,13 @@ function SlotPlannerInner<
         return next;
       });
     }
-  }, [motionEnabled, pendingKeys, planner.slots, retryByKey, selectedOccurrences]);
+  }, [
+    motionEnabled,
+    pendingKeys,
+    planner.slots,
+    retryByKey,
+    selectedOccurrences,
+  ]);
 
   const tabRefs = useRef(new Map<string, HTMLButtonElement>());
   const [editorState, setEditorState] = useState<
