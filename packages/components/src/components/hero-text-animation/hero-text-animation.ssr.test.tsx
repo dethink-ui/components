@@ -1,10 +1,22 @@
 import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { HeroTextAnimation } from ".";
 
 describe("HeroTextAnimation SSR", () => {
+  let root: ReturnType<typeof hydrateRoot> | undefined;
+
+  afterEach(async () => {
+    // These roots bypass Testing Library, so explicitly stop their animation
+    // effects before Vitest tears down the browser environment.
+    await act(async () => {
+      root?.unmount();
+    });
+    root = undefined;
+    vi.restoreAllMocks();
+  });
+
   it("renders final readable text on the server without hidden motion styles", () => {
     const html = renderToString(
       <HeroTextAnimation text="Build production-ready landing pages faster." />,
@@ -190,7 +202,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="scramble-decrypt"
@@ -218,7 +230,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation text="Hydrate production hero text." />,
       );
@@ -246,7 +258,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="typewriter"
@@ -279,7 +291,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="rotating-keyword"
@@ -312,7 +324,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="gradient-highlight"
@@ -343,7 +355,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="blur-focus"
@@ -375,7 +387,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="kinetic-emphasis-pop"
@@ -407,7 +419,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="scroll-responsive"
@@ -438,7 +450,7 @@ describe("HeroTextAnimation SSR", () => {
     );
 
     await act(async () => {
-      hydrateRoot(
+      root = hydrateRoot(
         container,
         <HeroTextAnimation
           animation="svg-stroke-draw"
