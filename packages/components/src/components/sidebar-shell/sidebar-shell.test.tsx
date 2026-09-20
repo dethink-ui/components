@@ -67,7 +67,7 @@ describe("SidebarShell", () => {
   it("includes the content pane in keyboard navigation without interactive children", async () => {
     const user = userEvent.setup();
     render(
-      <SidebarShell>
+      <SidebarShell aria-label="Workspace">
         <SidebarShellHeader>
           <button type="button">Before content</button>
         </SidebarShellHeader>
@@ -77,6 +77,7 @@ describe("SidebarShell", () => {
         </SidebarShellFooter>
       </SidebarShell>,
     );
+    expect(screen.getByRole("group", { name: "Workspace" })).toBeVisible();
     screen.getByRole("button", { name: "Before content" }).focus();
     await user.tab();
     expect(screen.getByRole("main")).toHaveFocus();

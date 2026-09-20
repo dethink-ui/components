@@ -594,6 +594,11 @@ export const SidebarShell = forwardRef<HTMLDivElement, SidebarShellProps>(
             transition={motionConfig.transition}
           >
             <motionElement.div
+              role={
+                props["aria-label"] || props["aria-labelledby"]
+                  ? "group"
+                  : undefined
+              }
               {...props}
               ref={ref}
               data-slot="sidebar-shell"

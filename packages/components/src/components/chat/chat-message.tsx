@@ -245,6 +245,7 @@ export function MessageActions({
         )}
         {onVersionChange && versions.length > 1 && (
           <div
+            role="group"
             className="ms-2 flex items-center gap-1"
             aria-label="Response versions"
           >
