@@ -125,7 +125,7 @@ export function ShaderHeroTextPreview({
           replayKey={replay}
           reducedMotion={staticText ? "always" : "user"}
           intensity={0.85}
-          className="text-[clamp(2.25rem,5vw,5.5rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-balance"
+          className="text-[clamp(2.25rem,5vw,5.5rem)] leading-[1.1] font-semibold tracking-[-0.045em] text-balance [font-size-adjust:none]"
         />
         <p className="text-muted-foreground mt-8 max-w-lg text-sm leading-relaxed">
           {item.description}

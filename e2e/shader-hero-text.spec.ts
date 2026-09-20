@@ -223,9 +223,10 @@ test("OS reduced motion cancels following; forced colors and accessibility stay 
 
 test("mobile coarse pointer preserves text and has no horizontal overflow", async ({
   browser,
+  baseURL,
 }) => {
   const context = await browser.newContext({
-    baseURL: "http://localhost:5279",
+    baseURL,
     viewport: { width: 390, height: 844 },
     isMobile: true,
     hasTouch: true,

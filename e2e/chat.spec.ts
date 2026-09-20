@@ -179,7 +179,9 @@ test("AI SDK text, tool approval, source and file stream contract", async ({
   page,
 }) => {
   await page.goto("/components/chat#sdk-heading", { waitUntil: "networkidle" });
-  const section = page.locator('section[aria-labelledby="sdk-heading"]');
+  const section = page
+    .locator("section")
+    .filter({ has: page.locator("#sdk-heading") });
   const chat = section.locator('[data-slot="chat"]');
   await section.getByRole("button", { name: "Try approval" }).click();
   await chat.getByRole("button", { name: "Send message" }).click();
@@ -325,7 +327,9 @@ test("SDK denial, cancellation before a token, and error recovery", async ({
   page,
 }) => {
   await page.goto("/components/chat#sdk-heading", { waitUntil: "networkidle" });
-  const section = page.locator('section[aria-labelledby="sdk-heading"]');
+  const section = page
+    .locator("section")
+    .filter({ has: page.locator("#sdk-heading") });
   const chat = section.locator('[data-slot="chat"]');
   const input = chat.getByRole("textbox", { name: "Message", exact: true });
   await section.getByRole("button", { name: "Try approval" }).click();

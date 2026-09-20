@@ -49,6 +49,8 @@ test("choose a date and time together, edit minutes, and finish", async ({
 test("clock shortcut, keyboard focus, boundaries, and accessibility", async ({
   page,
 }) => {
+  // Audit settled semantic colors, rather than an intermediate entrance frame.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   const basic = page.getByRole("region", { name: "Basic", exact: true });
   const clock = basic.getByRole("button", { name: "Open time picker" });
   await clock.click();

@@ -140,10 +140,10 @@ const severityMeta: Record<
 > = {
   sev1: {
     label: "SEV1",
-    cls: "bg-destructive/15 text-destructive ring-destructive/25",
+    cls: "bg-destructive/15 text-foreground ring-destructive/25",
   },
-  sev2: { label: "SEV2", cls: "bg-warning/15 text-warning ring-warning/25" },
-  sev3: { label: "SEV3", cls: "bg-info/15 text-info ring-info/25" },
+  sev2: { label: "SEV2", cls: "bg-warning/15 text-foreground ring-warning/25" },
+  sev3: { label: "SEV3", cls: "bg-info/15 text-foreground ring-info/25" },
 };
 
 const statusMeta: Record<Incident["status"], { label: string; dot: string }> = {
@@ -659,8 +659,11 @@ export function CommandCenterDashboardRecipe({
                   <h2 className="font-heading text-2xl font-semibold tracking-tight">
                     Command center
                   </h2>
-                  <span className="bg-warning/15 text-warning ring-warning/25 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset">
-                    <Radio className="size-3.5" aria-hidden="true" />
+                  <span className="bg-warning/15 text-foreground ring-warning/25 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset">
+                    <Radio
+                      className="text-warning size-3.5"
+                      aria-hidden="true"
+                    />
                     All systems degraded
                   </span>
                 </div>
@@ -733,10 +736,11 @@ export function CommandCenterDashboardRecipe({
                         <span className="text-muted-foreground text-[0.7rem] font-medium tracking-wide uppercase">
                           {kpi.label}
                         </span>
-                        <span
-                          className={`inline-flex items-center gap-1 text-xs font-semibold ${deltaColor}`}
-                        >
-                          <DeltaIcon aria-hidden="true" className="size-3" />
+                        <span className="text-foreground inline-flex items-center gap-1 text-xs font-semibold">
+                          <DeltaIcon
+                            aria-hidden="true"
+                            className={`size-3 ${deltaColor}`}
+                          />
                           {kpi.delta}
                         </span>
                       </div>

@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { recipesCatalog } from "../apps/showcase/src/lib/recipes-meta";
 
 test.describe("showcase final journey", () => {
   test("finds, assesses, copies, and continues through components and recipes", async ({
@@ -37,9 +38,14 @@ test.describe("showcase final journey", () => {
       "examples/button/variants.tsx",
     );
 
-    const installation = page.getByRole("region", { name: "Installation" });
+    const installation = page
+      .locator("section")
+      .filter({ has: page.locator("#installation-heading") });
     await installation.scrollIntoViewIfNeeded();
-    const installCopy = installation
+    await installation.getByRole("link", { name: "setup guide" }).click();
+    const installCopy = page
+      .locator("section")
+      .filter({ has: page.locator("#registry-heading") })
       .getByRole("button", { name: "Copy code" })
       .first();
     await installCopy.click();
@@ -48,7 +54,11 @@ test.describe("showcase final journey", () => {
     ).toBeVisible();
     await expect
       .poll(() => page.evaluate(() => navigator.clipboard.readText()))
-      .toBe("npx shadcn@latest add @dethink/button");
+      .toBe(
+        "npx shadcn@latest add https://components.dethink.co.uk/r/button.json",
+      );
+
+    await page.goto("/components/button");
 
     await page
       .getByRole("navigation", { name: "Components", exact: true })
@@ -62,7 +72,9 @@ test.describe("showcase final journey", () => {
     await page.goto("/recipes");
     await page.getByRole("button", { name: "AI", exact: true }).click();
     const recipes = page.getByRole("list", { name: "Recipe results" });
-    await expect(recipes.locator(":scope > li")).toHaveCount(2);
+    await expect(recipes.locator(":scope > li")).toHaveCount(
+      recipesCatalog.filter((recipe) => recipe.category === "ai").length,
+    );
     await recipes.getByRole("link", { name: "AI workspace" }).click();
     await expect(page).toHaveURL(/\/recipes\/ai-workspace$/);
     await expect(

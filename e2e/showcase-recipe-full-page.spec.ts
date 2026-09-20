@@ -105,7 +105,11 @@ test.describe("showcase full-page recipe shell", () => {
     expect(previewBounds).not.toBeNull();
     expect(previewBounds!.x).toBeCloseTo((layoutWidth - 1200) / 2, 0);
     expect(previewBounds!.width).toBe(1200);
-    expect(previewBounds!.y).toBeLessThanOrEqual(120);
+    expect(previewBounds!.y).toBeLessThanOrEqual(
+      await page
+        .getByRole("navigation", { name: "Recipe demo controls" })
+        .evaluate((element) => element.getBoundingClientRect().bottom + 1),
+    );
     expect(previewBounds!.y + previewBounds!.height).toBeGreaterThanOrEqual(
       900,
     );
@@ -161,7 +165,11 @@ test.describe("showcase full-page recipe shell", () => {
     expect(previewBounds).not.toBeNull();
     expect(previewBounds!.x).toBe(0);
     expect(previewBounds!.width).toBe(layoutWidth);
-    expect(previewBounds!.y).toBeLessThanOrEqual(120);
+    expect(previewBounds!.y).toBeLessThanOrEqual(
+      await page
+        .getByRole("navigation", { name: "Recipe demo controls" })
+        .evaluate((element) => element.getBoundingClientRect().bottom + 1),
+    );
     expect(previewBounds!.y + previewBounds!.height).toBeGreaterThanOrEqual(
       844,
     );
@@ -211,7 +219,9 @@ test.describe("showcase full-page recipe shell", () => {
           expectedWidth,
         );
         expect(previewBounds!.y, `${slug} preview top`).toBeLessThanOrEqual(
-          120,
+          await page
+            .getByRole("navigation", { name: "Recipe demo controls" })
+            .evaluate((element) => element.getBoundingClientRect().bottom + 1),
         );
         expect(
           previewBounds!.y + previewBounds!.height,

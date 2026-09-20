@@ -224,11 +224,12 @@ function MetricTile({
             {label}
           </span>
           {delta ? (
-            <span
-              className={`inline-flex items-center gap-1 text-xs font-semibold ${deltaColor}`}
-            >
+            <span className="text-foreground inline-flex items-center gap-1 text-xs font-semibold">
               {deltaDir ? (
-                <DeltaIcon aria-hidden="true" className="size-3" />
+                <DeltaIcon
+                  aria-hidden="true"
+                  className={`size-3 ${deltaColor}`}
+                />
               ) : null}
               {delta}
             </span>
@@ -597,7 +598,7 @@ export function AiWorkspaceRecipe({
                             <span className="font-mono">retrieval.search</span>{" "}
                             · 8 documents
                           </span>
-                          <span className="text-success inline-flex items-center gap-1.5 text-[0.7rem] font-semibold">
+                          <span className="text-foreground inline-flex items-center gap-1.5 text-[0.7rem] font-semibold">
                             <span
                               aria-hidden="true"
                               className="bg-success size-2 shrink-0 rounded-full"

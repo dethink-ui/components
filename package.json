@@ -34,22 +34,22 @@
     "registry:smoke:shader-backgrounds": "node scripts/smoke-shader-hero-registry.mjs --backgrounds"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.12.1",
-    "@changesets/cli": "^2.31.0",
-    "@eslint/js": "^9.39.4",
-    "@next/eslint-plugin-next": "^16.2.10",
-    "@playwright/cli": "^0.1.15",
-    "@playwright/test": "^1.61.1",
-    "@types/node": "^26.0.1",
-    "eslint": "^9.39.4",
+    "@axe-core/playwright": "^4.13.0",
+    "@changesets/cli": "^2.31.1",
+    "@eslint/js": "^9.39.5",
+    "@next/eslint-plugin-next": "^16.3.5",
+    "@playwright/cli": "^0.1.21",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26.6.2",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.3",
-    "eslint-plugin-storybook": "^10.4.6",
-    "globals": "^17.7.0",
-    "prettier": "^3.9.4",
-    "prettier-plugin-tailwindcss": "^0.8.0",
-    "typescript-eslint": "^8.63.0"
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "eslint-plugin-storybook": "^10.6.0",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.8",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "typescript-eslint": "^8.70.0"
   }
 }

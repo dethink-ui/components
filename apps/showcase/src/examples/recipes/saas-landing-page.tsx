@@ -236,7 +236,7 @@ function ProductGlimpse() {
             <div className="font-heading mt-1 text-2xl font-semibold tracking-tight">
               1,284
             </div>
-            <div className="text-success mt-1 inline-flex items-center gap-1 text-[0.7rem] font-medium">
+            <div className="text-foreground mt-1 inline-flex items-center gap-1 text-[0.7rem] font-medium">
               <TrendingUp aria-hidden="true" className="size-3" />
               +12.4%
             </div>

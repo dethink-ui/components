@@ -426,7 +426,7 @@ function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
   }
 
   if (ref) {
-    ref.current = node;
+    (ref as { current: T | null }).current = node;
   }
 }
 

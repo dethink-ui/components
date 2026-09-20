@@ -112,7 +112,11 @@ export const ShaderBackground = forwardRef<
     };
     const tick = (now: number) => {
       frame = 0;
-      if (!allowed() || !renderer) return;
+      if (!allowed()) {
+        release();
+        return;
+      }
+      if (!renderer) return;
       const dt = last ? (now - last) / 1000 : 1 / 30;
       if (!last || dt >= 1 / 30) {
         last = now;
