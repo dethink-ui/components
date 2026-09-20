@@ -102,7 +102,7 @@ await writeFile(
 <p><strong>${results.stats.expected} tests passed, including ${scans.length} axe scans.</strong> No violations were detected by the selected axe rules. ${needsReview} scans contain incomplete results requiring human review. Incomplete results are not passes.</p>
 <p><a href="accessibility-report.zip" download>Download the full Playwright report (ZIP)</a> · <a href="/docs/accessibility">Accessibility approach and limitations</a></p>
 <h2>Scope and method</h2><ul>
-<li>12 representative page/state combinations, the default brand palette in light and dark themes, 1440×900 and 390×900 viewports, Chromium, Firefox, and WebKit. Full rendered page scanned after fonts and finite animations settle; visible dialog/menu included when open. No rules or selectors excluded.</li>
+<li>12 representative page/state combinations, the default brand palette in light and dark themes, 1440×900 and 390×900 viewports, Chromium, Firefox, and WebKit. Full rendered page scanned after fonts and running CSS theme transitions settle; visible dialog/menu included when open. No rules or selectors excluded.</li>
 <li>Axe rules tagged wcag2a, wcag2aa, wcag21a, and wcag21aa. Reduced motion was requested for these scans. Each scan attachment records the axe version and complete results.</li>
 <li>12 additional browser acceptance tests cover keyboard focus trapping and return, menu navigation, field descriptions and errors, table semantics, 320px and enlarged-text/RTL reflow, and social metadata. These are separate from the axe scan totals.</li>
 <li>The report tests a local production build of the source revision above. Later changes need a new run. Browser engine versions are recorded below.</li></ul>
