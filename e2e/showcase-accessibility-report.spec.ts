@@ -33,6 +33,21 @@ for (const theme of ["light", "dark"] as const) {
         await expect(
           page.getByRole("heading", { level: 1 }).first(),
         ).toBeVisible();
+        // Settle theme transitions before opening overlays, which can suspend
+        // animation playback in their inert background content.
+        await page.evaluate(async () => {
+          await document.fonts.ready;
+          await Promise.all(
+            document
+              .getAnimations()
+              .filter(
+                (animation) =>
+                  animation instanceof CSSTransition &&
+                  animation.playState === "running",
+              )
+              .map((animation) => animation.finished.catch(() => undefined)),
+          );
+        });
         if (state === "open dialog") {
           await page
             .getByRole("button", { name: "Workspace settings", exact: true })
@@ -47,19 +62,6 @@ for (const theme of ["light", "dark"] as const) {
             .click();
           await expect(page.getByRole("menu")).toBeVisible();
         }
-        // Measure the rendered theme, not intermediate light-to-dark colors.
-        // Await actual font/finite-animation completion instead of a fixed delay.
-        await page.evaluate(async () => {
-          await document.fonts.ready;
-          await Promise.all(
-            document
-              .getAnimations()
-              .filter((animation) =>
-                Number.isFinite(animation.effect?.getComputedTiming().endTime),
-              )
-              .map((animation) => animation.finished.catch(() => undefined)),
-          );
-        });
         const results = await new AxeBuilder({ page })
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
           .analyze();
@@ -78,7 +80,7 @@ for (const theme of ["light", "dark"] as const) {
               browser: testInfo.project.name,
               browserVersion: browser.version(),
               scope:
-                "Settled rendered page after fonts and finite animations, including the visible overlay when open. Default brand palette. No rules or selectors excluded.",
+                "Page scanned after fonts and running CSS theme transitions settle, including the visible overlay when open. Default brand palette. No rules or selectors excluded.",
             },
             null,
             2,
