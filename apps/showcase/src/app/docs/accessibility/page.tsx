@@ -43,7 +43,7 @@ export default function AccessibilityPage() {
           <li>
             <a
               className={linkStyles}
-              href="https://github.com/dethink-ui/components/actions/workflows/pr-checks.yml"
+              href="https://github.com/dethink-ui/components/actions/workflows/browser-checks.yml"
             >
               View the latest test runs on GitHub
             </a>
@@ -56,9 +56,9 @@ export default function AccessibilityPage() {
           attachments.
         </p>
         <p className="text-muted-foreground text-sm leading-7">
-          To download a report from GitHub, sign in, open a test run, and select
-          the <code>accessibility-report</code> artifact. These reports are kept
-          for 30 days.
+          To download a report from GitHub, sign in, open a completed Browser
+          checks run, and select the <code>accessibility-report</code> artifact.
+          Maintainers start these runs manually. Reports are kept for 30 days.
         </p>
       </DocsSection>
       <DocsSection id="coverage" title="What we check">

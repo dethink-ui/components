@@ -1,0 +1,74 @@
+name: Browser checks
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    name: Browser tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.7.0
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Install browsers
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Showcase production and browser smoke checks
+        run: pnpm exec playwright test e2e/showcase-recipes-gallery.spec.ts e2e/showcase-release-acceptance.spec.ts --reporter=line
+
+      - name: Accessibility evidence across browser engines
+        run: pnpm test:accessibility:report
+
+      - name: Upload accessibility report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: accessibility-report
+          path: |
+            playwright-report/accessibility/
+            test-results/accessibility-results.json
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Verify clean registry consumers
+        shell: bash
+        run: |
+          DETHINK_REGISTRY_ORIGIN=http://127.0.0.1:3111 pnpm registry:build
+          python3 -m http.server 3111 --bind 127.0.0.1 --directory apps/showcase/public &
+          registry_pid=$!
+          trap 'kill "$registry_pid"' EXIT
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:3111/r/registry.json > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/verify-registry-consumer.mjs vite http://127.0.0.1:3111 18.3.1
+          node scripts/verify-registry-consumer.mjs next http://127.0.0.1:3111 19.3.0
