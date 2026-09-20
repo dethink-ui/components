@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "contour-field-background",
+  "type": "registry:ui",
+  "title": "ContourFieldBackground",
+  "description": "Topographic contours evolve through a warped noise field. WebGL rendering with static CSS fallback, reduced-motion support and bounded offscreen rendering.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "cssVars": {
+    "theme": {
+      "shader-background-base": "var(--dt-color-background)",
+      "shader-background-accent": "var(--dt-color-primary)",
+      "shader-background-secondary": "var(--dt-color-info)"
+    }
+  },
+  "files": [
+    {
+      "path": "packages/components/src/components/contour-field-background/contour-field-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/contour-field-background/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-backgrounds/shader-background.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-backgrounds/renderer.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-backgrounds/shaders.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-backgrounds/types.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

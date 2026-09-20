@@ -1,4 +1,9 @@
-import { parseDateTime, parseZonedDateTime } from "@internationalized/date";
+import {
+  CalendarDate,
+  parseDateTime,
+  parseZonedDateTime,
+} from "@internationalized/date";
+import { isDateTimePickerValueUnavailable } from "./date-time-picker-utils";
 import { describe, expect, it } from "vitest";
 import {
   getDateTimePickerPlaceholderValue,
@@ -14,6 +19,31 @@ import {
 } from ".";
 
 describe("DateTimePicker utilities", () => {
+  it("treats date bounds as whole days and timestamp bounds as inclusive instants", () => {
+    const date = new CalendarDate(2026, 7, 14);
+    const evening = parseDateTime("2026-07-14T23:59");
+    expect(isDateTimePickerValueUnavailable(evening, date, date)).toBe(false);
+    expect(
+      isDateTimePickerValueUnavailable(
+        evening,
+        undefined,
+        parseDateTime("2026-07-14T18:00"),
+      ),
+    ).toBe(true);
+    const zoned = parseZonedDateTime("2026-07-14T18:00[Europe/London]");
+    expect(isDateTimePickerValueUnavailable(zoned, zoned, zoned)).toBe(false);
+    expect(
+      isDateTimePickerValueUnavailable(zoned, zoned.add({ minutes: 1 })),
+    ).toBe(true);
+    expect(
+      isDateTimePickerValueUnavailable(
+        evening,
+        undefined,
+        undefined,
+        (value) => value.day === 14,
+      ),
+    ).toBe(true);
+  });
   it("serializes empty, local, and zoned values", () => {
     expect(serializeDateTimePickerValue(null)).toBe("");
     expect(serializeDateTimePickerValue(undefined)).toBe("");

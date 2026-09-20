@@ -8,7 +8,8 @@ export function DateTimePickerBasic() {
     <div className="mx-auto max-w-sm">
       <DateTimePicker
         label="Kickoff meeting"
-        description="Date and time in one field, minute precision by default."
+        description="Choose a date, set a time, then select Done."
+        name="kickoffAt"
         defaultValue={new CalendarDateTime(2026, 7, 14, 9, 30)}
       />
     </div>

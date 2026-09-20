@@ -58,6 +58,8 @@ Exported anatomy:
 - `hideDisabledControls` removes disabled previous/first or next/last controls at boundaries.
 - Ellipsis items are non-interactive and include screen-reader text.
 - Controls use stable dimensions so changing page windows does not shift layout.
+- Bounded windows fill the same number of page/ellipsis slots near both boundaries. The default large window always has seven slots; compact windows have five. Small totals show every page.
+- Pagination itself keeps framework-neutral anchors. The showcase reads the current page from `useSearchParams` and uses Next.js native history integration for local URL state, preserving scroll, unrelated query parameters, and Back/Forward. Modified clicks retain native navigation. Consumers loading server data should use their router instead of shallow history updates.
 - RTL layouts rotate directional control icons through Tailwind RTL variants.
 
 ## Accessibility

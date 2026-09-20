@@ -1,7 +1,8 @@
 # PRD: Six shader hero text animations
 
-Status: draft for scope and test-seam review. Not yet published to GitHub.
-Implementation is gated on the approved GitHub PRD and implementation issues.
+Status: approved by the user and published as [PRD #462](https://github.com/parveshh/dethink-components/issues/462).
+Implementation issues: #463–#468. All six effects and their showcase examples are
+implemented. See [verification](./verification.md) for checks and tested limits.
 
 ## Problem Statement
 
@@ -14,7 +15,7 @@ accessibility, or a portable registry installation.
 ## Solution
 
 Provide an opt-in `ShaderHeroText` React component with exactly six effects:
-`liquid-ripple`, `chromatic-refraction`, `noise-dissolve`, `wave-distortion`, and
+`liquid-ripple`, `chromatic-refraction`, `noise-dissolve`, `wave-distortion`,
 `liquid-metal`, and `particle-follow`. The first five use real WebGL shaders and
 resolve into crisp HTML text. Particle follow renders the letters as individual
 dots that follow the mouse and return to their original letter positions on exit.
@@ -158,7 +159,7 @@ states and registry installation support. Present it alongside HeroTextAnimation
 ## Further Notes
 
 Research and references are recorded in the companion research document. The
-six-effect direction, proposed test seams and vertical-slice breakdown are ready
-for review. After approval, publish this PRD with `ready-for-agent`, publish the
-implementation issues, and use the repository's stacked PRD/issue branch workflow.
+six-effect direction, test seams and vertical-slice breakdown were approved by
+the user. PRD #462 and implementation issues #463–#468 are published with
+`ready-for-agent`. Follow the repository PRD/issue branch workflow.
 No commit or integration into the default branch is authorized by this document.

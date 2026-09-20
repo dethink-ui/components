@@ -73,6 +73,8 @@ Defaults:
 
 - `granularity="minute"`
 - `clearable={false}`
+- `timeSelector={true}`: show editable time and quick picks beside the calendar
+- `timeStep={30}`: generate quick picks every 30 minutes
 - locale and hour cycle follow React Aria/browser behavior
 - timezone is shown when the value is a `ZonedDateTime` or `timeZone` is provided, unless `hideTimeZone` is true
 
@@ -88,6 +90,30 @@ Defaults:
 - Submit a hidden form value when `name` is provided. Serialization must be documented and stable.
 - Show label, description, error message, required, disabled, read-only, and invalid state wiring.
 - Return focus predictably when the popover closes.
+
+### Visible date and time selection
+
+The calendar button opens a combined popover. The clock button opens the same
+popover with focus in the time field. On small screens the time panel stacks
+below the calendar. Choosing a date keeps the popover open so the user can choose
+a time, then press Done. Changes are immediate; Done and Escape close the
+popover without rolling back edits and return focus to the initiating control.
+
+The time panel uses React Aria TimeField segments for keyboard editing, honoring
+`granularity`, `hourCycle`, and locale. Quick picks use `timeStep` or explicit
+`timeOptions`; out-of-range and unavailable options are disabled. Date-only
+bounds include the whole day, while timestamp bounds include the time. Typed
+out-of-range values remain editable and display an error. Time controls are
+disabled until a date exists. Zoned values retain their zone when editing time.
+
+Migration: the time panel is now visible by default. Set `timeSelector={false}`
+for the previous calendar-only popover with editable time in the main field.
+No new dependency or change to value serialization is required.
+
+Manual acceptance: open with each trigger, edit hours/minutes with number and
+arrow keys, tab to quick picks and Done, select a different date without losing
+the time, and close with Escape. Check focus return, 12-hour AM/PM, seconds,
+disabled/read-only fields, an empty date, time bounds, narrow screens, and RTL.
 
 ## Accessibility
 

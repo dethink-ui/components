@@ -1,21 +1,24 @@
 # ShaderHeroText implementation slices
 
-Status: proposed; awaiting approval before GitHub publication or implementation.
-Parent: companion PRD, to be published after review.
+Status: approved and published. All six effects and their showcase examples are implemented.
+The acceptance lists below preserve the approved issue plan. See
+[verification](./verification.md) for actual results.
+Parent: [PRD #462](https://github.com/parveshh/dethink-components/issues/462).
+Slices 1–6: GitHub issues [#463](https://github.com/parveshh/dethink-components/issues/463), [#464](https://github.com/parveshh/dethink-components/issues/464), [#465](https://github.com/parveshh/dethink-components/issues/465), [#466](https://github.com/parveshh/dethink-components/issues/466), [#467](https://github.com/parveshh/dethink-components/issues/467), [#468](https://github.com/parveshh/dethink-components/issues/468).
 
 All six slices are AFK after scope approval. Each includes its public API/types,
 registry distribution, documentation, showcase example, Storybook and relevant
 behavior, accessibility, SSR, visual and real-WebGL checks. There is no separate
 infrastructure-only or documentation-only slice.
 
-| # | Title | Type | Blocked by | User stories |
-| --- | --- | --- | --- | --- |
-| 1 | Ship liquid ripple with the shared shader lifecycle | AFK | None | 1, 6–20 |
-| 2 | Add chromatic refraction | AFK | 1 | 2, 6–20 |
-| 3 | Add noise dissolve reveal | AFK | 1 | 3, 6–20 |
-| 4 | Add wave distortion | AFK | 1 | 4, 6–20 |
-| 5 | Add liquid-metal lighting | AFK | 1 | 5, 6–20 |
-| 6 | Add particle lettering that follows the mouse and reforms | AFK | 1 | 6–25 |
+| #   | Title                                                     | Type | Blocked by | User stories |
+| --- | --------------------------------------------------------- | ---- | ---------- | ------------ |
+| 1   | Ship liquid ripple with the shared shader lifecycle       | AFK  | None       | 1, 6–20      |
+| 2   | Add chromatic refraction                                  | AFK  | 1          | 2, 6–20      |
+| 3   | Add noise dissolve reveal                                 | AFK  | 1          | 3, 6–20      |
+| 4   | Add wave distortion                                       | AFK  | 1          | 4, 6–20      |
+| 5   | Add liquid-metal lighting                                 | AFK  | 1          | 5, 6–20      |
+| 6   | Add particle lettering that follows the mouse and reforms | AFK  | 1          | 6–25         |
 
 Slices 2–6 need only slice 1 semantically. Their issue branches may all derive from
 the completed slice-1 branch, as allowed by the dependency graph; combine them on

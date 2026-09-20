@@ -1,6 +1,7 @@
 import { act } from "react";
+import { PassThrough } from "node:stream";
 import { hydrateRoot } from "react-dom/client";
-import { renderToString } from "react-dom/server";
+import { renderToPipeableStream, renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import {
   Field,
@@ -13,6 +14,39 @@ import {
 import { Switch } from ".";
 
 describe("Switch SSR", () => {
+  it("streams and hydrates a checked spring switch without replacing the input", async () => {
+    const field = <Switch spring defaultChecked aria-label="Spring setting" />;
+    const markup = await new Promise<string>((resolve, reject) => {
+      const output = new PassThrough();
+      let html = "";
+      output.on("data", (chunk) => {
+        html += chunk.toString();
+      });
+      output.on("end", () => resolve(html));
+      const stream = renderToPipeableStream(field, {
+        onAllReady() {
+          stream.pipe(output);
+        },
+        onError: reject,
+      });
+    });
+    const container = document.createElement("div");
+    container.innerHTML = markup;
+    const input = container.querySelector("input")!;
+    expect(input.checked).toBe(true);
+    const recover = vi.fn();
+    let root: ReturnType<typeof hydrateRoot>;
+    await act(async () => {
+      root = hydrateRoot(container, field, { onRecoverableError: recover });
+    });
+    expect(container.querySelector("input")).toBe(input);
+    expect(input.checked).toBe(true);
+    expect(recover).not.toHaveBeenCalled();
+    await act(async () => {
+      root.unmount();
+    });
+  });
+
   it("renders native switch markup on the server", () => {
     const markup = renderToString(
       <Field id="server-switch" invalid orientation="horizontal">

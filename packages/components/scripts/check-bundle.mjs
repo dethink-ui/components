@@ -17,6 +17,7 @@ await Promise.all(
 // include runtime dependencies, but exclude the separately exported CSS.
 for (const [name, budget] of [
   ["Button", 14_000],
+  ["Switch", 65_000],
   ["Tabs", 65_000],
   ["NavDock", 80_000],
 ]) {
@@ -56,10 +57,35 @@ for (const [name, budget] of [
     0,
   );
   const retainedModules = chunks.flatMap((chunk) => Object.keys(chunk.modules));
+  if (name === "Switch") {
+    const initialChunks = new Set();
+    function visit(chunk) {
+      if (!chunk || initialChunks.has(chunk)) return;
+      initialChunks.add(chunk);
+      for (const imported of chunk.imports) {
+        visit(chunks.find((candidate) => candidate.fileName === imported));
+      }
+    }
+    visit(chunks.find((chunk) => chunk.isEntry));
+    assert(
+      ![...initialChunks].some((chunk) =>
+        Object.keys(chunk.modules).some((id) =>
+          /framer-motion|motion-dom|motion-utils/.test(id),
+        ),
+      ),
+      "Switch must load Motion only through the optional spring chunk",
+    );
+    assert(
+      retainedModules.some((id) => /framer-motion/.test(id)),
+      "The optional spring chunk must include Motion",
+    );
+  }
   if (name === "Button") {
     assert(
       !retainedModules.some((id) =>
-        /framer-motion|motion-dom|motion-utils|react-aria|tanstack/.test(id),
+        /framer-motion|motion-dom|motion-utils|react-aria|tanstack|\/components\/(?:shader-hero-text|shader-backgrounds)\//.test(
+          id,
+        ),
       ),
       "Button-only consumers must not include motion or complex-widget runtimes",
     );

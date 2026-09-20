@@ -30,6 +30,38 @@ export interface ComponentGroup extends ComponentTypeMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "liquid-mesh-background",
+    name: "LiquidMeshBackground",
+    description: "Soft pools of color drift and blend behind your content.",
+    type: "effects",
+  },
+  {
+    slug: "silk-flow-background",
+    name: "SilkFlowBackground",
+    description:
+      "Satin folds flow across the surface with gentle directional lighting.",
+    type: "effects",
+  },
+  {
+    slug: "caustic-light-background",
+    name: "CausticLightBackground",
+    description: "Moving water-like ridges cast a field of caustic light.",
+    type: "effects",
+  },
+  {
+    slug: "contour-field-background",
+    name: "ContourFieldBackground",
+    description: "Topographic contours evolve through a warped noise field.",
+    type: "effects",
+  },
+  {
+    slug: "orbital-glow-background",
+    name: "OrbitalGlowBackground",
+    description:
+      "Luminous elliptical rings surround a soft, slowly shifting core.",
+    type: "effects",
+  },
+  {
     slug: "chat",
     name: "Chat",
     description:
@@ -90,6 +122,13 @@ export const componentCatalog: ComponentMeta[] = [
     slug: "hero-text-animation",
     name: "HeroTextAnimation",
     description: "Reveal a headline one word or line at a time.",
+    type: "effects",
+  },
+  {
+    slug: "shader-hero-text",
+    name: "ShaderHeroText",
+    description:
+      "Six WebGL headline effects, including particle lettering that follows your mouse and reforms.",
     type: "effects",
   },
   {

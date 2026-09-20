@@ -436,9 +436,11 @@ function WorkspaceDialog({
             </div>
             <DialogFooter>
               <DialogClose variant="outline">Cancel</DialogClose>
-              <Button type="submit">
+              <Button
+                type="submit"
+                rightIcon={<ArrowRight aria-hidden="true" className="size-4" />}
+              >
                 Create sample workspace
-                <ArrowRight aria-hidden="true" className="size-4" />
               </Button>
             </DialogFooter>
           </form>
@@ -652,11 +654,12 @@ export function RelayLandingRecipe({
           <br className="hidden sm:block" /> and see what supports it.
         </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Button asChild size="lg">
-            <a href="#relay-research">
-              Explore a sample
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </a>
+          <Button
+            asChild
+            size="lg"
+            rightIcon={<ArrowRight aria-hidden="true" className="size-4" />}
+          >
+            <a href="#relay-research">Explore a sample</a>
           </Button>
           <Button asChild variant="outline" size="lg">
             <a href="#relay-evidence">See how it works</a>
@@ -841,7 +844,7 @@ export function RelayLandingRecipe({
                 value={faq.id}
                 className="border-border rounded-none border-x-0 border-t border-b-0 bg-transparent shadow-none"
               >
-                <Accordion.Blade iconPosition="end" className="px-0 py-5">
+                <Accordion.Blade iconPosition="end" className="py-5">
                   <Accordion.BladeText className="font-serif text-lg font-normal">
                     {faq.question}
                   </Accordion.BladeText>
@@ -849,7 +852,7 @@ export function RelayLandingRecipe({
                     <Plus aria-hidden="true" className="size-4" />
                   </Accordion.BladeIcon>
                 </Accordion.Blade>
-                <Accordion.Content className="px-0">
+                <Accordion.Content>
                   <p className="text-muted-foreground max-w-3xl pb-4 text-sm leading-7">
                     {faq.answer}
                   </p>

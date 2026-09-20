@@ -5,6 +5,8 @@
   "type": "module",
   "packageManager": "pnpm@11.7.0",
   "scripts": {
+    "test:shader-hero": "playwright test --config=e2e/shader-hero-text.config.ts",
+    "registry:smoke:shader-hero": "node scripts/smoke-shader-hero-registry.mjs",
     "build": "pnpm --filter @dethink/components build && pnpm --filter @dethink/playground-vite build",
     "check": "pnpm lint && pnpm format:check && pnpm typecheck && pnpm test",
     "format": "prettier --write \".github/**/*.{yml,yaml}\" \"apps/**/*.{css,js,jsx,json,md,mdx,mjs,cjs,ts,tsx}\" \"packages/**/*.{css,js,jsx,json,md,mdx,mjs,cjs,ts,tsx}\" \"registry/**/*.json\" \"scripts/**/*.{js,mjs,cjs,ts}\" \"*.{js,json,mjs,cjs,ts}\" \"tsconfig*.json\" \"pnpm-workspace.yaml\"",
@@ -23,7 +25,9 @@
     "test:e2e:report": "playwright show-report",
     "capture:showcase": "node scripts/capture-showcase-final.mjs",
     "capture:recipes": "node scripts/capture-recipe-thumbnails.mjs",
-    "changeset": "changeset"
+    "changeset": "changeset",
+    "test:shader-backgrounds": "playwright test --config=e2e/shader-backgrounds.config.ts",
+    "registry:smoke:shader-backgrounds": "node scripts/smoke-shader-hero-registry.mjs --backgrounds"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",

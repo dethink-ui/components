@@ -10,6 +10,61 @@ function itemKeys(items: ReturnType<typeof getPaginationRenderItems>) {
 }
 
 describe("getPaginationRenderItems", () => {
+  it("fills the first and last windows instead of moving the controls", () => {
+    expect(
+      itemKeys(getPaginationRenderItems({ page: 1, pageCount: 12 })),
+    ).toEqual([
+      "page-1",
+      "page-2",
+      "page-3",
+      "page-4",
+      "page-5",
+      "ellipsis",
+      "page-12",
+    ]);
+    expect(
+      itemKeys(getPaginationRenderItems({ page: 12, pageCount: 12 })),
+    ).toEqual([
+      "page-1",
+      "ellipsis",
+      "page-8",
+      "page-9",
+      "page-10",
+      "page-11",
+      "page-12",
+    ]);
+  });
+
+  it("keeps a stable, ordered window containing the current page across bounded configurations", () => {
+    for (const pageCount of [1, 2, 5, 8, 12, 25]) {
+      for (const boundaryCount of [0, 1, 2]) {
+        for (const siblingCount of [0, 1, 2]) {
+          const windows = Array.from({ length: pageCount }, (_, i) =>
+            getPaginationRenderItems({
+              page: i + 1,
+              pageCount,
+              boundaryCount,
+              siblingCount,
+            }),
+          );
+          expect(new Set(windows.map((items) => items.length)).size).toBe(1);
+          windows.forEach((items, index) => {
+            const pages = items.flatMap((item) =>
+              item.type === "page" ? [item.page] : [],
+            );
+            expect(pages).toContain(index + 1);
+            expect(pages).toEqual([...new Set(pages)].sort((a, b) => a - b));
+            expect(pages.every((page) => page >= 1 && page <= pageCount)).toBe(
+              true,
+            );
+            expect(
+              items.filter((item) => item.type === "page" && item.current),
+            ).toHaveLength(1);
+          });
+        }
+      }
+    }
+  });
   it("creates a bounded middle window with ellipses", () => {
     expect(
       itemKeys(getPaginationRenderItems({ page: 5, pageCount: 10 })),

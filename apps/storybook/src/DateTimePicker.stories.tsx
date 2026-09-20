@@ -195,6 +195,27 @@ export const SelectableTimeSlots: Story = {
   ),
 };
 
+export const BoundedTimePicker: Story = {
+  args: {
+    label: "Interview slot",
+    defaultValue: parseDateTime("2026-07-14T10:15"),
+    minValue: parseDateTime("2026-07-14T08:00"),
+    maxValue: parseDateTime("2026-07-14T18:00"),
+    hourCycle: 12,
+    timeStep: 15,
+    description: "Choose a time between 8 AM and 6 PM.",
+  },
+};
+
+export const CalendarOnlyPopover: Story = {
+  args: {
+    label: "Scheduled time",
+    defaultValue: parseDateTime("2026-07-14T10:15"),
+    timeSelector: false,
+    description: "Time remains editable in the main field.",
+  },
+};
+
 export const RequiredInvalidField: Story = {
   render: () => (
     <DethinkProvider theme="light" className={storyProviderClasses}>

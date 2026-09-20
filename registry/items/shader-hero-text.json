@@ -1,0 +1,48 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shader-hero-text",
+  "type": "registry:ui",
+  "title": "ShaderHeroText",
+  "description": "Six accessible WebGL headline effects: liquid ripple, chromatic refraction, noise dissolve, wave distortion, liquid metal, and particles that follow the mouse and reform the text. Static HTML fallback, bounded motion, and no graphics runtime dependency.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "cssVars": {
+    "theme": {
+      "shader-hero-text-base": "var(--dt-color-foreground)",
+      "shader-hero-text-accent": "var(--dt-color-primary)",
+      "shader-hero-text-sheen": "var(--dt-color-muted-foreground)"
+    }
+  },
+  "files": [
+    {
+      "path": "packages/components/src/components/shader-hero-text/shader-hero-text.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-hero-text/types.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-hero-text/renderer.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-hero-text/text-mask.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-hero-text/shaders.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-hero-text/particles.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/shader-hero-text/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}

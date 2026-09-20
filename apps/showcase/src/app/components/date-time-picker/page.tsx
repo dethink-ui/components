@@ -42,7 +42,7 @@ import { CalendarDateTime, parseZonedDateTime } from "@internationalized/date";`
           <ExampleBlock
             file="date-time-picker/basic.tsx"
             title="Basic"
-            description="The uncontrolled default: date plus hours and minutes in a single segmented field."
+            description="Open the calendar to choose a date and time together, or use the clock button to jump straight to time."
           >
             <DateTimePickerBasic />
           </ExampleBlock>
@@ -70,7 +70,7 @@ import { CalendarDateTime, parseZonedDateTime } from "@internationalized/date";`
           <ExampleBlock
             file="date-time-picker/time-selector.tsx"
             title="Time selector"
-            description="timeSelector swaps free-form time entry for a dropdown generated at timeStep intervals, clipped by minValue and maxValue."
+            description="Quick picks every 15 minutes, with unavailable times disabled. Type any exact time using the hour and minute segments."
           >
             <DateTimePickerTimeSelector />
           </ExampleBlock>

@@ -47,7 +47,7 @@ export default function PaginationPage() {
           <ExampleBlock
             file="pagination/link-mode.tsx"
             title="Route-backed links"
-            description="When pages have stable URLs, generated controls render native anchors."
+            description="Real page URLs with in-place navigation: the selected page follows the URL, browser Back/Forward works, and changing pages preserves your scroll position."
           >
             <PaginationLinkMode />
           </ExampleBlock>
@@ -89,7 +89,7 @@ export default function PaginationPage() {
             ],
             [
               "Link mode",
-              "Use hrefForPage for route-backed results so browser navigation, copy-link, and server rendering keep native anchor behavior.",
+              "Use hrefForPage for real URLs. Integrate your router to avoid document reloads. This local-state demo uses Next.js history integration; server-backed results should navigate through the router with scrolling disabled.",
             ],
             [
               "Unbounded mode",

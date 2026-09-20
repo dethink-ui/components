@@ -2,6 +2,13 @@ import type { PropRow } from "@/components/props-table";
 
 export const switchProps: PropRow[] = [
   {
+    prop: "spring",
+    type: "boolean",
+    defaultValue: "false",
+    description:
+      "Opt in to a lazily loaded Motion spring for the thumb. Respects reduced motion.",
+  },
+  {
     prop: "checked / defaultChecked",
     type: "boolean",
     defaultValue: "false",

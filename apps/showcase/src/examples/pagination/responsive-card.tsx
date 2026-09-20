@@ -19,6 +19,7 @@ export function PaginationResponsiveCard() {
       </div>
       <div className="mt-4" dir="rtl">
         <Pagination
+          aria-label="Saved search pages"
           page={page}
           pageCount={12}
           showFirstLast

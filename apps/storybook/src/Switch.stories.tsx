@@ -27,6 +27,7 @@ const meta = {
   title: "Components/Switch",
   component: Switch,
   argTypes: {
+    spring: { control: "boolean" },
     controlSize: {
       control: "inline-radio",
       options: ["sm", "md", "lg"],
@@ -281,4 +282,19 @@ export const ThemeDensityAndRTL: Story = {
       ))}
     </div>
   ),
+};
+
+export const Spring: Story = {
+  ...Base,
+  args: { spring: true },
+  play: async ({ canvasElement }) => {
+    const input = within(canvasElement).getByRole("switch", {
+      name: "Enable notifications",
+    });
+    await userEvent.click(input);
+    await expect(input).toBeChecked();
+    await userEvent.keyboard("[Space]");
+    await expect(input).not.toBeChecked();
+    await expect(input).toHaveFocus();
+  },
 };

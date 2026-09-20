@@ -935,9 +935,14 @@ assert(
   "steps registry item must include motion for branch and progress choreography.",
 );
 assert(
-  Array.isArray(switchItem.dependencies) &&
-    switchItem.dependencies.length === 0,
-  "switch registry item must not add runtime dependencies.",
+  switchItem.dependencies?.includes("motion"),
+  "switch registry item must include motion for its optional spring thumb.",
+);
+assert(
+  switchItem.files?.some((file) =>
+    file.path.endsWith("/switch/switch-spring-thumb.tsx"),
+  ),
+  "switch registry item must include its lazy spring module.",
 );
 assert(
   Array.isArray(table.dependencies) && table.dependencies.length === 0,
@@ -2789,7 +2794,7 @@ assert(
   "switch source must expose stable track slot data.",
 );
 assert(
-  switchSource.includes('data-slot="switch-thumb"'),
+  switchSource.includes('"data-slot": "switch-thumb"'),
   "switch source must expose stable thumb slot data.",
 );
 assert(

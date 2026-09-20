@@ -38,7 +38,7 @@ The PRD positions the library as a shadcn-compatible, open-code React component 
 | Productivity | RichTextEditor, TreeView, TreeSelect, SlotPlanner, Scheduler/EventCalendar, KanbanBoard, SortableList, DragDrop, OnboardingTour |
 | AI / Chat | Chat, ChatActivity, PromptInput, ChatMessage, MessageContent, MessageActions, MessageList, MessageScroller, ConversationList, AttachmentBubble, TypingIndicator, CitationCard, ToolCallCard, ModelPicker |
 | Utilities | Portal, VisuallyHidden, FocusTrap, FocusScope, Presence, Transition, ClientOnly, EnvironmentProvider, LocaleProvider, DirectionProvider, CopyButton, Hotkeys, useControllableState, useMediaQuery |
-| Effects | HeroTextAnimation, GridBeamsBackground, MagneticBeamsBackground, AuroraBackground, ScanGridBackground, DotMatrixBackground, LightStreaksBackground, StarfieldBackground |
+| Effects | HeroTextAnimation, ShaderHeroText, GridBeamsBackground, MagneticBeamsBackground, AuroraBackground, ScanGridBackground, DotMatrixBackground, LightStreaksBackground, StarfieldBackground, LiquidMeshBackground, SilkFlowBackground, CausticLightBackground, ContourFieldBackground, OrbitalGlowBackground |
 
 ## Priority Quick View
 

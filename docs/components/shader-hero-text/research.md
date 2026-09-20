@@ -1,6 +1,7 @@
 # Shader hero text research
 
-Researched 2026-09-19. Status: proposed direction; no component implemented.
+Researched 2026-09-19. Status: all six effects implemented locally. This document
+records the original research; see [verification](./verification.md) for results.
 
 ## Recommendation
 
@@ -10,14 +11,14 @@ renderer and original GLSL shaders. Keep the current component API unchanged.
 Each effect should have a distinct silhouette or material behavior, rather than
 being a recolored version of the same animation.
 
-| Effect | Visual direction | Shader technique | Proposed default |
-| --- | --- | --- | --- |
-| Liquid ripple | A soft ripple bends the letters, then settles into crisp type. | Radial, damped UV displacement of the text mask. | One 1.4-second pass. |
-| Chromatic refraction | Prismatic fringes separate around the letter edges and reunite. | Slightly offset mask samples, token-derived accent colors, and a moving distortion band. | One 1.2-second pass; no flashing. |
-| Noise dissolve | Fine organic fragments assemble into the complete headline. | Seeded noise threshold multiplied by the text alpha, with a narrow highlighted edge. | One 1.6-second reveal. |
-| Wave distortion | A broad, fabric-like wave travels through the line and flattens. | Directional sinusoidal UV displacement with a decaying amplitude envelope. | One 1.4-second pass. |
-| Liquid metal | Reflective bands flow across the letter interiors before resolving. | Procedural lighting bands, warped coordinates, and mask-edge shading. | One 1.8-second pass ending in readable foreground text. |
-| Particle follow | Dots form the letters, gather around and trail the mouse, then return to the same letter positions on pointer exit. | Text-mask sampling into home positions; spring-updated point buffers; WebGL point sprites. | Static particle lettering at rest; motion only while following or returning. |
+| Effect               | Visual direction                                                                                                    | Shader technique                                                                           | Proposed default                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Liquid ripple        | A soft ripple bends the letters, then settles into crisp type.                                                      | Radial, damped UV displacement of the text mask.                                           | One 1.4-second pass.                                                         |
+| Chromatic refraction | Prismatic fringes separate around the letter edges and reunite.                                                     | Slightly offset mask samples, token-derived accent colors, and a moving distortion band.   | One 1.2-second pass; no flashing.                                            |
+| Noise dissolve       | Fine organic fragments assemble into the complete headline.                                                         | Seeded noise threshold multiplied by the text alpha, with a narrow highlighted edge.       | One 1.6-second reveal.                                                       |
+| Wave distortion      | A broad, fabric-like wave travels through the line and flattens.                                                    | Directional sinusoidal UV displacement with a decaying amplitude envelope.                 | One 1.4-second pass.                                                         |
+| Liquid metal         | Reflective bands flow across the letter interiors before resolving.                                                 | Procedural lighting bands, warped coordinates, and mask-edge shading.                      | One 1.8-second pass ending in readable foreground text.                      |
+| Particle follow      | Dots form the letters, gather around and trail the mouse, then return to the same letter positions on pointer exit. | Text-mask sampling into home positions; spring-updated point buffers; WebGL point sprites. | Static particle lettering at rest; motion only while following or returning. |
 
 These timings and the six-effect selection are design proposals, not performance
 measurements or claims from the references. The metal effect is stylized shading,
@@ -62,13 +63,13 @@ texture; it does not refract arbitrary HTML behind the component.
 
 ## Rendering options
 
-| Approach | Benefits | Costs | Decision |
-| --- | --- | --- | --- |
-| Canvas 2D text mask + raw WebGL | Consumer fonts; small renderer; no additional runtime dependency; texture effects and particle home-position sampling. | Must own raster/layout alignment, shader lifecycle, point buffers, and cleanup. | Recommended. |
-| Three.js + custom shader material | Useful scene abstractions and a path to 3D typography. | Additional dependency and scene machinery for a flat text effect. | Reconsider if genuine 3D geometry becomes a requirement. |
-| SDF/MSDF glyph atlas | Strong scaling for large or deeply transformed glyphs. | Font preparation, glyph coverage, shaping and asset distribution complexity. | Defer. |
-| Paper shader package | Existing material effects and controls. | Text masking/layout still needed; external runtime and API. | Visual reference for this original open-code implementation. |
-| HTML-in-canvas | Potential future direct DOM-to-texture integration. | Retrieved guidance flags limited browser availability. | Do not make it a v1 requirement or ship a polyfill. |
+| Approach                          | Benefits                                                                                                               | Costs                                                                           | Decision                                                     |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Canvas 2D text mask + raw WebGL   | Consumer fonts; small renderer; no additional runtime dependency; texture effects and particle home-position sampling. | Must own raster/layout alignment, shader lifecycle, point buffers, and cleanup. | Recommended.                                                 |
+| Three.js + custom shader material | Useful scene abstractions and a path to 3D typography.                                                                 | Additional dependency and scene machinery for a flat text effect.               | Reconsider if genuine 3D geometry becomes a requirement.     |
+| SDF/MSDF glyph atlas              | Strong scaling for large or deeply transformed glyphs.                                                                 | Font preparation, glyph coverage, shaping and asset distribution complexity.    | Defer.                                                       |
+| Paper shader package              | Existing material effects and controls.                                                                                | Text masking/layout still needed; external runtime and API.                     | Visual reference for this original open-code implementation. |
+| HTML-in-canvas                    | Potential future direct DOM-to-texture integration.                                                                    | Retrieved guidance flags limited browser availability.                          | Do not make it a v1 requirement or ship a polyfill.          |
 
 The required modern-web-guidance search returned `apply-webgl-shaders`. That guide
 was retrieved and its progressive-enhancement constraints reviewed. The CLI also

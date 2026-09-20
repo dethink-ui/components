@@ -1,4 +1,4 @@
-import { cn } from "@dethink/components";
+import { cn } from "../../../../packages/components/src/utils/cn";
 
 /**
  * Approved folded d/t mark with an angled notch in the upright stem.

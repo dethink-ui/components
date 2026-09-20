@@ -1,6 +1,12 @@
 import { CalendarDate, parseDateTime } from "@internationalized/date";
 import { useState } from "react";
 import {
+  ShaderHeroText,
+  LiquidMeshBackground,
+  SilkFlowBackground,
+  CausticLightBackground,
+  ContourFieldBackground,
+  OrbitalGlowBackground,
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -280,6 +286,40 @@ export function App() {
             Foundation scaffold is active
           </Heading>
           <ChatSmoke />
+          <section aria-label="Shader backgrounds smoke" className="grid gap-4">
+            <LiquidMeshBackground animate={false} className="rounded-xl p-6">
+              <h2>LiquidMesh background</h2>
+            </LiquidMeshBackground>
+            <SilkFlowBackground animate={false} className="rounded-xl p-6">
+              <h2>SilkFlow background</h2>
+            </SilkFlowBackground>
+            <CausticLightBackground animate={false} className="rounded-xl p-6">
+              <h2>CausticLight background</h2>
+            </CausticLightBackground>
+            <ContourFieldBackground animate={false} className="rounded-xl p-6">
+              <h2>ContourField background</h2>
+            </ContourFieldBackground>
+            <OrbitalGlowBackground animate={false} className="rounded-xl p-6">
+              <h2>OrbitalGlow background</h2>
+            </OrbitalGlowBackground>
+          </section>
+          <section
+            aria-label="Shader hero text smoke"
+            className="border-border space-y-4 rounded-xl border p-6"
+          >
+            <ShaderHeroText
+              as="h2"
+              text="A thousand points. One idea."
+              animation="particle-follow"
+              className="text-5xl font-semibold"
+            />
+            <ShaderHeroText
+              as="h2"
+              text="Make waves."
+              animation="liquid-ripple"
+              className="text-4xl font-semibold"
+            />
+          </section>
           <Text tone="muted">
             This app verifies package imports, style imports, Tailwind tokens,
             the foundation provider, and the first wrapper, container, layout,

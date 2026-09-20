@@ -3,7 +3,7 @@ import {
   parseDateTime,
   parseZonedDateTime,
 } from "@internationalized/date";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { DateTimePicker } from ".";
@@ -154,7 +154,7 @@ describe("DateTimePicker", () => {
     expect(screen.queryByText("America/New_York")).not.toBeInTheDocument();
   });
 
-  it("opens the calendar popover from the trigger", async () => {
+  it("opens calendar and time controls together by default", async () => {
     const user = userEvent.setup();
 
     render(
@@ -168,18 +168,16 @@ describe("DateTimePicker", () => {
 
     expect(screen.getByRole("grid")).toBeInTheDocument();
     expect(screen.getAllByText(/January 2026/).length).toBeGreaterThan(0);
-    expect(
-      screen.queryByRole("group", { name: "Time" }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Time" })).toBeInTheDocument();
   });
 
-  it("keeps the time selector hidden when opening the calendar trigger", async () => {
+  it("supports opting out of the visible time selector", async () => {
     const user = userEvent.setup();
 
     render(
       <DateTimePicker
         label="Starts at"
-        timeSelector
+        timeSelector={false}
         value={parseDateTime("2026-01-12T09:30")}
       />,
     );
@@ -192,44 +190,23 @@ describe("DateTimePicker", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders opt-in time options only from a time segment interaction", async () => {
+  it("opens and focuses time controls from the clock trigger and restores focus on Done", async () => {
     const user = userEvent.setup();
-    const { container } = render(
+    render(
       <DateTimePicker
         label="Starts at"
-        timeSelector
-        value={parseDateTime("2026-01-12T09:30")}
+        defaultValue={parseDateTime("2026-01-12T09:30")}
       />,
     );
-
-    await user.click(getDateTimeSegment(container, "hour"));
-
-    const timeSelector = screen.getByRole("group", { name: "Time" });
-    const popover = document.body.querySelector(
-      '[data-slot="date-time-picker-popover"]',
+    const trigger = screen.getByRole("button", { name: "Open time picker" });
+    await user.click(trigger);
+    expect(screen.getByRole("grid")).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Exact time" })).toContainElement(
+      document.activeElement as HTMLElement,
     );
-
-    expect(popover).toHaveAttribute("data-panel", "time");
-    expect(popover).toHaveClass("data-[panel=time]:w-[var(--trigger-width)]");
-    expect(timeSelector).toHaveAttribute(
-      "data-slot",
-      "date-time-picker-time-selector",
-    );
-    expect(timeSelector).toHaveClass("min-w-0");
-    expect(screen.queryByRole("grid")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Exact time")).toHaveAttribute(
-      "data-slot",
-      "date-time-picker-time-input",
-    );
-    expect(screen.getByLabelText("Exact time")).toHaveClass("min-w-0");
-    expect(screen.getByRole("group", { name: "Quick picks" })).toHaveClass(
-      "grid-cols-[repeat(3,minmax(0,1fr))]",
-    );
-    expect(
-      screen.getByText("Time", {
-        selector: '[data-slot="date-time-picker-time-selector-label"]',
-      }),
-    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Done" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
   });
 
   it("selects calendar dates while preserving the time portion", async () => {
@@ -251,6 +228,7 @@ describe("DateTimePicker", () => {
     expect(day13).toBeTruthy();
 
     await user.click(day13!);
+    expect(screen.getByRole("group", { name: "Time" })).toBeInTheDocument();
 
     expect(onValueChange).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -261,33 +239,30 @@ describe("DateTimePicker", () => {
     );
   });
 
-  it("accepts arbitrary minute values from the exact time input", async () => {
+  it("accepts arbitrary minutes through keyboard editing in the time panel", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    const { container } = render(
+    render(
       <DateTimePicker
         label="Starts at"
-        timeSelector
-        value={parseDateTime("2026-01-12T09:30")}
+        hourCycle={24}
+        defaultValue={parseDateTime("2026-01-12T09:30")}
         onValueChange={onValueChange}
       />,
     );
-
-    await user.click(getDateTimeSegment(container, "hour"));
-
-    const timeInput = screen.getByLabelText("Exact time");
-
-    expect(timeInput).toHaveValue("09:30");
-
-    fireEvent.change(timeInput, { target: { value: "05:10" } });
-
-    expect(onValueChange).toHaveBeenCalledWith(
+    await user.click(screen.getByRole("button", { name: "Open time picker" }));
+    const field = within(screen.getByRole("group", { name: "Exact time" }));
+    await user.click(field.getByRole("spinbutton", { name: /hour/ }));
+    await user.keyboard("05");
+    await user.click(field.getByRole("spinbutton", { name: /minute/ }));
+    await user.keyboard("17");
+    expect(onValueChange).toHaveBeenLastCalledWith(
       expect.objectContaining({
+        year: 2026,
+        month: 1,
         day: 12,
         hour: 5,
-        minute: 10,
-        month: 1,
-        year: 2026,
+        minute: 17,
       }),
     );
   });
@@ -406,9 +381,11 @@ describe("DateTimePicker", () => {
     );
 
     await user.click(getDateTimeSegment(container, "hour"));
-    fireEvent.change(screen.getByLabelText("Exact time"), {
-      target: { value: "05:15" },
-    });
+    const field = within(screen.getByRole("group", { name: "Exact time" }));
+    await user.click(field.getByRole("spinbutton", { name: /hour/ }));
+    await user.keyboard("05");
+    await user.click(field.getByRole("spinbutton", { name: /minute/ }));
+    await user.keyboard("15");
 
     expect(input).toHaveValue("2026-01-12T05:15:00");
   });
@@ -452,9 +429,52 @@ describe("DateTimePicker", () => {
 
     await user.click(getDateTimeSegment(document.body, "hour"));
 
-    expect(screen.getByLabelText("Exact time")).toBeDisabled();
+    expect(screen.getByRole("group", { name: "Exact time" })).toHaveAttribute(
+      "data-disabled",
+    );
     expect(screen.getByRole("button", { name: "9:00 AM" })).toBeDisabled();
   });
+
+  it("disables out-of-range time picks and presets while including boundary times", async () => {
+    const user = userEvent.setup();
+    render(
+      <DateTimePicker
+        label="Starts at"
+        hourCycle={24}
+        defaultValue={parseDateTime("2026-01-12T09:30")}
+        minValue={parseDateTime("2026-01-12T09:00")}
+        maxValue={parseDateTime("2026-01-12T17:00")}
+        presets={[
+          { label: "Too early", value: parseDateTime("2026-01-12T08:00") },
+        ]}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Open time picker" }));
+    expect(screen.getByRole("button", { name: "08:30" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "09:00" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "17:00" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "17:30" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Too early" })).toBeDisabled();
+  });
+
+  it.each(["disabled", "readOnly"] as const)(
+    "does not open time controls when %s",
+    async (flag) => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <DateTimePicker
+          label="Starts at"
+          {...{ [flag]: true }}
+          defaultValue={parseDateTime("2026-01-12T09:30")}
+        />,
+      );
+      expect(
+        screen.getByRole("button", { name: "Open time picker" }),
+      ).toBeDisabled();
+      await user.click(getDateTimeSegment(container, "hour"));
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    },
+  );
 
   it("closes the popover with Escape and returns focus to the trigger", async () => {
     const user = userEvent.setup();
