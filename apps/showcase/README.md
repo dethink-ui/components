@@ -2,7 +2,7 @@
 
 A Next.js App Router showcase for Dethink Components: live examples, copyable
 usage code, installation steps, and props references for the documented
-components (currently Button, Card, and Input).
+components. Start at `/docs` for setup and theming, or `/components` for the catalog.
 
 ## Highlights
 
@@ -52,6 +52,24 @@ touch the picker see exactly the original site.
    `DocsPage`, `ExampleBlock`, `InstallationSection`, and `PropsTable`.
 4. Register the component in `src/lib/components-meta.ts` (drives nav,
    catalog, and landing page).
+
+## Writing docs
+
+- Follow this order: short description, installation, usage, examples, recipes
+  when useful, and props. `InstallationSection` includes the usage section.
+- Describe what someone can do with the component in one sentence. Keep the
+  catalog summary, page introduction, and metadata description in sync.
+- Use plain English: “Choose one option” instead of “single-selection primitive”.
+  Explain technical terms when they help someone use the component.
+- Keep examples small and give form fields visible labels. Example code is read
+  from the file that renders its preview.
+- Describe each prop’s effect. Keep names, types, allowed values, and defaults
+  exact. Explain `value` as the current value managed by the app and `defaultValue`
+  as the starting value managed by the component.
+- Use `DocsSection` with a stable, unique `id`. `DocsPage` uses these sections
+  to build the desktop contents list and mobile disclosure automatically.
+- Keep installation instructions honest: this repository has no public npm
+  package or registry URL yet. Document the local workspace setup until it does.
 
 ## Manual acceptance checks
 

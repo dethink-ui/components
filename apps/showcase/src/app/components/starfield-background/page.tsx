@@ -13,20 +13,24 @@ import { starfieldBackgroundProps } from "@/lib/props/starfield-background";
 
 export const metadata: Metadata = {
   title: "StarfieldBackground",
-  description:
-    "Drift a three-layer parallax starfield with twinkle and optional pointer parallax behind hero content, SSR-stable and reduced-motion safe.",
+  description: "Add a drifting star background with optional pointer movement.",
 };
 
 export default function StarfieldBackgroundPage() {
   return (
     <DocsPage
       name="StarfieldBackground"
-      description="An animated landing-page background that makes a hero feel expansive: three SVG star layers drifting at different speeds for depth, a bounded set of twinkling stars, and optional spring-smoothed pointer parallax. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a fully still field under reduced motion."
+      description="Add a drifting star background with optional pointer movement."
     >
+      <InstallationSection
+        registryName="starfield-background"
+        importCode={`import { StarfieldBackground } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The background fills its container; these previews bound it with a height utility. Move your cursor over the first example to feel the parallax."
+        description="Try the examples, then open the code to use them in your app. The background fills its container; these previews bound it with a height utility. Move your cursor over the first example to feel the parallax."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -55,11 +59,6 @@ export default function StarfieldBackgroundPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="starfield-background"
-        importCode={`import { StarfieldBackground } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

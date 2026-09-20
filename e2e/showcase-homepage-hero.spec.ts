@@ -1,17 +1,17 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("showcase homepage hero", () => {
-  test("presents the Component Stack logo as a clear home link", async ({
+  test("presents the angled-notch logo as a clear home link", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
 
     const homeLink = page.getByRole("link", {
-      name: "Dethink / Components",
+      name: "Dethink Components",
       exact: true,
     });
-    const logo = homeLink.locator('[data-brand-logo="component-stack"]');
+    const logo = homeLink.locator('[data-brand-logo="angled-notch"]');
 
     await expect(homeLink).toHaveAttribute("href", "/");
     await expect(logo).toBeVisible();

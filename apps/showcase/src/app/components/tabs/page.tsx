@@ -19,16 +19,20 @@ import { tabsPartProps, tabsProps } from "@/lib/props/tabs";
 
 export const metadata: Metadata = {
   title: "Tabs",
-  description:
-    "Switch in-page panels with APG semantics, roving focus, token-backed variants, and a reduced-motion-safe gliding active layer.",
+  description: "Switch between related views without leaving the page.",
 };
 
 export default function TabsPage() {
   return (
     <DocsPage
       name="Tabs"
-      description="A disclosure and in-page navigation primitive for settings pages, dashboards, and dense product workflows. The active layer can glide from one trigger to another, while semantic tab state remains available without motion."
+      description="Switch between related views without leaving the page."
     >
+      <InstallationSection
+        registryName="tabs"
+        importCode={`import { Tabs } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -114,11 +118,6 @@ export default function TabsPage() {
           <TabsRecipeSettings />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="tabs"
-        importCode={`import { Tabs } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="guides"

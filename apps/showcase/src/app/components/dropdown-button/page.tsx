@@ -11,16 +11,26 @@ import { dropdownButtonProps } from "@/lib/props/dropdown-button";
 
 export const metadata: Metadata = {
   title: "DropdownButton",
-  description:
-    "A menu, fixed-split, or selectable-primary action composition built from Button, ButtonGroup, and DropdownMenu with Motion-only state feedback.",
+  description: "Open a menu of related actions from a button.",
 };
 
 export default function DropdownButtonPage() {
   return (
     <DocsPage
       name="DropdownButton"
-      description="A policy composition for one menu button, a fixed dominant action, or a selected action that becomes the next primary command. It reuses Button visuals, ButtonGroup anatomy, and the React Aria-backed DropdownMenu instead of creating another menu model."
+      description="Open a menu of related actions from a button."
     >
+      <InstallationSection
+        registryName="dropdown-button"
+        importCode={`import {
+  DropdownButton,
+  type DropdownButtonSelectableAction,
+  DropdownMenuItem,
+  DropdownMenuSection,
+  DropdownMenuSeparator,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -144,17 +154,6 @@ export default function DropdownButtonPage() {
           </p>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="dropdown-button"
-        importCode={`import {
-  DropdownButton,
-  type DropdownButtonSelectableAction,
-  DropdownMenuItem,
-  DropdownMenuSection,
-  DropdownMenuSeparator,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

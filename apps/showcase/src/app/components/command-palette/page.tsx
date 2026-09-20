@@ -17,16 +17,26 @@ import { commandPaletteProps } from "@/lib/props/command-palette";
 
 export const metadata: Metadata = {
   title: "CommandPalette",
-  description:
-    "Run action, link, and nested page commands with async sources, recents, suggestions, live announcements, and Motion-aware dialog mode.",
+  description: "Let users search for actions and pages from one place.",
 };
 
 export default function CommandPalettePage() {
   return (
     <DocsPage
       name="CommandPalette"
-      description="A command workflow layer for dashboards and app shells: typed command records, composition primitives, nested pages, source windows, async feedback, and dialog mode without copying cmdk patterns."
+      description="Let users search for actions and pages from one place."
     >
+      <InstallationSection
+        registryName="command-palette"
+        importCode={`import {
+  CommandPalette,
+  CommandPaletteContent,
+  CommandPaletteDialog,
+  CommandPaletteTrigger,
+  type CommandPaletteCommand,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -96,17 +106,6 @@ export default function CommandPalettePage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="command-palette"
-        importCode={`import {
-  CommandPalette,
-  CommandPaletteContent,
-  CommandPaletteDialog,
-  CommandPaletteTrigger,
-  type CommandPaletteCommand,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="guides"

@@ -14,20 +14,25 @@ import { calendarProps } from "@/lib/props/calendar";
 
 export const metadata: Metadata = {
   title: "Calendar",
-  description:
-    "Select single dates or ranges on keyboard-accessible month grids with locale, bounds, and week-start control.",
+  description: "Let users choose a date or date range from a month view.",
 };
 
 export default function CalendarPage() {
   return (
     <DocsPage
       name="Calendar"
-      description="Keyboard-accessible month grids for picking a single date (Calendar) or a start–end range (RangeCalendar). Values are @internationalized/date objects, so time zones, calendars, and locales behave correctly by construction. Both components ship from the same registry item."
+      description="Let users choose a date or date range from a month view."
     >
+      <InstallationSection
+        registryName="calendar"
+        importCode={`import { Calendar, RangeCalendar } from "@dethink/components";
+import { CalendarDate } from "@internationalized/date";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Move focus into a grid and navigate with the arrow keys, PageUp/PageDown for months, and Enter or Space to select."
+        description="Try the examples, then open the code to use them in your app. Move focus into a grid and navigate with the arrow keys, PageUp/PageDown for months, and Enter or Space to select."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -60,12 +65,6 @@ export default function CalendarPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="calendar"
-        importCode={`import { Calendar, RangeCalendar } from "@dethink/components";
-import { CalendarDate } from "@internationalized/date";`}
-      />
 
       <DocsSection
         id="props"

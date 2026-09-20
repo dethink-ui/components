@@ -14,20 +14,28 @@ import { avatarProps } from "@/lib/props/avatar";
 
 export const metadata: Metadata = {
   title: "Avatar",
-  description:
-    "Represent people, teams, and systems with image fallbacks, initials, shapes, rings, and reduced-motion-aware feedback.",
+  description: "Represent a person or team with an image or initials.",
 };
 
 export default function AvatarPage() {
   return (
     <DocsPage
       name="Avatar"
-      description="Avatar renders identity in dense product surfaces with generated initials, image failure fallback, tokenized tones, shapes, rings, and reduced-motion-aware hover and focus feedback."
+      description="Represent a person or team with an image or initials."
     >
+      <InstallationSection
+        registryName="avatar"
+        importCode={`import { Avatar } from "@dethink/components";
+
+export function Example() {
+  return <Avatar name="Noah Reyes" src="/avatars/noah.png" ring="border" />;
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -61,15 +69,6 @@ export default function AvatarPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="avatar"
-        importCode={`import { Avatar } from "@dethink/components";
-
-export function Example() {
-  return <Avatar name="Noah Reyes" src="/avatars/noah.png" ring="border" />;
-}`}
-      />
 
       <DocsSection
         id="props"

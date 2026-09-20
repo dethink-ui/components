@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 376" fill="none">
+  <title>Dethink</title>
+  <desc>Folded d symbol with an angled notch in its right stem.</desc>
+  <g transform="translate(5 10)">
+    <path fill="#FFFFFF" d="M 46 201 L 46 161 Q 46 152 54 147 L 133 100 Q 141 95 149 100 L 182 119 Z"/>
+    <path fill="#FFFFFF" transform="translate(0 18)" d="M 46 216 L 46 253 Q 46 263 55 269 L 133 315 Q 141 320 149 315 L 224 271 L 80 186 Z"/>
+    <path fill="#FFFFFF" d="M 198 60 Q 198 51 206 46 L 264 12 L 264 269 Q 264 279 255 284 L 246 289 L 198 261 L 198 107 L 246 131 L 246 109 L 198 85 Z"/>
+  </g>
+</svg>
+

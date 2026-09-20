@@ -15,65 +15,70 @@ import { inputProps } from "@/lib/props/input";
 export const metadata: Metadata = {
   title: "Input",
   description:
-    "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
+    "Collect a single line of text, such as a name or email address.",
 };
 
 export default function InputPage() {
   return (
     <DocsPage
       name="Input"
-      description="A tokenized text field with three control sizes and first-class invalid, disabled, and read-only states. Pair it with a label element or the FormField primitives."
+      description="Collect a single line of text, such as a name or email address."
     >
+      <InstallationSection
+        registryName="input"
+        importCode={`import { Input } from "@dethink/components";
+
+export function Example() {
+  return (
+    <div>
+      <label htmlFor="email">Email</label>
+      <Input id="email" name="email" type="email" autoComplete="email" />
+    </div>
+  );
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
             file="input/basic.tsx"
             title="Basic"
-            description="Always pair an input with a visible label; hint text ties in through aria-describedby."
+            description="Give every input a visible label. Use aria-describedby to connect any help text."
           >
             <InputBasic />
           </ExampleBlock>
           <ExampleBlock
             file="input/sizes.tsx"
             title="Sizes"
-            description="Three control sizes. The default md height tracks the active density token, matching Button heights in the same layout."
+            description="Use controlSize to choose sm, md, or lg. The default size matches nearby buttons."
           >
             <InputSizes />
           </ExampleBlock>
           <ExampleBlock
             file="input/states.tsx"
             title="States"
-            description="invalid drives both the destructive styling and aria-invalid; disabled and readOnly get distinct treatments."
+            description="Use invalid for an error, disabled to block interaction, or readOnly to prevent editing while allowing text selection."
           >
             <InputStates />
           </ExampleBlock>
           <ExampleBlock
             file="input/form.tsx"
             title="In a form"
-            description="Inputs align with buttons out of the box because both draw their height from the same density token."
+            description="Place an input and button together for a short form. Their default heights match."
           >
             <InputForm />
           </ExampleBlock>
         </div>
       </DocsSection>
 
-      <InstallationSection
-        registryName="input"
-        importCode={`import { Input } from "@dethink/components";
-
-export function Example() {
-  return <Input type="email" placeholder="you@company.com" />;
-}`}
-      />
-
       <DocsSection
         id="props"
         title="Props"
-        description="InputProps extends InputHTMLAttributes<HTMLInputElement>."
+        description="Also accepts standard input props, such as value, onChange, placeholder, and autoComplete."
       >
         <PropsTable caption="Input props" rows={inputProps} />
       </DocsSection>

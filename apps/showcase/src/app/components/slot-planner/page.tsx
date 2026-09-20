@@ -16,15 +16,27 @@ import { slotPickerProps, slotPlannerProps } from "@/lib/props/slot-planner";
 export const metadata: Metadata = {
   title: "SlotPlanner",
   description:
-    "Manage a bookable time-slot inventory with week/day views, recurrence, and constraints, and project the same slots into a viewer's time zone for booking.",
+    "Manage available time slots and let users request bookings in their time zone.",
 };
 
 export default function SlotPlannerPage() {
   return (
     <DocsPage
       name="SlotPlanner"
-      description="A provider-facing manage mode with week/day views, an editor dialog, recurrence, and constraints, plus a consumer-facing book mode that projects the same slot collection into the viewer's time zone."
+      description="Manage available time slots and let users request bookings in their time zone."
     >
+      <InstallationSection
+        registryName="slot-planner"
+        importCode={`import {
+  SlotPicker,
+  SlotPlanner,
+  useSlotPlanner,
+  validateSlotPlannerSlots,
+  type SlotPlannerConstraints,
+  type SlotPlannerSlotData,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -68,18 +80,6 @@ export default function SlotPlannerPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="slot-planner"
-        importCode={`import {
-  SlotPicker,
-  SlotPlanner,
-  useSlotPlanner,
-  validateSlotPlannerSlots,
-  type SlotPlannerConstraints,
-  type SlotPlannerSlotData,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

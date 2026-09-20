@@ -14,19 +14,27 @@ import { dataTableProps } from "@/lib/props/data-table";
 export const metadata: Metadata = {
   title: "DataTable",
   description:
-    "Sort, filter, select, and paginate row data with column definitions, empty/loading/error states, and server-driven modes.",
+    "Display rows of data with sorting, filtering, selection, and pagination.",
 };
 
 export default function DataTablePage() {
   return (
     <DocsPage
       name="DataTable"
-      description="The data-heavy workhorse: TanStack-style column definitions drive sortable headers, global and per-column filtering, row selection with select-all, pagination, and loading/empty/error states — all controllable for server-driven data, all rendered on the semantic Table foundation."
+      description="Display rows of data with sorting, filtering, selection, and pagination."
     >
+      <InstallationSection
+        registryName="data-table"
+        importCode={`import {
+  DataTable,
+  type DataTableColumnDef,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Headers are real buttons — sort with Enter or Space."
+        description="Try the examples, then open the code to use them in your app. Headers are real buttons — sort with Enter or Space."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +57,7 @@ export default function DataTablePage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="data-table/recipe-ops-dashboard.tsx"
@@ -59,14 +67,6 @@ export default function DataTablePage() {
           <DataTableRecipeOpsDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="data-table"
-        importCode={`import {
-  DataTable,
-  type DataTableColumnDef,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

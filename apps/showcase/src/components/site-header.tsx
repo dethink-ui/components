@@ -18,6 +18,7 @@ import { ThemePicker } from "@/components/theme-picker";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const navLinks = [
+  { href: "/docs", label: "Docs" },
   { href: "/components", label: "Components" },
   { href: "/recipes", label: "Recipes" },
 ];

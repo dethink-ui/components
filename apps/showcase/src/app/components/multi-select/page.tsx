@@ -18,16 +18,20 @@ import {
 
 export const metadata: Metadata = {
   title: "MultiSelect",
-  description:
-    "Search and select several values with accessible listbox behavior, removable chips, and repeated form fields.",
+  description: "Let users search for and choose several options.",
 };
 
 export default function MultiSelectPage() {
   return (
     <DocsPage
       name="MultiSelect"
-      description="A searchable multi-value field for filters, recipients, roles, and labels. Selected options render as removable chips, the listbox can be filtered from the input, and named values submit as repeated hidden inputs."
+      description="Let users search for and choose several options."
     >
+      <InstallationSection
+        registryName="multi-select"
+        importCode={`import { MultiSelect, MultiSelectItem } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -68,7 +72,7 @@ export default function MultiSelectPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="multi-select/recipe-filter-bar.tsx"
@@ -78,11 +82,6 @@ export default function MultiSelectPage() {
           <MultiSelectRecipeFilterBar />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="multi-select"
-        importCode={`import { MultiSelect, MultiSelectItem } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

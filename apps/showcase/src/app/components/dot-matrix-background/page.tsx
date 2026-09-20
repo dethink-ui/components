@@ -14,20 +14,24 @@ import { dotMatrixBackgroundProps } from "@/lib/props/dot-matrix-background";
 
 export const metadata: Metadata = {
   title: "DotMatrixBackground",
-  description:
-    "Roll seeded brightness pulses through a token-colored dot grid, or follow the mouse with a local glow, SSR-stable and reduced-motion safe.",
+  description: "Add gentle pulses of light to a dot grid.",
 };
 
 export default function DotMatrixBackgroundPage() {
   return (
     <DocsPage
       name="DotMatrixBackground"
-      description="An animated landing-page background that suggests ambient computation: a faint dot grid with soft brightness pulses rolling through it at seeded origins, or a local brightening that follows the mouse. The overlays are masked copies of the same dot pattern, so dots brighten in place — no blob floating over the field. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a designed static frame under reduced motion."
+      description="Add gentle pulses of light to a dot grid."
     >
+      <InstallationSection
+        registryName="dot-matrix-background"
+        importCode={`import { DotMatrixBackground } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The background fills its container; these previews bound it with a height utility."
+        description="Try the examples, then open the code to use them in your app. The background fills its container; these previews bound it with a height utility."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -64,11 +68,6 @@ export default function DotMatrixBackgroundPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="dot-matrix-background"
-        importCode={`import { DotMatrixBackground } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

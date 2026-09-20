@@ -13,20 +13,30 @@ import { tableProps } from "@/lib/props/table";
 
 export const metadata: Metadata = {
   title: "Table",
-  description:
-    "Present static data with composable, semantic table anatomy: alignment, density, tones, caption, and footer.",
+  description: "Display data in rows and columns.",
 };
 
 export default function TablePage() {
   return (
-    <DocsPage
-      name="Table"
-      description="Real table elements with tokenized styling: header, body, footer, rows, cells, and caption compose freely, with alignment and density props where they matter. For sorting, filtering, selection, and pagination, reach for DataTable — this is the presentational foundation it builds on."
-    >
+    <DocsPage name="Table" description="Display data in rows and columns.">
+      <InstallationSection
+        registryName="table"
+        importCode={`import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +59,7 @@ export default function TablePage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="table/recipe-invoice.tsx"
@@ -59,20 +69,6 @@ export default function TablePage() {
           <TableRecipeInvoice />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="table"
-        importCode={`import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

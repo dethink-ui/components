@@ -16,20 +16,27 @@ import { timelineProps } from "@/lib/props/timeline";
 
 export const metadata: Metadata = {
   title: "Timeline",
-  description:
-    "Present event histories and step sequences on an interactive track with statuses, selection, zoomable viewports, and animated flow reveals.",
+  description: "Show events in order with statuses and optional selection.",
 };
 
 export default function TimelinePage() {
   return (
     <DocsPage
       name="Timeline"
-      description="A data-driven track for time: events mode maps dated items onto a scaled axis, progress mode renders undated step sequences, and items carry status tones, keyboard-navigable selection, and typed payloads. Long histories get a zoom/pan viewport."
+      description="Show events in order with statuses and optional selection."
     >
+      <InstallationSection
+        registryName="timeline"
+        importCode={`import {
+  Timeline,
+  type TimelineItemData,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Focus the track and use the arrow keys to move between items."
+        description="Try the examples, then open the code to use them in your app. Focus the track and use the arrow keys to move between items."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -66,7 +73,7 @@ export default function TimelinePage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -85,14 +92,6 @@ export default function TimelinePage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="timeline"
-        importCode={`import {
-  Timeline,
-  type TimelineItemData,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

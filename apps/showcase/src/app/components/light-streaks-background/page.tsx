@@ -13,20 +13,24 @@ import { lightStreaksBackgroundProps } from "@/lib/props/light-streaks-backgroun
 
 export const metadata: Metadata = {
   title: "LightStreaksBackground",
-  description:
-    "Sweep blurred diagonal light streaks across hero surfaces on staggered seeded loops, SSR-stable and reduced-motion safe.",
+  description: "Add moving diagonal streaks of light behind your content.",
 };
 
 export default function LightStreaksBackgroundPage() {
   return (
     <DocsPage
       name="LightStreaksBackground"
-      description="An animated landing-page background with no pattern at all — just blurred diagonal streaks of light sweeping through on staggered seeded loops. It gives dark heroes depth and occasion without geometry. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a designed static frame under reduced motion."
+      description="Add moving diagonal streaks of light behind your content."
     >
+      <InstallationSection
+        registryName="light-streaks-background"
+        importCode={`import { LightStreaksBackground } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The background fills its container; these previews bound it with a height utility."
+        description="Try the examples, then open the code to use them in your app. The background fills its container; these previews bound it with a height utility."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -55,11 +59,6 @@ export default function LightStreaksBackgroundPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="light-streaks-background"
-        importCode={`import { LightStreaksBackground } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

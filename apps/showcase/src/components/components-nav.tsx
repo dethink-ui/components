@@ -48,7 +48,10 @@ import {
   UsersRound,
   type LucideIcon,
 } from "lucide-react";
-import { componentGroups } from "@/lib/components-meta";
+import {
+  componentGroups,
+  getComponentDisplayName,
+} from "@/lib/components-meta";
 
 const componentIcons: Record<string, LucideIcon> = {
   accordion: ListCollapse,
@@ -106,42 +109,73 @@ const componentIcons: Record<string, LucideIcon> = {
   typography: Type,
 };
 
+const guides = [
+  { href: "/docs", name: "Introduction" },
+  { href: "/docs/installation", name: "Installation" },
+  { href: "/docs/theming", name: "Theming" },
+  { href: "/components", name: "All components" },
+];
+
 export function ComponentsNav() {
   const pathname = usePathname();
 
   return (
     <nav aria-label="Components" className="space-y-6">
+      <div>
+        <p className="mb-2 px-3 text-sm font-medium">Getting started</p>
+        <ul className="space-y-0.5">
+          {guides.map((guide) => (
+            <li key={guide.href}>
+              <Link
+                href={guide.href}
+                aria-current={pathname === guide.href ? "page" : undefined}
+                className="text-muted-foreground hover:bg-muted aria-[current=page]:bg-muted aria-[current=page]:text-foreground block rounded-md px-3 py-1.5 text-sm aria-[current=page]:font-medium"
+              >
+                {guide.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
       {componentGroups.map((group) => (
         <section key={group.id} aria-labelledby={`${group.id}-nav-heading`}>
           <p
             id={`${group.id}-nav-heading`}
-            className="text-muted-foreground mb-2 px-3 text-xs font-semibold tracking-[0.14em] uppercase"
+            className="mb-2 px-3 text-sm font-medium"
           >
             {group.name}
           </p>
           <ul className="space-y-0.5">
-            {group.components.map((component) => {
-              const href = `/components/${component.slug}`;
-              const active = pathname === href;
-              const Icon = componentIcons[component.slug] ?? BoxIcon;
+            {[...group.components]
+              .sort((a, b) =>
+                getComponentDisplayName(a).localeCompare(
+                  getComponentDisplayName(b),
+                ),
+              )
+              .map((component) => {
+                const href = `/components/${component.slug}`;
+                const active = pathname === href;
+                const Icon = componentIcons[component.slug] ?? BoxIcon;
 
-              return (
-                <li key={component.slug}>
-                  <Link
-                    href={href}
-                    aria-current={active ? "page" : undefined}
-                    className={`focus-visible:ring-ring focus-visible:ring-offset-background flex min-h-8 items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
-                      active
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    }`}
-                  >
-                    <Icon aria-hidden="true" className="size-3.5 shrink-0" />
-                    <span className="min-w-0 truncate">{component.name}</span>
-                  </Link>
-                </li>
-              );
-            })}
+                return (
+                  <li key={component.slug}>
+                    <Link
+                      href={href}
+                      aria-current={active ? "page" : undefined}
+                      className={`focus-visible:ring-ring focus-visible:ring-offset-background flex min-h-8 items-center gap-2 rounded-md px-3 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${
+                        active
+                          ? "bg-muted text-foreground font-medium"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      }`}
+                    >
+                      <Icon aria-hidden="true" className="size-3.5 shrink-0" />
+                      <span className="min-w-0 truncate">
+                        {getComponentDisplayName(component)}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
           </ul>
         </section>
       ))}

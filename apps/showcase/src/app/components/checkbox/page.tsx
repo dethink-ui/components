@@ -13,20 +13,24 @@ import { checkboxProps } from "@/lib/props/checkbox";
 
 export const metadata: Metadata = {
   title: "Checkbox",
-  description:
-    "Toggle independent options with a native-input checkbox supporting indeterminate, invalid, and sized states.",
+  description: "Let users turn individual options on or off.",
 };
 
 export default function CheckboxPage() {
   return (
     <DocsPage
       name="Checkbox"
-      description="A styled native checkbox input — clicking the label toggles it, forms submit it, and keyboard behavior is the browser's own. Supports a true indeterminate state, three sizes, and invalid styling. Compose labels and descriptions with the Field primitives."
+      description="Let users turn individual options on or off."
     >
+      <InstallationSection
+        registryName="checkbox"
+        importCode={`import { Checkbox } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +53,7 @@ export default function CheckboxPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="checkbox/recipe-permissions-tree.tsx"
@@ -59,11 +63,6 @@ export default function CheckboxPage() {
           <CheckboxRecipePermissionsTree />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="checkbox"
-        importCode={`import { Checkbox } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

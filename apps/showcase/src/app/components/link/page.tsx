@@ -13,20 +13,24 @@ import { linkProps } from "@/lib/props/link";
 
 export const metadata: Metadata = {
   title: "Link",
-  description:
-    "Navigate with tokenized anchor styling, underline control, and asChild composition for framework routers.",
+  description: "Take users to another page or a section on the same page.",
 };
 
 export default function LinkPage() {
   return (
     <DocsPage
       name="Link"
-      description="A styled anchor with variant and underline control. The type system requires an href — unless asChild hands rendering to a child element, which is how framework router links (Next.js, React Router) get the styling without losing client-side navigation."
+      description="Take users to another page or a section on the same page."
     >
+      <InstallationSection
+        registryName="link"
+        importCode={`import { Link } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +53,7 @@ export default function LinkPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="link/recipe-breadcrumbs.tsx"
@@ -59,11 +63,6 @@ export default function LinkPage() {
           <LinkRecipeBreadcrumbs />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="link"
-        importCode={`import { Link } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

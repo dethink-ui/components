@@ -16,20 +16,28 @@ import { soundInputProps } from "@/lib/props/sound-input";
 
 export const metadata: Metadata = {
   title: "SoundInput",
-  description:
-    "Microphone input control that exposes a live stream and expands into a Motion-powered waveform pill while active.",
+  description: "Capture microphone audio and show its input level.",
 };
 
 export default function SoundInputPage() {
   return (
     <DocsPage
       name="SoundInput"
-      description="An icon-first microphone action for AI-native composers and command surfaces. It requests permission on activation, hands your app a live MediaStream, and shows recording or muted state through a Motion-powered pill waveform."
+      description="Capture microphone audio and show its input level."
     >
+      <InstallationSection
+        registryName="sound-input"
+        importCode={`import { SoundInput } from "@dethink/components";
+
+export function Example() {
+  return <SoundInput onStream={(stream) => startTranscription(stream)} />;
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The docs examples use local fake streams so they can be exercised without granting microphone access."
+        description="Try the examples, then open the code to use them in your app. The docs examples use local fake streams so they can be exercised without granting microphone access."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -87,15 +95,6 @@ export default function SoundInputPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="sound-input"
-        importCode={`import { SoundInput } from "@dethink/components";
-
-export function Example() {
-  return <SoundInput onStream={(stream) => startTranscription(stream)} />;
-}`}
-      />
 
       <DocsSection
         id="props"

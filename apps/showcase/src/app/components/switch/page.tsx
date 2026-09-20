@@ -13,20 +13,21 @@ import { switchProps } from "@/lib/props/switch";
 
 export const metadata: Metadata = {
   title: "Switch",
-  description:
-    "Flip settings on and off with a native-input toggle that announces as a switch.",
+  description: "Turn a setting on or off.",
 };
 
 export default function SwitchPage() {
   return (
-    <DocsPage
-      name="Switch"
-      description="An on/off toggle built on a real checkbox input with role=switch — immediate-effect settings rather than form choices. Three sizes, invalid state, and Field composition for labels and descriptions."
-    >
+    <DocsPage name="Switch" description="Turn a setting on or off.">
+      <InstallationSection
+        registryName="switch"
+        importCode={`import { Switch } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +50,7 @@ export default function SwitchPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="switch/recipe-settings.tsx"
@@ -59,11 +60,6 @@ export default function SwitchPage() {
           <SwitchRecipeSettings />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="switch"
-        importCode={`import { Switch } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

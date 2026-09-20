@@ -18,20 +18,34 @@ import { drawerProps } from "@/lib/props/drawer";
 
 export const metadata: Metadata = {
   title: "Drawer",
-  description:
-    "Edge-anchored modal and push panels with spring drag-to-dismiss, snap points, background scale, edge-swipe-to-open, and nested-drawer recede.",
+  description: "Open a panel from the edge of the screen.",
 };
 
 export default function DrawerPage() {
   return (
     <DocsPage
       name="Drawer"
-      description="One unified component family covering all four edge directions through a direction prop, rather than shadcn's split Sheet (side-anchored, CSS-only) and Drawer (vaul, bottom-sheet-only) primitives. Modal mode reuses Dialog's focus-trapping substrate; modal={false} renders a non-modal push panel that shifts sibling layout instead of overlaying it. Snap points, drag-to-dismiss, background scale, edge-swipe, nested drawers, and shared-element morph use Motion as a required runtime dependency while collapsing cleanly to a CSS-only core under reduced motion or motionPreset=&quot;none&quot;."
+      description="Open a panel from the edge of the screen."
     >
+      <InstallationSection
+        registryName="drawer"
+        importCode={`import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHandle,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -54,7 +68,7 @@ export default function DrawerPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -102,21 +116,6 @@ export default function DrawerPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="drawer"
-        importCode={`import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHandle,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

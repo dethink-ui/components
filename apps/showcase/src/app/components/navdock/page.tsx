@@ -16,16 +16,31 @@ import { navDockProps } from "@/lib/props/navdock";
 
 export const metadata: Metadata = {
   title: "NavDock",
-  description:
-    "Motion-powered icon dock navigation with title modes, current matching, submenus, placements, and responsive collapsed rails.",
+  description: "Show navigation links in a compact icon dock.",
 };
 
 export default function NavDockPage() {
   return (
     <DocsPage
       name="NavDock"
-      description="Icon-first product navigation with Motion-powered magnification, route-current state, disclosure submenus, separators, edge placement, and an explicit collapsed rail for constrained screens."
+      description="Show navigation links in a compact icon dock."
     >
+      <InstallationSection
+        registryName="navdock"
+        importCode={`import {
+  CollapseDock,
+  NavDock,
+  NavDockButton,
+  NavDockItem,
+  NavDockLink,
+  NavDockList,
+  NavDockSeparator,
+  NavDockSubmenu,
+  NavDockSubmenuContent,
+  NavDockSubmenuTrigger,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -79,22 +94,6 @@ export default function NavDockPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="navdock"
-        importCode={`import {
-  CollapseDock,
-  NavDock,
-  NavDockButton,
-  NavDockItem,
-  NavDockLink,
-  NavDockList,
-  NavDockSeparator,
-  NavDockSubmenu,
-  NavDockSubmenuContent,
-  NavDockSubmenuTrigger,
-} from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="NavDock anatomy" rows={navDockProps} />

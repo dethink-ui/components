@@ -74,9 +74,7 @@ test.describe("showcase component documentation navigation", () => {
     await expect(switcher).toBeFocused();
 
     await page.keyboard.press("Tab");
-    await expect(
-      page.getByRole("link", { name: "Examples", exact: true }),
-    ).toBeFocused();
+    await expect(page.locator("article #installation-heading a")).toBeFocused();
   });
 
   test("remains complete on mobile with reduced motion", async ({ page }) => {

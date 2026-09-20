@@ -15,19 +15,29 @@ import { sidebarShellProps } from "@/lib/props/sidebar-shell";
 export const metadata: Metadata = {
   title: "SidebarShell",
   description:
-    "Compose full application chrome around Sidebar with semantic header, main, and footer regions, an automatic skip link, and workbench or plain framing.",
+    "Arrange a sidebar, header, main content, and footer into an app layout.",
 };
 
 export default function SidebarShellPage() {
   return (
     <DocsPage
       name="SidebarShell"
-      description="An animated application shell around the Sidebar family. SidebarShell owns viewport framing, landmark semantics, skip-link targeting, and collapse state so dashboards, internal tools, and AI workspaces stop rebuilding the same chrome — while navigation, routing, and page content stay yours to compose."
+      description="Arrange a sidebar, header, main content, and footer into an app layout."
     >
+      <InstallationSection
+        registryName="sidebar-shell"
+        importCode={`import {
+  SidebarShell,
+  SidebarShellHeader,
+  SidebarShellMain,
+  SidebarShellFooter,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The shell fills the viewport by default; these previews bound it with a height utility."
+        description="Try the examples, then open the code to use them in your app. The shell fills the viewport by default; these previews bound it with a height utility."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -60,7 +70,7 @@ export default function SidebarShellPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           wide
@@ -73,16 +83,6 @@ export default function SidebarShellPage() {
           <SidebarShellRecipeOpsConsole />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="sidebar-shell"
-        importCode={`import {
-  SidebarShell,
-  SidebarShellHeader,
-  SidebarShellMain,
-  SidebarShellFooter,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

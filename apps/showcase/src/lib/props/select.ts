@@ -5,45 +5,47 @@ export const selectProps: PropRow[] = [
     prop: "value",
     type: "string",
     defaultValue: "—",
-    description: "Controlled selected item value. Pair with onValueChange.",
+    description:
+      "The selected value. Use with onValueChange when your app manages the selection.",
   },
   {
     prop: "defaultValue",
     type: "string",
     defaultValue: "—",
-    description: "Initial selection for uncontrolled usage.",
+    description:
+      "The starting selection when the component manages its own state.",
   },
   {
     prop: "onValueChange",
     type: "(value: string) => void",
     defaultValue: "—",
-    description: "Fires with the selected item's value.",
+    description: "Called with the value the user selects.",
   },
   {
     prop: "children",
     type: "SelectItem nodes | (item) => SelectItem",
     defaultValue: "—",
     description:
-      "Static SelectItem children, or a render function when passing items.",
+      "Add SelectItem elements, or a function that renders each entry in items.",
   },
   {
     prop: "items",
     type: "Iterable<SelectItemData>",
     defaultValue: "—",
     description:
-      "Dynamic option data ({ value, label?, textValue? }) rendered through the children function.",
+      "A list of options. Each needs a value; use the children function to render it.",
   },
   {
     prop: "disabledKeys",
     type: "Iterable<string>",
     defaultValue: "—",
-    description: "Values of options that render disabled.",
+    description: "The values of options users cannot select.",
   },
   {
     prop: "label / description / errorMessage",
     type: "ReactNode",
     defaultValue: "—",
-    description: "Field label, helper text, and validation message slots.",
+    description: "The field label, help text, and error message.",
   },
   {
     prop: "placeholder",
@@ -55,25 +57,26 @@ export const selectProps: PropRow[] = [
     prop: "controlSize",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
-    description: "Trigger height and typography scale.",
+    description: "Sets the button height and text size.",
   },
   {
     prop: "required / disabled / readOnly / invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Standard form field states.",
+    description: "Makes the field required, disabled, read-only, or invalid.",
   },
   {
     prop: "open / defaultOpen / onOpenChange",
     type: "boolean / boolean / (open) => void",
     defaultValue: "—",
-    description: "Controlled or uncontrolled listbox visibility.",
+    description:
+      "Use open with onOpenChange to manage the list, or defaultOpen to set its starting state.",
   },
   {
     prop: "name",
     type: "string",
     defaultValue: "—",
-    description: "Hidden input name for native form submission.",
+    description: "The field name used when submitting a form.",
   },
 ];
 
@@ -82,14 +85,15 @@ export const selectItemProps: PropRow[] = [
     prop: "value",
     type: "string",
     defaultValue: "—",
-    description: "Unique value submitted and passed to onValueChange.",
+    description:
+      "A unique value for this option. Returned by onValueChange and submitted with the form.",
   },
   {
     prop: "textValue",
     type: "string",
     defaultValue: "text content",
     description:
-      "Plain-text form of the option for typeahead when children are rich nodes.",
+      "Text used to find this option when the user types. Set it when the option includes more than plain text.",
   },
   {
     prop: "disabled",

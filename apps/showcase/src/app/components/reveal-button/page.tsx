@@ -16,19 +16,28 @@ import { revealButtonProps } from "@/lib/props/reveal-button";
 export const metadata: Metadata = {
   title: "RevealButton",
   description:
-    "Motion-powered icon-first actions that reveal their label on hover and focus.",
+    "Show an icon that reveals its label on hover or keyboard focus.",
 };
 
 export default function RevealButtonPage() {
   return (
     <DocsPage
       name="RevealButton"
-      description="An icon-first action button for dense app chrome. It stays compact by default, reveals its label on hover and keyboard focus, shrinks subtly on press, and uses the label as the accessible name."
+      description="Show an icon that reveals its label on hover or keyboard focus."
     >
+      <InstallationSection
+        registryName="reveal-button"
+        importCode={`import { RevealButton } from "@dethink/components";
+
+export function Example() {
+  return <RevealButton icon={<SearchIcon />} label="Search" />;
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -58,7 +67,7 @@ export default function RevealButtonPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -79,15 +88,6 @@ export default function RevealButtonPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="reveal-button"
-        importCode={`import { RevealButton } from "@dethink/components";
-
-export function Example() {
-  return <RevealButton icon={<SearchIcon />} label="Search" />;
-}`}
-      />
 
       <DocsSection
         id="props"

@@ -76,7 +76,7 @@ export const dateTimePickerProps: PropRow[] = [
     prop: "label / description / errorMessage",
     type: "ReactNode",
     defaultValue: "—",
-    description: "Field label, helper text, and validation message slots.",
+    description: "The field label, help text, and error message.",
   },
   {
     prop: "name",
@@ -89,7 +89,7 @@ export const dateTimePickerProps: PropRow[] = [
     prop: "required / disabled / readOnly / invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Standard form field states.",
+    description: "Makes the field required, disabled, read-only, or invalid.",
   },
   {
     prop: "clearable",

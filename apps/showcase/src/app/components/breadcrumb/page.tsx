@@ -14,20 +14,24 @@ import { breadcrumbProps } from "@/lib/props/breadcrumb";
 
 export const metadata: Metadata = {
   title: "Breadcrumb",
-  description:
-    "Location hierarchy navigation with current-page semantics, overflow, and router composition.",
+  description: "Show where the current page sits in the site hierarchy.",
 };
 
 export default function BreadcrumbPage() {
   return (
     <DocsPage
       name="Breadcrumb"
-      description="A labelled navigation landmark for page hierarchy. Use it to show where a user is, expose parent-page links, and keep long object paths reachable through overflow."
+      description="Show where the current page sits in the site hierarchy."
     >
+      <InstallationSection
+        registryName="breadcrumb"
+        importCode={`import { Breadcrumb } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -57,7 +61,7 @@ export default function BreadcrumbPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="breadcrumb/recipe-page-header.tsx"
@@ -68,11 +72,6 @@ export default function BreadcrumbPage() {
           <BreadcrumbRecipePageHeader />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="breadcrumb"
-        importCode={`import { Breadcrumb } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

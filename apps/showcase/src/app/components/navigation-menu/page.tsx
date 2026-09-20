@@ -18,16 +18,29 @@ import { navigationMenuProps } from "@/lib/props/navigation-menu";
 
 export const metadata: Metadata = {
   title: "NavigationMenu",
-  description:
-    "Link-first site and app navigation with disclosure flyouts, rich panels, animated indicator, and responsive collapse recipes.",
+  description: "Group page links in a menu with optional dropdown panels.",
 };
 
 export default function NavigationMenuPage() {
   return (
     <DocsPage
       name="NavigationMenu"
-      description="Persistent site and app navigation built on real links and disclosure buttons — flyout panels, current-page state, premium motion, and responsive handoff without ARIA menu roles."
+      description="Group page links in a menu with optional dropdown panels."
     >
+      <InstallationSection
+        registryName="navigation-menu"
+        importCode={`import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -47,7 +60,7 @@ export default function NavigationMenuPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -102,20 +115,6 @@ export default function NavigationMenuPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="navigation-menu"
-        importCode={`import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-} from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable

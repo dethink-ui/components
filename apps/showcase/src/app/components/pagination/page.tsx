@@ -14,20 +14,27 @@ import { paginationProps } from "@/lib/props/pagination";
 
 export const metadata: Metadata = {
   title: "Pagination",
-  description:
-    "Navigate bounded and unbounded result sets with accessible page controls, route-backed links, compact layout, and RTL-safe icons.",
+  description: "Let users move between pages of results.",
 };
 
 export default function PaginationPage() {
   return (
     <DocsPage
       name="Pagination"
-      description="A labelled navigation landmark for result sets, audit logs, tables, and search pages. It owns deterministic page windows, current-page semantics, disabled boundaries, route-backed links, and compact responsive layout without owning data fetching or page-size controls."
+      description="Let users move between pages of results."
     >
+      <InstallationSection
+        registryName="pagination"
+        importCode={`import {
+  Pagination,
+  getPaginationRenderItems,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -57,7 +64,7 @@ export default function PaginationPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           wide
@@ -68,14 +75,6 @@ export default function PaginationPage() {
           <PaginationTableFooter />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="pagination"
-        importCode={`import {
-  Pagination,
-  getPaginationRenderItems,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="guides"

@@ -14,20 +14,44 @@ import { cardProps, cardSubcomponentProps } from "@/lib/props/card";
 
 export const metadata: Metadata = {
   title: "Card",
-  description:
-    "Group related content with a composable header, title, description, action, content, and footer anatomy.",
+  description: "Group related content and actions in a single panel.",
 };
 
 export default function CardPage() {
   return (
     <DocsPage
       name="Card"
-      description="A composable surface for grouping related content. Six anatomy pieces — header, title, description, action, content, footer — plus surface, border, shadow, radius, and density-aware spacing options."
+      description="Group related content and actions in a single panel."
     >
+      <InstallationSection
+        registryName="card"
+        importCode={`import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@dethink/components";
+
+export function Example() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Team plan</CardTitle>
+        <CardDescription>Everything your team needs.</CardDescription>
+      </CardHeader>
+      <CardContent>Invite members and work on projects together.</CardContent>
+      <CardFooter>Includes up to 10 members.</CardFooter>
+    </Card>
+  );
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -60,18 +84,6 @@ export default function CardPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="card"
-        importCode={`import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

@@ -16,14 +16,21 @@ import { ChatComposerTools } from "@/examples/chat/composer-tools";
 export const metadata: Metadata = {
   title: "Chat",
   description:
-    "Compose polished AI conversations with streaming, thinking, tool activity, approvals, and a capable prompt input.",
+    "Build an AI conversation with messages, a prompt box, attachments, and tool results.",
 };
 export default function ChatPage() {
   return (
     <DocsPage
       name="Chat"
-      description="A complete conversation surface, built from independently useful components. Give every stage of an AI response a clear, calm presence."
+      description="Build an AI conversation with messages, a prompt box, attachments, and tool results."
     >
+      <InstallationSection
+        registryName="chat"
+        importCode={
+          'import { Chat, PromptInput, ChatMessage } from "@dethink/components";'
+        }
+      />
+
       <DocsSection
         id="workspace"
         title="A complete conversation"
@@ -48,12 +55,6 @@ export default function ChatPage() {
           <ChatBasic />
         </ExampleBlock>
       </DocsSection>
-      <InstallationSection
-        registryName="chat"
-        importCode={
-          'import { Chat, PromptInput, ChatMessage } from "@dethink/components";'
-        }
-      />
       <DocsSection id="composer" title="A composer that fits your product">
         <ExampleBlock
           file="chat/composer-tools.tsx"

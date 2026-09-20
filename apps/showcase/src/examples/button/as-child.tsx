@@ -16,7 +16,7 @@ export function ButtonAsChild() {
         </a>
       </Button>
       <Button asChild variant="link">
-        <a href="#installation">Read the install guide</a>
+        <a href="#installation-heading">Read the install guide</a>
       </Button>
     </div>
   );

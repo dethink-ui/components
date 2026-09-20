@@ -12,7 +12,8 @@ export const datePickerProps: PropRow[] = [
     prop: "defaultValue",
     type: "DatePickerValue | null",
     defaultValue: "—",
-    description: "Initial selection for uncontrolled usage.",
+    description:
+      "The starting selection when the component manages its own state.",
   },
   {
     prop: "onValueChange",
@@ -49,7 +50,7 @@ export const datePickerProps: PropRow[] = [
     prop: "required / disabled / readOnly / invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Standard form field states.",
+    description: "Makes the field required, disabled, read-only, or invalid.",
   },
   {
     prop: "clearable",

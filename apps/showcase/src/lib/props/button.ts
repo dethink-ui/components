@@ -6,46 +6,46 @@ export const buttonProps: PropRow[] = [
     type: '"solid" | "soft" | "outline" | "ghost" | "link" | "destructive"',
     defaultValue: '"solid"',
     description:
-      "Visual emphasis of the button, from primary action to inline link.",
+      "Sets the button style. Use solid for the main action or outline for a secondary action.",
   },
   {
     prop: "size",
     type: '"xs" | "sm" | "md" | "lg" | "xl" | "icon"',
     defaultValue: '"md"',
     description:
-      'Control height and padding. "icon" renders a square button sized by the density token; provide an aria-label.',
+      'Sets the button size. The "icon" size is square and needs an aria-label.',
   },
   {
     prop: "loading",
     type: "boolean",
     defaultValue: "false",
     description:
-      "Shows a spinner in place of the left icon, sets aria-busy, and blocks clicks while pending.",
+      "Shows a spinner and blocks clicks while an action is running. Sets aria-busy for screen readers.",
   },
   {
     prop: "leftIcon",
     type: "ReactNode",
     description:
-      "Decorative icon rendered before the label. Hidden from assistive technology.",
+      "An icon before the label. Screen readers read the label and ignore the icon.",
   },
   {
     prop: "rightIcon",
     type: "ReactNode",
     description:
-      "Decorative icon rendered after the label. Hidden from assistive technology.",
+      "An icon after the label. Screen readers read the label and ignore the icon.",
   },
   {
     prop: "asChild",
     type: "boolean",
     defaultValue: "false",
     description:
-      "Merge button styling and behavior onto the single child element (for example a link) instead of rendering a <button>.",
+      "Applies button styles and behavior to its single child, such as a link.",
   },
   {
     prop: "disabled",
     type: "boolean",
     defaultValue: "false",
     description:
-      "Disables interaction. Also applied automatically while loading is true.",
+      "Blocks interaction. Also enabled automatically while loading.",
   },
 ];

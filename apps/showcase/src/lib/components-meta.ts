@@ -33,469 +33,418 @@ export const componentCatalog: ComponentMeta[] = [
     slug: "chat",
     name: "Chat",
     description:
-      "Complete AI conversations with thinking, tools, streaming, approvals, attachments, and history.",
+      "Build an AI conversation with messages, a prompt box, attachments, and tool results.",
     type: "ai",
   },
   {
     slug: "button",
     name: "Button",
-    description:
-      "Trigger actions with six visual variants, five sizes, icon slots, and a built-in loading state.",
+    description: "Run an action, such as saving a form or opening a dialog.",
     type: "general",
   },
   {
     slug: "icon-button",
     name: "IconButton",
-    description:
-      "Icon-only actions with enforced accessible names, five variants, five sizes, shapes, and a loading state.",
+    description: "Show an action as an icon when space is limited.",
     type: "general",
   },
   {
     slug: "button-group",
     name: "ButtonGroup",
-    description:
-      "Compose related native actions in attached or separated horizontal and vertical groups without changing their behavior.",
+    description: "Keep related buttons together in a row or column.",
     type: "general",
   },
   {
     slug: "dropdown-button",
     name: "DropdownButton",
-    description:
-      "Open a related action menu from one Button-styled trigger with controlled state, positioning, and Motion-only menu presence.",
+    description: "Open a menu of related actions from a button.",
     type: "general",
   },
   {
     slug: "reveal-button",
     name: "RevealButton",
     description:
-      "Icon-first actions that reveal their label on hover and focus with reduced-motion-safe Motion feedback.",
+      "Show an icon that reveals its label on hover or keyboard focus.",
     type: "general",
   },
   {
     slug: "badge",
     name: "Badge",
-    description:
-      "Label statuses, counts, and metadata with tokenized variants, tones, sizes, and decorative icon slots.",
+    description: "Show a short status, label, or count.",
     type: "general",
   },
   {
     slug: "link",
     name: "Link",
-    description:
-      "Navigate with tokenized anchor styling, underline control, and asChild composition for framework routers.",
+    description: "Take users to another page or a section on the same page.",
     type: "general",
   },
   {
     slug: "typography",
     name: "Typography",
     description:
-      "Set text hierarchy with Heading, Text, and Typography: levels, sizes, tones, weights, truncation, and clamping.",
+      "Style headings and body text with consistent sizes, weights, and colors.",
     type: "general",
   },
   {
     slug: "hero-text-animation",
     name: "HeroTextAnimation",
-    description:
-      "Animate hero headlines with accessible, SSR-safe staggered word and line reveals plus reduced-motion fallbacks.",
+    description: "Reveal a headline one word or line at a time.",
     type: "effects",
   },
   {
     slug: "grid-beams-background",
     name: "GridBeamsBackground",
-    description:
-      "Frame hero content over a subtle token-colored line grid with seeded light beams tracing along grid lines, SSR-stable and reduced-motion safe.",
+    description: "Add moving light beams to a subtle grid background.",
     type: "effects",
   },
   {
     slug: "magnetic-beams-background",
     name: "MagneticBeamsBackground",
-    description:
-      "Frame hero content over the GridBeams line grid with light beams that spring toward the pointer while it hovers, then resume their traversal from that point, SSR-stable and reduced-motion safe.",
+    description: "Add grid beams that follow the pointer.",
     type: "effects",
   },
   {
     slug: "aurora-background",
     name: "AuroraBackground",
-    description:
-      "Frame hero content with flowing aurora ribbons of blurred gradient light, each hue rotated from one tone token via CSS relative color syntax, SSR-stable and reduced-motion safe.",
+    description: "Add soft, flowing bands of color behind your content.",
     type: "effects",
   },
   {
     slug: "scan-grid-background",
     name: "ScanGridBackground",
-    description:
-      "Sweep a scanning highlight band across a token-colored line grid, vertically or horizontally, SSR-stable and reduced-motion safe.",
+    description: "Move a highlight across a grid background.",
     type: "effects",
   },
   {
     slug: "dot-matrix-background",
     name: "DotMatrixBackground",
-    description:
-      "Roll soft brightness pulses through a token-colored dot grid at seeded origins, SSR-stable and reduced-motion safe.",
+    description: "Add gentle pulses of light to a dot grid.",
     type: "effects",
   },
   {
     slug: "light-streaks-background",
     name: "LightStreaksBackground",
-    description:
-      "Sweep blurred diagonal light streaks across hero surfaces on staggered seeded loops, SSR-stable and reduced-motion safe.",
+    description: "Add moving diagonal streaks of light behind your content.",
     type: "effects",
   },
   {
     slug: "starfield-background",
     name: "StarfieldBackground",
     description:
-      "Drift a three-layer parallax starfield with twinkle and optional pointer parallax behind hero content, SSR-stable and reduced-motion safe.",
+      "Add a drifting star background with optional pointer movement.",
     type: "effects",
   },
   {
     slug: "box",
     name: "Box",
     description:
-      "The base layout primitive: tokenized spacing, surfaces, borders, and radius on any semantic element.",
+      "Wrap content with spacing, a background, a border, or rounded corners.",
     type: "layout",
   },
   {
     slug: "container",
     name: "Container",
-    description:
-      "Center page content at tokenized max widths with responsive gutters.",
+    description: "Center page content and limit its width.",
     type: "layout",
   },
   {
     slug: "stack",
     name: "Stack",
-    description:
-      "Space children along one axis with tokenized gaps, alignment, and wrapping.",
+    description: "Arrange content in a row or column with even spacing.",
     type: "layout",
   },
   {
     slug: "flex",
     name: "Flex",
     description:
-      "Full flexbox control with tokenized gaps and per-item grow, shrink, and basis through FlexItem.",
+      "Arrange items with control over alignment, wrapping, and available space.",
     type: "layout",
   },
   {
     slug: "grid",
     name: "Grid",
-    description:
-      "Two-dimensional layouts with tokenized tracks and gaps, plus per-cell spans through GridItem.",
+    description: "Arrange content in rows and columns.",
     type: "layout",
   },
   {
     slug: "separator",
     name: "Separator",
-    description:
-      "Divide content horizontally or vertically with tone, thickness, spacing, and correct semantics.",
+    description: "Add a horizontal or vertical line between sections.",
     type: "layout",
   },
   {
     slug: "accordion",
     name: "Accordion",
-    description:
-      "Reveal rounded vertical blades with single or multiple open modes, arbitrary in-blade content, and Motion choreography.",
+    description: "Let users expand and collapse sections of content.",
     type: "disclosure",
   },
   {
     slug: "horizontal-accordion",
     name: "HorizontalAccordion",
-    description:
-      "Expand one section at a time in a fixed-height band of always-visible blades with Motion choreography and a compact responsive layout.",
+    description: "Expand one panel at a time in a horizontal row.",
     type: "disclosure",
   },
   {
     slug: "tabs",
     name: "Tabs",
-    description:
-      "Switch in-page panels with APG semantics, roving focus, pill and line variants, and a reduced-motion-safe gliding active layer.",
+    description: "Switch between related views without leaving the page.",
     type: "disclosure",
   },
   {
     slug: "form-field",
     name: "FormField",
     description:
-      "Give any control accessible field anatomy — label, description, error, and state wiring through one composable Field.",
+      "Connect a form control to its label, help text, and error message.",
     type: "forms",
   },
   {
     slug: "input",
     name: "Input",
     description:
-      "Collect single-line text with tokenized sizes and accessible invalid, disabled, and read-only states.",
+      "Collect a single line of text, such as a name or email address.",
     type: "forms",
   },
   {
     slug: "textarea",
     name: "Textarea",
     description:
-      "Collect multi-line text with tokenized sizes, resize control, and accessible invalid and read-only states.",
+      "Collect several lines of text, such as a message or description.",
     type: "forms",
   },
   {
     slug: "number-input",
     name: "NumberInput",
     description:
-      "Capture numeric input with the right mobile keypad, native min/max/step semantics, and form states.",
+      "Collect a number with optional minimum, maximum, and step values.",
     type: "forms",
   },
   {
     slug: "checkbox",
     name: "Checkbox",
-    description:
-      "Toggle independent options with a native-input checkbox supporting indeterminate, invalid, and sized states.",
+    description: "Let users turn individual options on or off.",
     type: "forms",
   },
   {
     slug: "radio-group",
     name: "RadioGroup",
-    description:
-      "Choose exactly one option from a set of native radio inputs with orientation, size, and state control.",
+    description: "Let users choose one option from a visible list.",
     type: "forms",
   },
   {
     slug: "select",
     name: "Select",
-    description:
-      "Pick one option from a popover listbox with typeahead, form states, and native form submission.",
+    description: "Let users choose one option from a dropdown list.",
     type: "forms",
   },
   {
     slug: "combobox",
     name: "Combobox",
-    description:
-      "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
+    description: "Let users search a list and choose an option.",
     type: "forms",
   },
   {
     slug: "switch",
     name: "Switch",
-    description:
-      "Flip settings on and off with a native-input toggle that announces as a switch.",
+    description: "Turn a setting on or off.",
     type: "forms",
   },
   {
     slug: "async-select",
     name: "AsyncSelect",
     description:
-      "Render app-owned async result windows with loading, empty, retry, and single or multiple selection.",
+      "Let users choose from options loaded by your app, with loading and retry states.",
     type: "advanced-inputs",
   },
   {
     slug: "multi-select",
     name: "MultiSelect",
-    description:
-      "Search and select several values with removable chips and repeated form fields.",
+    description: "Let users search for and choose several options.",
     type: "advanced-inputs",
   },
   {
     slug: "tag-input",
     name: "TagInput",
-    description:
-      "Author free-form tags with chip editing, paste parsing, validation, and repeated form fields.",
+    description: "Let users add, edit, and remove text tags.",
     type: "advanced-inputs",
   },
   {
     slug: "sound-input",
     name: "SoundInput",
-    description:
-      "Request microphone input, expose a live MediaStream, and show recording or muted state through a Motion-powered waveform pill.",
+    description: "Capture microphone audio and show its input level.",
     type: "advanced-inputs",
   },
   {
     slug: "date-picker",
     name: "DatePicker",
-    description:
-      "Pick a single date through segmented keyboard input and a popover calendar, with form-ready serialized values.",
+    description: "Let users type a date or choose one from a calendar.",
     type: "advanced-inputs",
   },
   {
     slug: "date-range-picker",
     name: "DateRangePicker",
-    description:
-      "Capture start and end dates with linked segments, a range calendar popover, and native start/end form fields.",
+    description: "Let users choose a start date and an end date.",
     type: "advanced-inputs",
   },
   {
     slug: "date-time-picker",
     name: "DateTimePicker",
-    description:
-      "Combine date and time selection with granularity, hour-cycle, time-zone, preset, and time-selector options.",
+    description: "Let users choose a date and time.",
     type: "advanced-inputs",
   },
   {
     slug: "feedback-states",
     name: "Feedback States",
     description:
-      "Centralize announcements, loading, progress, skeletons, alerts, callouts, empty states, and actionable toasts.",
+      "Show loading, progress, errors, empty states, and notifications.",
     type: "feedback",
   },
   {
     slug: "dialog",
     name: "Dialog",
     description:
-      "Modal surfaces with focus trapping, size and dismissal control, plus AlertDialog for explicit confirmation.",
+      "Open a focused window above the page for a task or confirmation.",
     type: "overlays",
   },
   {
     slug: "popover",
     name: "Popover",
-    description:
-      "Anchor rich interactive content to a trigger with placement, arrows, and managed focus.",
+    description: "Show extra content next to a button or other trigger.",
     type: "overlays",
   },
   {
     slug: "tooltip",
     name: "Tooltip",
-    description:
-      "Hint at a control's purpose on hover and focus with delay, placement, and arrow options.",
+    description: "Show a short hint when users hover over or focus a control.",
     type: "overlays",
   },
   {
     slug: "dropdown-menu",
     name: "DropdownMenu",
-    description:
-      "Action menus with sections, icons, shortcuts, descriptions, submenus, and destructive items.",
+    description: "Show a menu of actions when users open a trigger.",
     type: "overlays",
   },
   {
     slug: "drawer",
     name: "Drawer",
-    description:
-      "Edge-anchored modal and push panels with spring drag-to-dismiss, snap points, background scale, edge-swipe-to-open, and nested-drawer recede.",
+    description: "Open a panel from the edge of the screen.",
     type: "overlays",
   },
   {
     slug: "breadcrumb",
     name: "Breadcrumb",
-    description:
-      "Show page hierarchy with labelled navigation, current-page semantics, responsive truncation, and overflow for hidden ancestors.",
+    description: "Show where the current page sits in the site hierarchy.",
     type: "navigation",
   },
   {
     slug: "command-palette",
     name: "CommandPalette",
-    description:
-      "Run typed action, link, and nested page commands with async sources, recents, live announcements, and Motion-aware dialog mode.",
+    description: "Let users search for actions and pages from one place.",
     type: "navigation",
   },
   {
     slug: "navigation-menu",
     name: "NavigationMenu",
-    description:
-      "Link-first site and app navigation with disclosure flyouts, rich panels, animated indicator, and responsive collapse recipes.",
+    description: "Group page links in a menu with optional dropdown panels.",
     type: "navigation",
   },
   {
     slug: "navdock",
     name: "NavDock",
-    description:
-      "Motion-powered icon dock navigation with title modes, current matching, submenus, placements, and responsive collapsed rails.",
+    description: "Show navigation links in a compact icon dock.",
     type: "navigation",
   },
   {
     slug: "pagination",
     name: "Pagination",
-    description:
-      "Navigate bounded and unbounded result sets with route-backed links, compact responsive layout, and current-page semantics.",
+    description: "Let users move between pages of results.",
     type: "navigation",
   },
   {
     slug: "sidebar",
     name: "Sidebar",
-    description:
-      "Compose app navigation with desktop collapse, icon rails, mobile drawers, grouped links, and current-route state.",
+    description: "Organize app navigation in a sidebar that can collapse.",
     type: "navigation",
   },
   {
     slug: "sidebar-shell",
     name: "SidebarShell",
     description:
-      "Frame full application chrome around Sidebar with semantic header, main, and footer regions, skip-link targeting, and workbench or plain treatments.",
+      "Arrange a sidebar, header, main content, and footer into an app layout.",
     type: "navigation",
   },
   {
     slug: "steps",
     name: "Steps",
-    description:
-      "Guide branching workflows with horizontal and vertical process indicators, progress, statuses, optional navigation, and Motion choreography.",
+    description: "Show the current step and progress through a task.",
     type: "navigation",
   },
   {
     slug: "calendar",
     name: "Calendar",
-    description:
-      "Select single dates or ranges on keyboard-accessible month grids with locale, bounds, and week-start control.",
+    description: "Let users choose a date or date range from a month view.",
     type: "data-display",
   },
   {
     slug: "card",
     name: "Card",
-    description:
-      "Group related content with a composable header, title, description, action, content, and footer anatomy.",
+    description: "Group related content and actions in a single panel.",
     type: "data-display",
   },
   {
     slug: "carousel",
     name: "Carousel",
-    description:
-      "Stage feature cards, media, plans, and customer stories with accessible controls, drag interaction, and reduced-motion-safe depth.",
+    description: "Let users browse a series of cards or images.",
     type: "data-display",
   },
   {
     slug: "card-scroller",
     name: "CardScroller",
-    description:
-      "Select pricing plans or feature groups in a responsive, draggable scroll-snap row with optional selected-card overlap.",
+    description: "Let users scroll through and select cards in a row.",
     type: "data-display",
   },
   {
     slug: "card-stack",
     name: "CardStack",
-    description:
-      "Cycle Card children as a layered deck or fanned arc with looping, built-in controls, and a controllable index.",
+    description: "Let users browse cards arranged in a stack or fan.",
     type: "data-display",
   },
   {
     slug: "avatar",
     name: "Avatar",
-    description:
-      "Represent people, teams, and systems with generated initials, image fallbacks, tokenized shapes, rings, and motion.",
+    description: "Represent a person or team with an image or initials.",
     type: "data-display",
   },
   {
     slug: "avatar-group",
     name: "AvatarGroup",
-    description:
-      "Stack identity clusters with overlap, overflow summaries, accessible member lists, and optional reveal behavior.",
+    description: "Show a group of people with overlapping avatars.",
     type: "data-display",
   },
   {
     slug: "data-table",
     name: "DataTable",
     description:
-      "Sort, filter, select, and paginate row data with column definitions, empty/loading/error states, and server-driven modes.",
+      "Display rows of data with sorting, filtering, selection, and pagination.",
     type: "data-display",
   },
   {
     slug: "slot-planner",
     name: "SlotPlanner",
     description:
-      "Manage a bookable time-slot inventory with week/day views, recurrence, and constraints, and project the same slots into a viewer's time zone for booking.",
+      "Manage available time slots and let users request bookings in their time zone.",
     type: "data-display",
   },
   {
     slug: "table",
     name: "Table",
-    description:
-      "Present static data with composable, semantic table anatomy: alignment, density, tones, caption, and footer.",
+    description: "Display data in rows and columns.",
     type: "data-display",
   },
   {
     slug: "timeline",
     name: "Timeline",
-    description:
-      "Present event histories and step sequences on an interactive track with statuses, selection, zoomable viewports, and animated flow reveals.",
+    description: "Show events in order with statuses and optional selection.",
     type: "data-display",
   },
 ];
@@ -504,42 +453,42 @@ export const componentTypes: ComponentTypeMeta[] = [
   {
     id: "general",
     name: "General",
-    description: "Actions, links, icons, and text primitives.",
+    description: "Buttons, links, labels, and text.",
   },
   {
     id: "layout",
     name: "Layout",
-    description: "Responsive layout primitives and structural separators.",
+    description: "Spacing, alignment, grids, and dividers.",
   },
   {
     id: "disclosure",
     name: "Disclosure",
-    description: "Progressive reveal and expansion patterns.",
+    description: "Expandable sections and switchable views.",
   },
   {
     id: "forms",
     name: "Forms",
-    description: "Field anatomy and direct input controls.",
+    description: "Labels, text fields, and choice controls.",
   },
   {
     id: "advanced-inputs",
     name: "Advanced Inputs",
-    description: "Search, tagging, async, multi-value, and date input flows.",
+    description: "Searchable lists, tags, dates, and audio input.",
   },
   {
     id: "feedback",
     name: "Feedback",
-    description: "Loading, messaging, and user state communication.",
+    description: "Loading indicators, status messages, and notifications.",
   },
   {
     id: "overlays",
     name: "Overlays",
-    description: "Layered surfaces anchored to focus, triggers, or workflows.",
+    description: "Dialogs, menus, tooltips, and panels.",
   },
   {
     id: "navigation",
     name: "Navigation",
-    description: "Wayfinding for pages, sections, commands, and app shells.",
+    description: "Menus and controls for moving around an app.",
   },
   {
     id: "data-display",
@@ -549,8 +498,7 @@ export const componentTypes: ComponentTypeMeta[] = [
   {
     id: "ai",
     name: "AI / Chat",
-    description:
-      "Thoughtful conversation, activity, and prompt components for AI interfaces.",
+    description: "Messages, prompts, and conversation tools.",
   },
   {
     id: "effects",

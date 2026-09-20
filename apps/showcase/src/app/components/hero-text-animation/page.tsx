@@ -21,16 +21,31 @@ import { heroTextAnimationProps } from "@/lib/props/hero-text-animation";
 
 export const metadata: Metadata = {
   title: "HeroTextAnimation",
-  description:
-    "Accessible, SSR-safe hero text animation with reduced-motion fallbacks.",
+  description: "Reveal a headline one word or line at a time.",
 };
 
 export default function HeroTextAnimationPage() {
   return (
     <DocsPage
       name="HeroTextAnimation"
-      description="A production hero text animation primitive for landing pages. It keeps final text in server-rendered HTML, hides decorative fragments from assistive technology, and falls back cleanly when users prefer reduced motion."
+      description="Reveal a headline one word or line at a time."
     >
+      <InstallationSection
+        registryName="hero-text-animation"
+        importCode={`import {
+  HeroTextAnimation,
+  HeroTextAnimationProvider,
+} from "@dethink/components";
+
+export function Example() {
+  return (
+    <HeroTextAnimationProvider>
+      <HeroTextAnimation text="Build production-ready landing pages faster." />
+    </HeroTextAnimationProvider>
+  );
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -149,22 +164,6 @@ export default function HeroTextAnimationPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="hero-text-animation"
-        importCode={`import {
-  HeroTextAnimation,
-  HeroTextAnimationProvider,
-} from "@dethink/components";
-
-export function Example() {
-  return (
-    <HeroTextAnimationProvider>
-      <HeroTextAnimation text="Build production-ready landing pages faster." />
-    </HeroTextAnimationProvider>
-  );
-}`}
-      />
 
       <DocsSection
         id="props"

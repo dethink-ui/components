@@ -15,16 +15,24 @@ import {
 
 export const metadata: Metadata = {
   title: "ButtonGroup",
-  description:
-    "Group related native actions in attached or separated horizontal and vertical layouts without changing their behavior.",
+  description: "Keep related buttons together in a row or column.",
 };
 
 export default function ButtonGroupPage() {
   return (
     <DocsPage
       name="ButtonGroup"
-      description="A semantic action-layout primitive that makes related Buttons read as one unit while preserving normal Tab order, native activation, form behavior, disabled and loading states, and RTL geometry."
+      description="Keep related buttons together in a row or column."
     >
+      <InstallationSection
+        registryName="button-group"
+        importCode={`import {
+  Button,
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -116,15 +124,6 @@ export default function ButtonGroupPage() {
           </p>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="button-group"
-        importCode={`import {
-  Button,
-  ButtonGroup,
-  ButtonGroupSeparator,
-} from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <div className="space-y-8">

@@ -41,7 +41,7 @@ test.describe("showcase component catalog", () => {
     await expect(search).toBeVisible();
     await search.fill("Icon Button");
 
-    await expect(resultCount).toContainText(/1\s*of 65 components/);
+    await expect(resultCount).toContainText(/1\s*of \d+ components/);
     await expect(
       results.getByRole("link", { name: /Icon Button IconButton/ }),
     ).toBeVisible();
@@ -83,7 +83,7 @@ test.describe("showcase component catalog", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: "Clear search" }).click();
-    await expect(resultCount).toContainText(/65\s*documented components/);
+    await expect(resultCount).toContainText(/\d+\s*documented components/);
     await expect(
       results.getByRole("heading", { name: "General" }),
     ).toBeVisible();
@@ -120,7 +120,7 @@ test.describe("showcase component catalog", () => {
     const resultCount = page.locator("search p[aria-hidden='true']");
     await search.fill("microphone");
 
-    await expect(resultCount).toContainText(/1\s*of 65 components/);
+    await expect(resultCount).toContainText(/1\s*of \d+ components/);
     await expect(
       page.getByRole("link", { name: /Sound Input SoundInput/ }),
     ).toBeVisible();

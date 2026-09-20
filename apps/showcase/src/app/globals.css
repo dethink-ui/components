@@ -664,7 +664,7 @@ a[aria-current="page"] {
 }
 
 /*
- * Code blocks are always dark (vitesse-dark via Shiki) so they stay legible
+ * Code blocks use Shiki's high-contrast dark theme so comments stay legible
  * and on-brand in both color schemes.
  */
 .sc-code-block pre {

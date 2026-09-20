@@ -13,20 +13,24 @@ import { iconButtonProps } from "@/lib/props/icon-button";
 
 export const metadata: Metadata = {
   title: "IconButton",
-  description:
-    "Icon-only actions with enforced accessible names, five variants, five sizes, shapes, and a loading state.",
+  description: "Show an action as an icon when space is limited.",
 };
 
 export default function IconButtonPage() {
   return (
     <DocsPage
       name="IconButton"
-      description="A square (or circular) button for icon-only actions. Its accessible name is enforced at the type level — aria-label or aria-labelledby is required to compile — so icon buttons can never ship nameless. Pairs naturally with Tooltip for visible hints."
+      description="Show an action as an icon when space is limited."
     >
+      <InstallationSection
+        registryName="icon-button"
+        importCode={`import { IconButton } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +53,7 @@ export default function IconButtonPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="icon-button/recipe-player.tsx"
@@ -59,11 +63,6 @@ export default function IconButtonPage() {
           <IconButtonRecipePlayer />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="icon-button"
-        importCode={`import { IconButton } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

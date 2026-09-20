@@ -6,14 +6,14 @@ export const inputProps: PropRow[] = [
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
     description:
-      'Control height and horizontal padding. "md" follows the active density token.',
+      'Sets the field height and padding. The "md" size follows the app density setting.',
   },
   {
     prop: "invalid",
     type: "boolean",
     defaultValue: "false",
     description:
-      "Marks the field invalid: destructive border and ring, plus aria-invalid for assistive technology.",
+      "Shows an error border and marks the field as invalid for screen readers.",
   },
   {
     prop: "disabled",
@@ -25,14 +25,13 @@ export const inputProps: PropRow[] = [
     prop: "readOnly",
     type: "boolean",
     defaultValue: "false",
-    description:
-      "Keeps the value selectable but not editable, on a muted surface.",
+    description: "Lets users read and select the text, but prevents editing.",
   },
   {
     prop: "required",
     type: "boolean",
     defaultValue: "false",
-    description: "Marks the field required for constraint validation.",
+    description: "Requires a value before the browser submits the form.",
   },
   {
     prop: "…InputHTMLAttributes",

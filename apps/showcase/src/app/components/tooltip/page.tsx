@@ -13,20 +13,28 @@ import { tooltipProps } from "@/lib/props/tooltip";
 
 export const metadata: Metadata = {
   title: "Tooltip",
-  description:
-    "Hint at a control's purpose on hover and focus with delay, placement, and arrow options.",
+  description: "Show a short hint when users hover over or focus a control.",
 };
 
 export default function TooltipPage() {
   return (
     <DocsPage
       name="Tooltip"
-      description="A hover-and-focus hint bound to a real button trigger. The tooltip supplements — the trigger keeps its own accessible name — and it shows on keyboard focus, not just pointer hover. For interactive content, use Popover instead."
+      description="Show a short hint when users hover over or focus a control."
     >
+      <InstallationSection
+        registryName="tooltip"
+        importCode={`import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Tab to a trigger — tooltips show on focus too."
+        description="Try the examples, then open the code to use them in your app. Tab to a trigger — tooltips show on focus too."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +57,7 @@ export default function TooltipPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="tooltip/recipe-toolbar.tsx"
@@ -59,15 +67,6 @@ export default function TooltipPage() {
           <TooltipRecipeToolbar />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="tooltip"
-        importCode={`import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

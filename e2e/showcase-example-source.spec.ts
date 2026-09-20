@@ -9,9 +9,7 @@ test.describe("showcase example source disclosure", () => {
     const example = page.locator('section[aria-labelledby="variants"]');
     const source = example.locator("#variants-source");
 
-    await expect(
-      example.getByRole("button", { name: "Solid" }),
-    ).toBeVisible();
+    await expect(example.getByRole("button", { name: "Solid" })).toBeVisible();
     await expect(source).not.toHaveAttribute("open", "");
     await expect(source.locator("summary")).toHaveAccessibleName(
       "Show source for Variants",
@@ -22,9 +20,10 @@ test.describe("showcase example source disclosure", () => {
   test("opens from the keyboard and keeps source copyable", async ({
     context,
     page,
+    baseURL,
   }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"], {
-      origin: "http://127.0.0.1:3015",
+      origin: new URL(baseURL!).origin,
     });
     await page.goto("/components/button");
 
@@ -77,8 +76,13 @@ test.describe("showcase example source disclosure", () => {
 
     await expect(source.locator(".sc-code-block")).toBeHidden();
     const sizesBounds = await sizesHeading.boundingBox();
+    const variantsBounds = await page
+      .getByRole("heading", { name: "Variants", exact: true })
+      .boundingBox();
     expect(sizesBounds).not.toBeNull();
-    expect(sizesBounds!.y).toBeLessThan(1_500);
+    expect(variantsBounds).not.toBeNull();
+    // The example remains compact regardless of the setup content above it.
+    expect(sizesBounds!.y - variantsBounds!.y).toBeLessThan(650);
 
     await source.locator("summary").click();
     await expect(source.locator(".sc-code-block")).toBeVisible();

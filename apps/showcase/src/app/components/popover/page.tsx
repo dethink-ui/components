@@ -13,20 +13,31 @@ import { popoverProps } from "@/lib/props/popover";
 
 export const metadata: Metadata = {
   title: "Popover",
-  description:
-    "Anchor rich interactive content to a trigger with placement, arrows, and managed focus.",
+  description: "Show extra content next to a button or other trigger.",
 };
 
 export default function PopoverPage() {
   return (
     <DocsPage
       name="Popover"
-      description="A non-modal overlay anchored to its trigger: focus moves in when it opens, Escape and outside clicks dismiss, and focus returns to the trigger. Use it when the content is interactive — for plain hints, use Tooltip."
+      description="Show extra content next to a button or other trigger."
     >
+      <InstallationSection
+        registryName="popover"
+        importCode={`import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +60,7 @@ export default function PopoverPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="popover/recipe-inline-edit.tsx"
@@ -59,18 +70,6 @@ export default function PopoverPage() {
           <PopoverRecipeInlineEdit />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="popover"
-        importCode={`import {
-  Popover,
-  PopoverClose,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

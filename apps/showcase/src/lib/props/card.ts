@@ -5,44 +5,45 @@ export const cardProps: PropRow[] = [
     prop: "surface",
     type: '"default" | "muted" | "transparent"',
     defaultValue: '"default"',
-    description: "Background treatment of the card surface.",
+    description: "Sets the card background.",
   },
   {
     prop: "border",
     type: '"default" | "muted" | "none"',
     defaultValue: '"default"',
-    description: "Border strength around the card.",
+    description: "Sets the card border style.",
   },
   {
     prop: "radius",
     type: '"md" | "lg"',
     defaultValue: '"lg"',
-    description: "Corner radius, resolved from the shared radius tokens.",
+    description: "Sets how rounded the corners are.",
   },
   {
     prop: "shadow",
     type: '"none" | "sm" | "md"',
     defaultValue: '"sm"',
-    description: "Elevation shadow of the card.",
+    description: "Sets the shadow below the card.",
   },
   {
     prop: "spacing",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
     description:
-      "Density-aware padding and gap scale applied to every card section.",
+      "Sets the padding and gaps inside each card section. Follows the app density setting.",
   },
   {
     prop: "as",
     type: '"div" | "article" | "section" | "aside" | "li"',
     defaultValue: '"div"',
-    description: "Semantic element the card renders as.",
+    description: "The HTML element to render.",
   },
   {
     prop: "asChild",
     type: "boolean",
     defaultValue: "false",
-    description: "Merge card styling onto the single child element instead.",
+    description:
+      "Applies the card styles to its single child instead of adding a wrapper.",
   },
 ];
 
@@ -51,8 +52,7 @@ export const cardSubcomponentProps: PropRow[] = [
     prop: "CardHeader",
     type: 'as: "div" | "header" | "section"',
     defaultValue: '"div"',
-    description:
-      "Grid region that lays out title and description beside an optional action.",
+    description: "Groups the title, description, and optional action.",
   },
   {
     prop: "CardTitle",
@@ -65,14 +65,13 @@ export const cardSubcomponentProps: PropRow[] = [
     prop: "CardDescription",
     type: 'as: "p" | "div" | "span"',
     defaultValue: '"p"',
-    description: "Muted supporting copy under the title.",
+    description: "Adds supporting text below the title.",
   },
   {
     prop: "CardAction",
     type: 'as: "div" | "span"',
     defaultValue: '"div"',
-    description:
-      "Slot pinned to the header's end column for buttons, menus, or badges.",
+    description: "Places a button, menu, or badge beside the title.",
   },
   {
     prop: "CardContent",
@@ -84,6 +83,6 @@ export const cardSubcomponentProps: PropRow[] = [
     prop: "CardFooter",
     type: 'as + justify: "start" | "between" | "end"',
     defaultValue: '"div", "start"',
-    description: "Action row at the bottom of the card with justify control.",
+    description: "Places actions at the bottom. Use justify to align them.",
   },
 ];

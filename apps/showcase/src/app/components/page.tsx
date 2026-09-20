@@ -13,16 +13,14 @@ export default function ComponentsIndexPage() {
     <div className="space-y-10">
       <header className="space-y-3">
         <p className="text-primary text-xs font-semibold tracking-[0.14em] uppercase">
-          Catalog
+          Documentation
         </p>
         <h1 className="font-heading text-4xl font-bold tracking-tight">
           Components
         </h1>
         <p className="text-muted-foreground max-w-2xl text-base leading-7">
-          Every component ships with live examples, copyable usage code, a
-          complete props reference, and a production-shaped recipe. The{" "}
-          {componentCatalog.length} documented registry components are grouped
-          by type.
+          Find the right component, try an example, and copy the code. Browse{" "}
+          {componentCatalog.length} components grouped by what they do.
         </p>
       </header>
       <ComponentCatalog />

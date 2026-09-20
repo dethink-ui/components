@@ -12,20 +12,24 @@ import { stackProps } from "@/lib/props/layout";
 
 export const metadata: Metadata = {
   title: "Stack",
-  description:
-    "Space children along one axis with tokenized gaps, alignment, and wrapping.",
+  description: "Arrange content in a row or column with even spacing.",
 };
 
 export default function StackPage() {
   return (
     <DocsPage
       name="Stack"
-      description="The rhythm primitive: children flow vertically or horizontally with a tokenized gap, alignment, and optional wrapping — the 90% case of flexbox without touching flex properties."
+      description="Arrange content in a row or column with even spacing."
     >
+      <InstallationSection
+        registryName="stack"
+        importCode={`import { Stack } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <ExampleBlock
           file="stack/basic.tsx"
@@ -39,7 +43,7 @@ export default function StackPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="One recipe shared by all six layout primitives: a dashboard skeleton with no custom CSS."
+        description="Combine the layout components to build a dashboard."
       >
         <ExampleBlock
           file="layout/recipe-dashboard.tsx"
@@ -49,11 +53,6 @@ export default function StackPage() {
           <LayoutRecipeDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="stack"
-        importCode={`import { Stack } from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="Stack props" rows={stackProps} />

@@ -13,20 +13,24 @@ import { radioGroupItemProps, radioGroupProps } from "@/lib/props/radio-group";
 
 export const metadata: Metadata = {
   title: "RadioGroup",
-  description:
-    "Choose exactly one option from a set of native radio inputs with orientation, size, and state control.",
+  description: "Let users choose one option from a visible list.",
 };
 
 export default function RadioGroupPage() {
   return (
     <DocsPage
       name="RadioGroup"
-      description="A group wrapper around real radio inputs: one name, one value, native arrow-key movement. Group-level size and state props flow down to every item, and labels compose through the Field primitives."
+      description="Let users choose one option from a visible list."
     >
+      <InstallationSection
+        registryName="radio-group"
+        importCode={`import { RadioGroup, RadioGroupItem } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Arrow keys move selection inside a focused group."
+        description="Try the examples, then open the code to use them in your app. Arrow keys move selection inside a focused group."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +53,7 @@ export default function RadioGroupPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="radio-group/recipe-plan-picker.tsx"
@@ -59,11 +63,6 @@ export default function RadioGroupPage() {
           <RadioGroupRecipePlanPicker />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="radio-group"
-        importCode={`import { RadioGroup, RadioGroupItem } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

@@ -18,16 +18,27 @@ import {
 
 export const metadata: Metadata = {
   title: "Carousel",
-  description:
-    "Stage focused feature cards, image collections, pricing plans, and customer stories with accessible controls, drag, and reduced-motion-safe depth.",
+  description: "Let users browse a series of cards or images.",
 };
 
 export default function CarouselPage() {
   return (
     <DocsPage
       name="Carousel"
-      description="A staged, keyboard-accessible carousel for content that benefits from one clear focal point. Use flat staging for media, tilt for comparable cards, and floor for a more editorial, spatial composition."
+      description="Let users browse a series of cards or images."
     >
+      <InstallationSection
+        registryName="carousel"
+        importCode={`import {
+  Carousel,
+  CarouselContent,
+  CarouselDots,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -68,18 +79,6 @@ export default function CarouselPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="carousel"
-        importCode={`import {
-  Carousel,
-  CarouselContent,
-  CarouselDots,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="accessibility"

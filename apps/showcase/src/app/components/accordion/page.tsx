@@ -13,20 +13,24 @@ import { accordionPartProps, accordionProps } from "@/lib/props/accordion";
 
 export const metadata: Metadata = {
   title: "Accordion",
-  description:
-    "Reveal rounded vertical blades with single or multiple open modes, arbitrary in-blade content, and Motion choreography.",
+  description: "Let users expand and collapse sections of content.",
 };
 
 export default function AccordionPage() {
   return (
     <DocsPage
       name="Accordion"
-      description="A vertical rounded-blade disclosure component where the trigger and expanded content remain inside the same blade. Use Accordion for settings, FAQs, workflow details, and dense product sections; use HorizontalAccordion when you need a fixed-height horizontal band with spatial blades."
+      description="Let users expand and collapse sections of content."
     >
+      <InstallationSection
+        registryName="accordion"
+        importCode={`import { Accordion } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Use Tab to reach blades, Enter or Space to toggle, and ArrowUp/ArrowDown/Home/End to move through enabled blades."
+        description="Try the examples, then open the code to use them in your app. Use Tab to reach blades, Enter or Space to toggle, and ArrowUp/ArrowDown/Home/End to move through enabled blades."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -55,11 +59,6 @@ export default function AccordionPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="accordion"
-        importCode={`import { Accordion } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

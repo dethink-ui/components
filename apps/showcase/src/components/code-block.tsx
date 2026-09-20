@@ -15,7 +15,7 @@ export async function CodeBlock({
   const trimmed = code.trimEnd();
   const html = await codeToHtml(trimmed, {
     lang,
-    theme: "vitesse-dark",
+    theme: "github-dark-high-contrast",
   });
 
   return (

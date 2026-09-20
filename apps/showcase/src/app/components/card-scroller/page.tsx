@@ -17,16 +17,24 @@ import {
 
 export const metadata: Metadata = {
   title: "CardScroller",
-  description:
-    "Select pricing plans or feature groups in a responsive, scroll-snapping row of spotlighted cards.",
+  description: "Let users scroll through and select cards in a row.",
 };
 
 export default function CardScrollerPage() {
   return (
     <DocsPage
       name="CardScroller"
-      description="A selectable row of Card surfaces for SaaS pricing, feature groups, and other visual choices. It adapts to its container, supports grab-to-scroll, snaps one card at a time on narrow screens, and can layer the selected card above its neighbors."
+      description="Let users scroll through and select cards in a row."
     >
+      <InstallationSection
+        registryName="card-scroller"
+        importCode={`import {
+  Card,
+  CardScroller,
+  CardScrollerItem,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -67,15 +75,6 @@ export default function CardScrollerPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="card-scroller"
-        importCode={`import {
-  Card,
-  CardScroller,
-  CardScrollerItem,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="accessibility"

@@ -14,19 +14,24 @@ import { typographyProps } from "@/lib/props/typography";
 export const metadata: Metadata = {
   title: "Typography",
   description:
-    "Set text hierarchy with Heading, Text, and Typography: levels, sizes, tones, weights, truncation, and clamping.",
+    "Style headings and body text with consistent sizes, weights, and colors.",
 };
 
 export default function TypographyPage() {
   return (
     <DocsPage
       name="Typography"
-      description="Three pieces cover most text: Heading keeps the document outline honest while visualLevel styles freely, Text handles body copy with sizes, tones, and weights, and Typography offers preset variants on a polymorphic element for everything else."
+      description="Style headings and body text with consistent sizes, weights, and colors."
     >
+      <InstallationSection
+        registryName="typography"
+        importCode={`import { Heading, Text, Typography } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +54,7 @@ export default function TypographyPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="typography/recipe-article.tsx"
@@ -59,11 +64,6 @@ export default function TypographyPage() {
           <TypographyRecipeArticle />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="typography"
-        importCode={`import { Heading, Text, Typography } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

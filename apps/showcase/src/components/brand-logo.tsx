@@ -1,25 +1,25 @@
 import { cn } from "@dethink/components";
 
 /**
- * Dethink mark: a block snapping into place. Three blocks are already merged
- * into an L-piece with an open slot; the fourth hovers diagonally offset,
- * mid-snap — the moment a registry component drops into your app. The
- * incoming block is full-strength; the assembled piece sits slightly muted.
+ * Approved folded d/t mark with an angled notch in the upright stem.
+ * Geometry matches docs/brand/logo/dethink-mark-currentcolor.svg; the tight
+ * viewBox keeps the mark legible at header and footer sizes.
  */
 export function BrandGlyph({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 28 28"
-      fill="none"
+      viewBox="34 0 242 350"
+      fill="currentColor"
       className={className}
       aria-hidden="true"
+      focusable="false"
     >
+      <path d="M 46 201 L 46 161 Q 46 152 54 147 L 133 100 Q 141 95 149 100 L 182 119 Z" />
       <path
-        d="M6.5 6H10.5Q12.5 6 12.5 8V13Q12.5 15 14.5 15H19.5Q21.5 15 21.5 17V21Q21.5 23 19.5 23H6.5Q4.5 23 4.5 21V8Q4.5 6 6.5 6Z"
-        fill="currentColor"
-        fillOpacity="0.72"
+        transform="translate(0 18)"
+        d="M 46 216 L 46 253 Q 46 263 55 269 L 133 315 Q 141 320 149 315 L 224 271 L 80 186 Z"
       />
-      <rect x="16" y="3.5" width="8" height="8" rx="2" fill="currentColor" />
+      <path d="M 198 60 Q 198 51 206 46 L 264 12 L 264 269 Q 264 279 255 284 L 246 289 L 198 261 L 198 107 L 246 131 L 246 109 L 198 85 Z" />
     </svg>
   );
 }
@@ -31,7 +31,7 @@ export function BrandGlyph({ className }: { className?: string }) {
 export function BrandMark({ className }: { className?: string }) {
   return (
     <span
-      data-brand-logo="block-snap"
+      data-brand-logo="angled-notch"
       aria-hidden="true"
       className={cn(
         "text-primary grid size-7 shrink-0 place-items-center",
@@ -43,13 +43,22 @@ export function BrandMark({ className }: { className?: string }) {
   );
 }
 
-/** Full lockup: brand tile plus the Dethink/Components wordmark. */
+/** Stacked wordmark: the brand leads, with the product category beneath it. */
 export function BrandLogo({ className }: { className?: string }) {
   return (
-    <span className={cn("flex items-center gap-3", className)}>
-      <BrandMark />
-      <span className="font-heading text-[15px] font-semibold tracking-tight">
-        Dethink<span className="text-primary">/</span>Components
+    <span className={cn("inline-flex items-center gap-2", className)}>
+      <span className="sr-only">Dethink Components</span>
+      <BrandMark className="h-9 w-7" />
+      <span
+        aria-hidden="true"
+        className="flex flex-col gap-1 whitespace-nowrap"
+      >
+        <span className="font-heading text-[22px] leading-5 font-semibold tracking-[-0.06em]">
+          dethink
+        </span>
+        <span className="text-muted-foreground text-[9px] leading-3 font-medium tracking-[0.2em] uppercase">
+          Components
+        </span>
       </span>
     </span>
   );

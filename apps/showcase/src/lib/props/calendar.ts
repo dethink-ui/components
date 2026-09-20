@@ -12,7 +12,8 @@ export const calendarProps: PropRow[] = [
     prop: "defaultValue",
     type: "DateValue | null",
     defaultValue: "—",
-    description: "Initial selection for uncontrolled usage.",
+    description:
+      "The starting selection when the component manages its own state.",
   },
   {
     prop: "onValueChange",

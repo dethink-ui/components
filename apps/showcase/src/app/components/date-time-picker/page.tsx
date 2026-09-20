@@ -15,20 +15,28 @@ import { dateTimePickerProps } from "@/lib/props/date-time-picker";
 
 export const metadata: Metadata = {
   title: "DateTimePicker",
-  description:
-    "Combine date and time selection with granularity, hour-cycle, time-zone, preset, and time-selector options.",
+  description: "Let users choose a date and time.",
 };
 
 export default function DateTimePickerPage() {
   return (
     <DocsPage
       name="DateTimePicker"
-      description="One field for a full timestamp: segmented date and time input, a popover calendar, optional quick presets, and an optional time-selector grid. Values are CalendarDateTime or ZonedDateTime objects, so time zones are explicit rather than implied."
+      description="Let users choose a date and time."
     >
+      <InstallationSection
+        registryName="date-time-picker"
+        importCode={`import {
+  DateTimePicker,
+  type DateTimePickerValue,
+} from "@dethink/components";
+import { CalendarDateTime, parseZonedDateTime } from "@internationalized/date";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Tab through the segments or open the popover for the calendar, presets, and time selector."
+        description="Try the examples, then open the code to use them in your app. Tab through the segments or open the popover for the calendar, presets, and time selector."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -68,15 +76,6 @@ export default function DateTimePickerPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="date-time-picker"
-        importCode={`import {
-  DateTimePicker,
-  type DateTimePickerValue,
-} from "@dethink/components";
-import { CalendarDateTime, parseZonedDateTime } from "@internationalized/date";`}
-      />
 
       <DocsSection
         id="props"

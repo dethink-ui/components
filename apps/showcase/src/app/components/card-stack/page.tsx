@@ -15,20 +15,24 @@ import { cardStackProps } from "@/lib/props/card-stack";
 
 export const metadata: Metadata = {
   title: "CardStack",
-  description:
-    "Cycle Card children as a layered deck or fanned arc with looping, built-in controls, and a controllable index.",
+  description: "Let users browse cards arranged in a stack or fan.",
 };
 
 export default function CardStackPage() {
   return (
     <DocsPage
       name="CardStack"
-      description="A focusable group that cycles direct Card children as a layered deck or a fanned arc. Navigation works three ways: the built-in previous/next controls, Arrow/Home/End keys while the group has focus, and clicking a visible card in open mode."
+      description="Let users browse cards arranged in a stack or fan."
     >
+      <InstallationSection
+        registryName="card-stack"
+        importCode={`import { Card, CardStack } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Focus a stack and use Arrow, Home, and End keys to navigate."
+        description="Try the examples, then open the code to use them in your app. Focus a stack and use Arrow, Home, and End keys to navigate."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -68,11 +72,6 @@ export default function CardStackPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="card-stack"
-        importCode={`import { Card, CardStack } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

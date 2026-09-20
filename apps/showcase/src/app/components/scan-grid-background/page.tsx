@@ -13,20 +13,24 @@ import { scanGridBackgroundProps } from "@/lib/props/scan-grid-background";
 
 export const metadata: Metadata = {
   title: "ScanGridBackground",
-  description:
-    "Sweep a scanning highlight band across a token-colored line grid, vertically or horizontally, SSR-stable and reduced-motion safe.",
+  description: "Move a highlight across a grid background.",
 };
 
 export default function ScanGridBackgroundPage() {
   return (
     <DocsPage
       name="ScanGridBackground"
-      description="An animated landing-page background that reads as continuous monitoring: a faint line grid with one soft highlight band sweeping across it on a calm linear loop. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a designed static frame under reduced motion."
+      description="Move a highlight across a grid background."
     >
+      <InstallationSection
+        registryName="scan-grid-background"
+        importCode={`import { ScanGridBackground } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The background fills its container; these previews bound it with a height utility."
+        description="Try the examples, then open the code to use them in your app. The background fills its container; these previews bound it with a height utility."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -55,11 +59,6 @@ export default function ScanGridBackgroundPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="scan-grid-background"
-        importCode={`import { ScanGridBackground } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

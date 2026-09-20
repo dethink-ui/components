@@ -162,16 +162,14 @@ export function ComponentSequenceNavigation({
             asChild
             size="xs"
             variant="ghost"
+            leftIcon={<ChevronLeft />}
             className="text-muted-foreground hover:text-foreground max-w-36 px-1.5 sm:max-w-48"
           >
             <Link
               href={`/components/${previousComponent.slug}`}
               aria-label={`Previous component: ${getComponentDisplayName(previousComponent)}`}
             >
-              <ChevronLeft aria-hidden="true" />
-              <span className="truncate">
-                {getComponentDisplayName(previousComponent)}
-              </span>
+              {getComponentDisplayName(previousComponent)}
             </Link>
           </Button>
         ) : null}
@@ -183,16 +181,14 @@ export function ComponentSequenceNavigation({
             asChild
             size="xs"
             variant="ghost"
+            rightIcon={<ChevronRight />}
             className="text-muted-foreground hover:text-foreground max-w-36 px-1.5 sm:max-w-48"
           >
             <Link
               href={`/components/${nextComponent.slug}`}
               aria-label={`Next component: ${getComponentDisplayName(nextComponent)}`}
             >
-              <span className="truncate">
-                {getComponentDisplayName(nextComponent)}
-              </span>
-              <ChevronRight aria-hidden="true" />
+              {getComponentDisplayName(nextComponent)}
             </Link>
           </Button>
         ) : null}

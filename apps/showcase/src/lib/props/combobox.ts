@@ -5,45 +5,50 @@ export const comboboxProps: PropRow[] = [
     prop: "value",
     type: "string | null",
     defaultValue: "—",
-    description: "Controlled selected item value. Pair with onValueChange.",
+    description:
+      "The selected value. Use with onValueChange when your app manages the selection.",
   },
   {
     prop: "defaultValue",
     type: "string | null",
     defaultValue: "—",
-    description: "Initial selection for uncontrolled usage.",
+    description:
+      "The starting selection when the component manages its own state.",
   },
   {
     prop: "onValueChange",
     type: "(value: string | null) => void",
     defaultValue: "—",
-    description: "Fires with the selected item's value, or null when cleared.",
+    description:
+      "Called with the selected value, or null when the selection is cleared.",
   },
   {
     prop: "inputValue / defaultInputValue / onInputValueChange",
     type: "string / string / (text) => void",
     defaultValue: "—",
-    description: "Controlled or uncontrolled text of the filter input.",
+    description:
+      "Use inputValue with onInputValueChange to manage the search text, or defaultInputValue to set its starting text.",
   },
   {
     prop: "children",
     type: "ComboboxItem nodes | (item) => ComboboxItem",
     defaultValue: "—",
     description:
-      "Static ComboboxItem children, or a render function when passing items.",
+      "Add ComboboxItem elements, or a function that renders each entry in items.",
   },
   {
     prop: "items / defaultItems",
     type: "Iterable<ComboboxItemData>",
     defaultValue: "—",
     description:
-      "Dynamic option data ({ value, label?, textValue? }); items opts out of built-in filtering for externally filtered lists.",
+      "The available options. Use defaultItems for built-in filtering, or items when your app filters the list.",
   },
   {
     prop: "menuTrigger",
     type: '"input" | "focus" | "manual"',
     defaultValue: '"input"',
-    description: "What opens the listbox: typing, focus, or only the button.",
+    description:
+      "Sets when the list opens: on typing, on focus, or only from the button.",
   },
   {
     prop: "allowsCustomValue",
@@ -56,19 +61,19 @@ export const comboboxProps: PropRow[] = [
     type: '"key" | "text"',
     defaultValue: '"key"',
     description:
-      "Whether the hidden input submits the option value or the typed text.",
+      "Chooses whether the form submits the selected option value or the typed text.",
   },
   {
     prop: "disabledKeys",
     type: "Iterable<string>",
     defaultValue: "—",
-    description: "Values of options that render disabled.",
+    description: "The values of options users cannot select.",
   },
   {
     prop: "label / description / errorMessage",
     type: "ReactNode",
     defaultValue: "—",
-    description: "Field label, helper text, and validation message slots.",
+    description: "The field label, help text, and error message.",
   },
   {
     prop: "placeholder",
@@ -80,18 +85,18 @@ export const comboboxProps: PropRow[] = [
     prop: "controlSize",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
-    description: "Input height and typography scale.",
+    description: "Sets the input height and text size.",
   },
   {
     prop: "required / disabled / readOnly / invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Standard form field states.",
+    description: "Makes the field required, disabled, read-only, or invalid.",
   },
   {
     prop: "name",
     type: "string",
     defaultValue: "—",
-    description: "Hidden input name for native form submission.",
+    description: "The field name used when submitting a form.",
   },
 ];

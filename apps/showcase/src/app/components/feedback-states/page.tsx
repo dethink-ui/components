@@ -15,15 +15,37 @@ import { feedbackStateProps } from "@/lib/props/feedback-states";
 export const metadata: Metadata = {
   title: "Feedback States",
   description:
-    "Shared loading, status, empty, announcement, and toast primitives for production workflows.",
+    "Show loading, progress, errors, empty states, and notifications.",
 };
 
 export default function FeedbackStatesPage() {
   return (
     <DocsPage
       name="Feedback States"
-      description="A production feedback layer for async work: centralized announcements, loading indicators, progress, skeletons, alerts, callouts, empty states, and actionable toasts."
+      description="Show loading, progress, errors, empty states, and notifications."
     >
+      <InstallationSection
+        registryName="feedback-states"
+        importCode={`import {
+  Alert,
+  Announcer,
+  Callout,
+  EmptyState,
+  LiveRegionProvider,
+  Progress,
+  ProgressCircle,
+  Skeleton,
+  SkeletonAvatar,
+  SkeletonButton,
+  SkeletonText,
+  Spinner,
+  ToastProvider,
+  ToastViewport,
+  useAnnouncer,
+  useToast,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -61,28 +83,6 @@ export default function FeedbackStatesPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="feedback-states"
-        importCode={`import {
-  Alert,
-  Announcer,
-  Callout,
-  EmptyState,
-  LiveRegionProvider,
-  Progress,
-  ProgressCircle,
-  Skeleton,
-  SkeletonAvatar,
-  SkeletonButton,
-  SkeletonText,
-  Spinner,
-  ToastProvider,
-  ToastViewport,
-  useAnnouncer,
-  useToast,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

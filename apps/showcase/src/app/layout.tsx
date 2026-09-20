@@ -55,8 +55,20 @@ export default function RootLayout({
       >
         <script dangerouslySetInnerHTML={{ __html: brandInitScript }} />
         <ShowcaseProviders>
+          <a
+            href="#main-content"
+            className="bg-background text-foreground focus-visible:ring-ring sr-only z-50 rounded-md p-3 focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:ring-2"
+          >
+            Skip to content
+          </a>
           <SiteHeader />
-          <main className="flex flex-1 flex-col">{children}</main>
+          <main
+            id="main-content"
+            tabIndex={-1}
+            className="flex flex-1 flex-col"
+          >
+            {children}
+          </main>
           <SiteFooter />
         </ShowcaseProviders>
       </body>

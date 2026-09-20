@@ -5,19 +5,21 @@ export const textareaProps: PropRow[] = [
     prop: "controlSize",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
-    description: "Padding and typography scale aligned with Input.",
+    description: "Sets the padding and text size to match Input.",
   },
   {
     prop: "invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Invalid styling plus aria-invalid.",
+    description:
+      "Shows an error style and marks the field as invalid for screen readers.",
   },
   {
     prop: "resize",
     type: '"none" | "vertical" | "horizontal" | "both"',
     defaultValue: '"vertical"',
-    description: "Which axes the user can drag-resize.",
+    description:
+      "Sets whether users can resize the field vertically, horizontally, both, or neither.",
   },
   {
     prop: "…native textarea props",

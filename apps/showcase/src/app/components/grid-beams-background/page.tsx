@@ -13,20 +13,24 @@ import { gridBeamsBackgroundProps } from "@/lib/props/grid-beams-background";
 
 export const metadata: Metadata = {
   title: "GridBeamsBackground",
-  description:
-    "Frame hero content over a subtle token-colored line grid with seeded light beams tracing along grid lines, SSR-stable and reduced-motion safe.",
+  description: "Add moving light beams to a subtle grid background.",
 };
 
 export default function GridBeamsBackgroundPage() {
   return (
     <DocsPage
       name="GridBeamsBackground"
-      description="An animated landing-page background with a technical, engineered feel: a faint line grid plus light beams that trace along grid lines. It wraps your hero content, keeps the decorative layer aria-hidden and non-interactive, renders deterministic SSR markup from a seed, pauses offscreen, and falls back to a designed static frame under reduced motion."
+      description="Add moving light beams to a subtle grid background."
     >
+      <InstallationSection
+        registryName="grid-beams-background"
+        importCode={`import { GridBeamsBackground } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. The background fills its container; these previews bound it with a height utility."
+        description="Try the examples, then open the code to use them in your app. The background fills its container; these previews bound it with a height utility."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -55,11 +59,6 @@ export default function GridBeamsBackgroundPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="grid-beams-background"
-        importCode={`import { GridBeamsBackground } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

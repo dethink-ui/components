@@ -15,61 +15,15 @@ import { alertDialogProps, dialogProps } from "@/lib/props/dialog";
 export const metadata: Metadata = {
   title: "Dialog",
   description:
-    "Modal surfaces with focus trapping, size and dismissal control, plus AlertDialog for explicit confirmation.",
+    "Open a focused window above the page for a task or confirmation.",
 };
 
 export default function DialogPage() {
   return (
     <DocsPage
       name="Dialog"
-      description="A modal overlay that traps focus, labels itself from its title and description, restores focus to the trigger on close, and portals above the page. AlertDialog is the confirmation variant: role=alertdialog with backdrop dismissal blocked so the user must choose."
+      description="Open a focused window above the page for a task or confirmation."
     >
-      <DocsSection
-        id="examples"
-        title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Open a dialog and Tab around — focus stays inside until it closes."
-      >
-        <div className="space-y-10">
-          <ExampleBlock
-            file="dialog/basic.tsx"
-            title="Basic"
-            description="Trigger, sized content, header anatomy, and footer with DialogClose buttons."
-          >
-            <DialogBasic />
-          </ExampleBlock>
-          <ExampleBlock
-            file="dialog/alert.tsx"
-            title="Alert dialog"
-            description="AlertDialog blocks backdrop dismissal and pairs an explicit cancel with a destructive action."
-          >
-            <DialogAlert />
-          </ExampleBlock>
-        </div>
-      </DocsSection>
-
-      <DocsSection
-        id="recipes"
-        title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
-      >
-        <div className="space-y-10">
-          <ExampleBlock
-            file="dialog/recipe-wizard.tsx"
-            title="Multi-step wizard"
-            description="A controlled Dialog hosts a three-step flow — the title tracks the step, Back/Continue drive the index, and closing resets so reopening starts clean."
-          >
-            <DialogRecipeWizard />
-          </ExampleBlock>
-          <ExampleBlock
-            file="dialog/recipe-type-to-confirm.tsx"
-            title="Type-to-confirm deletion"
-            description="The destructive action stays disabled until the typed project name matches exactly — the confirmation cannot be clicked through on autopilot."
-          >
-            <DialogRecipeTypeToConfirm />
-          </ExampleBlock>
-        </div>
-      </DocsSection>
-
       <InstallationSection
         registryName="dialog"
         importCode={`import {
@@ -81,13 +35,76 @@ export default function DialogPage() {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@dethink/components";`}
+} from "@dethink/components";
+
+export function Example() {
+  return (
+    <Dialog>
+      <DialogTrigger>View details</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Project details</DialogTitle>
+          <DialogDescription>Review your project settings.</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose>Done</DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}`}
       />
+
+      <DocsSection
+        id="examples"
+        title="Examples"
+        description="Try the examples, then open the code to use them in your app. Open a dialog and Tab around — focus stays inside until it closes."
+      >
+        <div className="space-y-10">
+          <ExampleBlock
+            file="dialog/basic.tsx"
+            title="Basic"
+            description="Use DialogTrigger to open the dialog and DialogClose to close it. Always include a DialogTitle."
+          >
+            <DialogBasic />
+          </ExampleBlock>
+          <ExampleBlock
+            file="dialog/alert.tsx"
+            title="Alert dialog"
+            description="Ask users to confirm an action. Clicking outside this dialog does not close it."
+          >
+            <DialogAlert />
+          </ExampleBlock>
+        </div>
+      </DocsSection>
+
+      <DocsSection
+        id="recipes"
+        title="Recipes"
+        description="Examples that combine components for common tasks."
+      >
+        <div className="space-y-10">
+          <ExampleBlock
+            file="dialog/recipe-wizard.tsx"
+            title="Multi-step wizard"
+            description="Split a task into three steps. Back and Continue move between steps; closing the dialog resets the form."
+          >
+            <DialogRecipeWizard />
+          </ExampleBlock>
+          <ExampleBlock
+            file="dialog/recipe-type-to-confirm.tsx"
+            title="Type-to-confirm deletion"
+            description="Require users to type the project name before enabling Delete."
+          >
+            <DialogRecipeTypeToConfirm />
+          </ExampleBlock>
+        </div>
+      </DocsSection>
 
       <DocsSection
         id="props"
         title="Props"
-        description="Dialog coordinates the trigger and content; content carries the panel options."
+        description="Set open state on Dialog. Set width and closing behavior on DialogContent."
       >
         <div className="space-y-8">
           <PropsTable caption="Dialog anatomy" rows={dialogProps} />

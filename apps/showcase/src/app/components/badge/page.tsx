@@ -14,20 +14,25 @@ import { badgeProps } from "@/lib/props/badge";
 
 export const metadata: Metadata = {
   title: "Badge",
-  description:
-    "Label statuses, counts, and metadata with tokenized variants, tones, sizes, and decorative icon slots.",
+  description: "Show a short status, label, or count.",
 };
 
 export default function BadgePage() {
   return (
-    <DocsPage
-      name="Badge"
-      description="Badge gives short metadata a consistent visual grammar across tables, cards, headers, and identity rows with tokenized variants, semantic tones, compact sizes, and decorative icon slots."
-    >
+    <DocsPage name="Badge" description="Show a short status, label, or count.">
+      <InstallationSection
+        registryName="badge"
+        importCode={`import { Badge } from "@dethink/components";
+
+export function Example() {
+  return <Badge tone="success">Healthy</Badge>;
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -62,15 +67,6 @@ export default function BadgePage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="badge"
-        importCode={`import { Badge } from "@dethink/components";
-
-export function Example() {
-  return <Badge tone="success">Healthy</Badge>;
-}`}
-      />
 
       <DocsSection
         id="props"

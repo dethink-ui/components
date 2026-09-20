@@ -16,15 +16,20 @@ import { asyncSelectProps } from "@/lib/props/async-select";
 export const metadata: Metadata = {
   title: "AsyncSelect",
   description:
-    "Render app-owned async result windows with loading, empty, min-query, retry, and single or multiple selection.",
+    "Let users choose from options loaded by your app, with loading and retry states.",
 };
 
 export default function AsyncSelectPage() {
   return (
     <DocsPage
       name="AsyncSelect"
-      description="A thin async state wrapper around Combobox and MultiSelect. Your app owns the query, fetch, cache, loading, error, and result window; AsyncSelect renders the field, status messages, retry affordance, selected labels, and form serialization."
+      description="Let users choose from options loaded by your app, with loading and retry states."
     >
+      <InstallationSection
+        registryName="async-select"
+        importCode={`import { AsyncSelect } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -65,7 +70,7 @@ export default function AsyncSelectPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="async-select/recipe-server-filter.tsx"
@@ -75,11 +80,6 @@ export default function AsyncSelectPage() {
           <AsyncSelectRecipeServerFilter />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="async-select"
-        importCode={`import { AsyncSelect } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

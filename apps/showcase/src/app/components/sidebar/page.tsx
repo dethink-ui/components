@@ -14,20 +14,28 @@ import { sidebarProps } from "@/lib/props/sidebar";
 
 export const metadata: Metadata = {
   title: "Sidebar",
-  description:
-    "Compose app navigation with desktop collapse, icon rails, mobile drawer behavior, grouped links, and current-route state.",
+  description: "Organize app navigation in a sidebar that can collapse.",
 };
 
 export default function SidebarPage() {
   return (
     <DocsPage
       name="Sidebar"
-      description="A composable app navigation primitive for dashboards, internal tools, analytics surfaces, settings areas, and AI workspaces. Sidebar owns navigation state and semantics without becoming a full dashboard shell."
+      description="Organize app navigation in a sidebar that can collapse."
     >
+      <InstallationSection
+        registryName="sidebar"
+        importCode={`import {
+  Sidebar,
+  SidebarProvider,
+  SidebarMenuLink,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -57,7 +65,7 @@ export default function SidebarPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="sidebar/recipe-ai-workspace.tsx"
@@ -67,15 +75,6 @@ export default function SidebarPage() {
           <SidebarRecipeAiWorkspace />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="sidebar"
-        importCode={`import {
-  Sidebar,
-  SidebarProvider,
-  SidebarMenuLink,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

@@ -5,7 +5,8 @@ export const dialogProps: PropRow[] = [
     prop: "open / defaultOpen / onOpenChange",
     type: "boolean / boolean / (open) => void",
     defaultValue: "—",
-    description: "Controlled or uncontrolled visibility of the dialog.",
+    description:
+      "Use open with onOpenChange to manage the dialog, or defaultOpen to set its starting state.",
   },
   {
     prop: "DialogTrigger / DialogClose",
@@ -18,7 +19,7 @@ export const dialogProps: PropRow[] = [
     prop: "DialogContent — size",
     type: '"sm" | "md" | "lg" | "xl" | "full"',
     defaultValue: '"md"',
-    description: "Panel width scale.",
+    description: "Sets the dialog width.",
   },
   {
     prop: "DialogContent — dismissible",
@@ -30,7 +31,7 @@ export const dialogProps: PropRow[] = [
     prop: "DialogContent — keyboardDismissDisabled",
     type: "boolean",
     defaultValue: "false",
-    description: "Disables Escape dismissal when true.",
+    description: "Prevents the Escape key from closing the dialog.",
   },
   {
     prop: "DialogContent — scrollBehavior",
@@ -42,14 +43,14 @@ export const dialogProps: PropRow[] = [
     prop: "DialogContent — showCloseButton",
     type: "boolean",
     defaultValue: "false",
-    description: "Built-in labeled close button in the corner.",
+    description: "Shows a close button in the corner.",
   },
   {
     prop: "DialogHeader / DialogTitle / DialogDescription / DialogFooter",
     type: "section components",
     defaultValue: "—",
     description:
-      "Anatomy pieces; the title and description label the dialog for assistive tech.",
+      "Build the dialog header and footer. The title and description tell screen readers what the dialog is for.",
   },
 ];
 
@@ -59,7 +60,7 @@ export const alertDialogProps: PropRow[] = [
     type: "same as Dialog",
     defaultValue: "—",
     description:
-      "Role alertdialog, backdrop dismissal blocked — the user must choose.",
+      "A confirmation dialog. Clicking outside it does not close it.",
   },
   {
     prop: "AlertDialogAction / AlertDialogCancel",

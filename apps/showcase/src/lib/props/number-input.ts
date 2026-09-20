@@ -25,7 +25,8 @@ export const numberInputProps: PropRow[] = [
     prop: "invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Invalid styling plus aria-invalid.",
+    description:
+      "Shows an error style and marks the field as invalid for screen readers.",
   },
   {
     prop: "…native input props",

@@ -12,20 +12,21 @@ import { gridProps } from "@/lib/props/layout";
 
 export const metadata: Metadata = {
   title: "Grid",
-  description:
-    "Two-dimensional layouts with tokenized tracks and gaps, plus per-cell spans through GridItem.",
+  description: "Arrange content in rows and columns.",
 };
 
 export default function GridPage() {
   return (
-    <DocsPage
-      name="Grid"
-      description="CSS grid with tokens: column and row counts, tokenized gaps, alignment, and GridItem for column and row spans — the tile-layout workhorse for dashboards and galleries."
-    >
+    <DocsPage name="Grid" description="Arrange content in rows and columns.">
+      <InstallationSection
+        registryName="grid"
+        importCode={`import { Grid, GridItem } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <ExampleBlock
           file="grid/basic.tsx"
@@ -39,7 +40,7 @@ export default function GridPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="One recipe shared by all six layout primitives: a dashboard skeleton with no custom CSS."
+        description="Combine the layout components to build a dashboard."
       >
         <ExampleBlock
           file="layout/recipe-dashboard.tsx"
@@ -49,11 +50,6 @@ export default function GridPage() {
           <LayoutRecipeDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="grid"
-        importCode={`import { Grid, GridItem } from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="Grid and GridItem props" rows={gridProps} />

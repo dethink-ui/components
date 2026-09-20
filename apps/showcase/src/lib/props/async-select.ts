@@ -56,7 +56,7 @@ export const asyncSelectProps: PropRow[] = [
     prop: "label / description / errorMessage",
     type: "ReactNode",
     defaultValue: "—",
-    description: "Field label, helper text, and validation message slots.",
+    description: "The field label, help text, and error message.",
   },
   {
     prop: "name",

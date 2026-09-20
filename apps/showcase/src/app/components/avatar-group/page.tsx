@@ -14,20 +14,33 @@ import { avatarGroupProps } from "@/lib/props/avatar-group";
 
 export const metadata: Metadata = {
   title: "AvatarGroup",
-  description:
-    "Stack identity clusters with overlap, overflow summaries, accessible member lists, and optional reveal behavior.",
+  description: "Show a group of people with overlapping avatars.",
 };
 
 export default function AvatarGroupPage() {
   return (
     <DocsPage
       name="AvatarGroup"
-      description="AvatarGroup renders accessible identity clusters for owners, reviewers, and collaborators with overflow summaries, overlap control, shared Avatar styling, and optional member-name reveal behavior."
+      description="Show a group of people with overlapping avatars."
     >
+      <InstallationSection
+        registryName="avatar-group"
+        importCode={`import { AvatarGroup, type AvatarGroupMember } from "@dethink/components";
+
+const members: AvatarGroupMember[] = [
+  { name: "Noah Reyes", src: "/avatars/noah.png" },
+  { name: "Mira Patel", src: "/avatars/mira.png" },
+];
+
+export function Example() {
+  return <AvatarGroup label="Reviewers" members={members} max={3} />;
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -62,20 +75,6 @@ export default function AvatarGroupPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="avatar-group"
-        importCode={`import { AvatarGroup, type AvatarGroupMember } from "@dethink/components";
-
-const members: AvatarGroupMember[] = [
-  { name: "Noah Reyes", src: "/avatars/noah.png" },
-  { name: "Mira Patel", src: "/avatars/mira.png" },
-];
-
-export function Example() {
-  return <AvatarGroup label="Reviewers" members={members} max={3} />;
-}`}
-      />
 
       <DocsSection
         id="props"

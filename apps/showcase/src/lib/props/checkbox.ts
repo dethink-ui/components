@@ -12,25 +12,26 @@ export const checkboxProps: PropRow[] = [
     prop: "defaultChecked",
     type: 'boolean | "indeterminate"',
     defaultValue: "false",
-    description: "Initial state for uncontrolled usage.",
+    description: "The starting state when the component manages its own state.",
   },
   {
     prop: "onCheckedChange",
     type: '(checked: boolean | "indeterminate") => void',
     defaultValue: "—",
-    description: "Fires with the next state on user toggle.",
+    description: "Called with the new state when the user toggles the control.",
   },
   {
     prop: "controlSize",
     type: '"sm" | "md" | "lg"',
     defaultValue: '"md"',
-    description: "Control dimensions aligned with the other form controls.",
+    description: "Sets the control size to match other form fields.",
   },
   {
     prop: "invalid",
     type: "boolean",
     defaultValue: "false",
-    description: "Invalid styling plus aria-invalid.",
+    description:
+      "Shows an error style and marks the field as invalid for screen readers.",
   },
   {
     prop: "…native input props",

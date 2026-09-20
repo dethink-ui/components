@@ -15,20 +15,33 @@ import { selectItemProps, selectProps } from "@/lib/props/select";
 
 export const metadata: Metadata = {
   title: "Select",
-  description:
-    "Pick one option from a popover listbox with typeahead, form states, and native form submission.",
+  description: "Let users choose one option from a dropdown list.",
 };
 
 export default function SelectPage() {
   return (
     <DocsPage
       name="Select"
-      description="A single-choice field backed by a popover listbox: full keyboard navigation and typeahead, label/description/error anatomy, three control sizes, and a hidden input for native forms. Options are static SelectItem children or dynamic items rendered through a function."
+      description="Let users choose one option from a dropdown list."
     >
+      <InstallationSection
+        registryName="select"
+        importCode={`import { Select, SelectItem } from "@dethink/components";
+
+export function Example() {
+  return (
+    <Select label="Region" name="region" placeholder="Choose a region">
+      <SelectItem value="us">United States</SelectItem>
+      <SelectItem value="uk">United Kingdom</SelectItem>
+    </Select>
+  );
+}`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Open with Space or Enter, jump options by typing, and confirm with Enter."
+        description="Try the examples, then open the code to use them in your app. Open with Space or Enter, jump options by typing, and confirm with Enter."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -41,7 +54,7 @@ export default function SelectPage() {
           <ExampleBlock
             file="select/options.tsx"
             title="Dynamic and rich options"
-            description="items feeds data through a render function; textValue keeps typeahead working when option children are rich nodes, and disabledKeys disables options by value."
+            description="Pass items to build options from data. Add textValue when an option contains icons or extra text, so users can still find it by typing."
           >
             <SelectOptions />
           </ExampleBlock>
@@ -65,26 +78,21 @@ export default function SelectPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="select/recipe-density.tsx"
           title="Live density switcher"
-          description="The library's density contract is a plain data-density attribute, so a controlled Select can respace an entire subtree in real time — the same mechanism an app-wide preference screen would use."
+          description="Let users choose how much space controls use. Changing the selection updates the surrounding layout."
         >
           <SelectRecipeDensity />
         </ExampleBlock>
       </DocsSection>
 
-      <InstallationSection
-        registryName="select"
-        importCode={`import { Select, SelectItem } from "@dethink/components";`}
-      />
-
       <DocsSection
         id="props"
         title="Props"
-        description="Select owns its field anatomy — pass a label instead of wrapping it in an external one."
+        description="Use the label prop to name the field. Select connects the label, help text, and error message for you."
       >
         <div className="space-y-8">
           <PropsTable caption="Select props" rows={selectProps} />

@@ -17,20 +17,24 @@ import {
 
 export const metadata: Metadata = {
   title: "HorizontalAccordion",
-  description:
-    "Expand one section at a time inside a fixed-height horizontal band of always-visible blades with Motion-powered choreography.",
+  description: "Expand one panel at a time in a horizontal row.",
 };
 
 export default function HorizontalAccordionPage() {
   return (
     <DocsPage
       name="HorizontalAccordion"
-      description="A fixed-height horizontal band where every section stays visible as a compact blade and the active section's panel expands to fill the remaining width. The active highlight glides between blades, panel content is choreographed with Motion, keyboard users get a single roving tab stop with RTL-aware arrows, and narrow containers switch to a compact layout with the panel above a blade tray."
+      description="Expand one panel at a time in a horizontal row."
     >
+      <InstallationSection
+        registryName="horizontal-accordion"
+        importCode={`import { HorizontalAccordion } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Focus a blade and use Arrow, Home, and End keys to navigate; Enter or Space activates."
+        description="Try the examples, then open the code to use them in your app. Focus a blade and use Arrow, Home, and End keys to navigate; Enter or Space activates."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -66,11 +70,6 @@ export default function HorizontalAccordionPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="horizontal-accordion"
-        importCode={`import { HorizontalAccordion } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

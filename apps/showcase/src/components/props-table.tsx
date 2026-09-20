@@ -17,23 +17,22 @@ export function PropsTable({ caption, rows }: PropsTableProps) {
       aria-label={caption}
       role="region"
       tabIndex={0}
-      className="border-border focus-visible:ring-ring overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:outline-none"
+      className="border-border focus-visible:ring-ring relative overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:outline-none"
     >
-      <table className="w-full min-w-[40rem] border-collapse text-left text-sm">
-        <caption className="sr-only">{caption}</caption>
+      <table className="w-full min-w-[32rem] table-fixed border-collapse text-left text-sm">
+        <caption className="text-foreground px-4 py-3 text-left text-sm font-medium">
+          {caption}
+        </caption>
         <thead>
           <tr className="border-border bg-muted/60 text-muted-foreground border-b text-xs tracking-wide uppercase">
-            <th scope="col" className="px-4 py-2.5 font-medium">
+            <th scope="col" className="w-[38%] px-4 py-2.5 font-medium">
               Prop
             </th>
             <th scope="col" className="px-4 py-2.5 font-medium">
-              Type
+              What it does
             </th>
-            <th scope="col" className="px-4 py-2.5 font-medium">
+            <th scope="col" className="w-[20%] px-4 py-2.5 font-medium">
               Default
-            </th>
-            <th scope="col" className="px-4 py-2.5 font-medium">
-              Description
             </th>
           </tr>
         </thead>
@@ -43,29 +42,31 @@ export function PropsTable({ caption, rows }: PropsTableProps) {
               key={row.prop}
               className="border-border/60 border-b last:border-b-0"
             >
-              <td className="px-4 py-3 align-top">
-                <code className="bg-primary/10 text-primary rounded px-1.5 py-0.5 font-mono text-[13px] font-medium">
+              <th
+                scope="row"
+                className="space-y-2 px-4 py-3 align-top font-normal wrap-anywhere"
+              >
+                <code className="text-primary font-mono text-[13px] font-medium">
                   {row.prop}
                 </code>
-              </td>
-              <td className="px-4 py-3 align-top">
-                <code className="text-muted-foreground font-mono text-[13px]">
+                <code className="text-muted-foreground block font-mono text-xs leading-5">
                   {row.type}
                 </code>
+              </th>
+              <td className="text-foreground/90 px-4 py-3 align-top leading-6 wrap-anywhere">
+                {row.description}
               </td>
-              <td className="px-4 py-3 align-top">
-                {row.defaultValue ? (
+              <td className="px-4 py-3 align-top wrap-anywhere">
+                {row.defaultValue && row.defaultValue !== "—" ? (
                   <code className="text-muted-foreground font-mono text-[13px]">
                     {row.defaultValue}
                   </code>
                 ) : (
-                  <span aria-hidden="true" className="text-muted-foreground/60">
-                    —
+                  <span className="text-muted-foreground">
+                    <span className="sr-only">Not set</span>
+                    <span aria-hidden="true">—</span>
                   </span>
                 )}
-              </td>
-              <td className="text-foreground/90 min-w-56 px-4 py-3 align-top leading-6">
-                {row.description}
               </td>
             </tr>
           ))}

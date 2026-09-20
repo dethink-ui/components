@@ -15,20 +15,24 @@ import { comboboxProps } from "@/lib/props/combobox";
 
 export const metadata: Metadata = {
   title: "Combobox",
-  description:
-    "Filter options as you type with an accessible input-plus-listbox field, custom values, and form states.",
+  description: "Let users search a list and choose an option.",
 };
 
 export default function ComboboxPage() {
   return (
     <DocsPage
       name="Combobox"
-      description="A text input fused with a filtering listbox: matches narrow as you type, arrow keys walk the results, and the field carries the same label/description/error anatomy and hidden-input form behavior as the other Dethink controls."
+      description="Let users search a list and choose an option."
     >
+      <InstallationSection
+        registryName="combobox"
+        importCode={`import { Combobox, ComboboxItem } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Type to filter, use the arrow keys to move through matches, and Enter to select."
+        description="Try the examples, then open the code to use them in your app. Type to filter, use the arrow keys to move through matches, and Enter to select."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -65,7 +69,7 @@ export default function ComboboxPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="combobox/recipe-command-palette.tsx"
@@ -75,11 +79,6 @@ export default function ComboboxPage() {
           <ComboboxRecipeCommandPalette />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="combobox"
-        importCode={`import { Combobox, ComboboxItem } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

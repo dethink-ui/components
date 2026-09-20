@@ -18,16 +18,30 @@ import {
 
 export const metadata: Metadata = {
   title: "Steps",
-  description:
-    "Build branching workflow indicators with horizontal and vertical layouts, progress, status overrides, optional navigation, custom rendering, and reduced-motion-safe transitions.",
+  description: "Show the current step and progress through a task.",
 };
 
 export default function StepsPage() {
   return (
     <DocsPage
       name="Steps"
-      description="A data-driven process indicator with an optional provider and focused hooks for workflows whose next and future steps can change. You own branch rules and panel components; Steps keeps indicators, dynamic collections, panels, progress, and controls on one typed current-step state."
+      description="Show the current step and progress through a task."
     >
+      <InstallationSection
+        registryName="steps"
+        importCode={`import {
+  Steps,
+  StepsPanel,
+  StepsProvider,
+  useCurrentStep,
+  useNextSteps,
+  useSteps,
+  useStepsState,
+  type StepItemData,
+  type StepRenderState,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -66,21 +80,6 @@ export default function StepsPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="steps"
-        importCode={`import {
-  Steps,
-  StepsPanel,
-  StepsProvider,
-  useCurrentStep,
-  useNextSteps,
-  useSteps,
-  useStepsState,
-  type StepItemData,
-  type StepRenderState,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

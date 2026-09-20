@@ -14,19 +14,24 @@ import { textareaProps } from "@/lib/props/textarea";
 export const metadata: Metadata = {
   title: "Textarea",
   description:
-    "Collect multi-line text with tokenized sizes, resize control, and accessible invalid and read-only states.",
+    "Collect several lines of text, such as a message or description.",
 };
 
 export default function TextareaPage() {
   return (
     <DocsPage
       name="Textarea"
-      description="A styled native textarea: tokenized sizes aligned with Input, a resize prop for controlling drag behavior, and invalid styling with aria-invalid. Compose labels and errors with the Field primitives."
+      description="Collect several lines of text, such as a message or description."
     >
+      <InstallationSection
+        registryName="textarea"
+        importCode={`import { Textarea } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +54,7 @@ export default function TextareaPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="textarea/recipe-composer.tsx"
@@ -59,11 +64,6 @@ export default function TextareaPage() {
           <TextareaRecipeComposer />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="textarea"
-        importCode={`import { Textarea } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

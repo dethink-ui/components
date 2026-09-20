@@ -14,19 +14,24 @@ import { numberInputProps } from "@/lib/props/number-input";
 export const metadata: Metadata = {
   title: "NumberInput",
   description:
-    "Capture numeric input with the right mobile keypad, native min/max/step semantics, and form states.",
+    "Collect a number with optional minimum, maximum, and step values.",
 };
 
 export default function NumberInputPage() {
   return (
     <DocsPage
       name="NumberInput"
-      description="A numeric input built on a real input element: numberMode picks the mobile keypad, type=number opts into native bounds and arrow-key stepping, and sizes and states align with the other controls."
+      description="Collect a number with optional minimum, maximum, and step values."
     >
+      <InstallationSection
+        registryName="number-input"
+        importCode={`import { NumberInput } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +54,7 @@ export default function NumberInputPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="number-input/recipe-allocator.tsx"
@@ -59,11 +64,6 @@ export default function NumberInputPage() {
           <NumberInputRecipeAllocator />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="number-input"
-        importCode={`import { NumberInput } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

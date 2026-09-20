@@ -13,19 +13,24 @@ import { boxProps } from "@/lib/props/layout";
 export const metadata: Metadata = {
   title: "Box",
   description:
-    "The base layout primitive: tokenized spacing, surfaces, borders, and radius on any semantic element.",
+    "Wrap content with spacing, a background, a border, or rounded corners.",
 };
 
 export default function BoxPage() {
   return (
     <DocsPage
       name="Box"
-      description="The primitive under everything: logical-property spacing (RTL-safe), tokenized surfaces with matched foregrounds, border tones, and radius — on any semantic element via as, or merged onto a child via asChild."
+      description="Wrap content with spacing, a background, a border, or rounded corners."
     >
+      <InstallationSection
+        registryName="box"
+        importCode={`import { Box } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <ExampleBlock
           file="box/basic.tsx"
@@ -39,7 +44,7 @@ export default function BoxPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="One recipe shared by all six layout primitives: a dashboard skeleton with no custom CSS."
+        description="Combine the layout components to build a dashboard."
       >
         <ExampleBlock
           file="layout/recipe-dashboard.tsx"
@@ -49,11 +54,6 @@ export default function BoxPage() {
           <LayoutRecipeDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="box"
-        importCode={`import { Box } from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="Box props" rows={boxProps} />

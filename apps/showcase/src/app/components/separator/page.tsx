@@ -12,20 +12,24 @@ import { separatorProps } from "@/lib/props/layout";
 
 export const metadata: Metadata = {
   title: "Separator",
-  description:
-    "Divide content horizontally or vertically with tone, thickness, spacing, and correct semantics.",
+  description: "Add a horizontal or vertical line between sections.",
 };
 
 export default function SeparatorPage() {
   return (
     <DocsPage
       name="Separator"
-      description="A rule with intent: horizontal or vertical, three tones, two thicknesses, tokenized spacing — and decorative by default so purely visual rules stay out of the accessibility tree. Divider is an alias."
+      description="Add a horizontal or vertical line between sections."
     >
+      <InstallationSection
+        registryName="separator"
+        importCode={`import { Separator } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <ExampleBlock
           file="separator/basic.tsx"
@@ -39,7 +43,7 @@ export default function SeparatorPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="One recipe shared by all six layout primitives: a dashboard skeleton with no custom CSS."
+        description="Combine the layout components to build a dashboard."
       >
         <ExampleBlock
           file="layout/recipe-dashboard.tsx"
@@ -49,11 +53,6 @@ export default function SeparatorPage() {
           <LayoutRecipeDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="separator"
-        importCode={`import { Separator } from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="Separator props" rows={separatorProps} />

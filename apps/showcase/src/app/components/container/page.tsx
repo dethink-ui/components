@@ -12,20 +12,24 @@ import { containerProps } from "@/lib/props/layout";
 
 export const metadata: Metadata = {
   title: "Container",
-  description:
-    "Center page content at tokenized max widths with responsive gutters.",
+  description: "Center page content and limit its width.",
 };
 
 export default function ContainerPage() {
   return (
     <DocsPage
       name="Container"
-      description="The page-width primitive: a centered max-width with gutter control, on any semantic element. Every docs page you are reading sits inside one."
+      description="Center page content and limit its width."
     >
+      <InstallationSection
+        registryName="container"
+        importCode={`import { Container } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <ExampleBlock
           file="container/basic.tsx"
@@ -39,7 +43,7 @@ export default function ContainerPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="One recipe shared by all six layout primitives: a dashboard skeleton with no custom CSS."
+        description="Combine the layout components to build a dashboard."
       >
         <ExampleBlock
           file="layout/recipe-dashboard.tsx"
@@ -49,11 +53,6 @@ export default function ContainerPage() {
           <LayoutRecipeDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="container"
-        importCode={`import { Container } from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="Container props" rows={containerProps} />

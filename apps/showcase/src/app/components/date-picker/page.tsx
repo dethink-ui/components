@@ -14,20 +14,25 @@ import { datePickerProps } from "@/lib/props/date-picker";
 
 export const metadata: Metadata = {
   title: "DatePicker",
-  description:
-    "Pick a single date through segmented keyboard input and a popover calendar, with form-ready serialized values.",
+  description: "Let users type a date or choose one from a calendar.",
 };
 
 export default function DatePickerPage() {
   return (
     <DocsPage
       name="DatePicker"
-      description="A complete date field: label, segmented day/month/year input you can type into, a popover calendar, helper and error text, and a hidden input that submits the ISO date in native forms. Values are CalendarDate objects from @internationalized/date."
+      description="Let users type a date or choose one from a calendar."
     >
+      <InstallationSection
+        registryName="date-picker"
+        importCode={`import { DatePicker, type DatePickerValue } from "@dethink/components";
+import { CalendarDate } from "@internationalized/date";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Tab into a field to edit segments with the arrow keys or by typing, and press the calendar button to open the popover."
+        description="Try the examples, then open the code to use them in your app. Tab into a field to edit segments with the arrow keys or by typing, and press the calendar button to open the popover."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -60,12 +65,6 @@ export default function DatePickerPage() {
           </ExampleBlock>
         </div>
       </DocsSection>
-
-      <InstallationSection
-        registryName="date-picker"
-        importCode={`import { DatePicker, type DatePickerValue } from "@dethink/components";
-import { CalendarDate } from "@internationalized/date";`}
-      />
 
       <DocsSection
         id="props"

@@ -13,19 +13,24 @@ import { flexProps } from "@/lib/props/layout";
 export const metadata: Metadata = {
   title: "Flex",
   description:
-    "Full flexbox control with tokenized gaps and per-item grow, shrink, and basis through FlexItem.",
+    "Arrange items with control over alignment, wrapping, and available space.",
 };
 
 export default function FlexPage() {
   return (
     <DocsPage
       name="Flex"
-      description="When Stack isn't enough: the full flexbox axis — direction, wrap, alignment, distribution — with tokenized gaps, plus FlexItem for per-child grow, shrink, and basis without arbitrary classes."
+      description="Arrange items with control over alignment, wrapping, and available space."
     >
+      <InstallationSection
+        registryName="flex"
+        importCode={`import { Flex, FlexItem } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <ExampleBlock
           file="flex/basic.tsx"
@@ -39,7 +44,7 @@ export default function FlexPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="One recipe shared by all six layout primitives: a dashboard skeleton with no custom CSS."
+        description="Combine the layout components to build a dashboard."
       >
         <ExampleBlock
           file="layout/recipe-dashboard.tsx"
@@ -49,11 +54,6 @@ export default function FlexPage() {
           <LayoutRecipeDashboard />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="flex"
-        importCode={`import { Flex, FlexItem } from "@dethink/components";`}
-      />
 
       <DocsSection id="props" title="Props">
         <PropsTable caption="Flex and FlexItem props" rows={flexProps} />

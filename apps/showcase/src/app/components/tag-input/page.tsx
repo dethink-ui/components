@@ -16,16 +16,20 @@ import { tagInputProps } from "@/lib/props/tag-input";
 
 export const metadata: Metadata = {
   title: "TagInput",
-  description:
-    "Author free-form tags with chip editing, paste parsing, duplicate prevention, validation, and repeated form fields.",
+  description: "Let users add, edit, and remove text tags.",
 };
 
 export default function TagInputPage() {
   return (
     <DocsPage
       name="TagInput"
-      description="A free-form token field for labels, recipients, and keywords. Users create tags with Enter, comma, or Tab, paste comma/newline-separated values, remove chips with buttons or Backspace, and submit tags through repeated hidden inputs."
+      description="Let users add, edit, and remove text tags."
     >
+      <InstallationSection
+        registryName="tag-input"
+        importCode={`import { TagInput } from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
@@ -73,7 +77,7 @@ export default function TagInputPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="tag-input/recipe-label-editor.tsx"
@@ -83,11 +87,6 @@ export default function TagInputPage() {
           <TagInputRecipeLabelEditor />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="tag-input"
-        importCode={`import { TagInput } from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

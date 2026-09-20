@@ -13,20 +13,32 @@ import { dropdownMenuProps } from "@/lib/props/dropdown-menu";
 
 export const metadata: Metadata = {
   title: "DropdownMenu",
-  description:
-    "Action menus with sections, icons, shortcuts, descriptions, submenus, and destructive items.",
+  description: "Show a menu of actions when users open a trigger.",
 };
 
 export default function DropdownMenuPage() {
   return (
     <DocsPage
       name="DropdownMenu"
-      description="A button-triggered action menu with full keyboard navigation and typeahead. Items compose from icon, label, description, and shortcut parts; sections, separators, and submenus structure larger menus, and destructive items get their own treatment."
+      description="Show a menu of actions when users open a trigger."
     >
+      <InstallationSection
+        registryName="dropdown-menu"
+        importCode={`import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuItemLabel,
+  DropdownMenuSection,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one. Open a menu and navigate with arrows, Home/End, or by typing an item name."
+        description="Try the examples, then open the code to use them in your app. Open a menu and navigate with arrows, Home/End, or by typing an item name."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +61,7 @@ export default function DropdownMenuPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="dropdown-menu/recipe-row-actions.tsx"
@@ -59,19 +71,6 @@ export default function DropdownMenuPage() {
           <DropdownMenuRecipeRowActions />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="dropdown-menu"
-        importCode={`import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuItemLabel,
-  DropdownMenuSection,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"

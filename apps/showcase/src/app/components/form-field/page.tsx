@@ -14,19 +14,31 @@ import { fieldPartsProps, fieldProps } from "@/lib/props/form-field";
 export const metadata: Metadata = {
   title: "FormField",
   description:
-    "Give any control accessible field anatomy — label, description, error, and state wiring through one composable Field.",
+    "Connect a form control to its label, help text, and error message.",
 };
 
 export default function FormFieldPage() {
   return (
     <DocsPage
       name="FormField"
-      description="The field anatomy behind every Dethink form: Field wires ids, aria-describedby, and aria-errormessage between a control and its label, description, and error, in vertical or horizontal orientation. FieldSet, FieldLegend, and FieldGroup add native fieldset semantics for related controls."
+      description="Connect a form control to its label, help text, and error message."
     >
+      <InstallationSection
+        registryName="form-field"
+        importCode={`import {
+  Field,
+  FieldControl,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  Form,
+} from "@dethink/components";`}
+      />
+
       <DocsSection
         id="examples"
         title="Examples"
-        description="Live previews rendered by the exact code shown below each one."
+        description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
           <ExampleBlock
@@ -49,7 +61,7 @@ export default function FormFieldPage() {
       <DocsSection
         id="recipes"
         title="Recipes"
-        description="Production-shaped compositions that go beyond exercising props."
+        description="Examples that combine components for common tasks."
       >
         <ExampleBlock
           file="form-field/recipe-project-form.tsx"
@@ -59,18 +71,6 @@ export default function FormFieldPage() {
           <FormFieldRecipeProjectForm />
         </ExampleBlock>
       </DocsSection>
-
-      <InstallationSection
-        registryName="form-field"
-        importCode={`import {
-  Field,
-  FieldControl,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-  Form,
-} from "@dethink/components";`}
-      />
 
       <DocsSection
         id="props"
