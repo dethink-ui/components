@@ -1,4 +1,4 @@
-import { parseDate } from "@internationalized/date";
+import { parseDate, parseDateTime, toZoned } from "@internationalized/date";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   countSlotPlannerPublishedOccurrences,
@@ -685,6 +685,26 @@ export function useSlotPlanner<
       date,
     });
     const violations = runValidation(slot);
+
+    // Creating inventory is different from editing a historical series: its
+    // first occurrence must still be usable, even when no notice rule is set.
+    if (violations.length === 0) {
+      const start = toZoned(
+        parseDateTime(`${date}T${slot.startTime}`),
+        slot.timeZone,
+      )
+        .toDate()
+        .getTime();
+      const minNoticeMinutes = constraints?.minNoticeMinutes ?? 0;
+      if (start < Date.parse(resolvedNow) + minNoticeMinutes * 60_000) {
+        return [
+          {
+            code: "min-notice",
+            params: { date, startTime: slot.startTime, minNoticeMinutes },
+          },
+        ];
+      }
+    }
 
     if (violations.length > 0) {
       return violations;

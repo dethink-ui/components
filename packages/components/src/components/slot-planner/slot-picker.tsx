@@ -84,6 +84,8 @@ export type SlotPickerSlotCardRenderContext<
   available: boolean;
   /** True while this occurrence's book-request promise is pending. */
   pending: boolean;
+  /** Request acknowledged during this mounted picker session; not server-owned identity. */
+  requestSent?: boolean;
   /** True while the last book request for this occurrence failed. */
   error: boolean;
   /** Re-fires the failed request's identical payload. Present on error. */
@@ -196,6 +198,7 @@ function SlotPickerSlotCardContent<
   taxonomy,
   locale,
   pending,
+  requestSent = false,
   onRetry,
   onRequest,
 }: {
@@ -203,6 +206,7 @@ function SlotPickerSlotCardContent<
   taxonomy: SlotPlannerTaxonomy;
   locale: string;
   pending: boolean;
+  requestSent?: boolean;
   /** Present only while the last book request for this occurrence failed. */
   onRetry?: (() => void) | undefined;
   /** Present only on available (requestable) occurrences. */
@@ -294,23 +298,25 @@ function SlotPickerSlotCardContent<
           type="button"
           data-slot="slot-picker-request"
           className={slotPlannerSlotActionButtonClasses}
-          aria-disabled={pending || undefined}
-          data-disabled={pending || undefined}
+          aria-disabled={pending || requestSent || undefined}
+          data-disabled={pending || requestSent || undefined}
           onClick={() => {
             // `aria-disabled` keeps the button focusable across the request
             // (native `disabled` would drop keyboard focus to the body); the
             // guard stops a second activation from firing mid-request.
-            if (pending) {
+            if (pending || requestSent) {
               return;
             }
 
             onRequest();
           }}
         >
-          {formatSlotPlannerTemplate(taxonomy.requestSlot, {
-            slot: taxonomy.slot,
-            slotPlural: taxonomy.slotPlural,
-          })}
+          {requestSent
+            ? taxonomy.bookRequestSent
+            : formatSlotPlannerTemplate(taxonomy.requestSlot, {
+                slot: taxonomy.slot,
+                slotPlural: taxonomy.slotPlural,
+              })}
         </button>
       ) : null}
       {pending ? (
@@ -451,6 +457,9 @@ function SlotPickerInner<
   // Book requests reuse the CRUD pending/error/retry machinery, keyed per
   // provider-zone occurrence identity.
   const { pendingKeys, retryByKey, run } = useSlotPlannerCrud();
+  const [sentRequests, setSentRequests] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   // The nonce advances on every announcement so identical consecutive
   // messages still mutate the live region's DOM (via the keyed span) instead
   // of being dropped by React's bail-out.
@@ -492,6 +501,11 @@ function SlotPickerInner<
   }, [resolvedTaxonomy, retryByKey, setAnnouncement]);
 
   const requestOccurrence = (occurrence: SlotPickerOccurrence<TData>) => {
+    const key = getSlotPickerOccurrenceKey(
+      occurrence.slotId,
+      occurrence.occurrenceDate,
+    );
+    if (sentRequests.has(key)) return;
     const payload: SlotPlannerBookRequestPayload = {
       slotId: occurrence.slotId,
       occurrenceDate: occurrence.occurrenceDate,
@@ -514,6 +528,7 @@ function SlotPickerInner<
       ),
       execute: () => onBookRequest?.(payload),
       onSuccess: () => {
+        setSentRequests((previous) => new Set(previous).add(key));
         setAnnouncement(
           formatSlotPlannerTemplate(
             resolvedTaxonomy.announceBookRequested,
@@ -797,6 +812,7 @@ function SlotPickerInner<
                   occurrence.occurrenceDate,
                 );
                 const available = isSlotPickerOccurrenceAvailable(occurrence);
+                const requestSent = sentRequests.has(key);
                 const pending = pendingKeys.has(key);
                 const storedRetry = retryByKey.get(key);
                 const retry = storedRetry
@@ -810,17 +826,19 @@ function SlotPickerInner<
                       storedRetry();
                     }
                   : undefined;
-                const request = available
-                  ? () => requestOccurrence(occurrence)
-                  : undefined;
+                const request =
+                  available && !requestSent
+                    ? () => requestOccurrence(occurrence)
+                    : undefined;
                 const defaultCardContent = (
                   <SlotPickerSlotCardContent
                     occurrence={occurrence}
                     taxonomy={resolvedTaxonomy}
                     locale={locale}
                     pending={pending}
+                    requestSent={requestSent}
                     onRetry={retry}
-                    onRequest={request}
+                    onRequest={requestSent ? () => {} : request}
                   />
                 );
 
@@ -846,6 +864,7 @@ function SlotPickerInner<
                           error: storedRetry !== undefined,
                           occurrence,
                           pending,
+                          requestSent,
                           renderDefault: () => defaultCardContent,
                           ...(request ? { request } : {}),
                           ...(retry ? { retry } : {}),
@@ -889,6 +908,9 @@ function SlotPickerInner<
             className="min-w-0 truncate text-base font-semibold sm:text-lg"
           >
             {title}
+            <p className="text-muted-foreground mt-1 text-xs font-normal">
+              {resolvedViewerTimeZone.replaceAll("_", " ")}
+            </p>
           </div>
           <div className="col-span-2 row-start-2 flex min-w-0 items-center justify-start gap-[var(--dt-space-1)] sm:col-span-1 sm:col-start-auto sm:row-auto sm:justify-center">
             <IconButton

@@ -27,6 +27,7 @@ function renderPlanner(props: Partial<SlotPlannerProps> = {}) {
       defaultFocusedDate="2026-07-06"
       now={NOW}
       title="Availability"
+      weekLayout="agenda"
       {...props}
     />,
   );

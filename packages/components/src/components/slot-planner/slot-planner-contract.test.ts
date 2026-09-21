@@ -132,6 +132,7 @@ describe("default taxonomy", () => {
       statusLabels,
       violationMessages,
       statusCountSummary,
+      calendarSlotCount,
       dailyCapSummary,
       weeklyCapSummary,
       remainingSeats,
@@ -141,6 +142,7 @@ describe("default taxonomy", () => {
       announceBatchRejected,
       ...labels
     } = defaultSlotPlannerTaxonomy;
+    expect(calendarSlotCount.other).toContain("{count}");
     for (const value of Object.values(labels)) {
       expect(typeof value).toBe("string");
       expect(value.length).toBeGreaterThan(0);

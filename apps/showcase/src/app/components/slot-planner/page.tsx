@@ -22,6 +22,7 @@ export const metadata: Metadata = {
 export default function SlotPlannerPage() {
   return (
     <DocsPage
+      wide
       name="SlotPlanner"
       description="Manage available time slots and let users request bookings in their time zone."
     >
@@ -44,9 +45,10 @@ export default function SlotPlannerPage() {
       >
         <div className="space-y-10">
           <ExampleBlock
+            wide
             file="slot-planner/basic.tsx"
             title="Manage mode"
-            description="Uncontrolled week view with mixed slot states, capacity, and a pending request."
+            description="Compare availability across the week. Select a slot to manage its day; narrow containers show a daily agenda."
           >
             <SlotPlannerBasic />
           </ExampleBlock>
@@ -81,6 +83,59 @@ export default function SlotPlannerPage() {
         </div>
       </DocsSection>
 
+      <DocsSection
+        id="interaction"
+        title="Using the planner"
+        description="Choose a date, then add or manage its slots."
+      >
+        <div className="text-muted-foreground space-y-4 text-sm leading-7">
+          <p>
+            The weekly calendar appears when the component has at least 620px of
+            space. Select Saturday or Sunday to show the weekend. Select an
+            appointment to open its day. The appointment menu contains Edit and
+            Delete; Day actions contains copy and clear options. Choose Week to
+            return to the calendar. Narrow containers show a date strip and
+            daily agenda.
+          </p>
+          <p>
+            The calendar projects appointments into the time zone shown above
+            it. The day editor uses the original appointment’s zone and date.
+            Pass timeZone explicitly for consistent server and browser
+            rendering. Slots crossing midnight appear on each affected day.
+            Short slots have a minimum hit target and overlaps use separate
+            lanes; the written times give the exact duration.
+          </p>
+          <p>
+            The editor includes duration presets and a custom duration field.
+            More options contains capacity, buffers, time zone, tags, and notes.
+            The end-time preview updates as you edit. New slots must meet the
+            notice period and start in the future. Existing recurring
+            appointments retain the choice between one occurrence and the whole
+            series.
+          </p>
+          <p>
+            Use Tab to reach calendar controls and appointments, and Enter or
+            Space to activate them. In the compact date strip, use arrow keys,
+            Home, and End. Dialogs contain focus, close with Escape, and return
+            focus to their trigger. Status labels communicate availability
+            alongside colour. Motion follows reduced-motion preferences.
+          </p>
+          <p>
+            SlotPicker shows Request sent after its callback succeeds and
+            prevents repeat activation for that occurrence while the picker
+            stays mounted. This acknowledgement is local to the current picker.
+            Your application owns authentication, persistent request state, seat
+            enforcement, cancellation, and duplicate prevention across sessions.
+          </p>
+          <p>
+            Set weekLayout="agenda" to retain the earlier weekday-rail
+            presentation. Providing custom renderers also retains that
+            presentation, including the existing tab, list-item, and renderer
+            semantics. The slot data model and mutation callback payloads are
+            unchanged.
+          </p>
+        </div>
+      </DocsSection>
       <DocsSection
         id="props"
         title="Props"

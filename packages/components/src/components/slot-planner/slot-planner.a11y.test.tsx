@@ -19,6 +19,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             slots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}
@@ -36,6 +37,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="dark">
         <main aria-label="SlotPlanner day view accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             view="day"
             slots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-07"
@@ -57,6 +59,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner editor accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             defaultSlots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}
@@ -83,6 +86,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner copy-day accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             defaultSlots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}
@@ -105,6 +109,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner violations accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             defaultSlots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}
@@ -133,6 +138,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner custom renderers accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             slots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}
@@ -184,6 +190,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner custom editor accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             defaultSlots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}
@@ -229,6 +236,7 @@ describe("SlotPlanner accessibility", () => {
       <DethinkProvider theme="light">
         <main aria-label="SlotPlanner error accessibility smoke">
           <SlotPlanner
+            weekLayout="agenda"
             defaultSlots={slotPlannerSampleSlots}
             defaultFocusedDate="2026-07-06"
             now={NOW}

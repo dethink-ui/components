@@ -9,6 +9,7 @@ interface DocsPageProps {
   description: string;
   children: ReactNode;
   category?: string;
+  wide?: boolean;
 }
 
 interface DocsSectionProps {
@@ -41,12 +42,19 @@ export function DocsPage({
   description,
   children,
   category,
+  wide = false,
 }: DocsPageProps) {
   const component = getComponentMetaByName(name);
   const sections = getSections(children);
 
   return (
-    <div className="min-w-0 xl:grid xl:grid-cols-[minmax(0,1fr)_10rem] xl:gap-12">
+    <div
+      className={
+        wide
+          ? "min-w-0"
+          : "min-w-0 xl:grid xl:grid-cols-[minmax(0,1fr)_10rem] xl:gap-12"
+      }
+    >
       <article className="min-w-0 space-y-10 pb-8">
         <header className="space-y-4">
           <p className="text-muted-foreground text-sm">
@@ -69,7 +77,9 @@ export function DocsPage({
           </p>
         </header>
         {sections.length ? (
-          <details className="border-border rounded-lg border px-4 py-3 xl:hidden">
+          <details
+            className={`border-border rounded-lg border px-4 py-3 ${wide ? "" : "xl:hidden"}`}
+          >
             <summary className="cursor-pointer text-sm font-medium">
               On this page
             </summary>
@@ -90,7 +100,7 @@ export function DocsPage({
           </footer>
         ) : null}
       </article>
-      {sections.length ? (
+      {sections.length && !wide ? (
         <aside
           aria-label="Page contents"
           className="sticky top-24 hidden max-h-[calc(100svh-7rem)] self-start overflow-y-auto xl:block"

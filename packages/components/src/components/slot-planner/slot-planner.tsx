@@ -1,4 +1,4 @@
-import { parseDate } from "@internationalized/date";
+import { fromAbsolute, parseDate } from "@internationalized/date";
 import {
   Fragment,
   forwardRef,
@@ -20,6 +20,13 @@ import { AnimatePresence, MotionConfig, useReducedMotion } from "motion/react";
 import { cn } from "../../utils/cn";
 import { Button, buttonClassNames } from "../button";
 import { IconButton } from "../icon-button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../dropdown-menu";
+import { SlotPlannerCalendar } from "./slot-planner-calendar";
 import {
   slotPlannerOccurrenceStatuses,
   type SlotPlannerBatchChangePayload,
@@ -138,6 +145,8 @@ export interface SlotPlannerProps<
   view?: SlotPlannerView;
   /** Initial view for uncontrolled usage. */
   defaultView?: SlotPlannerView;
+  /** Wide week presentation. Agenda preserves the original renderer layout. */
+  weekLayout?: "calendar" | "agenda";
   onViewChange?: (view: SlotPlannerView) => void;
   /** ISO date-time treated as "now"; injectable for deterministic renders. */
   now?: string;
@@ -206,9 +215,27 @@ function getSeriesEditorValues(
 
 function getCreateEditorValues(
   timeZone: string,
+  date: string,
+  now: string,
+  constraints?: SlotPlannerConstraints,
 ): SlotPlannerEditorSeriesValues {
+  const earliest = fromAbsolute(
+    Date.parse(now) + (constraints?.minNoticeMinutes ?? 0) * 60_000,
+    timeZone,
+  );
+  const earliestDate = earliest.toString().slice(0, 10);
+  const minute =
+    earliestDate === date
+      ? Math.min(
+          1439,
+          Math.max(
+            540,
+            Math.ceil((earliest.hour * 60 + earliest.minute + 1) / 15) * 15,
+          ),
+        )
+      : 540;
   return {
-    startTime: "09:00",
+    startTime: `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`,
     durationMinutes: 60,
     capacity: 1,
     bufferBeforeMinutes: 0,
@@ -221,10 +248,13 @@ function getCreateEditorValues(
   };
 }
 
-/**
- * Default slot-card content. Rendered inside the structural `<li>` wrapper —
- * directly, or through a custom `slotCard` renderer's `renderDefault()`.
- */
+// Let the menu's focus scope restore its trigger before mounting a dialog's
+// focus scope. Otherwise the closing menu can move focus out of the dialog.
+function openAfterMenu(action: () => void) {
+  requestAnimationFrame(() => requestAnimationFrame(action));
+}
+
+/** Default content inside the structural slot list item, also available to custom renderers. */
 function SlotPlannerSlotCardContent<
   TData extends SlotPlannerSlotPayload = SlotPlannerSlotPayload,
 >({
@@ -236,6 +266,7 @@ function SlotPlannerSlotCardContent<
   onDelete,
   editButtonRef,
   renderTag,
+  compact = false,
 }: {
   occurrence: SlotPlannerOccurrence<TData>;
   taxonomy: SlotPlannerTaxonomy;
@@ -248,6 +279,7 @@ function SlotPlannerSlotCardContent<
   editButtonRef?: (node: HTMLButtonElement | null) => void;
   /** Custom renderer for one tag chip. */
   renderTag?: (context: SlotPlannerTagRenderContext<TData>) => ReactNode;
+  compact?: boolean;
 }) {
   const { note, tags } = getConventionalSlotData(occurrence.slot.data);
   const recurrenceLabel = occurrence.isRecurring
@@ -265,17 +297,32 @@ function SlotPlannerSlotCardContent<
         )} · ${occurrence.timeZone}`
       : occurrence.timeZone;
   const renderTagChip = (tag: string) => (
-    <span data-slot="slot-planner-tag-chip" className={slotPlannerChipClasses}>
+    <span
+      data-slot="slot-planner-tag-chip"
+      className={
+        compact ? "text-muted-foreground text-xs" : slotPlannerChipClasses
+      }
+    >
       {tag}
     </span>
   );
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between gap-[var(--dt-space-2)]">
+      <div
+        className={
+          compact
+            ? "grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1"
+            : "flex flex-wrap items-center justify-between gap-[var(--dt-space-2)]"
+        }
+      >
         <span
           data-slot="slot-planner-slot-time"
-          className="text-sm font-semibold"
+          className={
+            compact
+              ? "text-base font-semibold tabular-nums"
+              : "text-sm font-semibold"
+          }
         >
           {`${occurrence.startTime} – ${getWallClockEndTime(
             occurrence.startTime,
@@ -285,7 +332,11 @@ function SlotPlannerSlotCardContent<
         <span
           data-slot="slot-planner-status-badge"
           data-status={occurrence.status}
-          className={slotPlannerStatusBadgeClasses}
+          className={
+            compact
+              ? "col-start-1 row-start-2 inline-flex items-center gap-1 text-xs"
+              : slotPlannerStatusBadgeClasses
+          }
         >
           <span
             aria-hidden="true"
@@ -296,11 +347,66 @@ function SlotPlannerSlotCardContent<
           />
           {taxonomy.statusLabels[occurrence.status]}
         </span>
+        {compact && (onEdit || onDelete) ? (
+          <DropdownMenu
+            motionPreset="none"
+            className="col-start-2 row-span-2 row-start-1"
+          >
+            <DropdownMenuTrigger
+              ref={editButtonRef}
+              size="sm"
+              variant="ghost"
+              disabled={pending}
+              aria-label={`${taxonomy.slotActions} · ${occurrence.startTime}`}
+              className="col-start-2 row-span-2 row-start-1 ms-auto min-h-10 min-w-10 px-2"
+            >
+              <span aria-hidden="true">•••</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {onEdit ? (
+                <DropdownMenuItem onAction={() => openAfterMenu(onEdit)}>
+                  {taxonomy.editSlot}
+                </DropdownMenuItem>
+              ) : null}
+              {onDelete ? (
+                <DropdownMenuItem
+                  destructive
+                  onAction={() => openAfterMenu(onDelete)}
+                >
+                  {taxonomy.deleteSlot}
+                </DropdownMenuItem>
+              ) : null}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
       </div>
+      {compact ? (
+        <p className="text-muted-foreground text-sm">
+          {formatSlotPlannerCountTemplate(
+            taxonomy.remainingSeats,
+            Math.max(
+              0,
+              occurrence.capacity -
+                occurrence.bookedCount -
+                occurrence.requestedCount,
+            ),
+            {
+              remaining: Math.max(
+                0,
+                occurrence.capacity -
+                  occurrence.bookedCount -
+                  occurrence.requestedCount,
+              ),
+            },
+          )}
+        </p>
+      ) : null}
       <div className="flex flex-wrap items-center gap-[var(--dt-space-1)]">
         <span
           data-slot="slot-planner-duration-chip"
-          className={slotPlannerChipClasses}
+          className={
+            compact ? "text-muted-foreground text-xs" : slotPlannerChipClasses
+          }
         >
           {formatSlotPlannerCountTemplate(
             taxonomy.durationSummary,
@@ -310,7 +416,9 @@ function SlotPlannerSlotCardContent<
         {recurrenceLabel ? (
           <span
             data-slot="slot-planner-recurrence-chip"
-            className={slotPlannerChipClasses}
+            className={
+              compact ? "text-muted-foreground text-xs" : slotPlannerChipClasses
+            }
           >
             {recurrenceLabel}
           </span>
@@ -342,7 +450,7 @@ function SlotPlannerSlotCardContent<
       >
         {metaLine}
       </p>
-      {onEdit || onDelete ? (
+      {!compact && (onEdit || onDelete) ? (
         <div
           data-slot="slot-planner-slot-actions"
           className="flex flex-wrap items-center gap-[var(--dt-space-2)]"
@@ -426,6 +534,7 @@ function SlotPlannerInner<
     taxonomy,
     view: controlledView,
     defaultView = "week",
+    weekLayout = "calendar",
     onViewChange,
     now,
     timeZone,
@@ -592,6 +701,21 @@ function SlotPlannerInner<
   const isPastDay = currentFocusedDate < todayIso;
 
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const [calendarWidth, setCalendarWidth] = useState(false);
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(([entry]) => {
+      setCalendarWidth((entry?.contentRect.width ?? 0) >= 620);
+    });
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+  // Legacy renderers own their original structural surfaces; opt them into the
+  // agenda automatically rather than silently bypassing consumer content.
+  const calendarPresentation = weekLayout === "calendar" && !renderers;
+  const showCalendar =
+    calendarPresentation && calendarWidth && currentView === "week";
   const mergedRef = useCallback(
     (node: HTMLDivElement | null) => {
       rootRef.current = node;
@@ -1110,7 +1234,7 @@ function SlotPlannerInner<
   const dayPanel = (
     <div
       ref={panelRef}
-      role={currentView === "week" ? "tabpanel" : undefined}
+      role={currentView === "week" && !showCalendar ? "tabpanel" : undefined}
       id={currentView === "week" ? panelId : undefined}
       aria-labelledby={
         currentView === "week" ? getTabId(currentFocusedDate) : undefined
@@ -1121,7 +1245,10 @@ function SlotPlannerInner<
       data-past={isPastDay ? "true" : undefined}
       data-loading={loading ? "true" : undefined}
       data-error={hasExternalError ? "true" : undefined}
-      className={slotPlannerDayPanelClasses}
+      className={cn(
+        slotPlannerDayPanelClasses,
+        calendarPresentation && "border-0 bg-transparent p-0 sm:p-0",
+      )}
     >
       <SlotPlannerWeekSlide
         motionEnabled={motionEnabled}
@@ -1189,42 +1316,72 @@ function SlotPlannerInner<
             data-error={batchRetry ? "true" : undefined}
             className="flex flex-wrap items-center gap-[var(--dt-space-2)]"
           >
-            <button
-              type="button"
-              data-slot="slot-planner-copy-day"
-              className={slotPlannerSlotActionButtonClasses}
-              disabled={batchPending}
-              onClick={openCopyDay}
-            >
-              <span aria-hidden="true">
-                <CopyIcon />
-              </span>
-              {resolvedTaxonomy.copyDay}
-            </button>
-            <button
-              type="button"
-              data-slot="slot-planner-copy-week"
-              className={slotPlannerSlotActionButtonClasses}
-              disabled={batchPending}
-              onClick={openCopyWeek}
-            >
-              <span aria-hidden="true">
-                <CopyIcon />
-              </span>
-              {resolvedTaxonomy.copyWeek}
-            </button>
-            <button
-              type="button"
-              data-slot="slot-planner-clear-day"
-              className={slotPlannerSlotActionButtonClasses}
-              disabled={batchPending}
-              onClick={openClearDay}
-            >
-              <span aria-hidden="true">
-                <TrashIcon />
-              </span>
-              {resolvedTaxonomy.clearDay}
-            </button>
+            {calendarPresentation ? (
+              <DropdownMenu motionPreset="none">
+                <DropdownMenuTrigger
+                  size="sm"
+                  variant="ghost"
+                  disabled={batchPending}
+                >
+                  {resolvedTaxonomy.dayActions}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onAction={() => openAfterMenu(openCopyDay)}>
+                    {resolvedTaxonomy.copyDay}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onAction={() => openAfterMenu(openCopyWeek)}
+                  >
+                    {resolvedTaxonomy.copyWeek}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    destructive
+                    onAction={() => openAfterMenu(openClearDay)}
+                  >
+                    {resolvedTaxonomy.clearDay}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  data-slot="slot-planner-copy-day"
+                  className={slotPlannerSlotActionButtonClasses}
+                  disabled={batchPending}
+                  onClick={openCopyDay}
+                >
+                  <span aria-hidden="true">
+                    <CopyIcon />
+                  </span>
+                  {resolvedTaxonomy.copyDay}
+                </button>
+                <button
+                  type="button"
+                  data-slot="slot-planner-copy-week"
+                  className={slotPlannerSlotActionButtonClasses}
+                  disabled={batchPending}
+                  onClick={openCopyWeek}
+                >
+                  <span aria-hidden="true">
+                    <CopyIcon />
+                  </span>
+                  {resolvedTaxonomy.copyWeek}
+                </button>
+                <button
+                  type="button"
+                  data-slot="slot-planner-clear-day"
+                  className={slotPlannerSlotActionButtonClasses}
+                  disabled={batchPending}
+                  onClick={openClearDay}
+                >
+                  <span aria-hidden="true">
+                    <TrashIcon />
+                  </span>
+                  {resolvedTaxonomy.clearDay}
+                </button>
+              </>
+            )}
             {batchPending ? (
               <span
                 data-slot="slot-planner-save-pending"
@@ -1320,6 +1477,7 @@ function SlotPlannerInner<
                       }
                     }}
                     renderTag={renderers?.tag}
+                    compact={calendarPresentation}
                   />
                 );
 
@@ -1351,7 +1509,11 @@ function SlotPlannerInner<
                     data-locked={locked ? "true" : undefined}
                     data-pending={pending ? "true" : undefined}
                     data-error={retry ? "true" : undefined}
-                    className={slotPlannerSlotCardClasses}
+                    className={cn(
+                      slotPlannerSlotCardClasses,
+                      calendarPresentation &&
+                        "data-[status=requestable]:border-s-success data-[status=requested]:border-s-warning data-[status=booked]:border-s-info border-s-[3px]",
+                    )}
                   >
                     {renderers?.slotCard
                       ? renderers.slotCard({
@@ -1447,9 +1609,14 @@ function SlotPlannerInner<
     <>
       <div
         data-slot="slot-planner-title"
-        className="min-w-0 truncate text-base font-semibold sm:text-lg"
+        className="min-w-0 text-base font-semibold sm:text-lg"
       >
         {title}
+        {calendarPresentation ? (
+          <p className="text-muted-foreground mt-1 text-xs font-normal">
+            {resolvedPlannerTimeZone.replaceAll("_", " ")}
+          </p>
+        ) : null}
       </div>
       <div className="col-span-2 row-start-2 flex min-w-0 items-center justify-start gap-[var(--dt-space-1)] sm:col-span-1 sm:col-start-auto sm:row-auto sm:justify-center">
         <IconButton
@@ -1460,6 +1627,15 @@ function SlotPlannerInner<
         >
           <ChevronIcon direction="backward" />
         </IconButton>
+        {calendarPresentation ? (
+          <span className="px-1 text-sm font-medium tabular-nums">
+            {currentView === "week"
+              ? dayMonthFormatter
+                  .formatRange(toUtcDate(weekDays[0]!), toUtcDate(weekDays[6]!))
+                  .replace(/\s+/gu, " ")
+              : dayMonthFormatter.format(toUtcDate(currentFocusedDate))}
+          </span>
+        ) : null}
         <Button
           size="sm"
           variant="outline"
@@ -1468,7 +1644,7 @@ function SlotPlannerInner<
           disabled={returnToCurrentDisabled}
           onClick={goToThisWeek}
         >
-          {returnToCurrentLabel}
+          {calendarPresentation ? resolvedTaxonomy.today : returnToCurrentLabel}
         </Button>
         <IconButton
           aria-label={nextPeriodLabel}
@@ -1505,6 +1681,20 @@ function SlotPlannerInner<
           </button>
         ))}
       </div>
+      {showCalendar ? (
+        <Button
+          size="sm"
+          leftIcon={<PlusIcon />}
+          disabled={createPending || isPastDay || loading || hasExternalError}
+          onClick={() => {
+            clearError(createKey);
+            setEditorViolations(null);
+            setEditorState({ mode: "create", date: currentFocusedDate });
+          }}
+        >
+          {resolvedTaxonomy.calendarAdd}
+        </Button>
+      ) : null}
     </>
   );
 
@@ -1530,7 +1720,11 @@ function SlotPlannerInner<
       >
         <div
           data-slot="slot-planner-toolbar"
-          className={slotPlannerToolbarClasses}
+          className={
+            showCalendar
+              ? "flex flex-wrap items-center justify-between gap-3"
+              : slotPlannerToolbarClasses
+          }
         >
           {renderers?.toolbar
             ? renderers.toolbar({
@@ -1552,18 +1746,75 @@ function SlotPlannerInner<
               })
             : defaultToolbar}
         </div>
-        {currentView === "week" ? (
+        {showCalendar ? (
+          <>
+            {!loading && !hasExternalError && primaryCap ? (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0 flex-1">{defaultCapMeter}</div>
+              </div>
+            ) : null}
+            {loading ? (
+              defaultLoading
+            ) : hasExternalError ? (
+              defaultError
+            ) : (
+              <SlotPlannerCalendar
+                slots={planner.slots}
+                dates={weekDays}
+                focusedDate={currentFocusedDate}
+                today={todayIso}
+                now={now ?? new Date().toISOString()}
+                timeZone={resolvedPlannerTimeZone}
+                locale={locale}
+                taxonomy={resolvedTaxonomy}
+                onSelectDay={setFocusedDate}
+                onAdd={(date) => {
+                  setFocusedDate(date);
+                  setEditorViolations(null);
+                  setEditorState({ mode: "create", date });
+                }}
+                onOpenSlot={(occurrence) => {
+                  setFocusedDate(occurrence.occurrenceDate);
+                  setView("day");
+                  window.setTimeout(() => panelRef.current?.focus(), 0);
+                }}
+              />
+            )}
+            {createPending ? (
+              <p role="status" className={slotPlannerSavePendingClasses}>
+                {resolvedTaxonomy.savePending}
+              </p>
+            ) : null}
+            {createRetry ? (
+              <div role="alert" className={slotPlannerSaveErrorClasses}>
+                {resolvedTaxonomy.saveError}
+                <Button size="sm" variant="outline" onClick={createRetry}>
+                  {resolvedTaxonomy.retry}
+                </Button>
+              </div>
+            ) : null}
+          </>
+        ) : currentView === "week" ? (
           <div
             data-slot="slot-planner-week-layout"
-            className="grid min-w-0 gap-[var(--dt-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
+            className={cn(
+              "grid min-w-0 gap-4",
+              !calendarPresentation && "md:grid-cols-[10rem_minmax(0,1fr)]",
+            )}
           >
             {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- The tablist delegates keyboard events to its roving, focusable tab buttons. */}
             <div
               role="tablist"
               aria-label={resolvedTaxonomy.weekRailLabel}
-              aria-orientation={railOrientation}
+              aria-orientation={
+                calendarPresentation ? "horizontal" : railOrientation
+              }
               data-slot="slot-planner-day-rail"
-              className={slotPlannerDayRailClasses}
+              className={
+                calendarPresentation
+                  ? "border-border flex min-w-0 gap-1 overflow-x-auto border-b pb-2"
+                  : slotPlannerDayRailClasses
+              }
               onKeyDown={handleRailKeyDown}
             >
               {weekDays.map((date) => {
@@ -1575,44 +1826,61 @@ function SlotPlannerInner<
                       {weekdayFormatter.format(toUtcDate(date))}
                     </span>
                     <span className="text-sm font-semibold">
-                      {dayMonthFormatter.format(toUtcDate(date))}
+                      {calendarPresentation
+                        ? Number(date.slice(-2))
+                        : dayMonthFormatter.format(toUtcDate(date))}
                     </span>
-                    {slotPlannerOccurrenceStatuses
-                      .filter((status) => summary[status] > 0)
-                      .map((status) => {
-                        const summaryText = formatSlotPlannerCountTemplate(
-                          resolvedTaxonomy.statusCountSummary,
-                          summary[status],
-                          {
-                            statusLabel: resolvedTaxonomy.statusLabels[status],
-                          },
+                    {calendarPresentation ? (
+                      <span
+                        className="text-muted-foreground text-xs"
+                        aria-label={formatSlotPlannerCountTemplate(
+                          resolvedTaxonomy.calendarSlotCount,
+                          (occurrencesByDate[date] ?? []).length,
+                          {},
                           locale,
-                        );
+                        )}
+                      >
+                        {(occurrencesByDate[date] ?? []).length ? "•" : "–"}
+                      </span>
+                    ) : (
+                      slotPlannerOccurrenceStatuses
+                        .filter((status) => summary[status] > 0)
+                        .map((status) => {
+                          const summaryText = formatSlotPlannerCountTemplate(
+                            resolvedTaxonomy.statusCountSummary,
+                            summary[status],
+                            {
+                              statusLabel:
+                                resolvedTaxonomy.statusLabels[status],
+                            },
+                            locale,
+                          );
 
-                        return (
-                          <span
-                            key={status}
-                            title={summaryText}
-                            data-slot="slot-planner-day-summary"
-                            data-status={status}
-                            className="text-muted-foreground flex w-full min-w-0 items-center gap-[var(--dt-space-1)] overflow-hidden text-xs whitespace-nowrap"
-                          >
+                          return (
                             <span
-                              aria-hidden="true"
-                              className={cn(
-                                "size-1.5 shrink-0 rounded-full",
-                                slotPlannerStatusDotClasses[status],
-                              )}
-                            />
-                            <span
-                              data-slot="slot-planner-day-summary-text"
-                              className="min-w-0 truncate"
+                              key={status}
+                              title={summaryText}
+                              data-slot="slot-planner-day-summary"
+                              data-status={status}
+                              className="text-muted-foreground flex w-full min-w-0 items-center gap-[var(--dt-space-1)] overflow-hidden text-xs whitespace-nowrap"
                             >
-                              {summaryText}
+                              <span
+                                aria-hidden="true"
+                                className={cn(
+                                  "size-1.5 shrink-0 rounded-full",
+                                  slotPlannerStatusDotClasses[status],
+                                )}
+                              />
+                              <span
+                                data-slot="slot-planner-day-summary-text"
+                                className="min-w-0 truncate"
+                              >
+                                {summaryText}
+                              </span>
                             </span>
-                          </span>
-                        );
-                      })}
+                          );
+                        })
+                    )}
                   </>
                 );
 
@@ -1639,10 +1907,14 @@ function SlotPlannerInner<
                     data-selected={selected ? "true" : undefined}
                     data-today={date === todayIso ? "true" : undefined}
                     data-past={date < todayIso ? "true" : undefined}
-                    className={slotPlannerDayTabClasses}
+                    className={
+                      calendarPresentation
+                        ? "focus-visible:outline-ring data-[selected=true]:border-primary data-[selected=true]:bg-primary/5 relative flex min-h-20 min-w-10 flex-1 flex-col rounded-md border-b-2 border-transparent p-2 text-start focus-visible:outline-2"
+                        : slotPlannerDayTabClasses
+                    }
                     onClick={() => setFocusedDate(date)}
                   >
-                    {selected ? (
+                    {selected && !calendarPresentation ? (
                       // Decorative shared-layout indicator; the non-motion
                       // selection state stays on aria-selected/data-selected.
                       <SlotPlannerDayTabIndicator
@@ -1690,7 +1962,12 @@ function SlotPlannerInner<
             }
             seriesValues={
               editorState.mode === "create"
-                ? getCreateEditorValues(resolvedPlannerTimeZone)
+                ? getCreateEditorValues(
+                    resolvedPlannerTimeZone,
+                    editorState.date,
+                    now ?? new Date().toISOString(),
+                    constraints,
+                  )
                 : getSeriesEditorValues(editorState.occurrence.slot)
             }
             occurrenceValues={
@@ -1702,6 +1979,7 @@ function SlotPlannerInner<
                   }
             }
             taxonomy={resolvedTaxonomy}
+            constraints={constraints}
             violations={editorViolations ?? undefined}
             onDismiss={() => {
               setEditorViolations(null);

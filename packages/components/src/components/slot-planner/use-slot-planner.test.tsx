@@ -45,6 +45,23 @@ function renderPlannerHook(options: UseSlotPlannerOptions = {}) {
 }
 
 describe("useSlotPlanner", () => {
+  it("rejects newly created slots in the past without dispatching", () => {
+    const onCreateSlot = vi.fn();
+    const { result } = renderPlannerHook({
+      now: "2026-07-06T12:00:00Z",
+      onCreateSlot,
+    });
+    let violations: SlotPlannerViolation[] = [];
+    act(() => {
+      violations = result.current.createSlot(baseEditorValues);
+    });
+    expect(violations).toEqual(
+      expect.arrayContaining([expect.objectContaining({ code: "min-notice" })]),
+    );
+    expect(onCreateSlot).not.toHaveBeenCalled();
+    expect(result.current.slots).toEqual([]);
+  });
+
   it("resolves taxonomy, week days, occurrences, summaries, and cap info", () => {
     const { result } = renderPlannerHook({
       slots: slotPlannerSampleSlots,

@@ -235,6 +235,10 @@ describe("SlotPicker week view", () => {
       seats: 1,
       viewerTimeZone: "Europe/London",
     });
+    const sent = within(card).getByRole("button", { name: "Request sent" });
+    expect(sent).toHaveAttribute("aria-disabled", "true");
+    await user.click(sent);
+    expect(onBookRequest).toHaveBeenCalledTimes(1);
   });
 
   it("navigates weeks with the toolbar and reports focus changes", async () => {
@@ -556,7 +560,8 @@ describe("SlotPicker keyboard support", () => {
     expect(onBookRequest).toHaveBeenCalledTimes(1);
 
     await user.keyboard(" ");
-    expect(onBookRequest).toHaveBeenCalledTimes(2);
+    expect(onBookRequest).toHaveBeenCalledTimes(1);
+    expect(requestButton).toHaveAttribute("aria-disabled", "true");
     expect(onBookRequest.mock.calls[0]![0]).toEqual({
       slotId: "mon-morning-architecture",
       occurrenceDate: "2026-07-06",
