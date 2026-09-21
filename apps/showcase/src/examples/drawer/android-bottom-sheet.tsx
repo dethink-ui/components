@@ -5,6 +5,7 @@ import {
   DrawerClose,
   DrawerContent,
   DrawerDescription,
+  DrawerFooter,
   DrawerHandle,
   DrawerHeader,
   DrawerTitle,
@@ -60,19 +61,17 @@ export function DrawerAndroidBottomSheet() {
           dismissible
           showCloseButton
           closeButtonLabel="Close quick actions"
-          dimension={450}
+          dimension="min(36rem, 90dvh)"
           className="inset-x-[max(var(--dt-space-4),calc((100vw-450px)/2))] overflow-hidden"
         >
           <DrawerHandle aria-label="Drag to dismiss quick actions" />
           <DrawerHeader>
             <DrawerTitle>Quick actions</DrawerTitle>
-            <DrawerDescription>
-              A compact 450px Android-style sheet for high-frequency links.
-            </DrawerDescription>
+            <DrawerDescription>Shortcuts for your workspace.</DrawerDescription>
           </DrawerHeader>
           <nav
             aria-label="Quick actions"
-            className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-3)] py-[var(--dt-space-3)]"
+            className="grid min-h-0 flex-1 content-start gap-[var(--dt-space-3)] overflow-y-auto overscroll-contain px-[var(--dt-space-3)] py-[var(--dt-space-3)]"
           >
             <ul className="grid gap-[var(--dt-space-1)]">
               {quickLinks.map(({ description, href, icon: Icon, label }) => (
@@ -110,11 +109,11 @@ export function DrawerAndroidBottomSheet() {
               ))}
             </div>
           </nav>
-          <div className="border-border/60 border-t p-[var(--dt-space-3)]">
+          <DrawerFooter>
             <DrawerClose className="w-full" variant="ghost">
               Cancel
             </DrawerClose>
-          </div>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </div>

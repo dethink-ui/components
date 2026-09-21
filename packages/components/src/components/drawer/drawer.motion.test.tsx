@@ -66,7 +66,77 @@ function DrawerDragProbe({
   return <div ref={contentRef} />;
 }
 
+function SnapLayoutProbe({
+  direction,
+  snapPoint,
+  size,
+  onStyle,
+}: {
+  direction: DrawerDirection;
+  snapPoint: number;
+  size: number;
+  onStyle: (style: DrawerDragMotionProps["style"]) => void;
+}) {
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const { getMotionProps } = useDrawerDrag({
+    activeSnapPoint: snapPoint,
+    snapPoints: [0.35, 0.65, 1],
+    closeThreshold: 0.25,
+    contentRef,
+    direction,
+    fallbackContentSize: size,
+    motionPreset: "none",
+    onOpenChange: vi.fn(),
+    open: true,
+    velocityThreshold: 500,
+  });
+  onStyle(getMotionProps(true).style);
+  return <div ref={contentRef} />;
+}
+
 describe("Drawer motion (enabled)", () => {
+  it.each(["bottom", "top", "left", "right"] as const)(
+    "keeps the visible layout aligned with %s snap changes and resizing",
+    async (direction) => {
+      let style: DrawerDragMotionProps["style"] | undefined;
+      const capture = (next: DrawerDragMotionProps["style"]) => {
+        style = next;
+      };
+      const { rerender } = render(
+        <SnapLayoutProbe
+          direction={direction}
+          snapPoint={0.35}
+          size={600}
+          onStyle={capture}
+        />,
+      );
+      await waitFor(() =>
+        expect(style?.["--drawer-visible-size"]?.get()).toBe("210px"),
+      );
+      rerender(
+        <SnapLayoutProbe
+          direction={direction}
+          snapPoint={0.65}
+          size={600}
+          onStyle={capture}
+        />,
+      );
+      await waitFor(() =>
+        expect(style?.["--drawer-visible-size"]?.get()).toBe("390px"),
+      );
+      rerender(
+        <SnapLayoutProbe
+          direction={direction}
+          snapPoint={0.65}
+          size={400}
+          onStyle={capture}
+        />,
+      );
+      await waitFor(() =>
+        expect(style?.["--drawer-visible-size"]?.get()).toBe("260px"),
+      );
+    },
+  );
   it("seeds first open from the configured drawer size instead of the viewport", () => {
     let translateValue: TestMotionValue | null = null;
     const captureTranslateValue = (value: TestMotionValue) => {

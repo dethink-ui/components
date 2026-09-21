@@ -46,7 +46,7 @@ export function DrawerBasic() {
               Review the workspace changes before checkout.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="text-foreground grid gap-[var(--dt-space-4)] px-[var(--dt-space-6)] py-[var(--dt-space-4)] text-sm">
+          <div className="text-foreground grid min-h-0 flex-1 content-start gap-[var(--dt-space-4)] overflow-y-auto overscroll-contain px-[var(--dt-space-6)] py-[var(--dt-space-4)] text-sm">
             <div className="grid gap-[var(--dt-space-3)]">
               {items.map((item) => (
                 <div
@@ -83,7 +83,7 @@ export function DrawerBasic() {
           </div>
           <DrawerFooter>
             <DrawerClose variant="outline">Cancel</DrawerClose>
-            <DrawerClose>Checkout</DrawerClose>
+            <DrawerClose variant="solid">Checkout</DrawerClose>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

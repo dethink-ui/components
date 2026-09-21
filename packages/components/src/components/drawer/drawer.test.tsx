@@ -106,12 +106,10 @@ describe("Drawer (modal mode)", () => {
     expect(content).toHaveClass("right-0");
     expect(content).toHaveClass("w-80");
     expect(content).toHaveClass("origin-right");
-    expect(content).toHaveClass("bg-background/95");
-    expect(content).toHaveClass("backdrop-blur");
+    expect(content).toHaveClass("bg-background", "max-w-full", "max-h-dvh");
     expect(overlay).toHaveClass("custom-overlay");
-    expect(overlay).toHaveClass("backdrop-blur-[2px]");
     expect(header).toHaveClass("border-b", "bg-background/95");
-    expect(footer).toHaveClass("border-t", "bg-background/95");
+    expect(footer).toHaveClass("border-t", "bg-background", "mt-auto");
     expect(screen.getByText("Drawer body")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Done" }));

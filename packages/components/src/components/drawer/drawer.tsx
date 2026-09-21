@@ -160,6 +160,7 @@ export interface DrawerCloseProps extends DrawerTriggerProps {}
 export interface DrawerHandleProps extends HTMLAttributes<HTMLDivElement> {}
 
 interface DrawerRootContextValue {
+  nested: boolean;
   activeSnapPoint?: number;
   backgroundScale: boolean;
   closeThreshold: number;
@@ -239,10 +240,10 @@ const drawerDirectionAxis: Record<DrawerDirection, "horizontal" | "vertical"> =
 const drawerRootClasses = "contents";
 
 const drawerOverlayBaseClasses =
-  "fixed inset-0 z-50 bg-[var(--dt-overlay-scrim)] outline-none backdrop-blur-[2px] motion-safe:transition-opacity data-[entering]:opacity-0 data-[exiting]:opacity-0";
+  "fixed inset-0 z-50 bg-[color-mix(in_srgb,var(--dt-overlay-scrim)_75%,transparent)] outline-none motion-safe:transition-opacity data-[entering]:opacity-0 data-[exiting]:opacity-0 data-[nested=true]:bg-transparent";
 
 const drawerContentBaseClasses =
-  "fixed z-50 flex flex-col border-border/80 bg-background/95 text-foreground shadow-[0_28px_90px_-44px_rgb(0_0_0/0.55),0_12px_36px_-24px_rgb(0_0_0/0.35)] outline-none backdrop-blur will-change-transform motion-safe:transition-[transform,opacity,filter] motion-safe:ease-out";
+  "fixed z-50 flex max-h-dvh max-w-full flex-col border-border/80 bg-background text-foreground shadow-xl outline-none will-change-transform motion-safe:transition-[opacity,filter] motion-safe:ease-out data-[motion=none]:transition-none data-[reduced-motion=true]:transition-none";
 
 /**
  * Dims a receded (auto-parented-back) drawer. Always present in the class
@@ -255,11 +256,11 @@ const drawerContentRecedeClasses = "data-[drawer-receded=true]:brightness-90";
 
 const drawerContentPositionClasses: Record<DrawerDirection, string> = {
   bottom:
-    "inset-x-0 bottom-0 origin-bottom rounded-t-lg border-t data-[entering]:translate-y-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0",
+    "inset-x-0 bottom-0 origin-bottom rounded-t-2xl border-t data-[entering]:translate-y-0 data-[exiting]:translate-y-full data-[exiting]:opacity-0",
   left: "inset-y-0 left-0 origin-left rounded-r-lg border-r data-[entering]:translate-x-0 data-[exiting]:-translate-x-full data-[exiting]:opacity-0",
   right:
     "inset-y-0 right-0 origin-right rounded-l-lg border-l data-[entering]:translate-x-0 data-[exiting]:translate-x-full data-[exiting]:opacity-0",
-  top: "inset-x-0 top-0 origin-top rounded-b-lg border-b data-[entering]:translate-y-0 data-[exiting]:-translate-y-full data-[exiting]:opacity-0",
+  top: "inset-x-0 top-0 origin-top rounded-b-2xl border-b data-[entering]:translate-y-0 data-[exiting]:-translate-y-full data-[exiting]:opacity-0",
 };
 
 const drawerPushContainerBaseClasses =
@@ -300,7 +301,21 @@ const drawerContentScrollBehaviorClasses: Record<DrawerScrollBehavior, string> =
   };
 
 // The dialog needs a real box so native focus and Escape dismissal work on open.
-const drawerPanelClasses = "flex min-h-0 min-w-0 flex-1 flex-col outline-none";
+const drawerPanelClasses =
+  "relative flex min-h-0 min-w-0 flex-1 flex-col outline-none";
+
+function drawerSnapPanelClassNames(direction: DrawerDirection) {
+  switch (direction) {
+    case "bottom":
+      return "h-[var(--drawer-visible-size)] flex-none overflow-y-auto overscroll-contain";
+    case "top":
+      return "mt-auto h-[var(--drawer-visible-size)] flex-none overflow-y-auto overscroll-contain";
+    case "left":
+      return "ml-auto h-full w-[var(--drawer-visible-size)] flex-none overflow-y-auto overscroll-contain";
+    case "right":
+      return "h-full w-[var(--drawer-visible-size)] flex-none overflow-y-auto overscroll-contain";
+  }
+}
 
 const drawerHeaderClasses =
   "grid shrink-0 gap-[var(--dt-space-1-5)] border-b border-border/60 bg-background/95 p-[var(--dt-space-6)] pb-[var(--dt-space-3)] text-start backdrop-blur";
@@ -309,7 +324,7 @@ const drawerHeaderWithCloseButtonClasses =
   "pe-[calc(var(--dt-space-6)+var(--dt-space-8))]";
 
 const drawerFooterClasses =
-  "flex shrink-0 flex-col-reverse gap-density-gap border-t border-border/60 bg-background/95 p-[var(--dt-space-6)] pt-[var(--dt-space-3)] backdrop-blur sm:flex-row sm:justify-end";
+  "mt-auto flex shrink-0 flex-col-reverse gap-density-gap border-t border-border/60 bg-background p-[var(--dt-space-6)] pt-[var(--dt-space-3)] pb-[max(var(--dt-space-4),env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-end";
 
 const drawerTitleClasses =
   "text-lg font-semibold leading-7 tracking-normal text-foreground";
@@ -817,6 +832,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
 
     const rootContextValue = useMemo<DrawerRootContextValue>(
       () => ({
+        nested: Boolean(nestedParentContext),
         activeSnapPoint,
         backgroundScale,
         closeThreshold,
@@ -841,6 +857,7 @@ export const Drawer = forwardRef<HTMLDivElement, DrawerProps>(
       }),
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [
+        nestedParentContext,
         activeSnapPoint,
         backgroundScale,
         closeThreshold,
@@ -1073,6 +1090,12 @@ function DrawerPushContent(
     size: sizing.size,
   });
 
+  const hasVisibleSnapLayout =
+    motionEnabled && Boolean(rootContext?.snapPoints?.length);
+  const snapPanelClasses = hasVisibleSnapLayout
+    ? drawerSnapPanelClassNames(direction)
+    : undefined;
+
   const panel = (
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The dialog handles bubbled Escape keys while focus remains on its controls.
     <div
@@ -1082,7 +1105,7 @@ function DrawerPushContent(
       aria-label={ariaLabel}
       aria-labelledby={labelledBy}
       aria-modal="false"
-      className={drawerPanelClasses}
+      className={cn(drawerPanelClasses, snapPanelClasses)}
       data-slot="drawer-panel"
       onKeyDown={handleKeyDown}
       role="dialog"
@@ -1218,7 +1241,7 @@ function DrawerModalContent(
     direction,
     sizing,
   });
-  const { dragControls, getMotionProps } = useDrawerDrag({
+  const { dragControls, getMotionProps, overlayOpacity } = useDrawerDrag({
     activeSnapPoint: rootContext?.activeSnapPoint,
     closeThreshold:
       rootContext?.closeThreshold ?? DRAWER_DEFAULT_CLOSE_THRESHOLD,
@@ -1277,7 +1300,12 @@ function DrawerModalContent(
       aria-describedby={joinIds(ariaDescribedBy, descriptionId ?? undefined)}
       aria-label={ariaLabel}
       aria-labelledby={labelledBy}
-      className={drawerPanelClasses}
+      className={cn(
+        drawerPanelClasses,
+        motionEnabled &&
+          rootContext?.snapPoints?.length &&
+          drawerSnapPanelClassNames(direction),
+      )}
       data-slot="drawer-panel"
       role="dialog"
     >
@@ -1308,11 +1336,21 @@ function DrawerModalContent(
       onOpenChange={(isOpen) => rootContext?.onOpenChange(isOpen)}
       data-direction={direction}
       data-slot="drawer-overlay"
+      data-nested={rootContext?.nested ? "true" : undefined}
+      style={motionEnabled ? { backgroundColor: "transparent" } : undefined}
       className={drawerOverlayClassNames({
         className: overlayClassName,
         motionPreset,
       })}
     >
+      {motionEnabled && !rootContext?.nested ? (
+        <MotionDiv
+          aria-hidden="true"
+          data-slot="drawer-scrim"
+          className="pointer-events-none absolute inset-0 bg-[color-mix(in_srgb,var(--dt-overlay-scrim)_75%,transparent)]"
+          style={{ opacity: overlayOpacity }}
+        />
+      ) : null}
       {motionEnabled ? (
         (() => {
           const motionProps = getMotionProps(

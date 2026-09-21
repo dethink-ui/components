@@ -5,7 +5,9 @@ import {
   useDragControls,
   useMotionValue,
   useReducedMotion,
+  useTransform,
   type DragControls,
+  type MotionValue,
   type PanInfo,
   type Transition,
 } from "motion/react";
@@ -161,7 +163,9 @@ export interface DrawerDragMotionProps {
   dragListener: boolean;
   dragMomentum: false;
   onDragEnd: (event: PointerEvent, info: PanInfo) => void;
-  style: { x: number; scale: number } | { y: number; scale: number };
+  style: ({ x: number; scale: number } | { y: number; scale: number }) & {
+    "--drawer-visible-size"?: MotionValue<string>;
+  };
 }
 
 export interface UseDrawerDragResult {
@@ -169,6 +173,7 @@ export interface UseDrawerDragResult {
   dragControls: DragControls;
   getMotionProps: (dragHandleOnly: boolean) => DrawerDragMotionProps;
   hasSnapPoints: boolean;
+  overlayOpacity: MotionValue<number>;
 }
 
 function measureContentSize(
@@ -176,9 +181,9 @@ function measureContentSize(
   axis: "x" | "y",
   fallbackContentSize?: number,
 ): number {
-  const rect = contentRef.current?.getBoundingClientRect();
+  const element = contentRef.current;
 
-  if (!rect) {
+  if (!element) {
     return (
       fallbackContentSize ??
       (typeof window === "undefined"
@@ -189,7 +194,9 @@ function measureContentSize(
     );
   }
 
-  const measuredSize = axis === "x" ? rect.width : rect.height;
+  // Measure layout size, not the scaled size of a receded parent.
+  const measuredSize =
+    axis === "x" ? element.offsetWidth : element.offsetHeight;
 
   if (measuredSize > 0 || typeof window === "undefined") {
     return measuredSize;
@@ -244,6 +251,27 @@ export function useDrawerDrag({
 
   const translateMotionValue = useMotionValue(0);
   const scaleMotionValue = useMotionValue(1);
+  const contentSizeValue = useMotionValue(fallbackContentSize ?? 0);
+  const recedeOffset = useMotionValue(0);
+  const recedeTranslate = useTransform(recedeOffset, (value) =>
+    axis === "x" ? `${value}px 0px` : `0px ${value}px`,
+  );
+  const visibleSize = useTransform(
+    () =>
+      `${Math.max(0, contentSizeValue.get() - Math.max(0, translateMotionValue.get() * closingSign))}px`,
+  );
+  const overlayOpacity = useTransform(() => {
+    const restingVisibleSize = contentSizeValue.get() * resolvedSnapPoint;
+    if (restingVisibleSize <= 0) return 0;
+    return Math.min(
+      1,
+      Math.max(
+        0,
+        (contentSizeValue.get() - translateMotionValue.get() * closingSign) /
+          restingVisibleSize,
+      ),
+    );
+  });
   const dragControls = useDragControls();
   const startSnapPointRef = useRef(resolvedSnapPoint);
   const hasMountedRef = useRef(false);
@@ -263,6 +291,7 @@ export function useDrawerDrag({
     if (contentSize <= 0) {
       return undefined;
     }
+    contentSizeValue.set(contentSize);
 
     const openTarget = (1 - resolvedSnapPoint) * contentSize * closingSign;
     const closedTarget = contentSize * closingSign;
@@ -284,7 +313,29 @@ export function useDrawerDrag({
 
     const controls = animate(translateMotionValue, target, springTransition);
 
-    return () => controls.stop();
+    // Keep snap geometry correct after viewport or custom-size changes.
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(() => {
+            const size = measureContentSize(
+              contentRef,
+              axis,
+              fallbackContentSize,
+            );
+            if (size === contentSizeValue.get()) return;
+            controls.stop();
+            contentSizeValue.set(size);
+            translateMotionValue.set(
+              (open ? 1 - resolvedSnapPoint : 1) * size * closingSign,
+            );
+          });
+    if (contentRef.current) observer?.observe(contentRef.current);
+
+    return () => {
+      controls.stop();
+      observer?.disconnect();
+    };
   }, [
     open,
     resolvedSnapPoint,
@@ -293,6 +344,8 @@ export function useDrawerDrag({
     fallbackContentSize,
     translateMotionValue,
     springTransition,
+    contentRef,
+    contentSizeValue,
   ]);
 
   useEffect(() => {
@@ -302,8 +355,23 @@ export function useDrawerDrag({
       springTransition,
     );
 
-    return () => controls.stop();
-  }, [receded, recedeScale, scaleMotionValue, springTransition]);
+    const offsetControls = animate(
+      recedeOffset,
+      receded ? -40 * closingSign : 0,
+      springTransition,
+    );
+    return () => {
+      controls.stop();
+      offsetControls.stop();
+    };
+  }, [
+    receded,
+    recedeScale,
+    scaleMotionValue,
+    springTransition,
+    recedeOffset,
+    closingSign,
+  ]);
 
   function commitSnapPoint(nextSnapPoint: number) {
     if (!isControlled) {
@@ -375,10 +443,13 @@ export function useDrawerDrag({
       dragListener: !dragHandleOnly,
       dragMomentum: false,
       onDragEnd: handleDragEnd,
-      style:
-        axis === "x"
+      style: {
+        ...(axis === "x"
           ? { scale: scaleMotionValue, x: translateMotionValue }
-          : { scale: scaleMotionValue, y: translateMotionValue },
+          : { scale: scaleMotionValue, y: translateMotionValue }),
+        translate: recedeTranslate,
+        ...(hasSnapPoints ? { "--drawer-visible-size": visibleSize } : {}),
+      },
     } as unknown as DrawerDragMotionProps;
   }
 
@@ -387,6 +458,7 @@ export function useDrawerDrag({
     dragControls,
     getMotionProps,
     hasSnapPoints,
+    overlayOpacity,
   };
 }
 
