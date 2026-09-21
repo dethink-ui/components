@@ -58,6 +58,35 @@ export async function verifyRegistryRuntime(root, framework, port = 3181) {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.goto(url);
+    for (const name of ["Preparing workspace", "Syncing records"]) {
+      const spinner = page.getByRole("status", { name, exact: true });
+      await expect(spinner).toBeVisible();
+      expect(
+        await spinner.evaluate(
+          (element) => element.getAnimations({ subtree: true }).length,
+        ),
+      ).toBe(0);
+    }
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await expect
+      .poll(() =>
+        page
+          .getByRole("status", { name: "Preparing workspace", exact: true })
+          .evaluate(
+            (element) => element.getAnimations({ subtree: true }).length,
+          ),
+      )
+      .toBe(2);
+    await expect
+      .poll(() =>
+        page
+          .getByRole("status", { name: "Syncing records", exact: true })
+          .evaluate(
+            (element) => element.getAnimations({ subtree: true }).length,
+          ),
+      )
+      .toBe(2);
+    await page.emulateMedia({ reducedMotion: "reduce" });
     await page.getByRole("button", { name: "Count 0", exact: true }).click();
     const counter = page.getByRole("button", { name: "Count 1", exact: true });
     await expect(counter).toBeVisible();

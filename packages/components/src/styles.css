@@ -248,6 +248,34 @@
   }
 }
 
+@keyframes dt-spinner-bounce {
+  0%,
+  100% {
+    transform: translateY(60%) scale(0.6);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  50% {
+    transform: translateY(-60%) scale(1);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+}
+
+@keyframes dt-spinner-shadow {
+  0%,
+  100% {
+    transform: perspective(60px) translateZ(0) translateY(0) scale(0.7);
+    filter: blur(0.3px);
+    opacity: 0.32;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  50% {
+    transform: perspective(60px) translateZ(-2px) translateY(10%) scale(1.15);
+    filter: blur(1px);
+    opacity: 0.16;
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+}
+
 @keyframes dt-progress-indeterminate {
   0% {
     translate: -100% 0;

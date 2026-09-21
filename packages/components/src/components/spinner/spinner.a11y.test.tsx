@@ -11,6 +11,10 @@ describe("Spinner accessibility", () => {
       <main aria-label="Spinner smoke">
         <Spinner />
         <Spinner label="Loading billing records" />
+        <Spinner variant="bouncing-dot" />
+        <Spinner variant="bouncing-dot" label="Preparing workspace" />
+        <Spinner variant="moving-rings" />
+        <Spinner variant="moving-rings" label="Syncing records" />
       </main>,
     );
 

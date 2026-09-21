@@ -3,7 +3,7 @@
   "name": "spinner",
   "type": "registry:ui",
   "title": "Spinner",
-  "description": "Compact loading indicator with decorative-by-default semantics, labelled status mode, ring and dots variants, token-backed tones and sizes, and reduced-motion-safe animation.",
+  "description": "Compact loading indicator with decorative-by-default semantics, labelled status mode, ring, dots, bouncing-dot and moving-rings variants, token-backed tones and sizes, and reduced-motion-safe animation. Install with dethink-base for the animation stylesheet.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
