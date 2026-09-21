@@ -43,7 +43,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Showcase production and browser smoke checks
-        run: pnpm exec playwright test e2e/showcase-recipes-gallery.spec.ts e2e/showcase-release-acceptance.spec.ts --reporter=line
+        run: pnpm exec playwright test e2e/showcase-recipes-gallery.spec.ts e2e/showcase-release-acceptance.spec.ts e2e/showcase-tabs-layout.spec.ts --reporter=line
 
       - name: Accessibility evidence across browser engines
         run: pnpm test:accessibility:report

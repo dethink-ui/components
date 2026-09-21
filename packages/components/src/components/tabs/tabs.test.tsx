@@ -147,41 +147,49 @@ describe("Tabs state and anatomy", () => {
     );
   });
 
-  it("keeps collapsible triggers labeled and icon-bearing while collapsed", () => {
-    render(
-      <Tabs collapsible defaultValue="explore">
-        <Tabs.List aria-label="Rail">
-          <Tabs.Trigger
-            value="explore"
-            icon={<svg data-testid="explore-icon" aria-hidden />}
-          >
-            Explore
-          </Tabs.Trigger>
-          <Tabs.Trigger
-            value="inbox"
-            icon={<svg data-testid="inbox-icon" aria-hidden />}
-          >
-            Inbox
-          </Tabs.Trigger>
-        </Tabs.List>
-        <Tabs.Panel value="explore">Explore panel</Tabs.Panel>
-        <Tabs.Panel value="inbox">Inbox panel</Tabs.Panel>
-      </Tabs>,
-    );
+  it.each(["horizontal", "vertical"] as const)(
+    "keeps %s icon triggers labeled with collapsible enabled",
+    (orientation) => {
+      render(
+        <Tabs collapsible orientation={orientation} defaultValue="explore">
+          <Tabs.List aria-label="Rail">
+            <Tabs.Trigger
+              value="explore"
+              icon={<svg data-testid="explore-icon" aria-hidden />}
+            >
+              Explore
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              value="inbox"
+              icon={<svg data-testid="inbox-icon" aria-hidden />}
+            >
+              Inbox
+            </Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Panel value="explore">Explore panel</Tabs.Panel>
+          <Tabs.Panel value="inbox">Inbox panel</Tabs.Panel>
+        </Tabs>,
+      );
 
-    // The selected trigger and the collapsed trigger both keep their text as the
-    // accessible name, so the label must stay in the DOM even while visually clipped.
-    const explore = screen.getByRole("tab", { name: "Explore" });
-    const inbox = screen.getByRole("tab", { name: "Inbox" });
+      // The selected trigger and the collapsed trigger both keep their text as the
+      // accessible name, so the label must stay in the DOM even while visually clipped.
+      const explore = screen.getByRole("tab", { name: "Explore" });
+      const inbox = screen.getByRole("tab", { name: "Inbox" });
 
-    expect(explore).toHaveAttribute("data-selected", "true");
-    expect(explore).toHaveAttribute("data-collapsible", "true");
-    expect(inbox).not.toHaveAttribute("data-selected");
-    expect(inbox).toHaveAttribute("data-collapsible", "true");
-    expect(screen.getByTestId("explore-icon")).toBeInTheDocument();
-    expect(screen.getByTestId("inbox-icon")).toBeInTheDocument();
-    expect(inbox).toHaveTextContent("Inbox");
-  });
+      expect(explore).toHaveAttribute("data-selected", "true");
+      expect(inbox).not.toHaveAttribute("data-selected");
+      for (const trigger of [explore, inbox]) {
+        if (orientation === "horizontal") {
+          expect(trigger).toHaveAttribute("data-collapsible", "true");
+        } else {
+          expect(trigger).not.toHaveAttribute("data-collapsible");
+        }
+      }
+      expect(screen.getByTestId("explore-icon")).toBeInTheDocument();
+      expect(screen.getByTestId("inbox-icon")).toBeInTheDocument();
+      expect(inbox).toHaveTextContent("Inbox");
+    },
+  );
 
   it("composes refs, class names, variants, and size data", () => {
     const rootRef = createRef<HTMLDivElement>();

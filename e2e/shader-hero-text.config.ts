@@ -1,4 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
+import { fileURLToPath } from "node:url";
+
+const baseURL = process.env.SHADER_HERO_BASE_URL ?? "http://localhost:5279";
 
 export default defineConfig({
   testDir: ".",
@@ -8,7 +11,7 @@ export default defineConfig({
   workers: 1,
   reporter: "list",
   use: {
-    baseURL: "http://localhost:5279",
+    baseURL,
     viewport: { width: 1440, height: 1000 },
     reducedMotion: "no-preference",
     trace: "retain-on-failure",
@@ -27,9 +30,10 @@ export default defineConfig({
     },
   ],
   webServer: {
+    cwd: fileURLToPath(new URL("..", import.meta.url)),
     command:
       "node apps/showcase/node_modules/next/dist/bin/next dev apps/showcase --webpack --port 5279",
-    url: "http://localhost:5279/components/shader-hero-text",
+    url: `${baseURL}/components/shader-hero-text`,
     reuseExistingServer: true,
     timeout: 120_000,
   },

@@ -39,9 +39,9 @@ export interface TabsProps extends Omit<
 > {
   activationMode?: TabsActivationMode;
   /**
-   * Collapse triggers to their icon by default, revealing the label only for the
+   * Collapse horizontal triggers to their icon, revealing the label only for the
    * selected trigger and on hover/focus. Requires each Tabs.Trigger to pass an
-   * `icon`. Works in both orientations as an expandable icon rail.
+   * `icon`. Vertical tabs always show their labels.
    */
   collapsible?: boolean;
   defaultValue?: TabsValue;
@@ -700,7 +700,8 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
     const selected = selectedValue === value;
     const tabIndex = disabled ? undefined : value === tabStopValue ? 0 : -1;
     const hasIcon = icon !== undefined && icon !== null;
-    const collapseLabel = collapsible && hasIcon;
+    const collapseLabel =
+      collapsible && hasIcon && orientation === "horizontal";
 
     const handleFocus = (event: FocusEvent<HTMLButtonElement>) => {
       onFocus?.(event);
@@ -836,7 +837,13 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         ) : null}
         <span
           data-slot="tabs-trigger-content"
-          className={tabsTriggerContentClasses}
+          className={cn(
+            tabsTriggerContentClasses,
+            collapsible &&
+              hasIcon &&
+              orientation === "vertical" &&
+              "w-full justify-start",
+          )}
         >
           {hasIcon ? (
             <span

@@ -66,7 +66,7 @@ export default function TabsPage() {
             wide
             file="tabs/collapsible.tsx"
             title="Collapsible icon rail"
-            description="Pass collapsible plus an icon on each trigger to keep only the active tab labeled. Hover or focus a collapsed tab to reveal its name; selecting it expands the label while the previous tab settles back to an icon. The same reveal works in vertical layout as an expandable side rail."
+            description="Horizontal tabs support collapsible labels: pass collapsible and an icon on each trigger, then hover, focus, or select a tab to reveal its name. Vertical tabs always show every label and keep the rail width stable."
           >
             <TabsCollapsible />
           </ExampleBlock>
