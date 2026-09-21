@@ -8,6 +8,7 @@ import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { FeedbackAnnouncer } from "@/examples/feedback-states/announcer";
 import { FeedbackLoading } from "@/examples/feedback-states/loading";
+import { FeedbackLoaders } from "@/examples/feedback-states/loaders";
 import { FeedbackMessaging } from "@/examples/feedback-states/messaging";
 import { FeedbackToastWorkflow } from "@/examples/feedback-states/toast-workflow";
 import { feedbackStateProps } from "@/lib/props/feedback-states";
@@ -52,6 +53,13 @@ export default function FeedbackStatesPage() {
         description="Feedback primitives compose across loading, async status, empty data, and mutation confirmation flows."
       >
         <div className="space-y-10">
+          <ExampleBlock
+            file="feedback-states/loaders.tsx"
+            title="Animated loaders"
+            description="Compact indicators for indeterminate activity. Every size keeps a steady footprint; reduced motion shows a static shape. Use a labelled status around visible loading text to avoid duplicate announcements."
+          >
+            <FeedbackLoaders />
+          </ExampleBlock>
           <ExampleBlock
             file="feedback-states/loading.tsx"
             title="Loading and progress"
