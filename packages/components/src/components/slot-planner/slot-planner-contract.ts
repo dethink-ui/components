@@ -240,6 +240,14 @@ export type SlotPlannerCountTemplate = {
  * neutral slot language.
  */
 export type SlotPlannerTaxonomy = {
+  calendarAdd: string;
+  dayActions: string;
+  slotActions: string;
+  calendarHint: string;
+  calendarSlotCount: SlotPlannerCountTemplate;
+  moreOptions: string;
+  endTimePreview: string;
+  bookRequestSent: string;
   /** Singular noun for a slot, e.g. "slot", "session", "appointment". */
   slot: string;
   slotPlural: string;
@@ -395,6 +403,15 @@ export type SlotPlannerTaxonomyInput = Partial<
 };
 
 export const defaultSlotPlannerTaxonomy: SlotPlannerTaxonomy = {
+  calendarAdd: "Add slot",
+  dayActions: "Day actions",
+  slotActions: "Slot actions",
+  calendarHint:
+    "Select a slot to view its details and manage it. Times are shown in the zone above.",
+  calendarSlotCount: { one: "{count} slot", other: "{count} slots" },
+  moreOptions: "More options",
+  endTimePreview: "Ends at {time} · {timeZone}",
+  bookRequestSent: "Request sent",
   slot: "slot",
   slotPlural: "slots",
   statusLabels: {

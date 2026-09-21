@@ -36,6 +36,7 @@ export function SlotPlannerConstraints() {
   return (
     <SlotPlanner
       title="Advising hours"
+      timeZone="America/New_York"
       defaultSlots={sampleSlots}
       defaultFocusedDate="2026-07-06"
       now="2026-07-06T08:00:00-04:00"

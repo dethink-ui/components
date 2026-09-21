@@ -70,8 +70,8 @@ export const slotPlannerStatusDotClasses: Record<
 };
 
 export const slotPlannerSlotActionButtonClasses = buttonClassNames({
-  className: "shadow-sm",
-  size: "xs",
+  className: "min-h-10 shadow-none",
+  size: "sm",
   variant: "outline",
 });
 

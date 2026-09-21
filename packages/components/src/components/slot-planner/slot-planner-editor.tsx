@@ -7,6 +7,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { parseDateTime, toZoned } from "@internationalized/date";
 import { Button } from "../button";
 import { Checkbox } from "../checkbox";
 import {
@@ -38,6 +39,7 @@ import { Textarea } from "../textarea";
 import type {
   SlotPlannerTaxonomy,
   SlotPlannerViolation,
+  SlotPlannerConstraints,
 } from "./slot-planner-contract";
 import type {
   SlotPlannerEditorRecurrence,
@@ -45,7 +47,10 @@ import type {
   SlotPlannerEditorSeriesValues,
 } from "./slot-planner-crud";
 import type { SlotPlannerSlotEditorRenderContext } from "./slot-planner-renderers";
-import { formatSlotPlannerTemplate } from "./slot-planner-utils";
+import {
+  formatSlotPlannerTemplate,
+  formatSlotPlannerCountTemplate,
+} from "./slot-planner-utils";
 
 type SlotPlannerEditorScope = SlotPlannerEditorResult["scope"];
 
@@ -149,6 +154,7 @@ export interface SlotPlannerEditorDialogProps {
    * structural.
    */
   renderContent?: (context: SlotPlannerSlotEditorRenderContext) => ReactNode;
+  constraints?: SlotPlannerConstraints;
 }
 
 export function SlotPlannerEditorDialog({
@@ -162,8 +168,10 @@ export function SlotPlannerEditorDialog({
   onDismiss,
   onSubmit,
   renderContent,
+  constraints,
 }: SlotPlannerEditorDialogProps) {
   const baseId = useId();
+  const advancedRef = useRef<HTMLDetailsElement>(null);
   const asksScope = mode === "edit" && isRecurring;
   const [scope, setScope] = useState<SlotPlannerEditorScope>(
     asksScope ? "occurrence" : "series",
@@ -251,6 +259,7 @@ export function SlotPlannerEditorDialog({
     const form = event.currentTarget;
 
     if (!form.checkValidity()) {
+      if (advancedRef.current) advancedRef.current.open = true;
       form.reportValidity();
 
       return;
@@ -303,11 +312,23 @@ export function SlotPlannerEditorDialog({
     { label: taxonomy.recurringWeekly, value: "weekly" },
     { label: taxonomy.recurringBiweekly, value: "biweekly" },
   ];
+  let endTime = "";
+  try {
+    if (startTime && Number(durationText) > 0) {
+      const end = toZoned(parseDateTime(`${date}T${startTime}`), timeZone).add({
+        minutes: Number(durationText),
+      });
+      endTime = `${String(end.hour).padStart(2, "0")}:${String(end.minute).padStart(2, "0")}${end.toString().slice(0, 10) !== date ? ` (${end.toString().slice(0, 10)})` : ""}`;
+    }
+  } catch {
+    /* The constraint engine reports invalid wall-clock values on submit. */
+  }
 
   const defaultContent = (
     <form
       data-slot="slot-planner-editor-form"
       className={editorFormClasses}
+      noValidate
       onSubmit={handleSubmit}
     >
       <div className={editorFieldsClasses}>
@@ -355,6 +376,7 @@ export function SlotPlannerEditorDialog({
             <FieldControl asChild>
               <Input
                 type="time"
+                required
                 value={startTime}
                 onChange={(event) => setStartTime(event.target.value)}
               />
@@ -374,114 +396,149 @@ export function SlotPlannerEditorDialog({
             </FieldControl>
           </Field>
         </div>
+        <div className="flex flex-wrap gap-2">
+          {[30, 45, 60].map((minutes) => (
+            <Button
+              key={minutes}
+              type="button"
+              size="sm"
+              variant={Number(durationText) === minutes ? "soft" : "outline"}
+              aria-pressed={Number(durationText) === minutes}
+              disabled={
+                minutes < (constraints?.minDurationMinutes ?? 1) ||
+                minutes > (constraints?.maxDurationMinutes ?? Infinity) ||
+                minutes % (constraints?.durationIncrementMinutes ?? 1) !== 0
+              }
+              onClick={() => setDurationText(String(minutes))}
+            >
+              {formatSlotPlannerCountTemplate(
+                taxonomy.durationSummary,
+                minutes,
+              )}
+            </Button>
+          ))}
+        </div>
+        {endTime ? (
+          <p
+            className="text-muted-foreground text-sm"
+            data-slot="slot-planner-end-preview"
+          >
+            {formatSlotPlannerTemplate(taxonomy.endTimePreview, {
+              time: endTime,
+              timeZone,
+            })}
+          </p>
+        ) : null}
         {scope === "series" ? (
           <>
-            <Field>
-              <FieldLabel>{taxonomy.fieldCapacity}</FieldLabel>
-              <FieldControl asChild>
-                <NumberInput
-                  type="number"
-                  numberMode="numeric"
-                  min={1}
-                  required
-                  value={capacityText}
-                  onChange={(event) => setCapacityText(event.target.value)}
-                />
-              </FieldControl>
-            </Field>
-            <div className={editorFieldRowClasses}>
-              <Field>
-                <FieldLabel>{taxonomy.fieldBufferBeforeMinutes}</FieldLabel>
-                <FieldControl asChild>
-                  <NumberInput
-                    type="number"
-                    numberMode="numeric"
-                    min={0}
-                    required
-                    value={bufferBeforeText}
-                    onChange={(event) =>
-                      setBufferBeforeText(event.target.value)
-                    }
-                  />
-                </FieldControl>
-              </Field>
-              <Field>
-                <FieldLabel>{taxonomy.fieldBufferAfterMinutes}</FieldLabel>
-                <FieldControl asChild>
-                  <NumberInput
-                    type="number"
-                    numberMode="numeric"
-                    min={0}
-                    required
-                    value={bufferAfterText}
-                    onChange={(event) => setBufferAfterText(event.target.value)}
-                  />
-                </FieldControl>
-              </Field>
-            </div>
-            {timeZoneItems ? (
-              <Select
-                data-slot="slot-planner-time-zone-select"
-                label={taxonomy.fieldTimeZone}
-                items={timeZoneItems}
-                value={timeZone}
-                onValueChange={setTimeZone}
-              >
-                {(item) => (
-                  <SelectItem value={item.value}>{item.label}</SelectItem>
-                )}
-              </Select>
-            ) : (
-              <Field>
-                <FieldLabel>{taxonomy.fieldTimeZone}</FieldLabel>
-                <FieldControl asChild>
-                  <Input
-                    value={timeZone}
-                    onChange={(event) => setTimeZone(event.target.value)}
-                  />
-                </FieldControl>
-              </Field>
-            )}
-            <TagInput
-              label={taxonomy.fieldTags}
-              value={tags}
-              onValueChange={setTags}
-            />
-            <Field>
-              <FieldLabel>{taxonomy.fieldNote}</FieldLabel>
-              <FieldControl asChild>
-                <Textarea
-                  rows={2}
-                  value={note}
-                  onChange={(event) => setNote(event.target.value)}
-                />
-              </FieldControl>
-            </Field>
-            <FieldSet data-slot="slot-planner-recurrence">
-              <FieldLegend>{taxonomy.fieldRecurrence}</FieldLegend>
-              <RadioGroup
-                aria-label={taxonomy.fieldRecurrence}
-                value={recurrence}
-                onValueChange={(value) =>
-                  setRecurrence(value as SlotPlannerEditorRecurrence)
-                }
-              >
-                {recurrenceOptions.map((option) => (
-                  <div key={option.value} className={editorRadioOptionClasses}>
-                    <RadioGroupItem
-                      id={`${baseId}-recurrence-${option.value}`}
-                      value={option.value}
+            <Select
+              data-slot="slot-planner-recurrence"
+              label={taxonomy.fieldRecurrence}
+              value={recurrence}
+              onValueChange={(value) =>
+                setRecurrence(value as SlotPlannerEditorRecurrence)
+              }
+            >
+              {recurrenceOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </Select>
+            <details
+              ref={advancedRef}
+              className="border-border rounded-md border p-3"
+              open={violations?.length ? true : undefined}
+            >
+              <summary className="min-h-6 cursor-pointer text-sm font-medium">
+                {taxonomy.moreOptions}
+              </summary>
+              <div className="mt-4 grid gap-4">
+                <Field>
+                  <FieldLabel>{taxonomy.fieldCapacity}</FieldLabel>
+                  <FieldControl asChild>
+                    <NumberInput
+                      type="number"
+                      numberMode="numeric"
+                      min={1}
+                      required
+                      value={capacityText}
+                      onChange={(event) => setCapacityText(event.target.value)}
                     />
-                    <label
-                      htmlFor={`${baseId}-recurrence-${option.value}`}
-                      className={editorRadioLabelClasses}
-                    >
-                      {option.label}
-                    </label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </FieldSet>
+                  </FieldControl>
+                </Field>
+                <div className={editorFieldRowClasses}>
+                  <Field>
+                    <FieldLabel>{taxonomy.fieldBufferBeforeMinutes}</FieldLabel>
+                    <FieldControl asChild>
+                      <NumberInput
+                        type="number"
+                        numberMode="numeric"
+                        min={0}
+                        required
+                        value={bufferBeforeText}
+                        onChange={(event) =>
+                          setBufferBeforeText(event.target.value)
+                        }
+                      />
+                    </FieldControl>
+                  </Field>
+                  <Field>
+                    <FieldLabel>{taxonomy.fieldBufferAfterMinutes}</FieldLabel>
+                    <FieldControl asChild>
+                      <NumberInput
+                        type="number"
+                        numberMode="numeric"
+                        min={0}
+                        required
+                        value={bufferAfterText}
+                        onChange={(event) =>
+                          setBufferAfterText(event.target.value)
+                        }
+                      />
+                    </FieldControl>
+                  </Field>
+                </div>
+                {timeZoneItems ? (
+                  <Select
+                    data-slot="slot-planner-time-zone-select"
+                    label={taxonomy.fieldTimeZone}
+                    items={timeZoneItems}
+                    value={timeZone}
+                    onValueChange={setTimeZone}
+                  >
+                    {(item) => (
+                      <SelectItem value={item.value}>{item.label}</SelectItem>
+                    )}
+                  </Select>
+                ) : (
+                  <Field>
+                    <FieldLabel>{taxonomy.fieldTimeZone}</FieldLabel>
+                    <FieldControl asChild>
+                      <Input
+                        value={timeZone}
+                        onChange={(event) => setTimeZone(event.target.value)}
+                      />
+                    </FieldControl>
+                  </Field>
+                )}
+                <TagInput
+                  label={taxonomy.fieldTags}
+                  value={tags}
+                  onValueChange={setTags}
+                />
+                <Field>
+                  <FieldLabel>{taxonomy.fieldNote}</FieldLabel>
+                  <FieldControl asChild>
+                    <Textarea
+                      rows={2}
+                      value={note}
+                      onChange={(event) => setNote(event.target.value)}
+                    />
+                  </FieldControl>
+                </Field>
+              </div>
+            </details>
             {recurrence !== "none" ? (
               <Field>
                 <FieldLabel>{taxonomy.recurrenceUntil}</FieldLabel>
@@ -500,7 +557,7 @@ export function SlotPlannerEditorDialog({
       {violations && violations.length > 0 ? (
         <SlotPlannerViolationList taxonomy={taxonomy} violations={violations} />
       ) : null}
-      <DialogFooter>
+      <DialogFooter className="border-border bg-background sticky bottom-0 z-10 border-t pt-4">
         <Button type="button" variant="outline" onClick={onDismiss}>
           {taxonomy.cancel}
         </Button>

@@ -28,6 +28,7 @@ export function SlotPlannerTaxonomy() {
   return (
     <SlotPlanner
       title="Therapy sessions"
+      timeZone="America/Los_Angeles"
       defaultSlots={sampleSlots}
       defaultFocusedDate="2026-07-06"
       now="2026-07-06T09:00:00-07:00"

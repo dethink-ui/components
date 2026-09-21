@@ -2,6 +2,13 @@ import type { PropRow } from "@/components/props-table";
 
 export const slotPlannerProps: PropRow[] = [
   {
+    prop: "weekLayout",
+    type: '"calendar" | "agenda"',
+    defaultValue: '"calendar"',
+    description:
+      "Calendar shows a time grid from 620px container width and a daily agenda below it. Agenda retains the original weekday rail. Custom renderers automatically use the agenda to preserve their structural contract.",
+  },
+  {
     prop: "slots / defaultSlots",
     type: "SlotPlannerSlotData[]",
     defaultValue: "uncontrolled",
@@ -27,7 +34,7 @@ export const slotPlannerProps: PropRow[] = [
     type: "string",
     defaultValue: "environment zone",
     description:
-      "IANA zone used to derive planner today and default editor values. Pass explicitly for deterministic renders and SSR.",
+      "IANA zone used for the weekly calendar, planner today, and new slots. Pass explicitly for deterministic renders and SSR. Existing slot edits retain their original zone.",
   },
   {
     prop: "constraints",

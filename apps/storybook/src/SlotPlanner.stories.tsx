@@ -31,6 +31,7 @@ const meta = {
     defaultFocusedDate: mondayIso,
     now: plannerNow,
     title: "Availability",
+    weekLayout: "agenda",
   },
   argTypes: {
     view: {
@@ -46,6 +47,37 @@ const meta = {
 export default meta;
 
 type Story = StoryObj<typeof meta>;
+
+export const WeeklyCalendar: Story = {
+  args: { weekLayout: "calendar", timeZone: "America/New_York" },
+  render: (args) => (
+    <DethinkProvider
+      theme="light"
+      className="border-border w-full max-w-5xl rounded-xl border p-6"
+    >
+      <SlotPlanner {...args} />
+    </DethinkProvider>
+  ),
+};
+
+export const CompactAgenda: Story = {
+  args: { weekLayout: "calendar", timeZone: "America/New_York" },
+  render: (args) => (
+    <DethinkProvider
+      theme="dark"
+      className="border-border w-full max-w-sm rounded-xl border p-4"
+    >
+      <SlotPlanner {...args} />
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getAllByRole("tab")[1]!);
+    await expect(
+      canvas.getByRole("heading", { name: "Tuesday, July 7, 2026" }),
+    ).toBeVisible();
+  },
+};
 
 export const ManageWeek: Story = {
   args: {

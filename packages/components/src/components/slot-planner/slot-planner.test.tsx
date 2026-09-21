@@ -34,6 +34,7 @@ function renderPlanner(props: Partial<SlotPlannerProps> = {}) {
       now={NOW}
       timeZone="Europe/London"
       title="Availability"
+      weekLayout="agenda"
       {...props}
     />,
   );
@@ -364,6 +365,7 @@ describe("SlotPlanner week view", () => {
 function renderCrudPlanner(props: Partial<SlotPlannerProps> = {}) {
   return render(
     <SlotPlanner
+      weekLayout="agenda"
       defaultSlots={slotPlannerSampleSlots}
       defaultFocusedDate="2026-07-06"
       now={NOW}
@@ -454,9 +456,9 @@ describe("SlotPlanner slot CRUD", () => {
     expect(
       within(dialog).queryByLabelText("Repeat until"),
     ).not.toBeInTheDocument();
-    await user.click(
-      within(dialog).getByRole("radio", { name: "Recurring weekly" }),
-    );
+    await user.click(within(dialog).getByRole("button", { name: /Repeats/ }));
+    await user.click(screen.getByRole("option", { name: "Recurring weekly" }));
+    await user.click(within(dialog).getByText("More options"));
     fireEvent.change(within(dialog).getByLabelText("Repeat until"), {
       target: { value: "2026-09-28" },
     });
