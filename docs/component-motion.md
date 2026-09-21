@@ -31,6 +31,23 @@ These can be overridden through the normal CSS cascade or provider `style`. For 
 
 ## Accessibility and verification
 
+### Spinner loaders
+
+`Spinner` supports `ring`, `dots`, `bouncing-dot`, and `moving-rings`. Bouncing dot grows as it rises and shrinks as it falls, using a 900ms CSS loop. Moving rings uses two concentric open arcs rotating in opposite directions over 1400ms. Override `--dt-spinner-bounce-duration` or `--dt-spinner-rings-duration` through the normal CSS cascade to adjust their pace. Every size from `xs` to `xl` uses the same bounded motion and semantic tone tokens.
+
+```tsx
+<Spinner variant="bouncing-dot" label="Preparing workspace" tone="primary" />
+<Spinner variant="moving-rings" label="Syncing records" size="lg" />
+```
+
+The bouncing dot casts a small rounded shadow. Its blur and spread increase as the ball rises, while its opacity decreases with a subtle depth shift; the shadow tightens on descent. Ball and shadow share the same duration and easing. Reduced motion leaves both static.
+
+Import `@dethink/components/styles.css` for package usage. Registry users install `spinner` (or `feedback-states`) with its `dethink-base` dependency and import the copied `components/dethink/styles.css`; the bounce keyframes ship in that stylesheet. No animation runtime or migration is required; `ring` remains the default.
+
+Use `label` or `aria-label` for a standalone status. With adjacent visible loading text, leave the spinner decorative and put `role="status"` on the text's container. The application owns `aria-busy` on the region being updated and announces completion. Spinners have no keyboard interaction and must not take focus. They convey indeterminate activity, not a percentage; use Progress for measured completion and Skeleton for content placeholders.
+
+Reduced motion stops movement and retains a visible static shape. Browser coverage in `e2e/spinner-loaders.spec.ts` checks actual bounce geometry, size containment, static reduced motion, theme/direction states and screenshots. Rendered, axe and SSR/hydration tests live with Spinner.
+
 Spatial transitions use `motion-safe` or the component's existing reduced-motion path. State, focus, labels, and keyboard behavior remain available without animation. The motion browser suite covers actual intermediate Switch/Dialog frames, RTL, loading geometry, immediate Escape/focus restoration, reduced-motion hydration, and mobile accessibility checks.
 
 Run component tests, build the package, then run its `test:bundle` script. `e2e/showcase-component-motion.spec.ts` exercises the showcase; `Button / LoadingTransition` provides a Storybook interaction example. Registry validation and smoke checks verify copied utility dependencies.

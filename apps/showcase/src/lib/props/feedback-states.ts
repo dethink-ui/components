@@ -22,6 +22,13 @@ export const feedbackStateProps: PropRow[] = [
       "Decorative loading indicator by default; labelled instances expose role=status.",
   },
   {
+    prop: "Spinner.variant",
+    type: '"ring" | "dots" | "bouncing-dot" | "moving-rings"',
+    defaultValue: '"ring"',
+    description:
+      "Indeterminate loading style. Use Skeleton for content placeholders and Progress for measured completion.",
+  },
+  {
     prop: "Progress",
     type: "{ value, min, max, indeterminate, label, status, showValue, tone }",
     defaultValue: "{ min: 0, max: 100 }",

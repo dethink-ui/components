@@ -10,7 +10,7 @@ export type SpinnerTone =
   | "warning"
   | "destructive"
   | "info";
-export type SpinnerVariant = "ring" | "dots";
+export type SpinnerVariant = "ring" | "dots" | "bouncing-dot" | "moving-rings";
 
 export interface SpinnerProps extends HTMLAttributes<HTMLSpanElement> {
   size?: SpinnerSize;
@@ -87,9 +87,52 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(
         data-size={size}
         data-tone={tone}
         data-variant={variant}
-        className={spinnerClassNames({ className, size, tone })}
+        className={cn(
+          variant === "bouncing-dot" && "relative",
+          spinnerClassNames({ className, size, tone }),
+        )}
       >
-        {variant === "dots" ? (
+        {variant === "moving-rings" ? (
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="size-full"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+              pathLength="100"
+              strokeDasharray="75 25"
+              strokeLinecap="round"
+              className="origin-center animate-spin [animation-duration:var(--dt-spinner-rings-duration,1400ms)] motion-reduce:animate-none"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="5"
+              pathLength="100"
+              strokeDasharray="65 35"
+              strokeLinecap="round"
+              className="origin-center animate-spin [animation-direction:reverse] [animation-duration:var(--dt-spinner-rings-duration,1400ms)] motion-reduce:animate-none"
+            />
+          </svg>
+        ) : variant === "bouncing-dot" ? (
+          <>
+            <span
+              aria-hidden="true"
+              className="size-2/5 [animation:dt-spinner-bounce_var(--dt-spinner-bounce-duration,900ms)_infinite] rounded-full bg-current motion-reduce:animate-none forced-colors:bg-[CanvasText]"
+            />
+            <span
+              aria-hidden="true"
+              data-slot="spinner-shadow"
+              className="absolute bottom-[2%] h-[12%] w-2/5 [animation:dt-spinner-shadow_var(--dt-spinner-bounce-duration,900ms)_infinite] rounded-full bg-current opacity-25 blur-[0.5px] motion-reduce:animate-none forced-colors:bg-[CanvasText]"
+            />
+          </>
+        ) : variant === "dots" ? (
           <span aria-hidden="true" className={spinnerDotsClasses}>
             <span className={spinnerDotClasses} />
             <span

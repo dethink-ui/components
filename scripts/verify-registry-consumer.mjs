@@ -112,11 +112,14 @@ import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger } from "../com
 import { NavDock } from "../components/dethink/components/navdock";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../components/dethink/components/dialog";
 import { ShaderHeroText } from "../components/dethink/components/shader-hero-text";
+import { Spinner } from "../components/dethink/components/spinner";
 export default function App() {
   const [count, setCount] = useState(0);
   return <DethinkProvider theme="light"><SidebarProvider>
     <Sidebar aria-label="Example navigation"><SidebarContent><SidebarTrigger /></SidebarContent></Sidebar>
     <main><h1>Clean registry consumer</h1>
+      <Spinner variant="bouncing-dot" label="Preparing workspace" />
+      <Spinner variant="moving-rings" label="Syncing records" />
       <ShaderHeroText as="h2" text="Registry works" />
       <Button onClick={() => setCount(count + 1)}>Count {count}</Button>
       <DataTable data={[{id: "1", name: "Ready"}]} columns={[{accessorKey: "name", header: "Status"}]} getRowId={row => row.id} />
@@ -161,6 +164,7 @@ const components = [
   "navdock",
   "dialog",
   "shader-hero-text",
+  "spinner",
 ];
 await run("npx", [
   "--yes",

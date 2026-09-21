@@ -142,6 +142,64 @@ export const LoadingAndProgress: Story = {
   ),
 };
 
+export const LoaderVariants: Story = {
+  render: (args) => (
+    <DethinkProvider
+      density={args.density}
+      theme={args.theme}
+      className="border-border grid gap-6 rounded-lg border p-6"
+    >
+      {(["ring", "dots", "bouncing-dot", "moving-rings"] as const).map(
+        (variant) => (
+          <div key={variant} className="grid gap-3">
+            <h3 className="text-sm font-medium">{variant}</h3>
+            <div className="flex flex-wrap items-center gap-6">
+              {(["xs", "sm", "md", "lg", "xl"] as const).map((size) => (
+                <Spinner
+                  key={size}
+                  variant={variant}
+                  size={size}
+                  tone="primary"
+                  label={`${variant} ${size}: Loading`}
+                />
+              ))}
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              {(
+                [
+                  "current",
+                  "muted",
+                  "primary",
+                  "success",
+                  "warning",
+                  "destructive",
+                  "info",
+                ] as const
+              ).map((tone) => (
+                <Spinner
+                  key={tone}
+                  variant={variant}
+                  tone={tone}
+                  label={`${variant} ${tone}: Loading`}
+                />
+              ))}
+            </div>
+          </div>
+        ),
+      )}
+    </DethinkProvider>
+  ),
+};
+
+export const LoaderVariantsDark: Story = {
+  ...LoaderVariants,
+  args: { theme: "dark" },
+};
+export const LoaderVariantsCompact: Story = {
+  ...LoaderVariants,
+  args: { density: "compact" },
+};
+
 export const MessagingAndEmptyState: Story = {
   render: (args) => (
     <DethinkProvider
