@@ -81,7 +81,7 @@ export default function DrawerPage() {
           <ExampleBlock
             file="drawer/filter-bottom-sheet.tsx"
             title="Mobile filter bottom sheet"
-            description="Snap points (35%, 65%, fully open) with a draggable handle and controlled active snap point."
+            description="Drag or use the size buttons to resize. Filters scroll independently while Apply stays reachable at every snap point."
           >
             <DrawerFilterBottomSheet />
           </ExampleBlock>
@@ -110,7 +110,7 @@ export default function DrawerPage() {
           <ExampleBlock
             file="drawer/nested-drill-down-edit.tsx"
             title="Nested drill-down edit flow"
-            description="A drawer opened from inside another drawer automatically recedes its parent."
+            description="Edit and save a record status in a nested drawer, or go Back without saving. The parent remains visible behind the editor."
           >
             <DrawerNestedDrillDownEdit />
           </ExampleBlock>
@@ -122,6 +122,14 @@ export default function DrawerPage() {
         title="Props"
         description="Drawer coordinates the trigger and open state; DrawerContent carries the panel, motion, and dismissal options."
       >
+        <p className="text-muted-foreground mb-4 text-sm">
+          Snap points are fractions of the configured drawer size. Initialize a
+          controlled snap point to one of the supplied stops. For a fixed header
+          and footer, put scrolling content in a min-h-0 flex-1 overflow-y-auto
+          body. Provide buttons alongside drag resizing. With reduced motion,
+          the panel opens at its full configured size without drag or spring
+          animation, keeping every control accessible.
+        </p>
         <PropsTable caption="Drawer anatomy" rows={drawerProps} />
       </DocsSection>
     </DocsPage>

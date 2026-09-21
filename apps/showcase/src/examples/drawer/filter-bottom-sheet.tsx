@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   Checkbox,
+  Button,
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -20,15 +21,21 @@ import {
 const statuses = ["Open", "In review", "Blocked", "Done"];
 
 export function DrawerFilterBottomSheet() {
-  const [activeSnapPoint, setActiveSnapPoint] = useState(0.5);
+  const [activeSnapPoint, setActiveSnapPoint] = useState(0.65);
+  const [selected, setSelected] = useState(["Open"]);
+  const [applied, setApplied] = useState(["Open"]);
 
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col items-center gap-3">
+      <p className="text-muted-foreground text-sm" role="status">
+        Showing: {applied.length ? applied.join(", ") : "all statuses"}
+      </p>
       <Drawer
         activeSnapPoint={activeSnapPoint}
         direction="bottom"
         onActiveSnapPointChange={setActiveSnapPoint}
         snapPoints={[0.35, 0.65, 1]}
+        size="xl"
       >
         <DrawerTrigger>Filter issues</DrawerTrigger>
         <DrawerContent
@@ -37,14 +44,37 @@ export function DrawerFilterBottomSheet() {
           closeButtonLabel="Close filters"
         >
           <DrawerHandle aria-label="Drag to resize filters" />
-          <DrawerHeader>
+          <DrawerHeader className="py-3">
             <DrawerTitle>Filters</DrawerTitle>
-            <DrawerDescription>
-              Drag the handle between 35%, 65%, and fully open, or flick down
-              fast to dismiss.
+            <DrawerDescription className="sr-only">
+              Choose statuses, then apply your filters. Use the sheet size
+              controls to resize.
             </DrawerDescription>
           </DrawerHeader>
-          <div className="grid gap-[var(--dt-space-3)] px-[var(--dt-space-6)] py-[var(--dt-space-2)]">
+          <div className="grid min-h-0 flex-1 content-start gap-3 overflow-y-auto overscroll-contain px-6 py-3">
+            <div
+              role="group"
+              aria-label="Sheet size"
+              className="flex flex-wrap gap-2 motion-reduce:hidden"
+            >
+              {(
+                [
+                  [0.35, "Compact"],
+                  [0.65, "Medium"],
+                  [1, "Expanded"],
+                ] as const
+              ).map(([point, label]) => (
+                <Button
+                  key={point}
+                  size="sm"
+                  variant={activeSnapPoint === point ? "solid" : "outline"}
+                  aria-pressed={activeSnapPoint === point}
+                  onClick={() => setActiveSnapPoint(point)}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
             <p className="text-muted-foreground text-xs tracking-wide uppercase">
               Status
             </p>
@@ -56,7 +86,14 @@ export function DrawerFilterBottomSheet() {
               >
                 <FieldControl asChild>
                   <Checkbox
-                    defaultChecked={status === "Open"}
+                    checked={selected.includes(status)}
+                    onCheckedChange={(checked) =>
+                      setSelected((current) =>
+                        checked
+                          ? [...current, status]
+                          : current.filter((value) => value !== status),
+                      )
+                    }
                     name="status"
                     value={status}
                   />
@@ -65,11 +102,13 @@ export function DrawerFilterBottomSheet() {
               </Field>
             ))}
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="flex-row items-center justify-between px-6 py-3">
             <span className="text-muted-foreground text-sm">
-              Snap point: {activeSnapPoint}
+              {selected.length} selected
             </span>
-            <DrawerClose>Apply filters</DrawerClose>
+            <DrawerClose variant="solid" onPress={() => setApplied(selected)}>
+              Apply filters
+            </DrawerClose>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
