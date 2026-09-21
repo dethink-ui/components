@@ -119,7 +119,8 @@ export function TabsCollapsible() {
                     {tab.title}
                   </h4>
                   <p className="text-muted-foreground mt-1 text-sm leading-6">
-                    {tab.body}
+                    All labels stay visible in this vertical rail. Select a tab
+                    or use the arrow keys to move between sections.
                   </p>
                 </div>
               </Tabs.Panel>

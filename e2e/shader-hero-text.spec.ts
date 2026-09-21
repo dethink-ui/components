@@ -138,6 +138,59 @@ test("rapid re-entry, theme changes and static mode retain usable text", async (
   ).not.toBe("rgba(0, 0, 0, 0)");
 });
 
+test("line-start caret rectangles do not disable Safari text rendering", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const bounds = Range.prototype.getBoundingClientRect;
+    const fragments = Range.prototype.getClientRects;
+    const affected = (range: Range) =>
+      range.startContainer.nodeType === Node.TEXT_NODE &&
+      range.endOffset === range.startOffset + 1 &&
+      range.startOffset > 0 &&
+      range.startContainer.textContent?.[range.startOffset - 1] === "\n";
+    // Safari includes a zero-width caret on the preceding line in a
+    // one-character range. Its bounding box spans both lines.
+    Range.prototype.getClientRects = function () {
+      const rects = fragments.call(this);
+      if (!affected(this) || !rects.length) return rects;
+      const glyph = rects[rects.length - 1]!;
+      return [
+        new DOMRect(
+          glyph.right + 100,
+          glyph.top - glyph.height,
+          0,
+          glyph.height,
+        ),
+        ...rects,
+      ] as unknown as DOMRectList;
+    };
+    Range.prototype.getBoundingClientRect = function () {
+      const rect = bounds.call(this);
+      if (!affected(this)) return rect;
+      return new DOMRect(
+        rect.x,
+        rect.y - rect.height,
+        rect.width + 100,
+        rect.height * 2,
+      );
+    };
+  });
+  await page.reload();
+  const heading = page.locator(
+    '[data-animation="particle-follow"][data-slot="shader-hero-text"]',
+  );
+  await heading.scrollIntoViewIfNeeded();
+  await expect(heading).toHaveAttribute("data-state", "formed");
+  const formed = await pixels(heading);
+  expect(formed.sum).toBeGreaterThan(50_000);
+  const box = (await heading.boundingBox())!;
+  await page.mouse.move(box.x + 100, box.y + 40);
+  await expect
+    .poll(async () => (await pixels(heading)).hash)
+    .not.toBe(formed.hash);
+});
+
 for (const effect of [
   "liquid-ripple",
   "chromatic-refraction",

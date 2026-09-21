@@ -76,8 +76,12 @@ export function createTextMask(
     if (text[i] === "\n") continue;
     range.setStart(node, i);
     range.setEnd(node, i + 1);
-    const rect = range.getBoundingClientRect();
-    if (!rect.height) continue;
+    // Safari can include a zero-width caret on the previous line at a wrap.
+    // The union from getBoundingClientRect() then incorrectly spans both lines.
+    const rect = Array.from(range.getClientRects()).find(
+      (fragment) => fragment.width > 0 && fragment.height > 0,
+    );
+    if (!rect) continue;
     const last = lines.at(-1);
     if (
       last &&

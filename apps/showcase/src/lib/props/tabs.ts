@@ -56,7 +56,7 @@ export const tabsProps: PropRow[] = [
     type: "boolean",
     defaultValue: "false",
     description:
-      "Collapses each trigger to its icon, revealing the label only for the selected tab and on hover/focus. Requires an icon per trigger.",
+      "Collapses horizontal triggers to their icons, revealing labels on selection, hover, or focus. Requires an icon per trigger. Vertical tabs always show their labels.",
   },
   {
     prop: "loop",
