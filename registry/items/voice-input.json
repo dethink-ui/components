@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "voice-input",
+  "type": "registry:ui",
+  "title": "VoiceInput",
+  "description": "Microphone input with cancellation, actionable errors, live audio levels, and an optional local voice recorder.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/voice-input/voice-input.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/voice-input/use-voice-recorder.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/voice-input/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

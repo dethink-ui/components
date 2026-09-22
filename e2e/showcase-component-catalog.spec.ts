@@ -68,7 +68,7 @@ test.describe("showcase component catalog", () => {
 
     await search.fill("microphone");
     await expect(
-      results.getByRole("link", { name: /Sound Input SoundInput/ }),
+      results.getByRole("link", { name: /Voice Input VoiceInput/ }),
     ).toBeVisible();
 
     await search.fill("forms");
@@ -122,7 +122,7 @@ test.describe("showcase component catalog", () => {
 
     await expect(resultCount).toContainText(/1\s*of \d+ components/);
     await expect(
-      page.getByRole("link", { name: /Sound Input SoundInput/ }),
+      page.getByRole("link", { name: /Voice Input VoiceInput/ }),
     ).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Clear component search" }),

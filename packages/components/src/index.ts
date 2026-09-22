@@ -581,16 +581,18 @@ export {
   type RevealButtonVariant,
 } from "./components/reveal-button";
 export {
-  SoundInput,
-  getSoundInputMotionState,
-  soundInputClassNames,
-  type SoundInputMotion,
-  type SoundInputProps,
-  type SoundInputSize,
-  type SoundInputState,
-  type SoundInputStopReason,
-  type SoundInputVariant,
-} from "./components/sound-input";
+  VoiceInput,
+  getVoiceInputMotionState,
+  voiceInputClassNames,
+  type VoiceInputController,
+  type VoiceInputMediaRequest,
+  type VoiceInputMotion,
+  type VoiceInputProps,
+  type VoiceInputSize,
+  type VoiceInputState,
+  type VoiceInputStopReason,
+  type VoiceInputVariant,
+} from "./components/voice-input";
 export {
   CardStack,
   cardStackClassNames,
@@ -1599,3 +1601,12 @@ export {
   TimelineFeed,
   type TimelineFeedProps,
 } from "./components/timeline/timeline-feed";
+
+export {
+  useVoiceRecorder,
+  type VoiceRecorder,
+  type VoiceRecorderState,
+  type VoiceRecorderStopReason,
+  type VoiceRecording,
+  type UseVoiceRecorderOptions,
+} from "./components/voice-input/use-voice-recorder";

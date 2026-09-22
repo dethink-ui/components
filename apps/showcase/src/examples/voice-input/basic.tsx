@@ -1,21 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { SoundInput, type SoundInputState } from "@dethink/components";
-import { SoundInputDemoMedia } from "@/examples/_shared/sound-input-demo-media";
+import { type VoiceInputState } from "@dethink/components";
+import { VoiceInputDemoMedia } from "@/examples/_shared/voice-input-demo-media";
 
-export function SoundInputBasic() {
-  const [state, setState] = useState<SoundInputState>("idle");
+export function VoiceInputBasic() {
+  const [state, setState] = useState<VoiceInputState>("idle");
 
   return (
     <div className="flex w-full flex-col items-center gap-3">
-      <SoundInputDemoMedia>
-        <SoundInput
-          onStateChange={setState}
-          onStream={() => setState("recording")}
-          onStop={() => setState("idle")}
-        />
-      </SoundInputDemoMedia>
+      <VoiceInputDemoMedia
+        onStateChange={setState}
+        onStream={() => setState("recording")}
+        onStop={() => setState("idle")}
+      />
       <p aria-live="polite" className="text-muted-foreground text-sm">
         {state === "idle"
           ? "Ready for voice input"

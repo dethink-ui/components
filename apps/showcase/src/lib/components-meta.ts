@@ -308,8 +308,8 @@ export const componentCatalog: ComponentMeta[] = [
     type: "advanced-inputs",
   },
   {
-    slug: "sound-input",
-    name: "SoundInput",
+    slug: "voice-input",
+    name: "VoiceInput",
     description: "Capture microphone audio and show its input level.",
     type: "advanced-inputs",
   },

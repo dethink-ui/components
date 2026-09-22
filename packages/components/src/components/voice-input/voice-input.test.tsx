@@ -3,26 +3,26 @@ import userEvent from "@testing-library/user-event";
 import { createRef } from "react";
 import { describe, expect, it, vi } from "vitest";
 import {
-  SoundInput,
-  getSoundInputMotionState,
-  soundInputClassNames,
-  type SoundInputMotion,
-  type SoundInputProps,
-  type SoundInputSize,
-  type SoundInputState,
-  type SoundInputVariant,
+  VoiceInput,
+  getVoiceInputMotionState,
+  voiceInputClassNames,
+  type VoiceInputMotion,
+  type VoiceInputProps,
+  type VoiceInputSize,
+  type VoiceInputState,
+  type VoiceInputVariant,
 } from ".";
 
-const variants: SoundInputVariant[] = [
+const variants: VoiceInputVariant[] = [
   "solid",
   "soft",
   "outline",
   "ghost",
   "destructive",
 ];
-const sizes: SoundInputSize[] = ["xs", "sm", "md", "lg", "xl"];
-const motions: SoundInputMotion[] = ["none", "subtle", "standard"];
-const states: SoundInputState[] = [
+const sizes: VoiceInputSize[] = ["xs", "sm", "md", "lg", "xl"];
+const motions: VoiceInputMotion[] = ["none", "subtle", "standard"];
+const states: VoiceInputState[] = [
   "idle",
   "permission-request",
   "permission-denied",
@@ -33,12 +33,12 @@ const states: SoundInputState[] = [
 
 const validProps = {
   onStream: vi.fn(),
-} satisfies SoundInputProps;
+} satisfies VoiceInputProps;
 
 const ariaLabelProps = {
-  // @ts-expect-error SoundInput owns its accessible name through state labels.
+  // @ts-expect-error VoiceInput owns its accessible name through state labels.
   "aria-label": "Start voice input",
-} satisfies SoundInputProps;
+} satisfies VoiceInputProps;
 
 void validProps;
 void ariaLabelProps;
@@ -49,7 +49,6 @@ class FakeAudioTrack extends EventTarget {
   readyState = "live";
   stop = vi.fn(() => {
     this.readyState = "ended";
-    this.dispatchEvent(new Event("ended"));
   });
 }
 
@@ -96,15 +95,15 @@ function mockUnsupportedMedia() {
   });
 }
 
-describe("SoundInput", () => {
+describe("VoiceInput", () => {
   it("renders a native button with safe defaults", () => {
-    render(<SoundInput />);
+    render(<VoiceInput />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
     expect(button.tagName).toBe("BUTTON");
     expect(button).toHaveAttribute("type", "button");
-    expect(button).toHaveAttribute("data-slot", "sound-input");
+    expect(button).toHaveAttribute("data-slot", "voice-input");
     expect(button).toHaveAttribute("data-state", "idle");
     expect(button).toHaveAttribute("data-motion-state", "idle");
     expect(button).toHaveAttribute("data-variant", "soft");
@@ -112,27 +111,27 @@ describe("SoundInput", () => {
     expect(button).toHaveAttribute("data-motion", "standard");
     expect(button).not.toHaveAttribute("aria-pressed");
     expect(
-      button.querySelector('[data-slot="sound-input-icon-wrap"]'),
+      button.querySelector('[data-slot="voice-input-icon-wrap"]'),
     ).toHaveAttribute("aria-hidden", "true");
     expect(
-      button.querySelector('[data-slot="sound-input-waveform"]'),
+      button.querySelector('[data-slot="voice-input-waveform"]'),
     ).toHaveAttribute("aria-hidden", "true");
   });
 
   it.each(variants)("renders the %s variant attribute", (variant) => {
-    render(<SoundInput variant={variant} />);
+    render(<VoiceInput variant={variant} />);
 
     expect(screen.getByRole("button")).toHaveAttribute("data-variant", variant);
   });
 
   it.each(sizes)("renders the %s size attribute", (size) => {
-    render(<SoundInput size={size} />);
+    render(<VoiceInput size={size} />);
 
     expect(screen.getByRole("button")).toHaveAttribute("data-size", size);
   });
 
   it.each(motions)("renders the %s motion attribute", (motion) => {
-    render(<SoundInput motion={motion} />);
+    render(<VoiceInput motion={motion} />);
 
     const button = screen.getByRole("button");
 
@@ -149,7 +148,7 @@ describe("SoundInput", () => {
     const onStateChange = vi.fn();
     const { getUserMedia, stream } = mockGetUserMedia();
 
-    render(<SoundInput onStateChange={onStateChange} onStream={onStream} />);
+    render(<VoiceInput onStateChange={onStateChange} onStream={onStream} />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
@@ -173,7 +172,7 @@ describe("SoundInput", () => {
     const onStop = vi.fn();
     const { stream } = mockGetUserMedia();
 
-    render(<SoundInput onStop={onStop} />);
+    render(<VoiceInput onStop={onStop} />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
@@ -197,7 +196,7 @@ describe("SoundInput", () => {
     const onError = vi.fn();
     const getUserMedia = mockGetUserMediaError(error);
 
-    render(<SoundInput onError={onError} />);
+    render(<VoiceInput onError={onError} />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
@@ -220,7 +219,7 @@ describe("SoundInput", () => {
 
     mockUnsupportedMedia();
 
-    render(<SoundInput onError={onError} />);
+    render(<VoiceInput onError={onError} />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
@@ -235,7 +234,7 @@ describe("SoundInput", () => {
   it("disables and reenables audio tracks through the muted prop", async () => {
     const user = userEvent.setup();
     const { stream } = mockGetUserMedia();
-    const { rerender } = render(<SoundInput muted />);
+    const { rerender } = render(<VoiceInput muted />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
@@ -246,7 +245,7 @@ describe("SoundInput", () => {
     expect(button).toHaveAttribute("data-state", "muted");
     expect(button).toHaveAttribute("data-muted", "true");
 
-    rerender(<SoundInput muted={false} />);
+    rerender(<VoiceInput muted={false} />);
 
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Stop voice input" })),
@@ -261,7 +260,7 @@ describe("SoundInput", () => {
     const onStop = vi.fn();
     const { stream } = mockGetUserMedia();
 
-    render(<SoundInput onStop={onStop} />);
+    render(<VoiceInput onStop={onStop} />);
 
     await user.click(screen.getByRole("button", { name: "Start voice input" }));
     await screen.findByRole("button", { name: "Stop voice input" });
@@ -280,7 +279,7 @@ describe("SoundInput", () => {
     const user = userEvent.setup();
     const onStop = vi.fn();
     const { stream } = mockGetUserMedia();
-    const { unmount } = render(<SoundInput onStop={onStop} />);
+    const { unmount } = render(<VoiceInput onStop={onStop} />);
 
     await user.click(screen.getByRole("button", { name: "Start voice input" }));
     await screen.findByRole("button", { name: "Stop voice input" });
@@ -295,7 +294,7 @@ describe("SoundInput", () => {
     const user = userEvent.setup();
     const { getUserMedia } = mockGetUserMedia();
 
-    render(<SoundInput disabled />);
+    render(<VoiceInput disabled />);
 
     const button = screen.getByRole("button", { name: "Start voice input" });
 
@@ -308,7 +307,7 @@ describe("SoundInput", () => {
   });
 
   it("supports custom state labels", () => {
-    render(<SoundInput labels={{ idle: "Dictate message" }} />);
+    render(<VoiceInput labels={{ idle: "Dictate message" }} />);
 
     expect(
       screen.getByRole("button", { name: "Dictate message" }),
@@ -319,21 +318,21 @@ describe("SoundInput", () => {
     const ref = createRef<HTMLButtonElement>();
 
     expect(
-      soundInputClassNames({
+      voiceInputClassNames({
         className: "custom-class",
         size: "sm",
         variant: "outline",
       }),
     ).toContain("custom-class");
 
-    render(<SoundInput ref={ref} className="custom-class" />);
+    render(<VoiceInput ref={ref} className="custom-class" />);
 
     expect(screen.getByRole("button")).toHaveClass("custom-class");
     expect(ref.current).toBe(screen.getByRole("button"));
   });
 
   it.each(states)("maps %s to the expected motion state", (state) => {
-    expect(getSoundInputMotionState(state)).toBe(
+    expect(getVoiceInputMotionState(state)).toBe(
       state === "recording" || state === "muted" ? "active" : "idle",
     );
   });

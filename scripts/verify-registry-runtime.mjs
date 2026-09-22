@@ -58,6 +58,9 @@ export async function verifyRegistryRuntime(root, framework, port = 3181) {
       if (message.type() === "error") errors.push(message.text());
     });
     await page.goto(url);
+    await expect(
+      page.getByRole("button", { name: "Start voice input", exact: true }),
+    ).toBeVisible();
     for (const name of ["Preparing workspace", "Syncing records"]) {
       const spinner = page.getByRole("status", { name, exact: true });
       await expect(spinner).toBeVisible();
