@@ -6,14 +6,13 @@ import {
   Field,
   FieldControl,
   FieldLabel,
-  SoundInput,
   Textarea,
-  type SoundInputState,
+  type VoiceInputState,
 } from "@dethink/components";
-import { SoundInputDemoMedia } from "@/examples/_shared/sound-input-demo-media";
+import { VoiceInputDemoMedia } from "@/examples/_shared/voice-input-demo-media";
 
-export function SoundInputRecipeAiComposer() {
-  const [state, setState] = useState<SoundInputState>("idle");
+export function VoiceInputRecipeAiComposer() {
+  const [state, setState] = useState<VoiceInputState>("idle");
   const [muted, setMuted] = useState(false);
 
   return (
@@ -49,14 +48,12 @@ export function SoundInputRecipeAiComposer() {
           >
             {muted ? "Unmute" : "Mute"}
           </Button>
-          <SoundInputDemoMedia>
-            <SoundInput
-              muted={muted}
-              variant="solid"
-              onStateChange={setState}
-              onStop={() => setState("idle")}
-            />
-          </SoundInputDemoMedia>
+          <VoiceInputDemoMedia
+            muted={muted}
+            variant="solid"
+            onStateChange={setState}
+            onStop={() => setState("idle")}
+          />
           <Button size="sm">Send</Button>
         </div>
       </div>

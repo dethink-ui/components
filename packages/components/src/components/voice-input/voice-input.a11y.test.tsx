@@ -3,18 +3,18 @@ import userEvent from "@testing-library/user-event";
 import { axe, toHaveNoViolations } from "jest-axe";
 import { describe, expect, it, vi } from "vitest";
 import { DethinkProvider } from "../../foundation/dethink-provider";
-import { SoundInput, type SoundInputSize, type SoundInputVariant } from ".";
+import { VoiceInput, type VoiceInputSize, type VoiceInputVariant } from ".";
 
 expect.extend(toHaveNoViolations);
 
-const variants: SoundInputVariant[] = [
+const variants: VoiceInputVariant[] = [
   "solid",
   "soft",
   "outline",
   "ghost",
   "destructive",
 ];
-const sizes: SoundInputSize[] = ["xs", "sm", "md", "lg", "xl"];
+const sizes: VoiceInputSize[] = ["xs", "sm", "md", "lg", "xl"];
 
 class FakeAudioTrack extends EventTarget {
   enabled = true;
@@ -44,16 +44,16 @@ function mockGetUserMedia() {
   });
 }
 
-describe("SoundInput accessibility", () => {
+describe("VoiceInput accessibility", () => {
   it("has no axe violations for baseline variants, sizes, and states", async () => {
     mockGetUserMedia();
 
     const { container } = render(
       <DethinkProvider theme="light">
-        <main aria-label="SoundInput accessibility smoke">
+        <main aria-label="VoiceInput accessibility smoke">
           <div>
             {variants.map((variant) => (
-              <SoundInput
+              <VoiceInput
                 key={variant}
                 labels={{ idle: `${variant} voice input` }}
                 variant={variant}
@@ -62,7 +62,7 @@ describe("SoundInput accessibility", () => {
           </div>
           <div>
             {sizes.map((size) => (
-              <SoundInput
+              <VoiceInput
                 key={size}
                 labels={{ idle: `${size} voice input` }}
                 size={size}
@@ -70,9 +70,9 @@ describe("SoundInput accessibility", () => {
             ))}
           </div>
           <div>
-            <SoundInput disabled labels={{ idle: "Disabled voice input" }} />
-            <SoundInput motion="none" labels={{ idle: "Reduced motion" }} />
-            <SoundInput muted labels={{ idle: "Muted voice input" }} />
+            <VoiceInput disabled labels={{ idle: "Disabled voice input" }} />
+            <VoiceInput motion="none" labels={{ idle: "Reduced motion" }} />
+            <VoiceInput muted labels={{ idle: "Muted voice input" }} />
           </div>
         </main>
       </DethinkProvider>,
@@ -88,7 +88,7 @@ describe("SoundInput accessibility", () => {
 
     const { container } = render(
       <DethinkProvider theme="light">
-        <SoundInput />
+        <VoiceInput />
       </DethinkProvider>,
     );
 

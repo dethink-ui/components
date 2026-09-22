@@ -1,6 +1,20 @@
 import type { PropRow } from "@/components/props-table";
 
-export const soundInputProps: PropRow[] = [
+export const voiceInputProps: PropRow[] = [
+  {
+    prop: "controllerRef",
+    type: "Ref<VoiceInputController>",
+    defaultValue: "—",
+    description:
+      "Separate imperative ref with stop() and cancel(); the native ref still points to the button.",
+  },
+  {
+    prop: "getUserMedia",
+    type: "VoiceInputMediaRequest",
+    defaultValue: "browser API",
+    description:
+      "Optional instance-scoped acquisition adapter. Returned streams are owned and stopped by VoiceInput.",
+  },
   {
     prop: "variant",
     type: '"solid" | "soft" | "outline" | "ghost" | "destructive"',
@@ -12,14 +26,14 @@ export const soundInputProps: PropRow[] = [
     type: '"xs" | "sm" | "md" | "lg" | "xl"',
     defaultValue: '"md"',
     description:
-      "Collapsed control size. The active pill expands inline from the same height.",
+      "Circular control size, unchanged while recording. Audio-responsive rays stay inside the button.",
   },
   {
     prop: "motion",
     type: '"none" | "subtle" | "standard"',
     defaultValue: '"standard"',
     description:
-      "Controls the pill and waveform choreography with Motion primitives.",
+      "Controls the microphone and radial waveform transitions. None keeps the rays still.",
   },
   {
     prop: "muted",
@@ -37,10 +51,10 @@ export const soundInputProps: PropRow[] = [
   },
   {
     prop: "labels",
-    type: "Partial<Record<SoundInputState, string>>",
+    type: "Partial<Record<VoiceInputState, string>>",
     defaultValue: "built-in copy",
     description:
-      "State-specific accessible names for idle, requesting, denied, recording, muted, and unsupported states.",
+      "State-specific accessible names, including cancellation while requesting and actionable device errors.",
   },
   {
     prop: "onStream",
@@ -51,23 +65,23 @@ export const soundInputProps: PropRow[] = [
   },
   {
     prop: "onStop",
-    type: '(stream, reason: "user" | "unmount" | "track-ended") => void',
+    type: "(stream: MediaStream, reason: VoiceInputStopReason) => void",
     defaultValue: "—",
     description:
-      "Called after SoundInput stops its owned tracks because of user stop, unmount, or track end.",
+      "Called after VoiceInput stops its owned tracks because of user stop, cancellation, disabling, errors, unmount, or track end.",
   },
   {
     prop: "onError",
-    type: "(error: unknown, state: SoundInputState) => void",
+    type: "(error: unknown, state: VoiceInputState) => void",
     defaultValue: "—",
     description:
-      "Called when microphone access is unsupported or permission is rejected.",
+      "Receives acquisition or synchronous consumer callback failures with their classified state.",
   },
   {
     prop: "onStateChange",
-    type: "(state: SoundInputState) => void",
+    type: "(state: VoiceInputState) => void",
     defaultValue: "—",
-    description: "Receives the public state whenever SoundInput changes state.",
+    description: "Receives the public state whenever VoiceInput changes state.",
   },
   {
     prop: "…native button props",

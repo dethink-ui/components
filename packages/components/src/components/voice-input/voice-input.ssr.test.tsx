@@ -2,13 +2,13 @@ import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
-import { SoundInput } from ".";
+import { VoiceInput } from ".";
 
-describe("SoundInput SSR", () => {
+describe("VoiceInput SSR", () => {
   it("renders stable native button markup on the server", () => {
-    const html = renderToString(<SoundInput />);
+    const html = renderToString(<VoiceInput />);
 
-    expect(html).toContain('data-slot="sound-input"');
+    expect(html).toContain('data-slot="voice-input"');
     expect(html).toContain('data-state="idle"');
     expect(html).toContain('aria-label="Start voice input"');
   });
@@ -25,10 +25,10 @@ describe("SoundInput SSR", () => {
       value: { getUserMedia },
     });
 
-    container.innerHTML = renderToString(<SoundInput />);
+    container.innerHTML = renderToString(<VoiceInput />);
 
     await act(async () => {
-      hydrateRoot(container, <SoundInput />);
+      hydrateRoot(container, <VoiceInput />);
     });
 
     expect(getUserMedia).not.toHaveBeenCalled();

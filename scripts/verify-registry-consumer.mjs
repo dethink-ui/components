@@ -104,7 +104,7 @@ await write("tsconfig.json", {
   exclude: ["node_modules"],
 });
 const fixture = `"use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { DethinkProvider } from "../components/dethink/foundation/dethink-provider";
 import { Button } from "../components/dethink/components/button";
 import { DataTable } from "../components/dethink/components/data-table";
@@ -115,11 +115,15 @@ import { ShaderHeroText } from "../components/dethink/components/shader-hero-tex
 import { Timeline } from "../components/dethink/components/timeline";
 import { TimelineFeed } from "../components/dethink/components/timeline/timeline-feed";
 import { Spinner } from "../components/dethink/components/spinner";
+import { VoiceInput, useVoiceRecorder, type VoiceInputController } from "../components/dethink/components/voice-input";
 export default function App() {
   const [count, setCount] = useState(0);
+  const controllerRef = useRef<VoiceInputController>(null);
+  const recorder = useVoiceRecorder({ maxDurationMs: 1000, onRelease: () => controllerRef.current?.stop() });
   return <DethinkProvider theme="light"><SidebarProvider>
     <Sidebar aria-label="Example navigation"><SidebarContent><SidebarTrigger /></SidebarContent></Sidebar>
     <main><h1>Clean registry consumer</h1>
+      <VoiceInput controllerRef={controllerRef} onStream={recorder.start} onStop={(_stream, reason) => recorder.stop(reason)} />
       <Timeline items={[{id:"a",title:"Release",details:"Verified"}]} getGroup={() => ({id:"today",label:"Today"})} />
       <TimelineFeed items={[{id:"a",title:"Release"}]} />
       <Spinner variant="bouncing-dot" label="Preparing workspace" />
@@ -170,6 +174,7 @@ const components = [
   "shader-hero-text",
   "spinner",
   "timeline-feed",
+  "voice-input",
 ];
 await run("npx", [
   "--yes",
