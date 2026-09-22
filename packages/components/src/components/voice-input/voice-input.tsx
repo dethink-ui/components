@@ -110,7 +110,7 @@ const voiceInputRootSizeClasses =
   "size-[var(--voice-input-size)] min-w-[var(--voice-input-size)] rounded-full";
 
 const voiceInputIconWrapClasses =
-  "pointer-events-none inline-flex h-[var(--voice-input-size)] w-[var(--voice-input-size)] shrink-0 items-center justify-center";
+  "pointer-events-none absolute inset-0 inline-flex items-center justify-center";
 
 const voiceInputIconClasses =
   "inline-flex size-[var(--voice-input-icon-size)] items-center justify-center [&>svg]:size-full";
