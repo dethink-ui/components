@@ -95,6 +95,8 @@ export interface MultiSelectProps<
   searchPlaceholder?: string;
   selectedItems?: Iterable<T>;
   selectedLabel?: string;
+  /** Disable when items have already been filtered by a server. */
+  shouldFilter?: boolean;
   value?: MultiSelectValue[];
 }
 
@@ -457,6 +459,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
     searchPlaceholder = "Search options",
     selectedItems,
     selectedLabel,
+    shouldFilter = true,
     value,
     ...props
   }: MultiSelectProps<T>,
@@ -545,7 +548,7 @@ function MultiSelectRoot<T extends MultiSelectItemData = MultiSelectItemData>(
   );
   const renderedChildren = renderMultiSelectChildren({
     children,
-    inputValue: resolvedInputValue,
+    inputValue: shouldFilter ? resolvedInputValue : "",
     items,
     onItemAction: toggleValue,
   });

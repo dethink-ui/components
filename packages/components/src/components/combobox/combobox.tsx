@@ -85,6 +85,8 @@ export interface ComboboxProps<
   disabled?: boolean;
   disabledKeys?: Iterable<ComboboxValue>;
   errorMessage?: ReactNode;
+  /** Feedback displayed beside the results inside the popup. */
+  popupContent?: ReactNode;
   formValue?: ComboboxFormValue;
   inputValue?: string;
   invalid?: boolean;
@@ -167,7 +169,7 @@ function isAriaInvalid(value: ComboboxProps["aria-invalid"]) {
 }
 
 function toSelectionKey(value: ComboboxValue | null | undefined) {
-  return value ?? undefined;
+  return value;
 }
 
 function toDisabledKeys(disabledKeys: Iterable<ComboboxValue> | undefined) {
@@ -291,6 +293,7 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
     disabled = false,
     disabledKeys,
     errorMessage,
+    popupContent,
     formValue = "key",
     inputValue,
     invalid = false,
@@ -441,6 +444,7 @@ function ComboboxRoot<T extends ComboboxItemData = ComboboxItemData>(
           >
             {renderedChildren}
           </ListBox>
+          {popupContent}
         </Popover>
       </AriaCombobox>
     </DethinkPortalProvider>

@@ -112,6 +112,7 @@ import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger } from "../com
 import { NavDock } from "../components/dethink/components/navdock";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../components/dethink/components/dialog";
 import { ShaderHeroText } from "../components/dethink/components/shader-hero-text";
+import { AsyncSelect } from "../components/dethink/components/async-select";
 import { Timeline } from "../components/dethink/components/timeline";
 import { TimelineFeed } from "../components/dethink/components/timeline/timeline-feed";
 import { Spinner } from "../components/dethink/components/spinner";
@@ -120,6 +121,7 @@ export default function App() {
   return <DethinkProvider theme="light"><SidebarProvider>
     <Sidebar aria-label="Example navigation"><SidebarContent><SidebarTrigger /></SidebarContent></Sidebar>
     <main><h1>Clean registry consumer</h1>
+      <AsyncSelect label="Registry account" defaultValue="ready" items={[{value:"ready",label:"Ready"}]} />
       <Timeline items={[{id:"a",title:"Release",details:"Verified"}]} getGroup={() => ({id:"today",label:"Today"})} />
       <TimelineFeed items={[{id:"a",title:"Release"}]} />
       <Spinner variant="bouncing-dot" label="Preparing workspace" />
@@ -170,6 +172,7 @@ const components = [
   "shader-hero-text",
   "spinner",
   "timeline-feed",
+  "async-select",
 ];
 await run("npx", [
   "--yes",
