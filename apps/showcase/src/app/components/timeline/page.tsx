@@ -14,6 +14,13 @@ import { TimelineRecipeDeployHistory } from "@/examples/timeline/recipe-deploy-h
 import { TimelineRecipeOriginStory } from "@/examples/timeline/recipe-origin-story";
 import { timelineProps } from "@/lib/props/timeline";
 
+import {
+  TimelineGroupedDetails,
+  TimelineLiveFeed,
+  TimelineCanvas,
+  TimelineCards,
+} from "@/examples/timeline/enhanced";
+
 export const metadata: Metadata = {
   title: "Timeline",
   description: "Show events in order with statuses and optional selection.",
@@ -36,27 +43,55 @@ export default function TimelinePage() {
       <DocsSection
         id="examples"
         title="Examples"
-        description="Try the examples, then open the code to use them in your app. Focus the track and use the arrow keys to move between items."
+        description="Try the examples, then open the code to use them in your app. Interactive timelines support arrow keys and Home/End. Use flow for readable histories and canvas when people need to explore a large track."
       >
         <div className="space-y-10">
           <ExampleBlock
             file="timeline/basic.tsx"
-            title="Events"
+            title="Activity history"
             description="Dated milestones with complete, current, and upcoming statuses."
           >
             <TimelineBasic />
           </ExampleBlock>
           <ExampleBlock
             file="timeline/progress.tsx"
-            title="Progress"
-            description="progress mode drops the dates for an evenly spaced step sequence — pipelines, wizards, order tracking."
+            title="Deployment progress"
+            description="A readable sequence of completed, current and upcoming stages."
           >
             <TimelineProgress />
           </ExampleBlock>
           <ExampleBlock
+            file="timeline/enhanced.tsx"
+            title="Grouped release activity"
+            description="Scan by date, then expand an event for its owner and commit. Details do not change selection."
+          >
+            <TimelineGroupedDetails />
+          </ExampleBlock>
+          <ExampleBlock
+            file="timeline/enhanced.tsx"
+            title="Live release feed"
+            description="Scroll up, then add an event. Your reading position stays put until you choose Jump to latest."
+          >
+            <TimelineLiveFeed />
+          </ExampleBlock>
+          <ExampleBlock
+            file="timeline/enhanced.tsx"
+            title="Bordered cards"
+            description="Use cards when events benefit from more separation."
+          >
+            <TimelineCards />
+          </ExampleBlock>
+          <ExampleBlock
+            file="timeline/enhanced.tsx"
+            title="Explore a canvas"
+            description="Pan and zoom an explicit canvas. Drag the track or focus a selection control and use the arrow keys."
+          >
+            <TimelineCanvas />
+          </ExampleBlock>
+          <ExampleBlock
             file="timeline/flow-reveal.tsx"
             title="Flow presentation with reveal"
-            description='presentation="flow" swaps the pan/zoom viewport for a static document-flow list, and reveal="stagger" with the in-view trigger animates the items in one by one as they scroll into view. Reduced-motion users see everything immediately.'
+            description="Milestones enter as you reach them. Reduced-motion users see the content immediately."
           >
             <TimelineFlowReveal />
           </ExampleBlock>
@@ -93,6 +128,18 @@ export default function TimelinePage() {
         </div>
       </DocsSection>
 
+      <DocsSection
+        id="migration"
+        title="Migration"
+        description='Timeline now defaults to a vertical activity list. Set presentation="canvas" to retain pan and zoom, or variant="cards" for bordered flow cards. Reveal defaults are 220ms with a 60ms interval; pass revealOptions to keep your previous timing.'
+      >
+        <p className="text-muted-foreground text-sm">
+          Grouping and expandable details are flow features. Custom renderers
+          remain supported; selection and disclosure controls are separate from
+          links and actions. TimelineFeed installs separately as timeline-feed
+          and owns its scroll panel.
+        </p>
+      </DocsSection>
       <DocsSection
         id="props"
         title="Props"

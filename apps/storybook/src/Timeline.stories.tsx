@@ -1,7 +1,9 @@
+import { expect, userEvent, within } from "storybook/test";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   DethinkProvider,
   Timeline,
+  TimelineFeed,
   type TimelineItemData,
 } from "@dethink/components";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
@@ -12,7 +14,7 @@ const meta = {
   args: {
     items: [],
     mode: "events",
-    orientation: "horizontal",
+    orientation: "vertical",
     layout: "rail",
     scale: "auto",
     order: "asc",
@@ -611,6 +613,7 @@ export const ImageRich: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Timeline
+        presentation="canvas"
         items={imageItems}
         layout="alternating"
         viewport={{ defaultZoom: 0.75, minZoom: 0.5, maxZoom: 2 }}
@@ -627,6 +630,7 @@ export const VerticalAlternating: Story = {
   render: () => (
     <DethinkProvider theme="light" className="p-6">
       <Timeline
+        presentation="canvas"
         items={eventItems}
         orientation="vertical"
         layout="alternating"
@@ -726,6 +730,7 @@ export const PlanetaryPositions: Story = {
       <style>{planetaryTimelineStyles}</style>
       <div className="dt-planetary-field overflow-hidden rounded-md p-5 shadow-2xl">
         <Timeline<PlanetPayload>
+          presentation="canvas"
           aria-label="Planetary position timeline"
           items={planetItems}
           layout="alternating"
@@ -1065,3 +1070,76 @@ export const ThemeDensityAndRtl: Story = {
     </div>
   ),
 };
+
+export const GroupedDetails: Story = {
+  render: () => (
+    <DethinkProvider>
+      <Timeline
+        aria-label="Grouped activity"
+        interactive={false}
+        items={eventItems.map((item, index) => ({
+          ...item,
+          details: <p>Release notes for event {index + 1}.</p>,
+        }))}
+        getGroup={(item) => ({
+          id: item.status === "complete" ? "done" : "next",
+          label: item.status === "complete" ? "Completed" : "Next milestones",
+        })}
+      />
+    </DethinkProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const disclosure = canvas.getAllByRole("button", {
+      name: /Show details/,
+    })[0];
+    await userEvent.click(disclosure);
+    await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+  },
+};
+
+export const Cards: Story = {
+  args: { items: eventItems, variant: "cards", interactive: false },
+};
+export const Canvas: Story = {
+  args: {
+    items: eventItems,
+    presentation: "canvas",
+    orientation: "horizontal",
+    viewport: { controlsVisibility: "always" },
+  },
+};
+export const KeyboardFlow: Story = {
+  args: { items: eventItems },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const buttons = canvas.getAllByRole("button");
+    buttons[0].focus();
+    await userEvent.keyboard("{End}");
+    await expect(buttons[buttons.length - 1]).toHaveFocus();
+  },
+};
+function LiveFeedExample() {
+  const [items, setItems] = useState(eventItems);
+  return (
+    <DethinkProvider>
+      <button
+        type="button"
+        onClick={() =>
+          setItems((current) => [
+            ...current,
+            {
+              id: `new-${current.length}`,
+              title: `New event ${current.length}`,
+              status: "complete",
+            },
+          ])
+        }
+      >
+        Add event
+      </button>
+      <TimelineFeed items={items} scale="sequence" interactive={false} />
+    </DethinkProvider>
+  );
+}
+export const LiveFeed: Story = { render: () => <LiveFeedExample /> };

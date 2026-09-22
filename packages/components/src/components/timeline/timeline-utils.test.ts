@@ -218,10 +218,10 @@ describe("Timeline utilities", () => {
 
   it("resolves presentation defaults and forces flow for story styling", () => {
     expect(resolveTimelinePresentation(undefined, "events", "rail")).toBe(
-      "canvas",
+      "flow",
     );
     expect(resolveTimelinePresentation(undefined, "progress", "rail")).toBe(
-      "canvas",
+      "flow",
     );
     expect(resolveTimelinePresentation("flow", "events", "rail")).toBe("flow");
     expect(resolveTimelinePresentation(undefined, "story", "story")).toBe(
@@ -239,8 +239,9 @@ describe("Timeline utilities", () => {
   it("normalizes and clamps reveal options", () => {
     expect(normalizeTimelineRevealOptions(undefined)).toEqual({
       trigger: "mount",
-      interval: 200,
-      duration: 500,
+      interval: 60,
+      duration: 220,
+      maxStagger: 300,
       initialDelay: 0,
     });
     expect(

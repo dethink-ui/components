@@ -30,5 +30,11 @@ const milestones: TimelineItemData[] = [
 ];
 
 export function TimelineBasic() {
-  return <Timeline aria-label="Release milestones" items={milestones} />;
+  return (
+    <Timeline
+      interactive={false}
+      aria-label="Release milestones"
+      items={milestones}
+    />
+  );
 }
