@@ -299,7 +299,7 @@
 @keyframes dt-timeline-reveal-y {
   from {
     opacity: 0;
-    translate: 0 var(--dt-space-2);
+    translate: 0 6px;
   }
 
   to {
@@ -567,29 +567,58 @@
      immediately (also the correct no-JS/SSR fallback). Reveal progression is
      tracked in React state, so callbacks still fire when motion is reduced. */
   @media (prefers-reduced-motion: no-preference) {
-    [data-slot="timeline-item"][data-reveal][data-revealed="false"] {
+    [data-reveal-ready="true"]
+      [data-slot="timeline-item"][data-reveal][data-revealed="false"] {
       opacity: 0;
-      translate: 0 var(--dt-space-2);
+      translate: 0 6px;
     }
 
-    [data-slot="timeline-item"][data-reveal][data-revealed="true"] {
+    [data-reveal-ready="true"]
+      [data-slot="timeline-item"][data-reveal][data-revealed="true"] {
       animation: dt-timeline-reveal-y var(--timeline-reveal-duration, 500ms)
         cubic-bezier(0.16, 1, 0.3, 1) both;
-      animation-delay: calc(
-        var(--timeline-reveal-initial-delay, 0ms) +
-          var(--timeline-reveal-index, 0) *
-          var(--timeline-reveal-interval, 200ms)
-      );
+      animation-delay: var(--timeline-reveal-delay, 0ms);
     }
 
-    /* The rail grows alongside the staggered items. `scale` is an independent
-       property, so it does not clash with the alternating rail's translate. */
-    [data-slot="timeline-list"][data-reveal-rail="true"]::before {
-      transform-origin: top center;
-      scale: 1 0;
-      animation: dt-timeline-rail-grow-y var(--timeline-rail-duration, 500ms)
-        linear both;
-      animation-delay: var(--timeline-rail-delay, 0ms);
+    [data-reveal-ready="true"]
+      [data-slot="timeline-list"][data-reveal-rail="true"]::before {
+      display: none;
+    }
+    [data-reveal-ready="true"]
+      [data-slot="timeline-list"][data-reveal-rail="true"]
+      > [data-slot="timeline-item"]:not(:last-child)::before {
+      content: "";
+      position: absolute;
+      left: 1.5rem;
+      top: 2rem;
+      bottom: 0;
+      width: 1px;
+      background: var(--dt-color-timeline-rail);
+      transform-origin: top;
+      animation: dt-timeline-rail-grow-y var(--timeline-reveal-duration, 220ms)
+        ease-out both;
+      animation-delay: var(--timeline-reveal-delay, 0ms);
+    }
+    [data-reveal-ready="true"]
+      [data-reveal-rail="true"]
+      > [data-revealed="false"]::before {
+      visibility: hidden;
+    }
+    [data-reveal-ready="true"] [data-slot="timeline-item"]:focus-within {
+      opacity: 1;
+      translate: none;
+      animation: none;
+    }
+    [data-layout="story"] [data-slot="timeline-item"]::before {
+      left: 1.75rem !important;
+    }
+    @media (min-width: 640px) {
+      [data-layout="story"] [data-slot="timeline-item"]::before {
+        left: 2.25rem !important;
+      }
+      [data-layout="alternating"] [data-slot="timeline-item"]::before {
+        left: 50% !important;
+      }
     }
   }
 }
@@ -1081,5 +1110,14 @@
   :focus-visible {
     outline: 2px solid var(--dt-color-ring);
     outline-offset: 2px;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  [data-slot="timeline-controls"][data-visibility="hover"] {
+    opacity: 1;
+    pointer-events: auto;
+    translate: none;
+    transform: none;
   }
 }

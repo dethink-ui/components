@@ -36,6 +36,8 @@ export {
   type NormalizedTimelineItem,
   type NormalizedTimelineRevealOptions,
   type TimelineImage,
+  type TimelineVariant,
+  type TimelineGroup,
   type TimelineItemBaseData,
   type TimelineItemData,
   type TimelineItemDefaultContent,

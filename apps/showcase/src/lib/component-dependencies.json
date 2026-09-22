@@ -288,7 +288,14 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "textarea": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
-  "timeline": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "timeline": {
+    "direct": ["lucide-react", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
+  "timeline-feed": {
+    "direct": ["react"],
+    "shared": ["clsx", "lucide-react", "tailwind-merge"]
+  },
   "toast": {
     "direct": ["motion", "react"],
     "shared": ["clsx", "tailwind-merge"]

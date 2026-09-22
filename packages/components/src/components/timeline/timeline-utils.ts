@@ -14,6 +14,8 @@ export type TimelineViewportChrome = "none" | "subtle" | "panel";
 export type TimelineControlsVisibility = "always" | "hover";
 
 export type TimelinePresentation = "canvas" | "flow";
+export type TimelineVariant = "activity" | "cards";
+export type TimelineGroup = { id: string; label: ReactNode };
 export type TimelineRevealMode = "none" | "stagger" | "all";
 export type TimelineRevealTrigger = "mount" | "in-view" | "manual";
 
@@ -29,6 +31,8 @@ export type NormalizedTimelineRevealOptions = {
   interval: number;
   duration: number;
   initialDelay: number;
+  /** Undefined preserves explicitly supplied stagger timing. */
+  maxStagger?: number;
 };
 
 export type TimelineImage = {
@@ -53,6 +57,7 @@ export type TimelineItemDefaultContent = {
   title?: ReactNode;
   description?: ReactNode;
   image?: TimelineImage;
+  details?: ReactNode;
 };
 
 export type TimelineItemData<
@@ -114,8 +119,8 @@ export const timelineDefaultViewport = {
 
 export const timelineDefaultRevealOptions: NormalizedTimelineRevealOptions = {
   trigger: "mount",
-  interval: 200,
-  duration: 500,
+  interval: 60,
+  duration: 220,
   initialDelay: 0,
 };
 
@@ -175,13 +180,14 @@ export function resolveTimelinePresentation(
     return "flow";
   }
 
-  return presentation ?? "canvas";
+  return presentation ?? "flow";
 }
 
 export function normalizeTimelineRevealOptions(
   options: TimelineRevealOptions | undefined,
 ): NormalizedTimelineRevealOptions {
   return {
+    maxStagger: options?.interval === undefined ? 300 : undefined,
     trigger: options?.trigger ?? timelineDefaultRevealOptions.trigger,
     interval: Math.max(
       0,
@@ -235,7 +241,13 @@ export function getTimelineRevealItemDelay({
     return options.initialDelay;
   }
 
-  return options.initialDelay + Math.max(0, batchOrder) * options.interval;
+  return (
+    options.initialDelay +
+    Math.min(
+      options.maxStagger ?? Infinity,
+      Math.max(0, batchOrder) * options.interval,
+    )
+  );
 }
 
 export function getTimelineRevealBatchDuration({
@@ -257,7 +269,10 @@ export function getTimelineRevealBatchDuration({
 
   return (
     options.initialDelay +
-    Math.max(0, batchSize - 1) * options.interval +
+    Math.min(
+      options.maxStagger ?? Infinity,
+      Math.max(0, batchSize - 1) * options.interval,
+    ) +
     options.duration
   );
 }

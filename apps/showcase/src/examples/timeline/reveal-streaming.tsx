@@ -65,6 +65,7 @@ export function TimelineRevealStreaming() {
         </Button>
       </div>
       <Timeline
+        interactive={false}
         aria-label="Agent run events"
         items={runEvents.slice(0, count)}
         presentation="flow"

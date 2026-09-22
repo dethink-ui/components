@@ -3,8 +3,8 @@
   "name": "timeline",
   "type": "registry:ui",
   "title": "Timeline",
-  "description": "Semantic pannable and zoomable Timeline component for events and progress.",
-  "dependencies": [],
+  "description": "Accessible activity timeline with flow and canvas layouts, grouped events and expandable details.",
+  "dependencies": ["lucide-react"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
   "files": [
@@ -17,12 +17,16 @@
       "type": "registry:component"
     },
     {
-      "path": "packages/components/src/components/timeline/index.ts",
-      "type": "registry:component"
-    },
-    {
       "path": "packages/components/src/utils/cn.ts",
       "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/use-hydrated.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/timeline/index.ts",
+      "type": "registry:component"
     }
   ]
 }

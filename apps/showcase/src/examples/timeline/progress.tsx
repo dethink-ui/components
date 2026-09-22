@@ -32,12 +32,12 @@ const steps: TimelineItemData[] = [
 export function TimelineProgress() {
   return (
     <Timeline
+      interactive={false}
       aria-label="Deployment progress"
       mode="progress"
       scale="auto"
       layout="stacked"
       items={steps}
-      defaultSelectedId="building"
     />
   );
 }
