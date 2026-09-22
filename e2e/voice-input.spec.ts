@@ -49,6 +49,49 @@ test("variant and size demos do not leak props or request the real microphone", 
   expect(errors).toEqual([]);
 });
 
+test("microphone stays centered within the ring across sizes and directions", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/components/voice-input");
+  for (const direction of ["ltr", "rtl"]) {
+    await page.evaluate((dir) => {
+      document.documentElement.dir = dir;
+    }, direction);
+    const controls = page
+      .getByRole("region", { name: "Sizes", exact: true })
+      .locator('[data-slot="voice-input"]');
+    for (const control of await controls.all()) {
+      for (const active of [false, true]) {
+        if (active) await control.click();
+        await expect(control).toHaveAttribute(
+          "data-state",
+          active ? "recording" : "idle",
+        );
+        const offsets = await control.evaluate((button) => {
+          const center = (element: Element) => {
+            const rect = element.getBoundingClientRect();
+            return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+          };
+          const root = center(button);
+          return [
+            '[data-slot="voice-input-icon"] svg',
+            '[data-slot="voice-input-waveform"]',
+          ].map((selector) => {
+            const child = center(button.querySelector(selector)!);
+            return Math.max(
+              Math.abs(child.x - root.x),
+              Math.abs(child.y - root.y),
+            );
+          });
+        });
+        expect(Math.max(...offsets)).toBeLessThan(0.1);
+      }
+      await control.click();
+    }
+  }
+});
+
 test("demos are isolated and permission requests can be canceled by keyboard", async ({
   page,
 }) => {
