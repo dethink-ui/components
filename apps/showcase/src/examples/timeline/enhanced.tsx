@@ -136,17 +136,6 @@ export function TimelineLiveFeed() {
   );
 }
 
-export function TimelineCanvas() {
-  return (
-    <Timeline
-      aria-label="Explore release milestones"
-      items={history}
-      presentation="canvas"
-      viewport={{ controlsVisibility: "always" }}
-    />
-  );
-}
-
 export function TimelineCards() {
   return (
     <Timeline
