@@ -1211,6 +1211,11 @@ export {
 export {
   Timeline,
   TimelineControls,
+  type TimelineVariant,
+  type TimelineGroup,
+  type TimelinePresentation,
+  type TimelineRevealOptions,
+  type TimelineRevealMode,
   TimelineItem,
   TimelineViewport,
   centerTimelinePoint,
@@ -1589,3 +1594,8 @@ export type {
   ShaderBackgroundProps,
   ShaderBackgroundEffect,
 } from "./components/shader-backgrounds/types";
+
+export {
+  TimelineFeed,
+  type TimelineFeedProps,
+} from "./components/timeline/timeline-feed";

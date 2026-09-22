@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "timeline-feed",
+  "type": "registry:ui",
+  "title": "Timeline Feed",
+  "description": "Contained live timeline with follow-latest, unread events and reading-position preservation.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["timeline"],
+  "files": [
+    {
+      "path": "packages/components/src/components/timeline/timeline-feed.tsx",
+      "type": "registry:component"
+    }
+  ]
+}

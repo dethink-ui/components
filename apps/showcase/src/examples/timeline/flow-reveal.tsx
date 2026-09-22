@@ -46,6 +46,7 @@ const milestones: TimelineItemData[] = [
 export function TimelineFlowReveal() {
   return (
     <Timeline
+      interactive={false}
       aria-label="Project milestones"
       items={milestones}
       presentation="flow"

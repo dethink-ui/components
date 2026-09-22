@@ -269,6 +269,7 @@ describe("Timeline", () => {
   it("supports optional viewport chrome and controls visibility", () => {
     render(
       <Timeline
+        presentation="canvas"
         items={eventItems}
         viewport={{ chrome: "panel", controlsVisibility: "always" }}
       />,
@@ -285,7 +286,11 @@ describe("Timeline", () => {
   it("uses timeline contrast tokens for rail and card borders", () => {
     render(
       <DethinkProvider theme="dark">
-        <Timeline items={eventItems} viewport={{ controls: false }} />
+        <Timeline
+          presentation="canvas"
+          items={eventItems}
+          viewport={{ controls: false }}
+        />
       </DethinkProvider>,
     );
 
@@ -298,7 +303,7 @@ describe("Timeline", () => {
   });
 
   it("reveals viewport controls on hover", () => {
-    render(<Timeline items={eventItems} />);
+    render(<Timeline presentation="canvas" items={eventItems} />);
 
     const viewport = screen.getByRole("region", { name: "Timeline viewport" });
     const controls = document.querySelector('[data-slot="timeline-controls"]');
@@ -376,7 +381,7 @@ describe("Timeline", () => {
   it("zooms, resets, fits, and pans the viewport", async () => {
     const user = userEvent.setup();
 
-    render(<Timeline items={eventItems} />);
+    render(<Timeline presentation="canvas" items={eventItems} />);
 
     const viewport = screen.getByRole("region", { name: "Timeline viewport" });
     const content = document.querySelector(
@@ -417,7 +422,13 @@ describe("Timeline", () => {
   });
 
   it("requires the configured modifier for wheel zoom by default", () => {
-    render(<Timeline items={eventItems} viewport={{ controls: false }} />);
+    render(
+      <Timeline
+        presentation="canvas"
+        items={eventItems}
+        viewport={{ controls: false }}
+      />,
+    );
 
     const viewport = screen.getByRole("region", { name: "Timeline viewport" });
     const content = document.querySelector(
@@ -524,6 +535,7 @@ describe("Timeline reveal", () => {
   it("ignores reveal for the canvas presentation", () => {
     render(
       <Timeline
+        presentation="canvas"
         mode="events"
         reveal="stagger"
         items={flowItems}
