@@ -2,6 +2,13 @@ import type { PropRow } from "@/components/props-table";
 
 export const comboboxProps: PropRow[] = [
   {
+    prop: "popupContent",
+    type: "ReactNode",
+    defaultValue: "—",
+    description:
+      "Optional async feedback rendered inside the popup beside the result list.",
+  },
+  {
     prop: "value",
     type: "string | null",
     defaultValue: "—",

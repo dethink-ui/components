@@ -1,8 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AsyncSelect } from "@dethink/components";
 
 export function AsyncSelectStates() {
+  const [failed, setFailed] = useState(true);
+  const [retrying, setRetrying] = useState(false);
+  useEffect(() => {
+    if (!retrying) return;
+    const timer = setTimeout(() => {
+      setFailed(false);
+      setRetrying(false);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [retrying]);
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-3">
@@ -20,11 +31,12 @@ export function AsyncSelectStates() {
           emptyMessage="No customer found."
         />
         <AsyncSelect
-          error="Customer lookup failed."
+          error={failed && !retrying ? "Customer lookup failed." : undefined}
+          loading={retrying}
           inputValue="acme"
-          items={[]}
+          items={failed ? [] : [{ value: "acme", label: "Acme Operations" }]}
           label="Errored customer"
-          onRetry={() => undefined}
+          onRetry={() => setRetrying(true)}
           retryLabel="Try again"
         />
       </div>

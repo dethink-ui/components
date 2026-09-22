@@ -1,5 +1,5 @@
 import { createRef, useState } from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { AsyncSelect, asyncSelectClassNames } from ".";
@@ -241,4 +241,165 @@ describe("AsyncSelect", () => {
       "acme",
     ]);
   });
+});
+
+it("preserves authoritative server matches in multiple mode", async () => {
+  const user = userEvent.setup();
+  render(
+    <AsyncSelect
+      selectionMode="multiple"
+      label="People"
+      inputValue="engineering"
+      items={[{ value: "ari", label: "Ari Chen" }]}
+    />,
+  );
+  await user.click(screen.getByRole("button", { name: /Show options/ }));
+  expect(screen.getByRole("option", { name: "Ari Chen" })).toBeInTheDocument();
+});
+it("synchronizes controlled single selection labels", () => {
+  const items = [
+    { value: "a", label: "Alpha" },
+    { value: "b", label: "Beta" },
+  ];
+  const { rerender } = render(
+    <AsyncSelect label="Account" items={items} value="a" />,
+  );
+  rerender(<AsyncSelect label="Account" items={items} value="b" />);
+  expect(screen.getByRole("combobox")).toHaveValue("Beta");
+});
+it("resolves labels arriving after the selected key", () => {
+  const { rerender } = render(
+    <AsyncSelect label="Account" value="a" items={[]} loading />,
+  );
+  rerender(
+    <AsyncSelect
+      label="Account"
+      value="a"
+      items={[{ value: "a", label: "Alpha" }]}
+    />,
+  );
+  expect(screen.getByRole("combobox")).toHaveValue("Alpha");
+});
+
+it("keeps a typed query when refreshed labels arrive", async () => {
+  const user = userEvent.setup();
+  const { rerender } = render(
+    <AsyncSelect
+      label="Account"
+      value="a"
+      items={[{ value: "a", label: "Alpha" }]}
+    />,
+  );
+  await user.clear(screen.getByRole("combobox"));
+  await user.type(screen.getByRole("combobox"), "beta");
+  rerender(
+    <AsyncSelect
+      label="Account"
+      value="a"
+      items={[{ value: "a", label: "Alpha updated" }]}
+    />,
+  );
+  expect(screen.getByRole("combobox")).toHaveValue("beta");
+});
+it("shows one accessible loading message inside an open single popup", async () => {
+  const user = userEvent.setup();
+  render(<AsyncSelect label="Account" loading items={[]} />);
+  await user.click(screen.getByRole("button", { name: /Show options/ }));
+  expect(screen.getAllByRole("status")).toHaveLength(1);
+  expect(
+    document.querySelector('[data-slot="combobox-popover"]'),
+  ).toHaveTextContent("Loading options...");
+});
+it.each([{ invalid: true }, { "aria-invalid": true as const }])(
+  "shows empty search feedback in an open invalid field (%j)",
+  async (validation) => {
+    const user = userEvent.setup();
+    render(
+      <AsyncSelect
+        {...validation}
+        label="Account"
+        inputValue="missing"
+        items={[]}
+        emptyMessage="No matching accounts"
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Show options/ }));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No matching accounts",
+    );
+  },
+);
+it("does not insert cached selected items into the result window", async () => {
+  const user = userEvent.setup();
+  render(
+    <AsyncSelect
+      label="Account"
+      value="a"
+      selectedItems={[{ value: "a", label: "Alpha" }]}
+      items={[{ value: "b", label: "Beta" }]}
+    />,
+  );
+  await user.click(screen.getByRole("button", { name: /Show options/ }));
+  expect(screen.queryByRole("option", { name: "Alpha" })).toBeNull();
+  expect(screen.getByRole("option", { name: "Beta" })).toBeInTheDocument();
+});
+
+it("tabs from an open error to Retry and returns focus to the input on retry", async () => {
+  const user = userEvent.setup();
+  const retry = vi.fn();
+  render(<AsyncSelect label="Account" error="Unavailable" onRetry={retry} />);
+  await user.click(screen.getByRole("button", { name: /Show options/ }));
+  await user.tab();
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "Retry" })).toHaveFocus(),
+  );
+  await user.keyboard("{Enter}");
+  expect(retry).toHaveBeenCalledTimes(1);
+  await waitFor(() => expect(screen.getByRole("combobox")).toHaveFocus());
+});
+
+it("renders one open multiple-mode status and never offers cached selections as results", async () => {
+  const user = userEvent.setup();
+  render(
+    <AsyncSelect
+      selectionMode="multiple"
+      label="Owners"
+      value={["a"]}
+      selectedItems={[{ value: "a", label: "Alpha" }]}
+      items={[]}
+      loading
+    />,
+  );
+  await user.click(screen.getByRole("button", { name: /Show options/ }));
+  expect(screen.getAllByRole("status")).toHaveLength(1);
+  expect(screen.queryByRole("option")).toBeNull();
+});
+
+it("does not render retry actions for disabled or read-only fields", () => {
+  render(
+    <>
+      <AsyncSelect
+        label="Disabled"
+        disabled
+        error="Unavailable"
+        onRetry={() => undefined}
+      />
+      <AsyncSelect
+        label="Read only"
+        readOnly
+        error="Unavailable"
+        onRetry={() => undefined}
+      />
+    </>,
+  );
+  expect(screen.queryByRole("button", { name: "Retry" })).toBeNull();
+});
+
+it("clears the label when a controlled selection becomes null", () => {
+  const items = [{ value: "a", label: "Alpha" }];
+  const { rerender } = render(
+    <AsyncSelect label="Account" value="a" items={items} />,
+  );
+  rerender(<AsyncSelect label="Account" value={null} items={items} />);
+  expect(screen.getByRole("combobox")).toHaveValue("");
 });

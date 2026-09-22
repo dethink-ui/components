@@ -2,6 +2,13 @@ import type { PropRow } from "@/components/props-table";
 
 export const multiSelectProps: PropRow[] = [
   {
+    prop: "shouldFilter",
+    type: "boolean",
+    defaultValue: "true",
+    description:
+      "Set false when items are already filtered by the server; preserves the provided result order.",
+  },
+  {
     prop: "value / defaultValue / onValueChange",
     type: "string[] / string[] / (value) => void",
     defaultValue: "[]",

@@ -33,13 +33,13 @@ export default function AsyncSelectPage() {
       <DocsSection
         id="examples"
         title="Examples"
-        description="Type to change the app-owned query; the examples filter local arrays to model a server result window."
+        description="Your app owns fetching and query state. The delayed lookup demonstrates pending requests, empty results, and retry without letting older responses overwrite a newer search."
       >
         <div className="space-y-10">
           <ExampleBlock
             file="async-select/basic.tsx"
-            title="Basic"
-            description="Single-value search where the app controls the query and result list."
+            title="Delayed account lookup"
+            description="Search accounts with a simulated 600ms response. Trigger a connection error, then retry to recover."
           >
             <AsyncSelectBasic />
           </ExampleBlock>
@@ -79,6 +79,33 @@ export default function AsyncSelectPage() {
         >
           <AsyncSelectRecipeServerFilter />
         </ExampleBlock>
+      </DocsSection>
+
+      <DocsSection
+        id="async-behavior"
+        title="Async behavior"
+        description="Treat the returned items as the authoritative result window, in server order."
+      >
+        <div className="text-muted-foreground space-y-3 text-sm">
+          <p>
+            AsyncSelect does not fetch or debounce. Cancel superseded requests
+            or ignore their responses in your app. Keep query text separate from
+            the selected value.
+          </p>
+          <p>
+            Pass selectedItems to preserve labels when a selection is outside
+            the result window. Cached selections are not added to the available
+            options. Without a controlled inputValue, selected labels update
+            when the value changes or its data arrives; an active typed query is
+            preserved.
+          </p>
+          <p>
+            Loading, empty, and retry feedback appears inside an open popup and
+            below a closed field. Tab from an errored input reaches Retry;
+            activating it returns focus to the search field. Reduced motion
+            retains the loading text without spinning.
+          </p>
+        </div>
       </DocsSection>
 
       <DocsSection

@@ -36,7 +36,7 @@ export function AsyncSelectRecipeServerFilter() {
           placeholder="Search models"
         />
         <AsyncSelect
-          inputValue="ari"
+          defaultValue="ari"
           items={[{ label: "Ari Chen", value: "ari" }]}
           label="Fallback owner"
           name="fallbackOwner"
