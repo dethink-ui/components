@@ -65,3 +65,28 @@ test("RTL keyboard direction and accessible examples", async ({ page }) => {
     .analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("stepper maps equal stops to labels and range endpoints", async ({
+  page,
+}) => {
+  const movement = page.getByRole("slider", { name: "Movement", exact: true });
+  await movement.focus();
+  await movement.press("End");
+  await expect(movement).toHaveAttribute("aria-valuetext", "Rapid");
+  await movement.press("Home");
+  await expect(movement).toHaveAttribute("aria-valuetext", "Still");
+  const low = page.getByRole("slider", {
+    name: "Slowest Allowed speed range",
+    exact: true,
+  });
+  await low.focus();
+  await low.press("End");
+  await expect(low).toHaveAttribute("aria-valuetext", "Fast");
+  await low.press("Tab");
+  await expect(
+    page.getByRole("slider", {
+      name: "Fastest Allowed speed range",
+      exact: true,
+    }),
+  ).toBeFocused();
+});

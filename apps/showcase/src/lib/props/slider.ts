@@ -1,6 +1,20 @@
 import type { PropRow } from "@/components/props-table";
 export const sliderProps: PropRow[] = [
   {
+    prop: "mode / steps",
+    type: '"numeric" | "stepper" / readonly SliderStep[]',
+    defaultValue: '"numeric" / —',
+    description:
+      "Stepper mode requires at least two strictly increasing finite values with readable labels. showLabel hides individual visible labels without removing accessible value text. Numeric min/max/step cannot be combined with steps.",
+  },
+  {
+    prop: "locale",
+    type: "string",
+    defaultValue: "Inherited locale",
+    description:
+      "Number formatting locale; keyboard and pointer direction follow inherited DOM direction independently.",
+  },
+  {
     prop: "value / defaultValue",
     type: "number | [number, number]",
     defaultValue: "min",

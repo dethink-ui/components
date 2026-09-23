@@ -1134,6 +1134,16 @@ export function App() {
                 </Field>
                 <FieldSet>
                   <Slider
+                    label="Stepper smoke"
+                    mode="stepper"
+                    steps={[
+                      { value: 0, label: "Off" },
+                      { value: 5, label: "On" },
+                    ]}
+                    defaultValue={5}
+                    name="stepperSmoke"
+                  />
+                  <Slider
                     label="Slider smoke"
                     name="sliderSmoke"
                     defaultValue={40}

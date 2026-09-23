@@ -12,6 +12,15 @@ it("has no axe violations for single, range, and disabled sliders", async () => 
         description="Monthly budget"
       />
       <Slider label="Disabled" disabled />
+      <Slider
+        label="Speed"
+        mode="stepper"
+        steps={[
+          { value: 0, label: "Slow" },
+          { value: 10, label: "Fast" },
+        ]}
+        defaultValue={10}
+      />
     </>,
   );
   expect((await axe(container)).violations).toEqual([]);
