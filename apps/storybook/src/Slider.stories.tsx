@@ -43,3 +43,23 @@ export const RightToLeft: Story = {
     </DethinkProvider>
   ),
 };
+export const Stepper: Story = {
+  render: () => (
+    <Slider
+      label="Speed"
+      mode="stepper"
+      steps={[
+        { value: 0, label: "Still" },
+        { value: 1, label: "Steady" },
+        { value: 4, label: "Rapid" },
+      ]}
+      defaultValue={1}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const input = within(canvasElement).getByRole("slider");
+    input.focus();
+    await userEvent.keyboard("{End}");
+    await expect(input).toHaveAttribute("aria-valuetext", "Rapid");
+  },
+};

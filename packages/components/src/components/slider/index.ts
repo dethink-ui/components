@@ -6,4 +6,5 @@ export {
   type SliderSize,
   type SliderSlots,
   type SliderValueDisplay,
+  type SliderStep,
 } from "./slider";

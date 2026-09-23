@@ -9,6 +9,7 @@ import { PropsTable } from "@/components/props-table";
 import { SliderPrecision } from "@/examples/slider/precision";
 import { SliderBudget } from "@/examples/slider/budget";
 import { SliderStates } from "@/examples/slider/states";
+import { SliderStepper } from "@/examples/slider/stepper";
 import { sliderProps } from "@/lib/props/slider";
 
 export const metadata: Metadata = {
@@ -32,6 +33,13 @@ export default function SliderPage() {
         description="Drag, click the track, or use your keyboard. Every adjustment stays precise."
       >
         <div className="space-y-10">
+          <ExampleBlock
+            file="slider/stepper.tsx"
+            title="Labelled steps"
+            description="Named milestones snap to evenly spaced stops. The app receives the original numeric values, including uneven increments."
+          >
+            <SliderStepper />
+          </ExampleBlock>
           <ExampleBlock
             file="slider/budget.tsx"
             title="Budget range"
