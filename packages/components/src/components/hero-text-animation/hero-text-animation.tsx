@@ -10,6 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
@@ -19,7 +20,6 @@ import {
   MotionConfig,
   motion as motionElement,
   useMotionValue,
-  useReducedMotion,
   type Transition,
   type Variants,
 } from "motion/react";
@@ -165,7 +165,7 @@ const heroTextAnimationWordClasses =
 const heroTextAnimationLineClasses =
   "block min-w-0 overflow-visible will-change-transform data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationCurtainMaskClasses =
-  "block min-w-0 overflow-hidden [line-height:inherit]";
+  "block min-w-0 overflow-hidden py-[0.2em] -my-[0.2em] [line-height:inherit]";
 const heroTextAnimationCurtainLineClasses =
   "block min-w-0 will-change-transform data-[reduced-motion=true]:will-change-auto";
 const heroTextAnimationTypewriterMotionClasses =
@@ -290,12 +290,9 @@ const kineticEmphasisMaximumWordCount = 2;
 const kineticEmphasisScale = 1.08;
 const kineticEmphasisHiddenScale = 0.84;
 const kineticEmphasisRise = "0.6em";
-// Scroll-responsive anchors to the hero's own position (offset "start start":
-// progress begins when the hero's top reaches the viewport top) rather than to
-// raw page scroll, so the effect is correct wherever the hero sits on the page
-// (PRD 9.9). The subtle transform then completes over a fixed scroll window so
-// the feel is independent of heading size.
-const scrollResponsiveAnchor = "start start";
+// Start inside the viewport so the subtle effect remains visible, and finish
+// over a fixed scroll distance independent of heading size.
+const scrollResponsiveAnchor = "start 70%";
 const scrollResponsiveRangePx = 220;
 const scrollResponsiveMinimumOpacity = 0.92;
 // The letter-trace renders the heading as an SVG `<text>` in a fixed user-unit
@@ -341,6 +338,21 @@ const svgStrokeDrawStyle = {
 
 const HeroTextAnimationReducedMotionContext =
   createContext<HeroTextAnimationProviderReducedMotion>("user");
+
+const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
+function subscribeToReducedMotion(onChange: () => void) {
+  const preference = window.matchMedia?.(reducedMotionQuery);
+  preference?.addEventListener("change", onChange);
+  return () => preference?.removeEventListener("change", onChange);
+}
+function getReducedMotionSnapshot() {
+  return window.matchMedia?.(reducedMotionQuery).matches ?? false;
+}
+// The server already renders static text; keep hydration identical, then
+// synchronise with the browser and listen for subsequent preference changes.
+function getServerReducedMotionSnapshot() {
+  return false;
+}
 
 export function HeroTextAnimationProvider({
   children,
@@ -2490,8 +2502,8 @@ function BlurFocusSegments({
         heroTextAnimationBlurFocusClasses,
         willChangeClass,
       )}
-      initial={shouldStart ? hiddenState : { opacity: 0 }}
-      animate={shouldStart ? visibleState : { opacity: 0 }}
+      initial={hiddenState}
+      animate={shouldStart ? visibleState : hiddenState}
       transition={transition}
       onAnimationComplete={
         shouldStart && !reducedMotion
@@ -2750,12 +2762,14 @@ function ScrollResponsiveSegments({
   const motionRef = useRef<HTMLSpanElement>(null);
   const y = useMotionValue(0);
   const opacity = useMotionValue(1);
+  const scale = useMotionValue(1);
 
   useEffect(() => {
     const element = motionRef.current;
 
     y.set(0);
     opacity.set(1);
+    scale.set(1);
     element?.setAttribute("data-scroll-progress", "0.000");
     element?.setAttribute("data-scroll-y", "0.000");
     element?.setAttribute("data-scroll-opacity", "1.000");
@@ -2773,20 +2787,33 @@ function ScrollResponsiveSegments({
         return;
       }
 
-      // Progress is anchored to the hero's own top: 0 while the hero top is at
-      // or below the viewport top, rising to 1 over the next `range` px of
-      // scroll. Uses the live element position, so it is correct wherever the
-      // hero is placed on the page.
-      const rect = element.getBoundingClientRect();
-      const progress = Math.min(
-        1,
-        Math.max(0, -rect.top / scrollResponsiveRangePx),
+      // Measure the untransformed heading, not the moving visual layer: using
+      // its transform in the input creates feedback on subsequent scrolls.
+      // Begin while the heading is still visible. A hero above this viewport
+      // threshold starts from its document position, staying unchanged at scroll 0.
+      const heading = element.closest('[data-slot="hero-text-animation"]');
+      if (!heading) return;
+      const rect = heading.getBoundingClientRect();
+      const anchor = Math.min(
+        window.innerHeight * 0.7,
+        rect.top + window.scrollY,
       );
+      const range = Math.max(
+        scrollResponsiveRangePx,
+        window.innerHeight * 0.55,
+      );
+      const progress = Math.min(1, Math.max(0, (anchor - rect.top) / range));
       const nextY = heroTextAnimationMotionTokens.distance.scrollY * progress;
       const nextOpacity = 1 - (1 - scrollResponsiveMinimumOpacity) * progress;
 
       y.set(nextY);
       opacity.set(nextOpacity);
+      scale.set(1 - 0.1 * progress);
+      element.setAttribute("data-scroll-range-px", range.toFixed(0));
+      element.setAttribute(
+        "data-scroll-scale",
+        (1 - 0.1 * progress).toFixed(3),
+      );
       element.setAttribute("data-scroll-progress", progress.toFixed(3));
       element.setAttribute("data-scroll-y", nextY.toFixed(3));
       element.setAttribute("data-scroll-opacity", nextOpacity.toFixed(3));
@@ -2817,7 +2844,7 @@ function ScrollResponsiveSegments({
         }
       }
     };
-  }, [opacity, reducedMotion, y]);
+  }, [opacity, reducedMotion, scale, y]);
 
   return (
     <motionElement.span
@@ -2837,7 +2864,7 @@ function ScrollResponsiveSegments({
         heroTextAnimationMotionClasses,
         heroTextAnimationScrollResponsiveClasses,
       )}
-      style={reducedMotion ? undefined : { opacity, y }}
+      style={reducedMotion ? undefined : { opacity, scale, y }}
     >
       {text}
     </motionElement.span>
@@ -2899,7 +2926,11 @@ export const HeroTextAnimation = forwardRef<
     const reducedMotionOverride = useContext(
       HeroTextAnimationReducedMotionContext,
     );
-    const prefersReducedMotion = useReducedMotion();
+    const prefersReducedMotion = useSyncExternalStore(
+      subscribeToReducedMotion,
+      getReducedMotionSnapshot,
+      getServerReducedMotionSnapshot,
+    );
     const reducedMotion =
       reducedMotionOverride === "always"
         ? true

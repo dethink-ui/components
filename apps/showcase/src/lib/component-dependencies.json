@@ -65,6 +65,10 @@
     "direct": ["lucide-react", "react"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "chat-bubble": {
+    "direct": ["lucide-react", "motion", "react", "react-aria", "react-dom"],
+    "shared": ["clsx", "react-aria-components", "tailwind-merge"]
+  },
   "chat-core": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "chat-markdown": {
     "direct": ["lucide-react", "react", "react-markdown", "remark-gfm"],

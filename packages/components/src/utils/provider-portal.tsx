@@ -6,6 +6,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { UNSAFE_PortalProvider } from "react-aria/PortalProvider";
@@ -36,6 +37,55 @@ export interface DethinkPortalProviderProps {
 }
 
 const DethinkPortalContext = createContext(false);
+const OverlayVisibilityContext = createContext(true);
+
+/** Persistent surfaces can dismiss overlays without unmounting their content. */
+export function DethinkOverlayScope({
+  visible,
+  children,
+}: {
+  visible: boolean;
+  children?: ReactNode;
+}) {
+  const parentVisible = useContext(OverlayVisibilityContext);
+  return (
+    <OverlayVisibilityContext.Provider value={visible && parentVisible}>
+      {children}
+    </OverlayVisibilityContext.Provider>
+  );
+}
+
+export function useScopedOverlayState({
+  open,
+  defaultOpen = false,
+  onOpenChange,
+}: {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}): readonly [boolean, (open: boolean) => void] {
+  const visible = useContext(OverlayVisibilityContext);
+  const [localOpen, setLocalOpen] = useState(defaultOpen);
+  const requestedOpen = open ?? localOpen;
+  const closeRequested = useRef(false);
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (next && !visible) return;
+      if (open === undefined) setLocalOpen(next);
+      onOpenChange?.(next);
+    },
+    [open, onOpenChange, visible],
+  );
+  useEffect(() => {
+    if (visible) closeRequested.current = false;
+    else if (requestedOpen && !closeRequested.current) {
+      closeRequested.current = true;
+      // Synchronize overlay state with the containing surface's lifecycle.
+      setOpen(false);
+    }
+  }, [visible, requestedOpen, setOpen]);
+  return [visible && requestedOpen, setOpen];
+}
 
 function assignForwardedRef<T>(
   ref: ForwardedRef<T> | undefined,

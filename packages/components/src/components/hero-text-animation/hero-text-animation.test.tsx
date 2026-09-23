@@ -30,6 +30,53 @@ afterEach(() => {
 });
 
 describe("HeroTextAnimation", () => {
+  it("reads and subscribes to the browser motion preference", () => {
+    let matches = true;
+    let notify: (() => void) | undefined;
+    const removeEventListener = vi.fn();
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => ({
+        get matches() {
+          return matches;
+        },
+        addEventListener: (_event: string, listener: () => void) => {
+          notify = listener;
+        },
+        removeEventListener,
+      })),
+    );
+    const { unmount } = render(
+      <HeroTextAnimation
+        text="A readable first impression."
+        animation="typewriter"
+        reducedMotionStrategy="static"
+      />,
+    );
+    const heading = screen.getByRole("heading");
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    expect(
+      heading.querySelector(
+        '[data-slot="hero-text-animation-typewriter-text"]',
+      ),
+    ).toHaveTextContent("A readable first impression.");
+    act(() => {
+      matches = false;
+      notify?.();
+    });
+    expect(heading).toHaveAttribute("data-reduced-motion", "false");
+    act(() => {
+      matches = true;
+      notify?.();
+    });
+    expect(heading).toHaveAttribute("data-reduced-motion", "true");
+    unmount();
+    expect(removeEventListener).toHaveBeenCalledWith(
+      "change",
+      expect.any(Function),
+    );
+  });
+
   it("renders a semantic h1 with a stable accessible label", async () => {
     render(
       <HeroTextAnimation text="Build production-ready landing pages faster." />,
@@ -1224,8 +1271,10 @@ describe("HeroTextAnimation", () => {
     expect(heading).toHaveAttribute("data-split-by", "phrase");
     expect(heading).toHaveAttribute("data-segment-count", "1");
     expect(motion).toHaveAttribute("aria-hidden", "true");
-    expect(motion).toHaveAttribute("data-scroll-anchor", "start start");
-    expect(motion).toHaveAttribute("data-scroll-range-px", "220");
+    expect(motion).toHaveAttribute("data-scroll-anchor", "start 70%");
+    expect(
+      Number(motion?.getAttribute("data-scroll-range-px")),
+    ).toBeGreaterThanOrEqual(220);
     expect(motion).toHaveAttribute("data-scroll-y-min", "-32");
     expect(motion).toHaveAttribute("data-scroll-y-max", "0");
     expect(motion).toHaveAttribute("data-scroll-opacity-min", "0.92");
@@ -1261,10 +1310,11 @@ describe("HeroTextAnimation", () => {
       '[data-slot="hero-text-animation-motion"][data-scroll-responsive="subtle"]',
     ) as HTMLElement;
 
-    // Progress is anchored to the hero's own top: -rect.top / rangePx (220),
-    // clamped to [0, 1], so it engages once the hero scrolls past the top.
+    // Progress begins at 70% of the viewport and uses the stable heading box.
+    vi.stubGlobal("innerHeight", 1000);
     const scrollHeroTo = (top: number) => {
-      motion.getBoundingClientRect = () =>
+      vi.stubGlobal("scrollY", 700 - top);
+      heading.getBoundingClientRect = () =>
         ({
           top,
           height: 200,
@@ -1281,8 +1331,8 @@ describe("HeroTextAnimation", () => {
 
     expect(motion).toHaveAttribute("data-scroll-progress", "0.000");
 
-    // Hero top 110px above the viewport top => 110 / 220 => progress 0.5.
-    scrollHeroTo(-110);
+    // Half of a 550px visible scroll range.
+    scrollHeroTo(425);
 
     await waitFor(() => {
       expect(motion).toHaveAttribute("data-scroll-progress", "0.500");

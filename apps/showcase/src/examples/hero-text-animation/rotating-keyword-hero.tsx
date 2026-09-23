@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   Button,
   HeroTextAnimation,
@@ -20,46 +19,23 @@ const rotatingKeywords = [
   "product teams.",
   "founders.",
 ];
-const rotateIntervalMs = 2000;
 
 const teamAvatars = [
-  { initials: "SO", tone: "bg-primary/15 text-primary" },
-  { initials: "CS", tone: "bg-info/15 text-info" },
-  { initials: "FL", tone: "bg-success/15 text-success" },
-  { initials: "PM", tone: "bg-warning/20 text-warning" },
+  { initials: "SO", tone: "bg-primary/15 text-foreground" },
+  { initials: "CS", tone: "bg-info/15 text-foreground" },
+  { initials: "FL", tone: "bg-success/15 text-foreground" },
+  { initials: "PM", tone: "bg-warning/20 text-foreground" },
   { initials: "OP", tone: "bg-muted text-muted-foreground" },
 ];
 
 export function HeroTextAnimationRotatingKeywordHero() {
-  const [keywordIndex, setKeywordIndex] = useState(0);
-
-  // Loop the keyword indefinitely for the showcase. The component's built-in
-  // autoRotateKeywords stops after ~5s (a WCAG 2.2.2 guard against text that
-  // moves forever), so we drive the index ourselves in controlled mode to keep
-  // the demo playing — while still honoring prefers-reduced-motion.
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
-
-    const intervalId = window.setInterval(() => {
-      setKeywordIndex((index) => (index + 1) % rotatingKeywords.length);
-    }, rotateIntervalMs);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
   return (
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-rotating-keyword-heading"
-        className="bg-background text-foreground border-border overflow-hidden rounded-md border"
+        className="bg-background text-foreground border-border @container/hero overflow-hidden rounded-md border"
       >
-        <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-20">
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center @min-[480px]/hero:px-8 @min-[900px]/hero:py-20">
           <span className="border-border bg-muted/50 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
             <span
               aria-hidden="true"
@@ -68,19 +44,24 @@ export function HeroTextAnimationRotatingKeywordHero() {
             One builder · every team
           </span>
 
+          {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The component renders its text prop as accessible heading content. */}
           <HeroTextAnimation
+            as="h2"
+            trigger="in-view"
+            reducedMotionStrategy="static"
             animation="rotating-keyword"
             ariaLabel="Launch pages for startups, agencies, product teams, and founders."
             duration={0.34}
             id="hero-text-rotating-keyword-heading"
-            rotatingKeywordIndex={keywordIndex}
+            autoRotateKeywords
+            rotatingKeywordInterval={1.4}
             rotatingKeywordOptions={rotatingKeywords}
             rotatingKeywordPrefix="Launch pages for "
             text="Launch pages for startups, agencies, product teams, and founders."
-            className="font-heading text-foreground [&_[data-slot=hero-text-animation-rotating-keyword]]:text-primary mx-auto mt-7 max-w-2xl text-4xl leading-[1.06] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl [&_[data-slot=hero-text-animation-motion]]:justify-center"
+            className="font-heading text-foreground [&_[data-slot=hero-text-animation-rotating-keyword]]:text-primary mx-auto mt-7 max-w-2xl text-[clamp(1.875rem,5.5cqi,3.75rem)] leading-[1.06] font-semibold tracking-tight text-balance [&_[data-slot=hero-text-animation-motion]]:justify-center"
           />
 
-          <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 sm:text-lg">
+          <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 @min-[480px]/hero:text-lg">
             One flexible page builder that speaks every team&apos;s language.
             Ship a launch that fits the audience — without a redesign for each
             one.
@@ -103,12 +84,12 @@ export function HeroTextAnimationRotatingKeywordHero() {
             ))}
           </div>
 
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 @min-[480px]/hero:flex-row">
             <Button asChild size="lg" rightIcon={<ArrowRight />}>
-              <a href="#installation">Start building free</a>
+              <a href="#installation-heading">Start building free</a>
             </Button>
             <Button asChild size="lg" variant="ghost" leftIcon={<Play />}>
-              <a href="#examples">Watch the tour</a>
+              <a href="#examples-heading">Watch the tour</a>
             </Button>
           </div>
 

@@ -32,35 +32,35 @@ export function HeroTextAnimationMaskedCurtainHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-masked-curtain-heading"
-        className="bg-background text-foreground border-border overflow-hidden rounded-md border"
+        className="bg-background text-foreground border-border @container/hero overflow-hidden rounded-md border"
       >
-        <header className="border-border flex items-center justify-between gap-4 border-b px-5 py-4 sm:px-8 lg:px-12">
+        <header className="border-border flex items-center justify-between gap-4 border-b px-5 py-4 @min-[480px]/hero:px-8 @min-[900px]/hero:px-12">
           <a
-            href="#examples"
+            href="#examples-heading"
             className="font-heading focus-visible:ring-ring focus-visible:ring-offset-background rounded-sm text-xs font-semibold tracking-[0.28em] uppercase outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           >
             Studio Dethink
           </a>
           <nav
             aria-label="Studio navigation"
-            className="hidden items-center gap-7 md:flex"
+            className="hidden items-center gap-7 @min-[680px]/hero:flex"
           >
             {navItems.map((item) => (
               <a
                 key={item}
-                href="#examples"
+                href="#examples-heading"
                 className="text-muted-foreground hover:text-foreground text-xs font-medium tracking-[0.14em] uppercase transition-colors"
               >
                 {item}
               </a>
             ))}
           </nav>
-          <span className="text-muted-foreground hidden text-xs tracking-[0.2em] uppercase sm:inline">
+          <span className="text-muted-foreground hidden text-xs tracking-[0.2em] uppercase @min-[480px]/hero:inline">
             Est. MMXXVI
           </span>
         </header>
 
-        <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-24">
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center @min-[480px]/hero:px-8 @min-[900px]/hero:py-24">
           <p className="text-muted-foreground text-xs font-medium tracking-[0.24em] uppercase">
             Independent design &amp; motion studio
           </p>
@@ -68,25 +68,27 @@ export function HeroTextAnimationMaskedCurtainHero() {
             aria-hidden="true"
             className="bg-border mx-auto mt-6 block h-px w-10"
           />
+          {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The component renders its text prop as accessible heading content. */}
           <HeroTextAnimation
+            as="h2"
+            trigger="in-view"
+            reducedMotionStrategy="static"
             animation="masked-curtain"
             ariaLabel="We design brands that move with intent."
             id="hero-text-masked-curtain-heading"
-            repeat
-            repeatDelay={1.8}
             text={"We design brands\nthat move with intent."}
-            className="font-heading text-foreground mx-auto mt-8 max-w-3xl text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
+            className="font-heading text-foreground mx-auto mt-8 max-w-3xl text-[clamp(1.875rem,5.5cqi,3.75rem)] leading-[1.05] font-semibold tracking-tight text-balance"
           />
-          <p className="text-muted-foreground mx-auto mt-7 max-w-xl text-base leading-7 sm:text-lg">
+          <p className="text-muted-foreground mx-auto mt-7 max-w-xl text-base leading-7 @min-[480px]/hero:text-lg">
             A small studio for founders who care about the details. We shape
             identity, product, and motion into one deliberate, unhurried whole.
           </p>
-          <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-9 flex flex-col items-center justify-center gap-4 @min-[480px]/hero:flex-row">
             <Button asChild size="lg" variant="outline">
-              <a href="#installation">Start a project</a>
+              <a href="#installation-heading">Start a project</a>
             </Button>
             <a
-              href="#examples"
+              href="#examples-heading"
               className="text-foreground focus-visible:ring-ring focus-visible:ring-offset-background group inline-flex items-center gap-1.5 rounded-sm text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             >
               View selected work
@@ -98,13 +100,13 @@ export function HeroTextAnimationMaskedCurtainHero() {
           </div>
         </div>
 
-        <ul className="border-border grid border-t sm:grid-cols-3">
+        <ul className="border-border grid border-t @min-[480px]/hero:grid-cols-3">
           {disciplines.map(({ index, title, description }, position) => (
             <li
               key={title}
-              className={`px-5 py-8 sm:px-8 lg:px-12 ${
+              className={`px-5 py-8 @min-[480px]/hero:px-8 @min-[900px]/hero:px-12 ${
                 position > 0
-                  ? "border-border border-t sm:border-t-0 sm:border-l"
+                  ? "border-border border-t @min-[480px]/hero:border-t-0 @min-[480px]/hero:border-l"
                   : ""
               }`}
             >

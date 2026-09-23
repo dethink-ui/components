@@ -5,6 +5,10 @@ import {
   InstallationSection,
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
+import { HeroPreview } from "@/components/hero-preview";
+import { HeroTextAnimationOrbitHero } from "@/examples/hero-text-animation/orbit-hero";
+import { HeroTextAnimationEditorialHero } from "@/examples/hero-text-animation/editorial-hero";
+import { HeroTextAnimationAnalyticsHero } from "@/examples/hero-text-animation/analytics-hero";
 import { PropsTable } from "@/components/props-table";
 import { HeroTextAnimationBlurFocusHero } from "@/examples/hero-text-animation/blur-focus-hero";
 import { HeroTextAnimationGradientHighlightHero } from "@/examples/hero-text-animation/gradient-highlight-hero";
@@ -27,8 +31,9 @@ export const metadata: Metadata = {
 export default function HeroTextAnimationPage() {
   return (
     <DocsPage
+      wide
       name="HeroTextAnimation"
-      description="Reveal a headline one word or line at a time."
+      description="Expressive typography for memorable first impressions. Explore fourteen complete hero sections with accessible, responsive text animation."
     >
       <InstallationSection
         registryName="hero-text-animation"
@@ -49,9 +54,9 @@ export function Example() {
       <DocsSection
         id="examples"
         title="Examples"
-        description="Each animation is shown in a distinct, production-style hero tuned to where it fits best — SaaS, developer tools, security, editorial, luxury, and more. Expand a source panel when you need the implementation."
+        description="Each animation is shown in a distinct, production-style hero tuned to where it fits best — SaaS, developer tools, security, editorial, luxury, and more. Animations play as you scroll into view. Use Replay to watch again; reduced-motion preferences are respected. Expand a source panel to copy a recipe."
       >
-        <div className="space-y-8">
+        <div className="space-y-12">
           <p className="text-muted-foreground text-sm">
             For liquid, prismatic, metallic, and mouse-following particle
             lettering, explore{" "}
@@ -64,14 +69,50 @@ export function Example() {
             .
           </p>
           <ExampleBlock
+            file="hero-text-animation/orbit-hero.tsx"
+            title="Connected workspace — orbit & focus"
+            description="A softly lit split hero with a word-by-word focus reveal and a connected workspace illustration."
+            wide
+            fullBleed
+          >
+            <HeroPreview label="Orbit hero">
+              <HeroTextAnimationOrbitHero />
+            </HeroPreview>
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/editorial-hero.tsx"
+            title="Objects & spaces — editorial curtain"
+            description="Oversized serif lines, architectural forms, and a measured curtain reveal for a considered studio identity."
+            wide
+            fullBleed
+          >
+            <HeroPreview label="Editorial hero">
+              <HeroTextAnimationEditorialHero />
+            </HeroPreview>
+          </ExampleBlock>
+          <ExampleBlock
+            file="hero-text-animation/analytics-hero.tsx"
+            title="Growth platform — signal & motion"
+            description="A crisp product introduction with kinetic emphasis and a staggered chart entrance."
+            wide
+            fullBleed
+          >
+            <HeroPreview label="Analytics hero">
+              <HeroTextAnimationAnalyticsHero />
+            </HeroPreview>
+          </ExampleBlock>
+          <ExampleBlock
             file="hero-text-animation/production-hero.tsx"
             title="SaaS product hero — staggered words"
             description="The default staggered word reveal in a conversion-focused SaaS layout: navbar, dual CTAs, and an icon-led proof grid."
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationProductionHero />
+            <HeroPreview label="Production Hero">
+              <HeroTextAnimationProductionHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/masked-curtain-hero.tsx"
@@ -80,8 +121,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationMaskedCurtainHero />
+            <HeroPreview label="Masked Curtain Hero">
+              <HeroTextAnimationMaskedCurtainHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/typewriter-hero.tsx"
@@ -90,8 +134,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationTypewriterHero />
+            <HeroPreview label="Typewriter Hero">
+              <HeroTextAnimationTypewriterHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/scramble-decrypt-hero.tsx"
@@ -100,8 +147,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationScrambleDecryptHero />
+            <HeroPreview label="Scramble Decrypt Hero">
+              <HeroTextAnimationScrambleDecryptHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/rotating-keyword-hero.tsx"
@@ -110,8 +160,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationRotatingKeywordHero />
+            <HeroPreview label="Rotating Keyword Hero">
+              <HeroTextAnimationRotatingKeywordHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/gradient-highlight-hero.tsx"
@@ -120,8 +173,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationGradientHighlightHero />
+            <HeroPreview label="Gradient Highlight Hero">
+              <HeroTextAnimationGradientHighlightHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/blur-focus-hero.tsx"
@@ -130,8 +186,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationBlurFocusHero />
+            <HeroPreview label="Blur Focus Hero">
+              <HeroTextAnimationBlurFocusHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/word-blur-focus-hero.tsx"
@@ -140,8 +199,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationWordBlurFocusHero />
+            <HeroPreview label="Word Blur Focus Hero">
+              <HeroTextAnimationWordBlurFocusHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/kinetic-emphasis-pop-hero.tsx"
@@ -150,8 +212,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationKineticEmphasisPopHero />
+            <HeroPreview label="Kinetic Emphasis Pop Hero">
+              <HeroTextAnimationKineticEmphasisPopHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/svg-stroke-draw-hero.tsx"
@@ -160,8 +225,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationSvgStrokeDrawHero />
+            <HeroPreview label="Svg Stroke Draw Hero">
+              <HeroTextAnimationSvgStrokeDrawHero />
+            </HeroPreview>
           </ExampleBlock>
           <ExampleBlock
             file="hero-text-animation/scroll-responsive-hero.tsx"
@@ -170,8 +238,11 @@ export function Example() {
             codeCollapsible
             codeDefaultOpen={false}
             wide
+            fullBleed
           >
-            <HeroTextAnimationScrollResponsiveHero />
+            <HeroPreview label="Scroll Responsive Hero" scrollDriven>
+              <HeroTextAnimationScrollResponsiveHero />
+            </HeroPreview>
           </ExampleBlock>
         </div>
       </DocsSection>

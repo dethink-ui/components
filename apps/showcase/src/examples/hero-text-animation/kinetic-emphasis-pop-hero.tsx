@@ -18,9 +18,9 @@ export function HeroTextAnimationKineticEmphasisPopHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-kinetic-emphasis-heading"
-        className="bg-background text-foreground border-border overflow-hidden rounded-md border"
+        className="bg-background text-foreground border-border @container/hero overflow-hidden rounded-md border"
       >
-        <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-20">
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center @min-[480px]/hero:px-8 @min-[900px]/hero:py-20">
           <div className="text-muted-foreground flex items-center justify-center gap-2 text-sm">
             <span className="flex" aria-hidden="true">
               {Array.from({ length: 5 }).map((_, index) => (
@@ -36,45 +36,47 @@ export function HeroTextAnimationKineticEmphasisPopHero() {
             </span>
           </div>
 
+          {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The component renders its text prop as accessible heading content. */}
           <HeroTextAnimation
+            as="h2"
+            trigger="in-view"
+            reducedMotionStrategy="static"
             animation="kinetic-emphasis-pop"
             duration={0.5}
             stagger={0.07}
             emphasisWords={["revenue", "faster"]}
             id="hero-text-kinetic-emphasis-heading"
-            repeat
-            repeatDelay={2}
             text="Turn more visitors into revenue, faster."
-            className="font-heading text-foreground mx-auto mt-6 max-w-2xl text-4xl leading-[1.06] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
+            className="font-heading text-foreground mx-auto mt-6 max-w-2xl text-[clamp(1.875rem,5.5cqi,3.75rem)] leading-[1.06] font-semibold tracking-tight text-balance"
           />
 
-          <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 sm:text-lg">
+          <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 @min-[480px]/hero:text-lg">
             Run experiments on every headline, offer, and CTA — then let the
             winners ship themselves. Built for teams that grow on evidence, not
             opinions.
           </p>
 
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 @min-[480px]/hero:flex-row">
             <Button asChild size="lg" rightIcon={<ArrowRight />}>
-              <a href="#installation">Start free trial</a>
+              <a href="#installation-heading">Start free trial</a>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <a href="#examples">Book a demo</a>
+              <a href="#examples-heading">Book a demo</a>
             </Button>
           </div>
         </div>
 
-        <dl className="border-border grid border-t sm:grid-cols-3">
+        <dl className="border-border grid border-t @min-[480px]/hero:grid-cols-3">
           {metrics.map(({ value, label }, position) => (
             <div
               key={label}
-              className={`px-5 py-8 text-center sm:px-8 ${
+              className={`px-5 py-8 text-center @min-[480px]/hero:px-8 ${
                 position > 0
-                  ? "border-border border-t sm:border-t-0 sm:border-l"
+                  ? "border-border border-t @min-[480px]/hero:border-t-0 @min-[480px]/hero:border-l"
                   : ""
               }`}
             >
-              <dt className="text-primary font-heading inline-flex items-center gap-1.5 text-3xl font-semibold tracking-tight sm:text-4xl">
+              <dt className="text-primary font-heading inline-flex items-center gap-1.5 text-3xl font-semibold tracking-tight @min-[480px]/hero:text-4xl">
                 {position === 0 ? (
                   <TrendingUp aria-hidden="true" className="size-6" />
                 ) : null}

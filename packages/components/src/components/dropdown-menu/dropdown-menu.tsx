@@ -42,7 +42,6 @@ import {
   type ReactNode,
   useContext,
   useMemo,
-  useState,
 } from "react";
 import {
   Button,
@@ -53,6 +52,7 @@ import {
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
+  useScopedOverlayState,
 } from "../../utils/provider-portal";
 import {
   PositionedOverlayArrow,
@@ -573,11 +573,11 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(
-      defaultOpen ?? false,
-    );
-    const isControlled = open !== undefined;
-    const resolvedOpen = open ?? uncontrolledOpen;
+    const [resolvedOpen, handleOpenChange] = useScopedOverlayState({
+      open,
+      defaultOpen,
+      onOpenChange,
+    });
     const prefersReducedMotion = useReducedMotion();
     const hasHydrated = useHydrated();
     const resolvedReducedMotion =
@@ -586,13 +586,6 @@ export const DropdownMenu = forwardRef<HTMLDivElement, DropdownMenuProps>(
       forwardedRef: ref,
       portalSlot: "dropdown-menu-portal-container",
     });
-    const handleOpenChange = (isOpen: boolean) => {
-      if (!isControlled) {
-        setUncontrolledOpen(isOpen);
-      }
-
-      onOpenChange?.(isOpen);
-    };
 
     return (
       <div

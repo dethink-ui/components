@@ -138,7 +138,7 @@ export const heroTextAnimationProps: PropRow[] = [
     prop: "delay / duration / stagger",
     type: "number",
     defaultValue:
-      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42; svg stroke draw duration 1.4; scroll responsive maps the first 220px of scroll",
+      "0.05 / 0.48 / 0.045; typewriter duration 1.1; scramble duration 1.2; rotating keyword duration 0.34; gradient highlight duration 0.9; blur focus duration 0.42; kinetic emphasis duration 0.42; svg stroke draw duration 1.4; scroll responsive spans 55% of viewport height (minimum 220px) after the heading reaches 70% of the viewport",
     description:
       "Timing controls in seconds. Typewriter, scramble-decrypt, gradient-highlight, blur-focus, kinetic-emphasis-pop, and svg-stroke-draw use duration as bounded total reveal time. Scramble-decrypt caps updates so it cannot run indefinitely or exceed three updates per second. Gradient-highlight, blur-focus, kinetic-emphasis-pop, and svg-stroke-draw run once by default and use the shared repeat mechanism only when repeat is enabled. Scroll-responsive is tied to page scroll instead of duration and does not replay.",
   },
@@ -161,7 +161,7 @@ export const heroTextAnimationProps: PropRow[] = [
     type: "storytelling hero heading",
     defaultValue: "—",
     description:
-      "Use scroll-responsive only when the complete heading is readable before scroll. The decorative layer maps the first 220px of page scroll to at most -32px of vertical movement and 92% opacity; reduced motion removes the scroll listener and transform style.",
+      "Use scroll-responsive only when the complete heading is readable before scroll. The decorative layer begins when the heading reaches 70% of the viewport (or its initial position for a hero already above that point), then spans 55% of viewport height (minimum 220px) to reach -32px of vertical movement, 90% scale, and 92% opacity; reduced motion removes the scroll listener and transform style.",
   },
   {
     prop: "svg-stroke-draw content guidance",

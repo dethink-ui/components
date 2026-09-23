@@ -31,9 +31,9 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "#examples", label: "Examples" },
-  { href: "#installation", label: "Install" },
-  { href: "#props", label: "API" },
+  { href: "#examples-heading", label: "Examples" },
+  { href: "#installation-heading", label: "Install" },
+  { href: "#props-heading", label: "API" },
 ];
 
 const resourceItems = [
@@ -85,12 +85,12 @@ export function HeroTextAnimationProductionHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-production-heading"
-        className="bg-background text-foreground border-border rounded-md border"
+        className="bg-background text-foreground border-border @container/hero rounded-md border"
       >
-        <div className="mx-auto max-w-5xl px-5 py-5 sm:px-8 lg:px-10">
+        <div className="mx-auto max-w-5xl px-5 py-5 @min-[480px]/hero:px-8 @min-[900px]/hero:px-10">
           <header className="border-border bg-background/95 flex min-h-14 items-center gap-4 rounded-md border px-3 shadow-sm">
             <a
-              href="#examples"
+              href="#examples-heading"
               aria-label="Dethink hero animation examples"
               className="focus-visible:ring-ring focus-visible:ring-offset-background flex min-w-0 shrink-0 items-center gap-2 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
             >
@@ -100,14 +100,14 @@ export function HeroTextAnimationProductionHero() {
               >
                 <Sparkles className="size-4" />
               </span>
-              <span className="font-heading hidden text-sm font-semibold sm:inline">
+              <span className="font-heading hidden text-sm font-semibold @min-[480px]/hero:inline">
                 Dethink Hero
               </span>
             </a>
 
             <nav
               aria-label="Hero recipe navigation"
-              className="hidden min-w-0 flex-1 md:block"
+              className="hidden min-w-0 flex-1 @min-[680px]/hero:block"
             >
               <ul className="flex items-center justify-center gap-1">
                 {navItems.map((item) => (
@@ -130,8 +130,10 @@ export function HeroTextAnimationProductionHero() {
                   variant="ghost"
                   className="gap-1.5"
                 >
-                  Resources
-                  <ChevronDown aria-hidden="true" className="size-3.5" />
+                  <span className="inline-flex items-center gap-1.5">
+                    Resources
+                    <ChevronDown aria-hidden="true" className="size-3.5" />
+                  </span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent placement="bottom end" showArrow>
                   <DropdownMenuSection>
@@ -161,7 +163,7 @@ export function HeroTextAnimationProductionHero() {
               </DropdownMenu>
 
               <RevealButton
-                className="hidden sm:inline-flex"
+                className="hidden @min-[480px]/hero:inline-flex"
                 icon={<PlayCircle />}
                 label="Preview"
                 size="sm"
@@ -177,7 +179,7 @@ export function HeroTextAnimationProductionHero() {
           </header>
         </div>
 
-        <div className="mx-auto grid max-w-5xl gap-8 px-5 pt-6 pb-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center lg:px-10 lg:pt-10 lg:pb-14">
+        <div className="mx-auto grid max-w-5xl gap-8 px-5 pt-6 pb-10 @min-[480px]/hero:px-8 @min-[900px]/hero:grid-cols-[minmax(0,1fr)_22rem] @min-[900px]/hero:items-center @min-[900px]/hero:px-10 @min-[900px]/hero:pt-10 @min-[900px]/hero:pb-14">
           <div className="min-w-0 space-y-7">
             <div className="border-border bg-muted/50 text-muted-foreground inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium">
               <Sparkles
@@ -188,31 +190,33 @@ export function HeroTextAnimationProductionHero() {
             </div>
 
             <div className="space-y-5">
+              {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The component renders its text prop as accessible heading content. */}
               <HeroTextAnimation
+                as="h2"
+                trigger="in-view"
+                reducedMotionStrategy="static"
                 id="hero-text-production-heading"
-                repeat
-                repeatDelay={1.6}
-                text="Turn your launch headline into a clear first impression."
-                className="font-heading text-foreground max-w-3xl text-4xl leading-[1.03] font-semibold tracking-normal sm:text-5xl lg:text-6xl"
+                text="Your next big idea starts here."
+                className="font-heading text-foreground max-w-3xl text-[clamp(1.875rem,5.5cqi,3.75rem)] leading-[1.03] font-semibold tracking-normal"
               />
-              <p className="text-muted-foreground max-w-xl text-base leading-7 sm:text-lg">
+              <p className="text-muted-foreground max-w-xl text-base leading-7 @min-[480px]/hero:text-lg">
                 Pair the animated headline with plain-language support copy,
                 clear actions, and icon-led proof points so the hero stays
                 usable before and after the motion completes.
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col flex-wrap gap-3 @min-[480px]/hero:flex-row">
               <Button asChild size="lg" rightIcon={<ArrowRight />}>
-                <a href="#installation">Install component</a>
+                <a href="#installation-heading">Install component</a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href="#props">Review props</a>
+                <a href="#props-heading">Review props</a>
               </Button>
             </div>
           </div>
 
-          <ul className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+          <ul className="grid min-w-0 gap-3 @min-[480px]/hero:grid-cols-2 @min-[900px]/hero:grid-cols-1">
             {heroSignals.map(({ icon: Icon, title, description }) => (
               <li
                 key={title}
