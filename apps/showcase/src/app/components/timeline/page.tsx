@@ -17,9 +17,9 @@ import { timelineProps } from "@/lib/props/timeline";
 import {
   TimelineGroupedDetails,
   TimelineLiveFeed,
-  TimelineCanvas,
   TimelineCards,
 } from "@/examples/timeline/enhanced";
+import { TimelineHorizontal } from "@/examples/timeline/horizontal";
 
 export const metadata: Metadata = {
   title: "Timeline",
@@ -82,11 +82,11 @@ export default function TimelinePage() {
             <TimelineCards />
           </ExampleBlock>
           <ExampleBlock
-            file="timeline/enhanced.tsx"
-            title="Explore a canvas"
-            description="Pan and zoom an explicit canvas. Drag the track or focus a selection control and use the arrow keys."
+            file="timeline/horizontal.tsx"
+            title="Horizontal timeline"
+            description='Arrange milestones from left to right with presentation="canvas" and orientation="horizontal". Drag the track, use Fit to see the sequence, or focus Select and navigate with Left/Right and Home/End.'
           >
-            <TimelineCanvas />
+            <TimelineHorizontal />
           </ExampleBlock>
           <ExampleBlock
             file="timeline/flow-reveal.tsx"

@@ -4,6 +4,10 @@ import {
   type RefAttributes,
   forwardRef,
   useMemo,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  type KeyboardEvent,
   useState,
 } from "react";
 import { Combobox, ComboboxItem, type ComboboxControlSize } from "../combobox";
@@ -67,7 +71,8 @@ export interface AsyncSelectProps<
   value?: AsyncSelectChangeValue<M>;
 }
 
-const asyncSelectRootClasses = "grid w-full min-w-0 gap-[var(--dt-space-2)]";
+const asyncSelectRootClasses =
+  "grid w-full min-w-0 content-start gap-[var(--dt-space-2)]";
 
 const asyncSelectStatusClasses =
   "min-h-10 rounded-md border border-border bg-muted/40 px-[var(--dt-space-3)] py-[var(--dt-space-2)] text-sm leading-5 text-muted-foreground motion-safe:animate-feedback-in";
@@ -189,6 +194,7 @@ function AsyncStatus({
         {onRetry ? (
           <button
             type="button"
+            data-slot="async-select-retry"
             onClick={onRetry}
             className={asyncSelectRetryClasses}
           >
@@ -213,7 +219,15 @@ function AsyncStatus({
       data-state={state}
       className={asyncSelectStatusClasses}
     >
-      {message}
+      <div className="flex items-center gap-2">
+        {state === "loading" ? (
+          <span
+            aria-hidden="true"
+            className="size-4 shrink-0 rounded-full border-2 border-current border-e-transparent motion-safe:animate-spin"
+          />
+        ) : null}
+        <span>{message}</span>
+      </div>
     </div>
   );
 }
@@ -259,15 +273,57 @@ function AsyncSelectRoot<
   }: AsyncSelectProps<T, M>,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => rootRef.current!, []);
+  const retryFocusPending = useRef(false);
   const isMultiple = selectionMode === "multiple";
   const valueControlled = value !== undefined;
   const inputControlled = inputValue !== undefined;
   const initialSingleValue = normalizeSingleValue(value ?? defaultValue);
   const initialMultipleValue = normalizeMultipleValue(value ?? defaultValue);
+  const resultItems = useMemo(() => Array.from(items ?? []), [items]);
   const resolvedItems = useMemo(
-    () => uniqueItems(items, selectedItems),
-    [items, selectedItems],
+    () => uniqueItems(resultItems, selectedItems),
+    [resultItems, selectedItems],
   );
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open && retryFocusPending.current) {
+      retryFocusPending.current = false;
+      const frame = requestAnimationFrame(() =>
+        rootRef.current
+          ?.querySelector<HTMLButtonElement>('[data-slot="async-select-retry"]')
+          ?.focus(),
+      );
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [open]);
+  const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (
+      event.key === "Tab" &&
+      !event.shiftKey &&
+      open &&
+      error &&
+      onRetry &&
+      !disabled &&
+      !readOnly &&
+      (event.target as HTMLElement).getAttribute("role") === "combobox"
+    ) {
+      // Tab leaves the popup and lands on its retry action in the field's feedback.
+      retryFocusPending.current = true;
+    }
+  };
+  const handleRetry =
+    onRetry && !disabled && !readOnly
+      ? () => {
+          onRetry();
+          requestAnimationFrame(() =>
+            rootRef.current
+              ?.querySelector<HTMLInputElement>('input[role="combobox"]')
+              ?.focus(),
+          );
+        }
+      : undefined;
   const initialSingleItem = initialSingleValue
     ? resolvedItems.find((item) => item.value === initialSingleValue)
     : undefined;
@@ -283,28 +339,54 @@ function AsyncSelectRoot<
     useState<AsyncSelectValue[]>(initialMultipleValue);
   const [uncontrolledInputValue, setUncontrolledInputValue] =
     useState(initialInputValue);
-  const resolvedInputValue = inputValue ?? uncontrolledInputValue;
+  const committedValue = valueControlled
+    ? normalizeSingleValue(value)
+    : singleValue;
+  const [previousValue, setPreviousValue] = useState(committedValue);
+  const [editing, setEditing] = useState(defaultInputValue !== undefined);
+  if (committedValue !== previousValue) {
+    setPreviousValue(committedValue);
+    setEditing(false);
+  }
+  const committedItem = resolvedItems.find(
+    (item) => item.value === committedValue,
+  );
+  const selectedLabel =
+    committedValue === null
+      ? ""
+      : itemTextValue(committedItem ?? { value: committedValue });
+  const resolvedInputValue =
+    inputValue ??
+    (!isMultiple && !editing ? selectedLabel : uncontrolledInputValue);
   const asyncState = getAsyncState({
     error,
     inputValue: resolvedInputValue,
-    itemsCount: Array.from(items ?? []).length,
+    itemsCount: resultItems.length,
     loading,
     minQueryLength,
   });
-  const renderedItems = asyncState === "ready" ? resolvedItems : [];
-  const status = (
+  const renderedItems = asyncState === "ready" ? resultItems : [];
+  const showStatus =
+    asyncState !== "empty" ||
+    open ||
+    (!invalid &&
+      ariaInvalid !== true &&
+      ariaInvalid !== "true" &&
+      resolvedInputValue.trim().length > 0);
+  const status = showStatus ? (
     <AsyncStatus
       error={error}
       errorMessage={emptyMessage}
       loadingMessage={loadingMessage}
       minQueryLength={minQueryLength}
       minQueryMessage={minQueryMessage}
-      onRetry={onRetry}
+      onRetry={handleRetry}
       retryLabel={retryLabel}
       state={asyncState}
     />
-  );
+  ) : null;
   const handleInputChange = (nextValue: string) => {
+    setEditing(true);
     if (!inputControlled) {
       setUncontrolledInputValue(nextValue);
     }
@@ -326,7 +408,8 @@ function AsyncSelectRoot<
 
     return (
       <div
-        ref={ref}
+        onKeyDownCapture={handleKeyDownCapture}
+        ref={rootRef}
         data-slot={dataSlot ?? "async-select"}
         data-selection-mode="multiple"
         className={cn(asyncSelectRootClasses, className)}
@@ -338,7 +421,7 @@ function AsyncSelectRoot<
           description={description}
           disabled={disabled}
           disabledKeys={disabledKeys}
-          emptyMessage={status}
+          emptyMessage={open ? status : null}
           errorMessage={errorMessage}
           inputValue={resolvedInputValue}
           invalid={invalid}
@@ -351,7 +434,9 @@ function AsyncSelectRoot<
           readOnly={readOnly}
           required={required}
           searchPlaceholder={searchPlaceholder}
-          selectedItems={selectedItems}
+          selectedItems={resolvedItems}
+          shouldFilter={false}
+          onOpenChange={setOpen}
           value={resolvedValue}
         >
           {(item) => (
@@ -360,7 +445,7 @@ function AsyncSelectRoot<
             </MultiSelectItem>
           )}
         </MultiSelect>
-        {status}
+        {!open ? status : null}
       </div>
     );
   }
@@ -369,6 +454,11 @@ function AsyncSelectRoot<
     ? normalizeSingleValue(value)
     : singleValue;
   const handleValueChange = (nextValue: AsyncSelectValue | null) => {
+    const selected = resolvedItems.find((item) => item.value === nextValue);
+    handleInputChange(
+      nextValue === null ? "" : itemTextValue(selected ?? { value: nextValue }),
+    );
+    setEditing(false);
     if (!valueControlled) {
       setSingleValue(nextValue);
     }
@@ -378,7 +468,8 @@ function AsyncSelectRoot<
 
   return (
     <div
-      ref={ref}
+      onKeyDownCapture={handleKeyDownCapture}
+      ref={rootRef}
       data-slot={dataSlot ?? "async-select"}
       data-selection-mode="single"
       className={cn(asyncSelectRootClasses, className)}
@@ -386,6 +477,8 @@ function AsyncSelectRoot<
       <Combobox
         aria-invalid={ariaInvalid}
         allowsEmptyCollection
+        onOpenChange={setOpen}
+        popupContent={open ? status : null}
         controlSize={controlSize}
         description={description}
         disabled={disabled}
@@ -409,7 +502,7 @@ function AsyncSelectRoot<
           </ComboboxItem>
         )}
       </Combobox>
-      {status}
+      {!open ? status : null}
     </div>
   );
 }
