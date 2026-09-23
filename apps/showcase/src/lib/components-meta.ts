@@ -469,6 +469,12 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "card-stack-animated",
+    name: "CardStackAnimated",
+    description: "Directional card decks with optional touch navigation.",
+    type: "data-display",
+  },
+  {
     slug: "avatar",
     name: "Avatar",
     description: "Represent a person or team with an image or initials.",

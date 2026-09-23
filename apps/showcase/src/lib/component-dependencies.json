@@ -39,6 +39,10 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "card-stack": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "card-stack-animated": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
   "carousel": {
     "direct": ["motion", "react"],
     "shared": ["clsx", "tailwind-merge"]

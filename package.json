@@ -43,7 +43,9 @@
     "test:sidebar-shell": "playwright test --config=e2e/sidebar-shell.config.ts",
     "registry:smoke:sidebar-shell": "node scripts/smoke-sidebar-shell-registry.mjs",
     "registry:smoke:sidebar-activity": "node scripts/smoke-sidebar-shell-registry.mjs --activity",
-    "registry:smoke:bottom-bar": "node scripts/smoke-sidebar-shell-registry.mjs --bottom-bar"
+    "registry:smoke:bottom-bar": "node scripts/smoke-sidebar-shell-registry.mjs --bottom-bar",
+    "test:card-stack": "playwright test --config=e2e/card-stack.config.ts",
+    "registry:smoke:card-stack": "node scripts/smoke-card-stack-registry.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

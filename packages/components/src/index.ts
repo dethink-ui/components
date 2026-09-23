@@ -594,6 +594,10 @@ export {
   type VoiceInputVariant,
 } from "./components/voice-input";
 export {
+  CardStackAnimated,
+  type CardStackAnimatedProps,
+} from "./components/card-stack-animated";
+export {
   CardStack,
   cardStackClassNames,
   type CardStackCardElement,
