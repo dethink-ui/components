@@ -41,7 +41,7 @@ export function HeroTextAnimationScrambleDecryptHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-scramble-heading"
-        className="bg-background text-foreground border-border relative overflow-hidden rounded-md border"
+        className="bg-background text-foreground border-border @container/hero relative overflow-hidden rounded-md border"
       >
         <span
           aria-hidden="true"
@@ -49,23 +49,25 @@ export function HeroTextAnimationScrambleDecryptHero() {
           className="pointer-events-none absolute inset-0 opacity-60"
         />
 
-        <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:px-10 lg:py-20">
+        <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-14 @min-[480px]/hero:px-8 @min-[900px]/hero:grid-cols-[minmax(0,1fr)_22rem] @min-[900px]/hero:px-10 @min-[900px]/hero:py-20">
           <div className="min-w-0">
             <span className="border-border bg-background/70 text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 font-mono text-xs backdrop-blur">
               <KeyRound aria-hidden="true" className="text-info size-3.5" />
               End-to-end encrypted by default
             </span>
 
+            {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The component renders its text prop as accessible heading content. */}
             <HeroTextAnimation
+              as="h2"
+              trigger="in-view"
+              reducedMotionStrategy="static"
               animation="scramble-decrypt"
               duration={1}
               id="hero-text-scramble-heading"
-              repeat
-              repeatDelay={1.8}
               text="Decrypt threats before they move."
-              className="font-heading text-foreground mt-6 max-w-2xl text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl lg:text-6xl"
+              className="font-heading text-foreground mt-6 max-w-2xl text-[clamp(1.875rem,5.5cqi,3.75rem)] leading-[1.05] font-semibold tracking-tight"
             />
-            <p className="text-muted-foreground mt-6 max-w-lg text-base leading-7 sm:text-lg">
+            <p className="text-muted-foreground mt-6 max-w-lg text-base leading-7 @min-[480px]/hero:text-lg">
               Runtime detection that resolves noise into signal. Continuous
               posture, automated key rotation, and audit trails your security
               team can actually read.
@@ -86,12 +88,12 @@ export function HeroTextAnimationScrambleDecryptHero() {
               ))}
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col flex-wrap gap-3 @min-[480px]/hero:flex-row">
               <Button asChild size="lg" rightIcon={<ArrowRight />}>
-                <a href="#installation">Request access</a>
+                <a href="#installation-heading">Request access</a>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <a href="#props">Read the security model</a>
+                <a href="#props-heading">Read the security model</a>
               </Button>
             </div>
           </div>
@@ -100,7 +102,7 @@ export function HeroTextAnimationScrambleDecryptHero() {
             <div className="border-border flex items-center justify-between border-b px-4 py-3">
               <span className="inline-flex items-center gap-2 font-mono text-xs font-medium">
                 <span className="relative flex size-2">
-                  <span className="bg-success/60 absolute inline-flex size-full animate-ping rounded-full motion-reduce:hidden" />
+                  <span className="bg-success/60 absolute inline-flex size-full rounded-full" />
                   <span className="bg-success relative inline-flex size-2 rounded-full" />
                 </span>
                 All systems encrypted

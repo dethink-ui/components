@@ -1610,3 +1610,4 @@ export {
   type VoiceRecording,
   type UseVoiceRecorderOptions,
 } from "./components/voice-input/use-voice-recorder";
+export * from "./components/chat-bubble";

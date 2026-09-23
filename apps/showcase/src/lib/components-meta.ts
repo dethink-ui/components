@@ -30,6 +30,12 @@ export interface ComponentGroup extends ComponentTypeMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "chat-bubble",
+    name: "ChatBubble",
+    description: "Open a conversation from a floating, animated chat launcher.",
+    type: "ai",
+  },
+  {
     slug: "liquid-mesh-background",
     name: "LiquidMeshBackground",
     description: "Soft pools of color drift and blend behind your content.",
