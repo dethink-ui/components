@@ -476,10 +476,12 @@ function parseDrawerDimensionFallback(dimension: DrawerDimension | undefined) {
     return dimension;
   }
 
+  // Keep integer and fractional digits separated by a required decimal point
+  // so a long invalid number cannot be repartitioned between digit groups.
   const match = dimension
     .trim()
     .toLowerCase()
-    .match(/^(-?\d*\.?\d+)\s*(px|rem|vw|vh|dvh|svh|lvh)$/);
+    .match(/^(-?(?:\d+(?:\.\d+)?|\.\d+))\s*(px|rem|vw|vh|dvh|svh|lvh)$/);
 
   if (!match) {
     return undefined;

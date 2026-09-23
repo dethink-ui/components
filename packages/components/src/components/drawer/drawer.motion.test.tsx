@@ -95,6 +95,67 @@ function SnapLayoutProbe({
 }
 
 describe("Drawer motion (enabled)", () => {
+  it.each([
+    ["320px", 320],
+    ["320.5px", 320.5],
+    [".5px", 0.5],
+    [" 20 REM ", 320],
+    ["50vw", window.innerWidth / 2],
+    ...["vh", "dvh", "svh", "lvh"].map(
+      (unit) => [`50${unit}`, window.innerHeight / 2] as const,
+    ),
+    ["320.px", 384],
+  ] as const)(
+    "uses a safe dimension fallback for case %#",
+    async (dimension, expectedSize) => {
+      render(
+        <Drawer
+          defaultOpen
+          direction="right"
+          dimension={dimension}
+          modal={false}
+          reducedMotion={false}
+          snapPoints={[0.5, 1]}
+          activeSnapPoint={0.5}
+        >
+          <DrawerContent data-testid="dimension-fallback">
+            <DrawerTitle>Dimension fallback</DrawerTitle>
+          </DrawerContent>
+        </Drawer>,
+      );
+      await waitFor(() =>
+        expect(
+          screen
+            .getByTestId("dimension-fallback")
+            .style.getPropertyValue("--drawer-visible-size"),
+        ).toBe(`${expectedSize / 2}px`),
+      );
+    },
+  );
+
+  it("rejects long invalid dimensions without blocking rendering", () => {
+    const started = performance.now();
+    render(
+      <Drawer
+        defaultOpen
+        direction="right"
+        dimension={"9".repeat(100_000) + "!"}
+        modal={false}
+        reducedMotion={false}
+      >
+        <DrawerContent>
+          <DrawerTitle>Invalid dimension</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    expect(
+      screen.getByRole("dialog", { name: "Invalid dimension" }),
+    ).toBeVisible();
+    // A generous ceiling for a linear scan, but below the seconds-long
+    // backtracking caused by overlapping digit groups on this input.
+    expect(performance.now() - started).toBeLessThan(2000);
+  });
+
   it.each(["bottom", "top", "left", "right"] as const)(
     "keeps the visible layout aligned with %s snap changes and resizing",
     async (direction) => {
