@@ -4,13 +4,9 @@
   "type": "registry:ui",
   "title": "Expressive Slider",
   "description": "Optional Motion feedback for Slider: thumb compression, milestone pulses and floating labels.",
-  "dependencies": [
-    "motion"
-  ],
+  "dependencies": ["motion"],
   "devDependencies": [],
-  "registryDependencies": [
-    "slider"
-  ],
+  "registryDependencies": ["slider"],
   "files": [
     {
       "path": "packages/components/src/components/slider-expressive/slider-expressive.tsx",
