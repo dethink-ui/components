@@ -23,6 +23,7 @@ import {
   validateSliderSteps,
   validateSliderValue,
   sliderStepIndex,
+  sliderFormatOptions,
   type SliderStep,
 } from "./slider-values";
 import { SliderDecorationContext } from "./slider-visuals";
@@ -141,6 +142,11 @@ function SliderImpl(
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
   const Decoration = useContext(SliderDecorationContext);
+  // Store public values rather than React Aria's step indices, so a new stop
+  // list can always resolve the current selection to a valid position.
+  const [uncontrolledValue, setUncontrolledValue] = useState<SliderValue>(
+    () => defaultValue ?? (mode === "stepper" ? (steps?.[0]?.value ?? 0) : min),
+  );
   const [directDrag, setDirectDrag] = useState(false);
   useEffect(() => {
     if (!directDrag) return;
@@ -191,7 +197,7 @@ function SliderImpl(
   const direction = dir === "rtl" || dir === "ltr" ? dir : inheritedDirection;
   const numberFormatter = new Intl.NumberFormat(
     locale ?? inheritedLocale.locale,
-    props.formatOptions,
+    sliderFormatOptions(step, min, props.formatOptions),
   );
   // React Aria uses locale direction for input mechanics. Preserve the consumer's
   // number locale separately while matching inherited DOM direction for movement.
@@ -205,10 +211,14 @@ function SliderImpl(
   const toPosition = (
     input: SliderValue | undefined,
   ): SliderValue | undefined => {
-    if (!stops || input === undefined) return input;
+    if (input === undefined) return input;
+    const resolve = (number: number) =>
+      stops
+        ? sliderStepIndex(number, stops)
+        : Math.min(max, Math.max(min, number));
     return Array.isArray(input)
-      ? [sliderStepIndex(input[0], stops), sliderStepIndex(input[1], stops)]
-      : sliderStepIndex(input, stops);
+      ? [resolve(input[0]), resolve(input[1])]
+      : resolve(input);
   };
   const toValue = (input: SliderValue): SliderValue => {
     if (!stops) return input;
@@ -216,7 +226,7 @@ function SliderImpl(
       ? [stops[input[0]].value, stops[input[1]].value]
       : stops[input].value;
   };
-  const range = Array.isArray(value ?? defaultValue);
+  const range = Array.isArray(value ?? uncontrolledValue);
   return (
     <I18nProvider locale={interactionLocale}>
       <AriaSlider
@@ -236,17 +246,18 @@ function SliderImpl(
           if (!disabled && event.buttons === 1) setDirectDrag(true);
         }}
         dir={dir}
-        value={toPosition(value)}
-        defaultValue={
-          toPosition(defaultValue) ??
-          (value === undefined ? (stops ? 0 : min) : undefined)
-        }
+        value={toPosition(value ?? uncontrolledValue)}
+        defaultValue={toPosition(defaultValue)}
         minValue={stops ? 0 : min}
         maxValue={stops ? stops.length - 1 : max}
         step={stops ? 1 : step}
         isDisabled={disabled}
         orientation="horizontal"
-        onChange={(next: SliderValue) => onValueChange?.(toValue(next))}
+        onChange={(next: SliderValue) => {
+          const nextValue = toValue(next);
+          if (value === undefined) setUncontrolledValue(nextValue);
+          onValueChange?.(nextValue);
+        }}
         onChangeEnd={(next: SliderValue) => onValueCommit?.(toValue(next))}
         aria-describedby={
           [describedBy, description ? descriptionId : undefined]
