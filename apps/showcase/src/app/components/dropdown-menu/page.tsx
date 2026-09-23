@@ -7,6 +7,8 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { DropdownMenuBasic } from "@/examples/dropdown-menu/basic";
+import { DropdownMenuWorkspace } from "@/examples/dropdown-menu/workspace";
+import { DropdownMenuAccount } from "@/examples/dropdown-menu/account";
 import { DropdownMenuRecipeRowActions } from "@/examples/dropdown-menu/recipe-row-actions";
 import { DropdownMenuSubmenuExample } from "@/examples/dropdown-menu/submenu";
 import { dropdownMenuProps } from "@/lib/props/dropdown-menu";
@@ -41,6 +43,20 @@ export default function DropdownMenuPage() {
         description="Try the examples, then open the code to use them in your app. Open a menu and navigate with arrows, Home/End, or by typing an item name."
       >
         <div className="space-y-10">
+          <ExampleBlock
+            file="dropdown-menu/workspace.tsx"
+            title="Workspace switcher"
+            description="A compact workspace card with initials, plan details, and an accessible active selection. Choose a workspace to update the card."
+          >
+            <DropdownMenuWorkspace />
+          </ExampleBlock>
+          <ExampleBlock
+            file="dropdown-menu/account.tsx"
+            title="Account menu"
+            description="A profile header, grouped settings, and a highlighted plan action. Actions show local demo feedback."
+          >
+            <DropdownMenuAccount />
+          </ExampleBlock>
           <ExampleBlock
             file="dropdown-menu/basic.tsx"
             title="Sections, icons, and shortcuts"
