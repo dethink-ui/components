@@ -18,6 +18,23 @@ step 1. Values must be finite; range pairs must be ascending. Do not switch betw
 scalar and range shapes after mounting. Use two names for independently named form
 values, or one name to submit repeated values.
 
+## Stepper mode
+
+Use `mode="stepper"` and `steps={[{value: 0, label: "Still"}, {value: 1,
+label: "Steady"}, {value: 4, label: "Rapid"}]}`. Values must be finite and strictly
+increasing, labels non-empty, and there must be at least two stops. Invalid
+configurations throw a descriptive error. Numeric min/max/step are excluded in
+this mode. A supplied off-stop value resolves to the nearest backing value (ties
+choose the lower stop). Changing steps remaps the current position to the new
+stop list; use controlled values when changing the list dynamically.
+
+Callbacks and named hidden form inputs use original values, while thumb inputs
+use positional indices and announce readable labels. Stops are equally spaced.
+`showLabel: false` hides text below an individual mark without changing its spoken
+value. Prefer 3–7 concise labels on mobile; use endpoint-only labels for denser
+scales. Selected markers and the active range receive a distinct fill. Range
+thumbs share this same mapping and may meet without crossing.
+
 ## Accessibility
 
 Provide `label`, `aria-label`, or `aria-labelledby`. Range thumb labels default to

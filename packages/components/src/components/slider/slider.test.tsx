@@ -5,6 +5,69 @@ import { describe, it, expect, vi } from "vitest";
 import { Slider } from ".";
 
 describe("Slider", () => {
+  it("announces step labels but changes, commits, and submits backing values", async () => {
+    const user = userEvent.setup();
+    const change = vi.fn();
+    const commit = vi.fn();
+    render(
+      <form data-testid="step-form">
+        <Slider
+          label="Movement"
+          mode="stepper"
+          steps={[
+            { value: 0, label: "Still" },
+            { value: 1, label: "Steady", showLabel: false },
+            { value: 4, label: "Rapid" },
+          ]}
+          defaultValue={1}
+          name="speed"
+          onValueChange={change}
+          onValueCommit={commit}
+        />
+      </form>,
+    );
+    const input = screen.getByRole("slider", { name: "Movement" });
+    expect(input).toHaveAttribute("aria-valuetext", "Steady");
+    await user.tab();
+    await user.keyboard("{ArrowRight}");
+    expect(input).toHaveAttribute("aria-valuetext", "Rapid");
+    expect(change).toHaveBeenLastCalledWith(4);
+    expect(commit).toHaveBeenLastCalledWith(4);
+    expect(
+      new FormData(screen.getByTestId("step-form") as HTMLFormElement).getAll(
+        "speed",
+      ),
+    ).toEqual(["4"]);
+    await user.keyboard("{Home}");
+    expect(input).toHaveAttribute("aria-valuetext", "Still");
+  });
+  it("maps a controlled step range without crossing", async () => {
+    function Fixture() {
+      const [value, setValue] = useState<[number, number]>([1, 4]);
+      return (
+        <Slider<[number, number]>
+          label="Range"
+          mode="stepper"
+          steps={[
+            { value: 0, label: "Still" },
+            { value: 1, label: "Steady" },
+            { value: 4, label: "Rapid" },
+          ]}
+          value={value}
+          onValueChange={setValue}
+        />
+      );
+    }
+    const user = userEvent.setup();
+    render(<Fixture />);
+    await user.tab();
+    await user.keyboard("{End}{ArrowRight}");
+    expect(
+      screen
+        .getAllByRole("slider")
+        .map((el) => el.getAttribute("aria-valuetext")),
+    ).toEqual(["Rapid", "Rapid"]);
+  });
   it("supports decimal keyboard changes, commit callbacks and bounds", async () => {
     const user = userEvent.setup();
     const change = vi.fn();

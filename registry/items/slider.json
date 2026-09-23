@@ -3,13 +3,22 @@
   "name": "slider",
   "type": "registry:ui",
   "title": "Slider",
-  "description": "Accessible numeric and range sliders with tokenized styling and precise keyboard and touch input.",
-  "dependencies": ["react-aria-components", "react-aria"],
+  "description": "Accessible numeric, range and labelled stepper sliders with precise keyboard and touch input.",
+  "dependencies": [
+    "react-aria-components",
+    "react-aria"
+  ],
   "devDependencies": [],
-  "registryDependencies": ["dethink-base"],
+  "registryDependencies": [
+    "dethink-base"
+  ],
   "files": [
     {
       "path": "packages/components/src/components/slider/slider.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slider/slider-values.ts",
       "type": "registry:component"
     },
     {

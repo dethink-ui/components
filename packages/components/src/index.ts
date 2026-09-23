@@ -9,6 +9,7 @@ export {
   type SliderSize,
   type SliderSlots,
   type SliderValueDisplay,
+  type SliderStep,
 } from "./components/slider";
 
 export {
