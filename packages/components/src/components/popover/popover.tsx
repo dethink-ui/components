@@ -126,24 +126,29 @@ const PopoverRootContext = createContext<PopoverRootContextValue | null>(null);
 const popoverRootClasses = "contents";
 
 const popoverContentClasses =
-  "relative w-[var(--dt-popover-width,20rem)] max-w-[min(var(--dt-popover-max-width,24rem),calc(100vw_-_var(--dt-space-4)))] overflow-visible";
+  "relative flex min-w-0 w-[var(--dt-popover-width,20rem)] max-w-[min(var(--dt-popover-max-width,24rem),calc(100vw_-_var(--dt-space-6)))] flex-col overflow-visible rounded-xl p-[var(--dt-space-4)]";
 
 const popoverPanelClasses =
-  "grid max-h-[min(calc(var(--dt-overlay-max-height,18rem)_-_var(--dt-space-6)),calc(100dvh_-_var(--dt-space-10)))] gap-[var(--dt-space-3)] overflow-auto overscroll-contain outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+  "grid min-h-0 min-w-0 gap-[var(--dt-space-4)] overflow-auto overscroll-contain [overflow-wrap:anywhere] outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
 const popoverHeaderClasses = "grid gap-[var(--dt-space-1)] text-start";
 
 const popoverFooterClasses =
-  "flex flex-col-reverse gap-density-gap sm:flex-row sm:justify-end";
+  "flex flex-wrap items-center justify-end gap-density-gap border-t border-border pt-[var(--dt-space-3)]";
 
 const popoverTitleClasses =
   "text-sm font-semibold leading-6 tracking-normal text-foreground";
 
-const popoverDescriptionClasses = "text-sm leading-6 text-muted-foreground";
+const popoverDescriptionClasses =
+  "text-sm leading-relaxed text-muted-foreground";
 
 const visuallyHiddenClasses = "sr-only";
 
 const popoverCloseIconClasses = "pointer-events-none size-4 shrink-0";
+
+// Overlap the surface border by a pixel so the arrow shares its outline.
+const popoverArrowClasses =
+  "[filter:none] data-[placement=top]:-translate-y-px data-[placement=bottom]:translate-y-px data-[placement=left]:-translate-x-px data-[placement=right]:translate-x-px";
 
 function renderPopoverChildren(
   children: PopoverContentProps["children"],
@@ -221,7 +226,9 @@ export function popoverPanelClassNames({
 export function popoverArrowClassNames({
   className,
 }: Pick<PopoverArrowProps, "className"> = {}) {
-  return positionedOverlayArrowClassNames({ className });
+  return positionedOverlayArrowClassNames({
+    className: cn(popoverArrowClasses, className),
+  });
 }
 
 export function popoverHeaderClassNames({
@@ -494,7 +501,7 @@ export const PopoverArrow = forwardRef<HTMLDivElement, PopoverArrowProps>(
       {...props}
       ref={ref}
       data-slot="popover-arrow"
-      className={className}
+      className={cn(popoverArrowClasses, className)}
     />
   ),
 );
