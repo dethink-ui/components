@@ -7,6 +7,7 @@ export function SliderStates() {
       <Slider label="Small" size="sm" defaultValue={25} />
       <Slider label="Medium" defaultValue={50} />
       <Slider label="Large" size="lg" defaultValue={75} />
+      <Slider label="Extra large · inset thumb" size="xl" defaultValue={65} />
       <Slider label="Disabled" disabled defaultValue={35} />
       <DethinkProvider density="compact" dir="rtl">
         <Slider label="Compact · right to left" defaultValue={60} />

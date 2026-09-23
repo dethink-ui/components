@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
-import { DethinkProvider, Slider } from "@dethink/components";
+import { DethinkProvider, Slider, ExpressiveSlider } from "@dethink/components";
+function NumericSliderStory(props: { label: string; defaultValue: number }) {
+  return <Slider {...props} />;
+}
 const meta = {
   title: "Components/Slider",
-  component: Slider,
+  component: NumericSliderStory,
   args: { label: "Volume", defaultValue: 40 },
   decorators: [
     (Story) => (
@@ -12,7 +15,7 @@ const meta = {
       </DethinkProvider>
     ),
   ],
-} satisfies Meta<typeof Slider>;
+} satisfies Meta<typeof NumericSliderStory>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Numeric: Story = {
@@ -62,4 +65,28 @@ export const Stepper: Story = {
     await userEvent.keyboard("{End}");
     await expect(input).toHaveAttribute("aria-valuetext", "Rapid");
   },
+};
+export const Sizes: Story = {
+  render: () => (
+    <div className="grid gap-5">
+      {(["sm", "md", "lg", "xl"] as const).map((size) => (
+        <Slider key={size} label={size} size={size} defaultValue={65} />
+      ))}
+    </div>
+  ),
+};
+export const Expressive: Story = {
+  render: () => (
+    <ExpressiveSlider
+      label="Pace"
+      mode="stepper"
+      steps={[
+        { value: 0, label: "Still" },
+        { value: 1, label: "Steady" },
+        { value: 4, label: "Rapid" },
+      ]}
+      defaultValue={1}
+      size="xl"
+    />
+  ),
 };

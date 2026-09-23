@@ -161,3 +161,44 @@ describe("Slider", () => {
     );
   });
 });
+
+it("resets an uncontrolled stepper to its backing default and omits disabled steps", async () => {
+  const user = userEvent.setup();
+  render(
+    <form data-testid="reset-form">
+      <Slider
+        label="Pace"
+        mode="stepper"
+        steps={[
+          { value: 0, label: "Still" },
+          { value: 4, label: "Rapid" },
+        ]}
+        defaultValue={0}
+        name="pace"
+      />
+      <Slider
+        label="Locked pace"
+        mode="stepper"
+        steps={[
+          { value: 0, label: "Still" },
+          { value: 4, label: "Rapid" },
+        ]}
+        defaultValue={4}
+        name="locked"
+        disabled
+      />
+      <button type="reset">Reset</button>
+    </form>,
+  );
+  await user.tab();
+  await user.keyboard("{End}");
+  const form = screen.getByTestId("reset-form") as HTMLFormElement;
+  expect(new FormData(form).get("pace")).toBe("4");
+  expect(new FormData(form).has("locked")).toBe(false);
+  await user.click(screen.getByRole("button", { name: "Reset" }));
+  expect(screen.getByRole("slider", { name: "Pace" })).toHaveAttribute(
+    "aria-valuetext",
+    "Still",
+  );
+  expect(new FormData(form).get("pace")).toBe("0");
+});
