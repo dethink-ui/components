@@ -4,6 +4,39 @@ export interface SliderStep {
   showLabel?: boolean;
 }
 
+function fractionDigits(value: number) {
+  const [coefficient, exponent = "0"] = value.toString().split("e");
+  return Math.max(
+    0,
+    (coefficient.split(".")[1]?.length ?? 0) - Number(exponent),
+  );
+}
+
+export function sliderFormatOptions(
+  step: number,
+  min: number,
+  options?: Intl.NumberFormatOptions,
+): Intl.NumberFormatOptions {
+  // Explicit digit settings remain the consumer's formatting contract.
+  if (
+    options &&
+    [
+      options.minimumFractionDigits,
+      options.maximumFractionDigits,
+      options.minimumSignificantDigits,
+      options.maximumSignificantDigits,
+    ].some((value) => value !== undefined)
+  )
+    return options;
+  return {
+    maximumFractionDigits: Math.min(
+      100,
+      Math.max(3, fractionDigits(step), fractionDigits(min)),
+    ),
+    ...options,
+  };
+}
+
 export function validateSliderSteps(steps: readonly SliderStep[]) {
   if (
     steps.length < 2 ||

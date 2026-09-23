@@ -202,3 +202,119 @@ it("resets an uncontrolled stepper to its backing default and omits disabled ste
   );
   expect(new FormData(form).get("pace")).toBe("0");
 });
+
+it("reconciles uncontrolled backing values when the step list shrinks", async () => {
+  const user = userEvent.setup();
+  const change = vi.fn();
+  const commit = vi.fn();
+  const initial = [
+    { value: 0, label: "Still" },
+    { value: 1, label: "Steady" },
+    { value: 4, label: "Rapid" },
+  ];
+  const fixture = (steps: typeof initial) => (
+    <form data-testid="dynamic-form">
+      <Slider
+        label="Dynamic pace"
+        mode="stepper"
+        steps={steps}
+        defaultValue={0}
+        name="pace"
+        onValueChange={change}
+        onValueCommit={commit}
+      />
+    </form>
+  );
+  const { rerender } = render(fixture(initial));
+  await user.tab();
+  await user.keyboard("{End}");
+  rerender(fixture(initial.slice(0, 2)));
+  expect(screen.getByRole("slider")).toHaveAttribute(
+    "aria-valuetext",
+    "Steady",
+  );
+  expect(
+    new FormData(screen.getByTestId("dynamic-form") as HTMLFormElement).get(
+      "pace",
+    ),
+  ).toBe("1");
+  await user.keyboard("{Home}");
+  expect(change).toHaveBeenLastCalledWith(0);
+  expect(commit).toHaveBeenLastCalledWith(0);
+});
+
+it.each([true, false])(
+  "clamps both numeric range endpoints (controlled=%s)",
+  (controlled) => {
+    const fixture = (bounds: [number, number]) => (
+      <form data-testid="bounded-form">
+        <Slider<[number, number]>
+          label="Bounded range"
+          {...(controlled ? { value: bounds } : { defaultValue: bounds })}
+          name={["low", "high"]}
+        />
+      </form>
+    );
+    const { unmount } = render(fixture([120, 150]));
+    expect(
+      screen
+        .getAllByRole("slider")
+        .map((el) => el.getAttribute("aria-valuetext")),
+    ).toEqual(["100", "100"]);
+    expect([
+      ...new FormData(
+        screen.getByTestId("bounded-form") as HTMLFormElement,
+      ).values(),
+    ]).toEqual(["100", "100"]);
+    unmount();
+    render(fixture([-50, -20]));
+    expect(
+      screen
+        .getAllByRole("slider")
+        .map((el) => el.getAttribute("aria-valuetext")),
+    ).toEqual(["0", "0"]);
+  },
+);
+
+it("preserves fine decimal announcements, output and callbacks", async () => {
+  const user = userEvent.setup();
+  const change = vi.fn();
+  const { container } = render(
+    <Slider
+      label="Fine precision"
+      min={0}
+      max={0.001}
+      step={0.0001}
+      defaultValue={0.0002}
+      onValueChange={change}
+    />,
+  );
+  expect(screen.getByRole("slider")).toHaveAttribute(
+    "aria-valuetext",
+    "0.0002",
+  );
+  expect(
+    container.querySelector('[data-slot="slider-output"]'),
+  ).toHaveTextContent("0.0002");
+  await user.tab();
+  await user.keyboard("{ArrowRight}");
+  expect(screen.getByRole("slider")).toHaveAttribute(
+    "aria-valuetext",
+    "0.0003",
+  );
+  expect(change).toHaveBeenLastCalledWith(0.0003);
+});
+
+it("preserves explicit precision options", () => {
+  render(
+    <Slider
+      label="Rounded"
+      min={0}
+      max={1}
+      step={0.0001}
+      defaultValue={0.1234}
+      formatOptions={{ maximumFractionDigits: 2 }}
+    />,
+  );
+  expect(screen.getByRole("slider")).toHaveAttribute("aria-valuetext", "0.12");
+});
