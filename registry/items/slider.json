@@ -3,7 +3,7 @@
   "name": "slider",
   "type": "registry:ui",
   "title": "Slider",
-  "description": "Accessible numeric, range and labelled stepper sliders with precise keyboard and touch input.",
+  "description": "Accessible numeric, range and labelled stepper sliders, including an inset XL size. No Motion dependency.",
   "dependencies": [
     "react-aria-components",
     "react-aria"
@@ -15,6 +15,10 @@
   "files": [
     {
       "path": "packages/components/src/components/slider/slider.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/slider/slider-visuals.ts",
       "type": "registry:component"
     },
     {

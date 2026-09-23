@@ -2,11 +2,16 @@ import "./styles.css";
 
 export * from "./components/chat";
 export {
+  ExpressiveSlider,
+  type ExpressiveSliderProps,
+} from "./components/slider-expressive";
+export {
   Slider,
   sliderClassNames,
   type SliderProps,
   type SliderValue,
   type SliderSize,
+  type SliderVariant,
   type SliderSlots,
   type SliderValueDisplay,
   type SliderStep,

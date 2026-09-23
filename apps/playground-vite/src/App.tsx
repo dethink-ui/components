@@ -99,6 +99,7 @@ import {
   Divider,
   NumberInput,
   Slider,
+  ExpressiveSlider,
   Popover,
   PopoverClose,
   PopoverContent,
@@ -1133,6 +1134,11 @@ export function App() {
                   </FieldDescription>
                 </Field>
                 <FieldSet>
+                  <ExpressiveSlider
+                    label="Expressive smoke"
+                    size="xl"
+                    defaultValue={50}
+                  />
                   <Slider
                     label="Stepper smoke"
                     mode="stepper"

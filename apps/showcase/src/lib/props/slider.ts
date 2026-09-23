@@ -1,6 +1,13 @@
 import type { PropRow } from "@/components/props-table";
 export const sliderProps: PropRow[] = [
   {
+    prop: "variant",
+    type: '"default" | "expressive"',
+    defaultValue: "default",
+    description:
+      "Static themed glow. Install slider-expressive and use ExpressiveSlider for optional thumb spring and milestone pulse feedback; its defaults are expressive and floating.",
+  },
+  {
     prop: "mode / steps",
     type: '"numeric" | "stepper" / readonly SliderStep[]',
     defaultValue: '"numeric" / —',
@@ -50,7 +57,7 @@ export const sliderProps: PropRow[] = [
   },
   {
     prop: "size / valueDisplay",
-    type: '"sm" | "md" | "lg" / "inline" | "floating" | "none"',
+    type: '"sm" | "md" | "lg" | "xl" / "inline" | "floating" | "none"',
     defaultValue: "md / inline",
     description:
       "Visual sizing and output presentation. Floating mode retains a stable inline summary for ranges.",

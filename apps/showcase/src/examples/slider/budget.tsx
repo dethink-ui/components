@@ -14,6 +14,7 @@ export function SliderBudget() {
       </h3>
       <Slider<[number, number]>
         label="Monthly budget"
+        valueDisplay="floating"
         min={0}
         max={5000}
         step={100}

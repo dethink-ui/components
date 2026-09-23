@@ -4,6 +4,7 @@ export {
   type SliderProps,
   type SliderValue,
   type SliderSize,
+  type SliderVariant,
   type SliderSlots,
   type SliderValueDisplay,
   type SliderStep,
