@@ -98,6 +98,7 @@ import {
   Link,
   Divider,
   NumberInput,
+  Slider,
   Popover,
   PopoverClose,
   PopoverContent,
@@ -1132,6 +1133,15 @@ export function App() {
                   </FieldDescription>
                 </Field>
                 <FieldSet>
+                  <Slider
+                    label="Slider smoke"
+                    name="sliderSmoke"
+                    defaultValue={40}
+                  />
+                  <Slider<[number, number]>
+                    label="Range smoke"
+                    defaultValue={[20, 70]}
+                  />
                   <FieldLegend>Channels</FieldLegend>
                   <FieldGroup>
                     <Field id="playground-email" orientation="horizontal">

@@ -265,6 +265,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "forms",
   },
   {
+    slug: "slider",
+    name: "Slider",
+    description:
+      "Choose a value, range, or labelled milestone with an accessible slider.",
+    type: "forms",
+  },
+  {
     slug: "checkbox",
     name: "Checkbox",
     description: "Let users turn individual options on or off.",
