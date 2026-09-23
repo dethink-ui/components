@@ -124,7 +124,7 @@ const useIsomorphicLayoutEffect =
 const dialogRootClasses = "contents";
 
 const dialogOverlayBaseClasses =
-  "fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto overscroll-contain bg-[var(--dt-overlay-scrim)] p-[var(--dt-space-4)] text-foreground outline-none motion-safe:data-[entering]:animate-scrim-in motion-safe:data-[exiting]:animate-scrim-out motion-reduce:animate-none sm:p-[var(--dt-space-6)]";
+  "fixed inset-0 z-50 grid min-h-dvh place-items-center overflow-y-auto overscroll-contain bg-[var(--dt-overlay-scrim)] p-[var(--dt-space-4)] text-foreground backdrop-blur-xs outline-none motion-safe:data-[entering]:animate-scrim-in motion-safe:data-[exiting]:animate-scrim-out motion-reduce:animate-none sm:p-[var(--dt-space-6)] forced-colors:backdrop-blur-none";
 
 const dialogContentBaseClasses =
   "relative grid w-full overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-xl outline-none motion-safe:data-[entering]:animate-dialog-in motion-safe:data-[exiting]:animate-dialog-out motion-reduce:animate-none";
