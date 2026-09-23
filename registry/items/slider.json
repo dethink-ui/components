@@ -4,14 +4,9 @@
   "type": "registry:ui",
   "title": "Slider",
   "description": "Accessible numeric, range and labelled stepper sliders, including an inset XL size. No Motion dependency.",
-  "dependencies": [
-    "react-aria-components",
-    "react-aria"
-  ],
+  "dependencies": ["react-aria-components", "react-aria"],
   "devDependencies": [],
-  "registryDependencies": [
-    "dethink-base"
-  ],
+  "registryDependencies": ["dethink-base"],
   "files": [
     {
       "path": "packages/components/src/components/slider/slider.tsx",
