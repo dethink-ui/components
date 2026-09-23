@@ -20,7 +20,7 @@ interface HeaderAction {
 const headerActions: HeaderAction[] = [
   { id: "preview", label: "Preview" },
   { id: "share", label: "Share" },
-  { disabled: true, id: "export", label: "Export pending approval" },
+  { disabled: true, id: "export", label: "Export" },
   { destructive: true, id: "archive", label: "Archive" },
 ];
 
@@ -38,10 +38,10 @@ export function ButtonGroupResponsiveActionHandoff() {
   const runAction = (action: HeaderAction) => setLastActionId(action.id);
 
   return (
-    <div className="@container space-y-4">
+    <div className="border-border bg-background @container w-full space-y-4 rounded-2xl border p-5 shadow-sm">
       <div
         data-layout="wide"
-        className="hidden @min-3xl:flex @min-3xl:items-center @min-3xl:justify-between @min-3xl:gap-4"
+        className="hidden @min-lg:flex @min-lg:items-center @min-lg:justify-between @min-lg:gap-4"
       >
         <p className="text-sm font-medium">Quarterly report</p>
         <ButtonGroup aria-label="Quarterly report actions">
@@ -49,6 +49,7 @@ export function ButtonGroupResponsiveActionHandoff() {
             <Button
               key={action.id}
               data-action-id={action.id}
+              size="sm"
               disabled={action.disabled}
               onClick={() => runAction(action)}
               variant={action.destructive ? "destructive" : "outline"}
@@ -61,14 +62,19 @@ export function ButtonGroupResponsiveActionHandoff() {
 
       <div
         data-layout="narrow"
-        className="flex items-center justify-between gap-3 @min-3xl:hidden"
+        className="flex flex-col items-start gap-3 @min-lg:hidden"
       >
         <p className="min-w-0 truncate text-sm font-medium">Quarterly report</p>
-        <ButtonGroup aria-label="Quarterly report actions" mode="separated">
+        <ButtonGroup
+          aria-label="Quarterly report actions"
+          mode="separated"
+          className="flex-wrap"
+        >
           {narrowPrimaryActions.map((action) => (
             <Button
               key={action.id}
               data-action-id={action.id}
+              size="sm"
               disabled={action.disabled}
               onClick={() => runAction(action)}
               variant="outline"
@@ -96,9 +102,12 @@ export function ButtonGroupResponsiveActionHandoff() {
         </ButtonGroup>
       </div>
 
+      <p className="text-muted-foreground text-xs">
+        Export becomes available after approval.
+      </p>
       <p aria-live="polite" className="text-muted-foreground text-sm">
         {lastActionId
-          ? `Application handled action ID: ${lastActionId}`
+          ? `${headerActions.find((action) => action.id === lastActionId)?.label} selected for Quarterly report.`
           : "Choose an available action."}
       </p>
     </div>

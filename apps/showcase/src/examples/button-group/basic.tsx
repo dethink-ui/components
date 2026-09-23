@@ -28,7 +28,11 @@ export function ButtonGroupBasic() {
         <p className="text-muted-foreground text-sm font-medium">
           Separated state-aware actions
         </p>
-        <ButtonGroup aria-label="Publishing actions" mode="separated">
+        <ButtonGroup
+          aria-label="Publishing actions"
+          mode="separated"
+          className="flex-wrap"
+        >
           <Button>Publish</Button>
           <Button disabled variant="outline">
             Schedule

@@ -6,6 +6,9 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { ButtonGroupReviewDesk } from "@/examples/button-group/review-desk";
+import { ButtonGroupCanvasControls } from "@/examples/button-group/canvas-controls";
+import { ButtonGroupWeekNavigation } from "@/examples/button-group/week-navigation";
 import { ButtonGroupBasic } from "@/examples/button-group/basic";
 import { ButtonGroupResponsiveActionHandoff } from "@/examples/button-group/responsive-action-handoff";
 import {
@@ -38,24 +41,47 @@ export default function ButtonGroupPage() {
         title="Examples"
         description="Attached and separated groups share visual structure, never interaction state."
       >
-        <ExampleBlock
-          file="button-group/basic.tsx"
-          title="Action groups"
-          description="Horizontal, vertical, mixed-state, icon-only, and separator compositions using the same two-prop layout contract."
-        >
-          <ButtonGroupBasic />
-        </ExampleBlock>
+        <div className="space-y-10">
+          <ExampleBlock
+            file="button-group/review-desk.tsx"
+            title="A considered decision"
+            description="Attached decision actions with independent states. Review three documents; each remembers your decision."
+          >
+            <ButtonGroupReviewDesk />
+          </ExampleBlock>
+          <ExampleBlock
+            file="button-group/canvas-controls.tsx"
+            title="A closer look"
+            description="A vertical, icon-only group with real zoom controls, boundary states, and a decorative separator."
+          >
+            <ButtonGroupCanvasControls />
+          </ExampleBlock>
+          <ExampleBlock
+            file="button-group/week-navigation.tsx"
+            title="Make room for the week"
+            description="Previous, reset, and next actions in a compact attached group. Every button keeps its own Tab stop."
+          >
+            <ButtonGroupWeekNavigation />
+          </ExampleBlock>
+          <ExampleBlock
+            file="button-group/basic.tsx"
+            title="Layouts and states"
+            description="Horizontal, vertical, mixed-state, icon-only, and separator compositions using the same two-prop layout contract."
+          >
+            <ButtonGroupBasic />
+          </ExampleBlock>
+        </div>
       </DocsSection>
 
       <DocsSection
         id="responsive-handoff"
         title="Responsive action handoff"
-        description="The product declares one container threshold and keeps action ownership stable across representations."
+        description="Keep frequent actions visible and move secondary actions into a menu when space is limited."
       >
         <ExampleBlock
           file="button-group/responsive-action-handoff.tsx"
           title="Wide group to narrow overflow"
-          description="The narrow representation is the no-container-query fallback. At the declared container threshold, the same action definitions render in ButtonGroup; IDs, labels, disabled rules, destructive meaning, and handlers are preserved."
+          description="The same actions work in either layout, including disabled and destructive actions."
         >
           <ButtonGroupResponsiveActionHandoff />
         </ExampleBlock>
@@ -64,6 +90,16 @@ export default function ButtonGroupPage() {
           ButtonGroup never measures children, infers priority, hides actions,
           installs a ResizeObserver, or becomes a Toolbar. Choose the threshold
           and the always-visible action IDs from product requirements.
+        </p>
+      </DocsSection>
+
+      <DocsSection id="composition" title="Composition tips">
+        <p className="text-muted-foreground max-w-prose text-sm leading-6">
+          Use matching button sizes for a clean attached edge. Keep buttons and
+          decorative separators as direct children. For narrow screens, let
+          separated groups wrap or move secondary actions into a menu; attached
+          groups work best on one line. Give each icon button its own accessible
+          name.
         </p>
       </DocsSection>
 
