@@ -269,6 +269,10 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "skeleton": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "slider": {
+    "direct": ["react", "react-aria", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
   "slot-planner": {
     "direct": ["@internationalized/date", "motion", "react"],
     "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]

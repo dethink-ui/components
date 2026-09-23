@@ -2,6 +2,16 @@ import "./styles.css";
 
 export * from "./components/chat";
 export {
+  Slider,
+  sliderClassNames,
+  type SliderProps,
+  type SliderValue,
+  type SliderSize,
+  type SliderSlots,
+  type SliderValueDisplay,
+} from "./components/slider";
+
+export {
   ShaderHeroText,
   shaderHeroTextAnimations,
   type ShaderHeroTextAnimation,
