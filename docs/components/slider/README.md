@@ -14,7 +14,8 @@ Horizontal numeric and two-thumb range input backed by React Aria. Install the
 The root coordinates a label, output, track, fill and one or two thumbs. Use
 `value`/`onValueChange` for controlled state; `defaultValue` for uncontrolled state.
 `onValueCommit` reports completed adjustments. Numeric defaults are min 0, max 100,
-step 1. Values must be finite; range pairs must be ascending. Do not switch between
+step 1. Values must be finite; range pairs must be ascending. Both endpoints are
+clamped to the numeric bounds before range constraints are applied. Do not switch between
 scalar and range shapes after mounting. Use two names for independently named form
 values, or one name to submit repeated values.
 
@@ -25,8 +26,9 @@ label: "Steady"}, {value: 4, label: "Rapid"}]}`. Values must be finite and stric
 increasing, labels non-empty, and there must be at least two stops. Invalid
 configurations throw a descriptive error. Numeric min/max/step are excluded in
 this mode. A supplied off-stop value resolves to the nearest backing value (ties
-choose the lower stop). Changing steps remaps the current position to the new
-stop list; use controlled values when changing the list dynamically.
+choose the lower stop). Changing steps resolves the current numeric selection
+against the new stop list, preserving it when available or choosing its nearest
+remaining stop. This works for controlled and uncontrolled sliders.
 
 Callbacks and named hidden form inputs use original values, while thumb inputs
 use positional indices and announce readable labels. Stops are equally spaced.
@@ -41,6 +43,8 @@ Provide `label`, `aria-label`, or `aria-labelledby`. Range thumb labels default 
 Minimum and Maximum and can be replaced with `thumbLabels`. Tab/Shift+Tab focus
 thumbs; arrows adjust, Home/End reach bounds. Thumbs cannot cross. `description`
 is associated with the control. `formatOptions` formats visible and spoken values.
+Without explicit digit options, formatting preserves the precision of `step` and
+`min`, including small increments written in scientific notation.
 Disabled sliders cannot change and are omitted from form submission.
 
 ## Theming and recipes
@@ -78,9 +82,17 @@ compression and pulse; static state remains visible. The showcase's motion-speed
 preview starts paused for reduced-motion users and can be explicitly played.
 
 ```tsx
-<ExpressiveSlider label="Speed" mode="stepper" size="xl"
-  steps={[{ value: 0, label: "Still" }, { value: 1, label: "Steady" },
-    { value: 4, label: "Rapid" }]} defaultValue={1} />
+<ExpressiveSlider
+  label="Speed"
+  mode="stepper"
+  size="xl"
+  steps={[
+    { value: 0, label: "Still" },
+    { value: 1, label: "Steady" },
+    { value: 4, label: "Rapid" },
+  ]}
+  defaultValue={1}
+/>
 ```
 
 Full prop tables and copyable budget, precision, stepper, states and motion-speed
