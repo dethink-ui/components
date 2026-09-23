@@ -181,7 +181,7 @@ export function MessageScroller({
           role="region"
           aria-label={label}
           tabIndex={0}
-          className="focus-visible:ring-ring min-h-0 flex-1 overflow-y-auto overscroll-contain outline-none [overflow-anchor:none] [scrollbar-gutter:stable] focus-visible:ring-2 focus-visible:ring-inset"
+          className="focus-visible:ring-ring min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain outline-none [overflow-anchor:none] focus-visible:ring-2 focus-visible:ring-inset"
           onScroll={onScroll}
         >
           <div
