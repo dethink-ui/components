@@ -834,6 +834,187 @@
     -webkit-backface-visibility: hidden;
   }
 
+  /* Angled modes expect an opaque card surface. Distance controls ordering
+     during drag; DOM order must never put a rear card above the foreground. */
+  [data-slot="carousel"]:is(
+    [data-staging="fan"],
+    [data-staging="arc"],
+    [data-staging="ribbon"]
+  ) {
+    --carousel-focus-blur: 1.5px;
+    --carousel-step-ratio: 0.68;
+    --carousel-viewport-pad-block: 3rem;
+  }
+
+  [data-slot="carousel"][data-staging="arc"] {
+    --carousel-focus-blur: 0.5px;
+    --carousel-step-ratio: 0.88;
+  }
+
+  [data-slot="carousel"][data-staging="ribbon"] {
+    --carousel-step-ratio: 0.83;
+  }
+
+  @container (max-width: 39.999rem) {
+    [data-slot="carousel"]:is([data-staging="tilt"], [data-staging="floor"])
+      [data-slot="carousel-viewport"] {
+      --carousel-card-size: min(84cqw, 24rem);
+      --carousel-step: calc(
+        var(--carousel-card-size) * 0.9 + var(--carousel-gap)
+      );
+    }
+    [data-slot="carousel"] [data-slot="carousel-dot"] {
+      width: clamp(1.5rem, 8cqw, 2.75rem);
+    }
+  }
+
+  [data-slot="carousel"]:is(
+      [data-staging="fan"],
+      [data-staging="arc"],
+      [data-staging="ribbon"]
+    )
+    [data-slot="carousel-viewport"] {
+    --carousel-card-size: min(84cqw, 24rem);
+    --carousel-step: calc(
+      var(--carousel-card-size) * var(--carousel-step-ratio)
+    );
+    --carousel-angle-strength: 0.55;
+  }
+
+  @container (min-width: 40rem) {
+    [data-slot="carousel"]:is(
+        [data-staging="fan"],
+        [data-staging="arc"],
+        [data-staging="ribbon"]
+      )
+      [data-slot="carousel-viewport"] {
+      --carousel-card-size: min(46cqw, 24rem);
+      --carousel-angle-strength: 1;
+    }
+    [data-slot="carousel"][data-staging="arc"] [data-slot="carousel-viewport"] {
+      --carousel-card-size: min(38cqw, 21rem);
+    }
+  }
+
+  [data-slot="carousel"]:is(
+      [data-staging="fan"],
+      [data-staging="arc"],
+      [data-staging="ribbon"]
+    )
+    [data-slot="carousel-item"] {
+    --carousel-near: clamp(0, var(--carousel-abs-distance), 1);
+    z-index: calc(100 - var(--carousel-abs-distance) * 10);
+    transform-origin: 50% 80%;
+    filter: blur(calc(var(--carousel-near) * var(--carousel-focus-blur)));
+  }
+
+  [data-slot="carousel"][data-staging="fan"] [data-slot="carousel-item"] {
+    transform: perspective(var(--carousel-perspective))
+      translateX(
+        calc(
+          var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+        )
+      )
+      translateY(calc(var(--carousel-near) * 22px))
+      translateZ(calc(var(--carousel-abs-clamped) * -75px))
+      rotateY(
+        calc(
+          var(--carousel-clamped-distance) * -16deg *
+            var(--carousel-angle-strength) * var(--carousel-intensity) *
+            var(--carousel-dir)
+        )
+      )
+      rotateZ(
+        calc(
+          (var(--carousel-clamped-distance) * 12deg - 3deg) *
+            var(--carousel-angle-strength) * var(--carousel-intensity) *
+            var(--carousel-dir)
+        )
+      )
+      scale(calc(1 - var(--carousel-near) * 0.08));
+  }
+
+  [data-slot="carousel"][data-staging="arc"] [data-slot="carousel-item"] {
+    transform: perspective(var(--carousel-perspective))
+      translateX(
+        calc(
+          var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+        )
+      )
+      translateZ(calc(var(--carousel-abs-clamped) * -100px))
+      rotateY(
+        calc(
+          var(--carousel-clamped-distance) * -34deg *
+            var(--carousel-angle-strength) * var(--carousel-intensity) *
+            var(--carousel-dir)
+        )
+      )
+      scale(calc(1 - var(--carousel-near) * 0.04));
+  }
+
+  [data-slot="carousel"][data-staging="ribbon"] [data-slot="carousel-item"] {
+    transform: perspective(var(--carousel-perspective))
+      translateX(
+        calc(
+          var(--carousel-distance) * var(--carousel-step) * var(--carousel-dir)
+        )
+      )
+      translateY(
+        calc(
+          var(--carousel-near) * (24px + var(--carousel-item-polarity) * 10px)
+        )
+      )
+      rotateZ(
+        calc(
+          var(--carousel-item-polarity) * 6deg *
+            var(--carousel-angle-strength) * var(--carousel-intensity) *
+            var(--carousel-dir)
+        )
+      )
+      scale(calc(1 - var(--carousel-near) * 0.1));
+  }
+
+  /* New modes show a single centered slide with no depth when motion is
+     reduced. Inactive slides stay in the grid to reserve long-content height. */
+  [data-slot="carousel"][data-reduced-motion="true"]:is(
+      [data-staging="fan"],
+      [data-staging="arc"],
+      [data-staging="ribbon"]
+    )
+    [data-slot="carousel-item"] {
+    transform: none;
+    filter: none;
+    visibility: hidden;
+  }
+  [data-slot="carousel"][data-reduced-motion="true"]:is(
+      [data-staging="fan"],
+      [data-staging="arc"],
+      [data-staging="ribbon"]
+    )
+    [data-slot="carousel-item"][data-active="true"] {
+    visibility: visible;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-slot="carousel"]:is(
+        [data-staging="fan"],
+        [data-staging="arc"],
+        [data-staging="ribbon"]
+      )
+      [data-slot="carousel-item"] {
+      transform: none;
+      filter: none;
+      visibility: hidden;
+    }
+    [data-slot="carousel"]:is(
+        [data-staging="fan"],
+        [data-staging="arc"],
+        [data-staging="ribbon"]
+      )
+      [data-slot="carousel-item"][data-active="true"] {
+      visibility: visible;
+    }
+  }
+
   /* Reduced motion flattens every 3D staging: the motion tokens are zeroed and
      the tilt/floor item transforms collapse to the flat horizontal translate,
      so the active-slide change reads as an opacity crossfade (the item carries

@@ -54,7 +54,7 @@ const meta = {
   argTypes: {
     staging: {
       control: "inline-radio",
-      options: ["flat", "tilt", "floor"],
+      options: ["flat", "tilt", "floor", "fan", "arc", "ribbon"],
     },
     intensity: {
       control: "inline-radio",
@@ -88,7 +88,7 @@ const swatches = [
 
 function Frame({ index }: { index: number }) {
   return (
-    <div className="border-border bg-card flex h-64 w-full flex-col justify-end overflow-hidden rounded-xl border shadow-lg">
+    <div className="border-border bg-background flex h-64 w-full flex-col justify-end overflow-hidden rounded-xl border shadow-lg">
       <div
         className={`flex-1 bg-gradient-to-br ${swatches[index % swatches.length]}`}
       />
@@ -318,7 +318,7 @@ export const FeatureCards: Story = {
           const Icon = feature.icon;
           return (
             <CarouselItem key={feature.title}>
-              <article className="border-border bg-card flex h-[22rem] w-full flex-col overflow-hidden rounded-2xl border shadow-xl shadow-black/5">
+              <article className="border-border bg-background flex h-[22rem] w-full flex-col overflow-hidden rounded-2xl border shadow-xl shadow-black/5">
                 <div className="from-primary/15 via-primary/5 to-background relative min-h-40 overflow-hidden bg-gradient-to-br p-6">
                   <div className="bg-primary/10 absolute -top-10 -right-10 size-40 rounded-full blur-2xl" />
                   <div className="border-primary/15 bg-background/70 text-primary relative flex size-12 items-center justify-center rounded-2xl border shadow-sm backdrop-blur-sm">
@@ -389,7 +389,7 @@ export const ImageGallery: Story = {
       <CarouselContent>
         {gallerySlides.map((slide) => (
           <CarouselItem key={slide.title}>
-            <figure className="border-border bg-card relative h-[clamp(19rem,52vw,30rem)] w-full overflow-hidden rounded-2xl border shadow-xl shadow-black/10">
+            <figure className="border-border bg-background relative h-[clamp(19rem,52vw,30rem)] w-full overflow-hidden rounded-2xl border shadow-xl shadow-black/10">
               <img
                 alt={slide.alt}
                 className="size-full object-cover"
@@ -450,7 +450,7 @@ export const PricingPlans: Story = {
       <CarouselContent>
         {plans.map((plan) => (
           <CarouselItem key={plan.name}>
-            <section className="border-border bg-card flex h-[27rem] w-full flex-col rounded-2xl border p-6 shadow-xl shadow-black/5">
+            <section className="border-border bg-background flex h-[27rem] w-full flex-col rounded-2xl border p-6 shadow-xl shadow-black/5">
               <div className="flex min-h-7 items-center justify-between gap-3">
                 <p className="text-muted-foreground text-sm font-semibold">
                   {plan.name}
@@ -533,7 +533,7 @@ export const Testimonials: Story = {
       <CarouselContent>
         {testimonials.map((testimonial) => (
           <CarouselItem key={testimonial.name}>
-            <figure className="border-border bg-card flex h-[22rem] w-full flex-col rounded-2xl border p-7 shadow-xl shadow-black/5">
+            <figure className="border-border bg-background flex h-[22rem] w-full flex-col rounded-2xl border p-7 shadow-xl shadow-black/5">
               <div className="flex items-center justify-between">
                 <span
                   aria-hidden="true"
@@ -755,7 +755,7 @@ export const MarketingCards: Story = {
       <CarouselContent>
         {Array.from({ length: 5 }, (_, i) => (
           <CarouselItem key={i}>
-            <article className="border-border bg-card flex h-64 w-full flex-col justify-between rounded-xl border p-5 shadow-lg">
+            <article className="border-border bg-background flex h-64 w-full flex-col justify-between rounded-xl border p-5 shadow-lg">
               <div>
                 <p className="text-muted-foreground text-xs font-medium uppercase">
                   Feature {i + 1}
@@ -792,7 +792,9 @@ export const MarketingCards: Story = {
     const slides = canvasElement.querySelectorAll(
       '[data-slot="carousel-item"]',
     );
-    await expect(slides[0]).toHaveAttribute("inert");
+    await expect(
+      slides[0].querySelector('[data-slot="carousel-item-content"]'),
+    ).toHaveAttribute("inert");
   },
 };
 
@@ -900,4 +902,26 @@ export const WithAuroraBackground: Story = {
       </div>
     </AuroraBackground>
   ),
+};
+
+// Each presentation uses the same public controls and interaction story.
+export const FannedDeck: Story = {
+  ...Flat,
+  args: { staging: "fan", defaultIndex: 0 },
+};
+export const CurvedGallery: Story = {
+  ...ImageGallery,
+  args: { staging: "arc", defaultIndex: 1 },
+};
+export const KineticRibbon: Story = {
+  ...Flat,
+  args: { staging: "ribbon", defaultIndex: 0 },
+};
+export const FanDark: Story = {
+  ...DarkMode,
+  args: { staging: "fan", defaultIndex: 1 },
+};
+export const RibbonRTL: Story = {
+  ...RTL,
+  args: { staging: "ribbon", defaultIndex: 1 },
 };

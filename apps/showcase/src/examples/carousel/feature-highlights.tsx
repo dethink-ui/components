@@ -1,5 +1,7 @@
 "use client";
 
+import { useId, useState } from "react";
+
 import {
   ChartNoAxesCombined,
   Layers3,
@@ -13,6 +15,8 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  useCarousel,
+  type CarouselStaging,
 } from "@dethink/components";
 
 const features = [
@@ -51,6 +55,7 @@ const features = [
 ] as const;
 
 export function CarouselFeatureHighlights() {
+  const [staging, setStaging] = useState<CarouselStaging>("ribbon");
   return (
     <div className="space-y-7">
       <div className="mx-auto max-w-2xl space-y-2 text-center">
@@ -58,7 +63,7 @@ export function CarouselFeatureHighlights() {
           Product storytelling
         </p>
         <h3 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-          Make a feature feel like a destination.
+          Good ideas never stand still.
         </h3>
         <p className="text-muted-foreground text-sm leading-6">
           Give every capability a focused moment, then let the surrounding cards
@@ -66,11 +71,12 @@ export function CarouselFeatureHighlights() {
         </p>
       </div>
 
+      <CarouselModeControls value={staging} onChange={setStaging} />
       <Carousel
         aria-label="Product capabilities"
         defaultIndex={1}
-        staging="tilt"
-        className="mx-auto max-w-5xl"
+        staging={staging}
+        className="[&_[data-active=true]_article]:border-primary/60 mx-auto max-w-5xl"
       >
         <CarouselContent>
           {features.map((feature) => {
@@ -78,21 +84,20 @@ export function CarouselFeatureHighlights() {
 
             return (
               <CarouselItem key={feature.title}>
-                <article className="border-border bg-card flex h-[23rem] w-full flex-col overflow-hidden rounded-2xl border shadow-xl shadow-black/5">
-                  <div className="from-primary/20 via-primary/5 to-background relative min-h-40 overflow-hidden bg-gradient-to-br p-6">
-                    <div className="bg-primary/15 absolute -top-12 -right-10 size-44 rounded-full blur-3xl" />
-                    <div className="border-primary/15 bg-background/75 text-primary relative flex size-12 items-center justify-center rounded-2xl border shadow-sm backdrop-blur-sm">
+                <article className="border-border bg-background shadow-foreground/5 flex min-h-[23rem] w-full flex-col rounded-2xl border p-5 shadow-xl sm:p-6">
+                  <div>
+                    <div className="bg-primary/10 text-primary flex size-12 items-center justify-center rounded-xl">
                       <Icon aria-hidden="true" className="size-5" />
                     </div>
-                    <p className="text-muted-foreground relative mt-8 text-xs font-semibold tracking-[0.16em] uppercase">
+                    <p className="text-primary mt-6 text-xs font-semibold tracking-[0.12em] uppercase">
                       {feature.eyebrow}
                     </p>
                   </div>
-                  <div className="flex flex-1 flex-col p-6 pt-5">
+                  <div className="flex flex-1 flex-col pt-4">
                     <h4 className="font-heading text-xl font-semibold tracking-tight">
                       {feature.title}
                     </h4>
-                    <p className="text-muted-foreground mt-2 text-sm leading-6">
+                    <p className="text-muted-foreground mt-3 mb-7 text-sm leading-6">
                       {feature.summary}
                     </p>
                     <p className="text-primary mt-auto border-t pt-4 text-xs font-semibold">
@@ -105,11 +110,54 @@ export function CarouselFeatureHighlights() {
           })}
         </CarouselContent>
         <div className="mt-7 flex items-center justify-center gap-3">
-          <CarouselPrevious />
+          <CarouselPrevious size="lg" />
           <CarouselDots label={(index) => `Show ${features[index].title}`} />
-          <CarouselNext />
+          <CarouselNext size="lg" />
         </div>
+        <CarouselPosition />
       </Carousel>
     </div>
+  );
+}
+
+function CarouselModeControls({
+  value,
+  onChange,
+}: {
+  value: CarouselStaging;
+  onChange: (value: CarouselStaging) => void;
+}) {
+  const id = useId();
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <label htmlFor={id} className="text-muted-foreground text-sm">
+        Presentation
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value as CarouselStaging)}
+        className="border-border bg-background text-foreground focus-visible:outline-ring min-h-11 rounded-lg border px-3 text-sm focus-visible:outline-2"
+      >
+        <option value="fan">Fanned deck</option>
+        <option value="arc">Curved gallery</option>
+        <option value="ribbon">Kinetic ribbon</option>
+        <option value="flat">Flat</option>
+        <option value="tilt">Tilt</option>
+        <option value="floor">Floor</option>
+      </select>
+    </div>
+  );
+}
+
+function CarouselPosition() {
+  const { index, count } = useCarousel();
+  return (
+    <p
+      className="text-muted-foreground mt-3 text-center text-xs tabular-nums"
+      aria-hidden="true"
+    >
+      {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+    </p>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Quote } from "lucide-react";
+import { useId, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -8,6 +9,8 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  useCarousel,
+  type CarouselStaging,
 } from "@dethink/components";
 
 const testimonials = [
@@ -38,6 +41,7 @@ const testimonials = [
 ] as const;
 
 export function CarouselTestimonials() {
+  const [staging, setStaging] = useState<CarouselStaging>("fan");
   return (
     <div className="space-y-7">
       <div className="mx-auto max-w-xl space-y-2 text-center">
@@ -49,24 +53,24 @@ export function CarouselTestimonials() {
         </h3>
       </div>
 
+      <CarouselModeControls value={staging} onChange={setStaging} />
       <Carousel
         aria-label="Customer testimonials"
         defaultIndex={1}
-        intensity="subtle"
-        staging="floor"
-        className="mx-auto max-w-5xl"
+        staging={staging}
+        className="[&_[data-active=true]_figure]:border-primary/60 mx-auto max-w-5xl"
       >
         <CarouselContent>
           {testimonials.map((testimonial) => (
             <CarouselItem key={testimonial.name}>
-              <figure className="border-border bg-card flex h-[23rem] w-full flex-col rounded-2xl border p-7 shadow-xl shadow-black/5">
+              <figure className="border-border bg-background shadow-foreground/5 flex min-h-[23rem] w-full flex-col rounded-2xl border p-5 shadow-xl sm:p-7">
                 <div className="flex items-center justify-between">
                   <Quote aria-hidden="true" className="text-primary size-6" />
                   <span className="text-muted-foreground text-xs font-medium">
                     Customer story
                   </span>
                 </div>
-                <blockquote className="font-heading mt-7 text-xl leading-8 font-medium tracking-tight">
+                <blockquote className="font-heading my-7 text-lg leading-relaxed font-medium tracking-tight sm:text-xl">
                   “{testimonial.quote}”
                 </blockquote>
                 <figcaption className="mt-auto flex items-center gap-3 border-t pt-5">
@@ -90,15 +94,58 @@ export function CarouselTestimonials() {
           ))}
         </CarouselContent>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <CarouselPrevious />
+          <CarouselPrevious size="lg" />
           <CarouselDots
             label={(index) =>
               `Show testimonial from ${testimonials[index].name}`
             }
           />
-          <CarouselNext />
+          <CarouselNext size="lg" />
         </div>
+        <CarouselPosition />
       </Carousel>
     </div>
+  );
+}
+
+function CarouselModeControls({
+  value,
+  onChange,
+}: {
+  value: CarouselStaging;
+  onChange: (value: CarouselStaging) => void;
+}) {
+  const id = useId();
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <label htmlFor={id} className="text-muted-foreground text-sm">
+        Presentation
+      </label>
+      <select
+        id={id}
+        value={value}
+        onChange={(event) => onChange(event.target.value as CarouselStaging)}
+        className="border-border bg-background text-foreground focus-visible:outline-ring min-h-11 rounded-lg border px-3 text-sm focus-visible:outline-2"
+      >
+        <option value="fan">Fanned deck</option>
+        <option value="arc">Curved gallery</option>
+        <option value="ribbon">Kinetic ribbon</option>
+        <option value="flat">Flat</option>
+        <option value="tilt">Tilt</option>
+        <option value="floor">Floor</option>
+      </select>
+    </div>
+  );
+}
+
+function CarouselPosition() {
+  const { index, count } = useCarousel();
+  return (
+    <p
+      className="text-muted-foreground mt-3 text-center text-xs tabular-nums"
+      aria-hidden="true"
+    >
+      {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+    </p>
   );
 }

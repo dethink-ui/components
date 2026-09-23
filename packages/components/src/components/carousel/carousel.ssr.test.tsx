@@ -8,11 +8,22 @@ import {
   CarouselDots,
   CarouselItem,
   CarouselNext,
+  type CarouselStaging,
 } from ".";
 
-function Gallery({ defaultIndex }: { defaultIndex?: number }) {
+function Gallery({
+  defaultIndex,
+  staging,
+}: {
+  defaultIndex?: number;
+  staging?: CarouselStaging;
+}) {
   return (
-    <Carousel aria-label="Featured" defaultIndex={defaultIndex}>
+    <Carousel
+      aria-label="Featured"
+      defaultIndex={defaultIndex}
+      staging={staging}
+    >
       <CarouselContent>
         <CarouselItem>
           <div>One</div>
@@ -48,22 +59,27 @@ describe("Carousel SSR", () => {
     );
   });
 
-  it("hydrates without mismatch warnings", async () => {
-    const consoleError = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => undefined);
-    const container = document.createElement("div");
-    container.innerHTML = renderToString(<Gallery defaultIndex={1} />);
+  it.each(["flat", "fan", "arc", "ribbon"] as const)(
+    "hydrates %s without mismatch warnings",
+    async (staging) => {
+      const consoleError = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      const container = document.createElement("div");
+      container.innerHTML = renderToString(
+        <Gallery defaultIndex={1} staging={staging} />,
+      );
 
-    await act(async () => {
-      hydrateRoot(container, <Gallery defaultIndex={1} />);
-    });
+      await act(async () => {
+        hydrateRoot(container, <Gallery defaultIndex={1} staging={staging} />);
+      });
 
-    expect(
-      consoleError.mock.calls.some(([message]) =>
-        String(message).toLowerCase().includes("hydration"),
-      ),
-    ).toBe(false);
-    consoleError.mockRestore();
-  });
+      expect(
+        consoleError.mock.calls.some(([message]) =>
+          String(message).toLowerCase().includes("hydration"),
+        ),
+      ).toBe(false);
+      consoleError.mockRestore();
+    },
+  );
 });

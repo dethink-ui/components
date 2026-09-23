@@ -10,6 +10,8 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
+  version,
   type CSSProperties,
   type DragEvent,
   type ForwardedRef,
@@ -24,7 +26,6 @@ import {
   animate,
   motion,
   useMotionValue,
-  useReducedMotion,
   type AnimationPlaybackControls,
   type MotionValue,
 } from "motion/react";
@@ -38,7 +39,12 @@ import {
   pxToIndexDelta,
 } from "./carousel-utils";
 
-export type CarouselStaging = "flat" | "tilt" | "floor";
+// Bundlers replace this development flag; copied browser components do not
+// otherwise need Node's ambient types.
+declare const process: { env: { NODE_ENV?: string } };
+
+export type CarouselStaging =
+  "flat" | "tilt" | "floor" | "fan" | "arc" | "ribbon";
 export type CarouselIntensity = "subtle" | "standard" | "dramatic";
 
 // Motion owns the root element, so the same drag/animation handler names it
@@ -68,6 +74,8 @@ export interface CarouselProps extends MotionSafeDivProps {
   onIndexChange?: (index: number) => void;
   drag?: boolean;
   intensity?: CarouselIntensity;
+  /** Inactive-card blur in pixels (0–4). Does not affect the active card. */
+  inactiveBlur?: number;
   children?: ReactNode;
 }
 
@@ -101,6 +109,20 @@ export interface UseCarouselReturn {
 
 const CarouselContext = createContext<CarouselContextValue | null>(null);
 const CarouselItemIndexContext = createContext<number>(0);
+
+function subscribeToMotionPreference(callback: () => void) {
+  const query = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+  query?.addEventListener("change", callback);
+  return () => query?.removeEventListener("change", callback);
+}
+function getMotionPreference() {
+  return (
+    window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false
+  );
+}
+function getServerMotionPreference() {
+  return false;
+}
 
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
@@ -152,6 +174,9 @@ const stagingVisibleRadius: Record<CarouselStaging, number> = {
   flat: 0,
   tilt: 1,
   floor: 2,
+  fan: 0,
+  arc: 0,
+  ribbon: 0,
 };
 
 // Rotate/depth multiplier written inline on the root; blur is switched off
@@ -186,11 +211,10 @@ const carouselItemClasses =
 const carouselShadowClasses =
   "pointer-events-none absolute bottom-0 left-1/2 -z-10 h-[var(--carousel-shadow-height)] w-[var(--carousel-shadow-width)] -translate-x-1/2 translate-y-[var(--carousel-shadow-offset)] rounded-[100%] bg-[var(--carousel-shadow-color)] blur-md";
 
-const carouselDotsClasses =
-  "flex items-center justify-center gap-[var(--dt-space-2)] pt-[var(--dt-space-3)]";
+const carouselDotsClasses = "flex items-center justify-center";
 
 const carouselDotClasses =
-  "size-2.5 rounded-full border border-border bg-transparent transition-[background-color,transform] duration-200 hover:bg-muted-foreground/40 aria-[current=true]:scale-110 aria-[current=true]:border-primary aria-[current=true]:bg-primary motion-reduce:transition-none forced-colors:aria-[current=true]:bg-[Highlight]";
+  "group/dot flex size-11 shrink-0 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring";
 
 export function carouselClassNames({
   className,
@@ -282,6 +306,7 @@ export const Carousel = forwardRef(function Carousel(
     onIndexChange,
     drag = true,
     intensity = "standard",
+    inactiveBlur,
     style,
     "aria-label": ariaLabel,
     "aria-labelledby": ariaLabelledby,
@@ -300,7 +325,11 @@ export const Carousel = forwardRef(function Carousel(
     count,
   );
 
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribeToMotionPreference,
+    getMotionPreference,
+    getServerMotionPreference,
+  );
   const hasHydrated = useHasHydrated();
   const reducedMotion = hasHydrated && prefersReducedMotion === true;
 
@@ -442,6 +471,11 @@ export const Carousel = forwardRef(function Carousel(
     "--carousel-offset": offset,
     "--carousel-intensity": intensityMultiplier[intensity],
     "--carousel-blur-enabled": intensity === "subtle" ? 0 : 1,
+    ...(inactiveBlur !== undefined && Number.isFinite(inactiveBlur)
+      ? {
+          "--carousel-focus-blur": `${Math.min(4, Math.max(0, inactiveBlur))}px`,
+        }
+      : {}),
   } as CSSProperties;
 
   return (
@@ -514,7 +548,7 @@ export const CarouselContent = forwardRef<HTMLDivElement, CarouselContentProps>(
       scrollNext,
       scrollTo,
     } = useCarouselContext("CarouselContent");
-    const viewportRef = useRef<HTMLDivElement>(null);
+    const viewportRef = useRef<HTMLDivElement | null>(null);
     const probeRef = useRef<HTMLSpanElement>(null);
     const sessionRef = useRef<DragSession | null>(null);
     const suppressClickUntilRef = useRef(0);
@@ -615,6 +649,9 @@ export const CarouselContent = forwardRef<HTMLDivElement, CarouselContentProps>(
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
+      // Nested controls own their arrow/Home/End keys (text selection, sliders,
+      // menus). Carousel navigation belongs to the viewport itself.
+      if (event.target !== event.currentTarget) return;
       const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
       switch (event.key) {
         case "ArrowRight":
@@ -696,7 +733,8 @@ export const CarouselItem = forwardRef<HTMLDivElement, CarouselItemProps>(
     { children, className, style, ...props },
     forwardedRef,
   ) {
-    const { count, index, staging } = useCarouselContext("CarouselItem");
+    const { count, index, staging, scrollTo } =
+      useCarouselContext("CarouselItem");
     const itemIndex = useContext(CarouselItemIndexContext);
     const isInert = Math.abs(itemIndex - index) > stagingVisibleRadius[staging];
     const showShadow = staging !== "flat";
@@ -737,14 +775,12 @@ export const CarouselItem = forwardRef<HTMLDivElement, CarouselItemProps>(
         aria-label={`${itemIndex + 1} of ${count}`}
         data-slot="carousel-item"
         data-active={itemIndex === index ? "true" : undefined}
-        // React 19 forwards the `inert` boolean to the attribute; applied from
-        // the settled index only, never per animation frame.
-        inert={appliedInert || undefined}
         className={carouselItemClassNames({ className })}
         style={
           {
             ...style,
             "--carousel-item-index": itemIndex,
+            "--carousel-item-polarity": itemIndex % 2 === 0 ? 1 : -1,
           } as CSSProperties
         }
       >
@@ -755,7 +791,40 @@ export const CarouselItem = forwardRef<HTMLDivElement, CarouselItemProps>(
             className={carouselShadowClasses}
           />
         ) : null}
-        {children}
+        <div
+          data-slot="carousel-item-content"
+          className="contents"
+          // Keep the preview selector outside inert content. React 18 needs
+          // the string form of this native attribute; React 19 uses a boolean.
+          {...({
+            inert: appliedInert
+              ? version.startsWith("18.")
+                ? ""
+                : true
+              : undefined,
+          } as unknown as HTMLAttributes<HTMLDivElement>)}
+        >
+          {children}
+        </div>
+        {itemIndex !== index ? (
+          <button
+            type="button"
+            data-slot="carousel-preview"
+            aria-label={`Show slide ${itemIndex + 1}`}
+            tabIndex={-1}
+            className="absolute inset-0 z-10 cursor-pointer rounded-[inherit]"
+            onClick={(event) => {
+              if (event.defaultPrevented) return;
+              event.stopPropagation();
+              if (document.activeElement === event.currentTarget) {
+                itemRef.current
+                  ?.closest<HTMLElement>('[data-slot="carousel-viewport"]')
+                  ?.focus();
+              }
+              scrollTo(itemIndex);
+            }}
+          />
+        ) : null}
       </div>
     );
   },
@@ -870,7 +939,12 @@ export const CarouselDots = forwardRef<HTMLDivElement, CarouselDotsProps>(
             aria-current={i === index ? "true" : undefined}
             className={carouselDotClasses}
             onClick={() => scrollTo(i)}
-          />
+          >
+            <span
+              aria-hidden="true"
+              className="bg-muted-foreground/30 group-hover/dot:bg-muted-foreground/60 group-aria-[current=true]/dot:bg-primary size-2 rounded-full transition-[background-color,transform] group-aria-[current=true]/dot:scale-125 motion-reduce:transition-none forced-colors:border forced-colors:border-[ButtonText] forced-colors:group-aria-[current=true]/dot:bg-[Highlight]"
+            />
+          </button>
         ))}
       </div>
     );

@@ -119,11 +119,31 @@ describe("Carousel", () => {
       <Basic count={5} staging="tilt" defaultIndex={2} />,
     );
     const slides = container.querySelectorAll('[data-slot="carousel-item"]');
-    expect(slides[1].hasAttribute("inert")).toBe(false);
-    expect(slides[2].hasAttribute("inert")).toBe(false);
-    expect(slides[3].hasAttribute("inert")).toBe(false);
-    expect(slides[0].hasAttribute("inert")).toBe(true);
-    expect(slides[4].hasAttribute("inert")).toBe(true);
+    expect(
+      slides[1]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[2]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[3]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[0]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
+    expect(
+      slides[4]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
   });
 
   it("widens the inert visible radius further for floor staging", () => {
@@ -133,10 +153,26 @@ describe("Carousel", () => {
     );
     const slides = container.querySelectorAll('[data-slot="carousel-item"]');
     // Active index 3, radius 2: slides 1..5 stay interactive, 0 and 6 go inert.
-    expect(slides[0].hasAttribute("inert")).toBe(true);
-    expect(slides[1].hasAttribute("inert")).toBe(false);
-    expect(slides[5].hasAttribute("inert")).toBe(false);
-    expect(slides[6].hasAttribute("inert")).toBe(true);
+    expect(
+      slides[0]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
+    expect(
+      slides[1]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[5]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[6]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
     expect(
       container.querySelectorAll('[data-slot="carousel-item-shadow"]'),
     ).toHaveLength(7);
@@ -152,9 +188,21 @@ describe("Carousel", () => {
   it("marks fully out-of-view slides inert in flat staging", () => {
     const { container } = render(<Basic count={3} defaultIndex={0} />);
     const slides = container.querySelectorAll('[data-slot="carousel-item"]');
-    expect(slides[0].hasAttribute("inert")).toBe(false);
-    expect(slides[1].hasAttribute("inert")).toBe(true);
-    expect(slides[2].hasAttribute("inert")).toBe(true);
+    expect(
+      slides[0]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[1]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
+    expect(
+      slides[2]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
   });
 
   it("advances with the next control and reports the change once", async () => {
@@ -169,8 +217,16 @@ describe("Carousel", () => {
     const slides = screen
       .getByRole("region")
       .querySelectorAll('[data-slot="carousel-item"]');
-    expect(slides[1].hasAttribute("inert")).toBe(false);
-    expect(slides[0].hasAttribute("inert")).toBe(true);
+    expect(
+      slides[1]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(false);
+    expect(
+      slides[0]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
   });
 
   it("disables previous/next at the bounds", async () => {
@@ -352,7 +408,11 @@ describe("Carousel", () => {
     ) as HTMLElement;
     expect(document.activeElement).toBe(viewport);
     const slides = container.querySelectorAll('[data-slot="carousel-item"]');
-    expect(slides[0].hasAttribute("inert")).toBe(true);
+    expect(
+      slides[0]
+        .querySelector('[data-slot="carousel-item-content"]')!
+        .hasAttribute("inert"),
+    ).toBe(true);
   });
 
   it("chains consumer handlers on CarouselContent instead of dropping them", async () => {

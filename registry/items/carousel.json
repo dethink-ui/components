@@ -3,7 +3,7 @@
   "name": "carousel",
   "type": "registry:ui",
   "title": "Carousel",
-  "description": "A Motion-powered carousel with flat, tilt, and floor-standing 3D staging, driven by a single offset CSS variable, with drag momentum, dots, keyboard, RTL, density, and full APG accessibility.",
+  "description": "A Motion-powered carousel with flat, tilt, floor, fan, arc and ribbon staging, responsive angles, inactive blur, drag momentum, keyboard navigation, RTL and reduced-motion support.",
   "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "icon-button"],
