@@ -1,5 +1,7 @@
 import {
   Children,
+  Fragment,
+  cloneElement,
   createContext,
   forwardRef,
   isValidElement,
@@ -20,6 +22,10 @@ import {
   type Transition,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import {
+  getSidebarShellPart,
+  markSidebarShellPart,
+} from "../../utils/sidebar-shell-part";
 import {
   Sidebar,
   SidebarProvider,
@@ -91,6 +97,8 @@ export interface SidebarShellMainProps extends MotionSafeLandmarkProps {
 
 export interface SidebarShellFooterProps extends MotionSafeLandmarkProps {
   as?: "footer" | "div";
+  /** Content width by default; shell spans beneath navigation and content. */
+  span?: "content" | "shell";
 }
 
 export interface SidebarShellSkipLinkProps extends Omit<
@@ -117,34 +125,27 @@ type SidebarShellContextValue = {
   side: SidebarSide;
 };
 
-type SidebarShellPartName =
-  "Navigation" | "Header" | "Main" | "Footer" | "SkipLink";
-type MarkedSidebarShellPart = {
-  [SIDEBAR_SHELL_PART]?: SidebarShellPartName;
-};
-
-const SIDEBAR_SHELL_PART = Symbol.for("@dethink/sidebar-shell.part");
 const SidebarShellContext = createContext<SidebarShellContextValue | null>(
   null,
 );
 
 const sidebarShellRootClasses =
-  "group/sidebar-shell relative isolate flex h-[100dvh] min-h-0 w-full min-w-0 overflow-hidden text-foreground data-[side=right]:flex-row-reverse rtl:data-[side=left]:flex-row-reverse rtl:data-[side=right]:flex-row data-[chrome=workbench]:gap-[var(--dt-density-gap)] data-[chrome=workbench]:bg-muted/40 data-[chrome=workbench]:p-[var(--dt-density-gap)] data-[chrome=workbench]:[&>[data-slot=sidebar]]:h-full data-[chrome=workbench]:[&>[data-slot=sidebar]]:rounded-xl data-[chrome=workbench]:[&>[data-slot=sidebar]]:border data-[chrome=workbench]:[&>[data-slot=sidebar]]:shadow-sm data-[chrome=plain]:bg-background";
+  "group/sidebar-shell relative isolate grid [container-type:size] [--bottom-bar-shell-limit:50cqh] h-[100dvh] min-h-0 w-full min-w-0 grid-cols-[auto_minmax(0,1fr)] grid-rows-[minmax(0,1fr)] data-[has-shell-footer=true]:grid-rows-[minmax(0,1fr)_auto] overflow-hidden text-foreground data-[side=right]:grid-cols-[minmax(0,1fr)_auto] rtl:data-[side=left]:grid-cols-[minmax(0,1fr)_auto] rtl:data-[side=right]:grid-cols-[auto_minmax(0,1fr)] data-[has-navigation=false]:grid-cols-1 data-[chrome=workbench]:gap-[var(--dt-density-gap)] data-[chrome=workbench]:bg-muted/40 data-[chrome=workbench]:p-[var(--dt-density-gap)] data-[chrome=workbench]:[&>[data-slot=sidebar]]:h-full data-[chrome=workbench]:[&>[data-slot=sidebar]]:rounded-xl data-[chrome=workbench]:[&>[data-slot=sidebar]]:border data-[chrome=workbench]:[&>[data-slot=sidebar]]:shadow-sm data-[chrome=plain]:bg-background";
 
 const sidebarShellFrameClasses =
-  "relative z-0 grid min-h-0 min-w-0 flex-1 grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden bg-background data-[chrome=workbench]:rounded-xl data-[chrome=workbench]:border data-[chrome=workbench]:border-border data-[chrome=workbench]:shadow-sm";
+  "relative z-0 col-start-2 row-start-1 grid [container-type:size] min-h-0 min-w-0 grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden bg-background group-data-[side=right]/sidebar-shell:col-start-1 rtl:group-data-[side=left]/sidebar-shell:col-start-1 rtl:group-data-[side=right]/sidebar-shell:col-start-2 group-data-[has-navigation=false]/sidebar-shell:col-span-full data-[chrome=workbench]:rounded-xl data-[chrome=workbench]:border data-[chrome=workbench]:border-border data-[chrome=workbench]:shadow-sm";
 
 const sidebarShellNavigationClasses =
   "relative z-20 min-h-0 shrink-0 [&>[data-slot=sidebar]]:h-full data-[chrome=workbench]:rounded-xl data-[chrome=workbench]:border data-[chrome=workbench]:border-border data-[chrome=workbench]:shadow-sm data-[chrome=workbench]:[&>[data-slot=sidebar]]:rounded-[inherit] data-[chrome=workbench]:[&>[data-slot=sidebar]]:border-0";
 
 const sidebarShellHeaderClasses =
-  "relative z-10 flex min-h-[calc(var(--dt-density-control)+var(--dt-space-4))] min-w-0 items-center gap-[calc(var(--dt-density-gap)+var(--dt-space-1))] border-b border-border bg-background px-[var(--dt-space-4)] py-[var(--dt-density-gap)] text-foreground outline-none data-[chrome=workbench]:bg-muted/35";
+  "relative z-10 row-start-1 flex min-h-[calc(var(--dt-density-control)+var(--dt-space-4))] min-w-0 items-center gap-[calc(var(--dt-density-gap)+var(--dt-space-1))] border-b border-border bg-background px-[var(--dt-space-4)] py-[var(--dt-density-gap)] text-foreground outline-none data-[chrome=workbench]:bg-muted/35";
 
 const sidebarShellMainClasses =
-  "min-h-0 min-w-0 overflow-auto overscroll-contain bg-background p-[calc(var(--dt-density-gap)+var(--dt-space-2))] text-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
+  "row-start-2 min-h-0 min-w-0 overflow-auto overscroll-contain bg-background p-[calc(var(--dt-density-gap)+var(--dt-space-2))] text-foreground outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
 const sidebarShellFooterClasses =
-  "relative z-10 flex min-h-[calc(var(--dt-density-control)+var(--dt-space-1))] min-w-0 items-center gap-[var(--dt-density-gap)] border-t border-border bg-background px-[var(--dt-space-4)] py-[var(--dt-density-gap)] text-sm text-muted-foreground data-[chrome=workbench]:bg-muted/20";
+  "relative z-10 row-start-3 flex min-h-[calc(var(--dt-density-control)+var(--dt-space-1))] min-w-0 flex-wrap items-center gap-[var(--dt-density-gap)] border-t border-border bg-background px-[var(--dt-space-4)] py-[var(--dt-density-gap)] pb-[max(var(--dt-density-gap),env(safe-area-inset-bottom))] text-sm text-muted-foreground data-[span=shell]:col-span-full data-[span=shell]:row-start-2 data-[span=shell]:max-h-[40dvh] data-[span=shell]:overflow-auto data-[chrome=workbench]:bg-muted/20 data-[span=shell]:data-[chrome=workbench]:rounded-xl data-[span=shell]:data-[chrome=workbench]:border";
 
 const sidebarShellMotionSettings: Record<
   SidebarMotion,
@@ -293,22 +294,15 @@ function useControllableBoolean({
   return [currentValue, setValue] as const;
 }
 
-function markSidebarShellPart(
-  component: unknown,
-  partName: SidebarShellPartName,
-) {
-  Object.defineProperty(component, SIDEBAR_SHELL_PART, {
-    configurable: true,
-    value: partName,
+// Fragments are transparent slots. Qualify keys so sibling fragments can reuse keys.
+function flattenShellChildren(children: ReactNode, prefix = ""): ReactNode[] {
+  return Children.toArray(children).flatMap((child) => {
+    if (!isValidElement<{ children?: ReactNode }>(child)) return [child];
+    const key = `${prefix}${child.key}`;
+    return child.type === Fragment
+      ? flattenShellChildren(child.props.children, `${key}/`)
+      : [cloneElement(child, { key })];
   });
-}
-
-function getSidebarShellPart(child: ReactNode) {
-  if (!isValidElement(child) || typeof child.type === "string") {
-    return undefined;
-  }
-
-  return (child.type as MarkedSidebarShellPart)[SIDEBAR_SHELL_PART];
 }
 
 function isSidebarChild(child: ReactNode) {
@@ -476,12 +470,13 @@ markSidebarShellPart(SidebarShellMain, "Main");
 export const SidebarShellFooter = forwardRef<
   HTMLElement,
   SidebarShellFooterProps
->(({ as = "footer", className, ...props }, ref) => {
+>(({ as = "footer", className, span = "content", ...props }, ref) => {
   const context = useSidebarShellContext("SidebarShellFooter");
   const motionConfig = context.motionConfig;
   const motionProps = {
     ...props,
     "data-slot": "sidebar-shell-footer",
+    "data-span": span,
     "data-chrome": context.chrome,
     "data-collapsed": context.collapsed ? "true" : "false",
     "data-motion": motionConfig.motion,
@@ -546,7 +541,7 @@ export const SidebarShell = forwardRef<HTMLDivElement, SidebarShellProps>(
       onChange: onMobileOpenChange,
       value: mobileOpen,
     });
-    const resolvedChildren = Children.toArray(children);
+    const resolvedChildren = flattenShellChildren(children);
     const explicitMainId = resolvedChildren.find(
       (child) => getSidebarShellPart(child) === "Main",
     );
@@ -569,11 +564,32 @@ export const SidebarShell = forwardRef<HTMLDivElement, SidebarShellProps>(
     const navigationRegionChildren = resolvedChildren.filter(
       (child) => getSidebarShellPart(child) === "Navigation",
     );
+    const shellFooters = resolvedChildren.filter(
+      (child) =>
+        getSidebarShellPart(child) === "Footer" &&
+        isValidElement<SidebarShellFooterProps>(child) &&
+        child.props.span === "shell",
+    );
     const frameChildren = resolvedChildren.filter(
       (child) =>
         getSidebarShellPart(child) !== "SkipLink" &&
         getSidebarShellPart(child) !== "Navigation" &&
+        !shellFooters.includes(child) &&
         !isSidebarChild(child),
+    );
+    const navigation = [...navigationRegionChildren, ...navigationChildren];
+    const frame = (
+      <motionElement.div
+        key="shell-frame"
+        data-slot="sidebar-shell-frame"
+        data-chrome={chrome}
+        data-collapsed={resolvedCollapsed ? "true" : "false"}
+        data-motion={motionConfig.motion}
+        className={sidebarShellFrameClassNames()}
+        initial={false}
+      >
+        {frameChildren}
+      </motionElement.div>
     );
 
     return (
@@ -612,6 +628,8 @@ export const SidebarShell = forwardRef<HTMLDivElement, SidebarShellProps>(
                 motionConfig.reducedMotion ? "true" : undefined
               }
               data-side={side}
+              data-has-navigation={navigation.length > 0 ? "true" : "false"}
+              data-has-shell-footer={shellFooters.length > 0 ? "true" : "false"}
               className={sidebarShellClassNames({ className })}
               initial={false}
             >
@@ -620,18 +638,10 @@ export const SidebarShell = forwardRef<HTMLDivElement, SidebarShellProps>(
               ) : (
                 <SidebarShellSkipLink />
               )}
-              {navigationRegionChildren}
-              {navigationChildren}
-              <motionElement.div
-                data-slot="sidebar-shell-frame"
-                data-chrome={chrome}
-                data-collapsed={resolvedCollapsed ? "true" : "false"}
-                data-motion={motionConfig.motion}
-                className={sidebarShellFrameClassNames()}
-                initial={false}
-              >
-                {frameChildren}
-              </motionElement.div>
+              {side === "left"
+                ? [...navigation, frame]
+                : [frame, ...navigation]}
+              {shellFooters}
             </motionElement.div>
           </MotionConfig>
         </SidebarShellContext.Provider>

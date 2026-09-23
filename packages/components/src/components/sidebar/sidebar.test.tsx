@@ -396,6 +396,34 @@ describe("Sidebar", () => {
     expect(trigger).toHaveFocus();
   });
 
+  it.each(["left", "right"] as const)(
+    "points the navigation toggle toward its action on the %s edge",
+    async (side) => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <SidebarProvider side={side}>
+          <Sidebar>
+            <SidebarHeader>
+              <SidebarTrigger />
+            </SidebarHeader>
+          </Sidebar>
+        </SidebarProvider>,
+      );
+      const icon = container.querySelector('[data-slot="sidebar-toggle-icon"]');
+      expect(icon).toHaveAttribute("data-direction", side);
+      await user.click(
+        screen.getByRole("button", { name: "Collapse sidebar" }),
+      );
+      expect(icon).toHaveAttribute(
+        "data-direction",
+        side === "left" ? "right" : "left",
+      );
+      expect(
+        screen.getByRole("button", { name: "Expand sidebar" }),
+      ).toHaveAttribute("aria-expanded", "false");
+    },
+  );
+
   it("renders a Motion-ready default rail handle and preserves custom children", () => {
     render(
       <SidebarProvider motion="expressive">
@@ -857,6 +885,30 @@ describe("Sidebar", () => {
     });
   });
 
+  it("skips negative tab indices and hidden ancestors in the drawer focus loop", async () => {
+    const user = userEvent.setup();
+    render(
+      <SidebarProvider defaultMobileOpen animate={false}>
+        <SidebarMobile label="Focus fixture" showCloseButton={false}>
+          <button type="button">First action</button>
+          <button type="button" tabIndex={-1}>
+            Programmatic only
+          </button>
+          <div style={{ display: "none" }}>
+            <button type="button">Hidden action</button>
+          </div>
+          <button type="button">Last action</button>
+        </SidebarMobile>
+      </SidebarProvider>,
+    );
+    await user.tab();
+    expect(screen.getByRole("button", { name: "First action" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Last action" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "First action" })).toHaveFocus();
+  });
+
   it("dismisses the mobile drawer on outside click and link activation", async () => {
     const user = userEvent.setup();
 
@@ -1054,4 +1106,28 @@ describe("Sidebar", () => {
       screen.getByRole("link", { name: "Skip navigation" }),
     ).toHaveAttribute("href", "#main-content");
   });
+});
+
+it("keeps Tab with a child widget that prevents its default behavior", async () => {
+  const user = userEvent.setup();
+  render(
+    <SidebarProvider defaultMobileOpen motion="none">
+      <SidebarMobile label="Editor drawer">
+        <button>Before</button>
+        <textarea
+          aria-label="Editor"
+          onKeyDown={(event) => {
+            if (event.key === "Tab") event.preventDefault();
+          }}
+        />
+        <button>After</button>
+      </SidebarMobile>
+    </SidebarProvider>,
+  );
+  const editor = screen.getByRole("textbox", { name: "Editor" });
+  editor.focus();
+  await user.keyboard("{Tab}");
+  expect(editor).toHaveFocus();
+  await user.keyboard("{Shift>}{Tab}{/Shift}");
+  expect(editor).toHaveFocus();
 });

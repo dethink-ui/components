@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bottom-bar",
+  "type": "registry:ui",
+  "title": "BottomBar",
+  "description": "Composable bottom work panel with disclosure controls, preset or custom sizing, standalone use and SidebarShell integration.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/bottom-bar/bottom-bar.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/bottom-bar/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/sidebar-shell-part.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

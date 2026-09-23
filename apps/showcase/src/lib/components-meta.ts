@@ -412,6 +412,20 @@ export const componentCatalog: ComponentMeta[] = [
     type: "navigation",
   },
   {
+    slug: "sidebar-activity",
+    name: "SidebarActivity",
+    description:
+      "Keep background work, progress, and attention items visible in a sidebar.",
+    type: "navigation",
+  },
+  {
+    slug: "bottom-bar",
+    name: "BottomBar",
+    description:
+      "Compose a collapsible bottom work panel with custom content and sizing.",
+    type: "navigation",
+  },
+  {
     slug: "sidebar-shell",
     name: "SidebarShell",
     description:

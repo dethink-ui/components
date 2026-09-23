@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sidebar-activity",
+  "type": "registry:ui",
+  "title": "SidebarActivity",
+  "description": "Background-work visibility inside a sidebar: status, progress, review/resume actions and a collapsed summary with accessible expansion and focus handoff.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["sidebar"],
+  "files": [
+    {
+      "path": "packages/components/src/components/sidebar-activity/sidebar-activity.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/sidebar-activity/index.ts",
+      "type": "registry:component"
+    }
+  ]
+}

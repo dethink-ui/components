@@ -676,6 +676,8 @@ export {
   sidebarSeparatorClassNames,
   sidebarSkipLinkClassNames,
   sidebarTriggerClassNames,
+  useSidebarState,
+  type SidebarState,
   type SidebarContentProps,
   type SidebarFooterProps,
   type SidebarGroupContentProps,
@@ -1611,3 +1613,24 @@ export {
   type UseVoiceRecorderOptions,
 } from "./components/voice-input/use-voice-recorder";
 export * from "./components/chat-bubble";
+
+export {
+  SidebarActivity,
+  type SidebarActivityProps,
+  type SidebarActivityItem,
+  type SidebarActivityAction,
+  type SidebarActivityStatus,
+  type SidebarActivityCounts,
+} from "./components/sidebar-activity";
+
+export {
+  BottomBar,
+  BottomBarHeader,
+  BottomBarTrigger,
+  BottomBarContent,
+  type BottomBarProps,
+  type BottomBarHeaderProps,
+  type BottomBarTriggerProps,
+  type BottomBarContentProps,
+  type BottomBarSize,
+} from "./components/bottom-bar";

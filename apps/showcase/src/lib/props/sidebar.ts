@@ -47,14 +47,14 @@ export const sidebarProps: PropRow[] = [
     type: "button props",
     defaultValue: "toggle collapse",
     description:
-      "Desktop collapse controls with aria-expanded state. SidebarTrigger is the default 40px panel-icon button: place it in the sidebar header or the shell header. SidebarRail is an optional edge alternative for existing consumers. Use one primary desktop toggle.",
+      "Desktop collapse controls with aria-expanded state. SidebarTrigger is the default 40px navigation-strokes and directional-chevron button: place it in the sidebar header or the shell header. SidebarRail is an optional edge alternative for existing consumers. Use one primary desktop toggle.",
   },
   {
     prop: "SidebarMobile / SidebarMobileTrigger",
     type: "{ label, closeButtonLabel, showCloseButton } / button props",
     defaultValue: 'label: "Sidebar navigation"',
     description:
-      "Mobile drawer surface and trigger. The drawer handles Escape, outside click, link activation close, and focus restore.",
+      "Mobile drawer surface and trigger. The drawer uses the configured physical left/right edge in LTR and RTL, inherits text direction across its portal, and handles Escape, outside click, link activation close, and focus restore.",
   },
   {
     prop: "SidebarInset",

@@ -23,9 +23,11 @@ expect.extend(toHaveNoViolations);
 function AccessibleShell({
   defaultCollapsed = false,
   side = "left",
+  span = "content",
 }: {
   defaultCollapsed?: boolean;
   side?: "left" | "right";
+  span?: "content" | "shell";
 }) {
   return (
     <DethinkProvider theme="light">
@@ -50,7 +52,9 @@ function AccessibleShell({
           Command center
         </SidebarShellHeader>
         <SidebarShellMain>Operational overview</SidebarShellMain>
-        <SidebarShellFooter>All systems operational</SidebarShellFooter>
+        <SidebarShellFooter span={span}>
+          All systems operational
+        </SidebarShellFooter>
       </SidebarShell>
     </DethinkProvider>
   );
@@ -60,12 +64,16 @@ describe("SidebarShell accessibility", () => {
   it.each([
     { defaultCollapsed: false, side: "left" as const },
     { defaultCollapsed: true, side: "left" as const },
-    { defaultCollapsed: false, side: "right" as const },
+    { defaultCollapsed: false, side: "right" as const, span: "shell" as const },
   ])(
     "has no axe violations for $side collapsed=$defaultCollapsed",
-    async ({ defaultCollapsed, side }) => {
+    async ({ defaultCollapsed, side, span }) => {
       const { container } = render(
-        <AccessibleShell defaultCollapsed={defaultCollapsed} side={side} />,
+        <AccessibleShell
+          defaultCollapsed={defaultCollapsed}
+          side={side}
+          span={span}
+        />,
       );
 
       await expect(axe(container)).resolves.toHaveNoViolations();

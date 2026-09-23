@@ -18,16 +18,16 @@ export const sidebarShellProps: PropRow[] = [
   {
     prop: "SidebarShellMain",
     type: 'main attributes + { as: "main" | "div" | "section", id, tabIndex }',
-    defaultValue: 'as: "main", tabIndex: -1',
+    defaultValue: 'as: "main", tabIndex: 0',
     description:
-      "The single main landmark and skip-link target. The only scroll container in the shell: header and footer stay pinned while this canvas scrolls with overscroll containment.",
+      "The single main landmark and skip-link target. The main content scroll container: header and footer stay pinned while this canvas scrolls with overscroll containment.",
   },
   {
     prop: "SidebarShellFooter",
-    type: 'footer attributes + { as: "footer" | "div" }',
-    defaultValue: 'as: "footer"',
+    type: 'footer attributes + { as: "footer" | "div", span: "content" | "shell" }',
+    defaultValue: 'as: "footer", span: "content"',
     description:
-      "Optional status strip pinned below the work stage for system status, version, or legal text. Renders a contentinfo landmark by default.",
+      'Optional bottom bar. span="content" stays below the work stage; span="shell" stretches below both navigation and content. Omit to remove it without reserved space. Content can wrap; renders a contentinfo landmark by default.',
   },
   {
     prop: "SidebarShellNavigation",

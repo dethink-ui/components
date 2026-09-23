@@ -64,6 +64,39 @@ function ShellFixture({
 }
 
 describe("SidebarShell", () => {
+  it("places an optional shell footer after navigation and keeps the default footer in the frame", () => {
+    const { container, rerender } = render(
+      <SidebarShell side="right">
+        <Sidebar />
+        <SidebarShellMain>Main</SidebarShellMain>
+        <SidebarShellFooter span="shell">Global status</SidebarShellFooter>
+      </SidebarShell>,
+    );
+    const shell = container.querySelector('[data-slot="sidebar-shell"]');
+    expect(shell?.lastElementChild).toBe(screen.getByRole("contentinfo"));
+    expect(screen.getByRole("contentinfo")).toHaveAttribute(
+      "data-span",
+      "shell",
+    );
+    rerender(
+      <SidebarShell>
+        <SidebarShellMain>Main</SidebarShellMain>
+        <SidebarShellFooter>Local status</SidebarShellFooter>
+      </SidebarShell>,
+    );
+    expect(screen.getByRole("contentinfo").parentElement).toHaveAttribute(
+      "data-slot",
+      "sidebar-shell-frame",
+    );
+    rerender(
+      <SidebarShell>
+        <SidebarShellMain>Main</SidebarShellMain>
+      </SidebarShell>,
+    );
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
+    expect(shell).toHaveAttribute("data-has-shell-footer", "false");
+  });
+
   it("includes the content pane in keyboard navigation without interactive children", async () => {
     const user = userEvent.setup();
     render(
@@ -163,7 +196,7 @@ describe("SidebarShell", () => {
 
     expect(shell).toHaveAttribute("data-side", "right");
     expect(shell).toHaveAttribute("data-chrome", "plain");
-    expect(shell).toHaveClass("data-[side=right]:flex-row-reverse");
+    expect(frame?.nextElementSibling).toBe(screen.getByRole("navigation"));
     expect(frame).toHaveAttribute("data-chrome", "plain");
   });
 
@@ -180,8 +213,6 @@ describe("SidebarShell", () => {
       "compact",
     );
     expect(screen.getByTestId("provider")).toHaveAttribute("dir", "rtl");
-    expect(shell).toHaveClass("rtl:data-[side=left]:flex-row-reverse");
-    expect(shell).toHaveClass("rtl:data-[side=right]:flex-row");
     expect(shell?.className).toContain("var(--dt-density-gap)");
     expect(
       container.querySelector('[data-slot="sidebar-shell-header"]')?.className,
@@ -192,6 +223,41 @@ describe("SidebarShell", () => {
     expect(
       container.querySelector('[data-slot="sidebar-shell-footer"]')?.className,
     ).toContain("var(--dt-density-control)");
+  });
+
+  it("recognizes regions in fragments and preserves input state when changing sides", async () => {
+    const user = userEvent.setup();
+    const fixture = (side: "left" | "right") => (
+      <SidebarShell side={side}>
+        <>
+          <Sidebar aria-label="Navigation">
+            <input aria-label="Find a page" />
+          </Sidebar>
+          <SidebarShellMain id="fragment-main">
+            <input aria-label="Draft" />
+          </SidebarShellMain>
+        </>
+      </SidebarShell>
+    );
+    const { rerender } = render(fixture("left"));
+    await user.type(
+      screen.getByRole("textbox", { name: "Draft" }),
+      "Keep my draft",
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: "Find a page" }),
+      "Projects",
+    );
+    rerender(fixture("right"));
+    expect(screen.getByRole("textbox", { name: "Draft" })).toHaveValue(
+      "Keep my draft",
+    );
+    expect(screen.getByRole("textbox", { name: "Find a page" })).toHaveValue(
+      "Projects",
+    );
+    expect(
+      screen.getByRole("link", { name: "Skip to main content" }),
+    ).toHaveAttribute("href", "#fragment-main");
   });
 
   it("supports extracted navigation through the explicit Motion region", () => {

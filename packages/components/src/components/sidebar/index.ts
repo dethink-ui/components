@@ -44,6 +44,8 @@ export {
   sidebarSeparatorClassNames,
   sidebarSkipLinkClassNames,
   sidebarTriggerClassNames,
+  useSidebarState,
+  type SidebarState,
   type SidebarContentProps,
   type SidebarFooterProps,
   type SidebarGroupContentProps,

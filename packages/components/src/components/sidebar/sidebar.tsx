@@ -214,6 +214,25 @@ const SidebarSurfaceContext = createContext<SidebarSurfaceContextValue | null>(
   null,
 );
 
+export interface SidebarState {
+  collapsed: boolean;
+  side: SidebarSide;
+  variant: SidebarVariant;
+  setCollapsed: (collapsed: boolean) => void;
+}
+
+/** State for sidebar extensions, resolved against the current desktop/mobile surface. */
+export function useSidebarState(): SidebarState {
+  const context = useSidebarContext("useSidebarState");
+  const surface = useContext(SidebarSurfaceContext);
+  return {
+    collapsed: surface?.collapsed ?? context.collapsed,
+    side: surface?.side ?? context.side,
+    variant: surface?.variant ?? context.variant,
+    setCollapsed: context.setCollapsed,
+  };
+}
+
 interface SidebarGroupContextValue {
   collapsible: boolean;
   contentId: string;
@@ -230,7 +249,7 @@ const sidebarProviderClasses =
   "group/sidebar-provider flex min-h-0 w-full min-w-0 text-foreground [--sidebar-motion-duration:220ms] [--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] [--sidebar-width:16rem] [--sidebar-width-collapsed:3.5rem] data-[motion=expressive]:[--sidebar-motion-duration:320ms] data-[motion=expressive]:[--sidebar-motion-ease:cubic-bezier(0.34,1.56,0.64,1)] data-[motion=none]:[--sidebar-motion-duration:0ms] data-[motion=none]:[--sidebar-motion-ease:linear] data-[motion=standard]:[--sidebar-motion-duration:220ms] data-[motion=standard]:[--sidebar-motion-ease:cubic-bezier(0.34,1.24,0.64,1)] data-[motion=subtle]:[--sidebar-motion-duration:150ms] data-[motion=subtle]:[--sidebar-motion-ease:cubic-bezier(0.16,1,0.3,1)]";
 
 const sidebarClasses =
-  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-visible border-border bg-background text-foreground outline-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[side=left]:border-e data-[side=right]:border-s";
+  "group group/sidebar relative flex min-h-0 w-[var(--sidebar-width)] shrink-0 flex-col overflow-visible border-border bg-background text-foreground outline-none data-[collapsed=true]:w-[var(--sidebar-width-collapsed)] data-[side=left]:border-r data-[side=right]:border-l";
 
 const sidebarViewportClasses =
   "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[inherit]";
@@ -271,7 +290,7 @@ const sidebarMobileOverlayClasses =
   "fixed inset-0 z-50 bg-foreground/35 text-foreground outline-none";
 
 const sidebarMobilePanelClasses =
-  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none data-[side=left]:start-0 data-[side=left]:border-e data-[side=right]:end-0 data-[side=right]:border-s";
+  "fixed inset-y-0 flex w-[min(var(--sidebar-width),calc(100vw_-_var(--dt-space-6)))] max-w-sm flex-col overflow-hidden border-border bg-background shadow-xl outline-none data-[side=left]:left-0 data-[side=left]:border-r data-[side=right]:right-0 data-[side=right]:border-l";
 
 const sidebarMobileCloseClasses =
   "absolute end-[var(--dt-space-3)] top-[var(--dt-space-3)] z-10";
@@ -471,15 +490,22 @@ const focusableSelector = [
 
 function isFocusableElement(element: HTMLElement) {
   if (
-    element.hasAttribute("disabled") ||
-    element.getAttribute("aria-hidden") === "true"
+    element.tabIndex < 0 ||
+    element.matches(":disabled") ||
+    element.closest('[hidden], [inert], [aria-hidden="true"]')
   ) {
     return false;
   }
 
-  const style = window.getComputedStyle(element);
-
-  return style.display !== "none" && style.visibility !== "hidden";
+  for (
+    let current: HTMLElement | null = element;
+    current;
+    current = current.parentElement
+  ) {
+    const style = window.getComputedStyle(current);
+    if (style.display === "none" || style.visibility === "hidden") return false;
+  }
+  return true;
 }
 
 function getFocusableElements(container: HTMLElement) {
@@ -615,9 +641,12 @@ function getTriggerDirection(collapsed: boolean, side: SidebarSide) {
 }
 
 function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
+  const direction = getTriggerDirection(collapsed, side);
   return (
     <svg
       aria-hidden="true"
+      data-slot="sidebar-toggle-icon"
+      data-direction={direction}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -625,20 +654,24 @@ function renderTriggerIcon(collapsed: boolean, side: SidebarSide) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <rect x="3" y="4" width="18" height="16" rx="2" />
-      <path d={side === "left" ? "M9 4v16" : "M15 4v16"} />
-      {!collapsed && (
-        <path
-          d={
-            side === "left"
-              ? "M5 5h3v14H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"
-              : "M16 5h3a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-3Z"
-          }
-          fill="currentColor"
-          fillOpacity="0.15"
-          stroke="none"
-        />
-      )}
+      <path
+        d={
+          side === "left"
+            ? "M4 6h10M4 12h7M4 18h10"
+            : "M10 6h10M13 12h7M10 18h10"
+        }
+      />
+      <path
+        d={
+          side === "left"
+            ? direction === "left"
+              ? "m20 9-3 3 3 3"
+              : "m17 9 3 3-3 3"
+            : direction === "left"
+              ? "m7 9-3 3 3 3"
+              : "m4 9 3 3-3 3"
+        }
+      />
     </svg>
   );
 }
@@ -1258,6 +1291,8 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
     const side = sideProp ?? surfaceContext?.side ?? context.side;
     const overlayRef = useRef<HTMLDivElement | null>(null);
     const panelRef = useRef<HTMLDivElement | null>(null);
+    const directionAnchorRef = useRef<HTMLSpanElement | null>(null);
+    const [inheritedDirection, setInheritedDirection] = useState("ltr");
     const portalElement = useSyncExternalStore(
       subscribePortal,
       getPortalSnapshot,
@@ -1273,6 +1308,11 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
 
     useEffect(() => {
       if (context.mobileOpen) {
+        if (directionAnchorRef.current) {
+          setInheritedDirection(
+            getComputedStyle(directionAnchorRef.current).direction,
+          );
+        }
         panelRef.current?.focus();
       }
 
@@ -1353,7 +1393,7 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
         context.setMobileOpen(false);
       }
 
-      if (event.key === "Tab") {
+      if (event.key === "Tab" && !event.defaultPrevented) {
         const panelElement = panelRef.current;
 
         if (!panelElement) {
@@ -1368,26 +1408,17 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
           return;
         }
 
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-        const activeElement = document.activeElement;
-        const isFocusOutsidePanel =
-          activeElement instanceof Node &&
-          !panelElement.contains(activeElement);
-
-        if (
-          event.shiftKey &&
-          (activeElement === firstElement || isFocusOutsidePanel)
-        ) {
-          event.preventDefault();
-          lastElement.focus();
-        } else if (
-          !event.shiftKey &&
-          (activeElement === lastElement || isFocusOutsidePanel)
-        ) {
-          event.preventDefault();
-          firstElement.focus();
-        }
+        // Own the complete loop: Safari may skip links/buttons in native Tab order.
+        const index = focusableElements.indexOf(
+          document.activeElement as HTMLElement,
+        );
+        const nextIndex = event.shiftKey
+          ? index <= 0
+            ? focusableElements.length - 1
+            : index - 1
+          : (index + 1) % focusableElements.length;
+        event.preventDefault();
+        focusableElements[nextIndex].focus();
       }
 
       onKeyDown?.(event);
@@ -1418,6 +1449,7 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
             <motionElement.div
               {...(props as HTMLMotionProps<"div">)}
               ref={composeRefs(ref, panelRef)}
+              dir={props.dir ?? inheritedDirection}
               role="dialog"
               tabIndex={-1}
               animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -1459,14 +1491,23 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
                   <CloseIcon />
                 </button>
               ) : null}
-              {children}
+              <SidebarSurfaceContext.Provider
+                value={{ collapsed: false, side, variant: "default" }}
+              >
+                {children}
+              </SidebarSurfaceContext.Provider>
             </motionElement.div>
           </motionElement.div>
         ) : null}
       </AnimatePresence>
     );
 
-    return portalElement ? createPortal(overlay, portalElement) : overlay;
+    return (
+      <>
+        <span hidden ref={directionAnchorRef} />
+        {portalElement ? createPortal(overlay, portalElement) : overlay}
+      </>
+    );
   },
 );
 

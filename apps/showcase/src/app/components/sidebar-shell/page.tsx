@@ -7,6 +7,7 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { SidebarShellBasic } from "@/examples/sidebar-shell/basic";
+import { SidebarShellLayoutOptions } from "@/examples/sidebar-shell/layout-options";
 import { SidebarShellControlled } from "@/examples/sidebar-shell/controlled";
 import { SidebarShellPlain } from "@/examples/sidebar-shell/plain";
 import { SidebarShellRecipeOpsConsole } from "@/examples/sidebar-shell/recipe-ops-console";
@@ -40,6 +41,14 @@ export default function SidebarShellPage() {
         description="Try the examples, then open the code to use them in your app. The shell fills the viewport by default; these previews bound it with a height utility."
       >
         <div className="space-y-10">
+          <ExampleBlock
+            wide
+            file="sidebar-shell/layout-options.tsx"
+            title="Make it your workspace"
+            description="Place navigation on either edge. Try a collapsible work panel inside the shell with activity and notes, switch to a simple bottom status bar, or leave it out. Try RTL and a header-free layout too."
+          >
+            <SidebarShellLayoutOptions />
+          </ExampleBlock>
           <ExampleBlock
             wide
             file="sidebar-shell/basic.tsx"
@@ -82,6 +91,48 @@ export default function SidebarShellPage() {
         >
           <SidebarShellRecipeOpsConsole />
         </ExampleBlock>
+      </DocsSection>
+
+      <DocsSection
+        id="composition"
+        title="Placement and bottom bars"
+        description="The side prop always names a physical edge, including in RTL layouts. Set it on the shell so navigation, rails, and mobile controls agree."
+      >
+        <div className="text-muted-foreground space-y-3 text-sm">
+          <p>
+            SidebarFooter belongs inside navigation. SidebarShellFooter is the
+            application’s bottom bar: its default span is content; span="shell"
+            places it beneath navigation and the work area. Omit it to remove
+            the bar entirely. Header and footer are independently optional.
+          </p>
+          <p>
+            For an embedded work panel, compose BottomBar, BottomBarHeader,
+            BottomBarTrigger and BottomBarContent directly inside SidebarShell.
+            Use span="content" or span="shell" and choose a size or custom
+            height. The example keeps Activity and Notes close to the workspace;
+            collapsing the panel gives that space back to the main content.
+            Panel state belongs to your application.
+          </p>
+          <p>
+            Pass regions directly or inside fragments. Wrap an extracted
+            navigation component in SidebarShellNavigation. The main region
+            scrolls independently; long navigation scrolls in SidebarContent.
+            Keep bar content concise and allow actions to wrap.
+          </p>
+          <p>
+            The skip link comes first. Left-side navigation precedes the content
+            frame in DOM order; right-side navigation follows it. A full-width
+            bottom bar comes last. On small screens, hide desktop navigation and
+            compose SidebarMobile with SidebarMobileTrigger, as shown above; the
+            shell does not choose your breakpoint.
+          </p>
+          <p>
+            Existing compositions need no migration. Footer span is additive.
+            Use as="div" when a parent already owns the footer landmark, and
+            provide distinct navigation labels when your page has multiple
+            navigation regions.
+          </p>
+        </div>
       </DocsSection>
 
       <DocsSection

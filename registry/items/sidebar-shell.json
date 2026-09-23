@@ -3,7 +3,7 @@
   "name": "sidebar-shell",
   "type": "registry:ui",
   "title": "SidebarShell",
-  "description": "Provider-aware viewport application shell that composes the Dethink Sidebar with semantic header, main, footer, automatic skip-link wiring, Bounded Workbench and plain chrome treatments, controlled or uncontrolled collapse state, and Motion-powered none/subtle/standard/expressive layout choreography and micro-interactions with reduced-motion fallbacks.",
+  "description": "Responsive application shell with physical left/right navigation, optional header, independently scrolling content, optional content-width or full-shell bottom bar, plain/workbench chrome, accessible skip link and reduced-motion-aware transitions.",
   "dependencies": ["motion"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "sidebar"],
@@ -18,6 +18,10 @@
     },
     {
       "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/sidebar-shell-part.ts",
       "type": "registry:lib"
     }
   ]

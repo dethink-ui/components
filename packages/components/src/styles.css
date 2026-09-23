@@ -444,10 +444,10 @@
       position: fixed;
       position-anchor: var(--dt-sidebar-tooltip-anchor);
       top: anchor(center, -100vh);
-      inset-inline-start: anchor(end, 100vi);
+      left: anchor(right, 100vw);
       translate: 0 -50%;
       z-index: 50;
-      margin-inline-start: var(--dt-space-3);
+      margin-left: var(--dt-space-3);
       white-space: nowrap;
       border-radius: var(--dt-radius-md);
       background: var(--dt-color-foreground);
@@ -464,10 +464,10 @@
 
     [data-slot="sidebar"][data-collapsed="true"][data-side="right"]
       [data-sidebar-tooltip]::after {
-      inset-inline-start: auto;
-      inset-inline-end: anchor(start, 100vi);
-      margin-inline-start: 0;
-      margin-inline-end: var(--dt-space-3);
+      left: auto;
+      right: anchor(left, 100vw);
+      margin-left: 0;
+      margin-right: var(--dt-space-3);
     }
 
     [data-slot="sidebar"][data-collapsed="true"]
