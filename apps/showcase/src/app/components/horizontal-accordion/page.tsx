@@ -17,14 +17,14 @@ import {
 
 export const metadata: Metadata = {
   title: "HorizontalAccordion",
-  description: "Expand one panel at a time in a horizontal row.",
+  description: "Keep every section in reach while giving one room to shine.",
 };
 
 export default function HorizontalAccordionPage() {
   return (
     <DocsPage
       name="HorizontalAccordion"
-      description="Expand one panel at a time in a horizontal row."
+      description="Keep every section in reach while giving one room to shine. A focused workspace for project overviews, activity, and everyday actions."
     >
       <InstallationSection
         registryName="horizontal-accordion"
@@ -40,16 +40,16 @@ export default function HorizontalAccordionPage() {
           <ExampleBlock
             file="horizontal-accordion/basic.tsx"
             wide
-            title="Basic"
-            description="Uncontrolled with defaultValue. Clicking the active blade collapses it because collapsible defaults to true."
+            title="Project command centre"
+            description="Four sections, one workspace. Follow the project, filter activity, preview documents, or assign a review lead. Your choices survive switching panels. defaultValue and collapsible={false} keep the workspace open."
           >
             <HorizontalAccordionBasic />
           </ExampleBlock>
           <ExampleBlock
             file="horizontal-accordion/controlled.tsx"
             wide
-            title="Controlled"
-            description="Drive the active section from external state with value and onValueChange; pass undefined to collapse everything."
+            title="Controlled checklist"
+            description="Move between delivery phases with external controls. Completed steps stay checked, and collapsing the checklist leaves a compact tray with a clear next step."
           >
             <HorizontalAccordionControlled />
           </ExampleBlock>
@@ -64,11 +64,45 @@ export default function HorizontalAccordionPage() {
           <ExampleBlock
             file="horizontal-accordion/compact.tsx"
             title="Compact layout"
-            description="Below compactBreakpoint (measured on the container, not the viewport) the active panel moves above a horizontal blade tray and labels flatten."
+            description="A working inbox in a narrow container. Archive and restore messages; blade counts stay in sync. Below compactBreakpoint the panel moves above a touch-friendly tray, regardless of viewport size."
           >
             <HorizontalAccordionCompact />
           </ExampleBlock>
         </div>
+      </DocsSection>
+
+      <DocsSection
+        id="guidance"
+        title="Choosing the right layout"
+        description="Use a horizontal accordion for a small set of related sections when people benefit from seeing every destination at once."
+      >
+        <ul className="text-muted-foreground list-disc space-y-3 ps-5 text-sm leading-6">
+          <li>
+            Start persistent workspaces with defaultValue and collapsible=false.
+            Keep collapse optional for supplementary information and give the
+            collapsed state an intentional height or instruction.
+          </li>
+          <li>
+            Keep blade labels short. Compose counts or status with ordinary
+            elements and include their meaning in the blade's accessible name.
+            Avoid nested buttons or links inside a blade.
+          </li>
+          <li>
+            Choose compactBreakpoint for the space your content needs,
+            especially with four or more blades. For long content, give Panel
+            overflow-y-auto and check keyboard access to everything inside.
+          </li>
+          <li>
+            Arrow keys move focus; Enter or Space opens the focused section.
+            Home and End reach the first and last enabled blades. Inactive
+            panels preserve state by default and are inert during exit.
+          </li>
+          <li>
+            Use Tabs for frequent comparisons with short labels, or Accordion
+            for long reading sections. Test translated labels, RTL, reduced
+            motion, zoom, and your target screen readers.
+          </li>
+        </ul>
       </DocsSection>
 
       <DocsSection

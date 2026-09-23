@@ -10,6 +10,7 @@ import {
   useMemo,
   useRef,
   useState,
+  version as reactVersion,
   type ButtonHTMLAttributes,
   type CSSProperties,
   type HTMLAttributes,
@@ -111,6 +112,11 @@ type ItemContextValue = {
   value: string;
 };
 
+// React 18 serializes unknown attributes; React 19 supports boolean inert.
+const inertAttribute = (
+  Number.parseInt(reactVersion, 10) < 19 ? "" : true
+) as true;
+
 const DEFAULT_BLADE_WIDTH = 72;
 const DEFAULT_HEIGHT = 420;
 const DEFAULT_COMPACT_BREAKPOINT = 640;
@@ -145,7 +151,7 @@ const horizontalAccordionItemClasses =
   "flex h-full min-h-0 min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] motion-safe:transition-[flex-basis,flex-grow,min-width] motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none data-[state=active]:min-w-[min(100%,calc(var(--horizontal-accordion-blade-width)+16rem))] data-[state=active]:shrink data-[state=active]:grow data-[state=active]:basis-0 data-[layout=compact]:contents";
 
 const horizontalAccordionBladeClasses =
-  "group/horizontal-accordion-blade relative flex h-full w-[var(--horizontal-accordion-blade-width)] min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] cursor-pointer flex-col items-center justify-between gap-[var(--dt-space-3)] overflow-hidden border-e border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-4)] text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring data-[state=active]:text-primary-foreground motion-reduce:data-[state=active]:bg-primary disabled:cursor-not-allowed disabled:opacity-50 data-[layout=compact]:row-start-2 data-[layout=compact]:h-auto data-[layout=compact]:w-auto data-[layout=compact]:min-w-0 data-[layout=compact]:min-h-[var(--horizontal-accordion-blade-width)] data-[layout=compact]:basis-auto data-[layout=compact]:border-e-0 data-[layout=compact]:border-t data-[layout=compact]:p-[var(--dt-space-3)] [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:relative [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:z-[2]";
+  "group/horizontal-accordion-blade relative flex h-full w-[var(--horizontal-accordion-blade-width)] min-w-[var(--horizontal-accordion-blade-width)] shrink-0 grow-0 basis-[var(--horizontal-accordion-blade-width)] cursor-pointer flex-col items-center justify-between gap-[var(--dt-space-3)] overflow-hidden border-e border-border bg-muted px-[var(--dt-space-2)] py-[var(--dt-space-4)] text-muted-foreground outline-none motion-safe:transition-colors motion-safe:duration-[var(--horizontal-accordion-duration)] motion-safe:ease-[var(--horizontal-accordion-easing)] motion-reduce:transition-none after:pointer-events-none after:absolute after:inset-1 after:z-[3] after:rounded-sm after:border-2 after:border-current after:opacity-0 focus-visible:after:opacity-100 data-[state=active]:text-primary-foreground motion-reduce:data-[state=active]:bg-primary disabled:cursor-not-allowed disabled:opacity-50 data-[layout=compact]:row-start-2 data-[layout=compact]:h-auto data-[layout=compact]:w-auto data-[layout=compact]:min-w-0 data-[layout=compact]:min-h-[var(--horizontal-accordion-blade-width)] data-[layout=compact]:basis-auto data-[layout=compact]:border-e-0 data-[layout=compact]:border-t data-[layout=compact]:p-[var(--dt-space-3)] [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:relative [&>:not([data-slot=horizontal-accordion-blade-active-layer])]:z-[2]";
 
 const horizontalAccordionBladeActiveLayerClasses =
   "pointer-events-none absolute inset-0 z-[1] bg-primary";
@@ -750,14 +756,7 @@ export const HorizontalAccordionBlade = forwardRef<
             return;
           }
 
-          if (
-            event.key === "Enter" ||
-            event.key === " " ||
-            event.key === "Spacebar"
-          ) {
-            event.preventDefault();
-            setActiveValue(value);
-          }
+          // Native button clicks handle Enter and Space (on key release).
         }}
       >
         {active ? (
@@ -913,6 +912,8 @@ export const HorizontalAccordionPanel = forwardRef<
       id={panelId}
       role="region"
       aria-labelledby={bladeId}
+      aria-hidden={!active || undefined}
+      inert={!active ? inertAttribute : undefined}
       data-slot="horizontal-accordion-panel"
       data-state={active ? "active" : "inactive"}
       data-layout={layout}
