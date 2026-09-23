@@ -298,6 +298,49 @@ export const NonCollapsible: Story = {
   render: (args) => <DemoAccordion {...args} defaultValue="metrics" />,
 };
 
+export const PersistentPanelState: Story = {
+  render: (args) => (
+    <HorizontalAccordion
+      {...args}
+      aria-label="Review workspace"
+      collapsible={false}
+      defaultValue="note"
+    >
+      <HorizontalAccordion.Item value="note">
+        <HorizontalAccordion.Blade>Draft</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel className="p-6">
+          <label className="flex flex-col gap-2 text-sm">
+            Review note
+            <input
+              className="border-border bg-background rounded-md border p-2"
+              defaultValue="Ready for review"
+            />
+          </label>
+        </HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+      <HorizontalAccordion.Item value="activity">
+        <HorizontalAccordion.Blade>Activity</HorizontalAccordion.Blade>
+        <HorizontalAccordion.Panel className="p-6">
+          No new updates.
+        </HorizontalAccordion.Panel>
+      </HorizontalAccordion.Item>
+    </HorizontalAccordion>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.type(
+      canvas.getByRole("textbox", { name: "Review note" }),
+      " tomorrow",
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Activity" }));
+    await expect(canvas.queryByRole("textbox")).toBeNull();
+    await userEvent.click(canvas.getByRole("button", { name: "Draft" }));
+    await expect(
+      canvas.getByRole("textbox", { name: "Review note" }),
+    ).toHaveValue("Ready for review tomorrow");
+  },
+};
+
 export const AutomaticActivation: Story = {
   args: { activationMode: "automatic" },
   render: (args) => <DemoAccordion {...args} />,

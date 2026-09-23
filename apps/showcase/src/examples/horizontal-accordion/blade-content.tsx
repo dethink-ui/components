@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, HorizontalAccordion, Link } from "@dethink/components";
+import { HorizontalAccordion, Link } from "@dethink/components";
 
 function TypeIcon() {
   return (
@@ -72,15 +72,15 @@ function Panel({
       <h3 className="text-foreground text-lg font-semibold">{title}</h3>
       <p className="text-muted-foreground max-w-md text-sm leading-6">
         {body}{" "}
-        <Link href="#blade-content" variant="muted" underline="always">
+        <Link href="#props-heading" variant="muted" underline="always">
           See the API
         </Link>
         .
       </p>
       <div>
-        <Button size="sm" variant="outline">
+        <Link href="#props-heading" underline="always">
           {cta}
-        </Button>
+        </Link>
       </div>
     </div>
   );
@@ -92,6 +92,7 @@ export function HorizontalAccordionBladeContent() {
       aria-label="Blade content mixes"
       className="border-border rounded-lg border"
       compactBreakpoint={480}
+      collapsible={false}
       defaultValue="rotated"
       height={320}
     >
@@ -107,7 +108,7 @@ export function HorizontalAccordionBladeContent() {
         <HorizontalAccordion.Panel>
           <Panel
             body="The default label orientation rotates text to read bottom to top, with a supporting icon at the start of the blade."
-            cta="Copy rotated recipe"
+            cta="View label props"
             title="Rotated label with icon"
           />
         </HorizontalAccordion.Panel>
@@ -124,7 +125,7 @@ export function HorizontalAccordionBladeContent() {
         <HorizontalAccordion.Panel>
           <Panel
             body="True vertical writing mode reading top to bottom keeps glyphs upright, which suits short wayfinding labels."
-            cta="Copy vertical recipe"
+            cta="View orientation props"
             title="Vertical writing mode"
           />
         </HorizontalAccordion.Panel>
@@ -138,7 +139,7 @@ export function HorizontalAccordionBladeContent() {
         <HorizontalAccordion.Panel>
           <Panel
             body="Icon-only blades stay ultra compact and take an aria-label so assistive technology still announces a meaningful name."
-            cta="Copy icon-only recipe"
+            cta="View blade props"
             title="Icon-only blade"
           />
         </HorizontalAccordion.Panel>
@@ -155,7 +156,7 @@ export function HorizontalAccordionBladeContent() {
         <HorizontalAccordion.Panel>
           <Panel
             body="Icon plus label with the icon anchored to the end of the blade axis via iconPosition."
-            cta="Copy mixed recipe"
+            cta="View icon position props"
             title="Icon anchored to the end"
           />
         </HorizontalAccordion.Panel>

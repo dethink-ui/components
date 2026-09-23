@@ -35,6 +35,46 @@ function itemState(testId: string) {
 }
 
 describe("HorizontalAccordion state", () => {
+  it("removes exiting panel controls from the accessibility tree immediately and preserves their values", async () => {
+    const user = userEvent.setup();
+    render(
+      <HorizontalAccordion defaultValue="one" animation={{ duration: 1000 }}>
+        <HorizontalAccordion.Item value="one">
+          <HorizontalAccordion.Blade>First</HorizontalAccordion.Blade>
+          <HorizontalAccordion.Panel data-testid="exiting-panel">
+            <input aria-label="Draft note" defaultValue="Keep this" />
+          </HorizontalAccordion.Panel>
+        </HorizontalAccordion.Item>
+        <HorizontalAccordion.Item value="two">
+          <HorizontalAccordion.Blade>Second</HorizontalAccordion.Blade>
+          <HorizontalAccordion.Panel>Second panel</HorizontalAccordion.Panel>
+        </HorizontalAccordion.Item>
+      </HorizontalAccordion>,
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: "Draft note" }),
+      " draft",
+    );
+    await user.click(screen.getByRole("button", { name: "Second" }));
+    expect(screen.queryByRole("textbox", { name: "Draft note" })).toBeNull();
+    expect(screen.getByTestId("exiting-panel")).toHaveAttribute("inert");
+    await user.click(screen.getByRole("button", { name: "First" }));
+    expect(screen.getByRole("textbox", { name: "Draft note" })).toHaveValue(
+      "Keep this draft",
+    );
+    expect(screen.getByTestId("exiting-panel")).not.toHaveAttribute("inert");
+  });
+
+  it("activates Space on release rather than keydown", async () => {
+    const user = userEvent.setup();
+    render(<BasicAccordion />);
+    await user.tab();
+    await user.keyboard("[Space>]");
+    expect(itemState("item-one")).toBe("inactive");
+    await user.keyboard("[/Space]");
+    expect(itemState("item-one")).toBe("active");
+  });
+
   it("renders with no active item when no defaultValue is provided", () => {
     render(<BasicAccordion />);
 
