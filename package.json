@@ -39,7 +39,11 @@
     "test:shader-backgrounds": "playwright test --config=e2e/shader-backgrounds.config.ts",
     "registry:smoke:shader-backgrounds": "node scripts/smoke-shader-hero-registry.mjs --backgrounds",
     "test:carousel": "playwright test --config=e2e/carousel-modes.config.ts",
-    "registry:smoke:carousel": "node scripts/smoke-carousel-registry.mjs"
+    "registry:smoke:carousel": "node scripts/smoke-carousel-registry.mjs",
+    "test:sidebar-shell": "playwright test --config=e2e/sidebar-shell.config.ts",
+    "registry:smoke:sidebar-shell": "node scripts/smoke-sidebar-shell-registry.mjs",
+    "registry:smoke:sidebar-activity": "node scripts/smoke-sidebar-shell-registry.mjs --activity",
+    "registry:smoke:bottom-bar": "node scripts/smoke-sidebar-shell-registry.mjs --bottom-bar"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

@@ -16,7 +16,7 @@ function ServerShell({ defaultCollapsed = false }) {
       <Sidebar aria-label="Server navigation" />
       <SidebarShellHeader>Server toolbar</SidebarShellHeader>
       <SidebarShellMain>Server content</SidebarShellMain>
-      <SidebarShellFooter>Server status</SidebarShellFooter>
+      <SidebarShellFooter span="shell">Server status</SidebarShellFooter>
     </SidebarShell>
   );
 }

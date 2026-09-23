@@ -1,0 +1,4 @@
+/* Development tooling is outside the component under visual test. */
+nextjs-portal {
+  display: none !important;
+}

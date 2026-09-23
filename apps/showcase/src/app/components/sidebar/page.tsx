@@ -7,6 +7,7 @@ import {
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
 import { SidebarBasic } from "@/examples/sidebar/basic";
+import { SidebarActivityExample } from "@/examples/sidebar/activity";
 import { SidebarCollapsed } from "@/examples/sidebar/collapsed";
 import { SidebarMobileDrawer } from "@/examples/sidebar/mobile-drawer";
 import { SidebarRecipeAiWorkspace } from "@/examples/sidebar/recipe-ai-workspace";
@@ -38,6 +39,13 @@ export default function SidebarPage() {
         description="Try the examples, then open the code to use them in your app."
       >
         <div className="space-y-10">
+          <ExampleBlock
+            file="sidebar/activity.tsx"
+            title="Background work"
+            description="Keep AI runs, imports, and approval requests visible. Collapse the sidebar to turn the list into an activity summary."
+          >
+            <SidebarActivityExample />
+          </ExampleBlock>
           <ExampleBlock
             file="sidebar/basic.tsx"
             title="Dashboard navigation"

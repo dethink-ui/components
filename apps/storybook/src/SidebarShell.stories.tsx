@@ -297,7 +297,10 @@ function WorkspaceContent() {
   );
 }
 
-function ShellExample(props: SidebarShellProps) {
+function ShellExample({
+  footerSpan = "content",
+  ...props
+}: SidebarShellProps & { footerSpan?: "content" | "shell" }) {
   return (
     <SidebarShell {...props} className="h-[44rem] max-h-[100dvh]">
       <SidebarShellNavigation>
@@ -336,7 +339,7 @@ function ShellExample(props: SidebarShellProps) {
       <SidebarShellMain>
         <WorkspaceContent />
       </SidebarShellMain>
-      <SidebarShellFooter>
+      <SidebarShellFooter span={footerSpan}>
         <span className="bg-success size-2 rounded-full" />
         Live operations data updated moments ago
       </SidebarShellFooter>
@@ -393,5 +396,21 @@ export const CompactDensityRtl: Story = {
     <DethinkProvider density="compact" dir="rtl">
       <ShellExample {...args} />
     </DethinkProvider>
+  ),
+};
+
+export const FullShellBottomBar: Story = {
+  args: { side: "right" },
+  render: (args) => <ShellExample {...args} footerSpan="shell" />,
+};
+
+export const MainOnly: Story = {
+  render: (args) => (
+    <SidebarShell {...args} className="h-96">
+      <Sidebar aria-label="Minimal navigation" />
+      <SidebarShellMain>
+        Content fills the shell without a header or footer.
+      </SidebarShellMain>
+    </SidebarShell>
   ),
 };

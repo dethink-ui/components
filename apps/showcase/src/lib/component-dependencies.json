@@ -21,6 +21,7 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "badge": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "bottom-bar": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "box": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "breadcrumb": {
     "direct": ["react", "react-aria-components"],
@@ -250,6 +251,10 @@
   "sidebar": {
     "direct": ["motion", "react", "react-dom"],
     "shared": ["clsx", "tailwind-merge"]
+  },
+  "sidebar-activity": {
+    "direct": ["react"],
+    "shared": ["clsx", "motion", "react-dom", "tailwind-merge"]
   },
   "sidebar-shell": {
     "direct": ["motion", "react"],
