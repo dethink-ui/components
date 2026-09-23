@@ -118,7 +118,7 @@ const formField = await readJson(join(registryRoot, "form-field.json"));
 const input = await readJson(join(registryRoot, "input.json"));
 const iconButton = await readJson(join(registryRoot, "icon-button.json"));
 const revealButton = await readJson(join(registryRoot, "reveal-button.json"));
-const soundInput = await readJson(join(registryRoot, "sound-input.json"));
+const voiceInput = await readJson(join(registryRoot, "voice-input.json"));
 const flex = await readJson(join(registryRoot, "flex.json"));
 const grid = await readJson(join(registryRoot, "grid.json"));
 const link = await readJson(join(registryRoot, "link.json"));
@@ -187,7 +187,7 @@ const registryItemsByName = new Map(
     input,
     iconButton,
     revealButton,
-    soundInput,
+    voiceInput,
     flex,
     grid,
     link,
@@ -287,8 +287,8 @@ assert(
   "reveal-button registry item must be named reveal-button.",
 );
 assert(
-  soundInput.name === "sound-input",
-  "sound-input registry item must be named sound-input.",
+  voiceInput.name === "voice-input",
+  "voice-input registry item must be named voice-input.",
 );
 assert(flex.name === "flex", "flex registry item must be named flex.");
 assert(grid.name === "grid", "grid registry item must be named grid.");
@@ -526,12 +526,12 @@ assert(
   "reveal-button registry item must depend on button for shared variant types.",
 );
 assert(
-  soundInput.registryDependencies?.includes("dethink-base"),
-  "sound-input registry item must depend on dethink-base.",
+  voiceInput.registryDependencies?.includes("dethink-base"),
+  "voice-input registry item must depend on dethink-base.",
 );
 assert(
-  soundInput.registryDependencies?.includes("button"),
-  "sound-input registry item must depend on button for shared variant types.",
+  voiceInput.registryDependencies?.includes("button"),
+  "voice-input registry item must depend on button for shared variant types.",
 );
 assert(
   flex.registryDependencies?.includes("dethink-base"),
@@ -881,8 +881,8 @@ assert(
   "reveal-button registry item must include motion for hover, focus, and press choreography.",
 );
 assert(
-  soundInput.dependencies?.includes("motion"),
-  "sound-input registry item must include motion for pill and waveform choreography.",
+  voiceInput.dependencies?.includes("motion"),
+  "voice-input registry item must include motion for pill and waveform choreography.",
 );
 assert(
   Array.isArray(flex.dependencies) && flex.dependencies.length === 0,
@@ -1126,7 +1126,7 @@ for (const item of [
   input,
   iconButton,
   revealButton,
-  soundInput,
+  voiceInput,
   flex,
   grid,
   link,
@@ -1186,7 +1186,7 @@ await assertRegistryRelativeImportsResolve(drawer, registryItemsByName);
 await assertRegistryRelativeImportsResolve(formField, registryItemsByName);
 await assertRegistryRelativeImportsResolve(input, registryItemsByName);
 await assertRegistryRelativeImportsResolve(revealButton, registryItemsByName);
-await assertRegistryRelativeImportsResolve(soundInput, registryItemsByName);
+await assertRegistryRelativeImportsResolve(voiceInput, registryItemsByName);
 await assertRegistryRelativeImportsResolve(grid, registryItemsByName);
 await assertRegistryRelativeImportsResolve(numberInput, registryItemsByName);
 await assertRegistryRelativeImportsResolve(popover, registryItemsByName);
@@ -1326,8 +1326,8 @@ const revealButtonSource = await readFile(
   ),
   "utf8",
 );
-const soundInputSource = await readFile(
-  join(root, "packages/components/src/components/sound-input/sound-input.tsx"),
+const voiceInputSource = await readFile(
+  join(root, "packages/components/src/components/voice-input/voice-input.tsx"),
   "utf8",
 );
 const flexSource = await readFile(
@@ -1737,40 +1737,40 @@ assert(
   "package index must export RevealButton.",
 );
 assert(
-  soundInputSource.includes('data-slot="sound-input"'),
-  "sound-input source must expose stable root slot data.",
+  voiceInputSource.includes('data-slot="voice-input"'),
+  "voice-input source must expose stable root slot data.",
 );
 assert(
-  soundInputSource.includes('data-slot="sound-input-waveform"'),
-  "sound-input source must expose stable waveform slot data.",
+  voiceInputSource.includes('data-slot="voice-input-waveform"'),
+  "voice-input source must expose stable waveform slot data.",
 );
 assert(
-  soundInputSource.includes("navigator.mediaDevices.getUserMedia"),
-  "sound-input source must document unsupported getUserMedia handling.",
+  voiceInputSource.includes("navigator.mediaDevices.getUserMedia"),
+  "voice-input source must document unsupported getUserMedia handling.",
 );
 assert(
-  soundInputSource.includes("mediaDevices.getUserMedia"),
-  "sound-input source must request media from the click path.",
+  voiceInputSource.includes("mediaDevices.getUserMedia"),
+  "voice-input source must request media from the click path.",
 );
 assert(
-  soundInputSource.includes("stopMediaStream"),
-  "sound-input source must centralize owned stream cleanup.",
+  voiceInputSource.includes("stopMediaStream"),
+  "voice-input source must centralize owned stream cleanup.",
 );
 assert(
-  soundInputSource.includes("useReducedMotion"),
-  "sound-input source must respect reduced-motion preferences.",
+  voiceInputSource.includes("useReducedMotion"),
+  "voice-input source must respect reduced-motion preferences.",
 );
 assert(
-  soundInputSource.includes("useMotionValue"),
-  "sound-input source must use Motion values for waveform state.",
+  voiceInputSource.includes("useMotionValue"),
+  "voice-input source must use Motion values for waveform state.",
 );
 assert(
-  soundInputSource.includes("motionElement.button"),
-  "sound-input source must render a Motion button primitive.",
+  voiceInputSource.includes("motionElement.button"),
+  "voice-input source must render a Motion button primitive.",
 );
 assert(
-  packageIndexSource.includes("SoundInput"),
-  "package index must export SoundInput.",
+  packageIndexSource.includes("VoiceInput"),
+  "package index must export VoiceInput.",
 );
 assert(
   cardSource.includes('"data-slot": "card"'),

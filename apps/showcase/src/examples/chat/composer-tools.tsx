@@ -30,7 +30,7 @@ export function ChatComposerTools() {
             Use selected context
           </Button>
         }
-        footer="The action slot can also host an explicitly activated SoundInput. No microphone is requested here."
+        footer="The action slot can also host an explicitly activated VoiceInput. No microphone is requested here."
       />
       <p role="status" className="text-muted-foreground text-xs">
         {sent ? `Sample prompt accepted: ${sent}` : ""}

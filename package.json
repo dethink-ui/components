@@ -6,6 +6,10 @@
   "type": "module",
   "packageManager": "pnpm@11.7.0",
   "scripts": {
+    "test:chat-bubble": "playwright test --config=e2e/chat-bubble.config.ts",
+    "registry:smoke:chat-bubble": "node scripts/smoke-chat-registry.mjs --bubble",
+    "registry:smoke:chat-bubble:react18": "node scripts/smoke-chat-registry.mjs --bubble --react18",
+    "test:voice-input": "playwright test --config=e2e/voice-input.config.ts",
     "test:shader-hero": "playwright test --config=e2e/shader-hero-text.config.ts",
     "registry:smoke:shader-hero": "node scripts/smoke-shader-hero-registry.mjs",
     "build": "pnpm --filter @dethink/components build && pnpm --filter @dethink/playground-vite build",

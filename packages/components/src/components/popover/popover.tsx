@@ -17,7 +17,6 @@ import {
   type ReactNode,
   type Ref,
   useContext,
-  useCallback,
   useEffect,
   useId,
   useMemo,
@@ -32,6 +31,7 @@ import {
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
+  useScopedOverlayState,
 } from "../../utils/provider-portal";
 import {
   PositionedOverlayArrow,
@@ -275,28 +275,18 @@ export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(
-      defaultOpen ?? false,
-    );
-    const isControlled = open !== undefined;
+    const [resolvedOpen, handleOpenChange] = useScopedOverlayState({
+      open,
+      defaultOpen,
+      onOpenChange,
+    });
     const isAnchored = anchorRef !== undefined;
-    const resolvedOpen = open ?? uncontrolledOpen;
     const previousOpenRef = useRef(resolvedOpen);
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "popover-portal-container",
     });
-    const handleOpenChange = useCallback(
-      (isOpen: boolean) => {
-        if (!isControlled) {
-          setUncontrolledOpen(isOpen);
-        }
-
-        onOpenChange?.(isOpen);
-      },
-      [isControlled, onOpenChange],
-    );
     const rootContextValue = useMemo<PopoverRootContextValue>(
       () => ({
         anchorRef,

@@ -14,7 +14,7 @@ export function HeroTextAnimationGradientHighlightHero() {
     <HeroTextAnimationProvider>
       <section
         aria-labelledby="hero-text-gradient-highlight-heading"
-        className="bg-background text-foreground border-border relative isolate overflow-hidden rounded-md border"
+        className="bg-background text-foreground border-border @container/hero relative isolate overflow-hidden rounded-md border"
       >
         <span
           aria-hidden="true"
@@ -25,29 +25,31 @@ export function HeroTextAnimationGradientHighlightHero() {
           className="bg-info/20 pointer-events-none absolute -top-10 right-10 -z-10 size-56 rounded-full blur-3xl"
         />
 
-        <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-24">
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center @min-[480px]/hero:px-8 @min-[900px]/hero:py-24">
           <span className="border-border bg-background/70 text-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur">
             <Sparkles aria-hidden="true" className="text-primary size-3.5" />
             New — AI that writes in your voice
           </span>
 
+          {/* eslint-disable-next-line jsx-a11y/heading-has-content -- The component renders its text prop as accessible heading content. */}
           <HeroTextAnimation
+            as="h2"
+            trigger="in-view"
+            reducedMotionStrategy="static"
             animation="gradient-highlight"
             duration={1.8}
             id="hero-text-gradient-highlight-heading"
-            repeat
-            repeatDelay={2}
             text="Write copy that sounds unmistakably you."
-            className="font-heading text-foreground mx-auto mt-7 max-w-2xl text-4xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl"
+            className="font-heading text-foreground mx-auto mt-7 max-w-2xl text-[clamp(1.875rem,5.5cqi,3.75rem)] leading-[1.05] font-semibold tracking-tight text-balance"
           />
 
-          <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 sm:text-lg">
+          <p className="text-muted-foreground mx-auto mt-6 max-w-xl text-base leading-7 @min-[480px]/hero:text-lg">
             Trained on your best pages, our model drafts launch copy, ads, and
             emails that stay on-brand — then hands you the edit, never the other
             way around.
           </p>
 
-          <div className="mx-auto mt-9 flex max-w-md flex-col gap-2.5 sm:flex-row">
+          <div className="mx-auto mt-9 flex max-w-md flex-col gap-2.5 @min-[480px]/hero:flex-row">
             <label htmlFor="gradient-hero-email" className="sr-only">
               Work email
             </label>

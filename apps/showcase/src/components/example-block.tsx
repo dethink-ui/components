@@ -10,6 +10,8 @@ interface ExampleBlockProps {
   description?: string;
   /** Let the preview span the full column for wide compositions like navbars. */
   wide?: boolean;
+  /** Remove the preview inset for full-bleed page compositions. */
+  fullBleed?: boolean;
   /** Collapse source for long recipes where preview scanning is the primary task. */
   codeCollapsible?: boolean;
   codeDefaultOpen?: boolean;
@@ -28,6 +30,7 @@ export async function ExampleBlock({
   title,
   description,
   wide = false,
+  fullBleed = false,
   codeCollapsible = true,
   codeDefaultOpen = false,
   children,
@@ -51,7 +54,9 @@ export async function ExampleBlock({
         ) : null}
       </div>
       <div className="border-border overflow-hidden rounded-lg border">
-        <div className="sc-preview-surface bg-background flex min-h-44 items-center justify-center p-6 sm:p-10">
+        <div
+          className={`sc-preview-surface bg-background flex min-h-44 items-center justify-center ${fullBleed ? "" : "p-6 sm:p-10"}`}
+        >
           <div className={wide ? "w-full" : "w-full max-w-xl"}>{children}</div>
         </div>
         {codeCollapsible ? (

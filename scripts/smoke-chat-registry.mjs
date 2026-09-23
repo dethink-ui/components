@@ -33,7 +33,9 @@ function closure(name, found = new Map()) {
     closure(dependency, found);
   return found;
 }
-const plain = [...closure("chat").values()];
+const entry = process.argv.includes("--bubble") ? "chat-bubble" : "chat";
+const react18 = process.argv.includes("--react18");
+const plain = [...closure(entry).values()];
 assert(
   !plain.some((item) =>
     (item.dependencies ?? []).some((dep) =>
@@ -44,11 +46,11 @@ assert(
 );
 const destination = await mkdtemp(join(tmpdir(), "dethink-chat-consumer-"));
 const selected = [
-  ...new Map([...closure("chat"), ...closure("chat-markdown")]).values(),
+  ...new Map([...closure(entry), ...closure("chat-markdown")]).values(),
 ];
 const deps = {
-  react: manifest.devDependencies.react,
-  "react-dom": manifest.devDependencies["react-dom"],
+  react: react18 ? "^18.3.1" : manifest.devDependencies.react,
+  "react-dom": react18 ? "^18.3.1" : manifest.devDependencies["react-dom"],
 };
 const sourceFiles = new Set();
 for (const item of selected) {
@@ -110,7 +112,12 @@ await writeFile(
           "tailwindcss",
           "@types/react",
           "@types/react-dom",
-        ].map((name) => [name, manifest.devDependencies[name]]),
+        ].map((name) => [
+          name,
+          react18 && ["@types/react", "@types/react-dom"].includes(name)
+            ? "^18.3.0"
+            : manifest.devDependencies[name],
+        ]),
       ),
     },
     null,
@@ -140,7 +147,7 @@ await writeFile(
 );
 await writeFile(
   join(destination, "main.tsx"),
-  `import { createRoot } from "react-dom/client";\nimport { Chat } from "./src/components/chat/chat";\nimport { MarkdownMessage } from "./src/chat-markdown";\nimport "./src/styles.css";\ncreateRoot(document.getElementById("root")!).render(<Chat conversationId="smoke" messages={[{ id:"m",conversationId:"smoke",role:"assistant",parts:[{id:"t",type:"text",text:"**Registry installed**"}]}]} renderPart={part => part.type === "text" ? <MarkdownMessage text={part.text} /> : undefined} prompt={{onSend:()=>true}}/>);\n`,
+  `import { createRoot } from "react-dom/client";\nimport { Chat } from "./src/components/chat/chat";\n${entry === "chat-bubble" ? 'import { ChatBubble, ChatBubbleTrigger, ChatBubbleContent } from "./src/components/chat-bubble";\n' : ""}import { MarkdownMessage } from "./src/chat-markdown";\nimport "./src/styles.css";\ncreateRoot(document.getElementById("root")!).render(${entry === "chat-bubble" ? "<ChatBubble defaultOpen><ChatBubbleTrigger /><ChatBubbleContent>" : ""}<Chat conversationId="smoke" messages={[{ id:"m",conversationId:"smoke",role:"assistant",parts:[{id:"t",type:"text",text:"**Registry installed**"}]}]} renderPart={part => part.type === "text" ? <MarkdownMessage text={part.text} /> : undefined} prompt={{onSend:()=>true}}/>${entry === "chat-bubble" ? "</ChatBubbleContent></ChatBubble>" : ""});\n`,
 );
 await writeFile(
   join(destination, "vite.config.mjs"),
@@ -160,5 +167,5 @@ execFileSync(join(destination, "node_modules/.bin/vite"), ["build"], {
   stdio: "inherit",
 });
 console.log(
-  `Chat + optional Markdown: ${sourceFiles.size} copied files; clean install, typecheck, and Vite build passed. Core dependency isolation passed.`,
+  `${entry} + optional Markdown: ${sourceFiles.size} copied files; clean install, typecheck, and Vite build passed. Core dependency isolation passed.`,
 );

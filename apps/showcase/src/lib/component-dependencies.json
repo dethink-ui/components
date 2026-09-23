@@ -65,6 +65,10 @@
     "direct": ["lucide-react", "react"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "chat-bubble": {
+    "direct": ["lucide-react", "motion", "react", "react-aria", "react-dom"],
+    "shared": ["clsx", "react-aria-components", "tailwind-merge"]
+  },
   "chat-core": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "chat-markdown": {
     "direct": ["lucide-react", "react", "react-markdown", "remark-gfm"],
@@ -260,10 +264,6 @@
     "direct": ["@internationalized/date", "motion", "react"],
     "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
   },
-  "sound-input": {
-    "direct": ["motion", "react"],
-    "shared": ["clsx", "tailwind-merge"]
-  },
   "spinner": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "stack": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "starfield-background": {
@@ -304,5 +304,9 @@
     "direct": ["react", "react-aria", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
   },
-  "typography": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] }
+  "typography": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "voice-input": {
+    "direct": ["motion", "react"],
+    "shared": ["clsx", "tailwind-merge"]
+  }
 }

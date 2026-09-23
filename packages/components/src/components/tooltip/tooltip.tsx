@@ -14,6 +14,7 @@ import {
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
+  useScopedOverlayState,
 } from "../../utils/provider-portal";
 import {
   PositionedOverlayArrow,
@@ -118,12 +119,18 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       children,
       className,
       disabled = false,
+      defaultOpen,
       onOpenChange,
       open,
       ...props
     },
     ref,
   ) => {
+    const [resolvedOpen, handleOpenChange] = useScopedOverlayState({
+      open,
+      defaultOpen,
+      onOpenChange,
+    });
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "tooltip-portal-container",
@@ -133,15 +140,15 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       <div
         ref={rootRef}
         data-slot={dataSlot ?? "tooltip"}
-        data-open={open ? "" : undefined}
+        data-open={resolvedOpen ? "" : undefined}
         className={tooltipClassNames({ className })}
       >
         <DethinkPortalProvider container={portalContainer}>
           <AriaTooltipTrigger
             {...props}
             isDisabled={disabled}
-            isOpen={open}
-            onOpenChange={onOpenChange}
+            isOpen={resolvedOpen}
+            onOpenChange={handleOpenChange}
           >
             {children}
           </AriaTooltipTrigger>

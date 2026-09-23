@@ -33,6 +33,7 @@ import {
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
+  useScopedOverlayState,
 } from "../../utils/provider-portal";
 import { cn } from "../../utils/cn";
 
@@ -311,11 +312,11 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(
-      defaultOpen ?? false,
-    );
-    const isControlled = open !== undefined;
-    const resolvedOpen = open ?? uncontrolledOpen;
+    const [resolvedOpen, handleOpenChange] = useScopedOverlayState({
+      open,
+      defaultOpen,
+      onOpenChange,
+    });
     const previousOpenRef = useRef(resolvedOpen);
     const triggerElementRef = useRef<HTMLButtonElement | null>(null);
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
@@ -330,13 +331,6 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
       }),
       [],
     );
-    const handleOpenChange = (isOpen: boolean) => {
-      if (!isControlled) {
-        setUncontrolledOpen(isOpen);
-      }
-
-      onOpenChange?.(isOpen);
-    };
 
     useEffect(() => {
       const wasOpen = previousOpenRef.current;
@@ -788,22 +782,15 @@ export const AlertDialog = forwardRef<HTMLDivElement, AlertDialogProps>(
     },
     ref,
   ) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = useState(
-      defaultOpen ?? false,
-    );
-    const isControlled = open !== undefined;
-    const resolvedOpen = open ?? uncontrolledOpen;
+    const [resolvedOpen, handleOpenChange] = useScopedOverlayState({
+      open,
+      defaultOpen,
+      onOpenChange,
+    });
     const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
       forwardedRef: ref,
       portalSlot: "alert-dialog-portal-container",
     });
-    const handleOpenChange = (isOpen: boolean) => {
-      if (!isControlled) {
-        setUncontrolledOpen(isOpen);
-      }
-
-      onOpenChange?.(isOpen);
-    };
 
     return (
       <div

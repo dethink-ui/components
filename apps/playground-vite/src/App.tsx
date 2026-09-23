@@ -1,6 +1,7 @@
 import { CalendarDate, parseDateTime } from "@internationalized/date";
 import { useState } from "react";
 import {
+  ChatBubble,
   ShaderHeroText,
   LiquidMeshBackground,
   SilkFlowBackground,
@@ -1191,6 +1192,18 @@ export function App() {
           </Card>
         </Stack>
       </Container>
+      <ChatBubble
+        contentProps={{
+          title: "Playground chat",
+          subtitle: "Package smoke check",
+        }}
+        chat={{
+          conversationId: "playground-bubble",
+          messages: [],
+          emptyState: <p>ChatBubble is installed and ready.</p>,
+          prompt: { onSend: () => false },
+        }}
+      />
     </DethinkProvider>
   );
 }

@@ -30,6 +30,7 @@ import { toPlainText } from "../../utils/to-plain-text";
 import {
   DethinkPortalProvider,
   useProviderPortalRoot,
+  useScopedOverlayState,
 } from "../../utils/provider-portal";
 
 export type SelectValue = string;
@@ -287,8 +288,12 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
   const resolvedInvalid = invalid || isAriaInvalid(ariaInvalid);
   const resolvedAriaInvalid = invalid ? true : ariaInvalid;
   const renderedChildren = renderSelectChildren({ children, items });
-  const resolvedOpen = readOnly ? false : open;
-  const resolvedDefaultOpen = readOnly ? false : defaultOpen;
+  const [scopedOpen, setScopedOpen] = useScopedOverlayState({
+    open,
+    defaultOpen,
+    onOpenChange,
+  });
+  const resolvedOpen = !readOnly && scopedOpen;
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const { portalContainer, rootRef } = useProviderPortalRoot<HTMLDivElement>({
     forwardedRef: ref,
@@ -314,10 +319,9 @@ function SelectRoot<T extends SelectItemData = SelectItemData>(
         selectedKey={toSelectionKey(value)}
         defaultSelectedKey={toSelectionKey(defaultValue)}
         isOpen={resolvedOpen}
-        defaultOpen={resolvedDefaultOpen}
         onOpenChange={(isOpen) => {
           if (!readOnly) {
-            onOpenChange?.(isOpen);
+            setScopedOpen(isOpen);
           }
         }}
         onSelectionChange={(key: Key | null) => {

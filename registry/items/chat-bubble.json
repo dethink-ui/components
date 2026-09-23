@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chat-bubble",
+  "type": "registry:ui",
+  "title": "ChatBubble",
+  "description": "A customizable floating chat launcher with an animated, persistent conversation panel.",
+  "dependencies": ["motion", "lucide-react", "react-aria"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chat"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chat-bubble/chat-bubble.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/chat-bubble/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/use-hydrated.ts",
+      "type": "registry:lib"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}
