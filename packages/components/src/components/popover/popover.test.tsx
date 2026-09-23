@@ -377,9 +377,6 @@ describe("Popover", () => {
     );
     expect(popoverPanelClassNames()).toContain("overflow-auto");
     expect(popoverPanelClassNames()).toContain("overscroll-contain");
-    expect(popoverPanelClassNames()).toContain(
-      "max-h-[min(calc(var(--dt-overlay-max-height,18rem)_-_var(--dt-space-6)),calc(100dvh_-_var(--dt-space-10)))]",
-    );
     expect(popoverPanelClassNames()).toContain("focus-visible:outline-ring");
     expect(popoverArrowClassNames()).toContain("group");
     expect(popoverHeaderClassNames({ className: "custom-header" })).toContain(

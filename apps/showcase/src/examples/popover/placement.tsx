@@ -4,6 +4,8 @@ import {
   Popover,
   PopoverContent,
   PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
   PopoverTrigger,
 } from "@dethink/components";
 
@@ -18,9 +20,15 @@ export function PopoverPlacement() {
             {placement}
           </PopoverTrigger>
           <PopoverContent placement={placement} showArrow>
-            <PopoverDescription className="px-[var(--dt-space-4)] py-[var(--dt-space-3)]">
-              Anchored {placement} with an arrow.
-            </PopoverDescription>
+            <PopoverHeader>
+              <PopoverTitle className="capitalize">
+                {placement} placement
+              </PopoverTitle>
+              <PopoverDescription>
+                The arrow follows the trigger. This panel flips sides when it
+                needs more room.
+              </PopoverDescription>
+            </PopoverHeader>
           </PopoverContent>
         </Popover>
       ))}

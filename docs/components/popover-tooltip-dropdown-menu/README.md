@@ -54,6 +54,17 @@ import {
 
 ## Anatomy
 
+Popover content owns its padding. Place fields directly between the header and
+footer without adding another horizontal inset. The footer includes a subtle
+divider and wraps actions in reading order when space is limited. The inner
+panel scrolls within the positioned surface so long content remains reachable.
+Use `panelClassName` to customize this scroll region and `className` to customize
+the outer surface.
+
+For editable content, use a form with a submit button and close the controlled
+popover only after validation succeeds. `PopoverClose` always dismisses; reserve
+it for cancel, done, or other actions that do not need to reject invalid input.
+
 Popover exports:
 
 - `Popover`
