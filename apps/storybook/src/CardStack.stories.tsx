@@ -324,6 +324,13 @@ export const OpenFan: Story = {
     await userEvent.click(secondCardItem as HTMLElement);
 
     await expect(stack).toHaveAttribute("data-active-index", "1");
+    const thirdCard = canvas.getByRole("button", { name: "Show card 3" });
+    thirdCard.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(stack).toHaveFocus();
+    await expect(stack).toHaveAttribute("data-active-index", "2");
+    await userEvent.keyboard("{ArrowLeft}");
+    await expect(stack).toHaveAttribute("data-active-index", "1");
   },
 };
 
@@ -346,6 +353,30 @@ export const AngleTuning: Story = {
   ),
 };
 
+export const BoundedNamedDeck: Story = {
+  render: () => (
+    <CardStack
+      mode="open"
+      visibleCount={3}
+      showControls
+      getCardLabel={(index) => deckItems[index]?.title ?? ""}
+    >
+      {deckItems.map(createDeckCard)}
+    </CardStack>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stack = canvas.getByRole("group", { name: "Card stack" });
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Show Production readiness" }),
+    );
+    await expect(stack).toHaveAttribute("data-active-index", "1");
+    await expect(
+      canvas.getByText("Card 2 of 4: Production readiness"),
+    ).toBeInTheDocument();
+  },
+};
+
 export const ControlledActiveIndex: Story = {
   render: () => {
     const [activeIndex, setActiveIndex] = useState(1);
@@ -360,6 +391,8 @@ export const ControlledActiveIndex: Story = {
                   key={item.title}
                   size="sm"
                   variant={index === activeIndex ? "solid" : "outline"}
+                  aria-label={`Show ${item.title}`}
+                  aria-pressed={index === activeIndex}
                   onClick={() => setActiveIndex(index)}
                 >
                   {index + 1}

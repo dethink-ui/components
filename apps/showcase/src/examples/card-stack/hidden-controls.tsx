@@ -31,6 +31,7 @@ const updates = [
 
 export function CardStackHiddenControls() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [complete, setComplete] = useState(false);
   const isLast = activeIndex === updates.length - 1;
 
   return (
@@ -40,7 +41,7 @@ export function CardStackHiddenControls() {
         activeIndex={activeIndex}
         loop={false}
         onActiveIndexChange={setActiveIndex}
-        showPreviousControl={false}
+        showControls={false}
       >
         {updates.map((update) => (
           <Card key={update.title}>
@@ -58,19 +59,40 @@ export function CardStackHiddenControls() {
         <Button
           size="sm"
           variant="outline"
-          disabled={activeIndex === 0}
+          disabled={activeIndex === 0 || complete}
           onClick={() => setActiveIndex((index) => index - 1)}
         >
           Back
         </Button>
         <Button
           size="sm"
-          disabled={isLast}
-          onClick={() => setActiveIndex((index) => index + 1)}
+          disabled={complete}
+          onClick={() =>
+            isLast ? setComplete(true) : setActiveIndex((index) => index + 1)
+          }
         >
-          {isLast ? "Done" : "Continue"}
+          {complete ? "Completed" : isLast ? "Finish walkthrough" : "Continue"}
         </Button>
       </div>
+      <div className="text-muted-foreground text-center text-sm" role="status">
+        {complete
+          ? "Walkthrough complete. Nothing has been published."
+          : `Step ${activeIndex + 1} of ${updates.length}`}
+      </div>
+      {complete ? (
+        <div className="text-center">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setComplete(false);
+              setActiveIndex(0);
+            }}
+          >
+            Start again
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

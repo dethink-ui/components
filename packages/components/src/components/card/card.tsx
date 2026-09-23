@@ -10,6 +10,7 @@ import {
   type ReactElement,
   type ReactNode,
   type Ref,
+  type MutableRefObject,
 } from "react";
 import { cn } from "../../utils/cn";
 
@@ -221,7 +222,7 @@ function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
   }
 
   if (ref) {
-    ref.current = node;
+    (ref as MutableRefObject<T | null>).current = node;
   }
 }
 

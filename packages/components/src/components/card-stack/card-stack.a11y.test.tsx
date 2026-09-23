@@ -9,6 +9,31 @@ import { CardStack } from ".";
 expect.extend(toHaveNoViolations);
 
 describe("CardStack accessibility", () => {
+  it("keeps open fan selectors accessible alongside the active card action", async () => {
+    const { container } = render(
+      <CardStack mode="open" aria-label="Design choices">
+        <Card>
+          <CardHeader>
+            <CardTitle>Active design</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button>Open design</Button>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Next design</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button>Hidden action</Button>
+          </CardContent>
+        </Card>
+      </CardStack>,
+    );
+    expect(screen.getByRole("button", { name: "Show card 2" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Hidden action" })).toBeNull();
+    await expect(axe(container)).resolves.toHaveNoViolations();
+  });
   it("has no axe violations and exposes only active nested controls", async () => {
     const { container } = render(
       <DethinkProvider theme="light">

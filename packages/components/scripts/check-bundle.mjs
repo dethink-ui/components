@@ -20,6 +20,8 @@ for (const [name, budget] of [
   ["Switch", 65_000],
   ["Tabs", 65_000],
   ["NavDock", 80_000],
+  ["CardStack", 20_000],
+  ["CardStackAnimated", 35_000],
 ]) {
   const result = await build({
     configFile: false,
@@ -57,6 +59,14 @@ for (const [name, budget] of [
     0,
   );
   const retainedModules = chunks.flatMap((chunk) => Object.keys(chunk.modules));
+  if (name === "CardStack") {
+    assert(
+      !retainedModules.some((id) =>
+        /framer-motion|motion-dom|motion-utils/.test(id),
+      ),
+      "Base CardStack must not retain Motion",
+    );
+  }
   if (name === "Switch") {
     const initialChunks = new Set();
     function visit(chunk) {

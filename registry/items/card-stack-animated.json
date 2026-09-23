@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-stack-animated",
+  "type": "registry:ui",
+  "title": "CardStackAnimated",
+  "description": "Optional directional Card Stack handoff with Motion, reduced-motion support, and shared accessible navigation.",
+  "dependencies": ["motion"],
+  "devDependencies": [],
+  "registryDependencies": ["card-stack"],
+  "files": [
+    {
+      "path": "packages/components/src/components/card-stack-animated/card-stack-animated.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/card-stack-animated/index.ts",
+      "type": "registry:component"
+    }
+  ]
+}

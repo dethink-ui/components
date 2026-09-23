@@ -2,6 +2,20 @@ import type { PropRow } from "@/components/props-table";
 
 export const cardStackProps: PropRow[] = [
   {
+    prop: "getCardLabel",
+    type: "(index: number) => string",
+    defaultValue: "—",
+    description:
+      "Explicit card name for fan selectors and position announcements. Keep it short and meaningful; empty labels fall back to the card number.",
+  },
+  {
+    prop: "visibleCount",
+    type: "number",
+    defaultValue: "5",
+    description:
+      "Maximum visible cards including the active card, clamped to 1–9. Hidden cards stay mounted to preserve local state; this is not virtualization.",
+  },
+  {
     prop: "children",
     type: "Card element | Card element[]",
     defaultValue: "—",
@@ -47,7 +61,7 @@ export const cardStackProps: PropRow[] = [
     type: "boolean",
     defaultValue: "stack mode with 2+ cards",
     description:
-      "Force the built-in previous/next icon buttons on or off in either mode.",
+      "Show or hide the previous/next icon buttons below the deck in either mode.",
   },
   {
     prop: "showPreviousControl",

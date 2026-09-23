@@ -38,6 +38,80 @@ function renderThreeCards(
 }
 
 describe("CardStack", () => {
+  it("names fan selectors and announces explicit labels", async () => {
+    const user = userEvent.setup();
+    renderThreeCards({
+      mode: "open",
+      getCardLabel: (index) =>
+        ["Research", "Evidence", "Decision"][index] ?? "",
+    });
+    await user.click(screen.getByRole("button", { name: "Show Evidence" }));
+    expect(screen.getByText("Card 2 of 3: Evidence")).toBeInTheDocument();
+  });
+
+  it("bounds the visible fan without unmounting card state", async () => {
+    const user = userEvent.setup();
+    render(
+      <CardStack mode="open" visibleCount={3}>
+        {Array.from({ length: 8 }, (_, index) => (
+          <Card key={index}>
+            <CardContent>
+              <input
+                aria-label={`Note ${index}`}
+                defaultValue={`Draft ${index}`}
+              />
+            </CardContent>
+          </Card>
+        ))}
+      </CardStack>,
+    );
+    await user.type(screen.getByRole("textbox", { name: "Note 0" }), " saved");
+    const root = screen.getByRole("group", { name: "Card stack" });
+    expect(
+      document.querySelectorAll('[data-card-stack-visible="true"]'),
+    ).toHaveLength(3);
+    root.focus();
+    await user.keyboard("{End}");
+    expect(screen.queryByRole("textbox", { name: "Note 0" })).toBeNull();
+    await user.keyboard("{Home}");
+    expect(screen.getByRole("textbox", { name: "Note 0" })).toHaveValue(
+      "Draft 0 saved",
+    );
+  });
+
+  it("preserves a keyed selection on insertion and recovers focus on removal", async () => {
+    const user = userEvent.setup();
+    const first = createExampleCard({ title: "First" });
+    const second = createExampleCard({
+      title: "Second",
+      action: "Open second",
+    });
+    const third = createExampleCard({ title: "Third" });
+    const { rerender } = render(
+      <CardStack defaultActiveIndex={1}>{[first, second, third]}</CardStack>,
+    );
+    rerender(
+      <CardStack>
+        {[createExampleCard({ title: "Inserted" }), first, second, third]}
+      </CardStack>,
+    );
+    expect(screen.getByRole("group")).toHaveAttribute("data-active-index", "2");
+    await user.click(screen.getByRole("button", { name: "Open second" }));
+    rerender(<CardStack>{[first, third]}</CardStack>);
+    expect(screen.getByRole("heading", { name: "Third" })).toBeVisible();
+    expect(screen.getByRole("group")).toHaveFocus();
+  });
+
+  it("recovers focus when a controlled change hides the focused card", () => {
+    const cards = [
+      createExampleCard({ title: "First", action: "Open first" }),
+      createExampleCard({ title: "Second" }),
+    ];
+    const { rerender } = render(<CardStack activeIndex={0}>{cards}</CardStack>);
+    screen.getByRole("button", { name: "Open first" }).focus();
+    rerender(<CardStack activeIndex={1}>{cards}</CardStack>);
+    expect(screen.getByRole("group")).toHaveFocus();
+  });
   it("waits for Space release before activating an open card", async () => {
     const user = userEvent.setup();
     renderThreeCards({ mode: "open" });
@@ -65,6 +139,9 @@ describe("CardStack", () => {
       "1",
     );
     expect(screen.getByRole("heading", { name: "Second" })).toBeVisible();
+    expect(screen.getByRole("group", { name: "Card stack" })).toHaveFocus();
+    await user.keyboard("{ArrowRight}");
+    expect(screen.getByRole("heading", { name: "Third" })).toBeVisible();
   });
 
   it("renders stack mode with safe defaults and controls", () => {
@@ -88,6 +165,37 @@ describe("CardStack", () => {
     expect(cards[1]).toHaveAttribute("data-card-stack-active", "false");
     expect(cards[1]).toHaveAttribute("aria-hidden", "true");
     expect(cards[1]).toHaveAttribute("inert");
+  });
+
+  it("announces the current position after navigation", async () => {
+    const user = userEvent.setup();
+    renderThreeCards();
+    expect(screen.getByText("Card 1 of 3")).toHaveAttribute(
+      "aria-live",
+      "polite",
+    );
+    await user.click(screen.getByRole("button", { name: "Show next card" }));
+    expect(screen.getByText("Card 2 of 3")).toHaveAttribute(
+      "aria-atomic",
+      "true",
+    );
+  });
+
+  it("does not take keyboard navigation from active nested controls", async () => {
+    const user = userEvent.setup();
+    render(
+      <CardStack>
+        {createExampleCard({ title: "First", action: "Open first" })}
+        {createExampleCard({ title: "Second" })}
+      </CardStack>,
+    );
+    screen.getByRole("button", { name: "Open first" }).focus();
+    await user.keyboard("{ArrowRight}{Home}{End}");
+    expect(screen.getByRole("group", { name: "Card stack" })).toHaveAttribute(
+      "data-active-index",
+      "0",
+    );
+    expect(screen.getByRole("button", { name: "Open first" })).toHaveFocus();
   });
 
   it("composes consumer classes and forwards the root ref", () => {
@@ -236,6 +344,19 @@ describe("CardStack", () => {
       "data-active-index",
       "1",
     );
+  });
+
+  it("uses logical horizontal navigation in RTL and keeps vertical navigation consistent", async () => {
+    const user = userEvent.setup();
+    renderThreeCards({ dir: "rtl", style: { direction: "rtl" } });
+    const stack = screen.getByRole("group", { name: "Card stack" });
+    stack.focus();
+    await user.keyboard("{ArrowLeft}");
+    expect(stack).toHaveAttribute("data-active-index", "1");
+    await user.keyboard("{ArrowRight}");
+    expect(stack).toHaveAttribute("data-active-index", "0");
+    await user.keyboard("{ArrowDown}");
+    expect(stack).toHaveAttribute("data-active-index", "1");
   });
 
   it("keeps inactive nested controls hidden and inert", () => {

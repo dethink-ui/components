@@ -3,11 +3,15 @@
   "name": "card-stack",
   "type": "registry:ui",
   "title": "CardStack",
-  "description": "Interactive Card deck composition with stack and open fan modes, active-card navigation, inert inactive cards, and CSS-only transform motion.",
+  "description": "Responsive Card deck with stack and open fan modes, keyboard focus continuity, position announcements, inert inactive cards, and reduced-motion-aware CSS transitions.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "card", "icon-button"],
   "files": [
+    {
+      "path": "packages/components/src/components/card-stack/card-stack-renderer.tsx",
+      "type": "registry:component"
+    },
     {
       "path": "packages/components/src/components/card-stack/card-stack.tsx",
       "type": "registry:component"
