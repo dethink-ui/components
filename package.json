@@ -45,7 +45,10 @@
     "registry:smoke:sidebar-activity": "node scripts/smoke-sidebar-shell-registry.mjs --activity",
     "registry:smoke:bottom-bar": "node scripts/smoke-sidebar-shell-registry.mjs --bottom-bar",
     "test:card-stack": "playwright test --config=e2e/card-stack.config.ts",
-    "registry:smoke:card-stack": "node scripts/smoke-card-stack-registry.mjs"
+    "registry:smoke:card-stack": "node scripts/smoke-card-stack-registry.mjs",
+    "test:slider": "playwright test --config=e2e/slider.config.ts",
+    "registry:smoke:slider": "node scripts/smoke-slider-registry.mjs",
+    "registry:smoke:slider-expressive": "node scripts/smoke-slider-registry.mjs --expressive"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

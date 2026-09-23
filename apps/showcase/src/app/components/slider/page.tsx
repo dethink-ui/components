@@ -6,6 +6,7 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { SliderMotionSpeed } from "@/examples/slider/motion-speed";
 import { SliderPrecision } from "@/examples/slider/precision";
 import { SliderBudget } from "@/examples/slider/budget";
 import { SliderStates } from "@/examples/slider/states";
@@ -34,6 +35,13 @@ export default function SliderPage() {
       >
         <div className="space-y-10">
           <ExampleBlock
+            file="slider/motion-speed.tsx"
+            title="Motion speed"
+            description="An inset control with a little spring. Choose a pace and watch the orbit respond; reduced-motion preferences start the preview paused."
+          >
+            <SliderMotionSpeed />
+          </ExampleBlock>
+          <ExampleBlock
             file="slider/stepper.tsx"
             title="Labelled steps"
             description="Named milestones snap to evenly spaced stops. The app receives the original numeric values, including uneven increments."
@@ -57,11 +65,42 @@ export default function SliderPage() {
           <ExampleBlock
             file="slider/states.tsx"
             title="Sizes and states"
-            description="Three sizes, disabled state, compact density, and right-to-left layout."
+            description="Four sizes, including an XL inset thumb, disabled state, compact density, and right-to-left layout."
           >
             <SliderStates />
           </ExampleBlock>
         </div>
+      </DocsSection>
+      <DocsSection id="theming" title="Theming and expressive motion">
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          Semantic primary, muted, border, background and ring tokens follow
+          your theme. Customize track, fill, thumb, marks and output with
+          classNames. XL keeps the thumb inside a pill-shaped rail, including at
+          the endpoints. Floating outputs retain an inline summary so values
+          remain readable on small screens.
+        </p>
+        <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+          The basic Slider supports a static expressive variant without Motion.
+          Install the optional slider-expressive registry item and import
+          ExpressiveSlider for thumb compression and milestone pulses. Only
+          decoration springs; the thumb always follows your pointer directly.
+          Reduced motion removes the animation.
+        </p>
+        <p className="mt-3 text-sm">
+          <a
+            className="underline underline-offset-4"
+            href="https://components.dethink.co.uk/r/slider-expressive.json"
+          >
+            Expressive Slider registry item
+          </a>
+        </p>
+        <pre className="bg-muted mt-3 overflow-x-auto rounded-lg p-4 text-xs">
+          <code>
+            {
+              'npx shadcn@latest add https://components.dethink.co.uk/r/slider-expressive.json\n\nimport { ExpressiveSlider } from "@dethink/components";'
+            }
+          </code>
+        </pre>
       </DocsSection>
       <DocsSection id="props" title="Props">
         <PropsTable caption="Slider API" rows={sliderProps} />

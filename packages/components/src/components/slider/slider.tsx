@@ -5,6 +5,7 @@ import {
   useState,
   useEffect,
   useId,
+  useContext,
   type ReactElement,
   type ReactNode,
   type RefAttributes,
@@ -24,11 +25,13 @@ import {
   sliderStepIndex,
   type SliderStep,
 } from "./slider-values";
+import { SliderDecorationContext } from "./slider-visuals";
 import { SliderThumbControl } from "./slider-thumb";
 import { cn } from "../../utils/cn";
 
 export type SliderValue = number | [number, number];
-export type SliderSize = "sm" | "md" | "lg";
+export type SliderSize = "sm" | "md" | "lg" | "xl";
+export type SliderVariant = "default" | "expressive";
 export type SliderValueDisplay = "inline" | "floating" | "none";
 export interface SliderSlots {
   track?: string;
@@ -62,6 +65,7 @@ interface SliderBaseProps<T extends SliderValue = number> extends Omit<
   name?: string | [string, string];
   thumbLabels?: [string, string];
   size?: SliderSize;
+  variant?: SliderVariant;
   valueDisplay?: SliderValueDisplay;
   className?: string;
   classNames?: SliderSlots;
@@ -87,9 +91,13 @@ export type SliderProps<T extends SliderValue = number> = SliderBaseProps<T> &
   );
 export type { SliderStep } from "./slider-values";
 
+const thumbVisual =
+  "border-primary bg-background group-data-[focus-visible]:ring-ring group-data-[focus-visible]:ring-offset-background pointer-events-none size-[var(--dt-slider-thumb-size)] rounded-full border-2 shadow-sm group-data-[focus-visible]:ring-2 group-data-[focus-visible]:ring-offset-2 forced-colors:border-[Highlight]";
+
 const sizes: Record<SliderSize, string> = {
   sm: "[--dt-slider-track-height:0.25rem] [--dt-slider-thumb-size:1rem]",
   md: "[--dt-slider-track-height:0.375rem] [--dt-slider-thumb-size:1.25rem]",
+  xl: "[--dt-slider-track-height:2.75rem] [--dt-slider-thumb-size:2.125rem]",
   lg: "[--dt-slider-track-height:0.5rem] [--dt-slider-thumb-size:1.5rem]",
 };
 
@@ -98,7 +106,7 @@ export function sliderClassNames({
   className,
 }: Pick<SliderProps, "size" | "className"> = {}) {
   return cn(
-    "grid w-full min-w-0 gap-density-gap text-foreground data-[disabled]:opacity-50",
+    "grid w-full min-w-0 gap-density-gap text-foreground [--dt-slider-snap-duration:180ms] data-[disabled]:opacity-50",
     sizes[size],
     className,
   );
@@ -121,6 +129,7 @@ function SliderImpl(
     name,
     thumbLabels = ["Minimum", "Maximum"],
     size = "md",
+    variant = "default",
     valueDisplay = "inline",
     className,
     classNames,
@@ -131,6 +140,18 @@ function SliderImpl(
   }: SliderProps<SliderValue>,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
+  const Decoration = useContext(SliderDecorationContext);
+  const [directDrag, setDirectDrag] = useState(false);
+  useEffect(() => {
+    if (!directDrag) return;
+    const release = () => setDirectDrag(false);
+    window.addEventListener("pointerup", release);
+    window.addEventListener("pointercancel", release);
+    return () => {
+      window.removeEventListener("pointerup", release);
+      window.removeEventListener("pointercancel", release);
+    };
+  }, [directDrag]);
   const descriptionId = useId();
   const trackRef = useRef<HTMLDivElement>(null);
   const inheritedLocale = useLocale();
@@ -201,6 +222,19 @@ function SliderImpl(
       <AriaSlider
         {...props}
         ref={setRoot}
+        onPointerDownCapture={(event) => {
+          props.onPointerDownCapture?.(event);
+          if (!disabled && !event.defaultPrevented)
+            setDirectDrag(
+              !!(event.target as HTMLElement).closest(
+                '[data-slot="slider-thumb"]',
+              ),
+            );
+        }}
+        onPointerMoveCapture={(event) => {
+          props.onPointerMoveCapture?.(event);
+          if (!disabled && event.buttons === 1) setDirectDrag(true);
+        }}
         dir={dir}
         value={toPosition(value)}
         defaultValue={
@@ -221,6 +255,7 @@ function SliderImpl(
         }
         data-slot="slider"
         data-size={size}
+        data-variant={variant}
         data-mode={mode}
         className={sliderClassNames({ size, className })}
       >
@@ -254,25 +289,43 @@ function SliderImpl(
                 ref={trackRef}
                 data-slot="slider-track"
                 className={cn(
-                  "relative mx-[var(--dt-space-3)] h-11 touch-none",
+                  "relative h-11 touch-none",
+                  size === "xl" ? "mx-[1.375rem]" : "mx-[var(--dt-space-3)]",
                   valueDisplay === "floating" && "mt-8",
                   classNames?.track,
                 )}
               >
                 <div
                   aria-hidden="true"
-                  className="bg-muted absolute top-1/2 h-[var(--dt-slider-track-height)] w-full -translate-y-1/2 rounded-full forced-colors:border forced-colors:border-[GrayText]"
+                  data-slot="slider-rail"
+                  className={cn(
+                    "bg-muted absolute top-1/2 h-[var(--dt-slider-track-height)] -translate-y-1/2 rounded-full forced-colors:border forced-colors:border-[GrayText]",
+                    size === "xl"
+                      ? "-inset-x-[1.375rem] shadow-inner"
+                      : "w-full",
+                  )}
                 />
                 <div
                   aria-hidden="true"
                   data-slot="slider-fill"
                   className={cn(
                     "bg-primary pointer-events-none absolute top-1/2 h-[var(--dt-slider-track-height)] -translate-y-1/2 rounded-full forced-colors:bg-[Highlight]",
+                    variant === "expressive" &&
+                      "shadow-[0_0_16px_color-mix(in_srgb,var(--dt-color-primary)_25%,transparent)]",
+                    stops &&
+                      !directDrag &&
+                      "motion-safe:transition-[width,inset-inline-start] motion-safe:duration-[var(--dt-slider-snap-duration)] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
                     classNames?.fill,
                   )}
                   style={{
-                    insetInlineStart: `${start}%`,
-                    width: `${end - start}%`,
+                    insetInlineStart:
+                      size === "xl"
+                        ? `calc(${start}% - 1.375rem)`
+                        : `${start}%`,
+                    width:
+                      size === "xl"
+                        ? `calc(${end - start}% + 2.75rem)`
+                        : `${end - start}%`,
                   }}
                 />
                 {stops?.map((stop, index) => {
@@ -313,36 +366,58 @@ function SliderImpl(
                     label={range ? thumbLabels[index] : undefined}
                     className={cn(
                       "group top-1/2 flex size-11 cursor-grab items-center justify-center outline-none data-[disabled]:cursor-not-allowed data-[dragging]:cursor-grabbing data-[focus-visible]:z-10",
+                      stops &&
+                        !directDrag &&
+                        "motion-safe:transition-[left] motion-safe:duration-[var(--dt-slider-snap-duration)] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
                       classNames?.thumb,
                     )}
                   >
                     {({ isDragging, isFocused, isHovered }) => (
                       <>
                         {valueDisplay === "floating" &&
-                          (isDragging || isFocused || isHovered) && (
+                          (isDragging ||
+                            isFocused ||
+                            (isHovered && state.focusedThumb == null)) && (
                             <span
                               aria-hidden="true"
                               data-slot="slider-floating-output"
-                              className="border-border bg-background pointer-events-none absolute bottom-full mb-1 max-w-32 rounded-md border px-2 py-1 text-center text-xs font-medium tabular-nums shadow-sm"
+                              className="border-border bg-background pointer-events-none absolute bottom-full mb-1 w-max max-w-32 truncate rounded-md border px-2 py-1 text-center text-xs font-medium tabular-nums shadow-sm"
                               style={{
                                 insetInlineStart:
-                                  index === 0 &&
-                                  state.getThumbPercent(index) < 0.15
-                                    ? "0"
+                                  state.getThumbPercent(index) < 0.25
+                                    ? size === "xl"
+                                      ? "0"
+                                      : "calc(1.375rem - var(--dt-space-3))"
                                     : undefined,
                                 insetInlineEnd:
-                                  state.getThumbPercent(index) > 0.85
-                                    ? "0"
+                                  state.getThumbPercent(index) > 0.75
+                                    ? size === "xl"
+                                      ? "0"
+                                      : "calc(1.375rem - var(--dt-space-3))"
                                     : undefined,
                               }}
                             >
                               {formatted[index]}
                             </span>
                           )}
-                        <span
-                          aria-hidden="true"
-                          className="border-primary bg-background group-data-[focus-visible]:ring-ring group-data-[focus-visible]:ring-offset-background pointer-events-none size-[var(--dt-slider-thumb-size)] rounded-full border-2 shadow-sm group-data-[focus-visible]:ring-2 group-data-[focus-visible]:ring-offset-2 forced-colors:border-[Highlight]"
-                        />
+                        {variant === "expressive" && Decoration ? (
+                          <Decoration
+                            dragging={isDragging}
+                            active={isDragging || isFocused}
+                            milestone={stops ? state.values[index] : undefined}
+                            className={thumbVisual}
+                          />
+                        ) : (
+                          <span
+                            aria-hidden="true"
+                            data-slot="slider-thumb-visual"
+                            className={cn(
+                              thumbVisual,
+                              variant === "expressive" &&
+                                "shadow-[0_0_0_5px_color-mix(in_srgb,var(--dt-color-primary)_10%,transparent)]",
+                            )}
+                          />
+                        )}
                       </>
                     )}
                   </SliderThumbControl>
@@ -363,9 +438,9 @@ function SliderImpl(
                       className={cn(
                         "min-w-0 px-0.5 text-center [overflow-wrap:anywhere]",
                         index === 0
-                          ? "text-start"
+                          ? "-ms-[var(--dt-space-3)] w-[calc(100%+var(--dt-space-3))] text-start"
                           : index === stops.length - 1
-                            ? "text-end"
+                            ? "-me-[var(--dt-space-3)] w-[calc(100%+var(--dt-space-3))] justify-self-end text-end"
                             : "col-span-2",
                         state.values.includes(index) &&
                           "text-primary font-semibold",

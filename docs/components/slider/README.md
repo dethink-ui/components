@@ -46,7 +46,7 @@ Disabled sliders cannot change and are omitted from form submission.
 ## Theming and recipes
 
 Semantic background, primary, muted, ring and border tokens support themes. Sizes
-sm/md/lg change the visible track and thumb while keeping 44px targets. Override
+sm/md/lg/xl change the visible track and thumb while keeping 44px targets. Override
 root classes or `classNames` slots: track, fill, thumb, marks, output. Size variables
 are `--dt-slider-track-height` and `--dt-slider-thumb-size`. RTL inherits from
 DethinkProvider. Floating outputs appear on focus, hover or drag; a stable output
@@ -62,3 +62,31 @@ Manual acceptance: tab through thumbs, use arrows and Home/End, inspect both ran
 names with a screen reader, drag with touch in RTL, and verify high contrast.
 This is a new component; existing inputs do not change. V1 excludes vertical
 orientation, more than two thumbs, text entry and increment/decrement buttons.
+
+## Expressive presentation and XL
+
+`size="xl"` uses a thick pill rail with a smaller inset thumb. The rail extends
+past the travel endpoints, keeping the thumb contained at both bounds. The same
+size works with numeric, range and stepper modes.
+
+`variant="expressive"` adds static themed glow to the base Slider. For animation,
+install `slider-expressive` and import `ExpressiveSlider`; this companion defaults
+to the expressive variant and floating output, and adds spring compression while
+dragging and a brief selected-milestone pulse. Pointer tracking is never sprung.
+The base registry dependency graph excludes Motion. Reduced motion disables
+compression and pulse; static state remains visible. The showcase's motion-speed
+preview starts paused for reduced-motion users and can be explicitly played.
+
+```tsx
+<ExpressiveSlider label="Speed" mode="stepper" size="xl"
+  steps={[{ value: 0, label: "Still" }, { value: 1, label: "Steady" },
+    { value: 4, label: "Rapid" }]} defaultValue={1} />
+```
+
+Full prop tables and copyable budget, precision, stepper, states and motion-speed
+recipes are maintained on `/components/slider` in the showcase. Floating labels
+show only the active thumb and retain the inline summary for both values.
+
+Stepper clicks and keyboard changes glide over 180ms using the
+`--dt-slider-snap-duration` token. Pointer dragging disables travel transitions,
+so the snapped value never trails a spring. Reduced motion removes this glide.
