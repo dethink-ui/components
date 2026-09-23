@@ -48,7 +48,7 @@ export default function CarouselPage() {
           <ExampleBlock
             file="carousel/feature-highlights.tsx"
             title="Feature highlights"
-            description="Tilt staging gives product capabilities a sense of depth while keeping their titles, context, and supporting metric readable at a glance."
+            description="Ribbon staging alternates card angles and heights. Change the presentation to compare all six modes without losing your place."
             wide
           >
             <CarouselFeatureHighlights />
@@ -56,7 +56,7 @@ export default function CarouselPage() {
           <ExampleBlock
             file="carousel/image-gallery.tsx"
             title="Editorial image gallery"
-            description="Flat staging lets the image lead. Captions preserve enough context to browse a place, project, portfolio, or product collection without a separate detail view."
+            description="Arc staging curves the images toward the center while the selected caption and navigation remain level and readable."
             wide
           >
             <CarouselImageGallery />
@@ -72,7 +72,7 @@ export default function CarouselPage() {
           <ExampleBlock
             file="carousel/testimonials.tsx"
             title="Customer testimonials"
-            description="Floor staging gives longer quotes a deliberate presentation surface while retaining direct, labelled ways to move between stories."
+            description="Fan staging gives each quote an angled, opaque surface. Neighboring cards soften while the active story stays crisp, with gentler angles in narrow containers."
             wide
           >
             <CarouselTestimonials />
@@ -99,10 +99,46 @@ export default function CarouselPage() {
             rather than an opaque number whenever the destination has a name.
           </li>
           <li className="border-border rounded-lg border p-4">
-            Off-stage slides become inert and reduced motion flattens the 3D
-            presentation into a calm opacity transition.
+            Fan, arc and ribbon make inactive slide content inert. Legacy modes
+            retain their visible-neighbor behavior. Reduced motion removes
+            angles and blur, showing one centered card in the new modes.
           </li>
         </ul>
+      </DocsSection>
+
+      <DocsSection
+        id="theming"
+        title="Theming and migration"
+        description="Existing flat, tilt and floor values remain supported. Choose fan for stories, arc for imagery, or ribbon for feature highlights; the controlled index and navigation API stay the same."
+      >
+        <div className="text-muted-foreground space-y-3 text-sm leading-6">
+          <p>
+            Use an opaque <code>bg-background</code> surface on overlapping card
+            content. CarouselItem remains unstyled so images and custom surfaces
+            compose naturally. Use content-aware heights for long text, rather
+            than clipping quotes or attribution.
+          </p>
+          <p>
+            Set <code>{"inactiveBlur={0}"}</code> for sharp previews. Tune{" "}
+            <code>--carousel-card-size</code> and <code>--carousel-step</code>{" "}
+            on CarouselContent; keep enough room around rotated corners. The new
+            modes adapt to their container width, not only the window.
+          </p>
+          <p>
+            Keep controls and captions outside rotated items. Only the active
+            slide’s content is interactive in the new modes. Click a visible
+            side card to center it, or use the arrows and named dots. Arrow,
+            Home and End keys inside nested form controls retain their native
+            behavior.
+          </p>
+          <p>
+            Manual acceptance: navigate with Tab and Arrow/Home/End, drag in
+            both directions, change reduced motion while mounted, check long
+            text at 200% zoom, and verify focus never enters an obscured card.
+            Screen-reader acceptance should confirm the region name, slide
+            position and updated gallery caption.
+          </p>
+        </div>
       </DocsSection>
 
       <DocsSection

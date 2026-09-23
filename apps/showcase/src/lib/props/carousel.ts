@@ -10,17 +10,24 @@ export const carouselProps: PropRow[] = [
   },
   {
     prop: "staging",
-    type: '"flat" | "tilt" | "floor"',
+    type: '"flat" | "tilt" | "floor" | "fan" | "arc" | "ribbon"',
     defaultValue: '"flat"',
     description:
-      "Conventional centered slides, a perspective row, or a receding floor stage.",
+      "Flat slides, legacy tilt/floor staging, a fanned deck, a curved image gallery, or an alternating tilted ribbon. New modes make inactive slides inert.",
   },
   {
     prop: "intensity",
     type: '"subtle" | "standard" | "dramatic"',
     defaultValue: '"standard"',
     description:
-      "Scales the depth and rotation in tilt and floor staging without changing the control model.",
+      "Scales rotation in angled modes without changing the control model. Narrow containers reduce angles automatically.",
+  },
+  {
+    prop: "inactiveBlur",
+    type: "number (0–4 pixels)",
+    defaultValue: "fan/ribbon: 1.5; arc: 0.5",
+    description:
+      "Controls blur of inactive cards in fan, arc and ribbon independently of intensity. Set 0 for crisp previews. Active cards are always sharp; legacy modes retain their existing treatment.",
   },
   {
     prop: "index",

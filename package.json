@@ -37,7 +37,9 @@
     "capture:recipes": "node scripts/capture-recipe-thumbnails.mjs",
     "changeset": "changeset",
     "test:shader-backgrounds": "playwright test --config=e2e/shader-backgrounds.config.ts",
-    "registry:smoke:shader-backgrounds": "node scripts/smoke-shader-hero-registry.mjs --backgrounds"
+    "registry:smoke:shader-backgrounds": "node scripts/smoke-shader-hero-registry.mjs --backgrounds",
+    "test:carousel": "playwright test --config=e2e/carousel-modes.config.ts",
+    "registry:smoke:carousel": "node scripts/smoke-carousel-registry.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

@@ -8,11 +8,12 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
+  type CarouselStaging,
 } from ".";
 
 expect.extend(toHaveNoViolations);
 
-function Gallery({ staging }: { staging?: "flat" | "tilt" | "floor" }) {
+function Gallery({ staging }: { staging?: CarouselStaging }) {
   return (
     <main aria-label="Carousel smoke">
       <Carousel aria-label="Featured work" staging={staging}>
@@ -36,6 +37,13 @@ function Gallery({ staging }: { staging?: "flat" | "tilt" | "floor" }) {
 }
 
 describe("Carousel accessibility", () => {
+  it.each(["fan", "arc", "ribbon"] as const)(
+    "has no axe violations in %s staging",
+    async (staging) => {
+      const { container } = render(<Gallery staging={staging} />);
+      await expect(axe(container)).resolves.toHaveNoViolations();
+    },
+  );
   it("has no axe violations in flat staging", async () => {
     const { container } = render(<Gallery staging="flat" />);
     await expect(axe(container)).resolves.toHaveNoViolations();

@@ -76,7 +76,7 @@ export function CarouselPricing() {
         <CarouselContent>
           {plans.map((plan) => (
             <CarouselItem key={plan.name}>
-              <section className="border-border bg-card flex h-[27rem] w-full flex-col rounded-2xl border p-6 shadow-xl shadow-black/5">
+              <section className="border-border bg-background shadow-foreground/5 flex min-h-[27rem] w-full flex-col rounded-2xl border p-5 shadow-xl sm:p-6">
                 <div className="flex min-h-7 items-center justify-between gap-3">
                   <p className="font-heading text-lg font-semibold">
                     {plan.name}
@@ -98,7 +98,7 @@ export function CarouselPricing() {
                     </span>
                   ) : null}
                 </p>
-                <ul className="mt-7 space-y-3 text-sm">
+                <ul className="my-7 space-y-3 text-sm">
                   {plan.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5">
                       <Check
