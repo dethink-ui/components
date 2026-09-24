@@ -80,6 +80,81 @@ export const recipeCategories: RecipeCategoryMeta[] = [
 
 export const recipesCatalog: RecipeMeta[] = [
   {
+    slug: "beacon-landing",
+    title: "Beacon incident-response landing",
+    category: "marketing",
+    summary:
+      "A product landing page with a live incident-replay hero and a pinned, scroll-driven stage that assembles a working incident app from real components, followed by feature tabs, pricing toggle, customer stories, FAQ and a validated trial sign-up.",
+    tags: ["Landing page", "Scrollytelling", "Incident response", "Motion"],
+    components: [
+      "navigation-menu",
+      "hero-text-animation",
+      "scan-grid-background",
+      "steps",
+      "avatar-group",
+      "icon-button",
+      "sidebar",
+      "breadcrumb",
+      "card",
+      "table",
+      "badge",
+      "feedback-states",
+      "command-palette",
+      "chat",
+      "tabs",
+      "switch",
+      "card-scroller",
+      "avatar",
+      "accordion",
+      "form-field",
+      "input",
+      "button",
+      "reveal-button",
+    ],
+    sourceFile: "recipes/beacon-landing.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "The hero replays a scripted incident (Steps, latency bars, responders, activity log) with pause and replay controls; it pauses off-screen and on hidden tabs, and starts paused on the resolved state for reduced motion. The assembly stage reveals each layer with tokenized transform and opacity transitions as story steps cross the viewport; Motion only drives the incident table's layout re-sort. Reduced motion removes the transitions, sorts instantly and shows the copilot reply in full.",
+    accessibilityNotes:
+      "The assembly stage is decorative (aria-hidden and inert) while an ordered step list carries the story with aria-current. Navigation, tabs, pricing switch, card scroller, FAQ accordion and the labelled sign-up field keep Dethink keyboard models; invalid email is announced through the field error and success through a toast. Beacon, customers and quotes are fictional.",
+    responsiveNotes:
+      "On large screens the stage pins beside the story; on small screens it pins above the steps. The stage is a fixed 1040×640 canvas scaled to its column. Set --beacon-sticky-top when your page has a sticky header, and copy beacon-hero.tsx and beacon-assembly.tsx with the recipe.",
+  },
+  {
+    slug: "maison-sillage",
+    title: "Maison Sillage perfume store",
+    category: "marketing",
+    summary:
+      "An editorial perfume storefront with generated photography, scent discovery, bottle-size selection, animated reviews and a local shopping bag with demo checkout.",
+    tags: ["Commerce", "Perfume", "Luxury", "Motion"],
+    components: [
+      "button",
+      "icon-button",
+      "badge",
+      "card",
+      "card-scroller",
+      "avatar",
+      "accordion",
+      "separator",
+      "dialog",
+      "drawer",
+      "radio-group",
+      "number-input",
+      "feedback-states",
+      "form-field",
+    ],
+    sourceFile: "recipes/maison-sillage.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Bounded viewport reveals and filtered collection transitions use Motion. A page pause control and reactive reduced-motion preference disable decorative movement; the bag drawer respects the same preference.",
+    accessibilityNotes:
+      "Pressed scent filters, labelled size and quantity controls, focus-managed product dialogs and bag drawer, announced additions and checkout completion. All products, prices, policies and reviews are fictional; no payment or order is sent.",
+    responsiveNotes:
+      "The hero, catalog and story stack naturally on narrow screens; the bag stays within the viewport. Copy the maison-sillage companion modules, stylesheet and public assets together. See docs/recipes/maison-sillage.md.",
+  },
+  {
     slug: "professional-cv",
     title: "Alex Morgan professional CV",
     category: "marketing",

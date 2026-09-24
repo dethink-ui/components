@@ -8,6 +8,8 @@ import { RecipeDemoBar } from "@/components/recipe-demo-bar";
 import { NewsOutletRecipe } from "@/examples/recipes/news-outlet";
 import { FormaAiRecipe } from "@/examples/recipes/forma-ai";
 import { ProfessionalCvRecipe } from "@/examples/recipes/professional-cv";
+import { MaisonSillageRecipe } from "@/examples/recipes/maison-sillage";
+import { BeaconLandingRecipe } from "@/examples/recipes/beacon-landing";
 import { AiWorkspaceRecipe } from "@/examples/recipes/ai-workspace";
 import { AutomationLandingRecipe } from "@/examples/recipes/automation-landing";
 import { AutomationLoginRecipe } from "@/examples/recipes/automation-login";
@@ -39,6 +41,8 @@ import {
 } from "@/lib/recipes-meta";
 
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
+  "beacon-landing": BeaconLandingRecipe,
+  "maison-sillage": MaisonSillageRecipe,
   "professional-cv": ProfessionalCvRecipe,
   "forma-ai": FormaAiRecipe,
   "news-outlet": NewsOutletRecipe,
