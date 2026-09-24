@@ -7,6 +7,7 @@ import { CodeBlock } from "@/components/code-block";
 import { RecipeDemoBar } from "@/components/recipe-demo-bar";
 import { NewsOutletRecipe } from "@/examples/recipes/news-outlet";
 import { FormaAiRecipe } from "@/examples/recipes/forma-ai";
+import { ProfessionalCvRecipe } from "@/examples/recipes/professional-cv";
 import { AiWorkspaceRecipe } from "@/examples/recipes/ai-workspace";
 import { AutomationLandingRecipe } from "@/examples/recipes/automation-landing";
 import { AutomationLoginRecipe } from "@/examples/recipes/automation-login";
@@ -38,6 +39,7 @@ import {
 } from "@/lib/recipes-meta";
 
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
+  "professional-cv": ProfessionalCvRecipe,
   "forma-ai": FormaAiRecipe,
   "news-outlet": NewsOutletRecipe,
   "automation-landing": AutomationLandingRecipe,
