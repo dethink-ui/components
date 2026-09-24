@@ -1,6 +1,6 @@
 # Slider
 
-Horizontal numeric and two-thumb range input backed by React Aria. Install the
+Horizontal or vertical numeric and two-thumb range input backed by React Aria. Install the
 `slider` registry item after the documented base setup, or import `Slider` from
 `@dethink/components`. No Motion dependency is needed for the basic registry item.
 
@@ -64,8 +64,7 @@ Rendered tests cover callbacks, range limits, disabled, form values and keyboard
 input. SSR/hydration and axe tests complement browser drag and responsive checks.
 Manual acceptance: tab through thumbs, use arrows and Home/End, inspect both range
 names with a screen reader, drag with touch in RTL, and verify high contrast.
-This is a new component; existing inputs do not change. V1 excludes vertical
-orientation, more than two thumbs, text entry and increment/decrement buttons.
+This is a new component; existing inputs do not change. The component excludes more than two thumbs, text entry and increment/decrement buttons.
 
 ## Expressive presentation and XL
 
@@ -102,3 +101,13 @@ show only the active thumb and retain the inline summary for both values.
 Stepper clicks and keyboard changes glide over 180ms using the
 `--dt-slider-snap-duration` token. Pointer dragging disables travel transitions,
 so the snapped value never trails a spring. Reduced motion removes this glide.
+
+## Vertical orientation
+
+Set `orientation="vertical"` on Slider or ExpressiveSlider. Numeric, range and
+stepper modes all increase from bottom to top, including RTL. Up/Down adjust
+values and Home/End reach the bounds. Labels stay upright beside preset marks.
+Use `className="[--dt-slider-track-length:16rem]"` to customize the travel length
+(default 12rem). Allow additional room for labels, thumb targets and output.
+The mixer example demonstrates controlled levels; the range example keeps
+independently named endpoints. Horizontal remains the default with no migration.

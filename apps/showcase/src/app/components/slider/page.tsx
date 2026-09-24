@@ -12,6 +12,7 @@ import { SliderBudget } from "@/examples/slider/budget";
 import { SliderStates } from "@/examples/slider/states";
 import { SliderStepper } from "@/examples/slider/stepper";
 import { sliderProps } from "@/lib/props/slider";
+import { SliderVertical } from "@/examples/slider/vertical";
 
 export const metadata: Metadata = {
   title: "Slider",
@@ -34,6 +35,13 @@ export default function SliderPage() {
         description="Drag, click the track, or use your keyboard. Every adjustment stays precise."
       >
         <div className="space-y-10">
+          <ExampleBlock
+            file="slider/vertical.tsx"
+            title="Vertical controls"
+            description="A compact mixer, temperature range and named focus presets. Values increase upward in both reading directions."
+          >
+            <SliderVertical />
+          </ExampleBlock>
           <ExampleBlock
             file="slider/motion-speed.tsx"
             title="Motion speed"

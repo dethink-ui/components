@@ -36,10 +36,11 @@ function closure(name, found = new Map()) {
     closure(dependency, found);
   return found;
 }
-const expressive = process.argv.includes("--expressive");
-const entry = expressive ? "slider-expressive" : "slider";
+const entry = "resizable";
 const react18 = process.argv.includes("--react18");
-const destination = await mkdtemp(join(tmpdir(), "dethink-slider-consumer-"));
+const destination = await mkdtemp(
+  join(tmpdir(), "dethink-resizable-consumer-"),
+);
 const selected = [...closure(entry).values()];
 const deps = {
   react: react18 ? "^18.3.1" : manifest.devDependencies.react,
@@ -65,11 +66,7 @@ for (const item of selected) {
     await cp(join(root, file.path), target);
   }
 }
-assert.equal(
-  "motion" in deps,
-  expressive,
-  "Only the optional companion may require Motion",
-);
+assert.equal("motion" in deps, false, "Resizable must not require Motion");
 // Check every copied relative import against the recursive registry closure before installing.
 for (const file of sourceFiles) {
   if (!/\.tsx?$/.test(file)) continue;
@@ -97,7 +94,7 @@ await writeFile(
   join(destination, "package.json"),
   JSON.stringify(
     {
-      name: "dethink-slider-consumer-smoke",
+      name: "dethink-resizable-consumer-smoke",
       private: true,
       type: "module",
       dependencies: deps,
@@ -142,15 +139,14 @@ await writeFile(
 );
 await writeFile(
   join(destination, "index.html"),
-  '<html lang="en"><head><title>Slider consumer smoke</title></head><body><div id="root"></div><script type="module" src="/main.tsx"></script></body></html>',
+  '<html lang="en"><head><title>Resizable consumer smoke</title></head><body><div id="root"></div><script type="module" src="/main.tsx"></script></body></html>',
 );
 await writeFile(
   join(destination, "main.tsx"),
   `import { createRoot } from "react-dom/client";
-import { Slider } from "./src/components/slider";
-${expressive ? 'import { ExpressiveSlider } from "./src/components/slider-expressive";' : ""}
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle, ResizableWorkspace } from "./src/components/resizable";
 import "./src/styles.css";
-createRoot(document.getElementById("root")!).render(<><Slider label="Numeric" defaultValue={20}/><Slider label="Vertical" orientation="vertical" defaultValue={40}/><Slider<[number, number]> label="Range" defaultValue={[20,80]} size="xl"/><Slider label="Steps" mode="stepper" steps={[{value:0,label:"Off"},{value:5,label:"On"}]} defaultValue={5}/>${expressive ? '<ExpressiveSlider label="Expressive" defaultValue={40}/>' : ""}</>);
+createRoot(document.getElementById("root")!).render(<><div className="h-80"><ResizablePanelGroup><ResizablePanel minSize="20%">Sources</ResizablePanel><ResizableHandle aria-label="Sources"/><ResizablePanel>Draft</ResizablePanel></ResizablePanelGroup></div><ResizableWorkspace id="smoke" label="Workspace" compactAt={500} panes={[{id:"a",title:"Sources",children:"Evidence",collapsible:true},{id:"b",title:"Draft",children:<input aria-label="Draft"/>}]} /></>);
 `,
 );
 await writeFile(

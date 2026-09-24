@@ -272,6 +272,12 @@ export const componentCatalog: ComponentMeta[] = [
     type: "forms",
   },
   {
+    slug: "resizable",
+    name: "Resizable Panels",
+    description: "Compose, resize, focus and restore useful workspaces.",
+    type: "layout",
+  },
+  {
     slug: "checkbox",
     name: "Checkbox",
     description: "Let users turn individual options on or off.",

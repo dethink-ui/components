@@ -2,6 +2,12 @@ export const dependencyInfo: Record<
   string,
   { name: string; href: string; purpose: string }
 > = {
+  "react-resizable-panels": {
+    name: "React Resizable Panels",
+    href: "https://github.com/bvaughn/react-resizable-panels",
+    purpose:
+      "Constraint-based pane sizing, nested groups, pointer/touch resizing and keyboard-accessible separators.",
+  },
   "@tanstack/react-table": {
     name: "TanStack Table",
     href: "https://tanstack.com/table/latest/docs/introduction",

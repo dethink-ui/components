@@ -61,6 +61,7 @@ interface SliderBaseProps<T extends SliderValue = number> extends Omit<
   onValueChange?: (value: T extends number ? number : [number, number]) => void;
   onValueCommit?: (value: T extends number ? number : [number, number]) => void;
   disabled?: boolean;
+  orientation?: "horizontal" | "vertical";
   label?: ReactNode;
   description?: ReactNode;
   name?: string | [string, string];
@@ -125,6 +126,7 @@ function SliderImpl(
     max = 100,
     step = 1,
     disabled = false,
+    orientation = "horizontal",
     label,
     description,
     name,
@@ -141,6 +143,7 @@ function SliderImpl(
   }: SliderProps<SliderValue>,
   ref: React.ForwardedRef<HTMLDivElement>,
 ) {
+  const vertical = orientation === "vertical";
   const Decoration = useContext(SliderDecorationContext);
   // Store public values rather than React Aria's step indices, so a new stop
   // list can always resolve the current selection to a valid position.
@@ -252,7 +255,7 @@ function SliderImpl(
         maxValue={stops ? stops.length - 1 : max}
         step={stops ? 1 : step}
         isDisabled={disabled}
-        orientation="horizontal"
+        orientation={orientation}
         onChange={(next: SliderValue) => {
           const nextValue = toValue(next);
           if (value === undefined) setUncontrolledValue(nextValue);
@@ -296,172 +299,240 @@ function SliderImpl(
                   )}
                 </div>
               )}
-              <SliderTrack
-                ref={trackRef}
-                data-slot="slider-track"
+              <div
                 className={cn(
-                  "relative h-11 touch-none",
-                  size === "xl" ? "mx-[1.375rem]" : "mx-[var(--dt-space-3)]",
-                  valueDisplay === "floating" && "mt-8",
-                  classNames?.track,
+                  vertical ? "flex justify-center gap-4" : "contents",
+                  vertical && valueDisplay === "floating" && "px-16",
                 )}
               >
-                <div
-                  aria-hidden="true"
-                  data-slot="slider-rail"
+                <SliderTrack
+                  ref={trackRef}
+                  data-slot="slider-track"
                   className={cn(
-                    "bg-muted absolute top-1/2 h-[var(--dt-slider-track-height)] -translate-y-1/2 rounded-full forced-colors:border forced-colors:border-[GrayText]",
-                    size === "xl"
-                      ? "-inset-x-[1.375rem] shadow-inner"
-                      : "w-full",
+                    "relative touch-none",
+                    vertical
+                      ? "my-[1.375rem] h-[var(--dt-slider-track-length,12rem)] w-11 shrink-0"
+                      : "h-11",
+                    !vertical &&
+                      (size === "xl"
+                        ? "mx-[1.375rem]"
+                        : "mx-[var(--dt-space-3)]"),
+                    !vertical && valueDisplay === "floating" && "mt-8",
+                    classNames?.track,
                   )}
-                />
-                <div
-                  aria-hidden="true"
-                  data-slot="slider-fill"
-                  className={cn(
-                    "bg-primary pointer-events-none absolute top-1/2 h-[var(--dt-slider-track-height)] -translate-y-1/2 rounded-full forced-colors:bg-[Highlight]",
-                    variant === "expressive" &&
-                      "shadow-[0_0_16px_color-mix(in_srgb,var(--dt-color-primary)_25%,transparent)]",
-                    stops &&
-                      !directDrag &&
-                      "motion-safe:transition-[width,inset-inline-start] motion-safe:duration-[var(--dt-slider-snap-duration)] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
-                    classNames?.fill,
-                  )}
-                  style={{
-                    insetInlineStart:
-                      size === "xl"
-                        ? `calc(${start}% - 1.375rem)`
-                        : `${start}%`,
-                    width:
-                      size === "xl"
-                        ? `calc(${end - start}% + 2.75rem)`
-                        : `${end - start}%`,
-                  }}
-                />
-                {stops?.map((stop, index) => {
-                  const selected = state.values.includes(index);
-                  const passed =
-                    index <= state.values[state.values.length - 1] &&
-                    (!range || index >= state.values[0]);
-                  return (
-                    <span
-                      key={stop.value}
-                      aria-hidden="true"
-                      data-slot="slider-mark"
-                      data-selected={selected || undefined}
-                      data-passed={passed || undefined}
-                      className={cn(
-                        "border-background bg-muted-foreground/50 data-[passed]:bg-primary data-[selected]:bg-primary pointer-events-none absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 rtl:translate-x-1/2 forced-colors:border-[Canvas] forced-colors:bg-[GrayText] forced-colors:data-[passed]:bg-[Highlight]",
-                        classNames?.marks,
-                      )}
-                      style={{
-                        insetInlineStart: `${(index / (stops.length - 1)) * 100}%`,
-                      }}
-                    />
-                  );
-                })}
-                {state.values.map((_, index) => (
-                  <SliderThumbControl
-                    trackRef={trackRef}
-                    valueText={formatted[index]}
-                    key={index}
-                    index={index}
-                    name={
-                      stops
-                        ? undefined
-                        : Array.isArray(name)
-                          ? name[index]
-                          : name
-                    }
-                    label={range ? thumbLabels[index] : undefined}
+                >
+                  <div
+                    aria-hidden="true"
+                    data-slot="slider-rail"
                     className={cn(
-                      "group top-1/2 flex size-11 cursor-grab items-center justify-center outline-none data-[disabled]:cursor-not-allowed data-[dragging]:cursor-grabbing data-[focus-visible]:z-10",
+                      "bg-muted absolute rounded-full forced-colors:border forced-colors:border-[GrayText]",
+                      vertical
+                        ? "left-1/2 w-[var(--dt-slider-track-height)] -translate-x-1/2"
+                        : "top-1/2 h-[var(--dt-slider-track-height)] -translate-y-1/2",
+                      size === "xl"
+                        ? vertical
+                          ? "-inset-y-[1.375rem] shadow-inner"
+                          : "-inset-x-[1.375rem] shadow-inner"
+                        : vertical
+                          ? "h-full"
+                          : "w-full",
+                    )}
+                  />
+                  <div
+                    aria-hidden="true"
+                    data-slot="slider-fill"
+                    className={cn(
+                      "bg-primary pointer-events-none absolute rounded-full forced-colors:bg-[Highlight]",
+                      vertical
+                        ? "left-1/2 w-[var(--dt-slider-track-height)] -translate-x-1/2"
+                        : "top-1/2 h-[var(--dt-slider-track-height)] -translate-y-1/2",
+                      variant === "expressive" &&
+                        "shadow-[0_0_16px_color-mix(in_srgb,var(--dt-color-primary)_25%,transparent)]",
                       stops &&
                         !directDrag &&
-                        "motion-safe:transition-[left] motion-safe:duration-[var(--dt-slider-snap-duration)] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
-                      classNames?.thumb,
+                        "motion-safe:duration-[var(--dt-slider-snap-duration)] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      stops &&
+                        !directDrag &&
+                        (vertical
+                          ? "motion-safe:transition-[height,bottom]"
+                          : "motion-safe:transition-[width,inset-inline-start]"),
+                      classNames?.fill,
                     )}
-                  >
-                    {({ isDragging, isFocused, isHovered }) => (
-                      <>
-                        {valueDisplay === "floating" &&
-                          (isDragging ||
-                            isFocused ||
-                            (isHovered && state.focusedThumb == null)) && (
-                            <span
-                              aria-hidden="true"
-                              data-slot="slider-floating-output"
-                              className="border-border bg-background pointer-events-none absolute bottom-full mb-1 w-max max-w-32 truncate rounded-md border px-2 py-1 text-center text-xs font-medium tabular-nums shadow-sm"
-                              style={{
-                                insetInlineStart:
-                                  state.getThumbPercent(index) < 0.25
-                                    ? size === "xl"
-                                      ? "0"
-                                      : "calc(1.375rem - var(--dt-space-3))"
-                                    : undefined,
-                                insetInlineEnd:
-                                  state.getThumbPercent(index) > 0.75
-                                    ? size === "xl"
-                                      ? "0"
-                                      : "calc(1.375rem - var(--dt-space-3))"
-                                    : undefined,
-                              }}
-                            >
-                              {formatted[index]}
-                            </span>
-                          )}
-                        {variant === "expressive" && Decoration ? (
-                          <Decoration
-                            dragging={isDragging}
-                            active={isDragging || isFocused}
-                            milestone={stops ? state.values[index] : undefined}
-                            className={thumbVisual}
-                          />
-                        ) : (
-                          <span
-                            aria-hidden="true"
-                            data-slot="slider-thumb-visual"
-                            className={cn(
-                              thumbVisual,
-                              variant === "expressive" &&
-                                "shadow-[0_0_0_5px_color-mix(in_srgb,var(--dt-color-primary)_10%,transparent)]",
-                            )}
-                          />
+                    style={{
+                      [vertical ? "bottom" : "insetInlineStart"]:
+                        size === "xl"
+                          ? `calc(${start}% - 1.375rem)`
+                          : `${start}%`,
+                      [vertical ? "height" : "width"]:
+                        size === "xl"
+                          ? `calc(${end - start}% + 2.75rem)`
+                          : `${end - start}%`,
+                    }}
+                  />
+                  {stops?.map((stop, index) => {
+                    const selected = state.values.includes(index);
+                    const passed =
+                      index <= state.values[state.values.length - 1] &&
+                      (!range || index >= state.values[0]);
+                    return (
+                      <span
+                        key={stop.value}
+                        aria-hidden="true"
+                        data-slot="slider-mark"
+                        data-selected={selected || undefined}
+                        data-passed={passed || undefined}
+                        className={cn(
+                          "border-background bg-muted-foreground/50 data-[passed]:bg-primary data-[selected]:bg-primary pointer-events-none absolute size-2 rounded-full border-2 forced-colors:border-[Canvas] forced-colors:bg-[GrayText] forced-colors:data-[passed]:bg-[Highlight]",
+                          vertical
+                            ? "left-1/2 -translate-x-1/2 translate-y-1/2"
+                            : "top-1/2 -translate-x-1/2 -translate-y-1/2 rtl:translate-x-1/2",
+                          classNames?.marks,
                         )}
-                      </>
-                    )}
-                  </SliderThumbControl>
-                ))}
-              </SliderTrack>
-              {stops && stops.some((stop) => stop.showLabel !== false) && (
-                <div
-                  aria-hidden="true"
-                  data-slot="slider-marks"
-                  className="text-muted-foreground mx-[var(--dt-space-3)] grid text-[11px] leading-4"
-                  style={{
-                    gridTemplateColumns: `repeat(${(stops.length - 1) * 2}, minmax(0, 1fr))`,
-                  }}
-                >
-                  {stops.map((stop, index) => (
-                    <span
-                      key={stop.value}
+                        style={{
+                          [vertical ? "bottom" : "insetInlineStart"]:
+                            `${(index / (stops.length - 1)) * 100}%`,
+                        }}
+                      />
+                    );
+                  })}
+                  {state.values.map((_, index) => (
+                    <SliderThumbControl
+                      trackRef={trackRef}
+                      orientation={orientation}
+                      valueText={formatted[index]}
+                      key={index}
+                      index={index}
+                      name={
+                        stops
+                          ? undefined
+                          : Array.isArray(name)
+                            ? name[index]
+                            : name
+                      }
+                      label={range ? thumbLabels[index] : undefined}
                       className={cn(
-                        "min-w-0 px-0.5 text-center [overflow-wrap:anywhere]",
-                        index === 0
-                          ? "-ms-[var(--dt-space-3)] w-[calc(100%+var(--dt-space-3))] text-start"
-                          : index === stops.length - 1
-                            ? "-me-[var(--dt-space-3)] w-[calc(100%+var(--dt-space-3))] justify-self-end text-end"
-                            : "col-span-2",
-                        state.values.includes(index) &&
-                          "text-primary font-semibold",
+                        "group flex size-11 cursor-grab items-center justify-center outline-none data-[disabled]:cursor-not-allowed data-[dragging]:cursor-grabbing data-[focus-visible]:z-10",
+                        vertical ? "left-1/2" : "top-1/2",
+                        stops &&
+                          !directDrag &&
+                          "motion-safe:duration-[var(--dt-slider-snap-duration)] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
+                        stops &&
+                          !directDrag &&
+                          (vertical
+                            ? "motion-safe:transition-[top]"
+                            : "motion-safe:transition-[left]"),
+                        classNames?.thumb,
                       )}
                     >
-                      {stop.showLabel !== false ? stop.label : null}
-                    </span>
+                      {({ isDragging, isFocused, isHovered }) => (
+                        <>
+                          {valueDisplay === "floating" &&
+                            (isDragging ||
+                              isFocused ||
+                              (isHovered && state.focusedThumb == null)) && (
+                              <span
+                                aria-hidden="true"
+                                data-slot="slider-floating-output"
+                                className={cn(
+                                  "border-border bg-background pointer-events-none absolute w-max truncate rounded-md border px-2 py-1 text-center text-xs font-medium tabular-nums shadow-sm",
+                                  vertical
+                                    ? "end-full me-1 max-w-16"
+                                    : "bottom-full mb-1 max-w-32",
+                                )}
+                                style={
+                                  vertical
+                                    ? undefined
+                                    : {
+                                        insetInlineStart:
+                                          state.getThumbPercent(index) < 0.25
+                                            ? size === "xl"
+                                              ? "0"
+                                              : "calc(1.375rem - var(--dt-space-3))"
+                                            : undefined,
+                                        insetInlineEnd:
+                                          state.getThumbPercent(index) > 0.75
+                                            ? size === "xl"
+                                              ? "0"
+                                              : "calc(1.375rem - var(--dt-space-3))"
+                                            : undefined,
+                                      }
+                                }
+                              >
+                                {formatted[index]}
+                              </span>
+                            )}
+                          {variant === "expressive" && Decoration ? (
+                            <Decoration
+                              dragging={isDragging}
+                              active={isDragging || isFocused}
+                              milestone={
+                                stops ? state.values[index] : undefined
+                              }
+                              className={thumbVisual}
+                            />
+                          ) : (
+                            <span
+                              aria-hidden="true"
+                              data-slot="slider-thumb-visual"
+                              className={cn(
+                                thumbVisual,
+                                variant === "expressive" &&
+                                  "shadow-[0_0_0_5px_color-mix(in_srgb,var(--dt-color-primary)_10%,transparent)]",
+                              )}
+                            />
+                          )}
+                        </>
+                      )}
+                    </SliderThumbControl>
                   ))}
-                </div>
-              )}
+                </SliderTrack>
+                {stops && stops.some((stop) => stop.showLabel !== false) && (
+                  <div
+                    aria-hidden="true"
+                    data-slot="slider-marks"
+                    className={cn(
+                      "text-muted-foreground text-[11px] leading-4",
+                      vertical
+                        ? "relative my-[1.375rem] h-[var(--dt-slider-track-length,12rem)] w-20"
+                        : "mx-[var(--dt-space-3)] grid",
+                    )}
+                    style={
+                      vertical
+                        ? undefined
+                        : {
+                            gridTemplateColumns: `repeat(${(stops.length - 1) * 2}, minmax(0, 1fr))`,
+                          }
+                    }
+                  >
+                    {stops.map((stop, index) => (
+                      <span
+                        key={stop.value}
+                        style={
+                          vertical
+                            ? {
+                                bottom: `${(index / (stops.length - 1)) * 100}%`,
+                              }
+                            : undefined
+                        }
+                        className={cn(
+                          "min-w-0 px-0.5 text-center [overflow-wrap:anywhere]",
+                          vertical
+                            ? "absolute start-0 w-full translate-y-1/2 text-start"
+                            : index === 0
+                              ? "-ms-[var(--dt-space-3)] w-[calc(100%+var(--dt-space-3))] text-start"
+                              : index === stops.length - 1
+                                ? "-me-[var(--dt-space-3)] w-[calc(100%+var(--dt-space-3))] justify-self-end text-end"
+                                : "col-span-2",
+                          state.values.includes(index) &&
+                            "text-primary font-semibold",
+                        )}
+                      >
+                        {stop.showLabel !== false ? stop.label : null}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
               {stops &&
                 name &&
                 state.values.map((position, index) => (

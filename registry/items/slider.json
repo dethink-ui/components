@@ -3,7 +3,7 @@
   "name": "slider",
   "type": "registry:ui",
   "title": "Slider",
-  "description": "Accessible numeric, range and labelled stepper sliders, including an inset XL size. No Motion dependency.",
+  "description": "Accessible horizontal and vertical numeric, range and labelled stepper sliders, including an inset XL size. No Motion dependency.",
   "dependencies": ["react-aria-components", "react-aria"],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],

@@ -48,7 +48,9 @@
     "registry:smoke:card-stack": "node scripts/smoke-card-stack-registry.mjs",
     "test:slider": "playwright test --config=e2e/slider.config.ts",
     "registry:smoke:slider": "node scripts/smoke-slider-registry.mjs",
-    "registry:smoke:slider-expressive": "node scripts/smoke-slider-registry.mjs --expressive"
+    "registry:smoke:slider-expressive": "node scripts/smoke-slider-registry.mjs --expressive",
+    "test:resizable": "playwright test --config=e2e/resizable.config.ts",
+    "registry:smoke:resizable": "node scripts/smoke-resizable-registry.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

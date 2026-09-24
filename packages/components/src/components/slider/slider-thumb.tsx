@@ -12,6 +12,7 @@ export interface SliderThumbVisualState {
 export function SliderThumbControl({
   index,
   trackRef,
+  orientation,
   name,
   label,
   valueText,
@@ -20,6 +21,7 @@ export function SliderThumbControl({
 }: {
   index: number;
   trackRef: RefObject<HTMLDivElement | null>;
+  orientation: "horizontal" | "vertical";
   name?: string;
   label?: string;
   valueText: string;
@@ -30,7 +32,7 @@ export function SliderThumbControl({
   const inputRef = useRef<HTMLInputElement>(null);
   const { thumbProps, inputProps, isDragging, isFocused, isDisabled } =
     useSliderThumb(
-      { index, trackRef, inputRef, name, "aria-label": label },
+      { index, trackRef, inputRef, name, orientation, "aria-label": label },
       state,
     );
   const { focusProps, isFocusVisible } = useFocusRing();

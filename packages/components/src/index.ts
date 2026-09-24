@@ -1654,3 +1654,4 @@ export {
   type BottomBarContentProps,
   type BottomBarSize,
 } from "./components/bottom-bar";
+export * from "./components/resizable";

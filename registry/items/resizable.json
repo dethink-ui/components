@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "resizable",
+  "type": "registry:ui",
+  "title": "Resizable Panels",
+  "description": "Accessible nested pane groups and recoverable workspaces with focus, collapse and saved layouts.",
+  "dependencies": ["react-resizable-panels@^4.13.2"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/resizable/resizable.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/resizable/resizable-workspace.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/resizable/resizable-layout.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/resizable/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}
