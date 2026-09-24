@@ -31,6 +31,40 @@ export const Range: Story = {
     <Slider<[number, number]> label="Budget" defaultValue={[20, 80]} />
   ),
 };
+export const Vertical: Story = {
+  render: () => (
+    <Slider label="Level" orientation="vertical" defaultValue={40} size="xl" />
+  ),
+  play: async ({ canvasElement }) => {
+    const input = within(canvasElement).getByRole("slider");
+    input.focus();
+    await userEvent.keyboard("{ArrowUp}");
+    await expect(input).toHaveValue("41");
+    await expect(input).toHaveAttribute("aria-orientation", "vertical");
+  },
+};
+export const VerticalRangeAndSteps: Story = {
+  render: () => (
+    <div className="grid grid-cols-2 gap-8">
+      <Slider<[number, number]>
+        label="Range"
+        orientation="vertical"
+        defaultValue={[20, 80]}
+      />
+      <ExpressiveSlider
+        label="Pace"
+        orientation="vertical"
+        mode="stepper"
+        steps={[
+          { value: 0, label: "Still" },
+          { value: 1, label: "Steady" },
+          { value: 4, label: "Rapid" },
+        ]}
+        defaultValue={1}
+      />
+    </div>
+  ),
+};
 export const DarkCompact: Story = {
   render: () => (
     <DethinkProvider theme="dark" density="compact" className="p-8">

@@ -100,6 +100,7 @@ import {
   NumberInput,
   Slider,
   ExpressiveSlider,
+  ResizableWorkspace,
   Popover,
   PopoverClose,
   PopoverContent,
@@ -1134,6 +1135,29 @@ export function App() {
                   </FieldDescription>
                 </Field>
                 <FieldSet>
+                  <ResizableWorkspace
+                    id="playground-panes"
+                    label="Resizable smoke"
+                    className="h-80"
+                    panes={[
+                      {
+                        id: "sources",
+                        title: "Sources",
+                        children: "Evidence",
+                        collapsible: true,
+                      },
+                      {
+                        id: "draft",
+                        title: "Draft",
+                        children: <input aria-label="Pane draft" />,
+                      },
+                    ]}
+                  />
+                  <Slider
+                    label="Vertical smoke"
+                    orientation="vertical"
+                    defaultValue={45}
+                  />
                   <ExpressiveSlider
                     label="Expressive smoke"
                     size="xl"

@@ -4,6 +4,43 @@ import AxeBuilder from "@axe-core/playwright";
 test.beforeEach(async ({ page }) => {
   await page.goto("/components/slider");
 });
+test("vertical controls drag upward and XL thumbs stay inside the rail", async ({
+  page,
+}) => {
+  const input = page.getByRole("slider", { name: "Voice", exact: true });
+  const root = input.locator('xpath=ancestor::*[@data-slot="slider"]');
+  await root.scrollIntoViewIfNeeded();
+  await expect(input).toHaveAttribute("aria-orientation", "vertical");
+  const track = (await root
+    .locator('[data-slot="slider-track"]')
+    .boundingBox())!;
+  await page.mouse.click(
+    track.x + track.width / 2,
+    track.y + track.height * 0.25,
+  );
+  expect(Number(await input.inputValue())).toBeGreaterThan(70);
+  for (const key of ["Home", "End"]) {
+    await input.press(key);
+    const rail = (await root
+      .locator('[data-slot="slider-rail"]')
+      .boundingBox())!;
+    const thumb = (await root
+      .locator('[data-slot="slider-thumb-visual"]')
+      .boundingBox())!;
+    expect(thumb.y).toBeGreaterThan(rail.y);
+    expect(thumb.y + thumb.height).toBeLessThan(rail.y + rail.height);
+  }
+  await page.mouse.move(track.x + track.width / 2, track.y);
+  await page.mouse.down();
+  await page.mouse.move(track.x + track.width / 2, track.y + track.height, {
+    steps: 8,
+  });
+  await page.mouse.up();
+  await expect(input).toHaveValue("0");
+  const preset = page.getByRole("slider", { name: "Focus level", exact: true });
+  await preset.press("End");
+  await expect(preset).toHaveAttribute("aria-valuetext", "Deep");
+});
 test("numeric range and precision keyboard interactions", async ({ page }) => {
   const low = page.getByRole("slider", {
     name: "Minimum Monthly budget",

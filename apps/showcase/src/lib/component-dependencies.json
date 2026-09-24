@@ -235,6 +235,10 @@
     "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
   },
   "radio-group": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "resizable": {
+    "direct": ["react", "react-resizable-panels"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
   "reveal-button": {
     "direct": ["motion", "react", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]

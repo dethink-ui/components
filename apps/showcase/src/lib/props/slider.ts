@@ -1,6 +1,13 @@
 import type { PropRow } from "@/components/props-table";
 export const sliderProps: PropRow[] = [
   {
+    prop: "orientation",
+    type: '"horizontal" | "vertical"',
+    defaultValue: "horizontal",
+    description:
+      "Vertical values increase bottom to top, including in RTL. Set --dt-slider-track-length on the root to customize vertical travel (default 12rem).",
+  },
+  {
     prop: "variant",
     type: '"default" | "expressive"',
     defaultValue: "default",
