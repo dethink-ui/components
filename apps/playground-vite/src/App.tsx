@@ -1,6 +1,7 @@
 import { CalendarDate, parseDateTime } from "@internationalized/date";
 import { useState } from "react";
 import {
+  FileUpload,
   ChatBubble,
   ShaderHeroText,
   LiquidMeshBackground,
@@ -290,6 +291,22 @@ export function App() {
             Foundation scaffold is active
           </Heading>
           <ChatSmoke />
+          <section
+            aria-label="File upload smoke"
+            className="border-border max-w-xl rounded-lg border p-4"
+          >
+            <FileUpload
+              label="File upload smoke"
+              multiple
+              accept=".pdf,.png"
+              maxFiles={3}
+              maxFileSize={1048576}
+              onUpload={(_file, { onProgress }) => {
+                onProgress(100);
+                return Promise.resolve();
+              }}
+            />
+          </section>
           <section aria-label="Shader backgrounds smoke" className="grid gap-4">
             <LiquidMeshBackground animate={false} className="rounded-xl p-6">
               <h2>LiquidMesh background</h2>

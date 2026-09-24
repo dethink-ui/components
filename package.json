@@ -6,6 +6,8 @@
   "type": "module",
   "packageManager": "pnpm@11.7.0",
   "scripts": {
+    "test:file-upload": "playwright test --config=e2e/file-upload.config.ts",
+    "registry:smoke:file-upload": "node scripts/smoke-file-upload-registry.mjs",
     "test:chat-bubble": "playwright test --config=e2e/chat-bubble.config.ts",
     "registry:smoke:chat-bubble": "node scripts/smoke-chat-registry.mjs --bubble",
     "registry:smoke:chat-bubble:react18": "node scripts/smoke-chat-registry.mjs --bubble --react18",

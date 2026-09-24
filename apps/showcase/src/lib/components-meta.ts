@@ -30,6 +30,13 @@ export interface ComponentGroup extends ComponentTypeMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "file-upload",
+    name: "FileUpload",
+    description:
+      "Stage files in a compact queue with clear limits and recoverable uploads.",
+    type: "advanced-inputs",
+  },
+  {
     slug: "chat-bubble",
     name: "ChatBubble",
     description: "Open a conversation from a floating, animated chat launcher.",

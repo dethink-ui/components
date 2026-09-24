@@ -161,6 +161,10 @@
     "direct": [],
     "shared": ["clsx", "motion", "react", "tailwind-merge"]
   },
+  "file-upload": {
+    "direct": ["lucide-react", "react", "react-aria-components"],
+    "shared": ["clsx", "tailwind-merge"]
+  },
   "flex": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "form-field": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "grid": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
