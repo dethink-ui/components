@@ -1,0 +1,103 @@
+/* Forma's own identity on Dethink's semantic token contract. */
+.sc-forma-theme {
+  color-scheme: light;
+  --dt-color-background: oklch(0.987 0.004 80);
+  --dt-color-foreground: oklch(0.2 0.022 280);
+  --dt-color-muted: oklch(0.95 0.012 290);
+  --dt-color-muted-foreground: oklch(0.47 0.022 280);
+  --dt-color-border: oklch(0.88 0.012 285);
+  --dt-color-input: oklch(0.57 0.035 285);
+  --dt-color-primary: oklch(0.49 0.235 290);
+  --dt-color-primary-foreground: oklch(1 0 0);
+  --dt-color-ring: oklch(0.49 0.235 290);
+  --forma-ink: oklch(0.2 0.022 280);
+  --forma-paper: oklch(0.987 0.004 80);
+  --forma-lilac: oklch(0.91 0.055 295);
+  font-family: var(--font-sans);
+}
+
+.sc-forma-ribbon {
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme="dark"] .sc-forma-theme {
+  color-scheme: dark;
+  --dt-color-background: oklch(0.18 0.022 280);
+  --dt-color-foreground: oklch(0.96 0.009 285);
+  --dt-color-muted: oklch(0.25 0.028 285);
+  --dt-color-muted-foreground: oklch(0.75 0.025 285);
+  --dt-color-border: oklch(0.37 0.033 285);
+  --dt-color-input: oklch(0.6 0.05 285);
+  --dt-color-primary: oklch(0.77 0.14 295);
+  --dt-color-primary-foreground: oklch(0.18 0.022 280);
+  --dt-color-ring: oklch(0.77 0.14 295);
+}
+:root[data-theme="dark"] .sc-forma-ribbon {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+  opacity: 0.45;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .sc-forma-theme,
+  :root[data-theme="system"] .sc-forma-theme {
+    color-scheme: dark;
+    --dt-color-background: oklch(0.18 0.022 280);
+    --dt-color-foreground: oklch(0.96 0.009 285);
+    --dt-color-muted: oklch(0.25 0.028 285);
+    --dt-color-muted-foreground: oklch(0.75 0.025 285);
+    --dt-color-border: oklch(0.37 0.033 285);
+    --dt-color-input: oklch(0.6 0.05 285);
+    --dt-color-primary: oklch(0.77 0.14 295);
+    --dt-color-primary-foreground: oklch(0.18 0.022 280);
+    --dt-color-ring: oklch(0.77 0.14 295);
+  }
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .sc-forma-ribbon,
+  :root[data-theme="system"] .sc-forma-ribbon {
+    filter: invert(1) hue-rotate(180deg);
+    mix-blend-mode: screen;
+    opacity: 0.45;
+  }
+}
+
+.sc-forma-theme .sc-forma-inverse {
+  color-scheme: dark;
+  --dt-color-background: var(--forma-ink);
+  --dt-color-foreground: var(--forma-paper);
+  --dt-color-muted: oklch(0.27 0.028 280);
+  --dt-color-muted-foreground: oklch(0.78 0.02 285);
+  --dt-color-border: oklch(0.39 0.033 285);
+  --dt-color-input: oklch(0.64 0.04 285);
+  --dt-color-primary: oklch(0.8 0.13 295);
+  --dt-color-primary-foreground: var(--forma-ink);
+  --dt-color-ring: oklch(0.8 0.13 295);
+}
+
+.sc-forma-canvas {
+  background-image: radial-gradient(
+    var(--dt-color-border) 0.7px,
+    transparent 0.7px
+  );
+  background-size: 16px 16px;
+}
+
+.sc-forma-theme[data-motion="paused"] *,
+.sc-forma-theme[data-motion="paused"] *::before,
+.sc-forma-theme[data-motion="paused"] *::after {
+  animation-play-state: paused !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+@media (forced-colors: active) {
+  .sc-forma-ribbon {
+    display: none;
+  }
+  .sc-forma-canvas {
+    background-image: none;
+  }
+  .sc-forma-theme [data-selected="true"],
+  .sc-forma-theme [aria-selected="true"] {
+    outline: 2px solid Highlight;
+  }
+}
