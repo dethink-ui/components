@@ -80,6 +80,78 @@ export const recipeCategories: RecipeCategoryMeta[] = [
 
 export const recipesCatalog: RecipeMeta[] = [
   {
+    slug: "forma-ai",
+    title: "Forma AI agents studio",
+    category: "marketing",
+    summary:
+      "An ivory-and-violet AI studio landing with an animated ribbon hero, runnable agent lab, selectable specialists, integration previews, engagement scopes, and a local project brief.",
+    tags: ["AI", "Agents", "Automation", "Motion"],
+    components: [
+      "hero-text-animation",
+      "light-streaks-background",
+      "navigation-menu",
+      "reveal-button",
+      "button",
+      "icon-button",
+      "badge",
+      "card",
+      "card-scroller",
+      "tabs",
+      "progress",
+      "steps",
+      "avatar-group",
+      "accordion",
+      "dialog",
+      "form-field",
+      "input",
+      "textarea",
+      "select",
+      "separator",
+      "feedback-states",
+    ],
+    sourceFile: "recipes/forma-ai.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "HeroTextAnimation introduces the headline and LightStreaksBackground adds subtle movement. A page motion control and reactive reduced-motion preference disable decorative motion. Agent stage changes use transform/opacity transitions and clean up pending timers when reset, switched or unmounted.",
+    accessibilityNotes:
+      "Keyboard-operable tabs and agent cards, named integration/brief dialogs, explicit human approval in sample runs, labelled validation and local completion. Forma is fictional; no AI calls, tool connections or brief transmission occur.",
+    responsiveNotes:
+      "The agent canvas stacks in reading order, specialist cards become a touch-friendly scroller, and navigation wraps. Copy forma-ai-data.ts, forma-ai-lab.tsx, forma-ai-brief.tsx, forma-ai.css and public/recipes/forma-ai with the source. Usage and asset provenance are documented in docs/recipes/forma-ai.md.",
+  },
+  {
+    slug: "news-outlet",
+    title: "The Current news outlet",
+    category: "marketing",
+    summary:
+      "A rich broadcast-style news homepage with an editorial hero, generated photography, latest and most-read stories, search, saved articles, video previews, opinion, and a newsletter demo.",
+    tags: ["News", "Editorial", "Landing", "Media"],
+    components: [
+      "navigation-menu",
+      "typography",
+      "card",
+      "badge",
+      "button",
+      "icon-button",
+      "separator",
+      "tabs",
+      "avatar",
+      "dialog",
+      "form-field",
+      "input",
+      "feedback-states",
+    ],
+    sourceFile: "recipes/news-outlet.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Static editorial layout with Dethink's reduced-motion-aware control feedback. Tabs use the none motion preset; no page-level animation runtime or autoplay is introduced.",
+    accessibilityNotes:
+      "Semantic sections, named controls, keyboard-operable tabs, focus-managed story/search/saved dialogs, announced saved state, and labelled newsletter validation. Reporting and writers are fictional; Watch uses still previews and sample transcripts, and signup does not send email.",
+    responsiveNotes:
+      "The lead grid stacks on mobile; section links wrap and story grids become one or two columns. Copy news-outlet-data.ts, news-outlet-reader.tsx, news-outlet-newsletter.tsx, news-outlet.css, and public/recipes/news-outlet alongside the main source. See docs/recipes/news-outlet.md for asset provenance and integration notes.",
+  },
+  {
     slug: "automation-landing",
     title: "Automation software landing",
     category: "marketing",

@@ -1,0 +1,75 @@
+/* Local editorial tokens; controls retain Dethink's semantic styling contract. */
+.sc-news-theme {
+  color-scheme: light;
+  --dt-color-background: oklch(1 0 0);
+  --dt-color-foreground: oklch(0.19 0.006 260);
+  --dt-color-muted: oklch(0.96 0.003 260);
+  --dt-color-muted-foreground: oklch(0.46 0.009 260);
+  --dt-color-border: oklch(0.85 0.004 260);
+  --dt-color-input: oklch(0.54 0.008 260);
+  --dt-color-primary: oklch(0.53 0.22 27);
+  --dt-color-primary-foreground: oklch(1 0 0);
+  --dt-color-ring: oklch(0.53 0.22 27);
+  --news-night: oklch(0.17 0.008 260);
+  --news-on-night: oklch(0.99 0 0);
+  --news-night-muted: oklch(0.78 0.005 260);
+  --news-night-border: oklch(0.35 0.008 260);
+  --news-red: oklch(0.53 0.22 27);
+  font-family: var(--font-sans);
+}
+
+:root[data-theme="dark"] .sc-news-theme {
+  color-scheme: dark;
+  --dt-color-background: oklch(0.2 0.006 260);
+  --dt-color-foreground: oklch(0.96 0.002 260);
+  --dt-color-muted: oklch(0.25 0.008 260);
+  --dt-color-muted-foreground: oklch(0.76 0.008 260);
+  --dt-color-border: oklch(0.37 0.008 260);
+  --dt-color-input: oklch(0.6 0.008 260);
+  --dt-color-primary: oklch(0.75 0.15 25);
+  --dt-color-primary-foreground: oklch(0.15 0.01 25);
+  --dt-color-ring: oklch(0.75 0.15 25);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .sc-news-theme,
+  :root[data-theme="system"] .sc-news-theme {
+    color-scheme: dark;
+    --dt-color-background: oklch(0.2 0.006 260);
+    --dt-color-foreground: oklch(0.96 0.002 260);
+    --dt-color-muted: oklch(0.25 0.008 260);
+    --dt-color-muted-foreground: oklch(0.76 0.008 260);
+    --dt-color-border: oklch(0.37 0.008 260);
+    --dt-color-input: oklch(0.6 0.008 260);
+    --dt-color-primary: oklch(0.75 0.15 25);
+    --dt-color-primary-foreground: oklch(0.15 0.01 25);
+    --dt-color-ring: oklch(0.75 0.15 25);
+  }
+}
+
+/* Inverse editorial bands also theme their nested Dethink controls. */
+.sc-news-theme .sc-news-inverse {
+  --dt-color-background: var(--news-night);
+  --dt-color-foreground: var(--news-on-night);
+  --dt-color-muted: oklch(0.28 0.008 260);
+  --dt-color-muted-foreground: var(--news-night-muted);
+  --dt-color-border: var(--news-night-border);
+  --dt-color-primary: oklch(0.75 0.15 25);
+  --dt-color-primary-foreground: var(--news-night);
+  --dt-color-ring: var(--news-on-night);
+}
+
+.sc-news-theme :is(a, button):focus-visible {
+  outline: 2px solid var(--dt-color-ring);
+  outline-offset: 4px;
+}
+
+@media (forced-colors: active) {
+  .sc-news-theme [aria-pressed="true"],
+  .sc-news-theme [aria-selected="true"] {
+    outline: 2px solid Highlight;
+  }
+  .sc-news-theme .sc-news-inverse {
+    border: 1px solid CanvasText;
+  }
+}
