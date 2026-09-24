@@ -80,6 +80,39 @@ export const recipeCategories: RecipeCategoryMeta[] = [
 
 export const recipesCatalog: RecipeMeta[] = [
   {
+    slug: "professional-cv",
+    title: "Alex Morgan professional CV",
+    category: "marketing",
+    summary:
+      "An editorial designer portfolio with generated photography, filterable case studies, a career timeline, CV download, local contact flow and thoughtful motion.",
+    tags: ["Portfolio", "CV", "Personal", "Motion"],
+    components: [
+      "badge",
+      "button",
+      "card",
+      "card-scroller",
+      "separator",
+      "timeline",
+      "dialog",
+      "accordion",
+      "avatar",
+      "icon-button",
+      "form-field",
+      "input",
+      "select",
+      "textarea",
+    ],
+    sourceFile: "recipes/professional-cv.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Bounded transform/opacity reveals and project filtering use Motion. A page pause control and reactive system preference disable decorative movement; server-rendered content remains readable.",
+    accessibilityNotes:
+      "Named navigation, pressed project filters, focus-managed case studies and contact validation, a real text CV download and local-only completion. People, projects and testimonials are fictional.",
+    responsiveNotes:
+      "Hero and career columns stack in reading order. Copy the companion source, theme and public assets; see docs/recipes/professional-cv.md.",
+  },
+  {
     slug: "forma-ai",
     title: "Forma AI agents studio",
     category: "marketing",
