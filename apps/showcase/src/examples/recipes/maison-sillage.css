@@ -1,0 +1,72 @@
+.sc-sillage-theme {
+  color-scheme: light;
+  --dt-color-background: oklch(0.975 0.011 80);
+  --dt-color-foreground: oklch(0.26 0.038 25);
+  --dt-color-muted: oklch(0.937 0.017 70);
+  --dt-color-muted-foreground: oklch(0.47 0.026 30);
+  --dt-color-border: oklch(0.86 0.022 70);
+  --dt-color-input: oklch(0.55 0.035 25);
+  --dt-color-primary: oklch(0.32 0.095 15);
+  --dt-color-primary-foreground: oklch(0.98 0.01 80);
+  --dt-color-ring: var(--dt-color-primary);
+  --sillage-wine: oklch(0.27 0.073 15);
+  --sillage-paper: oklch(0.975 0.011 80);
+  --sillage-gold: oklch(0.8 0.09 70);
+  font-family: var(--font-sans);
+}
+:root[data-theme="dark"] .sc-sillage-theme {
+  color-scheme: dark;
+  --dt-color-background: oklch(0.2 0.025 20);
+  --dt-color-foreground: oklch(0.94 0.018 75);
+  --dt-color-muted: oklch(0.27 0.03 20);
+  --dt-color-muted-foreground: oklch(0.75 0.026 60);
+  --dt-color-border: oklch(0.39 0.04 25);
+  --dt-color-input: oklch(0.6 0.04 25);
+  --dt-color-primary: oklch(0.82 0.09 45);
+  --dt-color-primary-foreground: oklch(0.2 0.025 20);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .sc-sillage-theme,
+  :root[data-theme="system"] .sc-sillage-theme {
+    color-scheme: dark;
+    --dt-color-background: oklch(0.2 0.025 20);
+    --dt-color-foreground: oklch(0.94 0.018 75);
+    --dt-color-muted: oklch(0.27 0.03 20);
+    --dt-color-muted-foreground: oklch(0.75 0.026 60);
+    --dt-color-border: oklch(0.39 0.04 25);
+    --dt-color-input: oklch(0.6 0.04 25);
+    --dt-color-primary: oklch(0.82 0.09 45);
+    --dt-color-primary-foreground: oklch(0.2 0.025 20);
+  }
+}
+.sc-sillage-theme [id] {
+  scroll-margin-top: 10rem;
+}
+.sc-sillage-theme a:focus-visible {
+  outline: 2px solid var(--dt-color-ring);
+  outline-offset: 5px;
+}
+.sc-sillage-theme[data-motion="paused"] *,
+.sc-sillage-theme[data-motion="paused"] *::before,
+.sc-sillage-theme[data-motion="paused"] *::after {
+  animation: none !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+.sc-sillage-theme[data-motion="paused"] [data-card-scroller-item],
+.sc-sillage-theme[data-motion="paused"]
+  [data-card-scroller-item]
+  [data-slot="card"] {
+  scale: 1;
+  translate: none;
+  filter: none;
+}
+.sc-sillage-theme[data-motion="paused"] .group:hover img {
+  scale: none;
+  transform: none;
+}
+@media (forced-colors: active) {
+  .sc-sillage-theme [aria-pressed="true"] {
+    outline: 2px solid Highlight;
+  }
+}
