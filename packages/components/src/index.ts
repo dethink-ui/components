@@ -1655,3 +1655,4 @@ export {
   type BottomBarSize,
 } from "./components/bottom-bar";
 export * from "./components/resizable";
+export * from "./components/file-upload";

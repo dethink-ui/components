@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "file-upload",
+  "type": "registry:ui",
+  "title": "File Upload",
+  "description": "Compact file selection with restrictions and recoverable per-file feedback.",
+  "dependencies": ["react-aria-components", "lucide-react"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "button"],
+  "files": [
+    {
+      "path": "packages/components/src/components/file-upload/use-file-upload.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/file-upload/file-upload.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/file-upload/file-upload-validation.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/file-upload/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}
