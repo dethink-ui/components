@@ -3,6 +3,8 @@
 Open-code React components for SaaS dashboards, internal tools, B2B products,
 and AI-native apps.
 
+Explore the [components showcase](https://components.dethink.co.uk/).
+
 Dethink gives teams ready-made building blocks without hiding the code. You can
 use the package in this workspace or copy components through the registry as the
 registry grows.
