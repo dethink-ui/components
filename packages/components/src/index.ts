@@ -1656,3 +1656,5 @@ export {
 } from "./components/bottom-bar";
 export * from "./components/resizable";
 export * from "./components/file-upload";
+export * from "./components/inspector";
+export * from "./components/kanban-board";

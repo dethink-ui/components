@@ -30,6 +30,20 @@ export interface ComponentGroup extends ComponentTypeMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "kanban-board",
+    name: "KanbanBoard",
+    description:
+      "Move cards between stages with drag, keyboard, or a menu, with WIP limits and optimistic saves.",
+    type: "data-display",
+  },
+  {
+    slug: "inspector",
+    name: "Inspector",
+    description:
+      "Edit the current selection in a compact, sectioned property panel.",
+    type: "forms",
+  },
+  {
     slug: "file-upload",
     name: "FileUpload",
     description:
