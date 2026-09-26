@@ -7,6 +7,7 @@ import {
   type ChangeEventHandler,
   type InputHTMLAttributes,
   type MouseEventHandler,
+  type MutableRefObject,
   type Ref,
 } from "react";
 import { cn } from "../../utils/cn";
@@ -77,7 +78,8 @@ function setRef<T>(ref: Ref<T> | undefined, node: T | null) {
   }
 
   if (ref) {
-    ref.current = node;
+    // React 18 types expose object refs as read-only.
+    (ref as MutableRefObject<T | null>).current = node;
   }
 }
 

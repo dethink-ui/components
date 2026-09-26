@@ -1,0 +1,64 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kanban-board",
+  "type": "registry:ui",
+  "title": "KanbanBoard",
+  "description": "Data-driven kanban board with a Pointer Events drag engine (velocity tilt, lift, spring settle, edge auto-scroll), keyboard pick-up/move/drop and a Move menu for single-pointer users, live announcements, soft and hard WIP limits with header meters, collapsible columns and swimlanes, canMove vetoes, and optimistic async moves that roll back with retry.",
+  "dependencies": ["lucide-react", "motion"],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "dropdown-menu"],
+  "files": [
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board-model.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board-types.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board-utils.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board-parts.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board-card.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board-menu.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/use-kanban-board-state.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/use-kanban-keyboard.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/use-kanban-pointer.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/kanban-board.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/kanban-board/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/provider-portal.tsx",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

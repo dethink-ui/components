@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "inspector",
+  "type": "registry:ui",
+  "title": "Inspector",
+  "description": "Compact, sectioned property panel for editing the current selection with controlled dot-path values and number, text, switch, and select controls.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "empty-state",
+    "input",
+    "number-input",
+    "select",
+    "switch"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/inspector/inspector-path.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/inspector/inspector.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/inspector/inspector-controls.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/inspector/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}

@@ -182,6 +182,20 @@
   },
   "icon-button": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "input": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "inspector": {
+    "direct": ["react"],
+    "shared": [
+      "clsx",
+      "motion",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
+  "kanban-board": {
+    "direct": ["lucide-react", "motion", "react", "react-dom"],
+    "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
+  },
   "label": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "light-streaks-background": {
     "direct": ["motion", "react"],

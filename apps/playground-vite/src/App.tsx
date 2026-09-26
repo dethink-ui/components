@@ -2,6 +2,12 @@ import { CalendarDate, parseDateTime } from "@internationalized/date";
 import { useState } from "react";
 import {
   FileUpload,
+  KanbanBoard,
+  Inspector,
+  InspectorNumber,
+  InspectorProperty,
+  InspectorSection,
+  InspectorSwitch,
   ChatBubble,
   ShaderHeroText,
   LiquidMeshBackground,
@@ -306,6 +312,15 @@ export function App() {
                 return Promise.resolve();
               }}
             />
+          </section>
+          <section
+            aria-label="Inspector smoke"
+            className="border-border max-w-xs rounded-lg border"
+          >
+            <InspectorSmoke />
+          </section>
+          <section aria-label="KanbanBoard smoke" className="h-80">
+            <KanbanSmoke />
           </section>
           <section aria-label="Shader backgrounds smoke" className="grid gap-4">
             <LiquidMeshBackground animate={false} className="rounded-xl p-6">
@@ -1272,5 +1287,45 @@ export function App() {
         }}
       />
     </DethinkProvider>
+  );
+}
+
+function InspectorSmoke() {
+  const [value, setValue] = useState<Record<string, unknown>>({
+    layout: { width: 120 },
+    visible: true,
+  });
+
+  return (
+    <Inspector value={value} onValueChange={(next) => setValue(next)}>
+      <InspectorSection title="Inspector smoke">
+        <InspectorProperty path="layout.width" label="Width">
+          <InspectorNumber min={0} unit="px" />
+        </InspectorProperty>
+        <InspectorProperty path="visible" label="Visible">
+          <InspectorSwitch />
+        </InspectorProperty>
+      </InspectorSection>
+    </Inspector>
+  );
+}
+
+function KanbanSmoke() {
+  const [items, setItems] = useState([
+    { id: "k1", columnId: "todo", title: "Write brief" },
+    { id: "k2", columnId: "doing", title: "Build board" },
+  ]);
+
+  return (
+    <KanbanBoard
+      className="h-full"
+      columns={[
+        { id: "todo", title: "To do" },
+        { id: "doing", title: "Doing", wipLimit: { max: 2, mode: "hard" } },
+      ]}
+      items={items}
+      onItemsChange={setItems}
+      renderCard={(item) => <span>{item.title}</span>}
+    />
   );
 }
