@@ -217,6 +217,14 @@ describe("chart core", () => {
     expect(summarizeSeries([])).toEqual({ count: 0 });
   });
 
+  it("formats with a fixed default locale so SSR and hydration agree", () => {
+    expect(
+      formatChartValue(4_200_000, { style: "currency", currency: "USD" }),
+    ).toBe("$4.2M");
+    expect(formatChartValue(12_940, { locale: "de-DE" })).toBe("12.940");
+    expect(formatChartValue(1284.5, { locale: "de-DE" })).toBe("1.284,5");
+  });
+
   it("formats values compactly only once they get large", () => {
     expect(formatChartValue(1284, { locale: "en-US" })).toBe("1,284");
     expect(formatChartValue(12_940, { locale: "en-US" })).toBe("12.9K");

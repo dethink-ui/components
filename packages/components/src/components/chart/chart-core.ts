@@ -403,8 +403,15 @@ export function summarizeSeries(values: readonly ChartValue[]): SeriesSummary {
 }
 
 export interface FormatChartValueOptions extends Intl.NumberFormatOptions {
+  /**
+   * Defaults to "en-US" rather than the runtime locale, so server and client
+   * render identical text and hydration never mismatches. Pass the user's
+   * locale explicitly to localize.
+   */
   locale?: string | string[];
 }
+
+export const DEFAULT_CHART_LOCALE = "en-US";
 
 const formatterCache = new Map<string, Intl.NumberFormat>();
 
@@ -414,7 +421,7 @@ const formatterCache = new Map<string, Intl.NumberFormat>();
  */
 export function formatChartValue(
   value: number,
-  { locale, ...options }: FormatChartValueOptions = {},
+  { locale = DEFAULT_CHART_LOCALE, ...options }: FormatChartValueOptions = {},
 ): string {
   const compact =
     options.notation === undefined && Math.abs(value) >= 10_000
