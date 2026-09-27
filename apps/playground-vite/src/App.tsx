@@ -3,7 +3,9 @@ import { useState } from "react";
 import {
   FileUpload,
   KanbanBoard,
+  KpiGroup,
   Sparkline,
+  StatTile,
   Inspector,
   InspectorNumber,
   InspectorProperty,
@@ -322,6 +324,22 @@ export function App() {
           </section>
           <section aria-label="KanbanBoard smoke" className="h-80">
             <KanbanSmoke />
+          </section>
+          <section aria-label="StatTile smoke" className="max-w-3xl">
+            <KpiGroup variant="joined" aria-label="KPI smoke">
+              <StatTile
+                label="Revenue"
+                value={128430}
+                delta={8.2}
+                comparison="vs last month"
+                trend={[3, 5, 4, 7, 8]}
+              />
+              <StatTile
+                label="Churn"
+                value="1.8%"
+                delta={{ value: -0.4, positiveDirection: "down" }}
+              />
+            </KpiGroup>
           </section>
           <section
             aria-label="Sparkline smoke"

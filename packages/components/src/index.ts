@@ -1661,3 +1661,5 @@ export * from "./components/kanban-board";
 
 export * from "./components/chart";
 export * from "./components/sparkline";
+export * from "./components/delta-badge";
+export * from "./components/stat-tile";

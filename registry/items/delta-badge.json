@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "delta-badge",
+  "type": "registry:ui",
+  "title": "Delta Badge",
+  "description": "Signed change indicator with a direction icon, meaning-aware success or destructive tone (positiveDirection handles metrics where down is good), a neutral threshold, and a screen-reader comparison sentence.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "badge", "chart-core"],
+  "files": [
+    {
+      "path": "packages/components/src/components/delta-badge/delta-badge.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/delta-badge/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}

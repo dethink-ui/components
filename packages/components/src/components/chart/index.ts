@@ -1,4 +1,5 @@
 export {
+  DEFAULT_CHART_LOCALE,
   areaPath,
   barPath,
   definedSegments,

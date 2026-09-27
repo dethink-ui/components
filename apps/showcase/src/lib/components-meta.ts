@@ -521,6 +521,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "delta-badge",
+    name: "DeltaBadge",
+    description:
+      "Show a signed change with an icon, colored by whether the change is good for the metric.",
+    type: "data-display",
+  },
+  {
     slug: "data-table",
     name: "DataTable",
     description:
@@ -532,6 +539,13 @@ export const componentCatalog: ComponentMeta[] = [
     name: "SlotPlanner",
     description:
       "Manage available time slots and let users request bookings in their time zone.",
+    type: "data-display",
+  },
+  {
+    slug: "stat-tile",
+    name: "StatTile",
+    description:
+      "Lead with a KPI: headline value, change indicator and inline trend, grouped into a responsive row.",
     type: "data-display",
   },
   {

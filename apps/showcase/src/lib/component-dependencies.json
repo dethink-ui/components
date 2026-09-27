@@ -133,6 +133,7 @@
     ],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "delta-badge": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "dethink-base": {
     "direct": ["clsx", "react", "tailwind-merge"],
     "shared": []
@@ -311,6 +312,7 @@
     "direct": ["motion", "react"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "stat-tile": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "steps": {
     "direct": ["motion", "react"],
     "shared": ["clsx", "tailwind-merge"]
