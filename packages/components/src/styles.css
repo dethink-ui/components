@@ -22,6 +22,17 @@
   --color-info-foreground: var(--dt-color-info-foreground);
   --color-timeline-border: var(--dt-color-timeline-border);
   --color-timeline-rail: var(--dt-color-timeline-rail);
+  --color-chart-1: var(--dt-color-chart-1);
+  --color-chart-2: var(--dt-color-chart-2);
+  --color-chart-3: var(--dt-color-chart-3);
+  --color-chart-4: var(--dt-color-chart-4);
+  --color-chart-5: var(--dt-color-chart-5);
+  --color-chart-6: var(--dt-color-chart-6);
+  --color-chart-7: var(--dt-color-chart-7);
+  --color-chart-8: var(--dt-color-chart-8);
+  --color-chart-grid: var(--dt-color-chart-grid);
+  --color-chart-axis: var(--dt-color-chart-axis);
+  --color-chart-crosshair: var(--dt-color-chart-crosshair);
   --font-sans: var(--dt-font-body);
   --font-heading: var(--dt-font-heading);
   --font-mono: var(--dt-font-mono);
@@ -273,6 +284,36 @@
     filter: blur(1px);
     opacity: 0.16;
     animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+}
+
+/* Chart entrance motion. Components apply these only under motion-safe. */
+@keyframes dt-chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dt-chart-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dt-chart-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes dt-chart-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
   }
 }
 
@@ -1094,6 +1135,18 @@
     --dt-color-info-foreground-light: oklch(0.985 0 0);
     --dt-color-timeline-border-light: oklch(0.84 0 0);
     --dt-color-timeline-rail-light: oklch(0.82 0 0);
+    /* Categorical chart palette: fixed slot order, CVD-validated against the light and dark surfaces. Override per theme. */
+    --dt-color-chart-1-light: #2a78d6;
+    --dt-color-chart-2-light: #eb6834;
+    --dt-color-chart-3-light: #1baf7a;
+    --dt-color-chart-4-light: #eda100;
+    --dt-color-chart-5-light: #e87ba4;
+    --dt-color-chart-6-light: #008300;
+    --dt-color-chart-7-light: #4a3aa7;
+    --dt-color-chart-8-light: #e34948;
+    --dt-color-chart-grid-light: oklch(0.93 0 0);
+    --dt-color-chart-axis-light: oklch(0.86 0 0);
+    --dt-color-chart-crosshair-light: oklch(0.62 0 0);
     --dt-color-background-dark: oklch(0.145 0 0);
     --dt-color-foreground-dark: oklch(0.985 0 0);
     --dt-color-muted-dark: oklch(0.22 0 0);
@@ -1113,6 +1166,17 @@
     --dt-color-info-foreground-dark: oklch(0.12 0.02 255);
     --dt-color-timeline-border-dark: oklch(0.42 0 0);
     --dt-color-timeline-rail-dark: oklch(0.46 0 0);
+    --dt-color-chart-1-dark: #3987e5;
+    --dt-color-chart-2-dark: #d95926;
+    --dt-color-chart-3-dark: #199e70;
+    --dt-color-chart-4-dark: #c98500;
+    --dt-color-chart-5-dark: #d55181;
+    --dt-color-chart-6-dark: #008300;
+    --dt-color-chart-7-dark: #9085e9;
+    --dt-color-chart-8-dark: #e66767;
+    --dt-color-chart-grid-dark: oklch(0.25 0 0);
+    --dt-color-chart-axis-dark: oklch(0.34 0 0);
+    --dt-color-chart-crosshair-dark: oklch(0.62 0 0);
     --dt-font-body: ui-sans-serif, system-ui, sans-serif;
     --dt-font-heading: ui-sans-serif, system-ui, sans-serif;
     --dt-font-mono:
@@ -1164,6 +1228,17 @@
     --dt-color-info-foreground: var(--dt-color-info-foreground-light);
     --dt-color-timeline-border: var(--dt-color-timeline-border-light);
     --dt-color-timeline-rail: var(--dt-color-timeline-rail-light);
+    --dt-color-chart-1: var(--dt-color-chart-1-light);
+    --dt-color-chart-2: var(--dt-color-chart-2-light);
+    --dt-color-chart-3: var(--dt-color-chart-3-light);
+    --dt-color-chart-4: var(--dt-color-chart-4-light);
+    --dt-color-chart-5: var(--dt-color-chart-5-light);
+    --dt-color-chart-6: var(--dt-color-chart-6-light);
+    --dt-color-chart-7: var(--dt-color-chart-7-light);
+    --dt-color-chart-8: var(--dt-color-chart-8-light);
+    --dt-color-chart-grid: var(--dt-color-chart-grid-light);
+    --dt-color-chart-axis: var(--dt-color-chart-axis-light);
+    --dt-color-chart-crosshair: var(--dt-color-chart-crosshair-light);
   }
 
   [data-theme="light"] {
@@ -1189,6 +1264,17 @@
     --dt-color-info-foreground: var(--dt-color-info-foreground-light);
     --dt-color-timeline-border: var(--dt-color-timeline-border-light);
     --dt-color-timeline-rail: var(--dt-color-timeline-rail-light);
+    --dt-color-chart-1: var(--dt-color-chart-1-light);
+    --dt-color-chart-2: var(--dt-color-chart-2-light);
+    --dt-color-chart-3: var(--dt-color-chart-3-light);
+    --dt-color-chart-4: var(--dt-color-chart-4-light);
+    --dt-color-chart-5: var(--dt-color-chart-5-light);
+    --dt-color-chart-6: var(--dt-color-chart-6-light);
+    --dt-color-chart-7: var(--dt-color-chart-7-light);
+    --dt-color-chart-8: var(--dt-color-chart-8-light);
+    --dt-color-chart-grid: var(--dt-color-chart-grid-light);
+    --dt-color-chart-axis: var(--dt-color-chart-axis-light);
+    --dt-color-chart-crosshair: var(--dt-color-chart-crosshair-light);
   }
 
   [data-theme="system"] {
@@ -1214,6 +1300,17 @@
     --dt-color-info-foreground: var(--dt-color-info-foreground-light);
     --dt-color-timeline-border: var(--dt-color-timeline-border-light);
     --dt-color-timeline-rail: var(--dt-color-timeline-rail-light);
+    --dt-color-chart-1: var(--dt-color-chart-1-light);
+    --dt-color-chart-2: var(--dt-color-chart-2-light);
+    --dt-color-chart-3: var(--dt-color-chart-3-light);
+    --dt-color-chart-4: var(--dt-color-chart-4-light);
+    --dt-color-chart-5: var(--dt-color-chart-5-light);
+    --dt-color-chart-6: var(--dt-color-chart-6-light);
+    --dt-color-chart-7: var(--dt-color-chart-7-light);
+    --dt-color-chart-8: var(--dt-color-chart-8-light);
+    --dt-color-chart-grid: var(--dt-color-chart-grid-light);
+    --dt-color-chart-axis: var(--dt-color-chart-axis-light);
+    --dt-color-chart-crosshair: var(--dt-color-chart-crosshair-light);
   }
 
   .dark,
@@ -1240,6 +1337,17 @@
     --dt-color-info-foreground: var(--dt-color-info-foreground-dark);
     --dt-color-timeline-border: var(--dt-color-timeline-border-dark);
     --dt-color-timeline-rail: var(--dt-color-timeline-rail-dark);
+    --dt-color-chart-1: var(--dt-color-chart-1-dark);
+    --dt-color-chart-2: var(--dt-color-chart-2-dark);
+    --dt-color-chart-3: var(--dt-color-chart-3-dark);
+    --dt-color-chart-4: var(--dt-color-chart-4-dark);
+    --dt-color-chart-5: var(--dt-color-chart-5-dark);
+    --dt-color-chart-6: var(--dt-color-chart-6-dark);
+    --dt-color-chart-7: var(--dt-color-chart-7-dark);
+    --dt-color-chart-8: var(--dt-color-chart-8-dark);
+    --dt-color-chart-grid: var(--dt-color-chart-grid-dark);
+    --dt-color-chart-axis: var(--dt-color-chart-axis-dark);
+    --dt-color-chart-crosshair: var(--dt-color-chart-crosshair-dark);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -1266,6 +1374,17 @@
       --dt-color-info-foreground: var(--dt-color-info-foreground-dark);
       --dt-color-timeline-border: var(--dt-color-timeline-border-dark);
       --dt-color-timeline-rail: var(--dt-color-timeline-rail-dark);
+      --dt-color-chart-1: var(--dt-color-chart-1-dark);
+      --dt-color-chart-2: var(--dt-color-chart-2-dark);
+      --dt-color-chart-3: var(--dt-color-chart-3-dark);
+      --dt-color-chart-4: var(--dt-color-chart-4-dark);
+      --dt-color-chart-5: var(--dt-color-chart-5-dark);
+      --dt-color-chart-6: var(--dt-color-chart-6-dark);
+      --dt-color-chart-7: var(--dt-color-chart-7-dark);
+      --dt-color-chart-8: var(--dt-color-chart-8-dark);
+      --dt-color-chart-grid: var(--dt-color-chart-grid-dark);
+      --dt-color-chart-axis: var(--dt-color-chart-axis-dark);
+      --dt-color-chart-crosshair: var(--dt-color-chart-crosshair-dark);
     }
   }
 

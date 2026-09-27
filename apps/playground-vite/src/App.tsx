@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   FileUpload,
   KanbanBoard,
+  Sparkline,
   Inspector,
   InspectorNumber,
   InspectorProperty,
@@ -321,6 +322,18 @@ export function App() {
           </section>
           <section aria-label="KanbanBoard smoke" className="h-80">
             <KanbanSmoke />
+          </section>
+          <section
+            aria-label="Sparkline smoke"
+            className="border-border grid max-w-xl gap-3 rounded-lg border p-4"
+          >
+            <Sparkline data={[4, 8, 6, 12, 10, 15]} label="Sparkline smoke" />
+            <Sparkline
+              data={[4, 8, 6, 12, 10, 15]}
+              variant="bar"
+              color="chart-3"
+              label="Sparkline bar smoke"
+            />
           </section>
           <section aria-label="Shader backgrounds smoke" className="grid gap-4">
             <LiquidMeshBackground animate={false} className="rounded-xl p-6">
