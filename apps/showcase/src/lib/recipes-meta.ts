@@ -155,6 +155,37 @@ export const recipesCatalog: RecipeMeta[] = [
       "The hero, catalog and story stack naturally on narrow screens; the bag stays within the viewport. Copy the maison-sillage companion modules, stylesheet and public assets together. See docs/recipes/maison-sillage.md.",
   },
   {
+    slug: "robot-landing",
+    title: "Ollo modular robot landing",
+    category: "marketing",
+    summary:
+      "A vibrant launch page for a fictional modular home robot. The robot stands centre stage in a pinned scene, and as you scroll its Blender-rendered parts fly apart while each feature appears beside the part it describes, followed by a module card scroller, spec tabs, and a finish configurator.",
+    tags: ["Landing", "3D", "Scroll", "Product"],
+    components: [
+      "hero-text-animation",
+      "button",
+      "badge",
+      "card",
+      "card-scroller",
+      "progress",
+      "tabs",
+      "radio-group",
+      "checkbox",
+      "switch",
+      "form-field",
+      "separator",
+    ],
+    sourceFile: "recipes/robot-landing.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Motion's useScroll pins a 640vh scene: the headline lifts away, the robot rises onto its pedestal, then the head, hands, core, and legs detach in sequence while feature callouts slide in beside them and the colour field rotates. With prefers-reduced-motion nothing scrubs: the scene switches between an assembled still and an exploded still with every feature listed.",
+    accessibilityNotes:
+      "The pinned scene is labelled by the page heading, feature callouts are real headings and text, and part layers are decorative. A step navigation lets keyboard users jump to each part, faded hero actions become inert, and the configurator uses labelled form fields with a polite status message. The single dark theme passes axe contrast checks.",
+    responsiveNotes:
+      "At extra-large widths every feature stays listed around the exploded robot; below that the active feature appears in one glass card under the robot, the step navigation hides on phones, and the module scroller becomes a one-up touch rail.",
+  },
+  {
     slug: "professional-cv",
     title: "Alex Morgan professional CV",
     category: "marketing",

@@ -24,3 +24,4 @@ yarn-error.log*
 .vercel/
 apps/showcase/public/r/
 .env*
+videos/
