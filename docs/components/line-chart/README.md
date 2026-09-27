@@ -51,7 +51,7 @@ leave gaps, and an isolated value draws as a dot.
 The plot is one tab stop. Focus lands on the latest point; Left/Right (or
 Down/Up) move one point, Home and End jump to the ends, and Escape clears the
 crosshair. Each move is announced politely, for example
-`Mar: Revenue $43,900, Expenses $34,800`. The plot is described by a summary of
+`Mar: Revenue $43.9K, Expenses $34.8K`. The plot is described by a summary of
 its series and range, and the table is always available to assistive technology.
 
 ## States
@@ -64,7 +64,7 @@ its series and range, and the table is always available to assistive technology.
 
 Build other charts from the same parts: `ChartContainer` (measures itself and
 maps `series` to CSS variables; read them with `useChart()` or a render
-function), `ChartGrid`, `ChartAxis`, `ChartLine`, `ChartCrosshair`,
+function), `ChartGrid`, `ChartAxis`, `ChartLine`, `ChartArea`, `ChartCrosshair`,
 `ChartTooltip`, `ChartLegend` and `ChartDataTable`. Scales and paths come from
 `chart-core`.
 

@@ -3,7 +3,7 @@
   "name": "chart",
   "type": "registry:ui",
   "title": "Chart",
-  "description": "Headless SVG chart primitives: a measuring ChartContainer that maps a series config to CSS variables, hairline grid, tabular axes, 2px lines with ringed end markers, a crosshair, a text-only tooltip, a toggleable legend and a data-table equivalent. No chart library.",
+  "description": "Headless SVG chart primitives: a measuring ChartContainer that maps a series config to CSS variables, hairline grid, tabular axes, 2px lines with ringed end markers, gradient area washes, a crosshair, a text-only tooltip, a toggleable legend, a data-table equivalent and the shared single-axis chart shell. No chart library.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base", "chart-core"],
@@ -12,6 +12,13 @@
       "path": "packages/components/src/components/chart/chart.tsx",
       "type": "registry:component"
     },
-    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+    {
+      "path": "packages/components/src/components/chart/cartesian-chart.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
   ]
 }

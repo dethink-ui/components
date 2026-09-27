@@ -5,6 +5,7 @@ import {
   KanbanBoard,
   BarList,
   LineChart,
+  AreaChart,
   KpiGroup,
   Sparkline,
   StatTile,
@@ -343,6 +344,23 @@ export function App() {
               aria-label="LineChart smoke"
               index="month"
               height={200}
+              series={[
+                { key: "revenue", label: "Revenue" },
+                { key: "costs", label: "Costs" },
+              ]}
+              data={[
+                { month: "Jan", revenue: 4000, costs: 2400 },
+                { month: "Feb", revenue: 3000, costs: 1398 },
+                { month: "Mar", revenue: 5000, costs: 2800 },
+              ]}
+            />
+          </section>
+          <section aria-label="AreaChart smoke" className="max-w-2xl">
+            <AreaChart
+              aria-label="AreaChart smoke"
+              index="month"
+              height={200}
+              stacked
               series={[
                 { key: "revenue", label: "Revenue" },
                 { key: "costs", label: "Costs" },
