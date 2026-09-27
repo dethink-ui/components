@@ -63,14 +63,14 @@ export interface StatTileProps extends Omit<
 }
 
 const rootClasses =
-  "group/stat-tile relative flex min-w-0 flex-col gap-[var(--dt-space-3)] rounded-xl border border-border bg-background p-[var(--dt-space-5)] text-foreground outline-none [--dt-chart-surface:var(--dt-color-background)] " +
+  "group/stat-tile relative flex min-w-0 flex-col gap-[var(--dt-space-3)] rounded-xl border border-border bg-background p-[var(--dt-space-5)] text-foreground outline-hidden [--dt-chart-surface:var(--dt-color-background)] " +
   // Inside a joined KpiGroup the group owns the frame. Each tile draws a
   // hairline on its start and top edges and is pulled 1px under the frame, so
   // outer edges clip away and only the dividers between tiles remain.
   "group-data-[variant=joined]/kpi:-ms-px group-data-[variant=joined]/kpi:-mt-px group-data-[variant=joined]/kpi:rounded-none group-data-[variant=joined]/kpi:border-0 group-data-[variant=joined]/kpi:shadow-[inset_1px_1px_0_var(--dt-color-border)] rtl:group-data-[variant=joined]/kpi:shadow-[inset_-1px_1px_0_var(--dt-color-border)]";
 
 const interactiveClasses =
-  "cursor-pointer motion-safe:transition-[border-color,box-shadow,background-color] motion-safe:duration-200 hover:border-foreground/25 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring group-data-[variant=joined]/kpi:focus-visible:-outline-offset-2";
+  "cursor-pointer motion-safe:transition-[border-color,box-shadow,background-color] motion-safe:duration-200 hover:border-foreground/25 hover:bg-muted/40 focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring group-data-[variant=joined]/kpi:focus-visible:-outline-offset-2";
 
 const valueSizeClasses: Record<StatTileSize, string> = {
   sm: "text-2xl",

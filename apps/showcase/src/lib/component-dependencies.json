@@ -21,6 +21,7 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "badge": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "bar-list": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "bottom-bar": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "box": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "breadcrumb": {

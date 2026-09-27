@@ -310,6 +310,12 @@
   }
 }
 
+@keyframes dt-chart-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
 @keyframes dt-chart-pop {
   from {
     opacity: 0;

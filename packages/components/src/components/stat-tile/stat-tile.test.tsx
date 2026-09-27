@@ -115,6 +115,7 @@ describe("StatTile", () => {
     expect(link).toHaveAttribute("href", "/revenue");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
     expect(link).toHaveAttribute("data-interactive", "true");
+    expect(link.className).toContain("focus-visible:outline-solid");
     expect(within(link).getByText("Revenue")).toBeInTheDocument();
   });
 
