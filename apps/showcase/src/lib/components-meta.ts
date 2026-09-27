@@ -542,6 +542,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "area-chart",
+    name: "AreaChart",
+    description:
+      "Show volume over time as overlapping or stacked areas with a crosshair tooltip, keyboard readout and table view.",
+    type: "data-display",
+  },
+  {
     slug: "data-table",
     name: "DataTable",
     description:

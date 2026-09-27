@@ -2,6 +2,7 @@ import {
   createContext,
   forwardRef,
   useContext,
+  useId,
   type CSSProperties,
   type HTMLAttributes,
   type ReactNode,
@@ -9,11 +10,14 @@ import {
 } from "react";
 import { cn } from "../../utils/cn";
 import {
+  areaPath,
   definedSegments,
+  isFiniteValue,
   linePath,
   resolveChartColor,
   type ChartColor,
   type ChartCurve,
+  type ChartPoint,
   type ChartValue,
   type LinearScale,
 } from "./chart-core";
@@ -363,6 +367,123 @@ export function ChartLine({
           style={{ animation: motion }}
         />
       ) : null}
+    </g>
+  );
+}
+
+export interface ChartAreaProps extends Omit<
+  SVGAttributes<SVGGElement>,
+  "color" | "opacity" | "values" | "x" | "y"
+> {
+  /** Upper edge per index, in value space. Missing values leave a gap. */
+  values: readonly ChartValue[];
+  /**
+   * Lower edge in value space: one value for a flat floor, or one per index
+   * for stacked bands. Defaults to zero, clamped into the y-domain.
+   */
+  baseline?: number | readonly ChartValue[];
+  /** Pixel x for each index. */
+  x: (index: number) => number;
+  y: LinearScale;
+  /** CSS color, usually a series' `colorVar`. */
+  color: string;
+  curve?: ChartCurve;
+  dimmed?: boolean;
+  animate?: boolean;
+  /** Wash opacity at the top of the plot; it fades out towards the bottom. */
+  opacity?: number;
+}
+
+const fadeClasses =
+  "motion-safe:animate-[dt-chart-fade_600ms_var(--ease-control)_300ms_both]";
+
+/**
+ * A vertical gradient wash between a series and its baseline. It carries no
+ * stroke: pair it with `ChartLine` so the edge reads at full strength.
+ */
+export function ChartArea({
+  values,
+  baseline,
+  x,
+  y,
+  color,
+  curve = "monotone",
+  dimmed = false,
+  animate = true,
+  opacity = 0.24,
+  className,
+  style,
+  ...props
+}: ChartAreaProps) {
+  const gradientId = `${useId().replace(/[^a-zA-Z0-9_-]/g, "")}-area`;
+  const [floor, ceiling] = y.domain;
+  const flat =
+    typeof baseline === "number"
+      ? baseline
+      : Math.min(
+          Math.max(0, Math.min(floor, ceiling)),
+          Math.max(floor, ceiling),
+        );
+  const lower = (i: number) =>
+    typeof baseline === "object" ? baseline[i] : flat;
+
+  // Runs of indexes where both edges are defined; a single index has no area.
+  const segments: { top: ChartPoint[]; bottom: ChartPoint[] }[] = [];
+  let current: (typeof segments)[number] | undefined;
+  values.forEach((value, i) => {
+    const base = lower(i);
+    if (isFiniteValue(value) && isFiniteValue(base)) {
+      current ??= { top: [], bottom: [] };
+      current.top.push({ x: x(i), y: y(value) });
+      current.bottom.push({ x: x(i), y: y(base) });
+    } else if (current) {
+      segments.push(current);
+      current = undefined;
+    }
+  });
+  if (current) segments.push(current);
+
+  // One gradient across the whole plot height, so equal values wash equally.
+  const [rangeBottom, rangeTop] = y.range;
+
+  return (
+    <g
+      data-slot="chart-area"
+      data-dimmed={dimmed ? "" : undefined}
+      className={cn(
+        "motion-safe:transition-opacity motion-safe:duration-200",
+        className,
+      )}
+      style={{ opacity: dimmed ? 0.2 : undefined, ...style }}
+      {...props}
+    >
+      <defs>
+        <linearGradient
+          id={gradientId}
+          gradientUnits="userSpaceOnUse"
+          x1={0}
+          x2={0}
+          y1={rangeTop}
+          y2={rangeBottom}
+        >
+          <stop offset={0} style={{ stopColor: color, stopOpacity: opacity }} />
+          <stop
+            offset={1}
+            style={{ stopColor: color, stopOpacity: opacity * 0.1 }}
+          />
+        </linearGradient>
+      </defs>
+      {segments.map((segment, i) =>
+        segment.top.length > 1 ? (
+          <path
+            key={i}
+            d={areaPath(segment.top, segment.bottom, curve)}
+            fill={`url(#${gradientId})`}
+            className={fadeClasses}
+            style={{ animation: animate ? undefined : "none" }}
+          />
+        ) : null,
+      )}
     </g>
   );
 }

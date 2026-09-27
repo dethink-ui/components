@@ -4,6 +4,7 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "alert": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
+  "area-chart": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "async-select": {
     "direct": ["react", "react-aria", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
