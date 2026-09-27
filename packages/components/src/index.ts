@@ -1658,3 +1658,6 @@ export * from "./components/resizable";
 export * from "./components/file-upload";
 export * from "./components/inspector";
 export * from "./components/kanban-board";
+
+export * from "./components/chart";
+export * from "./components/sparkline";

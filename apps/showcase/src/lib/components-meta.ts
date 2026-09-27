@@ -535,6 +535,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "sparkline",
+    name: "Sparkline",
+    description:
+      "Show a compact trend inline as a line, gradient area, or bars in the chart palette.",
+    type: "data-display",
+  },
+  {
     slug: "table",
     name: "Table",
     description: "Display data in rows and columns.",
