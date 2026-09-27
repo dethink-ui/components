@@ -24,6 +24,7 @@ import { HushAndHearthRecipe } from "@/examples/recipes/hush-and-hearth";
 import { IntegrationsHubRecipe } from "@/examples/recipes/integrations-hub";
 import { InvoiceApprovalDeskRecipe } from "@/examples/recipes/invoice-approval-desk";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
+import { RobotLandingRecipe } from "@/examples/recipes/robot-landing";
 import { RelayLandingRecipe } from "@/examples/recipes/relay-landing";
 import { LumenLandingRecipe } from "@/examples/recipes/lumen-landing";
 import { ReleaseReadinessRecipe } from "@/examples/recipes/release-readiness";
@@ -43,6 +44,7 @@ import {
 const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
   "beacon-landing": BeaconLandingRecipe,
   "maison-sillage": MaisonSillageRecipe,
+  "robot-landing": RobotLandingRecipe,
   "professional-cv": ProfessionalCvRecipe,
   "forma-ai": FormaAiRecipe,
   "news-outlet": NewsOutletRecipe,
