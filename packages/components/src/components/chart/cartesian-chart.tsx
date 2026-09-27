@@ -86,15 +86,25 @@ export interface CartesianLayout {
   /** Where the crosshair marks a series at an index, in value space. */
   pointValue: (key: string, index: number) => ChartValue;
   render: (context: CartesianMarksContext) => ReactNode;
+  /**
+   * Half the width the marks occupy around an index's centre, for a band
+   * layout, so the tooltip opens beside the marks rather than the whole slot.
+   */
+  markHalfWidth?: (step: number) => number;
 }
 
 export interface CartesianMarksContext {
+  /** Pixel x of an index: the point, or the centre of its band. */
   x: (index: number) => number;
+  /** Width of one index's band (the spacing between points for "point"). */
+  step: number;
   y: LinearScale;
   /** Pixel y of the plot's bottom edge. */
   bottom: number;
   active: number | undefined;
   highlighted: string | undefined;
+  /** Series under the pointer, for charts whose marks carry `data-series`. */
+  hovered: string | undefined;
 }
 
 export interface CartesianChartBaseProps extends Omit<
@@ -104,6 +114,11 @@ export interface CartesianChartBaseProps extends Omit<
   /** Names the widget ("line" → "line chart") and prefixes its data-slots. */
   kind: string;
   layout: (visible: readonly ResolvedChartSeries[]) => CartesianLayout;
+  /**
+   * "point" puts indexes on the plot edges with a crosshair line and dots;
+   * "band" gives each index an equal slot and highlights the whole slot.
+   */
+  xLayout?: "point" | "band";
 }
 
 const MARGIN = { top: 8, right: 8, bottom: 24 };
@@ -132,7 +147,7 @@ function evenlySpacedIndexes(count: number, maxTicks: number) {
   // Always label the latest point; drop the tick before it if they would crowd.
   const last = count - 1;
   if (indexes.at(-1) !== last) {
-    if (last - indexes.at(-1)! < step / 2) indexes.pop();
+    if (last - indexes.at(-1)! <= step / 2) indexes.pop();
     indexes.push(last);
   }
   return indexes;
@@ -168,6 +183,7 @@ export const CartesianChart = forwardRef<
       kind,
       layout,
       legend,
+      xLayout = "point",
       loading = false,
       loadingLabel = "Loading…",
       onHiddenSeriesChange,
@@ -191,6 +207,7 @@ export const CartesianChart = forwardRef<
     const showTable = showTableProp ?? showTableState;
     const [activeIndex, setActiveIndex] = useState<number>();
     const [highlighted, setHighlighted] = useState<string>();
+    const [hovered, setHovered] = useState<string>();
     const [announcement, setAnnouncement] = useState("");
 
     const format = (value: number) =>
@@ -370,12 +387,20 @@ export const CartesianChart = forwardRef<
                 [0, Math.max(1, data.length - 1)],
                 [left, right],
               );
+              const band = xLayout === "band";
+              const step = band
+                ? (right - left) / Math.max(1, data.length)
+                : (right - left) / Math.max(1, data.length - 1);
               const x = (i: number) =>
-                data.length === 1 ? (left + right) / 2 : xScale(i);
+                band
+                  ? left + step * (i + 0.5)
+                  : data.length === 1
+                    ? (left + right) / 2
+                    : xScale(i);
               const positions = data.map((_, i) => x(i));
               const xTicks = evenlySpacedIndexes(
                 data.length,
-                Math.max(2, Math.floor((right - left) / 80)),
+                Math.max(2, Math.floor((right - left) / (band ? 64 : 80))),
               );
               const active =
                 activeIndex !== undefined && activeIndex < data.length
@@ -388,6 +413,13 @@ export const CartesianChart = forwardRef<
                 setActiveIndex(
                   nearestIndex(positions, (event.clientX - rect.left) * scaleX),
                 );
+                if (band) {
+                  const mark =
+                    event.target instanceof Element
+                      ? event.target.closest("[data-series]")
+                      : null;
+                  setHovered(mark?.getAttribute("data-series") ?? undefined);
+                }
               };
 
               const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -432,6 +464,7 @@ export const CartesianChart = forwardRef<
                   onPointerMove={onPointer}
                   onPointerDown={onPointer}
                   onPointerLeave={(event) => {
+                    setHovered(undefined);
                     if (document.activeElement !== event.currentTarget) {
                       setActiveIndex(undefined);
                     }
@@ -463,6 +496,17 @@ export const CartesianChart = forwardRef<
                       </clipPath>
                     </defs>
                     <ChartGrid ticks={ticks} y={y} x0={left} x1={right} />
+                    {band && active !== undefined ? (
+                      <rect
+                        data-slot="chart-band-highlight"
+                        x={x(active) - step / 2}
+                        y={MARGIN.top}
+                        width={step}
+                        height={Math.max(0, bottom - MARGIN.top)}
+                        rx={4}
+                        className="fill-muted pointer-events-none"
+                      />
+                    ) : null}
                     <g style={{ visibility: measured ? undefined : "hidden" }}>
                       <ChartAxis
                         orientation="left"
@@ -489,12 +533,14 @@ export const CartesianChart = forwardRef<
                     >
                       {marks.render({
                         x,
+                        step,
                         y,
                         bottom,
                         active,
                         highlighted,
+                        hovered,
                       })}
-                      {active !== undefined ? (
+                      {!band && active !== undefined ? (
                         <ChartCrosshair
                           x={x(active)}
                           top={MARGIN.top}
@@ -518,6 +564,12 @@ export const CartesianChart = forwardRef<
                   {active !== undefined && measured ? (
                     <ChartTooltip
                       x={x(active)}
+                      // Beside the band, so the tooltip never covers its bars.
+                      offset={
+                        band
+                          ? (marks.markHalfWidth?.(step) ?? step / 2) + 4
+                          : undefined
+                      }
                       containerWidth={width}
                       title={indexText(active)}
                       items={visible.map((item) => {
@@ -526,6 +578,7 @@ export const CartesianChart = forwardRef<
                           key: item.key,
                           label: item.label,
                           color: item.colorVar,
+                          active: band && hovered === item.key,
                           value: isFiniteValue(value)
                             ? format(value)
                             : undefined,

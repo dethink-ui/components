@@ -11,6 +11,7 @@ import {
 import { cn } from "../../utils/cn";
 import {
   areaPath,
+  barPath,
   definedSegments,
   isFiniteValue,
   linePath,
@@ -488,6 +489,118 @@ export function ChartArea({
   );
 }
 
+export interface ChartBarsProps extends Omit<
+  SVGAttributes<SVGGElement>,
+  "color" | "values" | "x" | "y"
+> {
+  /** Data end per index, in value space. Missing values draw no bar. */
+  values: readonly ChartValue[];
+  /**
+   * Baseline in value space: one value, or one per index for stacked
+   * segments. Defaults to zero, clamped into the y-domain.
+   */
+  baseline?: number | readonly ChartValue[];
+  /** Pixel x of each index's bar left edge. */
+  x: (index: number) => number;
+  /** Bar thickness in pixels. */
+  width: number;
+  y: LinearScale;
+  /** CSS color, usually a series' `colorVar`. */
+  color: string;
+  /**
+   * Pixels trimmed from the baseline end, per index. Stacked segments use it
+   * to leave a surface gap above the segment below.
+   */
+  inset?: number | ((index: number) => number);
+  /** Round the data end; stacked charts round only the outermost segment. */
+  rounded?: boolean | ((index: number) => boolean);
+  dimmed?: boolean;
+  animate?: boolean;
+}
+
+/**
+ * One series of vertical bars with 4px rounded data-ends and square baselines.
+ * Bars grow from the zero line on mount, under motion-safe only.
+ */
+export function ChartBars({
+  values,
+  baseline,
+  x,
+  width,
+  y,
+  color,
+  inset = 0,
+  rounded = true,
+  dimmed = false,
+  animate = true,
+  className,
+  style,
+  ...props
+}: ChartBarsProps) {
+  const [floor, ceiling] = y.domain;
+  const zero = Math.min(
+    Math.max(0, Math.min(floor, ceiling)),
+    Math.max(floor, ceiling),
+  );
+  const lower = (i: number) =>
+    typeof baseline === "object"
+      ? baseline[i]
+      : typeof baseline === "number"
+        ? baseline
+        : zero;
+
+  return (
+    <g
+      data-slot="chart-bars"
+      data-dimmed={dimmed ? "" : undefined}
+      className={cn(
+        "motion-safe:transition-opacity motion-safe:duration-200",
+        className,
+      )}
+      style={{ color, opacity: dimmed ? 0.2 : undefined, ...style }}
+      {...props}
+    >
+      {values.map((value, i) => {
+        const base = lower(i);
+        if (!isFiniteValue(value) || !isFiniteValue(base)) return null;
+        const end = y(value);
+        let start = y(base);
+        const trim = typeof inset === "function" ? inset(i) : inset;
+        // Move the baseline towards the data end, never past it.
+        if (trim > 0) {
+          const room = Math.abs(end - start);
+          start += Math.sign(end - start) * Math.min(trim, room);
+        }
+        const round = typeof rounded === "function" ? rounded(i) : rounded;
+        const d = barPath({
+          x: x(i),
+          width,
+          baseline: start,
+          value: end,
+          radius: round ? 4 : 0,
+        });
+        if (!d) return null;
+        return (
+          <path
+            key={i}
+            data-slot="chart-bar"
+            data-index={i}
+            d={d}
+            fill="currentColor"
+            className="motion-safe:animate-[dt-chart-grow_600ms_var(--ease-control)_both]"
+            style={{
+              // Every segment scales from the zero line, so stacks grow as one.
+              transformBox: "view-box",
+              transformOrigin: `0 ${y(zero)}px`,
+              animation: animate ? undefined : "none",
+            }}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
 export interface ChartCrosshairPoint {
   key: string;
   y: number;
@@ -552,6 +665,8 @@ export interface ChartTooltipItem {
   /** Formatted value, or undefined when the series has no value here. */
   value?: string;
   color: string;
+  /** Emphasise this row, for example the bar under the pointer. */
+  active?: boolean;
 }
 
 export interface ChartTooltipProps extends Omit<
@@ -564,6 +679,8 @@ export interface ChartTooltipProps extends Omit<
   x: number;
   /** Width of the positioned parent, to flip the tooltip near the edge. */
   containerWidth: number;
+  /** Gap between `x` and the tooltip's near edge. */
+  offset?: number;
   emptyValue?: string;
 }
 
@@ -577,24 +694,34 @@ export function ChartTooltip({
   items,
   x,
   containerWidth,
+  offset = 12,
   emptyValue = "—",
   className,
   style,
   ...props
 }: ChartTooltipProps) {
-  const flip = x > containerWidth / 2;
+  // Open towards the side with more room, and never grow past that room, so
+  // the tooltip stays inside the chart (and any card that clips it).
+  const roomRight = containerWidth - x - offset;
+  const roomLeft = x - offset;
+  const flip = roomLeft > roomRight;
+  const room = Math.max(0, Math.floor(flip ? roomLeft : roomRight));
   return (
     <div
       aria-hidden="true"
       data-slot="chart-tooltip"
       data-side={flip ? "left" : "right"}
       className={cn(
-        "border-border bg-background text-foreground pointer-events-none absolute top-[var(--dt-space-2)] z-10 grid w-max max-w-60 min-w-32 gap-[var(--dt-space-1)] rounded-md border px-[var(--dt-space-2-5)] py-[var(--dt-space-2)] text-xs shadow-md",
+        "border-border bg-background text-foreground pointer-events-none absolute top-[var(--dt-space-2)] z-10 grid w-max gap-[var(--dt-space-1)] rounded-md border px-[var(--dt-space-2-5)] py-[var(--dt-space-2)] text-xs shadow-md",
         className,
       )}
       style={{
         left: x,
-        transform: flip ? "translateX(calc(-100% - 12px))" : "translateX(12px)",
+        maxWidth: `min(15rem, ${room}px)`,
+        minWidth: `min(8rem, ${room}px)`,
+        transform: flip
+          ? `translateX(calc(-100% - ${offset}px))`
+          : `translateX(${offset}px)`,
         ...style,
       }}
       {...props}
@@ -606,7 +733,8 @@ export function ChartTooltip({
         <div
           key={item.key}
           data-slot="chart-tooltip-item"
-          className="grid grid-cols-[0.75rem_auto_minmax(0,1fr)] items-center gap-x-[var(--dt-space-2)]"
+          data-active={item.active ? "" : undefined}
+          className="data-active:bg-muted -mx-[var(--dt-space-1)] grid grid-cols-[0.75rem_auto_minmax(0,1fr)] items-center gap-x-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-1)]"
         >
           <span
             aria-hidden="true"

@@ -6,6 +6,7 @@ import {
   BarList,
   LineChart,
   AreaChart,
+  BarChart,
   KpiGroup,
   Sparkline,
   StatTile,
@@ -361,6 +362,22 @@ export function App() {
               index="month"
               height={200}
               stacked
+              series={[
+                { key: "revenue", label: "Revenue" },
+                { key: "costs", label: "Costs" },
+              ]}
+              data={[
+                { month: "Jan", revenue: 4000, costs: 2400 },
+                { month: "Feb", revenue: 3000, costs: 1398 },
+                { month: "Mar", revenue: 5000, costs: 2800 },
+              ]}
+            />
+          </section>
+          <section aria-label="BarChart smoke" className="max-w-2xl">
+            <BarChart
+              aria-label="BarChart smoke"
+              index="month"
+              height={200}
               series={[
                 { key: "revenue", label: "Revenue" },
                 { key: "costs", label: "Costs" },

@@ -1668,3 +1668,4 @@ export * from "./components/stat-tile";
 export * from "./components/bar-list";
 export * from "./components/line-chart";
 export * from "./components/area-chart";
+export * from "./components/bar-chart";
