@@ -535,6 +535,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "line-chart",
+    name: "LineChart",
+    description:
+      "Plot trends on one axis with a crosshair tooltip, keyboard readout, legend filtering and a table view.",
+    type: "data-display",
+  },
+  {
     slug: "data-table",
     name: "DataTable",
     description:

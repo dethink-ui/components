@@ -52,6 +52,7 @@
     "direct": ["react"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "chart": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "chart-core": { "direct": [], "shared": ["clsx", "react", "tailwind-merge"] },
   "chat": {
     "direct": ["react"],
@@ -204,6 +205,7 @@
     "direct": ["motion", "react"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "line-chart": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "link": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "liquid-mesh-background": {
     "direct": ["react"],

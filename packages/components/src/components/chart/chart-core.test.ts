@@ -221,6 +221,10 @@ describe("chart core", () => {
     expect(
       formatChartValue(4_200_000, { style: "currency", currency: "USD" }),
     ).toBe("$4.2M");
+    // Whole compact currency never gains a trailing ".0" (hydration-safe).
+    expect(
+      formatChartValue(20_000, { style: "currency", currency: "USD" }),
+    ).toBe("$20K");
     expect(formatChartValue(12_940, { locale: "de-DE" })).toBe("12.940");
     expect(formatChartValue(1284.5, { locale: "de-DE" })).toBe("1.284,5");
   });
