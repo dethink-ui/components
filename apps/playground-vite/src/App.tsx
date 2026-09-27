@@ -4,6 +4,7 @@ import {
   FileUpload,
   KanbanBoard,
   BarList,
+  LineChart,
   KpiGroup,
   Sparkline,
   StatTile,
@@ -334,6 +335,22 @@ export function App() {
                 { label: "Direct", value: 4200 },
                 { label: "Search", value: 3100 },
                 { label: "Social", value: 900 },
+              ]}
+            />
+          </section>
+          <section aria-label="LineChart smoke" className="max-w-2xl">
+            <LineChart
+              aria-label="LineChart smoke"
+              index="month"
+              height={200}
+              series={[
+                { key: "revenue", label: "Revenue" },
+                { key: "costs", label: "Costs" },
+              ]}
+              data={[
+                { month: "Jan", revenue: 4000, costs: 2400 },
+                { month: "Feb", revenue: 3000, costs: 1398 },
+                { month: "Mar", revenue: 5000, costs: 2800 },
               ]}
             />
           </section>

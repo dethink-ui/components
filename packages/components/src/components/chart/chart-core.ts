@@ -425,7 +425,13 @@ export function formatChartValue(
 ): string {
   const compact =
     options.notation === undefined && Math.abs(value) >= 10_000
-      ? ({ notation: "compact", maximumFractionDigits: 1 } as const)
+      ? // Pin the fraction digits: engines disagree on the default for
+        // compact currency ($20.0K vs $20K), which breaks hydration.
+        ({
+          notation: "compact",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 1,
+        } as const)
       : // Whole amounts drop trailing zeros ($9,310, not $9,310.00) while
         // fractional ones keep them ($12.50).
         ({

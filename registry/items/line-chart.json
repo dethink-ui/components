@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "line-chart",
+  "type": "registry:ui",
+  "title": "Line Chart",
+  "description": "Multi-series line chart on a single y-axis with a crosshair tooltip listing every series, one-tab-stop keyboard navigation with a live readout, an automatic toggleable legend that keeps series colors stable, hover dimming, a table view and reduced-motion-safe draw-in.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chart-core", "chart"],
+  "files": [
+    {
+      "path": "packages/components/src/components/line-chart/line-chart.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/line-chart/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}
