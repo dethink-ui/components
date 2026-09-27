@@ -549,6 +549,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "bar-chart",
+    name: "BarChart",
+    description:
+      "Compare categories or periods with grouped or stacked bars, per-bar hover, a keyboard readout and a table view.",
+    type: "data-display",
+  },
+  {
     slug: "data-table",
     name: "DataTable",
     description:
