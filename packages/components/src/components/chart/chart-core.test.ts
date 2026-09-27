@@ -225,6 +225,13 @@ describe("chart core", () => {
     expect(formatChartValue(1284.5, { locale: "de-DE" })).toBe("1.284,5");
   });
 
+  it("drops trailing zeros only from whole currency amounts", () => {
+    const usd = { style: "currency", currency: "USD" } as const;
+    expect(formatChartValue(9310, usd)).toBe("$9,310");
+    expect(formatChartValue(12.5, usd)).toBe("$12.50");
+    expect(formatChartValue(48_210, usd)).toBe("$48.2K");
+  });
+
   it("formats values compactly only once they get large", () => {
     expect(formatChartValue(1284, { locale: "en-US" })).toBe("1,284");
     expect(formatChartValue(12_940, { locale: "en-US" })).toBe("12.9K");

@@ -426,7 +426,12 @@ export function formatChartValue(
   const compact =
     options.notation === undefined && Math.abs(value) >= 10_000
       ? ({ notation: "compact", maximumFractionDigits: 1 } as const)
-      : ({ maximumFractionDigits: 2 } as const);
+      : // Whole amounts drop trailing zeros ($9,310, not $9,310.00) while
+        // fractional ones keep them ($12.50).
+        ({
+          maximumFractionDigits: 2,
+          trailingZeroDisplay: "stripIfInteger",
+        } as Intl.NumberFormatOptions);
   const resolved = { ...compact, ...options };
   const cacheKey = JSON.stringify([locale, resolved]);
   let formatter = formatterCache.get(cacheKey);

@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   FileUpload,
   KanbanBoard,
+  BarList,
   KpiGroup,
   Sparkline,
   StatTile,
@@ -324,6 +325,17 @@ export function App() {
           </section>
           <section aria-label="KanbanBoard smoke" className="h-80">
             <KanbanSmoke />
+          </section>
+          <section aria-label="BarList smoke" className="max-w-md">
+            <BarList
+              aria-label="BarList smoke"
+              limit={2}
+              data={[
+                { label: "Direct", value: 4200 },
+                { label: "Search", value: 3100 },
+                { label: "Social", value: 900 },
+              ]}
+            />
           </section>
           <section aria-label="StatTile smoke" className="max-w-3xl">
             <KpiGroup variant="joined" aria-label="KPI smoke">

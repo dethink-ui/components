@@ -1663,3 +1663,4 @@ export * from "./components/chart";
 export * from "./components/sparkline";
 export * from "./components/delta-badge";
 export * from "./components/stat-tile";
+export * from "./components/bar-list";

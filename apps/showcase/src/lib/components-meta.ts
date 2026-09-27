@@ -528,6 +528,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "bar-list",
+    name: "BarList",
+    description:
+      "Rank categories with horizontal bars, aligned values, links, and a show-more limit.",
+    type: "data-display",
+  },
+  {
     slug: "data-table",
     name: "DataTable",
     description:
