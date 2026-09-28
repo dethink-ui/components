@@ -69,15 +69,65 @@ function Issues() {
 
 ## Fields and operators
 
-| Type          | Row value         | Operators                                                                                        | Default         |
-| ------------- | ----------------- | ------------------------------------------------------------------------------------------------ | --------------- |
-| `text`        | any (stringified) | contains, does not contain, is, is not, starts with, ends with, is empty, is not empty           | contains        |
-| `option`      | string (or array) | is any of / is, is none of / is not, is empty, is not empty                                      | is any of       |
-| `multiOption` | string array      | includes any of / includes, includes all of, includes none of / does not include, is (not) empty | includes any of |
+| Type          | Row value                                       | Operators                                                                                                                    | Default         |
+| ------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `text`        | any (stringified)                               | contains, does not contain, is, is not, starts with, ends with, is empty, is not empty                                       | contains        |
+| `number`      | number or numeric string                        | is, is not, is more than, is at least, is less than, is at most, is between, is (not) empty                                  | is              |
+| `date`        | `YYYY-MM-DD`, ISO date-time, `Date` or epoch ms | is, is before, is after, is between, is in the last / next N units, is in (this/last/next week, month, year), is (not) empty | is in the last  |
+| `boolean`     | `true` / `false`                                | is (Yes/No), is (not) empty                                                                                                  | is              |
+| `option`      | string (or array)                               | is any of / is, is none of / is not, is empty, is not empty                                                                  | is any of       |
+| `multiOption` | string array                                    | includes any of / includes, includes all of, includes none of / does not include, is (not) empty                             | includes any of |
 
 Text comparisons ignore case. When exactly one value is selected, list operators use their single-value label ("is" instead of "is any of"). `operators` restricts and orders the list for a field, and `defaultOperator` picks the one new chips start with.
 
-Number, date (with relative values that stay relative), boolean, custom types, facet counts and chip impact counts arrive in #130.
+### Typed values
+
+- **Numbers.** Values are numbers, and ranges are `[from, to]` (inclusive, in either order). Chips format values with `Intl.NumberFormat`, using `numberFormat` if set.
+- **Dates are calendar days.** Rows are read as days in the evaluation time zone:
+  - date-only strings are taken as-is;
+  - `Date` objects, timestamps and ISO date-times are converted into the zone.
+
+  Arithmetic runs on UTC midnights, so daylight-saving changes never move a row to another day. There is no time-of-day filtering.
+
+- **Relative dates stay relative.**
+  - `{ kind: "relative", amount: -7, unit: "day" }` means "7 days ago".
+  - `{ amount: 7, unit: "day" }` with "is in the last" means today and the 6 days before it.
+  - `{ kind: "relative", amount: -1, unit: "month" }` with "is in" means last month.
+
+  All of these resolve when the filter runs, so saved filters don't go stale.
+
+- **Evaluation options.** `createFilterPredicate(filter, fields, { now, timeZone, weekStartsOn })` and FilterBar's `evaluateOptions` control how relative dates resolve. `now` defaults to the current time. FilterBar fixes it at mount so its counts don't change between renders. Inject `now` on server-rendered pages so server and client output match.
+- **Booleans.** They match real `true`/`false` only; unset is "is empty". Labels come from `trueLabel` and `falseLabel`.
+- **Invalid values are skipped.** A value of the wrong shape (for example a string for "is more than") doesn't filter anything, and `validateFilter` reports it as `invalid-value`. Each operator declares a `valueKind`. Switching to an operator of another kind clears the value and opens the value editor.
+
+### Editors
+
+The value editor follows the operator:
+
+- a text box for text;
+- a searchable checklist for options;
+- Yes/No for booleans;
+- a number box or from/to boxes for numbers;
+- date presets (Today, Yesterday, Tomorrow, 7 and 30 days ago) plus a calendar;
+- a range calendar for date ranges;
+- duration presets (7, 14 and 30 days, 3 months, 1 year) plus an amount and unit;
+- a period list (this, last and next week, month and year).
+
+The calendars are the library's `Calendar` and `RangeCalendar`, shown inline in the popover. `locale` sets number, date and calendar formatting (default `en-US`).
+
+### Custom field types
+
+`defineFilterFieldType({ id, operators, defaultOperator, formatValue, renderEditor })` creates a type such as `user`, and you pass it as a field's `type`. Operators made with `defineFilterOperator` declare their `arity`, `valueKind`, `isValueValid` and an `evaluate(rowValue, value, context)` that receives `now`, `today`, `timeZone` and `weekStartsOn`. `formatValue` provides chip and sentence text. `renderEditor({ field, operator, value, onValueChange, onCommit })` renders the value editor. The AST stays plain JSON.
+
+## Counts: facets, impact and relax
+
+Pass `data` to FilterBar to get client-side counts. The helpers are also exported for your own UI: `computeFilterFacets`, `computeFilterImpact`, `countFilterMatches`, `findFilterRescue` and `useFilterInsights`.
+
+- **Facets.** Option and Yes/No pickers show how many rows each choice would match. The count applies every other condition but not the field's own, so it reflects what picking that choice would give. Options with zero matches are dimmed but still selectable. Screen readers hear "Open, 12 matching". Counts are only shown where they match what the pick would give: the condition being edited (or the group a new one joins) must sit under AND groups that aren't negated, the condition itself must not be negated, and its operator must be a built-in one that keeps the rows that have the value (option `is any of`, multi-option `includes any of` / `includes all of`, Yes/No `is`). Custom field types get no counts, even when an operator reuses a built-in id such as `is`, because their matching rules may differ. Otherwise, for example inside an OR group or with "is not", the picker shows no counts. `computeFilterFacets` takes the same position as `options.target` (`conditionId`, `parentId`, `operator`) and returns `undefined` when counts are not supported.
+- **Impact** (`showImpact`). Each chip shows how many rows it removes ("−42"): the matches without that condition minus the matches with it, which is also correct inside OR groups. A chip in an OR group can add rows instead; it shows "+3" and a negative impact value. The count is exposed as the chip's accessible description ("removes 42 rows" or "adds 3 rows").
+- **Rescue** (on by default when `data` is set). When nothing matches, the bar names the condition whose removal brings back the most rows and offers **Relax**. Relax removes that condition as a single undo step. The message is also announced with the result count.
+- **Result count.** With `data`, the result count is announced automatically. `resultCount` overrides it for server data.
+- **Cost.** Counts scale with rows × conditions and are memoized per filter. Facets are computed lazily when an option picker opens. For large or server-side data, compute counts on your server; a facet contract arrives in #135.
 
 ## Groups
 
@@ -146,10 +196,13 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 - `filter-commands.test.ts`: mixed nesting, depth and height, the shared depth limit, wrap/unwrap, move/shift, empty-group lifetime, negation flags.
 - `use-filter-state.test.tsx`: history, coalescing, limits, controlled mode, one undo step per group command.
 - `filter-bar.test.tsx` and `filter-bar.keyboard.test.tsx`: add flows, segment edits, roving focus, Backspace removal, undo focus recovery, controlled value, announcements, shortcut, composition.
+- `filter-dates.test.ts`: calendar days across time zones and DST, month clamping, week starts, relative resolution, formatting.
+- `filter-typed-operators.test.ts`: number/date/boolean matrices including empty values, invalid shapes, relative dates in other zones, a fixed `now`, a custom `user` type, and facets, impact and rescue.
+- `filter-typed-editors.test.tsx`: number and range, date presets, calendar, duration, period, Yes/No and option facet counts, custom editor, impact badge, Relax with undo, typed editors nested in the group editor.
 - `filter-group-editor.test.tsx`: group chip editor, advanced editor, add group and condition, wrap/move/negate/ungroup with undo, Alt+Arrow moves, scoped Backspace, depth limit, standalone rendering.
 - `filter-bar.a11y.test.tsx`: axe with chips, group chips and open editors. `filter-bar.ssr.test.tsx`: server render and hydration.
 - `pnpm registry:smoke:filter-bar` (and `:react18`): clean-consumer install of `filter-bar` + `data-table`, typecheck and Vite build.
 
 ## Out of scope for this slice
 
-Number/date/boolean types, facets and impact counts (#130); the text query bar (#132); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
+Time-of-day filtering and date-times in chips (planned with server mode); the text query bar (#132); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.

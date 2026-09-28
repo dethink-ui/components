@@ -166,7 +166,7 @@
     "shared": ["clsx", "tailwind-merge"]
   },
   "filter-bar": {
-    "direct": ["react", "react-aria-components"],
+    "direct": ["@internationalized/date", "react", "react-aria-components"],
     "shared": ["clsx", "react-aria", "tailwind-merge"]
   },
   "filter-core": {

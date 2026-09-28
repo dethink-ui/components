@@ -9,17 +9,24 @@ import { cn } from "../../utils/cn";
 import {
   getFilterOperatorLabel,
   type DescribeFilterOptions,
+  type FilterFacetTarget,
+  type FilterRescue,
 } from "./filter-core";
 import type {
+  FilterEvaluateOptions,
   FilterFields,
   FilterOperatorDefinition,
   FilterValue,
 } from "./filter-types";
+import {
+  defaultFilterEditorLabels,
+  type FilterEditorLabels,
+} from "./filter-value-editor";
 import type { FilterState } from "./use-filter-state";
 
 export type FilterBarSize = "sm" | "md";
 
-export interface FilterBarLabels {
+export interface FilterBarLabels extends FilterEditorLabels {
   toolbar: string;
   add: string;
   addFirst: string;
@@ -28,13 +35,9 @@ export interface FilterBarLabels {
   clear: string;
   undo: string;
   searchFields: string;
-  searchOptions: (fieldLabel: string) => string;
   fieldList: string;
   operatorList: string;
-  noResults: string;
   selectValue: string;
-  textValue: (fieldLabel: string) => string;
-  textPlaceholder: string;
   changeField: (fieldLabel: string) => string;
   changeOperator: (operatorLabel: string) => string;
   changeValue: (valueText: string) => string;
@@ -69,6 +72,13 @@ export interface FilterBarLabels {
   moveDown: string;
   nodeActions: (description: string) => string;
   maxDepthReached: (maxDepth: number) => string;
+  /**
+   * Screen-reader text for a chip's impact count: positive when the chip
+   * removes rows, negative when it adds them (an OR branch).
+   */
+  impact: (count: number) => string;
+  relax: string;
+  rescue: (description: string, count: number) => string;
   operator: (
     operator: FilterOperatorDefinition,
     value: FilterValue | undefined,
@@ -76,6 +86,7 @@ export interface FilterBarLabels {
 }
 
 export const defaultFilterBarLabels: FilterBarLabels = {
+  ...defaultFilterEditorLabels,
   toolbar: "Filters",
   add: "Filter",
   addFirst: "Add filter",
@@ -84,13 +95,9 @@ export const defaultFilterBarLabels: FilterBarLabels = {
   clear: "Clear",
   undo: "Undo filter change",
   searchFields: "Filter by…",
-  searchOptions: (fieldLabel) => `Search ${fieldLabel.toLowerCase()}`,
   fieldList: "Fields",
   operatorList: "Operators",
-  noResults: "No results.",
   selectValue: "Select…",
-  textValue: (fieldLabel) => `${fieldLabel} value`,
-  textPlaceholder: "Type a value",
   changeField: (fieldLabel) => `Change field, ${fieldLabel}`,
   changeOperator: (operatorLabel) => `Change operator, ${operatorLabel}`,
   changeValue: (valueText) => `Change value, ${valueText}`,
@@ -126,6 +133,14 @@ export const defaultFilterBarLabels: FilterBarLabels = {
   maxDepthReached: (maxDepth) =>
     `Groups can be nested ${maxDepth} levels deep.`,
   operator: getFilterOperatorLabel,
+  impact: (count) => {
+    const rows = Math.abs(count);
+
+    return `${count < 0 ? "adds" : "removes"} ${rows} ${rows === 1 ? "row" : "rows"}`;
+  },
+  relax: "Relax",
+  rescue: (description, count) =>
+    `No results. Removing “${description}” would show ${count}.`,
 };
 
 export interface FilterBarContextValue {
@@ -134,9 +149,23 @@ export interface FilterBarContextValue {
   addMenuOpen: boolean;
   collapseAfter: number;
   describeOptions: DescribeFilterOptions;
+  evaluateOptions: FilterEvaluateOptions;
   expanded: boolean;
+  /** Rows per value of a field, applying the other conditions. */
+  getFacets?: (
+    fieldKey: string,
+    target?: FilterFacetTarget,
+  ) => ReadonlyMap<string, number> | undefined;
+  /**
+   * Rows removed by each active condition, keyed by condition id. Negative
+   * when the condition adds rows (an OR branch).
+   */
+  impact?: ReadonlyMap<string, number>;
+  /** Most restrictive condition when nothing matches. */
+  rescue?: FilterRescue;
   fields: FilterFields;
   labels: FilterBarLabels;
+  locale: string;
   maxDepth: number;
   requestFocus: (element: HTMLElement | null | undefined) => void;
   setAddMenuOpen: (open: boolean) => void;
@@ -222,7 +251,7 @@ export const editorBackClasses =
   "inline-flex size-7 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring";
 
 export const editorPopoverClasses =
-  "w-[var(--dt-filter-editor-width,16rem)] p-[var(--dt-space-2)]";
+  "w-max min-w-[var(--dt-filter-editor-width,16rem)] p-[var(--dt-space-2)]";
 
 export function filterBarClassNames({
   className,

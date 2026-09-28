@@ -1,10 +1,17 @@
 export type {
   Filter,
+  BuiltInFilterFieldType,
   FilterCombinator,
   FilterCondition,
+  FilterDate,
+  FilterDateUnit,
   FilterDiff,
+  FilterDuration,
+  FilterEvaluateOptions,
+  FilterEvaluationContext,
   FilterField,
   FilterFieldType,
+  FilterFieldTypeDefinition,
   FilterFields,
   FilterGroup,
   FilterIssue,
@@ -14,21 +21,53 @@ export type {
   FilterOperatorDefinition,
   FilterOption,
   FilterValue,
+  FilterValueEditorRenderProps,
+  FilterWeekday,
 } from "./filter-types";
 export {
-  defaultFilterOperatorByType,
-  filterOperatorsByType,
+  isEmptyFilterOperator,
   isEmptyFilterValue,
+  isNotEmptyFilterOperator,
   multiOptionFilterOperators,
   optionFilterOperators,
   textFilterOperators,
 } from "./filter-operators";
+export {
+  booleanFilterOperators,
+  dateFilterOperators,
+  numberFilterOperators,
+} from "./filter-typed-operators";
+export {
+  builtInFilterFieldTypes,
+  defaultFilterOperatorByType,
+  defineFilterFieldType,
+  defineFilterOperator,
+  filterOperatorsByType,
+  resolveFilterFieldType,
+} from "./filter-field-types";
+export {
+  calendarDayInZone,
+  createFilterEvaluationContext,
+  endOfCalendarPeriod,
+  formatFilterDate,
+  formatFilterDuration,
+  isCalendarDay,
+  isFilterDate,
+  isFilterDuration,
+  resolveFilterDate,
+  shiftCalendarDay,
+  startOfCalendarPeriod,
+  toCalendarDay,
+} from "./filter-dates";
 export {
   DEFAULT_FILTER_MAX_DEPTH,
   addFilterNode,
   canAddFilterGroup,
   canWrapFilterNode,
   clearFilter,
+  computeFilterFacets,
+  computeFilterImpact,
+  countFilterMatches,
   createFilter,
   createFilterCondition,
   createFilterId,
@@ -41,6 +80,7 @@ export {
   evaluateFilter,
   findFilterNode,
   findFilterParent,
+  findFilterRescue,
   formatFilterValue,
   getDefaultFilterOperator,
   getFilterConditions,
@@ -51,8 +91,10 @@ export {
   getFilterOperatorLabel,
   getFilterOperators,
   isFilterConditionActive,
+  isFilterValueUsable,
   isFilterEmpty,
   normalizeFilter,
+  readFilterFieldValue,
   moveFilterNode,
   removeFilterNode,
   shiftFilterNode,
@@ -62,7 +104,11 @@ export {
   updateFilterGroup,
   validateFilter,
   wrapFilterNode,
+  type CreateFilterPredicateOptions,
   type DescribeFilterOptions,
+  type FilterFacetOptions,
+  type FilterFacetTarget,
+  type FilterRescue,
   type FilterDescribeLabels,
 } from "./filter-core";
 export {
@@ -74,21 +120,37 @@ export {
 export {
   FilterFieldPicker,
   FilterOperatorPicker,
-  FilterValueEditor,
   filterListItemClassNames,
   type FilterFieldPickerProps,
   type FilterOperatorPickerProps,
-  type FilterValueEditorProps,
 } from "./filter-editors";
 export {
-  FilterBar,
+  FilterValueEditor,
+  defaultFilterEditorLabels,
+  type FilterEditorLabels,
+  type FilterValueEditorProps,
+} from "./filter-value-editor";
+export {
+  defaultFilterTypedEditorLabels,
+  type FilterTypedEditorLabels,
+} from "./filter-typed-editors";
+export {
+  useFilterInsights,
+  type FilterInsights,
+  type UseFilterInsightsOptions,
+} from "./use-filter-insights";
+export {
+  FilterBarRescue,
+  type FilterBarRescueProps,
+} from "./filter-bar-rescue";
+export { FilterBar, type FilterBarProps } from "./filter-bar";
+export {
   FilterBarChips,
   FilterBarClear,
   FilterBarUndo,
   type FilterBarActionProps,
   type FilterBarChipsProps,
-  type FilterBarProps,
-} from "./filter-bar";
+} from "./filter-bar-chips";
 export {
   defaultFilterBarLabels,
   filterBarActionClassNames,

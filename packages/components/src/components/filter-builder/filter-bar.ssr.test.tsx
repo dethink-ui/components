@@ -99,4 +99,56 @@ describe("FilterBar SSR", () => {
     expect(markup).toContain('data-slot="filter-group-combinator"');
     expect(markup).toContain('data-depth="2"');
   });
+
+  it("renders counts and relative dates identically on server and client with an injected now", async () => {
+    const dateFields = defineFilterFields<{ due: string; open: boolean }>([
+      { key: "due", label: "Due", type: "date" },
+      { key: "open", label: "Open", type: "boolean" },
+    ]);
+    const rows = [
+      { due: "2026-09-30", open: true },
+      { due: "2026-09-29", open: false },
+    ];
+    const App = () => (
+      <FilterBar
+        fields={dateFields}
+        data={rows}
+        showImpact
+        evaluateOptions={{ now: Date.UTC(2026, 8, 30, 12) }}
+        defaultValue={createFilter({
+          id: "root",
+          children: [
+            createFilterCondition({
+              id: "due",
+              field: "due",
+              operator: "is",
+              value: { kind: "relative", amount: 0, unit: "day" },
+            }),
+          ],
+        })}
+      />
+    );
+    const markup = renderToString(<App />);
+
+    expect(markup).toContain('aria-label="Due is today"');
+    expect(markup).toContain("−1");
+    expect(markup).toContain("1 result");
+
+    const consoleError = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
+    const container = document.createElement("div");
+
+    container.innerHTML = markup;
+    await act(async () => {
+      hydrateRoot(container, <App />);
+    });
+
+    expect(
+      consoleError.mock.calls.some(([message]) =>
+        String(message).toLowerCase().includes("hydration"),
+      ),
+    ).toBe(false);
+    consoleError.mockRestore();
+  });
 });

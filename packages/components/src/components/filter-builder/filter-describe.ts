@@ -1,3 +1,4 @@
+import { resolveFilterFieldType } from "./filter-field-types";
 import { isEmptyFilterValue } from "./filter-operators";
 import {
   getFilterField,
@@ -10,6 +11,7 @@ import type {
   FilterField,
   FilterFields,
   FilterNode,
+  FilterOperatorDefinition,
   FilterValue,
 } from "./filter-types";
 
@@ -31,36 +33,46 @@ export const defaultFilterDescribeLabels: FilterDescribeLabels = {
 
 export interface DescribeFilterOptions {
   labels?: Partial<FilterDescribeLabels>;
+  /** Locale for numbers and dates. Defaults to "en-US" for SSR stability. */
+  locale?: string;
 }
 
-/** Human-readable value text, with option values mapped to their labels. */
+/**
+ * Readable value text from the field type's formatter: option labels,
+ * formatted numbers, "7 days ago", "this week", "Yes"… One string per listed
+ * value; ranges read as one "from – to" string.
+ */
 export function formatFilterValue(
-  field: Pick<FilterField, "options" | "type"> | undefined,
+  field: FilterField | undefined,
   value: FilterValue | undefined,
+  {
+    locale = "en-US",
+    operator,
+  }: { locale?: string; operator?: FilterOperatorDefinition } = {},
 ) {
-  if (isEmptyFilterValue(value) || value === undefined) {
+  if (value === undefined || isEmptyFilterValue(value)) {
     return [];
   }
 
-  const values = Array.isArray(value) ? value : [value];
-
-  return values.map((item) => {
-    const option = field?.options?.find(
-      (candidate) => candidate.value === String(item),
+  if (!field) {
+    return (Array.isArray(value) ? value : [value]).map((item) =>
+      typeof item === "object" ? JSON.stringify(item) : String(item),
     );
+  }
 
-    if (option) {
-      return option.label;
-    }
+  const format = resolveFilterFieldType(field).formatValue;
 
-    return field?.type === "text" ? `"${String(item)}"` : String(item);
-  });
+  if (!format) {
+    return (Array.isArray(value) ? value : [value]).map(String);
+  }
+
+  return format(value, field, { locale, operator });
 }
 
 export function describeFilterCondition<TData>(
   condition: FilterCondition,
   fields: FilterFields<TData>,
-  { labels: labelOverrides }: DescribeFilterOptions = {},
+  { labels: labelOverrides, locale }: DescribeFilterOptions = {},
 ) {
   const labels = { ...defaultFilterDescribeLabels, ...labelOverrides };
   const field = getFilterField(fields, condition.field);
@@ -71,7 +83,14 @@ export function describeFilterCondition<TData>(
   const operatorLabel = operator
     ? getFilterOperatorLabel(operator, condition.value)
     : condition.operator;
-  const values = formatFilterValue(field, condition.value);
+  const values = formatFilterValue(
+    field as FilterField | undefined,
+    condition.value,
+    {
+      locale,
+      operator,
+    },
+  );
   const valueText =
     operator?.arity === "none"
       ? ""

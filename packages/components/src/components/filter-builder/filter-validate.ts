@@ -5,7 +5,12 @@ import {
   getFilterConditions,
 } from "./filter-model";
 import { DEFAULT_FILTER_MAX_DEPTH } from "./filter-commands";
-import type { FilterFields, FilterIssue, FilterNode } from "./filter-types";
+import type {
+  FilterFields,
+  FilterIssue,
+  FilterNode,
+  FilterValue,
+} from "./filter-types";
 
 export function validateFilter<TData>(
   filter: FilterNode,
@@ -80,11 +85,14 @@ function validateConditions<TData>(
     }
 
     const isList = Array.isArray(condition.value);
+    const wrongShape = operator.isValueValid
+      ? !operator.isValueValid(condition.value as FilterValue)
+      : (operator.arity === "multiple" && !isList) ||
+        (operator.arity === "single" && isList) ||
+        (operator.arity === "range" &&
+          !(isList && (condition.value as unknown[]).length === 2));
 
-    if (
-      (operator.arity === "multiple" && !isList) ||
-      (operator.arity === "single" && isList)
-    ) {
+    if (wrongShape) {
       return [
         {
           nodeId: condition.id,
@@ -94,7 +102,11 @@ function validateConditions<TData>(
       ];
     }
 
-    if (field.options && Array.isArray(condition.value)) {
+    if (
+      field.options &&
+      operator.valueKind === "list" &&
+      Array.isArray(condition.value)
+    ) {
       const unknown = condition.value.filter(
         (value) => !field.options?.some((option) => option.value === value),
       );

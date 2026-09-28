@@ -8,7 +8,8 @@ import {
   getFilterField,
   isFilterConditionActive,
 } from "./filter-core";
-import { FilterFieldPicker, FilterValueEditor } from "./filter-editors";
+import { FilterFieldPicker } from "./filter-editors";
+import { FilterValueEditor } from "./filter-value-editor";
 import {
   BackIcon,
   PlusIcon,
@@ -43,7 +44,8 @@ export function FilterAddMenu({
   parentId,
 }: FilterAddMenuProps) {
   const context = useFilterBarContext("FilterAddMenu");
-  const { fields, labels, size, state } = context;
+  const { evaluateOptions, fields, getFacets, labels, locale, size, state } =
+    context;
   const isPrimary = parentId === undefined;
   const [localOpen, setLocalOpen] = useState(false);
   const localButtonRef = useRef<HTMLButtonElement>(null);
@@ -138,11 +140,16 @@ export function FilterAddMenu({
               </div>
               <FilterValueEditor
                 field={field}
+                operator={operator}
                 value={condition?.value}
-                searchLabel={labels.searchOptions(field.label)}
-                emptyLabel={labels.noResults}
-                textLabel={labels.textValue(field.label)}
-                textPlaceholder={field.placeholder ?? labels.textPlaceholder}
+                counts={getFacets?.(field.key, {
+                  conditionId: draft.conditionId,
+                  parentId,
+                  operator: operator.id,
+                })}
+                labels={labels}
+                locale={locale}
+                weekStartsOn={evaluateOptions.weekStartsOn}
                 onValueChange={(value) => {
                   if (condition) {
                     state.updateCondition(

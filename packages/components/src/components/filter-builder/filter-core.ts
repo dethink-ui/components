@@ -7,3 +7,4 @@ export * from "./filter-commands";
 export * from "./filter-validate";
 export * from "./filter-evaluate";
 export * from "./filter-describe";
+export * from "./filter-facets";

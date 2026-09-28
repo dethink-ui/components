@@ -47,7 +47,7 @@ export default function FilterBarPage() {
             wide
             file="filter-bar/issue-table.tsx"
             title="Filtering a DataTable"
-            description="The bar sits in the table's toolbar and createFilterPredicate filters the rows. Press F to add a filter, use the arrow keys to move between chip parts, Backspace to remove a chip, and Ctrl or Cmd+Z to undo."
+            description="The bar sits in the table's toolbar and createFilterPredicate filters the rows. Option lists show how many rows each choice would match, chips show how many rows they hide, and when nothing matches the bar suggests which chip to relax. Try Created is in the last 7 days, Estimate is at least 5, or Customer reported. Press F to add a filter, arrow keys to move between chip parts, Backspace to remove a chip, and Cmd or Ctrl+Z to undo."
           >
             <FilterBarIssueTable />
           </ExampleBlock>

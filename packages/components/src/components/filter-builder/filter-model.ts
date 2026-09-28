@@ -1,8 +1,5 @@
-import {
-  defaultFilterOperatorByType,
-  filterOperatorsByType,
-  isEmptyFilterValue,
-} from "./filter-operators";
+import { resolveFilterFieldType } from "./filter-field-types";
+import { isEmptyFilterValue } from "./filter-operators";
 import type {
   FilterCombinator,
   FilterCondition,
@@ -85,7 +82,7 @@ export function getFilterField<TData>(
 export function getFilterOperators(
   field: Pick<FilterField, "operators" | "type">,
 ): FilterOperatorDefinition[] {
-  const operators = filterOperatorsByType[field.type] ?? [];
+  const operators = resolveFilterFieldType(field).operators;
 
   if (!field.operators) {
     return operators;
@@ -112,7 +109,7 @@ export function getDefaultFilterOperator(
 ) {
   const operators = getFilterOperators(field);
   const preferred =
-    field.defaultOperator ?? defaultFilterOperatorByType[field.type];
+    field.defaultOperator ?? resolveFilterFieldType(field).defaultOperator;
 
   return (
     operators.find((operator) => operator.id === preferred) ?? operators[0]
@@ -131,6 +128,22 @@ export function getFilterOperatorLabel(
   return operator.label;
 }
 
+/** Whether a value can be used with an operator: present and well-shaped. */
+export function isFilterValueUsable(
+  operator: FilterOperatorDefinition,
+  value: FilterValue | undefined,
+) {
+  if (operator.arity === "none") {
+    return true;
+  }
+
+  if (value === undefined || isEmptyFilterValue(value)) {
+    return false;
+  }
+
+  return operator.isValueValid ? operator.isValueValid(value) : true;
+}
+
 /** Whether the condition filters rows: known field, operator and a value. */
 export function isFilterConditionActive<TData>(
   condition: FilterCondition,
@@ -145,7 +158,7 @@ export function isFilterConditionActive<TData>(
     return false;
   }
 
-  return operator.arity === "none" || !isEmptyFilterValue(condition.value);
+  return isFilterValueUsable(operator, condition.value);
 }
 
 export function isFilterEmpty(filter: FilterNode) {
