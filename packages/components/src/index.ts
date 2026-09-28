@@ -900,6 +900,15 @@ export {
   isFilterValueUsable,
   isFilterEmpty,
   normalizeFilter,
+  parseFilterQuery,
+  printFilterQuery,
+  getFilterQueryDefaultField,
+  getFilterSignature,
+  reconcileFilterIds,
+  getFilterQuerySegments,
+  getFilterQuerySuggestions,
+  getFilterQueryToken,
+  lexFilterQuery,
   readFilterFieldValue,
   moveFilterNode,
   removeFilterNode,
@@ -916,7 +925,25 @@ export {
   type FilterFacetTarget,
   type FilterRescue,
   type FilterDescribeLabels,
+  type FilterQueryError,
+  type FilterQueryErrorCode,
+  type FilterQueryOptions,
+  type FilterQueryParseResult,
+  type FilterQuerySegment,
+  type FilterQuerySegmentKind,
+  type FilterQuerySuggestion,
+  type FilterQueryToken,
+  type FilterQueryTokenKind,
 } from "./components/filter-builder/filter-core";
+export {
+  QueryInput,
+  type QueryInputProps,
+} from "./components/filter-builder/query-input";
+export {
+  defaultQueryInputLabels,
+  queryInputClassNames,
+  type QueryInputLabels,
+} from "./components/filter-builder/query-input-parts";
 export {
   useFilterState,
   type FilterCommitOptions,

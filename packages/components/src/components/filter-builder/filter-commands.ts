@@ -317,41 +317,87 @@ export function clearFilter(filter: Filter): Filter {
   return { ...filter, children: [] };
 }
 
+function withNot<TNode extends FilterNode>(node: TNode, not: boolean): TNode {
+  const { not: _previous, ...rest } = node;
+
+  return (not ? { ...rest, not: true } : rest) as TNode;
+}
+
 /**
- * Canonical form: removes empty non-root groups, unwraps single-child
- * groups and merges nested groups that share their parent's combinator.
+ * Canonical form, the shape the text query parses to:
+ * - empty non-root groups are removed;
+ * - single-child groups are unwrapped, moving a group's negation onto the
+ *   child;
+ * - nested groups that share their parent's combinator are merged;
+ * - a root holding one group takes that group's combinator and children,
+ *   and a negated root holding one condition negates the condition instead;
+ * - a root with at most one child uses "and", and `not: false` is dropped.
  */
 export function normalizeFilter(filter: Filter): Filter {
-  const normalizeGroup = (
-    group: FilterGroup,
-    isRoot: boolean,
-  ): FilterNode[] => {
-    const children = group.children.flatMap((child): FilterNode[] => {
+  const normalizeChildren = (group: FilterGroup): FilterNode[] =>
+    group.children.flatMap((child): FilterNode[] => {
       if (child.type === "condition") {
-        return [child];
+        return [withNot(child, Boolean(child.not))];
       }
 
-      const normalized = normalizeGroup(child, false);
+      const children = normalizeChildren(child);
+      const [only] = children;
 
-      if (normalized.length === 0) {
+      if (!only) {
         return [];
       }
 
-      const [only] = normalized;
+      if (children.length === 1) {
+        const unwrapped = withNot(
+          only,
+          Boolean(only.not) !== Boolean(child.not),
+        );
 
-      if (normalized.length === 1 && only && !child.not) {
-        return [only];
+        // The surfaced group may now share the parent's combinator.
+        return unwrapped.type === "group" &&
+          !unwrapped.not &&
+          unwrapped.combinator === group.combinator
+          ? unwrapped.children
+          : [unwrapped];
       }
 
       if (!child.not && child.combinator === group.combinator) {
-        return normalized;
+        return children;
       }
 
-      return [{ ...child, children: normalized }];
+      return [withNot({ ...child, children }, Boolean(child.not))];
     });
 
-    return isRoot ? [{ ...group, children }] : children;
-  };
+  let root: Filter = withNot(
+    { ...filter, children: normalizeChildren(filter) },
+    Boolean(filter.not),
+  );
 
-  return normalizeGroup(filter, true)[0] as Filter;
+  for (;;) {
+    const [only, ...rest] = root.children;
+
+    if (!only || rest.length > 0) {
+      break;
+    }
+
+    if (only.type === "group") {
+      root = withNot(
+        { ...root, combinator: only.combinator, children: only.children },
+        Boolean(root.not) !== Boolean(only.not),
+      );
+      continue;
+    }
+
+    if (root.not) {
+      root = withNot({ ...root, children: [withNot(only, !only.not)] }, false);
+    }
+
+    break;
+  }
+
+  if (root.children.length <= 1) {
+    root = withNot({ ...root, combinator: "and" }, Boolean(root.not));
+  }
+
+  return root.children.length === 0 ? withNot(root, false) : root;
 }

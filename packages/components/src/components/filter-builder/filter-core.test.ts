@@ -434,8 +434,44 @@ describe("filter commands", () => {
       "title",
       "p",
       "q",
-      "negated",
+      "r",
     ]);
+    // The negated group's NOT moves onto its only child.
+    expect(normalized.children[3]).toMatchObject({ id: "r", not: true });
+  });
+
+  it("hoists a lone root group and pushes root negation into one condition", () => {
+    const either = createFilter({
+      id: "either",
+      combinator: "or",
+      children: [
+        createFilterCondition({ id: "a", field: "title", operator: "isEmpty" }),
+        createFilterCondition({
+          id: "b",
+          field: "labels",
+          operator: "isEmpty",
+        }),
+      ],
+    });
+
+    expect(
+      normalizeFilter(createFilter({ id: "root", children: [either] })),
+    ).toMatchObject({ id: "root", combinator: "or", children: [{}, {}] });
+    expect(
+      normalizeFilter(
+        createFilter({
+          id: "root",
+          not: true,
+          combinator: "or",
+          children: [either.children[0]!],
+        }),
+      ),
+    ).toEqual({
+      type: "group",
+      id: "root",
+      combinator: "and",
+      children: [{ ...either.children[0], not: true }],
+    });
   });
 
   it("diffs filters by node id", () => {

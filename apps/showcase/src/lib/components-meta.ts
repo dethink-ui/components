@@ -37,6 +37,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "query-input",
+    name: "QueryInput",
+    description:
+      "Type a filter like status:open created:>-7d with autocomplete, token colors and exact error ranges, in sync with FilterBar chips.",
+    type: "data-display",
+  },
+  {
     slug: "kanban-board",
     name: "KanbanBoard",
     description:

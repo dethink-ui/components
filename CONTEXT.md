@@ -55,3 +55,14 @@ _Avoid_: Rule group, block, bracket
 The visual form of a condition in a FilterBar: field, operator and value
 segments plus a remove action, each editable in place.
 _Avoid_: Pill, token, tag
+
+**Query**:
+The text form of a filter, such as `status:open created:>-7d (assignee:ada OR
+labels:bug)`. Parsing a query gives a filter, and printing a filter gives its
+canonical query; the two round-trip. "Term" is one `field:value` part.
+_Avoid_: Search string, expression, DSL (in public docs)
+
+**Operator token**:
+The short text after `field:` that picks an operator in a query, such as `>`
+in `estimate:>5` or `!` in `status:!done`.
+_Avoid_: Symbol, prefix

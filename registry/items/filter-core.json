@@ -3,7 +3,7 @@
   "name": "filter-core",
   "type": "registry:lib",
   "title": "Filter Core",
-  "description": "Dependency-free filter model for Dethink filter surfaces: a serializable AND/OR filter tree with negation; typed text, number, date, boolean, option and multi-option operators; relative dates stored relative and resolved per time zone as calendar days (DST-safe); custom field types and operators; group commands with a shared depth limit; validation; a compiled row predicate; facet, impact and empty-result rescue counts; a TanStack adapter; readable sentences and membership-aware diffs.",
+  "description": "Dependency-free filter model for Dethink filter surfaces: a serializable AND/OR filter tree with negation; typed text, number, date, boolean, option and multi-option operators; relative dates stored relative and resolved per time zone as calendar days (DST-safe); custom field types and operators; group commands with a shared depth limit; validation; a compiled row predicate; facet, impact and empty-result rescue counts; a TanStack adapter; readable sentences and membership-aware diffs; a text query syntax (field:value, lists, negation, comparisons, ranges, relative dates, AND/OR with parentheses) with a hand-written parser that reports exact error ranges, a canonical printer that round-trips, token highlighting and autocomplete suggestions, and id reconciliation for rebuilt filters.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
@@ -50,6 +50,26 @@
     },
     {
       "path": "packages/components/src/components/filter-builder/filter-describe.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-reconcile.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-query-lexer.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-query-values.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-query.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-query-suggest.ts",
       "type": "registry:lib"
     },
     {

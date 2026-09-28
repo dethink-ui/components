@@ -203,6 +203,10 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 - `filter-bar.a11y.test.tsx`: axe with chips, group chips and open editors. `filter-bar.ssr.test.tsx`: server render and hydration.
 - `pnpm registry:smoke:filter-bar` (and `:react18`): clean-consumer install of `filter-bar` + `data-table`, typecheck and Vite build.
 
+## Text query
+
+`QueryInput` edits the same filter as text (`status:open created:>-7d`). Share `useFilterState` between the two to keep them in sync. See [QueryInput](../query-input/README.md).
+
 ## Out of scope for this slice
 
-Time-of-day filtering and date-times in chips (planned with server mode); the text query bar (#132); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
+Time-of-day filtering and date-times in chips (planned with server mode); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
