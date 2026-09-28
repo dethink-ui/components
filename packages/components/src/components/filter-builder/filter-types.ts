@@ -168,6 +168,12 @@ export interface FilterOperatorDefinition {
   singleLabel?: string;
   arity: FilterOperatorArity;
   /**
+   * Text-query token written after `field:`, e.g. ">" in `amount:>5` or "!"
+   * in `status:!done`. Operators without one are written with their id,
+   * `field:id:value`, which also works for every operator.
+   */
+  token?: string;
+  /**
    * Operators with the same kind share a value shape. Switching to an
    * operator of another kind clears the value.
    */

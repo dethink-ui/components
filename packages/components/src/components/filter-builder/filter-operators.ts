@@ -46,11 +46,13 @@ function rowValueList(value: unknown) {
 function textOperator(
   id: string,
   label: string,
+  token: string,
   match: (rowText: string, query: string) => boolean,
 ): FilterOperatorDefinition {
   return {
     id,
     label,
+    token,
     arity: "single",
     valueKind: "text",
     isValueValid: (value) => typeof value === "string",
@@ -61,6 +63,7 @@ function textOperator(
 export const isEmptyFilterOperator: FilterOperatorDefinition = {
   id: "isEmpty",
   label: "is empty",
+  token: "empty",
   arity: "none",
   evaluate: (rowValue) => isEmptyFilterValue(rowValue),
 };
@@ -68,23 +71,27 @@ export const isEmptyFilterOperator: FilterOperatorDefinition = {
 export const isNotEmptyFilterOperator: FilterOperatorDefinition = {
   id: "isNotEmpty",
   label: "is not empty",
+  token: "!empty",
   arity: "none",
   evaluate: (rowValue) => !isEmptyFilterValue(rowValue),
 };
 
 export const textFilterOperators: FilterOperatorDefinition[] = [
-  textOperator("contains", "contains", (row, query) => row.includes(query)),
+  textOperator("contains", "contains", "", (row, query) => row.includes(query)),
   textOperator(
     "notContains",
     "does not contain",
+    "!",
     (row, query) => !row.includes(query),
   ),
-  textOperator("is", "is", (row, query) => row === query),
-  textOperator("isNot", "is not", (row, query) => row !== query),
-  textOperator("startsWith", "starts with", (row, query) =>
+  textOperator("is", "is", "=", (row, query) => row === query),
+  textOperator("isNot", "is not", "!=", (row, query) => row !== query),
+  textOperator("startsWith", "starts with", "^", (row, query) =>
     row.startsWith(query),
   ),
-  textOperator("endsWith", "ends with", (row, query) => row.endsWith(query)),
+  textOperator("endsWith", "ends with", "$", (row, query) =>
+    row.endsWith(query),
+  ),
   isEmptyFilterOperator,
   isNotEmptyFilterOperator,
 ];
@@ -92,6 +99,7 @@ export const textFilterOperators: FilterOperatorDefinition[] = [
 export const optionFilterOperators: FilterOperatorDefinition[] = [
   {
     id: "isAnyOf",
+    token: "",
     label: "is any of",
     singleLabel: "is",
     arity: "multiple",
@@ -105,6 +113,7 @@ export const optionFilterOperators: FilterOperatorDefinition[] = [
   },
   {
     id: "isNoneOf",
+    token: "!",
     label: "is none of",
     singleLabel: "is not",
     arity: "multiple",
@@ -123,6 +132,7 @@ export const optionFilterOperators: FilterOperatorDefinition[] = [
 export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
   {
     id: "includesAny",
+    token: "",
     label: "includes any of",
     singleLabel: "includes",
     arity: "multiple",
@@ -136,6 +146,7 @@ export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
   },
   {
     id: "includesAll",
+    token: "&",
     label: "includes all of",
     singleLabel: "includes",
     arity: "multiple",
@@ -149,6 +160,7 @@ export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
   },
   {
     id: "excludesAll",
+    token: "!",
     label: "includes none of",
     singleLabel: "does not include",
     arity: "multiple",

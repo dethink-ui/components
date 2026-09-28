@@ -47,11 +47,13 @@ function isNumberRange(value: FilterValue) {
 function numberOperator(
   id: string,
   label: string,
+  token: string,
   compare: (row: number, value: number) => boolean,
 ): FilterOperatorDefinition {
   return {
     id,
     label,
+    token,
     arity: "single",
     valueKind: "number",
     isValueValid: isNumber,
@@ -66,14 +68,15 @@ function numberOperator(
 }
 
 export const numberFilterOperators: FilterOperatorDefinition[] = [
-  numberOperator("eq", "is", (row, value) => row === value),
-  numberOperator("neq", "is not", (row, value) => row !== value),
-  numberOperator("gt", "is more than", (row, value) => row > value),
-  numberOperator("gte", "is at least", (row, value) => row >= value),
-  numberOperator("lt", "is less than", (row, value) => row < value),
-  numberOperator("lte", "is at most", (row, value) => row <= value),
+  numberOperator("eq", "is", "", (row, value) => row === value),
+  numberOperator("neq", "is not", "!=", (row, value) => row !== value),
+  numberOperator("gt", "is more than", ">", (row, value) => row > value),
+  numberOperator("gte", "is at least", ">=", (row, value) => row >= value),
+  numberOperator("lt", "is less than", "<", (row, value) => row < value),
+  numberOperator("lte", "is at most", "<=", (row, value) => row <= value),
   {
     id: "between",
+    token: "",
     label: "is between",
     arity: "range",
     valueKind: "numberRange",
@@ -123,11 +126,13 @@ function isPeriod(value: FilterValue) {
 function dateOperator(
   id: string,
   label: string,
+  token: string,
   compare: (row: string, day: string) => boolean,
 ): FilterOperatorDefinition {
   return {
     id,
     label,
+    token,
     arity: "single",
     valueKind: "date",
     isValueValid: isFilterDate,
@@ -146,11 +151,12 @@ function rowDay(rowValue: unknown, context: FilterEvaluationContext) {
 }
 
 export const dateFilterOperators: FilterOperatorDefinition[] = [
-  dateOperator("is", "is", (row, day) => row === day),
-  dateOperator("before", "is before", (row, day) => row < day),
-  dateOperator("after", "is after", (row, day) => row > day),
+  dateOperator("is", "is", "", (row, day) => row === day),
+  dateOperator("before", "is before", "<", (row, day) => row < day),
+  dateOperator("after", "is after", ">", (row, day) => row > day),
   {
     id: "between",
+    token: "",
     label: "is between",
     arity: "range",
     valueKind: "dateRange",
@@ -173,6 +179,7 @@ export const dateFilterOperators: FilterOperatorDefinition[] = [
     // The last N units up to and including today: "the last 7 days" is
     // today and the 6 days before it.
     id: "inLast",
+    token: "last:",
     label: "is in the last",
     arity: "single",
     valueKind: "duration",
@@ -188,6 +195,7 @@ export const dateFilterOperators: FilterOperatorDefinition[] = [
   },
   {
     id: "inNext",
+    token: "next:",
     label: "is in the next",
     arity: "single",
     valueKind: "duration",
@@ -204,6 +212,7 @@ export const dateFilterOperators: FilterOperatorDefinition[] = [
   {
     // A whole calendar period: this week (amount 0), last month (-1)…
     id: "inPeriod",
+    token: "in:",
     label: "is in",
     arity: "single",
     valueKind: "period",
@@ -236,6 +245,7 @@ export const booleanFilterOperators: FilterOperatorDefinition[] = [
   {
     id: "is",
     label: "is",
+    token: "",
     arity: "single",
     valueKind: "boolean",
     isValueValid: (value) => typeof value === "boolean",

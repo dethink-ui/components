@@ -36,7 +36,7 @@ function closure(name, found = new Map()) {
     closure(dependency, found);
   return found;
 }
-const entries = ["filter-bar", "data-table"];
+const entries = ["filter-bar", "query-input", "data-table"];
 const react18 = process.argv.includes("--react18");
 const destination = await mkdtemp(
   join(tmpdir(), "dethink-filter-bar-consumer-"),
@@ -152,6 +152,7 @@ import {
   defineFilterFields,
   useFilterState,
 } from "./src/components/filter-builder";
+import { QueryInput } from "./src/components/filter-builder/query-input";
 import {
   DataTable,
   type DataTableColumnDef,
@@ -180,7 +181,7 @@ function App() {
       columns={columns}
       data={issues}
       rowFilter={rowFilter}
-      toolbar={<FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} />}
+      toolbar={<><QueryInput fields={fields} state={state} /><FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} /></>}
     />
   );
 }
