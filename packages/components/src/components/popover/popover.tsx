@@ -161,7 +161,8 @@ function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
   if (typeof ref === "function") {
     ref(value);
   } else if (ref) {
-    ref.current = value;
+    // React 18 types RefObject.current as read-only.
+    (ref as { current: T | null }).current = value;
   }
 }
 

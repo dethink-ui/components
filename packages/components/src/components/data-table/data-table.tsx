@@ -1,4 +1,10 @@
-import { type HTMLAttributes, type ReactNode, useId, useState } from "react";
+import {
+  type HTMLAttributes,
+  type ReactNode,
+  useId,
+  useMemo,
+  useState,
+} from "react";
 import {
   flexRender,
   getFilteredRowModel,
@@ -10,6 +16,7 @@ import {
   type Column,
   type ColumnFiltersState,
   type ColumnDef,
+  type FilterFnOption,
   type Header,
   type OnChangeFn,
   type PaginationState,
@@ -105,6 +112,8 @@ export interface DataTableProps<TData extends RowData> extends Omit<
   enableSorting?: boolean;
   error?: ReactNode;
   globalFilter?: string;
+  /** Global filter function. Defaults to TanStack's `includesString`. */
+  globalFilterFn?: FilterFnOption<TData>;
   globalFilterPlaceholder?: string;
   getCellClassName?: (cell: DataTableCell<TData>) => string | undefined;
   getRowClassName?: (row: DataTableRow<TData>) => string | undefined;
@@ -131,11 +140,20 @@ export interface DataTableProps<TData extends RowData> extends Omit<
   renderColumnFilter?: (column: DataTableColumn<TData>) => ReactNode;
   renderRowActions?: (row: DataTableRow<TData>) => ReactNode;
   rowCount?: number;
+  /**
+   * Keeps only rows that pass the predicate, before sorting and pagination.
+   * Ignored when `manualFiltering` is set. Row ids stay tied to the original
+   * data index, so selection survives filter changes. Pair it with
+   * `createFilterPredicate` from the filter builder.
+   */
+  rowFilter?: (row: TData) => boolean;
   rowSelection?: RowSelectionState;
   selectionMode?: DataTableSelectionMode;
   sorting?: SortingState;
   tableClassName?: string;
   tableContainerClassName?: string;
+  /** Content rendered at the start of the toolbar, such as a FilterBar. */
+  toolbar?: ReactNode;
 }
 
 const defaultLabels = {
@@ -166,6 +184,8 @@ const dataTableBaseClasses = "w-full";
 
 const dataTableToolbarBaseClasses =
   "mb-[var(--dt-space-3)] flex flex-wrap items-end gap-[var(--dt-space-3)]";
+
+const dataTableToolbarContentBaseClasses = "min-w-0 basis-full";
 
 const dataTableToolbarGroupBaseClasses =
   "flex min-w-0 flex-wrap items-center gap-[var(--dt-space-2)]";
@@ -398,6 +418,7 @@ export function DataTable<TData extends RowData>({
   enableSorting = true,
   error,
   globalFilter,
+  globalFilterFn = "includesString",
   globalFilterPlaceholder,
   getCellClassName,
   getRowClassName,
@@ -420,11 +441,13 @@ export function DataTable<TData extends RowData>({
   renderColumnFilter,
   renderRowActions,
   rowCount,
+  rowFilter,
   rowSelection,
   selectionMode = "none",
   sorting,
   tableClassName,
   tableContainerClassName,
+  toolbar,
   ...props
 }: DataTableProps<TData>) {
   const generatedId = useId();
@@ -475,13 +498,36 @@ export function DataTable<TData extends RowData>({
   const isSortingControlled = sorting !== undefined;
   const hasRowSelection = selectionMode !== "none";
   const hasRowActions = renderRowActions !== undefined;
+  const applyRowFilter = rowFilter !== undefined && !manualFiltering;
+  // Source index of each kept row, by position, so duplicate row objects
+  // keep distinct ids.
+  const keptIndexes = useMemo(
+    () =>
+      applyRowFilter
+        ? data.flatMap((row, index) => (rowFilter(row) ? [index] : []))
+        : undefined,
+    [applyRowFilter, data, rowFilter],
+  );
+  const tableData = useMemo(
+    () => (keptIndexes ? keptIndexes.map((index) => data[index]!) : data),
+    [data, keptIndexes],
+  );
+  const resolvedGetRowId = useMemo(() => {
+    if (getRowId || !keptIndexes) {
+      return getRowId;
+    }
+
+    // Filtering changes positions, so default ids use the source index.
+    return (_row: TData, index: number, parent?: DataTableRow<TData>) =>
+      parent ? `${parent.id}.${index}` : String(keptIndexes[index] ?? index);
+  }, [getRowId, keptIndexes]);
 
   // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table v8 returns mutable table methods; keep this call outside React Compiler memoization.
   const table = useReactTable({
     autoResetPageIndex: !manualPagination,
     columnResizeMode: "onChange",
     columns,
-    data,
+    data: tableData,
     enableColumnFilters,
     enableGlobalFilter,
     enableHiding: enableColumnVisibility,
@@ -495,9 +541,9 @@ export function DataTable<TData extends RowData>({
       enablePagination && !manualPagination
         ? getPaginationRowModel()
         : undefined,
-    getRowId,
+    getRowId: resolvedGetRowId,
     getSortedRowModel: manualSorting ? undefined : getSortedRowModel(),
-    globalFilterFn: "includesString",
+    globalFilterFn,
     manualFiltering,
     manualPagination,
     manualSorting,
@@ -587,7 +633,10 @@ export function DataTable<TData extends RowData>({
   const globalFilterId = `${generatedId}-global-filter`;
   const pageSizeId = `${generatedId}-page-size`;
   const hasToolbar =
-    enableGlobalFilter || enableColumnVisibility || hasRowSelection;
+    toolbar !== undefined ||
+    enableGlobalFilter ||
+    enableColumnVisibility ||
+    hasRowSelection;
 
   return (
     <div
@@ -605,6 +654,14 @@ export function DataTable<TData extends RowData>({
           data-slot="data-table-toolbar"
           className={dataTableToolbarClassNames()}
         >
+          {toolbar !== undefined ? (
+            <div
+              data-slot="data-table-toolbar-content"
+              className={dataTableToolbarContentBaseClasses}
+            >
+              {toolbar}
+            </div>
+          ) : null}
           {enableGlobalFilter ? (
             <div
               data-slot="data-table-global-filter"

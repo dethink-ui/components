@@ -33,3 +33,25 @@ A NavDock behavior where the dock presents a compact entry point on small or
 coarse-pointer devices and expands before item activation. It is a NavDock
 interaction state, not a Sidebar or drawer handoff.
 _Avoid_: Mobile drawer, sidebar collapse, double-tap navigation
+
+**Filter**:
+The serializable tree that narrows a data set. Its root is always a group of
+conditions and nested groups. Every filter surface (chips, text query, group
+editor, AI proposals, URL state and saved views) reads and writes the same
+filter.
+_Avoid_: Query object, filter state, filter model (in public docs)
+
+**Condition**:
+One field, operator and value test in a filter, such as "Status is any of Open,
+Blocked". A condition with no value yet is incomplete and filters nothing.
+_Avoid_: Rule, predicate, clause
+
+**Filter group**:
+A set of conditions or nested groups joined by one combinator, "and" or "or",
+and optionally negated.
+_Avoid_: Rule group, block, bracket
+
+**Filter chip**:
+The visual form of a condition in a FilterBar: field, operator and value
+segments plus a remove action, each editable in place.
+_Avoid_: Pill, token, tag

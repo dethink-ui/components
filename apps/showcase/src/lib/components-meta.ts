@@ -30,6 +30,13 @@ export interface ComponentGroup extends ComponentTypeMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "filter-bar",
+    name: "FilterBar",
+    description:
+      'Filter a list with editable chips like "Status is any of Open, Blocked", built on one JSON filter model.',
+    type: "data-display",
+  },
+  {
     slug: "kanban-board",
     name: "KanbanBoard",
     description:
