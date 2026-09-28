@@ -1,3 +1,4 @@
+import { createFilterId } from "./filter-model";
 import type { Filter, FilterNode } from "./filter-types";
 
 function stable(value: unknown): unknown {
@@ -29,8 +30,24 @@ export function getFilterSignature(node: FilterNode) {
  * Gives nodes of `next` the ids of matching nodes in `previous`, so a filter
  * rebuilt from text or an AI proposal keeps chip identity (React keys,
  * focus) for everything that did not change. The root keeps its id.
+ * Unmatched nodes keep their own ids unless another node was given that id
+ * (or it repeats), in which case they get fresh ids, so the result never
+ * holds duplicates.
  */
-export function reconcileFilterIds(next: Filter, previous: Filter): Filter {
+export function reconcileFilterIds(
+  next: Filter,
+  previous: Filter,
+  {
+    createId = (node) =>
+      createFilterId(node.type === "group" ? "group" : "condition"),
+  }: {
+    /**
+     * Id for a node whose own id is taken. Defaults to a random id; pass a
+     * deterministic one when the result is only compared, not stored.
+     */
+    createId?: (node: FilterNode) => string;
+  } = {},
+): Filter {
   const pool = new Map<string, string[]>();
 
   const collect = (node: FilterNode) => {
@@ -47,17 +64,50 @@ export function reconcileFilterIds(next: Filter, previous: Filter): Filter {
 
   collect(previous);
 
-  const used = new Set<string>([previous.id]);
+  // Pass 1: matches by content, in document order.
+  const matched = new Map<FilterNode, string>();
+  const taken = new Set<string>([previous.id]);
 
-  const assign = <TNode extends FilterNode>(node: TNode): TNode => {
-    const ids = pool.get(getFilterSignature(node)) ?? [];
-    const id = ids.find((candidate) => !used.has(candidate));
+  const match = (node: FilterNode) => {
+    const id = (pool.get(getFilterSignature(node)) ?? []).find(
+      (candidate) => !taken.has(candidate),
+    );
 
     if (id) {
+      matched.set(node, id);
+      taken.add(id);
+    }
+
+    if (node.type === "group") {
+      node.children.forEach(match);
+    }
+  };
+
+  next.children.forEach(match);
+
+  // Pass 2: unmatched nodes keep their ids when those are still free.
+  const used = new Set<string>(taken);
+
+  const assign = <TNode extends FilterNode>(node: TNode): TNode => {
+    let id = matched.get(node);
+
+    if (id === undefined) {
+      id = node.id;
+
+      if (used.has(id)) {
+        const base = createId(node);
+
+        id = base;
+
+        for (let suffix = 2; used.has(id); suffix += 1) {
+          id = `${base}-${suffix}`;
+        }
+      }
+
       used.add(id);
     }
 
-    const withId = id ? { ...node, id } : node;
+    const withId = id === node.id ? node : { ...node, id };
 
     return (
       withId.type === "group"

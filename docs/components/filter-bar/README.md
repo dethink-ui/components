@@ -207,6 +207,10 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 
 `QueryInput` edits the same filter as text (`status:open created:>-7d`). Share `useFilterState` between the two to keep them in sync. See [QueryInput](../query-input/README.md).
 
+## URL state and saved views
+
+`useFilterUrlState` keeps the filter in a readable, versioned URL, and `useSavedViews` with `SavedViewsMenu` adds named views. See [Saved views and URL state](../saved-views/README.md).
+
 ## Out of scope for this slice
 
-Time-of-day filtering and date-times in chips (planned with server mode); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
+Time-of-day filtering and date-times in chips (planned with server mode); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.

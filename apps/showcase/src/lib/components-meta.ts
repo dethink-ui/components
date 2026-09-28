@@ -44,6 +44,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "saved-views",
+    name: "Saved views & URL state",
+    description:
+      "Keep filters in a readable, versioned URL and save them as named views with an edited marker and one-step undo.",
+    type: "data-display",
+  },
+  {
     slug: "kanban-board",
     name: "KanbanBoard",
     description:

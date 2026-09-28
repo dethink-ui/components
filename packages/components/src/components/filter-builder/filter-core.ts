@@ -13,3 +13,4 @@ export * from "./filter-query-lexer";
 export * from "./filter-query-values";
 export * from "./filter-query-suggest";
 export * from "./filter-reconcile";
+export * from "./filter-url";

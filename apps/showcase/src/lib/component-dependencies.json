@@ -173,6 +173,17 @@
     "direct": [],
     "shared": ["clsx", "react", "tailwind-merge"]
   },
+  "filter-url-state": {
+    "direct": [],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
   "flex": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "form-field": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "grid": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
@@ -278,6 +289,16 @@
   "reveal-button": {
     "direct": ["motion", "react", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
+  },
+  "saved-views": {
+    "direct": ["react"],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
   },
   "scan-grid-background": {
     "direct": ["motion", "react"],
