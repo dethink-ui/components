@@ -1,10 +1,4 @@
-import {
-  useLayoutEffect,
-  useEffect,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { useLayoutEffect, useEffect, useRef, useState } from "react";
 
 export interface ChartSize {
   width: number;
@@ -19,8 +13,10 @@ const useIsomorphicLayoutEffect =
  * until the first client measurement, so server output can fall back to a
  * `viewBox`-scaled render without a layout jump (the container owns its size).
  */
+// A plain mutable ref: React 18's RefObject is read-only, and callers assign
+// the node from their own merged ref callback.
 export function useChartSize<Element extends HTMLElement = HTMLDivElement>(): [
-  RefObject<Element | null>,
+  { current: Element | null },
   ChartSize | undefined,
 ] {
   const ref = useRef<Element | null>(null);

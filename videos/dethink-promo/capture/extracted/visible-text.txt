@@ -1,0 +1,322 @@
+[a] Skip to content
+[span] Dethink Components
+[span] dethink
+[span] Components
+[a] Features
+[a] Components
+[span] Teal
+[a] Dethink studio
+[a] Features
+[a] Components
+[span] Teal
+[a] Dethink studio
+[a] Introduction
+[a] Installation
+[a] Accessibility
+[a] Components
+[p] Getting started
+[a] Introduction
+[a] Installation
+[a] Accessibility
+[a] All components
+[span] Button Group
+[span] Dropdown Button
+[span] Icon Button
+[span] Reveal Button
+[span] Typography
+[span] Container
+[span] Resizable Panels
+[span] Separator
+[p] Disclosure
+[span] Accordion
+[span] Horizontal Accordion
+[span] Checkbox
+[span] Combobox
+[span] Form Field
+[span] Number Input
+[span] Radio Group
+[span] Textarea
+[p] Advanced Inputs
+[span] Async Select
+[span] Date & Time Picker
+[span] Date Picker
+[span] Date Range Picker
+[span] File Upload
+[span] Multi Select
+[span] Tag Input
+[span] Voice Input
+[p] Feedback
+[span] Feedback States
+[p] Overlays
+[span] Dropdown Menu
+[p] Navigation
+[span] Bottom Bar
+[span] Breadcrumb
+[span] Command Palette
+[span] Navigation Menu
+[span] Pagination
+[span] Sidebar Activity
+[span] Sidebar Shell
+[p] Data Display
+[span] Avatar Group
+[span] Calendar
+[span] Card Scroller
+[span] Card Stack
+[span] Card Stack Animated
+[span] Carousel
+[span] Data Table
+[span] Slot Planner
+[span] Timeline
+[p] AI / Chat
+[span] Chat Bubble
+[span] Aurora Background
+[span] Caustic Light Background
+[span] Contour Field Background
+[span] Dot Matrix Background
+[span] Grid Beams Background
+[span] Hero Text Animation
+[span] Light Streaks Background
+[span] Liquid Mesh Background
+[span] Magnetic Beams Background
+[span] Orbital Glow Background
+[span] Scan Grid Background
+[span] Shader Hero Text
+[span] Silk Flow Background
+[span] Starfield Background
+[p] Documentation
+[h1] Components
+[p] Find the right component, try an example, and copy the code. Browse
+[p] components grouped by what they do.
+[label] Find a component
+[p] Search by API name, purpose, or component group.
+[span] documented components
+[p] 80 components
+[p] found.
+[h2] General
+[p] Buttons, links, labels, and text.
+[span] Button
+[span] Run an action, such as saving a form or opening a dialog.
+[span] Icon Button
+[code] IconButton
+[span] Show an action as an icon when space is limited.
+[span] Button Group
+[code] ButtonGroup
+[span] Keep related buttons together in a row or column.
+[span] Dropdown Button
+[code] DropdownButton
+[span] Open a menu of related actions from a button.
+[span] Reveal Button
+[code] RevealButton
+[span] Show an icon that reveals its label on hover or keyboard focus.
+[span] Badge
+[span] Show a short status, label, or count.
+[span] Link
+[span] Take users to another page or a section on the same page.
+[span] Typography
+[span] Style headings and body text with consistent sizes, weights, and colors.
+[h2] Layout
+[p] Spacing, alignment, grids, and dividers.
+[span] Box
+[span] Wrap content with spacing, a background, a border, or rounded corners.
+[span] Container
+[span] Center page content and limit its width.
+[span] Stack
+[span] Arrange content in a row or column with even spacing.
+[span] Flex
+[span] Arrange items with control over alignment, wrapping, and available space.
+[span] Grid
+[span] Arrange content in rows and columns.
+[span] Separator
+[span] Add a horizontal or vertical line between sections.
+[span] Resizable Panels
+[span] Compose, resize, focus and restore useful workspaces.
+[h2] Disclosure
+[p] Expandable sections and switchable views.
+[span] Accordion
+[span] Let users expand and collapse sections of content.
+[span] Horizontal Accordion
+[code] HorizontalAccordion
+[span] Expand one panel at a time in a horizontal row.
+[span] Tabs
+[span] Switch between related views without leaving the page.
+[h2] Forms
+[p] Labels, text fields, and choice controls.
+[span] Form Field
+[code] FormField
+[span] Connect a form control to its label, help text, and error message.
+[span] Input
+[span] Collect a single line of text, such as a name or email address.
+[span] Textarea
+[span] Collect several lines of text, such as a message or description.
+[span] Number Input
+[code] NumberInput
+[span] Collect a number with optional minimum, maximum, and step values.
+[span] Slider
+[span] Choose a value, range, or labelled milestone with an accessible slider.
+[span] Checkbox
+[span] Let users turn individual options on or off.
+[span] Radio Group
+[code] RadioGroup
+[span] Let users choose one option from a visible list.
+[span] Select
+[span] Let users choose one option from a dropdown list.
+[span] Combobox
+[span] Let users search a list and choose an option.
+[span] Switch
+[span] Turn a setting on or off.
+[h2] Advanced Inputs
+[p] Searchable lists, tags, dates, and audio input.
+[span] File Upload
+[code] FileUpload
+[span] Stage files in a compact queue with clear limits and recoverable uploads.
+[span] Async Select
+[code] AsyncSelect
+[span] Let users choose from options loaded by your app, with loading and retry states.
+[span] Multi Select
+[code] MultiSelect
+[span] Let users search for and choose several options.
+[span] Tag Input
+[code] TagInput
+[span] Let users add, edit, and remove text tags.
+[span] Voice Input
+[code] VoiceInput
+[span] Capture microphone audio and show its input level.
+[span] Date Picker
+[code] DatePicker
+[span] Let users type a date or choose one from a calendar.
+[span] Date Range Picker
+[code] DateRangePicker
+[span] Let users choose a start date and an end date.
+[span] Date & Time Picker
+[code] DateTimePicker
+[span] Let users choose a date and time.
+[h2] Feedback
+[p] Loading indicators, status messages, and notifications.
+[span] Feedback States
+[span] Show loading, progress, errors, empty states, and notifications.
+[h2] Overlays
+[p] Dialogs, menus, tooltips, and panels.
+[span] Dialog
+[span] Open a focused window above the page for a task or confirmation.
+[span] Popover
+[span] Show extra content next to a button or other trigger.
+[span] Tooltip
+[span] Show a short hint when users hover over or focus a control.
+[span] Dropdown Menu
+[code] DropdownMenu
+[span] Show a menu of actions when users open a trigger.
+[span] Drawer
+[span] Open a panel from the edge of the screen.
+[h2] Navigation
+[p] Menus and controls for moving around an app.
+[span] Breadcrumb
+[span] Show where the current page sits in the site hierarchy.
+[span] Command Palette
+[code] CommandPalette
+[span] Let users search for actions and pages from one place.
+[span] Navigation Menu
+[code] NavigationMenu
+[span] Group page links in a menu with optional dropdown panels.
+[span] NavDock
+[span] Show navigation links in a compact icon dock.
+[span] Pagination
+[span] Let users move between pages of results.
+[span] Sidebar
+[span] Organize app navigation in a sidebar that can collapse.
+[span] Sidebar Activity
+[code] SidebarActivity
+[span] Keep background work, progress, and attention items visible in a sidebar.
+[span] Bottom Bar
+[code] BottomBar
+[span] Compose a collapsible bottom work panel with custom content and sizing.
+[span] Sidebar Shell
+[code] SidebarShell
+[span] Arrange a sidebar, header, main content, and footer into an app layout.
+[span] Steps
+[span] Show the current step and progress through a task.
+[h2] Data Display
+[p] Structured content, records, tables, cards, and timelines.
+[span] Calendar
+[span] Let users choose a date or date range from a month view.
+[span] Card
+[span] Group related content and actions in a single panel.
+[span] Carousel
+[span] Let users browse a series of cards or images.
+[span] Card Scroller
+[code] CardScroller
+[span] Let users scroll through and select cards in a row.
+[span] Card Stack
+[code] CardStack
+[span] Let users browse cards arranged in a stack or fan.
+[span] Card Stack Animated
+[code] CardStackAnimated
+[span] Directional card decks with optional touch navigation.
+[span] Avatar
+[span] Represent a person or team with an image or initials.
+[span] Avatar Group
+[code] AvatarGroup
+[span] Show a group of people with overlapping avatars.
+[span] Data Table
+[code] DataTable
+[span] Display rows of data with sorting, filtering, selection, and pagination.
+[span] Slot Planner
+[code] SlotPlanner
+[span] Manage available time slots and let users request bookings in their time zone.
+[span] Table
+[span] Display data in rows and columns.
+[span] Timeline
+[span] Show events in order with statuses and optional selection.
+[h2] AI / Chat
+[p] Messages, prompts, and conversation tools.
+[span] Chat Bubble
+[code] ChatBubble
+[span] Open a conversation from a floating, animated chat launcher.
+[span] Chat
+[span] Build an AI conversation with messages, a prompt box, attachments, and tool results.
+[h2] Effects
+[p] Animated backgrounds and decorative motion for landing pages and heroes.
+[span] Liquid Mesh Background
+[code] LiquidMeshBackground
+[span] Soft pools of color drift and blend behind your content.
+[span] Silk Flow Background
+[code] SilkFlowBackground
+[span] Satin folds flow across the surface with gentle directional lighting.
+[span] Caustic Light Background
+[code] CausticLightBackground
+[span] Moving water-like ridges cast a field of caustic light.
+[span] Contour Field Background
+[code] ContourFieldBackground
+[span] Topographic contours evolve through a warped noise field.
+[span] Orbital Glow Background
+[code] OrbitalGlowBackground
+[span] Luminous elliptical rings surround a soft, slowly shifting core.
+[span] Hero Text Animation
+[code] HeroTextAnimation
+[span] Reveal a headline one word or line at a time.
+[span] Shader Hero Text
+[code] ShaderHeroText
+[span] Six WebGL headline effects, including particle lettering that follows your mouse and reforms.
+[span] Grid Beams Background
+[code] GridBeamsBackground
+[span] Add moving light beams to a subtle grid background.
+[span] Magnetic Beams Background
+[code] MagneticBeamsBackground
+[span] Add grid beams that follow the pointer.
+[span] Aurora Background
+[code] AuroraBackground
+[span] Add soft, flowing bands of color behind your content.
+[span] Scan Grid Background
+[code] ScanGridBackground
+[span] Move a highlight across a grid background.
+[span] Dot Matrix Background
+[code] DotMatrixBackground
+[span] Add gentle pulses of light to a dot grid.
+[span] Light Streaks Background
+[code] LightStreaksBackground
+[span] Add moving diagonal streaks of light behind your content.
+[span] Starfield Background
+[code] StarfieldBackground
+[span] Add a drifting star background with optional pointer movement.
+[span] Built with
+[span] @dethink/components
+[span] — open code, themed by tokens.

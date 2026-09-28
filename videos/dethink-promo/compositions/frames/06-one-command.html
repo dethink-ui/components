@@ -1,0 +1,327 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-bfc7db5c00d21bc5-s.2vepgg3wcdr2q.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-89b21bb081cb7469-s.40kcwrf1wub16.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-3fe682a82f50d426-s.200l3jur7oygh.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-70bc3e132a0a741e-s.p.269kn9uafm0ti.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      font-family: Manrope, sans-serif;
+      color: #DEEBE9;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-bg {
+      position: absolute;
+      inset: 0;
+      background: #071D1C;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-kicker {
+      position: absolute;
+      left: 106px;
+      top: 104px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #B6F06B;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-rule {
+      width: 36px;
+      height: 2px;
+      background: #B6F06B;
+    }
+    /* Terminal — code surface, centred ~55% width */
+    [data-composition-id="06-one-command"] .f06-one-command-term {
+      position: absolute;
+      left: 432px;
+      top: 318px;
+      width: 1056px;
+      background: #05171B;
+      border: 1px solid #1B3236;
+      border-radius: 12px;
+      overflow: hidden;
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-bar {
+      position: relative;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid #1B3236;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-dots {
+      display: flex;
+      gap: 10px;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-dots span {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #1B3236;
+      border: 1px solid #6F8B87;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 60px;
+      line-height: 60px;
+      text-align: center;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 17px;
+      color: #8FA6A2;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-key {
+      margin-left: auto;
+      position: relative;
+      padding: 7px 14px;
+      border: 1px solid #1B3236;
+      border-radius: 6px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      color: #6F8B87;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-body {
+      padding: 44px 48px 48px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 34px;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-line {
+      display: flex;
+      align-items: baseline;
+      white-space: pre;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-prompt {
+      color: #6F8B87;
+      margin-right: 20px;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-cmd {
+      color: #DEEBE9;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-pkg {
+      color: #B6F06B;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-caret {
+      display: inline-block;
+      width: 18px;
+      height: 38px;
+      margin-left: 3px;
+      align-self: center;
+      background: #B6F06B;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-out {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 24px;
+      color: #55D7BE;
+      opacity: 0;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-out svg {
+      width: 24px;
+      height: 24px;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-out em {
+      font-style: normal;
+      color: #8FA6A2;
+    }
+    /* Data-table plate — 1260 x 721 (1502:860), springs out of the terminal */
+    [data-composition-id="06-one-command"] .f06-one-command-plate {
+      position: absolute;
+      left: 330px;
+      top: 64px;
+      width: 1260px;
+      height: 721px;
+      background: #05171B;
+      border: 1px solid #1B3236;
+      border-radius: 12px;
+      overflow: hidden;
+      transform-origin: 50% 50%;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-plate img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-tags {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 818px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 22px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #B6F06B;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-tag {
+      padding: 10px 18px;
+      border: 1px solid #1B3236;
+      opacity: 0;
+    }
+    [data-composition-id="06-one-command"] .f06-one-command-sep {
+      color: #6F8B87;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="06-one-command" data-width="1920" data-height="1080" data-duration="4.4">
+    <div id="f06-one-command-bg" class="f06-one-command-bg clip" data-start="0" data-duration="4.4" data-track-index="0"></div>
+
+    <div class="f06-one-command-kicker">
+      <div class="f06-one-command-rule"></div>
+      <div>shadcn registry</div>
+    </div>
+
+    <!-- terminal renders BEFORE the plate so the plate stacks on top -->
+    <div class="f06-one-command-term">
+      <div class="f06-one-command-bar">
+        <div class="f06-one-command-dots"><span></span><span></span><span></span></div>
+        <div class="f06-one-command-title">~/my-app</div>
+        <div class="f06-one-command-key">ENTER</div>
+      </div>
+      <div class="f06-one-command-body">
+        <div class="f06-one-command-line">
+          <span class="f06-one-command-prompt">$</span><span class="f06-one-command-cmd"></span><span class="f06-one-command-pkg"></span><span class="f06-one-command-caret"></span>
+        </div>
+        <div class="f06-one-command-out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#55D7BE" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>
+          <span>Added <em>components/ui/</em>data-table.tsx</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="f06-one-command-plate">
+      <img src="assets/ui-data-table.png" alt="Dethink data table component" />
+    </div>
+
+    <div class="f06-one-command-tags">
+      <div class="f06-one-command-tag">Open code</div>
+      <div class="f06-one-command-sep">·</div>
+      <div class="f06-one-command-tag">You own it</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.querySelector('[data-composition-id="06-one-command"]');
+      var q = function (s) { return root.querySelector(s); };
+      var term = q(".f06-one-command-term");
+      var key = q(".f06-one-command-key");
+      var cmdEl = q(".f06-one-command-cmd");
+      var pkgEl = q(".f06-one-command-pkg");
+      var caret = q(".f06-one-command-caret");
+      var out = q(".f06-one-command-out");
+      var plate = q(".f06-one-command-plate");
+      var img = q(".f06-one-command-plate img");
+      var kicker = q(".f06-one-command-kicker");
+      var tags = root.querySelectorAll(".f06-one-command-tag, .f06-one-command-sep");
+
+      var DUR = 4;
+      var BEAT = 60 / 128; // 0.469s
+      var CMD = "npx shadcn@latest add ";
+      var PKG = "@dethink/data-table";
+      var FULL = CMD + PKG;
+
+      // Keystroke schedule (discrete states): fast clusters, small breaths at word breaks.
+      var T_TYPE = 0.36;
+      var STEP = 0.029;
+      var times = [];
+      var t = T_TYPE;
+      for (var i = 0; i < FULL.length; i++) {
+        times.push(t);
+        t += STEP;
+        if (i === 3 || i === 21) t += 0.08; // after "npx " and "add "
+      }
+      var T_TYPED = times[times.length - 1];         // ~1.64s
+      var T_ENTER = 4 * BEAT - 0.03;                   // ~1.845s — beat 4
+      var T_OUT = T_ENTER + 0.13;
+      var T_PLATE = 5 * BEAT + 0.05;                   // ~2.39s — beat 5
+      var T_TAGS = 7 * BEAT;                           // ~3.28s — beat 7
+
+      function countAt(time) {
+        for (var k = times.length - 1; k >= 0; k--) {
+          if (time >= times[k]) return k + 1;
+        }
+        return 0;
+      }
+
+      var tl = gsap.timeline({ paused: true });
+
+      // Driver: typed text + caret (solid while typing, blinks on holds, gone after enter)
+      var drv = { t: 0 };
+      tl.to(drv, {
+        t: DUR,
+        duration: DUR,
+        ease: "none",
+        onUpdate: function () {
+          var n = countAt(drv.t);
+          cmdEl.textContent = FULL.slice(0, Math.min(n, CMD.length));
+          pkgEl.textContent = n > CMD.length ? FULL.slice(CMD.length, n) : "";
+          var on;
+          if (drv.t >= T_ENTER) on = false;
+          else if (drv.t >= T_TYPE && drv.t <= T_TYPED + 0.08) on = true;
+          else on = Math.sin((drv.t / 0.53) * Math.PI * 2) > -0.2;
+          caret.style.opacity = on ? "1" : "0";
+        }
+      }, 0);
+
+      // Scene 1 — terminal arrives (hero visible well before 0.5s), camera still
+      tl.fromTo(term, { opacity: 0, y: 28, scale: 0.985 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power4.out" }, 0);
+      tl.fromTo(kicker, { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, 0.12);
+
+      // Scene 2 — enter: linear press, smooth long-tail release (no overshoot)
+      tl.to(term, { scale: 0.965, duration: 0.1, ease: "power1.in" }, T_ENTER);
+      tl.to(term, { scale: 1, duration: T_PLATE - (T_ENTER + 0.1), ease: "power4.out" }, T_ENTER + 0.1);
+      tl.fromTo(term, { borderColor: "#1B3236" }, { borderColor: "#B6F06B", duration: 0.08, ease: "none", immediateRender: false }, T_ENTER);
+      tl.to(term, { borderColor: "#1B3236", duration: 0.45, ease: "power2.out" }, T_ENTER + 0.08);
+      tl.fromTo(key, { backgroundColor: "rgba(182,240,107,0)", color: "#6F8B87", borderColor: "#1B3236" },
+        { backgroundColor: "rgba(182,240,107,1)", color: "#071D1C", borderColor: "#B6F06B", duration: 0.07, ease: "none", immediateRender: false }, T_ENTER);
+      tl.to(key, { backgroundColor: "rgba(182,240,107,0)", color: "#6F8B87", borderColor: "#1B3236", duration: 0.5, ease: "power2.out" }, T_ENTER + 0.1);
+      tl.fromTo(out, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.4, ease: "power4.out" }, T_OUT);
+
+      // Scene 3 — plate springs up out of the terminal (card-morph-anchor: uniform scale + radius)
+      tl.to(term, { scale: 0.9, y: 40, opacity: 0.28, duration: 0.8, ease: "power4.out" }, T_PLATE);
+      tl.fromTo(plate,
+        { scale: 0.42, y: 96, borderRadius: 28 },
+        { scale: 1, y: 0, borderRadius: 12, duration: 0.9, ease: "expo.out" }, T_PLATE);
+      tl.fromTo(plate, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out" }, T_PLATE);
+      tl.fromTo(img, { opacity: 0 }, { opacity: 1, duration: 0.36, ease: "power1.out" }, T_PLATE + 0.12);
+
+      // Tags pop on the next beat, then a quiet push on the plate through the hold
+      tl.fromTo(tags, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out", stagger: 0.07 }, T_TAGS);
+      tl.to(plate, { scale: 1.012, duration: DUR - (T_PLATE + 0.9), ease: "none" }, T_PLATE + 0.9);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["06-one-command"] = tl;
+    })();
+  </script>
+</template>

@@ -81,3 +81,10 @@ the automatic legend, hover dimming, the keyboard crosshair and live readout,
 the tooltip, the table view, formatting, and empty, loading and refetch states.
 There are also axe and SSR tests, and Storybook play tests for the keyboard,
 legend and table flows.
+
+Across all charts, `pnpm test:charts` runs Playwright visual regression for the
+Line, Area and Bar Chart pages and the command-center recipe in light, dark and
+mobile layouts (Chromium and WebKit), plus keyboard and axe checks.
+`pnpm registry:smoke:charts` (and `:react18`) installs every chart and KPI
+registry item into a clean Vite app, typechecks and builds it, and asserts that
+no npm dependency beyond React, clsx and tailwind-merge is added.

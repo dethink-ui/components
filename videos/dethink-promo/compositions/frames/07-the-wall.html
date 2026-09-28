@@ -1,0 +1,243 @@
+<template>
+  <style>
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a342834df7752944-s.1ypl14jhz9yyw.woff2")format("woff2");unicode-range:U+460-52F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-d3fe2f289711ac3f-s.2g9li78_0_it5.woff2")format("woff2");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-58c4895d0a0ef7cc-s.00u3xrku2lqty.woff2")format("woff2");unicode-range:U+370-377,U+37A-37F,U+384-38A,U+38C,U+38E-3A1,U+3A3-3FF}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-bfc7db5c00d21bc5-s.2vepgg3wcdr2q.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      font-family: Manrope, sans-serif;
+    }
+    #root .w7-ground {
+      position: absolute;
+      inset: 0;
+      background: #071D1C;
+    }
+    #root .w7-scene {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    #root .w7-blur {
+      position: absolute;
+      inset: 0;
+    }
+    #root .w7-stage {
+      position: absolute;
+      inset: 0;
+      perspective: 2200px;
+      perspective-origin: 50% 50%;
+    }
+    #root .w7-cam {
+      position: absolute;
+      left: 960px;
+      top: 540px;
+      width: 0;
+      height: 0;
+      transform-origin: 0 0;
+    }
+    #root .w7-wall {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3370px;
+      height: 1438px;
+      transform-origin: 0 0;
+    }
+    #root .w7-row {
+      position: absolute;
+      left: 0;
+      display: flex;
+      gap: 26px;
+    }
+    #root .w7-tile {
+      position: relative;
+      flex: 0 0 540px;
+      width: 540px;
+      height: 340px;
+      border-radius: 12px;
+      border: 1px solid #1B3236;
+      background: #0B312D;
+      overflow: hidden;
+    }
+    #root .w7-tile img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #root .w7-img {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    #root .w7-dim {
+      position: absolute;
+      inset: 0;
+      background: #071D1C;
+    }
+    #root .w7-vignette {
+      position: absolute;
+      inset: -10%;
+      background: radial-gradient(ellipse 52% 50% at 50% 48%, rgba(7, 29, 28, 0.2) 0%, rgba(7, 29, 28, 0.78) 62%, #071D1C 100%);
+    }
+    #root .w7-type {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 83cqh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.2cqw;
+      font-size: 7.5cqw;
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+      color: #DEEBE9;
+      white-space: nowrap;
+    }
+    #root .w7-word {
+      display: inline-block;
+    }
+    #root .w7-accent {
+      color: #B6F06B;
+    }
+  </style>
+
+  <div id="root" data-composition-id="07-the-wall" data-width="1920" data-height="1080" data-duration="4.1">
+    <div class="w7-ground clip" id="f07-the-wall-ground" data-start="0" data-duration="4.1" data-track-index="0"></div>
+
+    <div class="w7-scene clip" id="f07-the-wall-scene" data-start="0" data-duration="4.1" data-track-index="1">
+      <div class="w7-blur" id="f07-the-wall-blur">
+        <div class="w7-stage">
+          <div class="w7-cam" id="f07-the-wall-cam">
+            <div class="w7-wall" id="f07-the-wall-wall">
+        <div class="w7-row" id="f07-the-wall-row0" style="top:0px">
+          <div class="w7-tile"><img src="assets/ui-tabs.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-command-palette.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-calendar.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-aurora-background.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-chat.png" alt="" style="object-position:50% 45%" /></div>
+          <div class="w7-tile"><img src="assets/ui-avatar-group.png" alt="" style="object-position:50% 50%" /></div>
+        </div>
+        <div class="w7-row" id="f07-the-wall-row1" style="top:366px">
+          <div class="w7-tile"><img src="assets/ui-timeline.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-hero-text-animation.png" alt="" style="object-position:50% 45%" /></div>
+          <div class="w7-tile" id="f07-the-wall-hero"><img src="assets/ui-carousel.png" alt="" style="object-position:50% 62%" /></div>
+          <div class="w7-tile"><img src="assets/ui-card-stack.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-file-upload.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><img src="assets/ui-multi-select.png" alt="" style="object-position:50% 50%" /></div>
+        </div>
+        <div class="w7-row" id="f07-the-wall-row2" style="top:732px">
+          <div class="w7-tile"><img src="assets/ui-slider.png" alt="" style="object-position:50% 40%" /></div>
+          <div class="w7-tile"><img src="assets/ui-date-range-picker.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-calendar.png');background-position:50% 50%"></div></div>
+          <div class="w7-tile"><img src="assets/ui-voice-input.png" alt="" style="object-position:50% 50%" /></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-tabs.png');background-position:50% 50%"></div></div>
+          <div class="w7-tile"><img src="assets/ui-shader-hero-text.png" alt="" style="object-position:50% 50%" /></div>
+        </div>
+        <div class="w7-row" id="f07-the-wall-row3" style="top:1098px">
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-chat.png');background-position:50% 45%"></div></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-aurora-background.png');background-position:50% 50%"></div></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-avatar-group.png');background-position:50% 50%"></div></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-timeline.png');background-position:50% 50%"></div></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-card-stack.png');background-position:50% 50%"></div></div>
+          <div class="w7-tile"><div class="w7-img" role="img" style="background-image:url('assets/ui-hero-text-animation.png');background-position:50% 45%"></div></div>
+        </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w7-dim" id="f07-the-wall-dim"></div>
+      <div class="w7-vignette" id="f07-the-wall-vignette"></div>
+      <div class="w7-type">
+        <span class="w7-word" id="f07-the-wall-w1">copy.</span>
+        <span class="w7-word" id="f07-the-wall-w2">paste.</span>
+        <span class="w7-word w7-accent" id="f07-the-wall-w3">ship.</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var ID = "07-the-wall";
+      var DUR = 3.5;
+      var BEAT = 60 / 128; // 0.46875s — 128 bpm grid drives every onset
+      var q = function (s) { return document.getElementById("f" + ID + "-" + s); };
+      var cam = q("cam");
+      var wall = q("wall");
+
+      // Wall geometry (authored, deterministic): tile 540x340, gap 26, 6 cols x 4 rows.
+      var TW = 540, TH = 340, GAP = 26;
+      var WALL_W = 6 * TW + 5 * GAP, WALL_H = 4 * TH + 3 * GAP;
+      // Row parallax: alternate rows travel in opposite directions, different depths.
+      var ROW_FROM = [-380, 260, -320, 420];
+      var ROW_TO = [-70, 60, -50, 80];
+
+      // Hero (carousel) = row 1, col 2. Its centre in wall space at t=0.
+      var HERO_X0 = 2 * (TW + GAP) + TW / 2 + ROW_FROM[1];
+      var HERO_Y0 = 1 * (TH + GAP) + TH / 2;
+      var WALL_CX = WALL_W / 2, WALL_CY = WALL_H / 2 - 20;
+
+      var S0 = 3.72, S_PRE = 3.42, S1 = 0.66; // open full-bleed -> gentle dwell pull -> wide
+      var cstate = { u: 0, pre: 0 };
+
+      function render() {
+        var sPre = S0 + (S_PRE - S0) * cstate.pre;
+        var u = cstate.u;
+        var s = Math.exp(Math.log(sPre) + (Math.log(S1) - Math.log(sPre)) * u);
+        var px = HERO_X0 + (WALL_CX - HERO_X0) * u;
+        var py = HERO_Y0 + (WALL_CY - HERO_Y0) * u;
+        var rx = 18 * u, rz = -8 * u;
+        cam.style.transform = "scale(" + s + ") rotateX(" + rx + "deg) rotateZ(" + rz + "deg)";
+        wall.style.transform = "translate(" + (-px) + "px," + (-py) + "px)";
+      }
+
+      var tl = gsap.timeline({ paused: true, onUpdate: render });
+
+      // Scene 1 (0 - 1 beat): tight on the carousel plate, a slow dwell pull (<10%).
+      tl.fromTo(cstate, { pre: 0 }, { pre: 1, duration: BEAT, ease: "none", onUpdate: render }, 0);
+
+      // Scene 2 (beat 1 - ~1.8s): ONE fast decelerating pull-back into the tilted wall. Camera locks after.
+      tl.fromTo(cstate, { u: 0 }, { u: 1, duration: 1.36, ease: "expo.out", onUpdate: render, immediateRender: false }, BEAT);
+
+      // Speed blur riding the burst's attack, resolving as it decelerates.
+      tl.fromTo(q("blur"), { filter: "blur(0px)" }, { filter: "blur(5px)", duration: 0.14, ease: "power2.out" }, BEAT);
+      tl.fromTo(q("blur"), { filter: "blur(5px)" }, { filter: "blur(0px)", duration: 0.5, ease: "power3.out", immediateRender: false }, BEAT + 0.14);
+
+      // Rows settle in parallax — one long expo tail each, so the wall keeps drifting to the end.
+      for (var r = 0; r < 4; r++) {
+        tl.fromTo(q("row" + r), { x: ROW_FROM[r] }, { x: ROW_TO[r], duration: DUR - BEAT - r * 0.04, ease: "expo.out" }, BEAT + r * 0.04);
+      }
+
+      // Scene 3 (1.8s+): vignette closes in, wall dims under the type.
+      tl.fromTo(q("vignette"), { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.7, ease: "power4.out" }, 1.8);
+      tl.fromTo(q("dim"), { opacity: 0 }, { opacity: 0.42, duration: 0.6, ease: "power3.out" }, 1.8);
+
+      // "copy. paste. ship." — one word per beat, a different attack axis each.
+      var W = [BEAT * 4, BEAT * 5, BEAT * 6];
+      tl.fromTo(q("w1"), { opacity: 0, scale: 1.7, filter: "blur(14px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "power4.out" }, W[0]);
+      tl.fromTo(q("w2"), { opacity: 0, x: 260 },
+        { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, W[1]);
+      tl.fromTo(q("w3"), { opacity: 0, y: 110, scale: 1.25 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.44, ease: "circ.out" }, W[2]);
+
+      render();
+      window.__timelines = window.__timelines || {};
+      window.__timelines[ID] = tl;
+    })();
+  </script>
+</template>
