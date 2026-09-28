@@ -190,3 +190,80 @@ export const GroupEditorFlow: Story = {
     ).toHaveAttribute("data-slot", "filter-group-chip");
   },
 };
+
+const typedFields = defineFilterFields<{
+  amount: number;
+  closes: string;
+  won: boolean;
+  stage: string;
+}>([
+  { key: "amount", label: "Amount", type: "number" },
+  { key: "closes", label: "Closes", type: "date" },
+  { key: "won", label: "Won", type: "boolean" },
+  {
+    key: "stage",
+    label: "Stage",
+    type: "option",
+    options: [
+      { value: "lead", label: "Lead" },
+      { value: "proposal", label: "Proposal" },
+      { value: "closed", label: "Closed" },
+    ],
+  },
+]);
+
+const deals = [
+  { amount: 1200, closes: "2026-09-30", won: true, stage: "lead" },
+  { amount: 5400, closes: "2026-09-29", won: false, stage: "lead" },
+  { amount: 900, closes: "2026-10-12", won: false, stage: "proposal" },
+  { amount: 15000, closes: "2026-08-01", won: true, stage: "closed" },
+];
+
+export const TypedValuesAndCounts: Story = {
+  args: {
+    fields: typedFields as typeof fields,
+    data: deals,
+    showImpact: true,
+    evaluateOptions: { now: Date.UTC(2026, 8, 30, 12) },
+    defaultValue: createFilter({
+      children: [
+        createFilterCondition({
+          field: "closes",
+          operator: "inLast",
+          value: { amount: 7, unit: "day" },
+        }),
+        createFilterCondition({
+          field: "amount",
+          operator: "gte",
+          value: 1000,
+        }),
+      ],
+    }),
+  },
+};
+
+export const RelaxWhenEmpty: Story = {
+  args: {
+    fields: typedFields as typeof fields,
+    data: deals,
+    evaluateOptions: { now: Date.UTC(2026, 8, 30, 12) },
+    defaultValue: createFilter({
+      children: [
+        createFilterCondition({
+          field: "stage",
+          operator: "isAnyOf",
+          value: ["closed"],
+        }),
+        createFilterCondition({ field: "won", operator: "is", value: false }),
+      ],
+    }),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Relax: Stage is Closed" }),
+    );
+    await expect(canvas.queryByRole("group", { name: /Stage/ })).toBeNull();
+  },
+};

@@ -9,172 +9,41 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import { cn } from "../../utils/cn";
 import { LiveRegion } from "../live-region";
 import {
   DEFAULT_FILTER_MAX_DEPTH,
   describeFilter,
+  describeFilterCondition,
   type DescribeFilterOptions,
 } from "./filter-core";
-import type { Filter, FilterCondition, FilterFields } from "./filter-types";
+import type {
+  Filter,
+  FilterEvaluateOptions,
+  FilterFields,
+} from "./filter-types";
+import { FilterBarRescue } from "./filter-bar-rescue";
+import { useFilterInsights } from "./use-filter-insights";
 import { useFilterState, type FilterState } from "./use-filter-state";
 import { FilterAddMenu } from "./filter-add-menu";
-import { FilterChip } from "./filter-chip";
-import { FilterBarAdvanced, FilterGroupChip } from "./filter-group-chip";
+import { FilterBarAdvanced } from "./filter-group-chip";
 import {
   FilterBarContext,
   ITEM_SELECTOR,
-  UndoIcon,
-  conjunctionClasses,
   defaultFilterBarLabels,
-  filterBarActionClassNames,
   filterBarClassNames,
   filterBarToolbarClasses,
   isEditableTarget,
   isVisible,
-  moreButtonClasses,
-  negationClasses,
-  useFilterBarContext,
   type FilterBarContextValue,
   type FilterBarLabels,
   type FilterBarSize,
 } from "./filter-bar-parts";
 
-export interface FilterBarChipsProps {
-  /** Custom chip renderer. Return `undefined` to use the default chip. */
-  renderChip?: (condition: FilterCondition, index: number) => ReactNode;
-}
-
-/** Chips for the root conditions, with narrow-width collapsing. */
-export function FilterBarChips({ renderChip }: FilterBarChipsProps) {
-  const { collapseAfter, expanded, labels, setExpanded, size, state } =
-    useFilterBarContext("FilterBarChips");
-  const { children, combinator } = state.filter;
-  const hiddenCount = Math.max(children.length - collapseAfter, 0);
-
-  return (
-    <>
-      {state.filter.not && children.length > 0 ? (
-        <span data-slot="filter-bar-not" className={negationClasses}>
-          {labels.notMatching}
-        </span>
-      ) : null}
-      {children.map((node, index) => (
-        <FilterBarChipSlot
-          key={node.id}
-          conjunction={index > 0 && combinator === "or" ? labels.or : undefined}
-        >
-          {node.type === "condition" ? (
-            (renderChip?.(node, index) ?? (
-              <FilterChip condition={node} index={index} />
-            ))
-          ) : (
-            <FilterGroupChip group={node} index={index} />
-          )}
-        </FilterBarChipSlot>
-      ))}
-      {hiddenCount > 0 ? (
-        <button
-          type="button"
-          data-filter-bar-item="more"
-          data-slot="filter-bar-more"
-          aria-expanded={expanded}
-          className={filterBarActionClassNames({
-            size,
-            className: moreButtonClasses,
-          })}
-          onClick={() => {
-            setExpanded(!expanded);
-          }}
-        >
-          {expanded ? labels.showLess : labels.showMore(hiddenCount)}
-        </button>
-      ) : null}
-    </>
-  );
-}
-
-function FilterBarChipSlot({
-  children,
-  conjunction,
-}: {
-  children: ReactNode;
-  conjunction?: string;
-}) {
-  if (!conjunction) {
-    return children;
-  }
-
-  return (
-    <>
-      <span aria-hidden="true" className={conjunctionClasses}>
-        {conjunction}
-      </span>
-      {children}
-    </>
-  );
-}
-
-export interface FilterBarActionProps {
-  className?: string;
-  children?: ReactNode;
-}
-
-/** Removes every filter. Hidden while the filter is empty. */
-export function FilterBarClear({ children, className }: FilterBarActionProps) {
-  const { addButtonRef, labels, requestFocus, size, state } =
-    useFilterBarContext("FilterBarClear");
-
-  if (state.filter.children.length === 0) {
-    return null;
-  }
-
-  return (
-    <button
-      type="button"
-      data-filter-bar-item="clear"
-      data-slot="filter-bar-clear"
-      className={filterBarActionClassNames({ size, className })}
-      onClick={() => {
-        requestFocus(addButtonRef.current);
-        state.clear();
-      }}
-    >
-      {children ?? labels.clear}
-    </button>
-  );
-}
-
-/** Undoes the last filter change. Hidden when there is nothing to undo. */
-export function FilterBarUndo({ children, className }: FilterBarActionProps) {
-  const { labels, size, state } = useFilterBarContext("FilterBarUndo");
-
-  if (!state.canUndo) {
-    return null;
-  }
-
-  return (
-    <button
-      type="button"
-      data-filter-bar-item="undo"
-      data-slot="filter-bar-undo"
-      aria-label={children ? undefined : labels.undo}
-      title={children ? undefined : labels.undo}
-      className={filterBarActionClassNames({
-        size,
-        className: cn(
-          children ? undefined : "px-[var(--dt-space-1-5)]",
-          className,
-        ),
-      })}
-      onClick={() => {
-        state.undo();
-      }}
-    >
-      {children ?? <UndoIcon />}
-    </button>
-  );
-}
+import {
+  FilterBarChips,
+  FilterBarClear,
+  FilterBarUndo,
+} from "./filter-bar-chips";
 
 export interface FilterBarProps<TData = unknown> extends Omit<
   HTMLAttributes<HTMLDivElement>,
@@ -195,6 +64,22 @@ export interface FilterBarProps<TData = unknown> extends Omit<
   collapseAfter?: number;
   /** Group levels allowed, counting the root as 1. Defaults to 3. */
   maxDepth?: number;
+  /**
+   * Rows to filter on the client. Enables facet counts in option pickers,
+   * an announced result count and the empty-result rescue.
+   */
+  data?: readonly TData[];
+  /** Shows how many rows each chip removes ("−42"). Needs `data`. */
+  showImpact?: boolean;
+  /** Offers "Relax" on the most restrictive chip when nothing matches. */
+  rescue?: boolean;
+  /**
+   * `now`, `timeZone` and `weekStartsOn` for relative dates. Inject `now`
+   * so server and client counts match.
+   */
+  evaluateOptions?: FilterEvaluateOptions;
+  /** Locale for numbers, dates and calendars. Defaults to "en-US". */
+  locale?: string;
   size?: FilterBarSize;
   /** Custom composition of FilterBar parts. Defaults to chips and actions. */
   children?: ReactNode;
@@ -210,12 +95,17 @@ export function FilterBar<TData>({
   children,
   className,
   collapseAfter = 2,
+  data,
   defaultValue,
+  evaluateOptions: evaluateOptionsProp,
   fields,
   labels: labelOverrides,
+  locale = "en-US",
   maxDepth = DEFAULT_FILTER_MAX_DEPTH,
   onValueChange,
+  rescue: withRescue = true,
   resultCount,
+  showImpact = false,
   size = "md",
   state: externalState,
   value,
@@ -229,6 +119,7 @@ export function FilterBar<TData>({
   );
   const describeOptions = useMemo<DescribeFilterOptions>(
     () => ({
+      locale,
       labels: {
         and: labels.and,
         empty: labels.empty,
@@ -237,8 +128,30 @@ export function FilterBar<TData>({
         or: labels.or,
       },
     }),
-    [labels],
+    [labels, locale],
   );
+  // A fixed default `now` keeps relative dates and counts stable across
+  // renders; pass `evaluateOptions.now` to match server output.
+  const [mountedAt] = useState(() => Date.now());
+  const evaluateNow = evaluateOptionsProp?.now ?? mountedAt;
+  const evaluateTimeZone = evaluateOptionsProp?.timeZone;
+  const evaluateWeekStart = evaluateOptionsProp?.weekStartsOn ?? 1;
+  const evaluateOptions = useMemo<FilterEvaluateOptions>(
+    () => ({
+      now: evaluateNow,
+      timeZone: evaluateTimeZone,
+      weekStartsOn: evaluateWeekStart,
+    }),
+    [evaluateNow, evaluateTimeZone, evaluateWeekStart],
+  );
+  const insights = useFilterInsights({
+    data,
+    evaluateOptions,
+    fields,
+    filter: state.filter,
+    impact: showImpact,
+    rescue: withRescue,
+  });
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const toolbarRef = useRef<HTMLDivElement>(null);
@@ -381,10 +294,15 @@ export function FilterBar<TData>({
       addMenuOpen,
       collapseAfter,
       describeOptions,
+      evaluateOptions,
       expanded,
       fields: fields as FilterFields,
+      getFacets: insights.getFacets,
+      impact: insights.impact,
       labels,
+      locale,
       maxDepth,
+      rescue: insights.rescue,
       requestFocus,
       setAddMenuOpen,
       setExpanded,
@@ -395,15 +313,30 @@ export function FilterBar<TData>({
       addMenuOpen,
       collapseAfter,
       describeOptions,
+      evaluateOptions,
       expanded,
       fields,
+      insights,
       labels,
+      locale,
       maxDepth,
       requestFocus,
       size,
       state,
     ],
   );
+
+  const announcedCount = resultCount ?? insights.count;
+  const rescueText = insights.rescue
+    ? labels.rescue(
+        describeFilterCondition(
+          insights.rescue.condition,
+          fields,
+          describeOptions,
+        ),
+        insights.rescue.count,
+      )
+    : undefined;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const target = event.target;
@@ -522,8 +455,12 @@ export function FilterBar<TData>({
         <span id={summaryId} hidden>
           {describeFilter(state.filter, fields, describeOptions)}
         </span>
+        <FilterBarRescue />
         <LiveRegion slotName="filter-bar-status">
-          {resultCount === undefined ? "" : labels.resultCount(resultCount)}
+          {announcedCount === undefined
+            ? ""
+            : labels.resultCount(announcedCount)}
+          {rescueText ? ` ${rescueText}` : ""}
         </LiveRegion>
       </div>
     </FilterBarContext.Provider>

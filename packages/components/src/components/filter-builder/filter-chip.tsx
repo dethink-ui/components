@@ -15,11 +15,8 @@ import {
   getFilterOperator,
   isFilterConditionActive,
 } from "./filter-core";
-import {
-  FilterFieldPicker,
-  FilterOperatorPicker,
-  FilterValueEditor,
-} from "./filter-editors";
+import { FilterFieldPicker, FilterOperatorPicker } from "./filter-editors";
+import { FilterValueEditor } from "./filter-value-editor";
 import type { FilterCondition } from "./filter-types";
 import {
   CloseIcon,
@@ -60,13 +57,18 @@ export function FilterChip({
   const {
     collapseAfter,
     describeOptions,
+    evaluateOptions,
     expanded,
     fields,
+    getFacets,
+    impact,
     labels,
+    locale,
     requestFocus,
     size,
     state,
   } = useFilterBarContext("FilterChip");
+  const impactId = useId();
   const [editing, setEditing] = useState<ChipSegment | null>(null);
   const [session, setSession] = useState(0);
   // The same condition can render in the bar and in a group editor at once,
@@ -145,7 +147,11 @@ export function FilterChip({
     );
   }
 
-  const values = formatFilterValue(field, condition.value);
+  const values = formatFilterValue(field, condition.value, {
+    locale,
+    operator,
+  });
+  const impactCount = impact?.get(condition.id);
   const valueText = formatChipValue(values, labels.selectValue);
   const operatorLabel = labels.operator(operator, condition.value);
 
@@ -161,6 +167,7 @@ export function FilterChip({
       role="group"
       aria-label={description}
       data-slot="filter-chip"
+      aria-describedby={impactCount ? impactId : undefined}
       data-active={active ? "" : undefined}
       data-incomplete={active ? undefined : ""}
       data-negated={condition.not ? "" : undefined}
@@ -223,6 +230,19 @@ export function FilterChip({
           <span className="min-w-0 truncate">{valueText}</span>
         </button>
       )}
+      {impactCount ? (
+        <span
+          data-slot="filter-chip-impact"
+          className="text-muted-foreground inline-flex shrink-0 items-center px-[var(--dt-space-1-5)] text-xs tabular-nums"
+        >
+          <span aria-hidden="true">
+            {impactCount > 0 ? `−${impactCount}` : `+${-impactCount}`}
+          </span>
+          <span id={impactId} className="sr-only">
+            {labels.impact(impactCount)}
+          </span>
+        </span>
+      ) : null}
       <button
         type="button"
         data-filter-bar-item="remove"
@@ -284,22 +304,38 @@ export function FilterChip({
               listLabel={labels.operatorList}
               getOperatorLabel={labels.operator}
               onSelect={(operatorId) => {
-                if (operatorId !== operator.id) {
-                  update({ operator: operatorId });
+                const next = getFilterOperator(field, operatorId);
+
+                if (!next || next.id === operator.id) {
+                  setEditing(null);
+                  return;
                 }
 
-                setEditing(null);
+                // A different value shape (e.g. a date to "last 7 days")
+                // can't keep the old value, so clear it and ask for one.
+                const reshape = next.valueKind !== operator.valueKind;
+
+                update(
+                  reshape
+                    ? { operator: next.id, value: undefined }
+                    : { operator: next.id },
+                );
+                setEditing(reshape && next.arity !== "none" ? "value" : null);
               }}
             />
           ) : null}
           {editing === "value" ? (
             <FilterValueEditor
               field={field}
+              operator={operator}
               value={condition.value}
-              searchLabel={labels.searchOptions(field.label)}
-              emptyLabel={labels.noResults}
-              textLabel={labels.textValue(field.label)}
-              textPlaceholder={field.placeholder ?? labels.textPlaceholder}
+              counts={getFacets?.(field.key, {
+                conditionId: condition.id,
+                operator: operator.id,
+              })}
+              labels={labels}
+              locale={locale}
+              weekStartsOn={evaluateOptions.weekStartsOn}
               onValueChange={(value) => {
                 update({ value });
               }}

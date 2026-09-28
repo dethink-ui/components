@@ -5,11 +5,10 @@ import {
   ListBoxItem,
   SearchField,
   useFilter,
-  type Selection,
 } from "react-aria-components";
-import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, type KeyboardEvent, type ReactNode } from "react";
 import { cn } from "../../utils/cn";
-import { Input, inputClassNames } from "../input";
+import { inputClassNames } from "../input";
 import { getFilterOperatorLabel, getFilterOperators } from "./filter-core";
 import type {
   FilterField,
@@ -17,27 +16,28 @@ import type {
   FilterValue,
 } from "./filter-types";
 
-const filterListBoxClasses = "max-h-64 min-w-0 overflow-auto outline-none";
+export const filterListBoxClasses =
+  "max-h-64 min-w-0 overflow-auto outline-none";
 
-const filterListItemClasses =
+export const filterListItemClasses =
   "grid cursor-default grid-cols-[1rem_minmax(0,1fr)] items-center gap-[var(--dt-space-2)] rounded-sm px-[var(--dt-space-2)] py-[var(--dt-space-1-5)] text-sm text-foreground outline-none motion-safe:transition-[background-color,color] motion-safe:duration-[var(--dt-motion-fast)] motion-safe:ease-control data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-ring data-[focused]:bg-muted data-[hovered]:bg-muted data-[pressed]:bg-muted/80";
 
-const filterListIndicatorClasses =
+export const filterListIndicatorClasses =
   "flex size-4 items-center justify-center text-foreground";
 
-const filterListCheckboxClasses =
+export const filterListCheckboxClasses =
   "flex size-4 items-center justify-center rounded-[4px] border border-input bg-background text-primary-foreground group-data-[selected]:border-primary group-data-[selected]:bg-primary [&>svg]:invisible group-data-[selected]:[&>svg]:visible";
 
-const filterListEmptyClasses =
+export const filterListEmptyClasses =
   "px-[var(--dt-space-2)] py-[var(--dt-space-3)] text-sm text-muted-foreground";
 
-const filterEditorStackClasses = "grid min-w-0 gap-[var(--dt-space-2)]";
+export const filterEditorStackClasses = "grid min-w-0 gap-[var(--dt-space-2)]";
 
 /**
  * Autocomplete spends the first Escape clearing its virtual focus. Close the
  * editor straight away instead when the search box is empty.
  */
-function closeOnEmptyEscape(onClose: (() => void) | undefined) {
+export function closeOnEmptyEscape(onClose: (() => void) | undefined) {
   return (event: KeyboardEvent<HTMLDivElement>) => {
     if (
       onClose &&
@@ -58,7 +58,7 @@ export function filterListItemClassNames({
   return cn(filterListItemClasses, className);
 }
 
-function CheckIcon() {
+export function CheckIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 16 16" className="size-3.5">
       <path
@@ -73,7 +73,7 @@ function CheckIcon() {
   );
 }
 
-function SearchInput({ label }: { label: string }) {
+export function SearchInput({ label }: { label: string }) {
   return (
     // Editors open on demand, so moving focus into the search is expected.
     // eslint-disable-next-line jsx-a11y/no-autofocus
@@ -204,135 +204,26 @@ export function FilterOperatorPicker({
   );
 }
 
-export interface FilterValueEditorProps<TData = unknown> {
-  field: FilterField<TData>;
-  value?: FilterValue;
-  onValueChange: (value: FilterValue | undefined) => void;
-  /** Called when the user confirms the value, e.g. Enter in a text field. */
-  onCommit?: () => void;
-  /** Closes the surrounding editor, e.g. on Escape. */
-  onClose?: () => void;
-  searchLabel?: string;
-  emptyLabel?: ReactNode;
-  textLabel?: string;
-  textPlaceholder?: string;
-}
-
-function toKeys(value: FilterValue | undefined) {
-  if (Array.isArray(value)) {
-    return value;
-  }
-
-  return value === undefined || value === "" ? [] : [String(value)];
-}
-
-/** Value input for a field: text box for text, checklist for options. */
-export function FilterValueEditor<TData>({
-  emptyLabel = "No results.",
-  field,
-  onClose,
-  onCommit,
-  onValueChange,
-  searchLabel,
-  textLabel,
-  textPlaceholder,
-  value,
-}: FilterValueEditorProps<TData>) {
-  const { contains } = useFilter({ sensitivity: "base" });
-  const textRef = useRef<HTMLInputElement>(null);
-  const isText = field.type === "text";
-
-  // Focus after the popover has registered as the top overlay. A native
-  // autoFocus fires first and, inside a group editor's popover, reads as an
-  // outside interaction that dismisses both popovers.
+/**
+ * Focuses an element after the popover has registered as the top overlay. A
+ * native autoFocus fires first and, inside a group editor's popover, reads as
+ * an outside interaction that dismisses both popovers.
+ */
+export function useDeferredFocus(
+  ref: { current: HTMLElement | null },
+  enabled = true,
+) {
   useEffect(() => {
-    if (!isText) {
+    if (!enabled) {
       return undefined;
     }
 
     const timer = window.setTimeout(() => {
-      textRef.current?.focus();
+      ref.current?.focus();
     }, 0);
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [isText]);
-
-  if (isText) {
-    return (
-      <div data-slot="filter-value-editor" className={filterEditorStackClasses}>
-        <Input
-          ref={textRef}
-          aria-label={textLabel ?? `${field.label} value`}
-          controlSize="sm"
-          placeholder={textPlaceholder ?? field.placeholder}
-          value={typeof value === "string" ? value : ""}
-          onChange={(event) => {
-            const next = event.currentTarget.value;
-
-            onValueChange(next === "" ? undefined : next);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              onCommit?.();
-            }
-          }}
-        />
-      </div>
-    );
-  }
-
-  const options = field.options ?? [];
-  const selected = toKeys(value);
-
-  return (
-    <div
-      data-slot="filter-value-editor"
-      className={filterEditorStackClasses}
-      onKeyDownCapture={closeOnEmptyEscape(onClose)}
-    >
-      <Autocomplete filter={contains}>
-        <SearchInput label={searchLabel ?? `Search ${field.label}`} />
-        <ListBox
-          aria-label={field.label}
-          items={options.map((option) => ({
-            id: option.value,
-            label: option.label,
-            keywords: option.keywords,
-          }))}
-          selectionMode="multiple"
-          selectedKeys={selected}
-          className={filterListBoxClasses}
-          renderEmptyState={() => (
-            <div className={filterListEmptyClasses}>{emptyLabel}</div>
-          )}
-          onSelectionChange={(keys: Selection) => {
-            const next =
-              keys === "all"
-                ? options.map((option) => option.value)
-                : options
-                    .map((option) => option.value)
-                    .filter((optionValue) => keys.has(optionValue));
-
-            onValueChange(next.length > 0 ? next : undefined);
-          }}
-        >
-          {(item) => (
-            <ListBoxItem
-              id={item.id}
-              textValue={[item.label, ...(item.keywords ?? [])].join(" ")}
-              className={filterListItemClassNames({ className: "group" })}
-            >
-              <span aria-hidden="true" className={filterListCheckboxClasses}>
-                <CheckIcon />
-              </span>
-              <span className="min-w-0 truncate">{item.label}</span>
-            </ListBoxItem>
-          )}
-        </ListBox>
-      </Autocomplete>
-    </div>
-  );
+  }, [enabled, ref]);
 }

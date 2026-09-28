@@ -94,4 +94,49 @@ describe("FilterBar accessibility", () => {
     await screen.findByRole("dialog", { name: "Edit filter groups" });
     await expect(axe(baseElement)).resolves.toHaveNoViolations();
   });
+
+  it("has no axe violations for typed editors, impact counts and the rescue", async () => {
+    const user = userEvent.setup();
+    const typedFields = defineFilterFields<{ due: string; size: number }>([
+      { key: "due", label: "Due", type: "date" },
+      { key: "size", label: "Size", type: "number" },
+    ]);
+    const { baseElement } = render(
+      <DethinkProvider theme="light">
+        <main aria-label="Typed filter accessibility smoke">
+          <FilterBar
+            fields={typedFields}
+            data={[{ due: "2026-09-30", size: 3 }]}
+            showImpact
+            evaluateOptions={{ now: Date.UTC(2026, 8, 30) }}
+            defaultValue={createFilter({
+              children: [
+                createFilterCondition({
+                  field: "due",
+                  operator: "is",
+                  value: { kind: "relative", amount: -1, unit: "day" },
+                }),
+                createFilterCondition({
+                  field: "size",
+                  operator: "gt",
+                  value: 1,
+                }),
+              ],
+            })}
+          />
+        </main>
+      </DethinkProvider>,
+    );
+
+    expect(
+      baseElement.querySelector('[data-slot="filter-bar-rescue"]'),
+    ).not.toBeNull();
+    await expect(axe(baseElement)).resolves.toHaveNoViolations();
+
+    await user.click(
+      screen.getByRole("button", { name: "Change value, yesterday" }),
+    );
+    await screen.findByRole("listbox", { name: "Presets" });
+    await expect(axe(baseElement)).resolves.toHaveNoViolations();
+  });
 });

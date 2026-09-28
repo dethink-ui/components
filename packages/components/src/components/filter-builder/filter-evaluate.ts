@@ -1,8 +1,23 @@
-import { isEmptyFilterValue } from "./filter-operators";
-import { getFilterOperator } from "./filter-model";
-import type { FilterField, FilterFields, FilterNode } from "./filter-types";
+import { createFilterEvaluationContext } from "./filter-dates";
+import { getFilterOperator, isFilterValueUsable } from "./filter-model";
+import type {
+  FilterCondition,
+  FilterEvaluateOptions,
+  FilterField,
+  FilterFields,
+  FilterNode,
+} from "./filter-types";
 
-function readFieldValue<TData>(field: FilterField<TData>, row: TData) {
+export interface CreateFilterPredicateOptions extends FilterEvaluateOptions {
+  /** Conditions to leave out, e.g. a field's own conditions for facets. */
+  exclude?: (condition: FilterCondition) => boolean;
+}
+
+/** Reads a field's value from a row, through its accessor if it has one. */
+export function readFilterFieldValue<TData>(
+  field: FilterField<TData>,
+  row: TData,
+) {
   if (field.accessor) {
     return field.accessor(row);
   }
@@ -13,14 +28,19 @@ function readFieldValue<TData>(field: FilterField<TData>, row: TData) {
 }
 
 /**
- * Compiles a filter into a row predicate. Incomplete or unknown conditions
- * are skipped, so a chip that is still being edited never hides every row.
+ * Compiles a filter into a row predicate. Incomplete, invalid or unknown
+ * conditions are skipped, so a chip that is still being edited never hides
+ * every row. Relative dates resolve against `now` (default: the current time)
+ * in `timeZone`; inject `now` for output that matches between server and
+ * client.
  */
 export function createFilterPredicate<TData>(
   filter: FilterNode,
   fields: FilterFields<TData>,
+  { exclude, ...options }: CreateFilterPredicateOptions = {},
 ): (row: TData) => boolean {
   const fieldMap = new Map(fields.map((field) => [field.key, field]));
+  const context = createFilterEvaluationContext(options);
 
   const compile = (node: FilterNode): ((row: TData) => boolean) | null => {
     if (node.type === "condition") {
@@ -32,13 +52,18 @@ export function createFilterPredicate<TData>(
       if (
         !field ||
         !operator ||
-        (operator.arity !== "none" && isEmptyFilterValue(node.value))
+        !isFilterValueUsable(operator, node.value) ||
+        exclude?.(node)
       ) {
         return null;
       }
 
       const test = (row: TData) =>
-        operator.evaluate(readFieldValue(field, row), node.value);
+        operator.evaluate(
+          readFilterFieldValue(field, row),
+          node.value,
+          context,
+        );
 
       return node.not ? (row) => !test(row) : test;
     }
@@ -68,8 +93,9 @@ export function evaluateFilter<TData>(
   filter: FilterNode,
   row: TData,
   fields: FilterFields<TData>,
+  options?: FilterEvaluateOptions,
 ) {
-  return createFilterPredicate(filter, fields)(row);
+  return createFilterPredicate(filter, fields, options)(row);
 }
 
 /**
@@ -78,7 +104,10 @@ export function evaluateFilter<TData>(
  * re-filters when that state changes, so a new filter never leaves stale rows.
  * Compiled predicates are cached per filter object.
  */
-export function toTanstackFilterFn<TData>(fields: FilterFields<TData>) {
+export function toTanstackFilterFn<TData>(
+  fields: FilterFields<TData>,
+  options?: FilterEvaluateOptions,
+) {
   const cache = new WeakMap<FilterNode, (row: TData) => boolean>();
 
   return (
@@ -93,7 +122,7 @@ export function toTanstackFilterFn<TData>(fields: FilterFields<TData>) {
     let predicate = cache.get(filter);
 
     if (!predicate) {
-      predicate = createFilterPredicate(filter, fields);
+      predicate = createFilterPredicate(filter, fields, options);
       cache.set(filter, predicate);
     }
 

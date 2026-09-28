@@ -1,8 +1,4 @@
-import type {
-  FilterFieldType,
-  FilterOperatorDefinition,
-  FilterValue,
-} from "./filter-types";
+import type { FilterOperatorDefinition, FilterValue } from "./filter-types";
 
 export function isEmptyFilterValue(value: unknown) {
   return (
@@ -25,9 +21,15 @@ function toText(value: unknown): string {
   return String(value).toLowerCase();
 }
 
-function toStringList(value: FilterValue | undefined) {
+function isStringList(value: FilterValue) {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+}
+
+function toStringList(value: FilterValue | undefined): string[] {
   if (Array.isArray(value)) {
-    return value;
+    return value.map((item) => String(item));
   }
 
   return isEmptyFilterValue(value) ? [] : [String(value)];
@@ -50,18 +52,20 @@ function textOperator(
     id,
     label,
     arity: "single",
+    valueKind: "text",
+    isValueValid: (value) => typeof value === "string",
     evaluate: (rowValue, value) => match(toText(rowValue), toText(value)),
   };
 }
 
-const isEmpty: FilterOperatorDefinition = {
+export const isEmptyFilterOperator: FilterOperatorDefinition = {
   id: "isEmpty",
   label: "is empty",
   arity: "none",
   evaluate: (rowValue) => isEmptyFilterValue(rowValue),
 };
 
-const isNotEmpty: FilterOperatorDefinition = {
+export const isNotEmptyFilterOperator: FilterOperatorDefinition = {
   id: "isNotEmpty",
   label: "is not empty",
   arity: "none",
@@ -81,8 +85,8 @@ export const textFilterOperators: FilterOperatorDefinition[] = [
     row.startsWith(query),
   ),
   textOperator("endsWith", "ends with", (row, query) => row.endsWith(query)),
-  isEmpty,
-  isNotEmpty,
+  isEmptyFilterOperator,
+  isNotEmptyFilterOperator,
 ];
 
 export const optionFilterOperators: FilterOperatorDefinition[] = [
@@ -91,6 +95,8 @@ export const optionFilterOperators: FilterOperatorDefinition[] = [
     label: "is any of",
     singleLabel: "is",
     arity: "multiple",
+    valueKind: "list",
+    isValueValid: isStringList,
     evaluate: (rowValue, value) => {
       const selected = toStringList(value);
 
@@ -102,14 +108,16 @@ export const optionFilterOperators: FilterOperatorDefinition[] = [
     label: "is none of",
     singleLabel: "is not",
     arity: "multiple",
+    valueKind: "list",
+    isValueValid: isStringList,
     evaluate: (rowValue, value) => {
       const selected = toStringList(value);
 
       return !rowValueList(rowValue).some((item) => selected.includes(item));
     },
   },
-  isEmpty,
-  isNotEmpty,
+  isEmptyFilterOperator,
+  isNotEmptyFilterOperator,
 ];
 
 export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
@@ -118,6 +126,8 @@ export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
     label: "includes any of",
     singleLabel: "includes",
     arity: "multiple",
+    valueKind: "list",
+    isValueValid: isStringList,
     evaluate: (rowValue, value) => {
       const items = rowValueList(rowValue);
 
@@ -129,6 +139,8 @@ export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
     label: "includes all of",
     singleLabel: "includes",
     arity: "multiple",
+    valueKind: "list",
+    isValueValid: isStringList,
     evaluate: (rowValue, value) => {
       const items = rowValueList(rowValue);
 
@@ -140,27 +152,14 @@ export const multiOptionFilterOperators: FilterOperatorDefinition[] = [
     label: "includes none of",
     singleLabel: "does not include",
     arity: "multiple",
+    valueKind: "list",
+    isValueValid: isStringList,
     evaluate: (rowValue, value) => {
       const items = rowValueList(rowValue);
 
       return !toStringList(value).some((item) => items.includes(item));
     },
   },
-  isEmpty,
-  isNotEmpty,
+  isEmptyFilterOperator,
+  isNotEmptyFilterOperator,
 ];
-
-export const filterOperatorsByType: Record<
-  FilterFieldType,
-  FilterOperatorDefinition[]
-> = {
-  text: textFilterOperators,
-  option: optionFilterOperators,
-  multiOption: multiOptionFilterOperators,
-};
-
-export const defaultFilterOperatorByType: Record<FilterFieldType, string> = {
-  text: "contains",
-  option: "isAnyOf",
-  multiOption: "includesAny",
-};
