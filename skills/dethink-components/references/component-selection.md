@@ -6,6 +6,7 @@ It is not an exhaustive catalog or a replacement for API types.
 | User need               | Start with                                              | What to check                                               |
 | ----------------------- | ------------------------------------------------------- | ----------------------------------------------------------- |
 | App dashboard           | SidebarShell, Sidebar, Card, DataTable                  | Header trigger, responsive navigation, current route        |
+| Metrics and charts      | KpiGroup, StatTile, LineChart, AreaChart, BarChart      | One y-axis per chart; BarList for ranked categories         |
 | Simple tabular data     | Table                                                   | Use DataTable when sorting/filtering/pagination is needed   |
 | Editable form           | FormField, Input, Select, Checkbox, Button              | Labels, validation, controlled state, submission            |
 | Searchable choices      | Combobox, MultiSelect, AsyncSelect, TagInput            | Single vs multiple values, async loading, free text         |
@@ -23,7 +24,8 @@ matching file in `apps/showcase/src/examples/recipes/`. Public previews are at
 
 Useful starting recipes:
 
-- `command-center-dashboard`: operations overview, sidebar, filters and incidents.
+- `command-center-dashboard`: operations overview, sidebar, KPI tiles, charts,
+  filters and incidents.
 - `crud-resource-manager`: resource lists and management interactions.
 - `automation-landing`: animated marketing hero, workflows and pricing.
 - `automation-login`: sign-in form and social sign-in presentation.

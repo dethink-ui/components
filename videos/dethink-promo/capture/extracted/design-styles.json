@@ -1,0 +1,177 @@
+{
+  "typography": [
+    {
+      "role": "display",
+      "fontFamily": "Bricolage Grotesque",
+      "fontSize": "36px",
+      "fontWeight": "700",
+      "lineHeight": "40px",
+      "letterSpacing": "-0.9px",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "sampleText": "Components"
+    },
+    {
+      "role": "heading",
+      "fontFamily": "Bricolage Grotesque",
+      "fontSize": "24px",
+      "fontWeight": "600",
+      "lineHeight": "32px",
+      "letterSpacing": "-0.6px",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "sampleText": "General"
+    },
+    {
+      "role": "link",
+      "fontFamily": "Manrope",
+      "fontSize": "16px",
+      "fontWeight": "500",
+      "lineHeight": "24px",
+      "letterSpacing": "normal",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "sampleText": "Skip to content"
+    },
+    {
+      "role": "code",
+      "fontFamily": "Manrope",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "lineHeight": "24px",
+      "letterSpacing": "normal",
+      "color": "#000000",
+      "sampleText": "@layer { [data-react-aria-pressable] { touch-action: pan-x p"
+    },
+    {
+      "role": "body",
+      "fontFamily": "Manrope",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "sampleText": "Getting started"
+    },
+    {
+      "role": "label",
+      "fontFamily": "Bricolage Grotesque",
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "20px",
+      "letterSpacing": "normal",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "sampleText": "Find a component"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      2,
+      6,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48
+    ],
+    "baseUnit": 8
+  },
+  "radius": [
+    "6px",
+    "8px"
+  ],
+  "shadows": [
+    {
+      "value": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px",
+      "count": 81
+    },
+    {
+      "value": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "count": 1
+    }
+  ],
+  "buttons": [
+    {
+      "label": "Teal",
+      "background": "oklab(0.979998 -0.00400898 -0.000350319 / 0.6)",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "padding": "0px 10px",
+      "borderRadius": "12px",
+      "border": "1px solid lab(88.4 0 0.0000119209)",
+      "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "height": "32px"
+    },
+    {
+      "label": "button",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "oklch(0.465599 0.0140096 184.994)",
+      "padding": "0px",
+      "borderRadius": "8px",
+      "border": "0px solid lab(88.4 0 0.0000119209)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "500",
+      "height": "24px"
+    },
+    {
+      "label": "button",
+      "background": "oklch(0.979998 0.00402426 184.994)",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "padding": "0px",
+      "borderRadius": "8px",
+      "border": "0px solid lab(88.4 0 0.0000119209)",
+      "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px",
+      "fontSize": "16px",
+      "fontWeight": "500",
+      "height": "24px"
+    }
+  ],
+  "cards": [],
+  "nav": {
+    "label": "navigation",
+    "background": "oklab(0.979998 -0.00400898 -0.000350319 / 0.95)",
+    "backgroundImage": "",
+    "backdropFilter": "blur(12px)",
+    "color": "oklch(0.223999 0.00800445 184.994)",
+    "padding": "0px",
+    "borderRadius": "0px",
+    "border": "",
+    "boxShadow": "none",
+    "fontSize": "16px",
+    "fontWeight": "500",
+    "height": "88px"
+  },
+  "chips": [],
+  "statCells": [],
+  "tabs": [
+    {
+      "label": "80",
+      "background": "transparent",
+      "color": "oklch(0.223999 0.00800445 184.994)",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px solid lab(88.4 0 0.0000119209)",
+      "boxShadow": "none",
+      "fontSize": "24px",
+      "fontWeight": "600",
+      "height": "32px"
+    }
+  ],
+  "backgrounds": [],
+  "glass": [
+    {
+      "backdropFilter": "blur(12px)",
+      "background": "oklab(0.979998 -0.00400898 -0.000350319 / 0.95)",
+      "border": "",
+      "borderRadius": "0px",
+      "boxShadow": "",
+      "area": 167992
+    }
+  ]
+}

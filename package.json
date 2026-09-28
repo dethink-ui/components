@@ -41,6 +41,7 @@
     "test:shader-backgrounds": "playwright test --config=e2e/shader-backgrounds.config.ts",
     "registry:smoke:shader-backgrounds": "node scripts/smoke-shader-hero-registry.mjs --backgrounds",
     "test:carousel": "playwright test --config=e2e/carousel-modes.config.ts",
+    "test:charts": "playwright test --config=e2e/charts.config.ts",
     "registry:smoke:carousel": "node scripts/smoke-carousel-registry.mjs",
     "test:sidebar-shell": "playwright test --config=e2e/sidebar-shell.config.ts",
     "registry:smoke:sidebar-shell": "node scripts/smoke-sidebar-shell-registry.mjs",
@@ -55,7 +56,9 @@
     "registry:smoke:resizable": "node scripts/smoke-resizable-registry.mjs",
     "registry:smoke:inspector": "node scripts/smoke-inspector-registry.mjs",
     "registry:smoke:inspector:react18": "node scripts/smoke-inspector-registry.mjs --react18",
-    "registry:smoke:kanban-board": "node scripts/smoke-kanban-board-registry.mjs"
+    "registry:smoke:kanban-board": "node scripts/smoke-kanban-board-registry.mjs",
+    "registry:smoke:charts": "node scripts/smoke-charts-registry.mjs",
+    "registry:smoke:charts:react18": "node scripts/smoke-charts-registry.mjs --react18"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
