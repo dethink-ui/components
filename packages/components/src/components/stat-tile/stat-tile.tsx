@@ -305,7 +305,8 @@ const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 function lengthToPixels(length: string, element: HTMLElement) {
-  const match = /^(\d*\.?\d+)(px|rem)$/.exec(length.trim());
+  // Separate integer-led and leading-dot forms so digit runs cannot overlap.
+  const match = /^(\d+(?:\.\d+)?|\.\d+)(px|rem)$/.exec(length.trim());
   if (!match) return undefined;
   const value = Number(match[1]);
   if (match[2] === "px") return value;
