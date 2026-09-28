@@ -3048,6 +3048,14 @@ assert(
   "data-table source must expose global filter slot data.",
 );
 assert(
+  dataTableSource.includes('data-slot="data-table-toolbar-content"'),
+  "data-table source must expose toolbar content slot data.",
+);
+assert(
+  dataTableSource.includes("rowFilter"),
+  "data-table source must support a rowFilter predicate for FilterBar.",
+);
+assert(
   dataTableSource.includes('data-slot="data-table-column-visibility"'),
   "data-table source must expose column visibility slot data.",
 );

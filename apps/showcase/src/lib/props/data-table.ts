@@ -68,6 +68,25 @@ export const dataTableProps: PropRow[] = [
       "Server-driven mode: the table emits state changes and renders what you pass, with pageCount/rowCount.",
   },
   {
+    prop: "rowFilter",
+    type: "(row) => boolean",
+    defaultValue: "—",
+    description:
+      "Keeps only matching rows before sorting and pagination, with row ids tied to the source index so selection survives. Pair it with createFilterPredicate from FilterBar.",
+  },
+  {
+    prop: "toolbar",
+    type: "ReactNode",
+    defaultValue: "—",
+    description: "Content at the start of the toolbar, such as a FilterBar.",
+  },
+  {
+    prop: "globalFilterFn",
+    type: "FilterFnOption",
+    defaultValue: '"includesString"',
+    description: "Custom TanStack global filter function for the search box.",
+  },
+  {
     prop: "renderRowActions",
     type: "(row) => ReactNode",
     defaultValue: "—",

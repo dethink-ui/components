@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "filter-bar",
+  "type": "registry:ui",
+  "title": "FilterBar",
+  "description": "Filter chips that read as sentences (field, operator, value) in a one-tab-stop toolbar, with searchable field and value editors in popovers, typed operators, undo/redo with coalesced editing sessions, Backspace to remove, an optional add shortcut, narrow-width collapsing, polite result-count announcements and a composable parts API over the filter-core model.",
+  "dependencies": ["react-aria-components"],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "filter-core",
+    "popover",
+    "input",
+    "live-region"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/filter-builder/use-filter-state.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-editors.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-bar.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/index.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

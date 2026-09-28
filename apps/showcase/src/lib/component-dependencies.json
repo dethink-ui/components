@@ -165,6 +165,14 @@
     "direct": ["lucide-react", "react", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "filter-bar": {
+    "direct": ["react", "react-aria-components"],
+    "shared": ["clsx", "react-aria", "tailwind-merge"]
+  },
+  "filter-core": {
+    "direct": [],
+    "shared": ["clsx", "react", "tailwind-merge"]
+  },
   "flex": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "form-field": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "grid": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },

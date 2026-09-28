@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "filter-core",
+  "type": "registry:lib",
+  "title": "Filter Core",
+  "description": "Dependency-free filter model for Dethink filter surfaces: a serializable AND/OR filter tree, typed text, option and multi-option operators, validation, normalization, a compiled row predicate, a TanStack filter-function adapter, readable sentence descriptions, node diffs and immutable edit commands.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base"],
+  "files": [
+    {
+      "path": "packages/components/src/components/filter-builder/filter-types.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-operators.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-core.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
