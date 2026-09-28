@@ -7,7 +7,7 @@ import {
   useFilter,
   type Selection,
 } from "react-aria-components";
-import { type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { cn } from "../../utils/cn";
 import { Input, inputClassNames } from "../input";
 import { getFilterOperatorLabel, getFilterOperators } from "./filter-core";
@@ -239,14 +239,31 @@ export function FilterValueEditor<TData>({
   value,
 }: FilterValueEditorProps<TData>) {
   const { contains } = useFilter({ sensitivity: "base" });
+  const textRef = useRef<HTMLInputElement>(null);
+  const isText = field.type === "text";
 
-  if (field.type === "text") {
+  // Focus after the popover has registered as the top overlay. A native
+  // autoFocus fires first and, inside a group editor's popover, reads as an
+  // outside interaction that dismisses both popovers.
+  useEffect(() => {
+    if (!isText) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      textRef.current?.focus();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [isText]);
+
+  if (isText) {
     return (
       <div data-slot="filter-value-editor" className={filterEditorStackClasses}>
         <Input
-          // Popover editors open on demand, so moving focus in is expected.
-          // eslint-disable-next-line jsx-a11y/no-autofocus
-          autoFocus
+          ref={textRef}
           aria-label={textLabel ?? `${field.label} value`}
           controlSize="sm"
           placeholder={textPlaceholder ?? field.placeholder}

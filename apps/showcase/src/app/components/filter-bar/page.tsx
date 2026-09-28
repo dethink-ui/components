@@ -6,12 +6,14 @@ import {
 } from "@/components/docs-page";
 import { ExampleBlock } from "@/components/example-block";
 import { PropsTable } from "@/components/props-table";
+import { FilterBarGroups } from "@/examples/filter-bar/groups";
 import { FilterBarIssueTable } from "@/examples/filter-bar/issue-table";
 import { FilterBarOneModel } from "@/examples/filter-bar/one-model";
 import {
   filterBarProps,
   filterCoreProps,
   filterFieldProps,
+  filterGroupEditorProps,
 } from "@/lib/props/filter-bar";
 
 export const metadata: Metadata = {
@@ -50,6 +52,14 @@ export default function FilterBarPage() {
             <FilterBarIssueTable />
           </ExampleBlock>
           <ExampleBlock
+            wide
+            file="filter-bar/groups.tsx"
+            title="AND/OR groups"
+            description="Nested groups show as one chip; click it, or use Advanced, to edit. The same filter also drives an inline FilterGroupEditor: switch a group to any, wrap a row in a new group, or move rows with Alt+Arrow keys."
+          >
+            <FilterBarGroups />
+          </ExampleBlock>
+          <ExampleBlock
             file="filter-bar/one-model.tsx"
             title="One filter model"
             description="The chips edit a plain JSON tree. describeFilter turns it into the sentence screen readers hear."
@@ -62,6 +72,10 @@ export default function FilterBarPage() {
         <div className="space-y-8">
           <PropsTable caption="FilterBar props" rows={filterBarProps} />
           <PropsTable caption="FilterField" rows={filterFieldProps} />
+          <PropsTable
+            caption="FilterGroupEditor"
+            rows={filterGroupEditorProps}
+          />
           <PropsTable caption="Filter core" rows={filterCoreProps} />
         </div>
       </DocsSection>
@@ -72,7 +86,9 @@ export default function FilterBarPage() {
             between chip parts, Home and End jump to the ends, and the direction
             flips in right-to-left layouts. Backspace or Delete removes the
             focused chip and moves focus to the next one. Cmd or Ctrl+Z undoes
-            and Shift+Cmd or Ctrl+Z redoes.
+            and Shift+Cmd or Ctrl+Z redoes. In the group editor, Tab moves
+            through controls and Alt+ArrowUp or ArrowDown moves the focused row.
+            Row actions are named after the row they act on.
           </p>
           <p>
             Each chip is a group named with its full sentence, such as

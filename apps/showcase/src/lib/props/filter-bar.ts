@@ -49,6 +49,13 @@ export const filterBarProps: PropRow[] = [
       "On narrow containers, chips after this many collapse behind a +N more button.",
   },
   {
+    prop: "maxDepth",
+    type: "number",
+    defaultValue: "3",
+    description:
+      "Group levels allowed, counting the root as 1. Enforced the same way when adding, wrapping and validating.",
+  },
+  {
     prop: "size",
     type: '"sm" | "md"',
     defaultValue: '"md"',
@@ -147,5 +154,22 @@ export const filterCoreProps: PropRow[] = [
     defaultValue: "—",
     description:
       "Controlled or uncontrolled state with addNode, updateCondition, removeNode, setCombinator, clear, undo and redo.",
+  },
+];
+
+export const filterGroupEditorProps: PropRow[] = [
+  {
+    prop: "groupId",
+    type: "string",
+    defaultValue: "root",
+    description:
+      "Group to edit. Group chips open the editor for their group; FilterBarAdvanced opens it for the whole filter.",
+  },
+  {
+    prop: "useFilterState commands",
+    type: "wrapInGroup · unwrapGroup · moveNode · shiftNode · setNegated · setCombinator",
+    defaultValue: "—",
+    description:
+      "The same group operations for your own UI. Each is a single undo step.",
   },
 ];

@@ -4,6 +4,7 @@ import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import {
   FilterBar,
+  FilterGroupEditor,
   createFilter,
   createFilterCondition,
   defineFilterFields,
@@ -67,5 +68,35 @@ describe("FilterBar SSR", () => {
       ),
     ).toBe(false);
     consoleError.mockRestore();
+  });
+
+  it("renders the group editor on the server", () => {
+    const markup = renderToString(
+      <FilterBar
+        fields={fields}
+        defaultValue={createFilter({
+          id: "root",
+          children: [
+            createFilter({
+              id: "group",
+              combinator: "or",
+              children: [
+                createFilterCondition({
+                  field: "status",
+                  operator: "isAnyOf",
+                  value: ["open"],
+                }),
+              ],
+            }),
+          ],
+        })}
+      >
+        <FilterGroupEditor />
+      </FilterBar>,
+    );
+
+    expect(markup).toContain('data-slot="filter-group-editor"');
+    expect(markup).toContain('data-slot="filter-group-combinator"');
+    expect(markup).toContain('data-depth="2"');
   });
 });
