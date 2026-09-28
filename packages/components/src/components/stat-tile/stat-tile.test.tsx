@@ -184,6 +184,43 @@ describe("KpiGroup", () => {
     spy.mockRestore();
   });
 
+  it.each([
+    ["208px", "2"],
+    ["208.5px", "2"],
+    ["13rem", "2"],
+    ["13.5rem", "2"],
+    [".5px", "4"],
+    [".5rem", "4"],
+    [" 208px ", "2"],
+    ["208.px", undefined],
+    ["1e2px", undefined],
+    ["-208px", undefined],
+    ["." + "9".repeat(50_000) + "xpx", undefined],
+    ["9".repeat(50_000) + "xpx", undefined],
+  ])("parses minimum tile width case %#", (minTileWidth, columns) => {
+    const spy = vi
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockReturnValue({ width: 700, height: 200 } as DOMRect);
+    try {
+      render(
+        <KpiGroup aria-label="Row" variant="joined" minTileWidth={minTileWidth}>
+          {[1, 2, 3, 4].map((n) => (
+            <StatTile key={n} label={`M${n}`} value={n} />
+          ))}
+        </KpiGroup>,
+      );
+      const group = screen.getByRole("group", { name: "Row" });
+      if (columns === undefined) {
+        expect(group).not.toHaveAttribute("data-columns");
+        expect(group.style.gridTemplateColumns).toBe("");
+      } else {
+        expect(group).toHaveAttribute("data-columns", columns);
+      }
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it("counts rendered tiles, including fragments and wrapper components", () => {
     const spy = vi
       .spyOn(HTMLElement.prototype, "getBoundingClientRect")
