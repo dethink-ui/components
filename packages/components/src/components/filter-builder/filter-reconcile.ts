@@ -64,26 +64,73 @@ export function reconcileFilterIds(
 
   collect(previous);
 
-  // Pass 1: matches by content, in document order.
+  // Pass 1: matches by content, in document order. A matched group's
+  // children take its old children's ids by position (they are identical),
+  // so identical siblings elsewhere never swap ids.
   const matched = new Map<FilterNode, string>();
   const taken = new Set<string>([previous.id]);
+  const previousNodes = new Map<string, FilterNode>();
 
-  const match = (node: FilterNode) => {
+  const index = (node: FilterNode) => {
+    previousNodes.set(node.id, node);
+
+    if (node.type === "group") {
+      node.children.forEach(index);
+    }
+  };
+
+  index(previous);
+
+  const pair = (node: FilterNode, id: string) => {
+    matched.set(node, id);
+    taken.add(id);
+
+    const old = previousNodes.get(id);
+
+    if (node.type === "group" && old?.type === "group") {
+      node.children.forEach((child, position) => {
+        const counterpart = old.children[position];
+
+        if (counterpart && !taken.has(counterpart.id)) {
+          pair(child, counterpart.id);
+        }
+      });
+    }
+  };
+
+  // Groups first: their content is the most specific, and matching one
+  // settles its whole subtree before loose conditions claim ids.
+  const match = (node: FilterNode, groupsOnly: boolean) => {
+    if (matched.has(node)) {
+      return;
+    }
+
+    if (node.type === "condition" && groupsOnly) {
+      return;
+    }
+
     const id = (pool.get(getFilterSignature(node)) ?? []).find(
       (candidate) => !taken.has(candidate),
     );
 
     if (id) {
-      matched.set(node, id);
-      taken.add(id);
+      pair(node, id);
+      return;
     }
 
     if (node.type === "group") {
-      node.children.forEach(match);
+      node.children.forEach((child) => {
+        match(child, groupsOnly);
+      });
     }
   };
 
-  next.children.forEach(match);
+  next.children.forEach((child) => {
+    match(child, true);
+  });
+  next.children.forEach((child) => {
+    match(child, false);
+  });
 
   // Pass 2: unmatched nodes keep their ids when those are still free.
   const used = new Set<string>(taken);
