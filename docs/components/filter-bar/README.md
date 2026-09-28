@@ -79,16 +79,35 @@ Text comparisons ignore case. When exactly one value is selected, list operators
 
 Number, date (with relative values that stay relative), boolean, custom types, facet counts and chip impact counts arrive in #130.
 
+## Groups
+
+Filters combine conditions with AND or OR, and groups can nest.
+
+- Each nested group appears in the bar as one group chip whose label is the group's sentence, for example "Labels includes Bug, or Title contains "api"". Clicking it opens `FilterGroupEditor` for that group, and × removes the whole group.
+- The **Advanced** action (`FilterBarAdvanced`) opens the editor for the whole filter. It appears once the filter has at least one chip.
+- In the editor, every group has a **Match all / any of the following** select. The root group has a **Not** toggle. Each row has these actions:
+  - **Not** negates the row.
+  - **Move up** and **Move down** reorder it.
+  - **Wrap in group** puts the row in a new group.
+  - Nested groups also have **Ungroup** and **Remove group**.
+- Each group ends with **+ Condition** (a `FilterAddMenu` bound to that group) and **+ Group**.
+- `maxDepth` (default 3, counting the root as level 1) caps nesting. The same limit is enforced by `canAddFilterGroup`, `canWrapFilterNode` and `validateFilter(filter, fields, { maxDepth })`. Actions blocked by the limit are disabled and explain why in their tooltip.
+- New groups start empty and stay until you remove them. A group is removed automatically only when its last condition is removed.
+- Core commands: `wrapFilterNode`, `unwrapFilterGroup`, `moveFilterNode`, `shiftFilterNode`, `findFilterParent`, `getFilterNodeDepth` and `getFilterHeight`.
+- `useFilterState` exposes the same commands as `wrapInGroup`, `unwrapGroup`, `moveNode`, `shiftNode` and `setNegated`. Each one is a single undo step.
+
+The PRD planned a Drawer for the group editor on mobile. It uses the Popover instead, sized to `min(36rem, 100vw - 2rem)`. Drawer depends on Motion, and the repo rules keep Motion out of components that don't need it.
+
 ## State and undo
 
 - `FilterBar` can be uncontrolled (`defaultValue`) or controlled (`value` + `onValueChange`), or it can take `state` from `useFilterState` when the filter is also needed outside the bar.
-- `useFilterState` returns the filter plus `addNode`, `updateCondition`, `removeNode`, `setCombinator`, `clear`, `undo` and `redo`.
+- `useFilterState` returns the filter plus `addNode`, `updateCondition`, `removeNode`, `setCombinator`, `setNegated`, `wrapInGroup`, `unwrapGroup`, `moveNode`, `shiftNode`, `clear`, `undo` and `redo`.
 - Every command is one history entry. Commits that share a `coalesceKey` merge into one entry, and the bar uses one key per editing session, so selecting three statuses in one popover undoes in a single step.
 - The pure commands (`addFilterNode`, `updateFilterCondition`, `removeFilterNode`, `updateFilterGroup`, `normalizeFilter`, `diffFilter`) are exported for your own stores. `diffFilter` matches nodes by id and reports a group as changed when its combinator, negation or membership changes, so moving a condition between groups shows up.
 
 ## Composition
 
-With no children, `FilterBar` renders `FilterBarChips`, `FilterAddMenu`, `FilterBarClear` and `FilterBarUndo`. You can compose them yourself, and `FilterBarChips` takes `renderChip` for custom chips. `FilterFieldPicker`, `FilterOperatorPicker` and `FilterValueEditor` are exported for building other editors. `useFilterBar()` exposes the nearest bar's fields, labels and state.
+With no children, `FilterBar` renders `FilterBarChips`, `FilterAddMenu`, `FilterBarAdvanced`, `FilterBarClear` and `FilterBarUndo`. `FilterGroupEditor` (optionally with `groupId`) can also be rendered inline, for example in a side panel. You can compose them yourself, and `FilterBarChips` takes `renderChip` for custom chips. `FilterFieldPicker`, `FilterOperatorPicker` and `FilterValueEditor` are exported for building other editors. `useFilterBar()` exposes the nearest bar's fields, labels and state.
 
 ## DataTable integration
 
@@ -112,7 +131,10 @@ With no children, `FilterBar` renders `FilterBarChips`, `FilterAddMenu`, `Filter
 - `addShortcut` (off by default) opens the add menu when focus is not in a text field. It ignores modifier keys.
 - Chips never communicate state through color alone: incomplete chips use a dashed border and a "Select…" value, and invalid fields name the unknown field.
 
-Manual keyboard acceptance: Tab to the bar, add a Status filter with the keyboard only, change its operator, remove it with Backspace, undo with Ctrl+Z, and check that focus is never lost.
+- Group editor: the editor is a dialog with a nested structure. Each group is a labelled `group` ("Edit group, …"), and its rows are a list. It does not use the ARIA `tree` role: the APG tree pattern does not allow several interactive controls inside a tree item, and every row here has a chip plus actions. Tab and Shift+Tab move through the controls. Alt+ArrowUp/ArrowDown moves the row that holds focus. Cmd/Ctrl+Z undoes inside the editor. Row actions are named with the row's sentence ("Move up, Status is Open"). After a move, wrap or ungroup, focus stays on the moved row or its nearest neighbor. At a list edge it moves to the arrow that is still enabled.
+- Backspace on a chip inside the editor removes only that condition, never the group chip that opened the editor, because remove keys are matched against the DOM, not React's portal bubbling.
+
+Manual keyboard acceptance: Tab to the bar, add a Status filter with the keyboard only, change its operator, remove it with Backspace, undo with Ctrl+Z, and check that focus is never lost. For groups: open Advanced, wrap a condition in a group, switch the group to "any", move a row with Alt+ArrowUp, ungroup it, then undo each step, and check that focus stays in the editor throughout.
 
 ## Theming and responsive behavior
 
@@ -121,11 +143,13 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 ## Verification
 
 - `filter-core.test.ts`: operator matrix, and/or/not evaluation, skipped incomplete conditions, descriptions, validation, commands, normalization, diffs, serialization.
-- `use-filter-state.test.tsx`: history, coalescing, limits, controlled mode.
-- `filter-bar.test.tsx`: add flows, segment edits, roving focus, Backspace removal, undo, controlled value, announcements, shortcut, composition.
+- `filter-commands.test.ts`: mixed nesting, depth and height, the shared depth limit, wrap/unwrap, move/shift, empty-group lifetime, negation flags.
+- `use-filter-state.test.tsx`: history, coalescing, limits, controlled mode, one undo step per group command.
+- `filter-bar.test.tsx` and `filter-bar.keyboard.test.tsx`: add flows, segment edits, roving focus, Backspace removal, undo focus recovery, controlled value, announcements, shortcut, composition.
+- `filter-group-editor.test.tsx`: group chip editor, advanced editor, add group and condition, wrap/move/negate/ungroup with undo, Alt+Arrow moves, scoped Backspace, depth limit, standalone rendering.
 - `filter-bar.a11y.test.tsx`: axe with chips, group chips and open editors. `filter-bar.ssr.test.tsx`: server render and hydration.
 - `pnpm registry:smoke:filter-bar` (and `:react18`): clean-consumer install of `filter-bar` + `data-table`, typecheck and Vite build.
 
 ## Out of scope for this slice
 
-Number/date/boolean types, facets and impact counts (#130); AND/OR group editing (#131); the text query bar (#132); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
+Number/date/boolean types, facets and impact counts (#130); the text query bar (#132); URL state and saved views (#133); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.

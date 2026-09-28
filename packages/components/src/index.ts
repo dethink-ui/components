@@ -830,7 +830,10 @@ export {
   textFilterOperators,
 } from "./components/filter-builder/filter-operators";
 export {
+  DEFAULT_FILTER_MAX_DEPTH,
   addFilterNode,
+  canAddFilterGroup,
+  canWrapFilterNode,
   clearFilter,
   createFilter,
   createFilterCondition,
@@ -843,21 +846,28 @@ export {
   diffFilter,
   evaluateFilter,
   findFilterNode,
+  findFilterParent,
   formatFilterValue,
   getDefaultFilterOperator,
   getFilterConditions,
   getFilterField,
+  getFilterHeight,
+  getFilterNodeDepth,
   getFilterOperator,
   getFilterOperatorLabel,
   getFilterOperators,
   isFilterConditionActive,
   isFilterEmpty,
   normalizeFilter,
+  moveFilterNode,
   removeFilterNode,
+  shiftFilterNode,
   toTanstackFilterFn,
+  unwrapFilterGroup,
   updateFilterCondition,
   updateFilterGroup,
   validateFilter,
+  wrapFilterNode,
   type DescribeFilterOptions,
   type FilterDescribeLabels,
 } from "./components/filter-builder/filter-core";
@@ -877,27 +887,41 @@ export {
   type FilterValueEditorProps,
 } from "./components/filter-builder/filter-editors";
 export {
-  FilterAddMenu,
   FilterBar,
   FilterBarChips,
   FilterBarClear,
   FilterBarUndo,
-  FilterChip,
-  FilterGroupChip,
+  type FilterBarActionProps,
+  type FilterBarChipsProps,
+  type FilterBarProps,
+} from "./components/filter-builder/filter-bar";
+export {
   defaultFilterBarLabels,
   filterBarActionClassNames,
   filterBarClassNames,
   filterChipClassNames,
   useFilterBar,
-  type FilterAddMenuProps,
-  type FilterBarActionProps,
-  type FilterBarChipsProps,
   type FilterBarLabels,
-  type FilterBarProps,
   type FilterBarSize,
+} from "./components/filter-builder/filter-bar-parts";
+export {
+  FilterChip,
   type FilterChipProps,
+} from "./components/filter-builder/filter-chip";
+export {
+  FilterAddMenu,
+  type FilterAddMenuProps,
+} from "./components/filter-builder/filter-add-menu";
+export {
+  FilterGroupEditor,
+  type FilterGroupEditorProps,
+} from "./components/filter-builder/filter-group-editor";
+export {
+  FilterBarAdvanced,
+  FilterGroupChip,
+  type FilterBarAdvancedProps,
   type FilterGroupChipProps,
-} from "./components/filter-builder/filter-bar";
+} from "./components/filter-builder/filter-group-chip";
 export {
   Field,
   FieldContent,

@@ -133,3 +133,60 @@ export const KeyboardRemoveAndUndo: Story = {
     ).toBeInTheDocument();
   },
 };
+
+const grouped = createFilter({
+  id: "grouped",
+  children: [
+    createFilterCondition({
+      id: "g-status",
+      field: "status",
+      operator: "isNoneOf",
+      value: ["done"],
+    }),
+    createFilter({
+      id: "g-labels",
+      combinator: "or",
+      children: [
+        createFilterCondition({
+          id: "g-bug",
+          field: "labels",
+          operator: "includesAny",
+          value: ["bug"],
+        }),
+        createFilterCondition({
+          id: "g-title",
+          field: "title",
+          operator: "contains",
+          value: "api",
+        }),
+      ],
+    }),
+  ],
+});
+
+export const Groups: Story = {
+  args: { defaultValue: grouped },
+};
+
+export const GroupEditorFlow: Story = {
+  args: { defaultValue: grouped },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole("button", { name: "Advanced" }));
+
+    const dialog = within(
+      await body.findByRole("dialog", { name: "Edit filter groups" }),
+    );
+
+    await userEvent.click(
+      dialog.getByRole("button", { name: "Wrap in group, Status is not Done" }),
+    );
+    await userEvent.keyboard("{Escape}");
+
+    await expect(
+      await canvas.findByRole("group", { name: "Status is not Done" }),
+    ).toHaveAttribute("data-slot", "filter-group-chip");
+  },
+};

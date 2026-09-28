@@ -84,7 +84,8 @@ export type FilterIssueCode =
   | "unknown-operator"
   | "missing-value"
   | "invalid-value"
-  | "unknown-option";
+  | "unknown-option"
+  | "max-depth";
 
 export interface FilterIssue {
   nodeId: string;

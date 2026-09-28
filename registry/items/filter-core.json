@@ -3,7 +3,7 @@
   "name": "filter-core",
   "type": "registry:lib",
   "title": "Filter Core",
-  "description": "Dependency-free filter model for Dethink filter surfaces: a serializable AND/OR filter tree, typed text, option and multi-option operators, validation, normalization, a compiled row predicate, a TanStack filter-function adapter, readable sentence descriptions, node diffs and immutable edit commands.",
+  "description": "Dependency-free filter model for Dethink filter surfaces: a serializable AND/OR filter tree with negation, typed text, option and multi-option operators, group commands (wrap, unwrap, move, shift) with a shared depth limit, validation, normalization, a compiled row predicate, a TanStack filter-function adapter, readable sentence descriptions and membership-aware diffs.",
   "dependencies": [],
   "devDependencies": [],
   "registryDependencies": ["dethink-base"],
@@ -14,6 +14,26 @@
     },
     {
       "path": "packages/components/src/components/filter-builder/filter-operators.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-model.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-commands.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-validate.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-evaluate.ts",
+      "type": "registry:lib"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-describe.ts",
       "type": "registry:lib"
     },
     {

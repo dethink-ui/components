@@ -85,4 +85,13 @@ describe("FilterBar accessibility", () => {
     await screen.findByRole("listbox", { name: "Status" });
     await expect(axe(baseElement)).resolves.toHaveNoViolations();
   });
+
+  it("has no axe violations with the group editor open", async () => {
+    const user = userEvent.setup();
+    const { baseElement } = renderBar();
+
+    await user.click(screen.getByRole("button", { name: "Advanced" }));
+    await screen.findByRole("dialog", { name: "Edit filter groups" });
+    await expect(axe(baseElement)).resolves.toHaveNoViolations();
+  });
 });
