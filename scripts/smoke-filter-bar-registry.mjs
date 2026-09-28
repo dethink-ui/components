@@ -36,7 +36,13 @@ function closure(name, found = new Map()) {
     closure(dependency, found);
   return found;
 }
-const entries = ["filter-bar", "query-input", "data-table"];
+const entries = [
+  "filter-bar",
+  "query-input",
+  "filter-url-state",
+  "saved-views",
+  "data-table",
+];
 const react18 = process.argv.includes("--react18");
 const destination = await mkdtemp(
   join(tmpdir(), "dethink-filter-bar-consumer-"),
@@ -150,9 +156,11 @@ import {
   FilterBar,
   createFilterPredicate,
   defineFilterFields,
-  useFilterState,
 } from "./src/components/filter-builder";
 import { QueryInput } from "./src/components/filter-builder/query-input";
+import { useFilterUrlState } from "./src/components/filter-builder/use-filter-url-state";
+import { useSavedViews } from "./src/components/filter-builder/use-saved-views";
+import { SavedViewsMenu } from "./src/components/filter-builder/saved-views-menu";
 import {
   DataTable,
   type DataTableColumnDef,
@@ -173,7 +181,8 @@ const columns: DataTableColumnDef<Issue>[] = [
   { accessorKey: "status", header: "Status" },
 ];
 function App() {
-  const state = useFilterState();
+  const state = useFilterUrlState({ fields });
+  const savedViews = useSavedViews({ state, fields, views: [] });
   const rowFilter = useMemo(() => createFilterPredicate(state.filter, fields), [state.filter]);
   return (
     <DataTable
@@ -181,7 +190,7 @@ function App() {
       columns={columns}
       data={issues}
       rowFilter={rowFilter}
-      toolbar={<><QueryInput fields={fields} state={state} /><FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} /></>}
+      toolbar={<><SavedViewsMenu savedViews={savedViews} /><QueryInput fields={fields} state={state} /><FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} /></>}
     />
   );
 }

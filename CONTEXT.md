@@ -66,3 +66,14 @@ _Avoid_: Search string, expression, DSL (in public docs)
 The short text after `field:` that picks an operator in a query, such as `>`
 in `estimate:>5` or `!` in `status:!done`.
 _Avoid_: Symbol, prefix
+
+**Saved view**:
+A named filter someone can return to, stored with the schema version it was
+saved in and an optional personal or team scope. A saved view is "edited" when
+the current filter does something different from it.
+_Avoid_: Preset, bookmark, saved search
+
+**Filter version**:
+The schema version written beside a filter in URLs (`v`) and saved views, so
+filters written before a field or operator was renamed can be migrated.
+_Avoid_: Revision, schema id

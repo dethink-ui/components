@@ -902,6 +902,12 @@ export {
   normalizeFilter,
   parseFilterQuery,
   printFilterQuery,
+  encodeFilterParam,
+  decodeFilterParam,
+  readFilterParam,
+  renameFilterField,
+  formatFilterSearch,
+  isSameFilterSearch,
   getFilterQueryDefaultField,
   getFilterSignature,
   reconcileFilterIds,
@@ -925,6 +931,10 @@ export {
   type FilterFacetTarget,
   type FilterRescue,
   type FilterDescribeLabels,
+  type FilterParamError,
+  type FilterParamErrorCode,
+  type FilterParamOptions,
+  type FilterParamResult,
   type FilterQueryError,
   type FilterQueryErrorCode,
   type FilterQueryOptions,
@@ -939,6 +949,31 @@ export {
   QueryInput,
   type QueryInputProps,
 } from "./components/filter-builder/query-input";
+export {
+  createHistoryFilterStore,
+  createMemoryFilterStore,
+  type FilterUrlStore,
+} from "./components/filter-builder/filter-url-store";
+export {
+  useFilterUrlState,
+  type FilterUrlState,
+  type UseFilterUrlStateOptions,
+} from "./components/filter-builder/use-filter-url-state";
+export {
+  useSavedViews,
+  type SavedView,
+  type SavedViewScope,
+  type SavedViewsState,
+  type UseSavedViewsOptions,
+} from "./components/filter-builder/use-saved-views";
+export {
+  SavedViewsMenu,
+  type SavedViewsMenuProps,
+} from "./components/filter-builder/saved-views-menu";
+export {
+  defaultSavedViewsMenuLabels,
+  type SavedViewsMenuLabels,
+} from "./components/filter-builder/saved-views-parts";
 export {
   defaultQueryInputLabels,
   queryInputClassNames,
