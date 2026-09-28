@@ -165,6 +165,16 @@
     "direct": ["lucide-react", "react", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "filter-assistant": {
+    "direct": ["react"],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
   "filter-bar": {
     "direct": ["@internationalized/date", "react", "react-aria-components"],
     "shared": ["clsx", "react-aria", "tailwind-merge"]

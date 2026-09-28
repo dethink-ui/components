@@ -902,6 +902,13 @@ export {
   normalizeFilter,
   parseFilterQuery,
   printFilterQuery,
+  toFilterJsonSchema,
+  getFilterFieldSummaries,
+  sanitizeFilterAssistantResult,
+  sanitizeFilterText,
+  getFilterProposalChanges,
+  applyFilterProposalChanges,
+  matchFilterProposalIds,
   encodeFilterParam,
   decodeFilterParam,
   readFilterParam,
@@ -931,6 +938,16 @@ export {
   type FilterFacetTarget,
   type FilterRescue,
   type FilterDescribeLabels,
+  type FilterAssistantResult,
+  type FilterClarification,
+  type FilterFieldSummary,
+  type FilterJsonSchema,
+  type FilterProposalChange,
+  type FilterProposalChangeKind,
+  type FilterUnresolved,
+  type FilterUnresolvedReason,
+  type SanitizeFilterAssistantOptions,
+  type SanitizedFilterAssistantResult,
   type FilterParamError,
   type FilterParamErrorCode,
   type FilterParamOptions,
@@ -974,6 +991,30 @@ export {
   defaultSavedViewsMenuLabels,
   type SavedViewsMenuLabels,
 } from "./components/filter-builder/saved-views-parts";
+export {
+  useFilterAssistant,
+  type FilterAssistantAnswer,
+  type FilterAssistantErrorCode,
+  type FilterAssistantProposal,
+  type FilterAssistantRequest,
+  type FilterAssistantResolve,
+  type FilterAssistantState,
+  type FilterAssistantStatus,
+  type FilterProposalDecision,
+  type UseFilterAssistantOptions,
+} from "./components/filter-builder/use-filter-assistant";
+export {
+  FilterAssistant,
+  type FilterAssistantProps,
+} from "./components/filter-builder/filter-assistant";
+export {
+  FilterProposal,
+  type FilterProposalProps,
+} from "./components/filter-builder/filter-proposal";
+export {
+  defaultFilterAssistantLabels,
+  type FilterAssistantLabels,
+} from "./components/filter-builder/filter-assistant-parts";
 export {
   defaultQueryInputLabels,
   queryInputClassNames,

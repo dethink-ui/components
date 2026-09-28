@@ -211,6 +211,10 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 
 `useFilterUrlState` keeps the filter in a readable, versioned URL, and `useSavedViews` with `SavedViewsMenu` adds named views. See [Saved views and URL state](../saved-views/README.md).
 
+## AI assistant
+
+`FilterAssistant` turns a request in words into a proposal of chip changes to review before applying. See [FilterAssistant](../filter-assistant/README.md).
+
 ## Out of scope for this slice
 
-Time-of-day filtering and date-times in chips (planned with server mode); the AI assistant (#134); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
+Time-of-day filtering and date-times in chips (planned with server mode); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.

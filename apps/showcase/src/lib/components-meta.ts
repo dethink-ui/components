@@ -51,6 +51,13 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "filter-assistant",
+    name: "FilterAssistant",
+    description:
+      "Ask for a filter in words, then accept or reject each proposed chip before anything changes.",
+    type: "data-display",
+  },
+  {
     slug: "kanban-board",
     name: "KanbanBoard",
     description:

@@ -77,3 +77,14 @@ _Avoid_: Preset, bookmark, saved search
 The schema version written beside a filter in URLs (`v`) and saved views, so
 filters written before a field or operator was renamed can be migrated.
 _Avoid_: Revision, schema id
+
+**Proposal**:
+A set of filter changes suggested by the assistant (added, changed and
+removed chips) that someone reviews, accepts or rejects per change, and
+applies as one undo step. A proposal never changes the filter by itself.
+_Avoid_: Suggestion, AI filter, draft
+
+**Needs-input chip**:
+A proposed condition whose field and operator are known but whose value
+couldn't be used, added without a value for the person to fill in.
+_Avoid_: Partial chip, placeholder

@@ -41,6 +41,7 @@ const entries = [
   "query-input",
   "filter-url-state",
   "saved-views",
+  "filter-assistant",
   "data-table",
 ];
 const react18 = process.argv.includes("--react18");
@@ -161,6 +162,8 @@ import { QueryInput } from "./src/components/filter-builder/query-input";
 import { useFilterUrlState } from "./src/components/filter-builder/use-filter-url-state";
 import { useSavedViews } from "./src/components/filter-builder/use-saved-views";
 import { SavedViewsMenu } from "./src/components/filter-builder/saved-views-menu";
+import { useFilterAssistant } from "./src/components/filter-builder/use-filter-assistant";
+import { FilterAssistant } from "./src/components/filter-builder/filter-assistant";
 import {
   DataTable,
   type DataTableColumnDef,
@@ -183,6 +186,7 @@ const columns: DataTableColumnDef<Issue>[] = [
 function App() {
   const state = useFilterUrlState({ fields });
   const savedViews = useSavedViews({ state, fields, views: [] });
+  const assistant = useFilterAssistant({ fields, state, resolve: async () => false });
   const rowFilter = useMemo(() => createFilterPredicate(state.filter, fields), [state.filter]);
   return (
     <DataTable
@@ -190,7 +194,7 @@ function App() {
       columns={columns}
       data={issues}
       rowFilter={rowFilter}
-      toolbar={<><SavedViewsMenu savedViews={savedViews} /><QueryInput fields={fields} state={state} /><FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} /></>}
+      toolbar={<><FilterAssistant assistant={assistant} /><SavedViewsMenu savedViews={savedViews} /><QueryInput fields={fields} state={state} /><FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} /></>}
     />
   );
 }
