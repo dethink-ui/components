@@ -10,11 +10,14 @@ import { queryFields } from "./filter-query.fixtures";
 function suggest(text: string) {
   const caret = text.indexOf("|");
 
-  return getFilterQuerySuggestions(text.replace("|", ""), caret, queryFields);
+  const plain = text.slice(0, caret) + text.slice(caret + 1);
+
+  return getFilterQuerySuggestions(plain, caret, queryFields);
 }
 
 function apply(text: string, id: string) {
-  const plain = text.replace("|", "");
+  const caret = text.indexOf("|");
+  const plain = text.slice(0, caret) + text.slice(caret + 1);
   const suggestion = suggest(text).find((candidate) => candidate.id === id);
 
   if (!suggestion) {
