@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
-    "@tanstack/react-table": "8.21.3",
+    "@tanstack/react-table": "9.2.4",
     "clsx": "^2.1.1",
     "lucide-react": "^1.47.0",
     "motion": "^12.43.0",
