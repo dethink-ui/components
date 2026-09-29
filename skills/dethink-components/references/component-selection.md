@@ -8,6 +8,7 @@ It is not an exhaustive catalog or a replacement for API types.
 | App dashboard           | SidebarShell, Sidebar, Card, DataTable                  | Header trigger, responsive navigation, current route        |
 | Metrics and charts      | KpiGroup, StatTile, LineChart, AreaChart, BarChart      | One y-axis per chart; BarList for ranked categories         |
 | Simple tabular data     | Table                                                   | Use DataTable when sorting/filtering/pagination is needed   |
+| Filtering a list        | FilterBar, DataTable                                    | Field types, rowFilter predicate, controlled filter state   |
 | Editable form           | FormField, Input, Select, Checkbox, Button              | Labels, validation, controlled state, submission            |
 | Searchable choices      | Combobox, MultiSelect, AsyncSelect, TagInput            | Single vs multiple values, async loading, free text         |
 | App navigation          | Sidebar, Breadcrumb, NavigationMenu                     | Route navigation vs in-page state                           |

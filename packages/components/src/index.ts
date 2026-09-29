@@ -804,6 +804,301 @@ export {
   type DataTableSortingState,
   type DataTableVisibilityState,
 } from "./components/data-table";
+export type {
+  Filter,
+  BuiltInFilterFieldType,
+  FilterCombinator,
+  FilterCondition,
+  FilterDate,
+  FilterDateUnit,
+  FilterDiff,
+  FilterDuration,
+  FilterEvaluateOptions,
+  FilterEvaluationContext,
+  FilterField,
+  FilterFieldType,
+  FilterFieldTypeDefinition,
+  FilterFields,
+  FilterGroup,
+  FilterIssue,
+  FilterIssueCode,
+  FilterNode,
+  FilterOperatorArity,
+  FilterOperatorDefinition,
+  FilterOption,
+  FilterValue,
+  FilterValueEditorRenderProps,
+  FilterWeekday,
+} from "./components/filter-builder/filter-types";
+export {
+  isEmptyFilterOperator,
+  isEmptyFilterValue,
+  isNotEmptyFilterOperator,
+  multiOptionFilterOperators,
+  optionFilterOperators,
+  textFilterOperators,
+} from "./components/filter-builder/filter-operators";
+export {
+  booleanFilterOperators,
+  dateFilterOperators,
+  numberFilterOperators,
+} from "./components/filter-builder/filter-typed-operators";
+export {
+  builtInFilterFieldTypes,
+  defaultFilterOperatorByType,
+  defineFilterFieldType,
+  defineFilterOperator,
+  filterOperatorsByType,
+  resolveFilterFieldType,
+} from "./components/filter-builder/filter-field-types";
+export {
+  calendarDayInZone,
+  createFilterEvaluationContext,
+  endOfCalendarPeriod,
+  formatFilterDate,
+  formatFilterDuration,
+  isCalendarDay,
+  isFilterDate,
+  isFilterDuration,
+  resolveFilterDate,
+  shiftCalendarDay,
+  startOfCalendarPeriod,
+  toCalendarDay,
+} from "./components/filter-builder/filter-dates";
+export {
+  DEFAULT_FILTER_MAX_DEPTH,
+  addFilterNode,
+  canAddFilterGroup,
+  canWrapFilterNode,
+  clearFilter,
+  computeFilterFacets,
+  computeFilterImpact,
+  countFilterMatches,
+  createFilter,
+  createFilterCondition,
+  createFilterId,
+  createFilterPredicate,
+  defaultFilterDescribeLabels,
+  defineFilterFields,
+  describeFilter,
+  describeFilterCondition,
+  diffFilter,
+  evaluateFilter,
+  findFilterNode,
+  findFilterParent,
+  findFilterRescue,
+  formatFilterValue,
+  getDefaultFilterOperator,
+  getFilterConditions,
+  getFilterField,
+  getFilterHeight,
+  getFilterNodeDepth,
+  getFilterOperator,
+  getFilterOperatorLabel,
+  getFilterOperators,
+  isFilterConditionActive,
+  isFilterValueUsable,
+  isFilterEmpty,
+  normalizeFilter,
+  parseFilterQuery,
+  printFilterQuery,
+  toFilterJsonSchema,
+  getFilterFacetFilter,
+  getFilterFieldSummaries,
+  sanitizeFilterAssistantResult,
+  sanitizeFilterText,
+  getFilterProposalChanges,
+  applyFilterProposalChanges,
+  matchFilterProposalIds,
+  encodeFilterParam,
+  decodeFilterParam,
+  readFilterParam,
+  renameFilterField,
+  formatFilterSearch,
+  isSameFilterSearch,
+  getFilterQueryDefaultField,
+  getFilterSignature,
+  reconcileFilterIds,
+  getFilterQuerySegments,
+  getFilterQuerySuggestions,
+  getFilterQueryToken,
+  lexFilterQuery,
+  readFilterFieldValue,
+  moveFilterNode,
+  removeFilterNode,
+  shiftFilterNode,
+  toTanstackFilterFn,
+  unwrapFilterGroup,
+  updateFilterCondition,
+  updateFilterGroup,
+  validateFilter,
+  wrapFilterNode,
+  type CreateFilterPredicateOptions,
+  type DescribeFilterOptions,
+  type FilterFacetOptions,
+  type FilterFacetTarget,
+  type FilterRescue,
+  type FilterDescribeLabels,
+  type FilterAssistantResult,
+  type FilterClarification,
+  type FilterFieldSummary,
+  type FilterJsonSchema,
+  type FilterProposalChange,
+  type FilterProposalChangeKind,
+  type FilterUnresolved,
+  type FilterUnresolvedReason,
+  type SanitizeFilterAssistantOptions,
+  type SanitizedFilterAssistantResult,
+  type FilterParamError,
+  type FilterParamErrorCode,
+  type FilterParamOptions,
+  type FilterParamResult,
+  type FilterQueryError,
+  type FilterQueryErrorCode,
+  type FilterQueryOptions,
+  type FilterQueryParseResult,
+  type FilterQuerySegment,
+  type FilterQuerySegmentKind,
+  type FilterQuerySuggestion,
+  type FilterQueryToken,
+  type FilterQueryTokenKind,
+} from "./components/filter-builder/filter-core";
+export {
+  QueryInput,
+  type QueryInputProps,
+} from "./components/filter-builder/query-input";
+export {
+  createHistoryFilterStore,
+  createMemoryFilterStore,
+  type FilterUrlStore,
+} from "./components/filter-builder/filter-url-store";
+export {
+  useFilterUrlState,
+  type FilterUrlState,
+  type UseFilterUrlStateOptions,
+} from "./components/filter-builder/use-filter-url-state";
+export {
+  useSavedViews,
+  type SavedView,
+  type SavedViewScope,
+  type SavedViewsState,
+  type UseSavedViewsOptions,
+} from "./components/filter-builder/use-saved-views";
+export {
+  SavedViewsMenu,
+  type SavedViewsMenuProps,
+} from "./components/filter-builder/saved-views-menu";
+export {
+  defaultSavedViewsMenuLabels,
+  type SavedViewsMenuLabels,
+} from "./components/filter-builder/saved-views-parts";
+export {
+  useServerFacets,
+  type FilterFacetCounts,
+  type FilterFacetRequest,
+  type FilterFacetStatus,
+  type GetFilterFacets,
+  type ServerFacets,
+} from "./components/filter-builder/use-server-facets";
+export {
+  useFilterAssistant,
+  type FilterAssistantAnswer,
+  type FilterAssistantErrorCode,
+  type FilterAssistantProposal,
+  type FilterAssistantRequest,
+  type FilterAssistantResolve,
+  type FilterAssistantState,
+  type FilterAssistantStatus,
+  type FilterProposalDecision,
+  type UseFilterAssistantOptions,
+} from "./components/filter-builder/use-filter-assistant";
+export {
+  FilterAssistant,
+  type FilterAssistantProps,
+} from "./components/filter-builder/filter-assistant";
+export {
+  FilterProposal,
+  type FilterProposalProps,
+} from "./components/filter-builder/filter-proposal";
+export {
+  defaultFilterAssistantLabels,
+  type FilterAssistantLabels,
+} from "./components/filter-builder/filter-assistant-parts";
+export {
+  defaultQueryInputLabels,
+  queryInputClassNames,
+  type QueryInputLabels,
+} from "./components/filter-builder/query-input-parts";
+export {
+  useFilterState,
+  type FilterCommitOptions,
+  type FilterState,
+  type UseFilterStateOptions,
+} from "./components/filter-builder/use-filter-state";
+export {
+  FilterFieldPicker,
+  FilterOperatorPicker,
+  filterListItemClassNames,
+  type FilterFieldPickerProps,
+  type FilterOperatorPickerProps,
+} from "./components/filter-builder/filter-editors";
+export {
+  FilterValueEditor,
+  defaultFilterEditorLabels,
+  type FilterEditorLabels,
+  type FilterValueEditorProps,
+} from "./components/filter-builder/filter-value-editor";
+export {
+  defaultFilterTypedEditorLabels,
+  type FilterTypedEditorLabels,
+} from "./components/filter-builder/filter-typed-editors";
+export {
+  useFilterInsights,
+  type FilterInsights,
+  type UseFilterInsightsOptions,
+} from "./components/filter-builder/use-filter-insights";
+export {
+  FilterBarRescue,
+  type FilterBarRescueProps,
+} from "./components/filter-builder/filter-bar-rescue";
+export {
+  FilterBar,
+  type FilterBarProps,
+} from "./components/filter-builder/filter-bar";
+export {
+  FilterBarChips,
+  FilterBarClear,
+  FilterBarUndo,
+  type FilterBarActionProps,
+  type FilterBarChipsProps,
+} from "./components/filter-builder/filter-bar-chips";
+export {
+  defaultFilterBarLabels,
+  filterBarActionClassNames,
+  filterBarClassNames,
+  filterChipClassNames,
+  useFilterBar,
+  type FilterBarLabels,
+  type FilterBarSize,
+} from "./components/filter-builder/filter-bar-parts";
+export {
+  FilterChip,
+  type FilterChipProps,
+} from "./components/filter-builder/filter-chip";
+export {
+  FilterAddMenu,
+  type FilterAddMenuProps,
+} from "./components/filter-builder/filter-add-menu";
+export {
+  FilterGroupEditor,
+  type FilterGroupEditorProps,
+} from "./components/filter-builder/filter-group-editor";
+export {
+  FilterBarAdvanced,
+  FilterGroupChip,
+  type FilterBarAdvancedProps,
+  type FilterGroupChipProps,
+} from "./components/filter-builder/filter-group-chip";
 export {
   Field,
   FieldContent,

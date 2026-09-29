@@ -30,6 +30,34 @@ export interface ComponentGroup extends ComponentTypeMeta {
 
 export const componentCatalog: ComponentMeta[] = [
   {
+    slug: "filter-bar",
+    name: "FilterBar",
+    description:
+      'Filter a list with editable chips like "Status is any of Open, Blocked", built on one JSON filter model.',
+    type: "data-display",
+  },
+  {
+    slug: "query-input",
+    name: "QueryInput",
+    description:
+      "Type a filter like status:open created:>-7d with autocomplete, token colors and exact error ranges, in sync with FilterBar chips.",
+    type: "data-display",
+  },
+  {
+    slug: "saved-views",
+    name: "Saved views & URL state",
+    description:
+      "Keep filters in a readable, versioned URL and save them as named views with an edited marker and one-step undo.",
+    type: "data-display",
+  },
+  {
+    slug: "filter-assistant",
+    name: "FilterAssistant",
+    description:
+      "Ask for a filter in words, then accept or reject each proposed chip before anything changes.",
+    type: "data-display",
+  },
+  {
     slug: "kanban-board",
     name: "KanbanBoard",
     description:

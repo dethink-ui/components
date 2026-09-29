@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "filter-url-state",
+  "type": "registry:hook",
+  "title": "useFilterUrlState",
+  "description": "Mirrors a filter into the URL as readable, versioned text (?q=status:open&v=1) and follows back/forward and pasted links, with undo intact. Store adapters decouple it from any router: a History API store (replace or push) and a memory store ship, and nuqs or Next.js stores are small recipes. Hydration-safe through useSyncExternalStore and an optional server search; never rewrites a link on load; keeps chips that have no value yet; migrates old links.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "filter-core", "filter-bar"],
+  "files": [
+    {
+      "path": "packages/components/src/components/filter-builder/filter-url-store.ts",
+      "type": "registry:hook"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/use-filter-url-state.ts",
+      "type": "registry:hook"
+    }
+  ]
+}

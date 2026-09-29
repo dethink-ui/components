@@ -531,3 +531,118 @@ describe("DataTable", () => {
     ).toHaveAttribute("data-status", "error");
   });
 });
+
+describe("DataTable row filtering", () => {
+  it("filters rows with a predicate and renders toolbar content", async () => {
+    const user = userEvent.setup();
+
+    function Filtered() {
+      const [minRequests, setMinRequests] = useState(0);
+
+      return (
+        <DataTable
+          aria-label="Filtered workspaces"
+          columns={columns}
+          data={workspaces}
+          rowFilter={(row) => row.requests >= minRequests}
+          selectionMode="multiple"
+          toolbar={
+            <button
+              type="button"
+              onClick={() => {
+                setMinRequests(300);
+              }}
+            >
+              Busy only
+            </button>
+          }
+        />
+      );
+    }
+
+    render(<Filtered />);
+
+    expect(
+      screen
+        .getByRole("button", { name: "Busy only" })
+        .closest('[data-slot="data-table-toolbar-content"]'),
+    ).toBeInTheDocument();
+
+    // Select Audit (source index 2), then filter it out and back in.
+    await user.click(screen.getByRole("checkbox", { name: "Select row 2" }));
+    expect(screen.getByText("1 of 3 rows selected")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Busy only" }));
+
+    expect(getBodyRows().map((row) => row.getAttribute("data-row-id"))).toEqual(
+      ["0", "1"],
+    );
+    expect(
+      screen.getByRole("checkbox", { name: "Select row 1" }),
+    ).not.toBeChecked();
+  });
+
+  it("keeps distinct ids for duplicate row objects", async () => {
+    const user = userEvent.setup();
+    const shared = workspaces[0]!;
+
+    render(
+      <DataTable
+        aria-label="Duplicates"
+        columns={columns}
+        data={[shared, workspaces[1]!, shared]}
+        rowFilter={(row) => row !== workspaces[1]}
+        selectionMode="multiple"
+      />,
+    );
+
+    expect(getBodyRows().map((row) => row.getAttribute("data-row-id"))).toEqual(
+      ["0", "2"],
+    );
+
+    await user.click(screen.getByRole("checkbox", { name: "Select row 2" }));
+
+    expect(
+      screen.getByRole("checkbox", { name: "Select row 0" }),
+    ).not.toBeChecked();
+  });
+
+  it("ignores the predicate in manual filtering mode", () => {
+    render(
+      <DataTable
+        aria-label="Server workspaces"
+        columns={columns}
+        data={workspaces}
+        manualFiltering
+        rowFilter={() => false}
+      />,
+    );
+
+    expect(getBodyRows()).toHaveLength(3);
+  });
+
+  it("accepts a custom global filter function", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DataTable
+        aria-label="Owner search"
+        columns={columns}
+        data={workspaces}
+        enableGlobalFilter
+        globalFilterFn={(row, columnId, value: string) =>
+          columnId === "owner" &&
+          String(row.getValue(columnId)).startsWith(value)
+        }
+      />,
+    );
+
+    await user.type(
+      screen.getByRole("textbox", { name: "Search table" }),
+      "qa",
+    );
+
+    expect(getBodyRows()).toHaveLength(1);
+    expect(getBodyRows()[0]).toHaveTextContent("Sandbox");
+  });
+});

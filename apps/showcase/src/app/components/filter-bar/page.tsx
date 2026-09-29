@@ -1,0 +1,114 @@
+import type { Metadata } from "next";
+import {
+  DocsPage,
+  DocsSection,
+  InstallationSection,
+} from "@/components/docs-page";
+import { ExampleBlock } from "@/components/example-block";
+import { PropsTable } from "@/components/props-table";
+import { FilterBarGroups } from "@/examples/filter-bar/groups";
+import { FilterBarIssueTable } from "@/examples/filter-bar/issue-table";
+import { FilterBarOneModel } from "@/examples/filter-bar/one-model";
+import { FilterBarServerMode } from "@/examples/filter-bar/server-mode";
+import {
+  filterBarProps,
+  filterCoreProps,
+  filterFieldProps,
+  filterGroupEditorProps,
+} from "@/lib/props/filter-bar";
+
+export const metadata: Metadata = {
+  title: "FilterBar",
+  description:
+    "Filter chips with typed operators, built on one serializable filter model that plugs into DataTable.",
+};
+
+export default function FilterBarPage() {
+  return (
+    <DocsPage
+      name="FilterBar"
+      description="Narrow a list with filters that read as sentences. Each chip is field, operator, and value, and every part can be edited in place. The chips edit one plain-JSON filter model, so the same filter can drive a table, a URL, or a server query."
+    >
+      <InstallationSection
+        registryName="filter-bar"
+        importCode={`import {
+  FilterBar,
+  createFilterPredicate,
+  defineFilterFields,
+  useFilterState,
+} from "@dethink/components";`}
+      />
+      <DocsSection
+        id="examples"
+        title="Examples"
+        description="Add a filter, then click any part of a chip to change it."
+      >
+        <div className="space-y-10">
+          <ExampleBlock
+            wide
+            file="filter-bar/issue-table.tsx"
+            title="Filtering a DataTable"
+            description="The bar sits in the table's toolbar and createFilterPredicate filters the rows. Option lists show how many rows each choice would match, chips show how many rows they hide, and when nothing matches the bar suggests which chip to relax. Try Created is in the last 7 days, Estimate is at least 5, or Customer reported. Press F to add a filter, arrow keys to move between chip parts, Backspace to remove a chip, and Cmd or Ctrl+Z to undo."
+          >
+            <FilterBarIssueTable />
+          </ExampleBlock>
+          <ExampleBlock
+            wide
+            file="filter-bar/groups.tsx"
+            title="AND/OR groups"
+            description="Nested groups show as one chip; click it, or use Advanced, to edit. The same filter also drives an inline FilterGroupEditor: switch a group to any, wrap a row in a new group, or move rows with Alt+Arrow keys."
+          >
+            <FilterBarGroups />
+          </ExampleBlock>
+          <ExampleBlock
+            wide
+            file="filter-bar/server-mode.tsx"
+            title="Server mode"
+            description="The filter is plain JSON, so it can go to your API as is. Here a pretend server filters 240 orders, returns a page and the total, and counts options for the pickers through getFacets. Counts show a placeholder while they load, and the table keeps its rows while the next page loads, with a thin progress line, so nothing jumps."
+          >
+            <FilterBarServerMode />
+          </ExampleBlock>
+          <ExampleBlock
+            file="filter-bar/one-model.tsx"
+            title="One filter model"
+            description="The chips edit a plain JSON tree. describeFilter turns it into the sentence screen readers hear."
+          >
+            <FilterBarOneModel />
+          </ExampleBlock>
+        </div>
+      </DocsSection>
+      <DocsSection id="api" title="API">
+        <div className="space-y-8">
+          <PropsTable caption="FilterBar props" rows={filterBarProps} />
+          <PropsTable caption="FilterField" rows={filterFieldProps} />
+          <PropsTable
+            caption="FilterGroupEditor"
+            rows={filterGroupEditorProps}
+          />
+          <PropsTable caption="Filter core" rows={filterCoreProps} />
+        </div>
+      </DocsSection>
+      <DocsSection id="accessibility" title="Accessibility">
+        <div className="text-muted-foreground space-y-3 text-sm leading-relaxed">
+          <p>
+            The chips sit in a toolbar with a single tab stop. Arrow keys move
+            between chip parts, Home and End jump to the ends, and the direction
+            flips in right-to-left layouts. Backspace or Delete removes the
+            focused chip and moves focus to the next one. Cmd or Ctrl+Z undoes
+            and Shift+Cmd or Ctrl+Z redoes. In the group editor, Tab moves
+            through controls and Alt+ArrowUp or ArrowDown moves the focused row.
+            Row actions are named after the row they act on.
+          </p>
+          <p>
+            Each chip is a group named with its full sentence, such as
+            &ldquo;Status is any of Open, Blocked&rdquo;, and the toolbar is
+            described by the sentence for the whole filter. Editors open in
+            popovers that take focus, close with Escape, and return focus to the
+            part that opened them. Pass resultCount to announce the number of
+            matches politely.
+          </p>
+        </div>
+      </DocsSection>
+    </DocsPage>
+  );
+}

@@ -57,6 +57,9 @@
     "registry:smoke:inspector": "node scripts/smoke-inspector-registry.mjs",
     "registry:smoke:inspector:react18": "node scripts/smoke-inspector-registry.mjs --react18",
     "registry:smoke:kanban-board": "node scripts/smoke-kanban-board-registry.mjs",
+    "registry:smoke:filter-bar": "node scripts/smoke-filter-bar-registry.mjs",
+    "registry:smoke:filter-bar:react18": "node scripts/smoke-filter-bar-registry.mjs --react18",
+    "test:filter-recipes": "playwright test --config=e2e/filter-recipes.config.ts",
     "registry:smoke:charts": "node scripts/smoke-charts-registry.mjs",
     "registry:smoke:charts:react18": "node scripts/smoke-charts-registry.mjs --react18"
   },
