@@ -3,9 +3,14 @@ import {
   addFilterNode,
   clearFilter,
   createFilter,
+  findFilterNode,
+  moveFilterNode,
   removeFilterNode,
+  shiftFilterNode,
+  unwrapFilterGroup,
   updateFilterCondition,
   updateFilterGroup,
+  wrapFilterNode,
 } from "./filter-core";
 import type {
   Filter,
@@ -51,6 +56,33 @@ export interface FilterState {
   setCombinator: (
     groupId: string,
     combinator: FilterCombinator,
+    options?: FilterCommitOptions,
+  ) => void;
+  /** Negates or un-negates a condition or group. */
+  setNegated: (
+    id: string,
+    negated: boolean,
+    options?: FilterCommitOptions,
+  ) => void;
+  /** Wraps a node in a new group that takes its place. */
+  wrapInGroup: (
+    id: string,
+    options?: FilterCommitOptions & {
+      combinator?: FilterCombinator;
+      groupId?: string;
+    },
+  ) => void;
+  /** Replaces a group with its children. */
+  unwrapGroup: (id: string, options?: FilterCommitOptions) => void;
+  moveNode: (
+    id: string,
+    target: { index?: number; parentId: string },
+    options?: FilterCommitOptions,
+  ) => void;
+  /** Moves a node one place up (-1) or down (1) among its siblings. */
+  shiftNode: (
+    id: string,
+    offset: -1 | 1,
     options?: FilterCommitOptions,
   ) => void;
   clear: (options?: FilterCommitOptions) => void;
@@ -194,6 +226,31 @@ export function useFilterState({
           (current) => updateFilterGroup(current, groupId, { combinator }),
           options,
         );
+      },
+      setNegated: (id, negated, options) => {
+        setFilter((current) => {
+          const patch = { not: negated || undefined };
+
+          return current.id === id ||
+            findFilterNode(current, id)?.type === "group"
+            ? updateFilterGroup(current, id, patch)
+            : updateFilterCondition(current, id, patch);
+        }, options);
+      },
+      wrapInGroup: (id, { combinator, groupId, ...options } = {}) => {
+        setFilter(
+          (current) => wrapFilterNode(current, id, { combinator, groupId }),
+          options,
+        );
+      },
+      unwrapGroup: (id, options) => {
+        setFilter((current) => unwrapFilterGroup(current, id), options);
+      },
+      moveNode: (id, target, options) => {
+        setFilter((current) => moveFilterNode(current, id, target), options);
+      },
+      shiftNode: (id, offset, options) => {
+        setFilter((current) => shiftFilterNode(current, id, offset), options);
       },
       clear: (options) => {
         setFilter(

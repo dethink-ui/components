@@ -5,10 +5,41 @@
  * The AST is plain serializable JSON: no functions, dates or class instances.
  */
 
+import type { ReactNode } from "react";
+
 export type FilterCombinator = "and" | "or";
 
-/** Values a condition can hold. Arrays hold option values. */
-export type FilterValue = string | number | boolean | string[];
+export type FilterDateUnit = "day" | "week" | "month" | "year";
+
+/**
+ * A calendar day. Relative days stay relative in the AST and resolve against
+ * `now` when the filter runs, so saved filters never go stale.
+ */
+export type FilterDate =
+  | { kind: "absolute"; /** ISO calendar day, YYYY-MM-DD. */ date: string }
+  | {
+      kind: "relative";
+      /** Offset from today: -7 is seven units ago, 0 is today. */
+      amount: number;
+      unit: FilterDateUnit;
+    };
+
+/** A span of calendar units, e.g. "the last 7 days". */
+export interface FilterDuration {
+  amount: number;
+  unit: FilterDateUnit;
+}
+
+/** Values a condition can hold. All are plain JSON. */
+export type FilterValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | [number, number]
+  | FilterDate
+  | [FilterDate, FilterDate]
+  | FilterDuration;
 
 export interface FilterCondition {
   type: "condition";
@@ -35,7 +66,60 @@ export type FilterNode = FilterCondition | FilterGroup;
 /** The root of a filter is always a group. */
 export type Filter = FilterGroup;
 
-export type FilterFieldType = "text" | "option" | "multiOption";
+export type BuiltInFilterFieldType =
+  "text" | "number" | "date" | "boolean" | "option" | "multiOption";
+
+/** 0 is Sunday, 1 is Monday … 6 is Saturday. */
+export type FilterWeekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+/** Options for evaluating filters. Inject `now` for SSR-stable output. */
+export interface FilterEvaluateOptions {
+  now?: Date | number;
+  /** IANA time zone for calendar days. Defaults to UTC. */
+  timeZone?: string;
+  /** First day of the week for "this week". Defaults to 1 (Monday). */
+  weekStartsOn?: FilterWeekday;
+}
+
+/** Resolved evaluation context passed to operators. */
+export interface FilterEvaluationContext {
+  now: number;
+  /** Today as an ISO calendar day in `timeZone`. */
+  today: string;
+  timeZone: string;
+  weekStartsOn: FilterWeekday;
+}
+
+export interface FilterValueEditorRenderProps {
+  field: FilterField;
+  operator: FilterOperatorDefinition;
+  value: FilterValue | undefined;
+  onValueChange: (value: FilterValue | undefined) => void;
+  /** Confirms the value and closes the editor. */
+  onCommit: () => void;
+}
+
+/**
+ * A field type: its operators, how values read in chips and descriptions,
+ * and optionally its own value editor. Built-in types are strings; custom
+ * types are definitions made with `defineFilterFieldType`.
+ */
+export interface FilterFieldTypeDefinition {
+  id: string;
+  operators: FilterOperatorDefinition[];
+  defaultOperator?: string;
+  /** Readable value text. Return one string per listed value. */
+  formatValue?: (
+    value: FilterValue,
+    field: FilterField,
+    options: { locale: string; operator?: FilterOperatorDefinition },
+  ) => string[];
+  /** Value editor for the chip popover. Defaults to a text box. */
+  renderEditor?: (props: FilterValueEditorRenderProps) => ReactNode;
+}
+
+export type FilterFieldType =
+  BuiltInFilterFieldType | FilterFieldTypeDefinition;
 
 export interface FilterOption {
   value: string;
@@ -51,6 +135,11 @@ export interface FilterField<TData = unknown> {
   type: FilterFieldType;
   /** Options for `option` and `multiOption` fields. */
   options?: FilterOption[];
+  /** Labels for `boolean` values. Default "Yes" and "No". */
+  trueLabel?: string;
+  falseLabel?: string;
+  /** Number formatting for `number` values in chips. */
+  numberFormat?: Intl.NumberFormatOptions;
   /** Restricts and orders the operators offered for this field. */
   operators?: string[];
   defaultOperator?: string;
@@ -65,8 +154,11 @@ export interface FilterField<TData = unknown> {
 
 export type FilterFields<TData = unknown> = readonly FilterField<TData>[];
 
-/** How many values an operator takes. */
-export type FilterOperatorArity = "none" | "single" | "multiple";
+/**
+ * How many values an operator takes: none, one, a list, or a `[from, to]`
+ * pair.
+ */
+export type FilterOperatorArity = "none" | "single" | "multiple" | "range";
 
 export interface FilterOperatorDefinition {
   id: string;
@@ -75,8 +167,25 @@ export interface FilterOperatorDefinition {
   /** Label used when exactly one value is selected, e.g. "is". */
   singleLabel?: string;
   arity: FilterOperatorArity;
+  /**
+   * Text-query token written after `field:`, e.g. ">" in `amount:>5` or "!"
+   * in `status:!done`. Operators without one are written with their id,
+   * `field:id:value`, which also works for every operator.
+   */
+  token?: string;
+  /**
+   * Operators with the same kind share a value shape. Switching to an
+   * operator of another kind clears the value.
+   */
+  valueKind?: string;
+  /** Checks the value's shape. Invalid values are skipped and reported. */
+  isValueValid?: (value: FilterValue) => boolean;
   /** Returns whether a row value matches the condition value. */
-  evaluate: (rowValue: unknown, value: FilterValue | undefined) => boolean;
+  evaluate: (
+    rowValue: unknown,
+    value: FilterValue | undefined,
+    context: FilterEvaluationContext,
+  ) => boolean;
 }
 
 export type FilterIssueCode =
@@ -84,7 +193,8 @@ export type FilterIssueCode =
   | "unknown-operator"
   | "missing-value"
   | "invalid-value"
-  | "unknown-option";
+  | "unknown-option"
+  | "max-depth";
 
 export interface FilterIssue {
   nodeId: string;

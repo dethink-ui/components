@@ -22,8 +22,10 @@ import { DethinkLabsSecurityRecipe } from "@/examples/recipes/dethink-labs-secur
 import { HelioGridEnergyRecipe } from "@/examples/recipes/heliogrid-energy";
 import { HushAndHearthRecipe } from "@/examples/recipes/hush-and-hearth";
 import { IntegrationsHubRecipe } from "@/examples/recipes/integrations-hub";
+import { IssueTrackerRecipe } from "@/examples/recipes/issue-tracker";
 import { InvoiceApprovalDeskRecipe } from "@/examples/recipes/invoice-approval-desk";
 import { LoginAndOnboardingRecipe } from "@/examples/recipes/login-and-onboarding";
+import { LogsDashboardRecipe } from "@/examples/recipes/logs-dashboard";
 import { RobotLandingRecipe } from "@/examples/recipes/robot-landing";
 import { RelayLandingRecipe } from "@/examples/recipes/relay-landing";
 import { LumenLandingRecipe } from "@/examples/recipes/lumen-landing";
@@ -61,8 +63,10 @@ const recipeComponents: Record<string, ComponentType<RecipePreviewProps>> = {
   "heliogrid-energy": HelioGridEnergyRecipe,
   "hush-and-hearth": HushAndHearthRecipe,
   "integrations-hub": IntegrationsHubRecipe,
+  "issue-tracker": IssueTrackerRecipe,
   "invoice-approval-desk": InvoiceApprovalDeskRecipe,
   "login-and-onboarding": LoginAndOnboardingRecipe,
+  "logs-dashboard": LogsDashboardRecipe,
   "lumen-landing": LumenLandingRecipe,
   "release-readiness": ReleaseReadinessRecipe,
   "saas-checkout-order-summary": SaasCheckoutOrderSummaryRecipe,
