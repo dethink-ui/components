@@ -9,6 +9,7 @@ import { PropsTable } from "@/components/props-table";
 import { FilterBarGroups } from "@/examples/filter-bar/groups";
 import { FilterBarIssueTable } from "@/examples/filter-bar/issue-table";
 import { FilterBarOneModel } from "@/examples/filter-bar/one-model";
+import { FilterBarServerMode } from "@/examples/filter-bar/server-mode";
 import {
   filterBarProps,
   filterCoreProps,
@@ -58,6 +59,14 @@ export default function FilterBarPage() {
             description="Nested groups show as one chip; click it, or use Advanced, to edit. The same filter also drives an inline FilterGroupEditor: switch a group to any, wrap a row in a new group, or move rows with Alt+Arrow keys."
           >
             <FilterBarGroups />
+          </ExampleBlock>
+          <ExampleBlock
+            wide
+            file="filter-bar/server-mode.tsx"
+            title="Server mode"
+            description="The filter is plain JSON, so it can go to your API as is. Here a pretend server filters 240 orders, returns a page and the total, and counts options for the pickers through getFacets. Counts show a placeholder while they load, and the table keeps its rows while the next page loads, with a thin progress line, so nothing jumps."
+          >
+            <FilterBarServerMode />
           </ExampleBlock>
           <ExampleBlock
             file="filter-bar/one-model.tsx"

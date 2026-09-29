@@ -3,7 +3,7 @@
   "name": "filter-bar",
   "type": "registry:ui",
   "title": "FilterBar",
-  "description": "Filter chips that read as sentences in a one-tab-stop toolbar, with typed value editors (text, option checklists with facet counts, yes/no, numbers and ranges, date presets and calendars, date ranges, last/next N units, calendar periods, custom type editors), nested AND/OR groups with a group editor, optional per-chip impact counts and an empty-result Relax suggestion, undo/redo, narrow-width collapsing, polite result announcements and a composable parts API over the filter-core model.",
+  "description": "Filter chips that read as sentences in a one-tab-stop toolbar, with typed value editors (text, option checklists with facet counts, yes/no, numbers and ranges, date presets and calendars, date ranges, last/next N units, calendar periods, custom type editors), nested AND/OR groups with a group editor, optional per-chip impact counts and an empty-result Relax suggestion, undo/redo, narrow-width collapsing, polite result announcements and a composable parts API over the filter-core model, and server-mode facet counts through a getFacets callback (cached per field and filter, abortable, with reserved space while loading).",
   "dependencies": ["@internationalized/date", "react-aria-components"],
   "devDependencies": [],
   "registryDependencies": [
@@ -22,6 +22,10 @@
     },
     {
       "path": "packages/components/src/components/filter-builder/use-filter-insights.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/use-server-facets.ts",
       "type": "registry:component"
     },
     {

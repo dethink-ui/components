@@ -156,6 +156,11 @@ export interface FilterBarContextValue {
     fieldKey: string,
     target?: FilterFacetTarget,
   ) => ReadonlyMap<string, number> | undefined;
+  /** Whether counts for a field are loading, from server facets. */
+  getFacetStatus?: (
+    fieldKey: string,
+    target?: FilterFacetTarget,
+  ) => "loading" | "ready" | "error" | "unsupported";
   /**
    * Rows removed by each active condition, keyed by condition id. Negative
    * when the condition adds rows (an OR branch).

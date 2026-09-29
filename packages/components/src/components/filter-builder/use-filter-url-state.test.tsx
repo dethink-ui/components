@@ -483,6 +483,25 @@ describe("createHistoryFilterStore", () => {
     expect(window.location.search).toBe("?q=amount:%3E3+urgent:yes&v=1");
   });
 
+  it("keeps other history state but drops router markers, so routers resync", () => {
+    window.history.replaceState(
+      { __NA: true, _N: true, key: "k1", scroll: 10 },
+      "",
+      "/issues",
+    );
+
+    const replace = vi.spyOn(window.history, "replaceState");
+
+    createHistoryFilterStore().write("?q=a&v=1");
+
+    expect(replace).toHaveBeenCalledWith(
+      { key: "k1", scroll: 10 },
+      "",
+      "/issues?q=a&v=1",
+    );
+    replace.mockRestore();
+  });
+
   it("pushes history entries in push mode", () => {
     const store = createHistoryFilterStore({ mode: "push" });
     const length = window.history.length;

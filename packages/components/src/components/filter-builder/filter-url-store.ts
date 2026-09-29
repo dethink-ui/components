@@ -21,6 +21,24 @@ function normalizeSearch(search: string) {
 }
 
 /**
+ * The current history state without routers' "this is my own call" markers.
+ * Next.js skips syncing its router for states carrying `__NA`/`_N` and would
+ * later restore its stale URL, dropping the filter; without them it copies
+ * its internals back and follows the new URL. Other keys are kept.
+ */
+function historyState() {
+  const current: unknown = window.history.state;
+
+  if (!current || typeof current !== "object") {
+    return current ?? null;
+  }
+
+  const { __NA: _na, _N: _n, ...rest } = current as Record<string, unknown>;
+
+  return rest;
+}
+
+/**
  * A store over `window.location` and the History API. Writes use
  * `history.replaceState` by default, so filter edits don't flood the back
  * stack; pass `mode: "push"` to make each change a history entry. Back and
@@ -53,11 +71,12 @@ export function createHistoryFilterStore({
       }
 
       const url = `${window.location.pathname}${next}${window.location.hash}`;
+      const state = historyState();
 
       if (mode === "push") {
-        window.history.pushState(window.history.state, "", url);
+        window.history.pushState(state, "", url);
       } else {
-        window.history.replaceState(window.history.state, "", url);
+        window.history.replaceState(state, "", url);
       }
 
       notify();

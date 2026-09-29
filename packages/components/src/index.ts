@@ -903,6 +903,7 @@ export {
   parseFilterQuery,
   printFilterQuery,
   toFilterJsonSchema,
+  getFilterFacetFilter,
   getFilterFieldSummaries,
   sanitizeFilterAssistantResult,
   sanitizeFilterText,
@@ -991,6 +992,14 @@ export {
   defaultSavedViewsMenuLabels,
   type SavedViewsMenuLabels,
 } from "./components/filter-builder/saved-views-parts";
+export {
+  useServerFacets,
+  type FilterFacetCounts,
+  type FilterFacetRequest,
+  type FilterFacetStatus,
+  type GetFilterFacets,
+  type ServerFacets,
+} from "./components/filter-builder/use-server-facets";
 export {
   useFilterAssistant,
   type FilterAssistantAnswer,

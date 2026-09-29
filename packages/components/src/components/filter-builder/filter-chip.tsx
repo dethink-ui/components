@@ -60,6 +60,7 @@ export function FilterChip({
     evaluateOptions,
     expanded,
     fields,
+    getFacetStatus,
     getFacets,
     impact,
     labels,
@@ -333,6 +334,12 @@ export function FilterChip({
                 conditionId: condition.id,
                 operator: operator.id,
               })}
+              countsLoading={
+                getFacetStatus?.(field.key, {
+                  conditionId: condition.id,
+                  operator: operator.id,
+                }) === "loading"
+              }
               labels={labels}
               locale={locale}
               weekStartsOn={evaluateOptions.weekStartsOn}

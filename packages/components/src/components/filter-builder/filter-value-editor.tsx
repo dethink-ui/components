@@ -69,6 +69,8 @@ export interface FilterValueEditorProps<TData = unknown> {
   onClose?: () => void;
   /** Rows per option value, shown next to options and yes/no. */
   counts?: ReadonlyMap<string, number>;
+  /** Counts are on their way (e.g. from a server): space is reserved. */
+  countsLoading?: boolean;
   labels?: Partial<FilterEditorLabels>;
   locale?: string;
   weekStartsOn?: FilterWeekday;
@@ -77,16 +79,29 @@ export interface FilterValueEditorProps<TData = unknown> {
 function Count({
   count,
   labels,
+  loading = false,
 }: {
   count: number | undefined;
   labels: FilterEditorLabels;
+  loading?: boolean;
 }) {
+  if (loading) {
+    // Same box as a count, so options don't shift when counts arrive.
+    return (
+      <span
+        aria-hidden="true"
+        data-slot="filter-facet-count-loading"
+        className="bg-muted ms-auto inline-block h-3 w-6 shrink-0 rounded-sm motion-safe:animate-pulse"
+      />
+    );
+  }
+
   if (count === undefined) {
     return null;
   }
 
   return (
-    <span className="text-muted-foreground ms-auto shrink-0 text-xs tabular-nums">
+    <span className="text-muted-foreground ms-auto min-w-6 shrink-0 text-end text-xs tabular-nums">
       <span aria-hidden="true">{count}</span>
       <span className="sr-only">, {labels.facetCount(count)}</span>
     </span>
@@ -136,6 +151,7 @@ function TextEditor({
 
 function OptionsEditor({
   counts,
+  countsLoading,
   field,
   labels,
   onClose,
@@ -143,6 +159,7 @@ function OptionsEditor({
   value,
 }: {
   counts?: ReadonlyMap<string, number>;
+  countsLoading?: boolean;
   field: FilterField;
   labels: FilterEditorLabels;
   onClose?: () => void;
@@ -199,6 +216,7 @@ function OptionsEditor({
               <Count
                 count={counts ? (counts.get(item.id) ?? 0) : undefined}
                 labels={labels}
+                loading={countsLoading}
               />
             </ListBoxItem>
           )}
@@ -210,6 +228,7 @@ function OptionsEditor({
 
 function BooleanEditor({
   counts,
+  countsLoading,
   field,
   labels,
   onCommit,
@@ -217,6 +236,7 @@ function BooleanEditor({
   value,
 }: {
   counts?: ReadonlyMap<string, number>;
+  countsLoading?: boolean;
   field: FilterField;
   labels: FilterEditorLabels;
   onCommit: () => void;
@@ -256,6 +276,7 @@ function BooleanEditor({
             <Count
               count={counts ? (counts.get(item.id) ?? 0) : undefined}
               labels={labels}
+              loading={countsLoading}
             />
           </ListBoxItem>
         )}
@@ -284,6 +305,7 @@ const typedEditors: Record<
  */
 export function FilterValueEditor<TData>({
   counts,
+  countsLoading = false,
   field: typedField,
   labels: labelOverrides,
   locale = "en-US",
@@ -330,6 +352,7 @@ export function FilterValueEditor<TData>({
     return (
       <OptionsEditor
         counts={counts}
+        countsLoading={countsLoading}
         field={field}
         labels={labels}
         onClose={onClose}
@@ -343,6 +366,7 @@ export function FilterValueEditor<TData>({
     return (
       <BooleanEditor
         counts={counts}
+        countsLoading={countsLoading}
         field={field}
         labels={labels}
         onCommit={onCommit}

@@ -23,6 +23,7 @@ import type {
 } from "./filter-types";
 import { FilterBarRescue } from "./filter-bar-rescue";
 import { useFilterInsights } from "./use-filter-insights";
+import { useServerFacets, type GetFilterFacets } from "./use-server-facets";
 import { useFilterState, type FilterState } from "./use-filter-state";
 import { FilterAddMenu } from "./filter-add-menu";
 import { FilterBarAdvanced } from "./filter-group-chip";
@@ -69,6 +70,19 @@ export interface FilterBarProps<TData = unknown> extends Omit<
    * an announced result count and the empty-result rescue.
    */
   data?: readonly TData[];
+  /**
+   * Facet counts from your server, for server-side data: called with the
+   * field and the filter to count under. Takes precedence over counts from
+   * `data`. Pickers reserve space while counts load.
+   */
+  getFacets?: GetFilterFacets;
+  /**
+   * Cache key for server facets besides the filter, e.g. a time range or a
+   * data version: counts are fetched again when it changes. Compared as
+   * JSON, so use a primitive or plain JSON value. `getFacets` itself may be
+   * an inline function.
+   */
+  facetsKey?: unknown;
   /** Shows how many rows each chip removes ("−42"). Needs `data`. */
   showImpact?: boolean;
   /** Offers "Relax" on the most restrictive chip when nothing matches. */
@@ -99,6 +113,8 @@ export function FilterBar<TData>({
   defaultValue,
   evaluateOptions: evaluateOptionsProp,
   fields,
+  facetsKey,
+  getFacets: getServerFacets,
   labels: labelOverrides,
   locale = "en-US",
   maxDepth = DEFAULT_FILTER_MAX_DEPTH,
@@ -151,6 +167,12 @@ export function FilterBar<TData>({
     filter: state.filter,
     impact: showImpact,
     rescue: withRescue,
+  });
+  const serverFacets = useServerFacets({
+    facetsKey,
+    fields,
+    filter: state.filter,
+    getFacets: getServerFacets,
   });
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -297,7 +319,8 @@ export function FilterBar<TData>({
       evaluateOptions,
       expanded,
       fields: fields as FilterFields,
-      getFacets: insights.getFacets,
+      getFacets: serverFacets?.getFacets ?? insights.getFacets,
+      getFacetStatus: serverFacets?.getFacetStatus,
       impact: insights.impact,
       labels,
       locale,
@@ -318,6 +341,7 @@ export function FilterBar<TData>({
       fields,
       insights,
       labels,
+      serverFacets,
       locale,
       maxDepth,
       requestFocus,

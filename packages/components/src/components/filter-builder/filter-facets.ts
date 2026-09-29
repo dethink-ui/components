@@ -1,3 +1,4 @@
+import { normalizeFilter } from "./filter-commands";
 import { createFilterPredicate, readFilterFieldValue } from "./filter-evaluate";
 import {
   findFilterNode,
@@ -13,6 +14,7 @@ import {
 } from "./filter-operators";
 import { booleanFilterOperators } from "./filter-typed-operators";
 import type {
+  Filter,
   FilterCondition,
   FilterEvaluateOptions,
   FilterField,
@@ -168,6 +170,44 @@ function resolveFacetScope<TData>(
     )
     ? () => false
     : undefined;
+}
+
+/**
+ * The filter a server needs to count `fieldKey`'s options: the current
+ * filter without the condition(s) the counts are for (see
+ * `computeFilterFacets` for the scope rules), with only active conditions,
+ * normalized. Undefined when counts wouldn't be meaningful, e.g. the value
+ * sits under an OR group or the operator is negative.
+ */
+export function getFilterFacetFilter<TData>(
+  filter: Filter,
+  fields: FilterFields<TData>,
+  fieldKey: string,
+  target?: FilterFacetTarget,
+): Filter | undefined {
+  const field = getFilterField(fields, fieldKey);
+  const exclude = field
+    ? resolveFacetScope(filter, field as FilterField<TData>, target)
+    : undefined;
+
+  if (!exclude) {
+    return undefined;
+  }
+
+  const keep = (node: FilterNode): FilterNode[] => {
+    if (node.type === "condition") {
+      return exclude(node) || !isFilterConditionActive(node, fields)
+        ? []
+        : [node];
+    }
+
+    return [{ ...node, children: node.children.flatMap(keep) }];
+  };
+
+  return normalizeFilter({
+    ...filter,
+    children: filter.children.flatMap(keep),
+  });
 }
 
 /**

@@ -98,6 +98,7 @@ export {
   printFilterQuery,
   getFilterQueryDefaultField,
   toFilterJsonSchema,
+  getFilterFacetFilter,
   getFilterFieldSummaries,
   sanitizeFilterAssistantResult,
   sanitizeFilterText,
@@ -217,3 +218,11 @@ export {
   type FilterBarAdvancedProps,
   type FilterGroupChipProps,
 } from "./filter-group-chip";
+export {
+  useServerFacets,
+  type FilterFacetCounts,
+  type FilterFacetRequest,
+  type FilterFacetStatus,
+  type GetFilterFacets,
+  type ServerFacets,
+} from "./use-server-facets";

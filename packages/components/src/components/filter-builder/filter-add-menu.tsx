@@ -44,8 +44,16 @@ export function FilterAddMenu({
   parentId,
 }: FilterAddMenuProps) {
   const context = useFilterBarContext("FilterAddMenu");
-  const { evaluateOptions, fields, getFacets, labels, locale, size, state } =
-    context;
+  const {
+    evaluateOptions,
+    fields,
+    getFacetStatus,
+    getFacets,
+    labels,
+    locale,
+    size,
+    state,
+  } = context;
   const isPrimary = parentId === undefined;
   const [localOpen, setLocalOpen] = useState(false);
   const localButtonRef = useRef<HTMLButtonElement>(null);
@@ -147,6 +155,13 @@ export function FilterAddMenu({
                   parentId,
                   operator: operator.id,
                 })}
+                countsLoading={
+                  getFacetStatus?.(field.key, {
+                    conditionId: draft.conditionId,
+                    parentId,
+                    operator: operator.id,
+                  }) === "loading"
+                }
                 labels={labels}
                 locale={locale}
                 weekStartsOn={evaluateOptions.weekStartsOn}

@@ -267,3 +267,25 @@ export const RelaxWhenEmpty: Story = {
     await expect(canvas.queryByRole("group", { name: /Stage/ })).toBeNull();
   },
 };
+
+const counts: Record<string, Record<string, number>> = {
+  status: { open: 42, blocked: 7, done: 118 },
+  labels: { bug: 31, api: 12 },
+};
+
+export const ServerFacets: Story = {
+  name: "Server facets (slow)",
+  args: {
+    defaultValue: populated,
+    // Counts arrive after a delay; pickers reserve their space meanwhile.
+    getFacets: ({ field, signal }) =>
+      new Promise((resolve, reject) => {
+        const timer = setTimeout(() => resolve(counts[field] ?? {}), 1200);
+
+        signal.addEventListener("abort", () => {
+          clearTimeout(timer);
+          reject(new DOMException("Aborted", "AbortError"));
+        });
+      }),
+  },
+};

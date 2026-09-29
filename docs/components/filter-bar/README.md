@@ -167,7 +167,202 @@ With no children, `FilterBar` renders `FilterBarChips`, `FilterAddMenu`, `Filter
 - `toolbar`: content rendered at the start of the toolbar.
 - `globalFilterFn`: a custom TanStack global filter function.
 
-`DataTable` does not import the filter model. Any predicate works. For TanStack tables you build yourself, use `globalFilterFn: toTanstackFilterFn(fields)` with the filter itself as the `globalFilter` state, so TanStack re-filters whenever the filter changes. In server mode, send the filter JSON to your API; the server facet contract and a manual-filtering example arrive in #135.
+`DataTable` does not import the filter model. Any predicate works. For TanStack tables you build yourself, use `globalFilterFn: toTanstackFilterFn(fields)` with the filter itself as the `globalFilter` state, so TanStack re-filters whenever the filter changes.
+
+## Server mode
+
+The filter is plain, validated JSON, so it can go to your API as is. Your server filters, pages and counts; the browser only renders.
+
+```tsx
+const state = useFilterState();
+const { rows, total, pending } = useYourQuery(state.filter); // POST the filter
+
+<div aria-busy={pending}>
+  <DataTable
+    columns={columns}
+    data={rows}
+    manualFiltering
+    loading={rows === undefined}
+    toolbar={
+      <FilterBar
+        fields={fields}
+        state={state}
+        resultCount={pending ? undefined : total}
+        getFacets={({ field, filter, signal }) =>
+          fetch("/api/issues/facets", {
+            method: "POST",
+            body: JSON.stringify({ field, filter }),
+            signal,
+          }).then((response) => response.json())
+        }
+      />
+    }
+  />
+</div>;
+```
+
+### Facet contract
+
+`getFacets({ field, filter, signal })` returns counts per option value of `field`, as a `Map`, a `{ value: count }` object, or `[{ value, count }]`.
+
+- `filter` is what to count under: the current filter without the condition being edited (or with the new condition's destination in mind), active conditions only, normalized. It's the same scope `computeFilterFacets` uses on the client, so client and server counts agree. `getFilterFacetFilter(filter, fields, field, target?)` computes it for your own UI.
+- Pickers ask for counts as they open. Each (field, filter) pair is requested once and cached. `getFacets` may be an inline function; pass `facetsKey` (a primitive or plain JSON value, such as a time range or a data version) when the same filter should count differently, and counts are fetched again. Requests are aborted when the bar unmounts or is hidden, or when `facetsKey` changes, and asked again later if still needed. A failed request shows no counts and is retried after 10 seconds, the next time a picker opens.
+- Where counts wouldn't be meaningful (the value sits under an OR or negated group, or the operator is negative), nothing is requested.
+- While counts load, each option shows a placeholder the size of a count, so the list never shifts. Keep the table from shifting too: show the last page dimmed while the next one loads (as in the example) instead of swapping in a loading row.
+
+### Translating to Prisma (hand-written recipe)
+
+Adapters for Prisma, SQL and Drizzle are planned for v1.1. Until then, a translation is a short recursive function. Only allowlist fields you mean to expose; `validateFilter` first rejects unknown fields and operators.
+
+```ts
+import {
+  isFilterConditionActive,
+  resolveFilterDate,
+  shiftCalendarDay,
+  validateFilter,
+  type Filter,
+  type FilterCondition,
+  type FilterNode,
+} from "@dethink/components";
+import type { Prisma } from "@prisma/client";
+import { fields } from "./issue-fields"; // your FilterFields
+
+const today = () => new Date().toISOString().slice(0, 10); // or the user's zone
+const textFields = new Set(["title", "assignee"]);
+const listFields = new Set(["labels"]);
+const day = (value: string) => new Date(`${value}T00:00:00Z`);
+
+function condition(node: FilterCondition): Prisma.IssueWhereInput {
+  const { field, operator, value } = node;
+  const text = { mode: "insensitive" as const };
+
+  switch (operator) {
+    case "contains":
+      return { [field]: { contains: value as string, ...text } };
+    case "notContains":
+      return { NOT: { [field]: { contains: value as string, ...text } } };
+    case "is":
+      return typeof value === "boolean"
+        ? { [field]: value }
+        : { [field]: { equals: value as string, ...text } };
+    case "startsWith":
+      return { [field]: { startsWith: value as string, ...text } };
+    case "endsWith":
+      return { [field]: { endsWith: value as string, ...text } };
+    case "isAnyOf":
+      return { [field]: { in: value as string[] } };
+    case "isNoneOf":
+      return { [field]: { notIn: value as string[] } };
+    case "includesAny":
+      return { [field]: { hasSome: value as string[] } };
+    case "includesAll":
+      return { [field]: { hasEvery: value as string[] } };
+    case "excludesAll":
+      return { NOT: { [field]: { hasSome: value as string[] } } };
+    case "eq":
+      return { [field]: value as number };
+    case "gt":
+    case "gte":
+    case "lt":
+    case "lte":
+      return { [field]: { [operator]: value as number } };
+    case "inLast": {
+      const { amount, unit } = value as {
+        amount: number;
+        unit: "day" | "week" | "month" | "year";
+      };
+
+      const start = shiftCalendarDay(
+        shiftCalendarDay(today(), -amount, unit),
+        1,
+        "day",
+      );
+
+      // Calendar days, like the client: the last 7 days are today and the
+      // six days before it. Both bounds, so future-dated rows don't match.
+      return {
+        [field]: {
+          gte: day(start),
+          lt: day(shiftCalendarDay(today(), 1, "day")),
+        },
+      };
+    }
+    case "after":
+      return {
+        [field]: {
+          gte: day(
+            shiftCalendarDay(
+              resolveFilterDate(value as never, today()),
+              1,
+              "day",
+            ),
+          ),
+        },
+      };
+    case "isEmpty":
+      // Only text columns can hold "", and lists use isEmpty.
+      return textFields.has(field)
+        ? { OR: [{ [field]: null }, { [field]: "" }] }
+        : listFields.has(field)
+          ? { [field]: { isEmpty: true } }
+          : { [field]: null };
+    case "isNotEmpty":
+      return textFields.has(field)
+        ? { AND: [{ NOT: { [field]: null } }, { NOT: { [field]: "" } }] }
+        : listFields.has(field)
+          ? { [field]: { isEmpty: false } }
+          : { NOT: { [field]: null } };
+    default:
+      throw new Error(`Unsupported operator ${operator}`);
+  }
+}
+
+export function toPrismaWhere(node: FilterNode): Prisma.IssueWhereInput {
+  const where =
+    node.type === "condition"
+      ? condition(node)
+      : {
+          [node.combinator === "or" ? "OR" : "AND"]:
+            node.children.map(toPrismaWhere),
+        };
+
+  return node.not ? { NOT: where } : where;
+}
+
+/** Drops conditions without a usable value, as the client does. */
+function pruneInactive(node: FilterNode): FilterNode[] {
+  if (node.type === "condition") {
+    return isFilterConditionActive(node, fields) ? [node] : [];
+  }
+
+  const children = node.children.flatMap(pruneInactive);
+
+  return children.length > 0 ? [{ ...node, children }] : [];
+}
+
+// In the route handler. Chips still being edited have no value yet: drop
+// them first (the client ignores them too), then validate the rest.
+export function whereFor(filter: Filter) {
+  const [active] = pruneInactive(filter);
+
+  if (!active) {
+    return {};
+  }
+
+  if (validateFilter(active, fields).length > 0) {
+    throw new Response("Invalid filter", { status: 400 });
+  }
+
+  return toPrismaWhere(active);
+}
+```
+
+Two differences from SQL to keep in mind:
+
+- **Missing values.** Negative conditions (`notContains`, `isNoneOf`, `excludesAll`) match rows with a missing value on the client, but `NOT`, `notIn` and `NOT hasSome` in SQL drop NULL rows. Add `{ [field]: null }` to an `OR` if you want the same result.
+- **Case.** Text operators are case-insensitive on the client. `mode: "insensitive"` works on PostgreSQL and MongoDB; with other databases, rely on a case-insensitive collation.
+
+Extend `condition` for the operators your fields use (`neq`, `between`, `before`, `inNext`, `inPeriod`, `isNot`); dates compare calendar days in the time zone you choose, and relative dates resolve at query time, so saved filters never go stale.
 
 ## Accessibility
 
@@ -201,7 +396,8 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 - `filter-typed-editors.test.tsx`: number and range, date presets, calendar, duration, period, Yes/No and option facet counts, custom editor, impact badge, Relax with undo, typed editors nested in the group editor.
 - `filter-group-editor.test.tsx`: group chip editor, advanced editor, add group and condition, wrap/move/negate/ungroup with undo, Alt+Arrow moves, scoped Backspace, depth limit, standalone rendering.
 - `filter-bar.a11y.test.tsx`: axe with chips, group chips and open editors. `filter-bar.ssr.test.tsx`: server render and hydration.
-- `pnpm registry:smoke:filter-bar` (and `:react18`): clean-consumer install of `filter-bar` + `data-table`, typecheck and Vite build.
+- `pnpm registry:smoke:filter-bar` (and `:react18`): a clean-consumer install of every filter item plus `data-table`, followed by a typecheck and a Vite build. It also asserts that no filter item adds npm dependencies beyond `react-aria-components` and `@internationalized/date`.
+- `filter-server-facets.test.tsx` and `.ssr.test.tsx`: the facet request scope, placeholders reserving space, caching per filter, refetching on change, errors, abort on unmount, and no requests on the server.
 
 ## Text query
 
@@ -215,6 +411,15 @@ Styling uses tokens only (`border`, `muted`, `muted-foreground`, `ring`, `destru
 
 `FilterAssistant` turns a request in words into a proposal of chip changes to review before applying. See [FilterAssistant](../filter-assistant/README.md).
 
+## Recipes
+
+Two full-page showcase recipes use every filter surface together:
+
+- **Issue tracker** (`/recipes/issue-tracker`) filters on the client. It has impact counts, Relax, AND/OR groups, a saved-views rail, the filter in the URL, and an assistant that asks a clarifying question.
+- **Logs dashboard** (`/recipes/logs-dashboard`) filters on the server. It has a typed query bar, server facet counts, a facet sidebar whose toggles edit the same filter, a volume histogram, a time range kept separate from the filter, saved views, URL state and the assistant.
+
+`pnpm test:filter-recipes` runs their end-to-end, scoped axe, reduced-motion and visual snapshot checks in Chromium and WebKit.
+
 ## Out of scope for this slice
 
-Time-of-day filtering and date-times in chips (planned with server mode); server mode (#135). Server adapters (Prisma, SQL) are planned for v1.1.
+Time-of-day filtering and date-times in chips (planned for v1.1). Server adapters (Prisma, SQL) are planned for v1.1.

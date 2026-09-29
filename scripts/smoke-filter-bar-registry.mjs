@@ -51,6 +51,36 @@ const destination = await mkdtemp(
 const found = new Map();
 for (const entry of entries) closure(entry, found);
 const selected = [...found.values()];
+// No filter item may bring npm dependencies beyond what FilterBar already
+// needed when the family started (react-aria-components for listboxes and
+// @internationalized/date for calendars). Everything else is registry code.
+const allowedFilterDependencies = new Set([
+  "@internationalized/date",
+  "react-aria-components",
+]);
+const filterItems = [
+  "filter-core",
+  "filter-bar",
+  "query-input",
+  "filter-url-state",
+  "saved-views",
+  "filter-assistant",
+];
+for (const name of filterItems) {
+  const item = items.get(name);
+  assert(item, `Missing filter registry item: ${name}`);
+  for (const dependency of [
+    ...(item.dependencies ?? []),
+    ...(item.devDependencies ?? []),
+  ]) {
+    const at = dependency.lastIndexOf("@");
+    const pkg = at > 0 ? dependency.slice(0, at) : dependency;
+    assert(
+      allowedFilterDependencies.has(pkg),
+      `${name} adds an npm dependency: ${dependency}`,
+    );
+  }
+}
 const deps = {
   react: react18 ? "^18.3.1" : manifest.devDependencies.react,
   "react-dom": react18 ? "^18.3.1" : manifest.devDependencies["react-dom"],
