@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chart",
+  "type": "registry:ui",
+  "title": "Chart",
+  "description": "Headless SVG chart primitives: a measuring ChartContainer that maps a series config to CSS variables, hairline grid, tabular axes, 2px lines with ringed end markers, gradient area washes, rounded bars, a crosshair, a text-only tooltip, a toggleable legend, a data-table equivalent and the shared single-axis chart shell. No chart library.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chart-core"],
+  "files": [
+    {
+      "path": "packages/components/src/components/chart/chart.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/chart/cartesian-chart.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

@@ -3,6 +3,13 @@ import { useState } from "react";
 import {
   FileUpload,
   KanbanBoard,
+  BarList,
+  LineChart,
+  AreaChart,
+  BarChart,
+  KpiGroup,
+  Sparkline,
+  StatTile,
   Inspector,
   InspectorNumber,
   InspectorProperty,
@@ -321,6 +328,94 @@ export function App() {
           </section>
           <section aria-label="KanbanBoard smoke" className="h-80">
             <KanbanSmoke />
+          </section>
+          <section aria-label="BarList smoke" className="max-w-md">
+            <BarList
+              aria-label="BarList smoke"
+              limit={2}
+              data={[
+                { label: "Direct", value: 4200 },
+                { label: "Search", value: 3100 },
+                { label: "Social", value: 900 },
+              ]}
+            />
+          </section>
+          <section aria-label="LineChart smoke" className="max-w-2xl">
+            <LineChart
+              aria-label="LineChart smoke"
+              index="month"
+              height={200}
+              series={[
+                { key: "revenue", label: "Revenue" },
+                { key: "costs", label: "Costs" },
+              ]}
+              data={[
+                { month: "Jan", revenue: 4000, costs: 2400 },
+                { month: "Feb", revenue: 3000, costs: 1398 },
+                { month: "Mar", revenue: 5000, costs: 2800 },
+              ]}
+            />
+          </section>
+          <section aria-label="AreaChart smoke" className="max-w-2xl">
+            <AreaChart
+              aria-label="AreaChart smoke"
+              index="month"
+              height={200}
+              stacked
+              series={[
+                { key: "revenue", label: "Revenue" },
+                { key: "costs", label: "Costs" },
+              ]}
+              data={[
+                { month: "Jan", revenue: 4000, costs: 2400 },
+                { month: "Feb", revenue: 3000, costs: 1398 },
+                { month: "Mar", revenue: 5000, costs: 2800 },
+              ]}
+            />
+          </section>
+          <section aria-label="BarChart smoke" className="max-w-2xl">
+            <BarChart
+              aria-label="BarChart smoke"
+              index="month"
+              height={200}
+              series={[
+                { key: "revenue", label: "Revenue" },
+                { key: "costs", label: "Costs" },
+              ]}
+              data={[
+                { month: "Jan", revenue: 4000, costs: 2400 },
+                { month: "Feb", revenue: 3000, costs: 1398 },
+                { month: "Mar", revenue: 5000, costs: 2800 },
+              ]}
+            />
+          </section>
+          <section aria-label="StatTile smoke" className="max-w-3xl">
+            <KpiGroup variant="joined" aria-label="KPI smoke">
+              <StatTile
+                label="Revenue"
+                value={128430}
+                delta={8.2}
+                comparison="vs last month"
+                trend={[3, 5, 4, 7, 8]}
+              />
+              <StatTile
+                label="Churn"
+                value="1.8%"
+                delta={{ value: -0.4, positiveDirection: "down" }}
+              />
+            </KpiGroup>
+          </section>
+          <section
+            aria-label="Sparkline smoke"
+            className="border-border grid max-w-xl gap-3 rounded-lg border p-4"
+          >
+            <Sparkline data={[4, 8, 6, 12, 10, 15]} label="Sparkline smoke" />
+            <Sparkline
+              data={[4, 8, 6, 12, 10, 15]}
+              variant="bar"
+              color="chart-3"
+              label="Sparkline bar smoke"
+            />
           </section>
           <section aria-label="Shader backgrounds smoke" className="grid gap-4">
             <LiquidMeshBackground animate={false} className="rounded-xl p-6">

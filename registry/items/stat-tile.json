@@ -1,0 +1,27 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stat-tile",
+  "type": "registry:ui",
+  "title": "StatTile and KpiGroup",
+  "description": "KPI tile with a compact headline value, DeltaBadge, comparison, caption and sparkline trend, plus loading, link and interactive states, and a responsive KpiGroup with separate or joined layouts.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "chart-core",
+    "delta-badge",
+    "sparkline",
+    "skeleton"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/stat-tile/stat-tile.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/stat-tile/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}

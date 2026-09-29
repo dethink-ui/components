@@ -1953,3 +1953,14 @@ export * from "./components/resizable";
 export * from "./components/file-upload";
 export * from "./components/inspector";
 export * from "./components/kanban-board";
+
+export * from "./components/chart";
+// Primitives live beside chart-core so the chart-core registry item stays math-only.
+export * from "./components/chart/chart";
+export * from "./components/sparkline";
+export * from "./components/delta-badge";
+export * from "./components/stat-tile";
+export * from "./components/bar-list";
+export * from "./components/line-chart";
+export * from "./components/area-chart";
+export * from "./components/bar-chart";

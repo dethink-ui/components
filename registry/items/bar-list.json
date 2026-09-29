@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bar-list",
+  "type": "registry:ui",
+  "title": "Bar List",
+  "description": "Ranked horizontal bars with label, compact value and optional icon, link or button rows, stable sorting, a show-more limit, chart-palette colors and reduced-motion-safe entrance.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chart-core"],
+  "files": [
+    {
+      "path": "packages/components/src/components/bar-list/bar-list.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/bar-list/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}

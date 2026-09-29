@@ -549,6 +549,41 @@ export const componentCatalog: ComponentMeta[] = [
     type: "data-display",
   },
   {
+    slug: "delta-badge",
+    name: "DeltaBadge",
+    description:
+      "Show a signed change with an icon, colored by whether the change is good for the metric.",
+    type: "data-display",
+  },
+  {
+    slug: "bar-list",
+    name: "BarList",
+    description:
+      "Rank categories with horizontal bars, aligned values, links, and a show-more limit.",
+    type: "data-display",
+  },
+  {
+    slug: "line-chart",
+    name: "LineChart",
+    description:
+      "Plot trends on one axis with a crosshair tooltip, keyboard readout, legend filtering and a table view.",
+    type: "data-display",
+  },
+  {
+    slug: "area-chart",
+    name: "AreaChart",
+    description:
+      "Show volume over time as overlapping or stacked areas with a crosshair tooltip, keyboard readout and table view.",
+    type: "data-display",
+  },
+  {
+    slug: "bar-chart",
+    name: "BarChart",
+    description:
+      "Compare categories or periods with grouped or stacked bars, per-bar hover, a keyboard readout and a table view.",
+    type: "data-display",
+  },
+  {
     slug: "data-table",
     name: "DataTable",
     description:
@@ -560,6 +595,20 @@ export const componentCatalog: ComponentMeta[] = [
     name: "SlotPlanner",
     description:
       "Manage available time slots and let users request bookings in their time zone.",
+    type: "data-display",
+  },
+  {
+    slug: "stat-tile",
+    name: "StatTile",
+    description:
+      "Lead with a KPI: headline value, change indicator and inline trend, grouped into a responsive row.",
+    type: "data-display",
+  },
+  {
+    slug: "sparkline",
+    name: "Sparkline",
+    description:
+      "Show a compact trend inline as a line, gradient area, or bars in the chart palette.",
     type: "data-display",
   },
   {

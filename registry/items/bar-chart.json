@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bar-chart",
+  "type": "registry:ui",
+  "title": "Bar Chart",
+  "description": "Grouped or stacked vertical bar chart on a zero-based y-axis: bars at most 24px thick with 4px rounded data-ends, 2px surface gaps between bars and stacked segments, grow-from-baseline motion, a slot highlight with per-bar tooltip emphasis, and the same keyboard readout, legend filtering and table view as LineChart.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chart-core", "chart"],
+  "files": [
+    {
+      "path": "packages/components/src/components/bar-chart/bar-chart.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/bar-chart/index.ts",
+      "type": "registry:component"
+    }
+  ]
+}
