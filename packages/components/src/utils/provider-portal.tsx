@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { UNSAFE_PortalProvider } from "react-aria/PortalProvider";
+import { setDethinkPortalOwner } from "./portal-owner";
 
 const providerPortalDefaultClasses = "bg-background font-sans text-foreground";
 const providerPortalMirroredAttributes = [
@@ -164,6 +165,7 @@ export function useProviderPortalRoot<T extends HTMLElement>({
       assignForwardedRef(forwardedRef, node);
 
       if (node && portalContainer && typeof document !== "undefined") {
+        setDethinkPortalOwner(portalContainer, node);
         const provider =
           node.closest<HTMLElement>("[data-dethink-provider]") ?? null;
 

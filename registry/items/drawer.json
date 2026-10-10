@@ -37,6 +37,10 @@
       "type": "registry:lib"
     },
     {
+      "path": "packages/components/src/utils/portal-owner.ts",
+      "type": "registry:lib"
+    },
+    {
       "path": "packages/components/src/utils/cn.ts",
       "type": "registry:lib"
     }
