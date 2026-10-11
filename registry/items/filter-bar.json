@@ -3,14 +3,16 @@
   "name": "filter-bar",
   "type": "registry:ui",
   "title": "FilterBar",
-  "description": "Filter chips that read as sentences (field, operator, value) in a one-tab-stop toolbar, with searchable field and value editors in popovers, typed operators, undo/redo with coalesced editing sessions, Backspace to remove, an optional add shortcut, narrow-width collapsing, polite result-count announcements and a composable parts API over the filter-core model.",
-  "dependencies": ["react-aria-components"],
+  "description": "Filter chips that read as sentences in a one-tab-stop toolbar, with typed value editors (text, option checklists with facet counts, yes/no, numbers and ranges, date presets and calendars, date ranges, last/next N units, calendar periods, custom type editors), nested AND/OR groups with a group editor, optional per-chip impact counts and an empty-result Relax suggestion, undo/redo, narrow-width collapsing, polite result announcements and a composable parts API over the filter-core model, and server-mode facet counts through a getFacets callback (cached per field and filter, abortable, with reserved space while loading).",
+  "dependencies": ["@internationalized/date", "react-aria-components"],
   "devDependencies": [],
   "registryDependencies": [
     "dethink-base",
     "filter-core",
     "popover",
     "input",
+    "number-input",
+    "calendar",
     "live-region"
   ],
   "files": [
@@ -19,7 +21,55 @@
       "type": "registry:component"
     },
     {
+      "path": "packages/components/src/components/filter-builder/use-filter-insights.ts",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/use-server-facets.ts",
+      "type": "registry:component"
+    },
+    {
       "path": "packages/components/src/components/filter-builder/filter-editors.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-typed-editors.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-value-editor.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-bar-parts.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-chip.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-add-menu.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-group-actions.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-group-editor.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-group-chip.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-bar-rescue.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-bar-chips.tsx",
       "type": "registry:component"
     },
     {

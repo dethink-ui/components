@@ -49,6 +49,48 @@ export const filterBarProps: PropRow[] = [
       "On narrow containers, chips after this many collapse behind a +N more button.",
   },
   {
+    prop: "data",
+    type: "TData[]",
+    defaultValue: "—",
+    description:
+      "Rows to count against on the client. Enables facet counts in option and yes/no pickers, an announced result count and the empty-result Relax suggestion.",
+  },
+  {
+    prop: "showImpact",
+    type: "boolean",
+    defaultValue: "false",
+    description:
+      "Shows how many rows each chip removes (−42) or, in an OR group, adds (+3), with a screen-reader description. Needs data.",
+  },
+  {
+    prop: "rescue",
+    type: "boolean",
+    defaultValue: "true",
+    description:
+      "When nothing matches, names the most restrictive chip and offers Relax, which removes it as one undo step.",
+  },
+  {
+    prop: "evaluateOptions",
+    type: "{ now?, timeZone?, weekStartsOn? }",
+    defaultValue: "mount time, UTC, Monday",
+    description:
+      "How relative dates resolve. Pass now for server-rendered pages so counts match on the client.",
+  },
+  {
+    prop: "locale",
+    type: "string",
+    defaultValue: '"en-US"',
+    description:
+      "Locale for numbers, dates and calendars in chips and editors.",
+  },
+  {
+    prop: "maxDepth",
+    type: "number",
+    defaultValue: "3",
+    description:
+      "Group levels allowed, counting the root as 1. Enforced the same way when adding, wrapping and validating.",
+  },
+  {
     prop: "size",
     type: '"sm" | "md"',
     defaultValue: '"md"',
@@ -80,10 +122,10 @@ export const filterFieldProps: PropRow[] = [
   },
   {
     prop: "type",
-    type: '"text" | "option" | "multiOption"',
+    type: '"text" | "number" | "date" | "boolean" | "option" | "multiOption" | FilterFieldTypeDefinition',
     defaultValue: "—",
     description:
-      "Picks the operators and value editor. multiOption fields hold arrays on each row.",
+      "Picks the operators, value text and editor. Dates compare calendar days; relative dates stay relative. Pass defineFilterFieldType(...) for your own type with its own operators and editor.",
   },
   {
     prop: "options",
@@ -97,6 +139,12 @@ export const filterFieldProps: PropRow[] = [
     defaultValue: "all for the type",
     description:
       "Restrict and order the operators, and pick the one new chips start with.",
+  },
+  {
+    prop: "trueLabel / falseLabel / numberFormat",
+    type: "string / string / Intl.NumberFormatOptions",
+    defaultValue: '"Yes" / "No" / —',
+    description: "Value text for boolean and number fields.",
   },
   {
     prop: "accessor",
@@ -147,5 +195,22 @@ export const filterCoreProps: PropRow[] = [
     defaultValue: "—",
     description:
       "Controlled or uncontrolled state with addNode, updateCondition, removeNode, setCombinator, clear, undo and redo.",
+  },
+];
+
+export const filterGroupEditorProps: PropRow[] = [
+  {
+    prop: "groupId",
+    type: "string",
+    defaultValue: "root",
+    description:
+      "Group to edit. Group chips open the editor for their group; FilterBarAdvanced opens it for the whole filter.",
+  },
+  {
+    prop: "useFilterState commands",
+    type: "wrapInGroup · unwrapGroup · moveNode · shiftNode · setNegated · setCombinator",
+    defaultValue: "—",
+    description:
+      "The same group operations for your own UI. Each is a single undo step.",
   },
 ];

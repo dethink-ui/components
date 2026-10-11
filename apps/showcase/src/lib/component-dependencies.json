@@ -165,13 +165,34 @@
     "direct": ["lucide-react", "react", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
   },
+  "filter-assistant": {
+    "direct": ["react"],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
   "filter-bar": {
-    "direct": ["react", "react-aria-components"],
+    "direct": ["@internationalized/date", "react", "react-aria-components"],
     "shared": ["clsx", "react-aria", "tailwind-merge"]
   },
   "filter-core": {
     "direct": [],
     "shared": ["clsx", "react", "tailwind-merge"]
+  },
+  "filter-url-state": {
+    "direct": [],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
   },
   "flex": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "form-field": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
@@ -260,6 +281,16 @@
     "direct": ["lucide-react", "react"],
     "shared": ["clsx", "react-aria", "react-aria-components", "tailwind-merge"]
   },
+  "query-input": {
+    "direct": ["react"],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
+  },
   "radio-group": { "direct": ["react"], "shared": ["clsx", "tailwind-merge"] },
   "resizable": {
     "direct": ["react", "react-resizable-panels"],
@@ -268,6 +299,16 @@
   "reveal-button": {
     "direct": ["motion", "react", "react-aria-components"],
     "shared": ["clsx", "tailwind-merge"]
+  },
+  "saved-views": {
+    "direct": ["react"],
+    "shared": [
+      "@internationalized/date",
+      "clsx",
+      "react-aria",
+      "react-aria-components",
+      "tailwind-merge"
+    ]
   },
   "scan-grid-background": {
     "direct": ["motion", "react"],

@@ -23,7 +23,15 @@ type Issue = {
   priority: "urgent" | "high" | "medium" | "low";
   labels: string[];
   assignee: string | null;
+  estimate: number;
+  created: string;
+  customer: boolean;
 };
+
+// A fixed "today" keeps relative dates and counts identical on the server
+// and in the browser. In an app, pass the request time instead.
+const today = Date.UTC(2026, 8, 30, 12);
+const evaluateOptions = { now: today };
 
 const statusOptions = [
   { value: "open", label: "Open" },
@@ -47,6 +55,9 @@ const issues: Issue[] = [
     priority: "urgent",
     labels: ["bug", "api"],
     assignee: "Ada",
+    estimate: 5,
+    created: "2026-09-29",
+    customer: true,
   },
   {
     id: "DT-418",
@@ -55,6 +66,9 @@ const issues: Issue[] = [
     priority: "high",
     labels: ["bug", "billing"],
     assignee: "Lin",
+    estimate: 3,
+    created: "2026-09-24",
+    customer: true,
   },
   {
     id: "DT-421",
@@ -63,6 +77,9 @@ const issues: Issue[] = [
     priority: "high",
     labels: ["bug", "auth"],
     assignee: "Ada",
+    estimate: 8,
+    created: "2026-09-30",
+    customer: false,
   },
   {
     id: "DT-425",
@@ -71,6 +88,9 @@ const issues: Issue[] = [
     priority: "medium",
     labels: ["feature"],
     assignee: null,
+    estimate: 13,
+    created: "2026-09-02",
+    customer: false,
   },
   {
     id: "DT-430",
@@ -79,6 +99,9 @@ const issues: Issue[] = [
     priority: "medium",
     labels: ["api"],
     assignee: "Sam",
+    estimate: 2,
+    created: "2026-08-18",
+    customer: true,
   },
   {
     id: "DT-433",
@@ -87,6 +110,9 @@ const issues: Issue[] = [
     priority: "low",
     labels: ["feature", "auth"],
     assignee: "Sam",
+    estimate: 5,
+    created: "2026-09-15",
+    customer: false,
   },
   {
     id: "DT-437",
@@ -95,6 +121,9 @@ const issues: Issue[] = [
     priority: "high",
     labels: ["api"],
     assignee: null,
+    estimate: 3,
+    created: "2026-09-28",
+    customer: true,
   },
 ];
 
@@ -135,6 +164,13 @@ const fields = defineFilterFields<Issue>([
     placeholder: "Name",
   },
   { key: "title", label: "Title", type: "text", placeholder: "Contains…" },
+  { key: "estimate", label: "Estimate", type: "number" },
+  { key: "created", label: "Created", type: "date" },
+  {
+    key: "customer",
+    label: "Customer reported",
+    type: "boolean",
+  },
 ]);
 
 const columns: DataTableColumnDef<Issue>[] = [
@@ -165,6 +201,8 @@ const columns: DataTableColumnDef<Issue>[] = [
     header: "Assignee",
     cell: ({ getValue }) => getValue<string | null>() ?? "—",
   },
+  { accessorKey: "estimate", header: "Est." },
+  { accessorKey: "created", header: "Created" },
 ];
 
 export function FilterBarIssueTable() {
@@ -182,14 +220,9 @@ export function FilterBarIssueTable() {
     }),
   });
   const rowFilter = useMemo(
-    () => createFilterPredicate(filterState.filter, fields),
+    () => createFilterPredicate(filterState.filter, fields, evaluateOptions),
     [filterState.filter],
   );
-  const resultCount = useMemo(
-    () => issues.filter(rowFilter).length,
-    [rowFilter],
-  );
-
   return (
     <DataTable
       aria-label="Issues"
@@ -202,7 +235,9 @@ export function FilterBarIssueTable() {
         <FilterBar
           fields={fields}
           state={filterState}
-          resultCount={resultCount}
+          data={issues}
+          evaluateOptions={evaluateOptions}
+          showImpact
           addShortcut="f"
         />
       }

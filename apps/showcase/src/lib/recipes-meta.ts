@@ -640,6 +640,56 @@ export const recipesCatalog: RecipeMeta[] = [
       "The dashboard compacts into a stacked content area while preserving the navigation region and table overflow.",
   },
   {
+    slug: "issue-tracker",
+    title: "Issue tracker",
+    category: "data",
+    summary:
+      "An issue list filtered every way at once: a text query, chips with impact counts and nested AND/OR groups, saved views in a sidebar, the filter in the URL, and an assistant that proposes filters to review.",
+    tags: ["Issues", "Filters", "Saved views", "AI"],
+    components: [
+      "query-input",
+      "filter-bar",
+      "saved-views",
+      "filter-assistant",
+      "data-table",
+      "badge",
+    ],
+    sourceFile: "recipes/issue-tracker.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Motion stays in the components: popover editors and proposal rows use short, reduced-motion-aware transitions.",
+    accessibilityNotes:
+      "Views are a labelled navigation with the current view marked, the query and chips edit one filter, proposals are reviewed change by change, and counts are announced politely.",
+    responsiveNotes:
+      "The views rail stacks above the list on narrow screens and chips collapse into “+N more”; the table scrolls horizontally.",
+  },
+  {
+    slug: "logs-dashboard",
+    title: "Logs dashboard",
+    category: "dashboard",
+    summary:
+      "A log explorer with a typed query bar, filter chips and groups, server-side facet counts, a volume histogram, saved views, URL state and an assistant that turns requests into reviewable filters.",
+    tags: ["Logs", "Filters", "Query", "AI", "Server mode"],
+    components: [
+      "query-input",
+      "filter-bar",
+      "saved-views",
+      "filter-assistant",
+      "data-table",
+      "badge",
+    ],
+    sourceFile: "recipes/logs-dashboard.tsx",
+    featured: true,
+    complexity: "Advanced",
+    motionNotes:
+      "Results dim with a short opacity transition while the next page loads, skipped with reduced motion; counts load into reserved space, so nothing shifts.",
+    accessibilityNotes:
+      "The query is a labelled combobox, chips form a toolbar, facet values are toggle buttons with counts, the time range is a pressed-state group, and result counts are announced politely.",
+    responsiveNotes:
+      "The facet sidebar stacks above the table on narrow screens, chips collapse into “+N more”, and the details panel moves under the table.",
+  },
+  {
     slug: "crud-resource-manager",
     title: "CRUD resource manager",
     category: "data",

@@ -36,7 +36,14 @@ function closure(name, found = new Map()) {
     closure(dependency, found);
   return found;
 }
-const entries = ["filter-bar", "data-table"];
+const entries = [
+  "filter-bar",
+  "query-input",
+  "filter-url-state",
+  "saved-views",
+  "filter-assistant",
+  "data-table",
+];
 const react18 = process.argv.includes("--react18");
 const destination = await mkdtemp(
   join(tmpdir(), "dethink-filter-bar-consumer-"),
@@ -44,6 +51,36 @@ const destination = await mkdtemp(
 const found = new Map();
 for (const entry of entries) closure(entry, found);
 const selected = [...found.values()];
+// No filter item may bring npm dependencies beyond what FilterBar already
+// needed when the family started (react-aria-components for listboxes and
+// @internationalized/date for calendars). Everything else is registry code.
+const allowedFilterDependencies = new Set([
+  "@internationalized/date",
+  "react-aria-components",
+]);
+const filterItems = [
+  "filter-core",
+  "filter-bar",
+  "query-input",
+  "filter-url-state",
+  "saved-views",
+  "filter-assistant",
+];
+for (const name of filterItems) {
+  const item = items.get(name);
+  assert(item, `Missing filter registry item: ${name}`);
+  for (const dependency of [
+    ...(item.dependencies ?? []),
+    ...(item.devDependencies ?? []),
+  ]) {
+    const at = dependency.lastIndexOf("@");
+    const pkg = at > 0 ? dependency.slice(0, at) : dependency;
+    assert(
+      allowedFilterDependencies.has(pkg),
+      `${name} adds an npm dependency: ${dependency}`,
+    );
+  }
+}
 const deps = {
   react: react18 ? "^18.3.1" : manifest.devDependencies.react,
   "react-dom": react18 ? "^18.3.1" : manifest.devDependencies["react-dom"],
@@ -150,8 +187,13 @@ import {
   FilterBar,
   createFilterPredicate,
   defineFilterFields,
-  useFilterState,
 } from "./src/components/filter-builder";
+import { QueryInput } from "./src/components/filter-builder/query-input";
+import { useFilterUrlState } from "./src/components/filter-builder/use-filter-url-state";
+import { useSavedViews } from "./src/components/filter-builder/use-saved-views";
+import { SavedViewsMenu } from "./src/components/filter-builder/saved-views-menu";
+import { useFilterAssistant } from "./src/components/filter-builder/use-filter-assistant";
+import { FilterAssistant } from "./src/components/filter-builder/filter-assistant";
 import {
   DataTable,
   type DataTableColumnDef,
@@ -172,7 +214,9 @@ const columns: DataTableColumnDef<Issue>[] = [
   { accessorKey: "status", header: "Status" },
 ];
 function App() {
-  const state = useFilterState();
+  const state = useFilterUrlState({ fields });
+  const savedViews = useSavedViews({ state, fields, views: [] });
+  const assistant = useFilterAssistant({ fields, state, resolve: async () => false });
   const rowFilter = useMemo(() => createFilterPredicate(state.filter, fields), [state.filter]);
   return (
     <DataTable
@@ -180,7 +224,7 @@ function App() {
       columns={columns}
       data={issues}
       rowFilter={rowFilter}
-      toolbar={<FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} />}
+      toolbar={<><FilterAssistant assistant={assistant} /><SavedViewsMenu savedViews={savedViews} /><QueryInput fields={fields} state={state} /><FilterBar fields={fields} state={state} resultCount={issues.filter(rowFilter).length} /></>}
     />
   );
 }

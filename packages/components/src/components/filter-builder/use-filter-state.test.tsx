@@ -107,6 +107,49 @@ describe("useFilterState", () => {
     expect(result.current.filter.combinator).toBe("or");
   });
 
+  it("records each group command as one undoable step", () => {
+    const { result } = renderHook(() => useFilterState());
+    const snapshots: Filter[] = [];
+    const run = (command: () => void) => {
+      snapshots.push(result.current.filter);
+      act(command);
+    };
+
+    run(() => {
+      result.current.addNode(status());
+    });
+    run(() => {
+      result.current.wrapInGroup("status", { groupId: "group" });
+    });
+    run(() => {
+      result.current.setCombinator("group", "or");
+    });
+    run(() => {
+      result.current.setNegated("group", true);
+    });
+    run(() => {
+      result.current.setNegated("status", true);
+    });
+    run(() => {
+      result.current.moveNode("status", { parentId: result.current.filter.id });
+    });
+    run(() => {
+      result.current.shiftNode("status", -1);
+    });
+    run(() => {
+      result.current.unwrapGroup("group");
+    });
+
+    for (const snapshot of snapshots.reverse()) {
+      act(() => {
+        result.current.undo();
+      });
+      expect(result.current.filter).toEqual(snapshot);
+    }
+
+    expect(result.current.canUndo).toBe(false);
+  });
+
   it("emits changes in controlled mode without owning the value", () => {
     const onValueChange = vi.fn<(filter: Filter) => void>();
     const value = createFilter({ id: "root" });

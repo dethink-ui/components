@@ -133,3 +133,159 @@ export const KeyboardRemoveAndUndo: Story = {
     ).toBeInTheDocument();
   },
 };
+
+const grouped = createFilter({
+  id: "grouped",
+  children: [
+    createFilterCondition({
+      id: "g-status",
+      field: "status",
+      operator: "isNoneOf",
+      value: ["done"],
+    }),
+    createFilter({
+      id: "g-labels",
+      combinator: "or",
+      children: [
+        createFilterCondition({
+          id: "g-bug",
+          field: "labels",
+          operator: "includesAny",
+          value: ["bug"],
+        }),
+        createFilterCondition({
+          id: "g-title",
+          field: "title",
+          operator: "contains",
+          value: "api",
+        }),
+      ],
+    }),
+  ],
+});
+
+export const Groups: Story = {
+  args: { defaultValue: grouped },
+};
+
+export const GroupEditorFlow: Story = {
+  args: { defaultValue: grouped },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole("button", { name: "Advanced" }));
+
+    const dialog = within(
+      await body.findByRole("dialog", { name: "Edit filter groups" }),
+    );
+
+    await userEvent.click(
+      dialog.getByRole("button", { name: "Wrap in group, Status is not Done" }),
+    );
+    await userEvent.keyboard("{Escape}");
+
+    await expect(
+      await canvas.findByRole("group", { name: "Status is not Done" }),
+    ).toHaveAttribute("data-slot", "filter-group-chip");
+  },
+};
+
+const typedFields = defineFilterFields<{
+  amount: number;
+  closes: string;
+  won: boolean;
+  stage: string;
+}>([
+  { key: "amount", label: "Amount", type: "number" },
+  { key: "closes", label: "Closes", type: "date" },
+  { key: "won", label: "Won", type: "boolean" },
+  {
+    key: "stage",
+    label: "Stage",
+    type: "option",
+    options: [
+      { value: "lead", label: "Lead" },
+      { value: "proposal", label: "Proposal" },
+      { value: "closed", label: "Closed" },
+    ],
+  },
+]);
+
+const deals = [
+  { amount: 1200, closes: "2026-09-30", won: true, stage: "lead" },
+  { amount: 5400, closes: "2026-09-29", won: false, stage: "lead" },
+  { amount: 900, closes: "2026-10-12", won: false, stage: "proposal" },
+  { amount: 15000, closes: "2026-08-01", won: true, stage: "closed" },
+];
+
+export const TypedValuesAndCounts: Story = {
+  args: {
+    fields: typedFields as typeof fields,
+    data: deals,
+    showImpact: true,
+    evaluateOptions: { now: Date.UTC(2026, 8, 30, 12) },
+    defaultValue: createFilter({
+      children: [
+        createFilterCondition({
+          field: "closes",
+          operator: "inLast",
+          value: { amount: 7, unit: "day" },
+        }),
+        createFilterCondition({
+          field: "amount",
+          operator: "gte",
+          value: 1000,
+        }),
+      ],
+    }),
+  },
+};
+
+export const RelaxWhenEmpty: Story = {
+  args: {
+    fields: typedFields as typeof fields,
+    data: deals,
+    evaluateOptions: { now: Date.UTC(2026, 8, 30, 12) },
+    defaultValue: createFilter({
+      children: [
+        createFilterCondition({
+          field: "stage",
+          operator: "isAnyOf",
+          value: ["closed"],
+        }),
+        createFilterCondition({ field: "won", operator: "is", value: false }),
+      ],
+    }),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Relax: Stage is Closed" }),
+    );
+    await expect(canvas.queryByRole("group", { name: /Stage/ })).toBeNull();
+  },
+};
+
+const counts: Record<string, Record<string, number>> = {
+  status: { open: 42, blocked: 7, done: 118 },
+  labels: { bug: 31, api: 12 },
+};
+
+export const ServerFacets: Story = {
+  name: "Server facets (slow)",
+  args: {
+    defaultValue: populated,
+    // Counts arrive after a delay; pickers reserve their space meanwhile.
+    getFacets: ({ field, signal }) =>
+      new Promise((resolve, reject) => {
+        const timer = setTimeout(() => resolve(counts[field] ?? {}), 1200);
+
+        signal.addEventListener("abort", () => {
+          clearTimeout(timer);
+          reject(new DOMException("Aborted", "AbortError"));
+        });
+      }),
+  },
+};

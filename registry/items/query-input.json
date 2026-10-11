@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "query-input",
+  "type": "registry:ui",
+  "title": "QueryInput",
+  "description": "One-line text query for the filter model (status:open created:>-7d (owner:@me OR labels:bug)) as an ARIA combobox: field, operator and value suggestions, colored tokens drawn by an overlay behind a single input, an underlined error range with an announced message, and commit on Enter or blur that never applies invalid text. Shares useFilterState with FilterBar so text and chips stay in sync, keeping chip ids for unchanged conditions.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "filter-core",
+    "filter-bar",
+    "input"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/filter-builder/query-input-parts.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/query-input.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}

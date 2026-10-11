@@ -55,3 +55,36 @@ _Avoid_: Rule group, block, bracket
 The visual form of a condition in a FilterBar: field, operator and value
 segments plus a remove action, each editable in place.
 _Avoid_: Pill, token, tag
+
+**Query**:
+The text form of a filter, such as `status:open created:>-7d (assignee:ada OR
+labels:bug)`. Parsing a query gives a filter, and printing a filter gives its
+canonical query; the two round-trip. "Term" is one `field:value` part.
+_Avoid_: Search string, expression, DSL (in public docs)
+
+**Operator token**:
+The short text after `field:` that picks an operator in a query, such as `>`
+in `estimate:>5` or `!` in `status:!done`.
+_Avoid_: Symbol, prefix
+
+**Saved view**:
+A named filter someone can return to, stored with the schema version it was
+saved in and an optional personal or team scope. A saved view is "edited" when
+the current filter does something different from it.
+_Avoid_: Preset, bookmark, saved search
+
+**Filter version**:
+The schema version written beside a filter in URLs (`v`) and saved views, so
+filters written before a field or operator was renamed can be migrated.
+_Avoid_: Revision, schema id
+
+**Proposal**:
+A set of filter changes suggested by the assistant (added, changed and
+removed chips) that someone reviews, accepts or rejects per change, and
+applies as one undo step. A proposal never changes the filter by itself.
+_Avoid_: Suggestion, AI filter, draft
+
+**Needs-input chip**:
+A proposed condition whose field and operator are known but whose value
+couldn't be used, added without a value for the person to fill in.
+_Avoid_: Partial chip, placeholder

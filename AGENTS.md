@@ -214,6 +214,7 @@ Do not include secrets, API keys, passwords, or private credentials in Context7 
 
 - Do not revert user changes.
 - Keep edits scoped to the component, docs, or tooling slice being worked on.
+- New source files must not exceed 600 lines. When a file you are creating or growing would pass that limit, split it into focused modules (for example shared parts, types, hooks, and each sub-component in its own file) instead of adding to one large file. Test files follow the same limit; split them by behavior area.
 - Use `rg` for searches.
 - Prefer `apply_patch` for manual edits.
 - Do not commit unless the user asks.

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "filter-assistant",
+  "type": "registry:ui",
+  "title": "FilterAssistant",
+  "description": "Natural-language filtering with a review step: useFilterAssistant sends the prompt, current filter, a JSON Schema of your fields, time context and an AbortSignal to your own resolve callback (any provider), sanitizes the answer against the field allowlist, and turns it into a proposal. FilterAssistant (prompt, stop, status, actions slot for VoiceInput) and FilterProposal (added/changed/removed chips with Accept/Reject, needs-input chips, what couldn't be used, one-tap clarification choices, optional result-count preview, Apply/Apply all/Discard). Nothing reaches the filter until applied, and applying is one undo step. Model text renders as text only.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": [
+    "dethink-base",
+    "filter-core",
+    "filter-bar",
+    "input",
+    "live-region"
+  ],
+  "files": [
+    {
+      "path": "packages/components/src/components/filter-builder/use-filter-assistant.ts",
+      "type": "registry:hook"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-assistant-parts.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-proposal.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/filter-builder/filter-assistant.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/utils/cn.ts",
+      "type": "registry:lib"
+    }
+  ]
+}
