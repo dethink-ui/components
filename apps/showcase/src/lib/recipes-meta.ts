@@ -617,8 +617,8 @@ export const recipesCatalog: RecipeMeta[] = [
     title: "Command-center dashboard",
     category: "dashboard",
     summary:
-      "A full app command center with sidebar navigation, breadcrumbs, command search, KPI cards, date filters, and incident data.",
-    tags: ["Dashboard", "Sidebar", "Command palette", "Filters"],
+      "A full app command center with sidebar navigation, breadcrumbs, command search, KPI tiles, latency and incident-load charts, ranked alert sources, date filters, and incident data.",
+    tags: ["Dashboard", "Sidebar", "Command palette", "Charts", "Filters"],
     components: [
       "sidebar",
       "breadcrumb",
@@ -626,16 +626,19 @@ export const recipesCatalog: RecipeMeta[] = [
       "data-table",
       "date-range-picker",
       "multi-select",
-      "progress",
+      "stat-tile",
+      "area-chart",
+      "bar-chart",
+      "bar-list",
       "card",
     ],
     sourceFile: "recipes/command-center-dashboard.tsx",
     featured: true,
     complexity: "Advanced",
     motionNotes:
-      "Sidebar and command-palette choreography come from Dethink components; KPI cards use restrained motion-safe hover transitions.",
+      "Sidebar and command-palette choreography come from Dethink components; charts draw in and bars grow from zero only under motion-safe.",
     accessibilityNotes:
-      "Sidebar links keep current state, command actions are labelled, and filters remain visible form controls.",
+      "Sidebar links keep current state, command actions are labelled, and filters remain visible form controls. Each chart is one tab stop named by its card title, with an arrow-key readout and a data table for assistive technology.",
     responsiveNotes:
       "The dashboard compacts into a stacked content area while preserving the navigation region and table overflow.",
   },

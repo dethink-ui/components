@@ -1,0 +1,268 @@
+<template>
+  <style>
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-3fe682a82f50d426-s.200l3jur7oygh.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-70bc3e132a0a741e-s.p.269kn9uafm0ti.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #071D1C;
+      font-family: Manrope, sans-serif;
+    }
+    .f02-ground {
+      position: absolute;
+      inset: 0;
+      background: #B6F06B;
+      container-type: size;
+    }
+    .f02-stage {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* ---- lockup (upper third, ~45% width) ---- */
+    .f02-lockup {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 214px;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      perspective: 1400px;
+      transform-origin: 50% 50%;
+    }
+    .f02-mark {
+      position: relative;
+      width: 159px;
+      height: 230px;
+      flex: none;
+      transform-style: preserve-3d;
+      z-index: 2;
+    }
+    .f02-piece,
+    .f02-ghost {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform, opacity, filter;
+    }
+    .f02-piece svg,
+    .f02-ghost svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .f02-ghost { color: #071D1C; }
+    .f02-ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 360px;
+      height: 360px;
+      margin: -180px 0 0 -180px;
+      border: 2px solid rgba(17,17,17,0.40);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .f02-word-clip {
+      overflow: hidden;
+      margin-left: 44px;
+      padding: 0 8px 0 0;
+      flex: none;
+      z-index: 1;
+    }
+    .f02-word {
+      display: block;
+      font-weight: 800;
+      font-size: 136px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      padding-bottom: 14px;
+      white-space: nowrap;
+    }
+    .f02-rule {
+      width: 2px;
+      height: 118px;
+      margin-left: 36px;
+      background: #071D1C;
+      flex: none;
+      transform-origin: 50% 0%;
+    }
+    .f02-label-clip {
+      overflow: hidden;
+      margin-left: 34px;
+      flex: none;
+    }
+    .f02-label {
+      display: block;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 24px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      line-height: 1.3;
+      color: rgba(17,17,17,0.75);
+      white-space: nowrap;
+    }
+
+    /* ---- headline (centered, above the 900px keep-out) ---- */
+    .f02-headline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transform-origin: 50% 50%;
+    }
+    .f02-line-clip {
+      overflow: hidden;
+      padding: 0 12px;
+    }
+    .f02-line {
+      display: block;
+      white-space: nowrap;
+      text-transform: lowercase;
+    }
+    .f02-line .f02-w { display: inline-block; }
+    .f02-line1 {
+      font-weight: 600;
+      font-size: 104px;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      color: rgba(17,17,17,0.75);
+    }
+    .f02-line2 {
+      font-weight: 800;
+      font-size: 138px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      color: #071D1C;
+      padding-bottom: 10px;
+    }
+  </style>
+
+  <div id="root" data-composition-id="02-own-the-components" data-start="0" data-duration="4" data-width="1920" data-height="1080">
+    <div id="f02-ground" class="f02-ground clip" data-start="0" data-duration="4" data-track-index="0"></div>
+
+    <div id="f02-stage" class="f02-stage clip" data-start="0" data-duration="4" data-track-index="1">
+      <div id="f02-lockup" class="f02-lockup">
+        <div id="f02-mark" class="f02-mark">
+          <div class="f02-ring" id="f02-ring"></div>
+          <!-- ghost echoes (motion-blur trail) -->
+          <div class="f02-ghost" data-i="0"><svg viewBox="34 0 242 350" fill="currentColor" aria-hidden="true"><path d="M 198 60 Q 198 51 206 46 L 264 12 L 264 269 Q 264 279 255 284 L 246 289 L 198 261 L 198 107 L 246 131 L 246 109 L 198 85 Z"></path></svg></div>
+          <div class="f02-ghost" data-i="1"><svg viewBox="34 0 242 350" fill="currentColor" aria-hidden="true"><path transform="translate(0 18)" d="M 46 216 L 46 253 Q 46 263 55 269 L 133 315 Q 141 320 149 315 L 224 271 L 80 186 Z"></path></svg></div>
+          <div class="f02-ghost" data-i="2"><svg viewBox="34 0 242 350" fill="currentColor" aria-hidden="true"><path d="M 46 201 L 46 161 Q 46 152 54 147 L 133 100 Q 141 95 149 100 L 182 119 Z"></path></svg></div>
+          <!-- the real Dethink mark, split into its three paths -->
+          <div class="f02-piece" data-i="0"><svg viewBox="34 0 242 350" fill="currentColor" aria-hidden="true"><path d="M 198 60 Q 198 51 206 46 L 264 12 L 264 269 Q 264 279 255 284 L 246 289 L 198 261 L 198 107 L 246 131 L 246 109 L 198 85 Z"></path></svg></div>
+          <div class="f02-piece" data-i="1"><svg viewBox="34 0 242 350" fill="currentColor" aria-hidden="true"><path transform="translate(0 18)" d="M 46 216 L 46 253 Q 46 263 55 269 L 133 315 Q 141 320 149 315 L 224 271 L 80 186 Z"></path></svg></div>
+          <div class="f02-piece" data-i="2"><svg viewBox="34 0 242 350" fill="currentColor" aria-hidden="true"><path d="M 46 201 L 46 161 Q 46 152 54 147 L 133 100 Q 141 95 149 100 L 182 119 Z"></path></svg></div>
+        </div>
+        <div class="f02-word-clip"><span id="f02-word" class="f02-word">dethink</span></div>
+        <div id="f02-rule" class="f02-rule"></div>
+        <div class="f02-label-clip"><span id="f02-label" class="f02-label">Components</span></div>
+      </div>
+
+      <div id="f02-headline" class="f02-headline">
+        <div class="f02-line-clip"><span class="f02-line f02-line1"><span class="f02-w f02-w1">build</span> <span class="f02-w f02-w1">interfaces.</span></span></div>
+        <div class="f02-line-clip"><span class="f02-line f02-line2"><span class="f02-w f02-w2">own</span> <span class="f02-w f02-w2">the</span> <span class="f02-w f02-w2">components.</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var BEAT = 60 / 128; // 0.469s
+      var tl = gsap.timeline({ paused: true });
+      var scope = document.querySelector('[data-composition-id="02-own-the-components"]');
+      var q = function (s) { return Array.prototype.slice.call(scope.querySelectorAll(s)); };
+
+      var pieces = q(".f02-piece");
+      var ghosts = q(".f02-ghost");
+
+      // depth-scatter-assemble: index-derived cloud points (golden angle, stepped depth)
+      var GOLDEN = Math.PI * (3 - Math.sqrt(5));
+      var RADIUS = 640, Z_NEAR = 380, Z_FAR = -420, TUMBLE = 70;
+      var n = pieces.length;
+      var scatter = pieces.map(function (el, i) {
+        var a = i * GOLDEN;
+        var depthT = n > 1 ? i / (n - 1) : 0;
+        return {
+          x: Math.cos(a) * RADIUS,
+          y: Math.sin(a) * RADIUS * 0.72,
+          z: Z_NEAR - depthT * (Z_NEAR - Z_FAR),
+          rotationX: Math.sin(a) * TUMBLE,
+          rotationY: Math.cos(a) * TUMBLE
+        };
+      });
+
+      // ---- Scene 1 (0.0–1.2s): lime flood + mark assembles, impact on lock ----
+      tl.fromTo("#f02-ground",
+        { clipPath: "circle(0% at 30% 31%)" },
+        { clipPath: "circle(120% at 30% 31%)", duration: 0.62, ease: "expo.out" }, 0);
+
+      tl.fromTo("#f02-mark", { rotationY: -28 }, { rotationY: 0, duration: 0.9, ease: "power2.out" }, 0);
+
+      var START = 0.06, STAGGER = 0.06, DUR = 0.64;
+      pieces.forEach(function (el, i) {
+        var s = scatter[i];
+        var t0 = START + i * STAGGER;
+        tl.fromTo(el,
+          { x: s.x, y: s.y, z: s.z, rotationX: s.rotationX, rotationY: s.rotationY, filter: "blur(18px)" },
+          { x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, filter: "blur(0px)", duration: DUR, ease: "power4.out" }, t0);
+        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, t0);
+      });
+      ghosts.forEach(function (el, i) {
+        var s = scatter[i];
+        var t0 = START + i * STAGGER + 0.07; // lagging echo = motion trail
+        tl.fromTo(el,
+          { x: s.x, y: s.y, z: s.z, rotationX: s.rotationX, rotationY: s.rotationY, filter: "blur(28px)" },
+          { x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, filter: "blur(6px)", duration: DUR, ease: "power4.out" }, t0);
+        tl.fromTo(el, { opacity: 0 }, { opacity: 0.32, duration: 0.1, ease: "none" }, t0);
+        tl.to(el, { opacity: 0, duration: 0.34, ease: "power2.out" }, t0 + 0.12);
+      });
+
+      // impact on the lock (beat 1.5)
+      var LOCK = BEAT * 1.5; // ~0.70s
+      tl.fromTo("#f02-mark", { scale: 1.09 }, { scale: 1, duration: 0.55, ease: "expo.out", immediateRender: false }, LOCK);
+      tl.set("#f02-ring", { scale: 0.35, opacity: 0 }, 0);
+      tl.fromTo("#f02-ring", { scale: 0.35, opacity: 0.7 }, { scale: 2.1, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, LOCK);
+
+      // ---- Scene 2 (1.2–1.9s): wordmark wipes out from behind the mark, rule + label snap ----
+      tl.fromTo("#f02-word", { xPercent: -104 }, { xPercent: 0, duration: 0.62, ease: "expo.out" }, BEAT * 2.5); // ~1.17
+      tl.fromTo("#f02-rule", { scaleY: 0 }, { scaleY: 1, duration: 0.36, ease: "expo.out" }, BEAT * 3); // ~1.41
+      tl.fromTo("#f02-label", { yPercent: 110 }, { yPercent: 0, duration: 0.42, ease: "expo.out" }, BEAT * 3 + 0.06);
+
+      // ---- Scene 3 (1.9–3.5s): scale-swap — lockup up and out, headline arrives on two beats ----
+      var SWAP = BEAT * 3.5; // ~1.64
+      tl.fromTo("#f02-lockup",
+        { y: 0, scale: 1, opacity: 1, filter: "blur(0px)" },
+        { y: -170, scale: 0.72, opacity: 0, filter: "blur(10px)", duration: 0.36, ease: "power2.in", immediateRender: false }, SWAP);
+
+      var L1 = BEAT * 4;   // ~1.875
+      var L2 = BEAT * 5;   // ~2.344
+      tl.fromTo("#f02-headline", { scale: 0.9 }, { scale: 1, duration: 1.5, ease: "expo.out" }, L1 - 0.12);
+      tl.fromTo(q(".f02-w1"), { yPercent: 120 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, L1);
+      tl.fromTo(q(".f02-w2"), { yPercent: 120 }, { yPercent: 0, duration: 0.72, ease: "power4.out", stagger: 0.06 }, L2);
+
+      // hold to the end of the shot (~0.8s still read)
+      tl.set({}, {}, 3.5);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["02-own-the-components"] = tl;
+    })();
+  </script>
+</template>

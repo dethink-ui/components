@@ -1,0 +1,215 @@
+<template>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-70bc3e132a0a741e-s.p.269kn9uafm0ti.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-3fe682a82f50d426-s.200l3jur7oygh.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #DEEBE9;
+      font-family: Manrope, sans-serif;
+    }
+    .s05-ground {
+      position: absolute;
+      inset: 0;
+      background: #071D1C;
+    }
+    .s05-stage {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 44%;
+    }
+    .s05-impact {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 44%;
+    }
+    /* triptych: pad-x 5.5cqw; block sits in the top 83% (ends at y=780 < 900) */
+    .s05-grid {
+      position: absolute;
+      left: 5.5cqw;
+      right: 5.5cqw;
+      top: 250px;
+      height: 530px;
+      display: flex;
+    }
+    .s05-col {
+      position: relative;
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 2.6cqw;
+    }
+    .s05-hair {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: #1B3236;
+      transform-origin: 50% 0%;
+    }
+    .s05-hair-top {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 1px;
+      background: #1B3236;
+      transform-origin: 0% 50%;
+    }
+    .s05-valwrap {
+      display: flex;
+      align-items: baseline;
+      width: 30cqw;
+      height: 12cqw;
+    }
+    .s05-val {
+      display: inline-block;
+      font-size: 13cqw;
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -0.04em;
+      color: #B6F06B;
+      font-variant-numeric: tabular-nums;
+      transform-origin: 0% 100%;
+    }
+    .s05-suffix {
+      display: inline-block;
+      font-size: 13cqw;
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -0.04em;
+      color: #B6F06B;
+    }
+    .s05-label {
+      margin-top: 2.2cqw;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1.6cqw;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8FA6A2;
+    }
+    .s05-underline {
+      position: absolute;
+      left: 5.5cqw;
+      right: 5.5cqw;
+      top: 796px;
+      height: 12px;
+      overflow: visible;
+    }
+    .s05-underline path {
+      fill: none;
+      stroke: #B6F06B;
+      stroke-width: 6;
+      stroke-linecap: butt;
+    }
+  </style>
+
+  <div id="root" data-composition-id="05-the-numbers" data-width="1920" data-height="1080" data-duration="4">
+    <div id="s05-ground" class="s05-ground clip" data-start="0" data-duration="4" data-track-index="0"></div>
+
+    <div id="s05-stage" class="s05-stage clip" data-start="0" data-duration="4" data-track-index="1">
+      <div id="s05-impact" class="s05-impact">
+        <div class="s05-grid">
+          <div id="s05-hairtop" class="s05-hair-top"></div>
+          <div id="s05-hair1" class="s05-hair" style="left: 33.333%"></div>
+          <div id="s05-hair2" class="s05-hair" style="left: 66.666%"></div>
+
+          <div class="s05-col">
+            <div class="s05-valwrap">
+              <span id="s05-v1" class="s05-val">0</span><span id="s05-s1" class="s05-suffix">+</span>
+            </div>
+            <div id="s05-l1" class="s05-label">Components</div>
+          </div>
+
+          <div class="s05-col">
+            <div class="s05-valwrap">
+              <span id="s05-v2" class="s05-val">0</span>
+            </div>
+            <div id="s05-l2" class="s05-label">Recipes</div>
+          </div>
+
+          <div class="s05-col">
+            <div class="s05-valwrap">
+              <span id="s05-v3" class="s05-val">1</span>
+            </div>
+            <div id="s05-l3" class="s05-label">Command</div>
+          </div>
+        </div>
+
+        <svg class="s05-underline" viewBox="0 0 1708.8 12" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path id="s05-uline" d="M 0 6 L 1708.8 6" pathLength="1" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var FID = "05-the-numbers";
+      var $ = function (s) { return document.getElementById("s05-" + s); };
+      var tl = gsap.timeline({ paused: true });
+
+      var BEAT = 0.469;
+      var COUNT_EASE = "expo.out";
+      var START_SCALE = 0.5;
+
+      var stage = $("stage"), impact = $("impact");
+      var v1 = $("v1"), v2 = $("v2"), v3 = $("v3");
+      var s1 = $("s1"), l1 = $("l1"), l2 = $("l2"), l3 = $("l3");
+      var h1 = $("hair1"), h2 = $("hair2"), ht = $("hairtop"), uline = $("uline");
+
+      // Camera: slow continuous push-in underneath the whole shot (defines 3.5s length)
+      tl.fromTo(stage, { scale: 1 }, { scale: 1.035, duration: 3.5, ease: "none" }, 0);
+
+      // ---- Scene 1 (0.0–1.2s): triptych hairlines + "80+" counts up
+      tl.fromTo(ht, { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "expo.out" }, 0);
+      tl.fromTo([h1, h2], { scaleY: 0 }, { scaleY: 1, duration: 0.9, ease: "expo.out", stagger: 0.08 }, 0.05);
+
+      var c1 = { value: 0 };
+      tl.to(c1, {
+        value: 80, duration: 1.0, ease: COUNT_EASE,
+        onUpdate: function () { v1.textContent = String(Math.round(c1.value)); }
+      }, 0);
+      tl.fromTo(v1, { scale: START_SCALE, opacity: 0.35 }, { scale: 1, opacity: 1, duration: 1.0, ease: COUNT_EASE }, 0);
+      tl.fromTo(l1, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, 0.3);
+      tl.fromTo(s1, { opacity: 0, y: 28 }, { opacity: 1, y: 0, duration: 0.35, ease: "power4.out" }, 0.92);
+
+      // ---- Scene 2 (1.2–2.2s): "24" counts up on the next beat
+      var T2 = 1.2;
+      var c2 = { value: 0 };
+      tl.to(c2, {
+        value: 24, duration: 0.85, ease: COUNT_EASE,
+        onUpdate: function () { v2.textContent = String(Math.round(c2.value)); }
+      }, T2);
+      tl.fromTo(v2, { scale: START_SCALE, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.85, ease: COUNT_EASE }, T2);
+      tl.fromTo(l2, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.45, ease: "power4.out" }, T2 + 0.18);
+
+      // ---- Scene 3 (2.2–3.5s): "1" slams in, underline draws, hold
+      var T3 = 2.2;
+      tl.fromTo(v3,
+        { opacity: 0, scale: 2.2, filter: "blur(18px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out" }, T3);
+      // impact: whole triptych takes the hit, settles without overshoot
+      tl.fromTo(impact, { scale: 1.022 }, { scale: 1, duration: 0.6, ease: "power4.out", immediateRender: false }, T3 + 0.06);
+      tl.fromTo(l3, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.45, ease: "power4.out" }, T3 + 0.14);
+
+      // lime underline drawn under all three stats (svg-path-draw, pathLength=1)
+      tl.fromTo(uline,
+        { strokeDasharray: 1, strokeDashoffset: 1 },
+        { strokeDashoffset: 0, duration: 0.5, ease: "power4.out" }, T3 + 0.12);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

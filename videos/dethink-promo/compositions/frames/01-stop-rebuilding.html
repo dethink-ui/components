@@ -1,0 +1,251 @@
+<template>
+  <style>
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a342834df7752944-s.1ypl14jhz9yyw.woff2")format("woff2");unicode-range:U+460-52F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-d3fe2f289711ac3f-s.2g9li78_0_it5.woff2")format("woff2");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-58c4895d0a0ef7cc-s.00u3xrku2lqty.woff2")format("woff2");unicode-range:U+370-377,U+37A-37F,U+384-38A,U+38C,U+38E-3A1,U+3A3-3FF}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-bfc7db5c00d21bc5-s.2vepgg3wcdr2q.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-13bf9871fe164e7f-s.3bz3aq452sydg.woff2")format("woff2");unicode-range:U+460-52F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-cc545e633e20c56d-s.2sb9jzhmrh7ny.woff2")format("woff2");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-71b036adf157cdcf-s.343obqi851wr5.woff2")format("woff2");unicode-range:U+370-377,U+37A-37F,U+384-38A,U+38C,U+38E-3A1,U+3A3-3FF}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-89b21bb081cb7469-s.40kcwrf1wub16.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-3fe682a82f50d426-s.200l3jur7oygh.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-70bc3e132a0a741e-s.p.269kn9uafm0ti.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  </style>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      color: #DEEBE9;
+      font-family: Manrope, sans-serif;
+    }
+    #root .clip {
+      position: absolute;
+      inset: 0;
+    }
+    #s01-ground {
+      background: #071D1C;
+      overflow: hidden;
+    }
+    #s01-plate-jump {
+      position: absolute;
+      left: -540px;
+      top: 186px;
+      width: 3000px;
+      height: 707px;
+    }
+    #s01-plate {
+      display: block;
+      width: 3000px;
+      height: 707px;
+      opacity: 0.25;
+      filter: blur(6px);
+    }
+    #s01-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 65% at 50% 42%, rgba(7, 29, 28, 0) 0%, rgba(7, 29, 28, 0.55) 70%, #071D1C 100%);
+    }
+    .s01-word {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: Manrope, sans-serif;
+      font-weight: 800;
+      text-transform: lowercase;
+      white-space: nowrap;
+      opacity: 0;
+    }
+    #s01-stop {
+      font-size: 540px;
+      line-height: 0.88;
+      letter-spacing: -0.05em;
+      padding-bottom: 60px;
+    }
+    #s01-rebuild,
+    #s01-rebuild-ghost {
+      font-size: 330px;
+      line-height: 0.88;
+      letter-spacing: -0.05em;
+    }
+    #s01-rebuild-ghost {
+      color: #B6F06B;
+    }
+    .s01-same {
+      flex-direction: column;
+      font-size: 280px;
+      line-height: 0.86;
+      letter-spacing: -0.045em;
+    }
+    .s01-same .s01-ui {
+      text-transform: none;
+      color: #B6F06B;
+    }
+    .s01-echo {
+      color: transparent;
+      -webkit-text-stroke: 2px #4E6A66;
+    }
+    .s01-echo .s01-ui {
+      color: transparent;
+      -webkit-text-stroke: 2px #B6F06B;
+    }
+    #s01-tag {
+      position: absolute;
+      top: 64px;
+      right: 106px;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 24px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #B6F06B;
+      opacity: 0;
+    }
+    #s01-rule {
+      position: absolute;
+      top: 106px;
+      right: 106px;
+      width: 36px;
+      height: 2px;
+      background: #B6F06B;
+      opacity: 0;
+    }
+  </style>
+
+  <div id="root" data-composition-id="01-stop-rebuilding" data-width="1920" data-height="1080" data-start="0" data-duration="3.4">
+    <div id="s01-ground" class="clip" data-start="0" data-duration="3.4" data-track-index="0">
+      <div id="s01-plate-jump">
+        <img id="s01-plate" src="assets/ui-button.png" alt="" />
+      </div>
+      <div id="s01-vignette"></div>
+    </div>
+
+    <div id="s01-stage" class="clip" data-start="0" data-duration="3.4" data-track-index="1">
+      <div class="s01-word" id="s01-stop">stop</div>
+
+      <div class="s01-word" id="s01-rebuild-ghost">rebuilding</div>
+      <div class="s01-word" id="s01-rebuild">rebuilding</div>
+
+      <div class="s01-word s01-same s01-echo" id="s01-echo-a"><span>the same</span><span class="s01-ui">UI.</span></div>
+      <div class="s01-word s01-same s01-echo" id="s01-echo-b"><span>the same</span><span class="s01-ui">UI.</span></div>
+      <div class="s01-word s01-same s01-echo" id="s01-echo-c"><span>the same</span><span class="s01-ui">UI.</span></div>
+      <div class="s01-word s01-same" id="s01-same"><span>the same</span><span class="s01-ui">UI.</span></div>
+
+      <div id="s01-tag">/ 01</div>
+      <div id="s01-rule"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      // 128 bpm beat grid — one beat = 0.469s. Every onset reads from this array.
+      const BEAT = 60 / 128;
+      const B = [0, BEAT * 2, BEAT * 4, BEAT * 5]; // stop · rebuilding · the same UI. · echo collapse
+      const tl = gsap.timeline({ paused: true });
+
+      // Stable resting baselines before any tween runs
+      tl.set(["#s01-stop", "#s01-rebuild", "#s01-rebuild-ghost", "#s01-same", "#s01-echo-a", "#s01-echo-b", "#s01-echo-c"], { opacity: 0, x: 0, y: 0, scale: 1 }, 0);
+
+      // ── Background plate: slow continuous push under everything (inner img) ──
+      tl.fromTo("#s01-plate", { scale: 1.0 }, { scale: 1.08, duration: 3, ease: "none" }, 0);
+
+      // Jump-cut offsets on each beat (outer wrapper, instant sets = hard cuts)
+      tl.set("#s01-plate-jump", { x: 120, y: -40, rotation: -7, scale: 1.0 }, 0);
+      // Beat 2 glitch flicker then new offset
+      tl.set("#s01-plate-jump", { x: -260, y: 90, rotation: 5, scale: 1.25, opacity: 1 }, B[1]);
+      tl.set("#s01-plate-jump", { x: -200, opacity: 0.4 }, B[1] + 0.035);
+      tl.set("#s01-plate-jump", { x: -300, y: 70, opacity: 1 }, B[1] + 0.07);
+      tl.set("#s01-plate-jump", { x: -240, y: 96, opacity: 0.6 }, B[1] + 0.105);
+      tl.set("#s01-plate-jump", { x: -260, y: 90, opacity: 1 }, B[1] + 0.14);
+      // Beat 4 new offset
+      tl.set("#s01-plate-jump", { x: 340, y: -120, rotation: -3, scale: 1.45 }, B[2]);
+      tl.set("#s01-plate-jump", { x: 300, opacity: 0.5 }, B[2] + 0.035);
+      tl.set("#s01-plate-jump", { x: 340, opacity: 1 }, B[2] + 0.07);
+      // Beat 5 (collapse) small snap
+      tl.set("#s01-plate-jump", { x: 20, y: -30, rotation: -5, scale: 1.3 }, B[3]);
+
+      // ── Scene 1: "stop" slams in (scale + blur slam) ──
+      tl.fromTo(
+        "#s01-stop",
+        { opacity: 0, scale: 1.6, filter: "blur(22px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out" },
+        B[0]
+      );
+      tl.fromTo("#s01-stop", { scale: 1 }, { scale: 1.035, duration: B[1] - 0.42, ease: "none", immediateRender: false }, 0.42);
+
+      // ── Scene 2: hard-cut word swap → "rebuilding" (side snap + chroma snap-clean) ──
+      tl.set("#s01-stop", { opacity: 0 }, B[1]);
+      tl.fromTo(
+        "#s01-rebuild",
+        { opacity: 1, x: 260, filter: "blur(14px)" },
+        { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "power4.out" },
+        B[1]
+      );
+      tl.fromTo(
+        "#s01-rebuild-ghost",
+        { opacity: 0.85, x: 300 },
+        { opacity: 0, x: 0, duration: 0.3, ease: "expo.out" },
+        B[1] + 0.02
+      );
+      tl.fromTo("#s01-rebuild", { scale: 1.0 }, { scale: 1.04, duration: B[2] - B[1] - 0.05, ease: "none", immediateRender: false }, B[1] + 0.05);
+
+      // ── Scene 3: swap → "the same UI." with stuttering ghost echoes that collapse ──
+      tl.set("#s01-rebuild", { opacity: 0 }, B[2]);
+      tl.fromTo(
+        "#s01-same",
+        { opacity: 1, y: 90, scale: 1.12, filter: "blur(12px)" },
+        { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out" },
+        B[2]
+      );
+      // Echo stack: stutter on sub-beats (quarter beats), then collapse into the line
+      const Q = BEAT / 4;
+      const echoes = [
+        { id: "#s01-echo-a", o: [-150, -110, -170], op: 0.9 },
+        { id: "#s01-echo-b", o: [-300, -240, -330], op: 0.6 },
+        { id: "#s01-echo-c", o: [-450, -380, -500], op: 0.35 },
+      ];
+      echoes.forEach((e, i) => {
+        tl.set(e.id, { opacity: e.op, y: e.o[0], x: 0 }, B[2] + Q * 0.5);
+        tl.set(e.id, { y: e.o[1], x: i % 2 ? 14 : -14 }, B[2] + Q * 1.5);
+        tl.set(e.id, { y: e.o[2], x: i % 2 ? -10 : 10 }, B[2] + Q * 2.5);
+        tl.set(e.id, { y: e.o[0], x: 0 }, B[2] + Q * 3.5);
+        tl.fromTo(
+          e.id,
+          { y: e.o[0], opacity: e.op },
+          { y: 0, opacity: 0, duration: 0.28, ease: "expo.out", immediateRender: false },
+          B[3]
+        );
+      });
+      // Collapse impact: the solid line takes a tiny punch as echoes land in it
+      tl.fromTo("#s01-same", { scale: 1.035 }, { scale: 1, duration: 0.3, ease: "power4.out", immediateRender: false }, B[3] + 0.04);
+
+      // Hold with subtle deterministic jitter
+      const JIT = [[2, -1], [-2, 1], [1, 2], [-1, -2], [2, 1], [-2, -1], [1, -2], [0, 0]];
+      const jStart = B[3] + 0.36;
+      JIT.forEach((p, i) => {
+        tl.set("#s01-same", { x: p[0], y: p[1] }, jStart + i * 0.05);
+      });
+
+      // Mono chrome tag top-right (lands with Scene 3)
+      tl.fromTo("#s01-tag", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out" }, B[2] + 0.06);
+      tl.fromTo("#s01-rule", { opacity: 0, scaleX: 0, transformOrigin: "100% 50%" }, { opacity: 1, scaleX: 1, duration: 0.35, ease: "expo.out" }, B[2] + 0.12);
+
+      // Pad timeline to full frame length
+      tl.set({}, {}, 3);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["01-stop-rebuilding"] = tl;
+    })();
+  </script>
+</template>

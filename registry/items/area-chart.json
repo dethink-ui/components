@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "area-chart",
+  "type": "registry:ui",
+  "title": "Area Chart",
+  "description": "Overlapping or stacked area chart on a single y-axis: vertical gradient washes in each series token under a 2px edge line, stacked offsets from chart core, the same crosshair tooltip, keyboard readout, legend filtering and table view as LineChart.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chart-core", "chart"],
+  "files": [
+    {
+      "path": "packages/components/src/components/area-chart/area-chart.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/area-chart/index.ts",
+      "type": "registry:component"
+    }
+  ]
+}

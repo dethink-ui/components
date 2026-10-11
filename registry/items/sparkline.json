@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sparkline",
+  "type": "registry:ui",
+  "title": "Sparkline",
+  "description": "Compact line, area and bar trends colored by the --dt-color-chart palette, with min/max/last markers, an accessible summary, and reduced-motion-safe draw-in.",
+  "dependencies": [],
+  "devDependencies": [],
+  "registryDependencies": ["dethink-base", "chart-core"],
+  "files": [
+    {
+      "path": "packages/components/src/components/sparkline/sparkline.tsx",
+      "type": "registry:component"
+    },
+    {
+      "path": "packages/components/src/components/sparkline/index.ts",
+      "type": "registry:component"
+    },
+    { "path": "packages/components/src/utils/cn.ts", "type": "registry:lib" }
+  ]
+}

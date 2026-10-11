@@ -15,11 +15,12 @@ import {
   Settings2,
   ShieldAlert,
   Timer,
-  TrendingDown,
-  TrendingUp,
   Users,
 } from "lucide-react";
 import {
+  AreaChart,
+  BarChart,
+  BarList,
   Breadcrumb,
   Card,
   CardContent,
@@ -32,9 +33,9 @@ import {
   CommandPaletteTrigger,
   DataTable,
   DateRangePicker,
+  KpiGroup,
   MultiSelect,
   MultiSelectItem,
-  Progress,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -51,9 +52,10 @@ import {
   SidebarMobileTrigger,
   SidebarProvider,
   SidebarTrigger,
+  StatTile,
   type CommandPaletteCommand,
   type DataTableColumnDef,
-  type ProgressTone,
+  type StatTileProps,
   cn,
 } from "@dethink/components";
 import type { RecipePreviewProps } from "@/lib/recipe-presentation";
@@ -239,100 +241,71 @@ const columns: DataTableColumnDef<Incident>[] = [
 // KPI tiles
 // ----------------------------------------------------------------------------
 
-const toneBar: Record<string, { solid: string; soft: string }> = {
-  primary: { solid: "bg-primary", soft: "bg-primary/25" },
-  info: { solid: "bg-info", soft: "bg-info/25" },
-  success: { solid: "bg-success", soft: "bg-success/25" },
-  warning: { solid: "bg-warning", soft: "bg-warning/25" },
-  destructive: { solid: "bg-destructive", soft: "bg-destructive/25" },
-};
-
-type Kpi = {
-  label: string;
-  value: string;
-  delta: string;
-  deltaTone: "success" | "destructive";
-  deltaDir: "up" | "down";
-  progress: number;
-  progressTone: ProgressTone;
-  barTone: keyof typeof toneBar;
-  spark: number[];
-};
-
-const kpis: Kpi[] = [
+const kpis: StatTileProps[] = [
   {
     label: "Open incidents",
-    value: "14",
-    delta: "+3",
-    deltaTone: "destructive",
-    deltaDir: "up",
-    progress: 68,
-    progressTone: "warning",
-    barTone: "destructive",
-    spark: [6, 8, 5, 9, 7, 11, 10, 14],
+    value: 14,
+    // More open incidents is worse, so a rise reads as negative.
+    delta: { value: 27.3, positiveDirection: "down" },
+    comparison: "vs yesterday",
+    trend: [6, 8, 5, 9, 7, 11, 10, 14],
   },
   {
     label: "Mean time to resolve",
     value: "22m",
-    delta: "−8m",
-    deltaTone: "success",
-    deltaDir: "down",
-    progress: 54,
-    progressTone: "info",
-    barTone: "info",
-    spark: [38, 34, 40, 29, 31, 26, 24, 22],
+    delta: { value: -26.7, positiveDirection: "down" },
+    comparison: "vs last week",
+    trend: [38, 34, 40, 29, 31, 26, 24, 22],
   },
   {
     label: "SLO attainment",
     value: "99.93%",
-    delta: "+0.04%",
-    deltaTone: "success",
-    deltaDir: "up",
-    progress: 93,
-    progressTone: "success",
-    barTone: "success",
-    spark: [88, 90, 89, 92, 91, 93, 92, 94],
+    delta: {
+      value: 0.04,
+      formatValue: (magnitude) => `${magnitude.toFixed(2)} pts`,
+    },
+    comparison: "vs 30-day target",
+    trend: [99.88, 99.9, 99.89, 99.92, 99.91, 99.93, 99.92, 99.93],
   },
   {
     label: "Runbooks ready",
-    value: "42",
-    delta: "+5",
-    deltaTone: "success",
-    deltaDir: "up",
-    progress: 82,
-    progressTone: "primary",
-    barTone: "primary",
-    spark: [30, 33, 35, 34, 37, 39, 40, 42],
+    value: 42,
+    delta: 13.5,
+    comparison: "vs last month",
+    trend: [30, 33, 35, 34, 37, 39, 40, 42],
   },
 ];
 
-function MiniBars({
-  data,
-  tone,
-}: {
-  data: number[];
-  tone: keyof typeof toneBar;
-}) {
-  const max = Math.max(...data);
-  const { solid, soft } = toneBar[tone];
-  return (
-    <div aria-hidden="true" className="flex h-9 w-24 items-end gap-0.5">
-      {data.map((v, i) => (
-        <span
-          key={i}
-          style={{ height: `${Math.max((v / max) * 100, 8)}%` }}
-          className={`w-full rounded-sm ${i === data.length - 1 ? solid : soft}`}
-        />
-      ))}
-    </div>
-  );
-}
-
 // ----------------------------------------------------------------------------
-// Incident load band data
+// Chart data
 // ----------------------------------------------------------------------------
 
-const loadBars = [3, 5, 4, 7, 6, 9, 8, 11, 7, 10, 12, 9];
+const hours = Array.from({ length: 12 }, (_, i) =>
+  i === 11 ? "Now" : `-${11 - i}h`,
+);
+
+// p95 latency per region, in milliseconds.
+const latency = hours.map((hour, i) => ({
+  hour,
+  usEast: [182, 176, 190, 205, 238, 262, 251, 229, 214, 221, 246, 233][i],
+  euWest: [148, 151, 146, 160, 172, 169, 181, 177, 170, 166, 174, 171][i],
+  apSouth: [211, 204, 219, 226, 231, 244, 239, 252, 247, 236, 241, 229][i],
+}));
+
+const load = hours.map((hour, i) => ({
+  hour,
+  opened: [3, 5, 4, 7, 6, 9, 8, 11, 7, 10, 12, 9][i],
+  resolved: [4, 4, 5, 5, 7, 6, 8, 8, 9, 8, 9, 11][i],
+}));
+
+const alertsByService = [
+  { label: "Gateway", value: 128, href: "#gateway" },
+  { label: "Billing", value: 74, href: "#billing" },
+  { label: "Reports", value: 41, href: "#reports" },
+  { label: "Identity", value: 23, href: "#identity" },
+  { label: "Search", value: 12, href: "#search" },
+  { label: "Notifications", value: 9, href: "#notifications" },
+];
 
 const severityBreakdown = [
   { label: "SEV1", count: 2, solid: "bg-destructive", dot: "bg-destructive" },
@@ -717,90 +690,108 @@ export function CommandCenterDashboardRecipe({
             </output>
 
             {/* KPI row */}
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {kpis.map((kpi) => {
-                const deltaColor =
-                  kpi.deltaTone === "success"
-                    ? "text-success"
-                    : "text-destructive";
-                const DeltaIcon =
-                  kpi.deltaDir === "up" ? TrendingUp : TrendingDown;
-                return (
-                  <Card
-                    key={kpi.label}
-                    shadow="sm"
-                    className="ring-border/60 relative overflow-hidden ring-1 backdrop-blur-sm hover:shadow-md motion-safe:transition-all motion-safe:duration-300 hover:motion-safe:-translate-y-0.5"
+            <section aria-label="Key metrics">
+              <KpiGroup>
+                {kpis.map((kpi) => (
+                  <StatTile
+                    key={String(kpi.label)}
+                    {...kpi}
+                    className="bg-background/80 backdrop-blur-sm"
+                  />
+                ))}
+              </KpiGroup>
+            </section>
+
+            {/* Latency and alert sources */}
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+              <Card shadow="sm" className="ring-border/60 min-w-0 ring-1">
+                <CardHeader>
+                  <CardTitle
+                    id="latency-title"
+                    className="flex items-center gap-2 text-base"
                   >
-                    <CardContent className="space-y-3 p-4">
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="text-muted-foreground text-[0.7rem] font-medium tracking-wide uppercase">
-                          {kpi.label}
-                        </span>
-                        <span className="text-foreground inline-flex items-center gap-1 text-xs font-semibold">
-                          <DeltaIcon
-                            aria-hidden="true"
-                            className={`size-3 ${deltaColor}`}
-                          />
-                          {kpi.delta}
-                        </span>
-                      </div>
-                      <div className="flex items-end justify-between gap-3">
-                        <div className="font-heading text-3xl font-semibold tracking-tight">
-                          {kpi.value}
-                        </div>
-                        <MiniBars data={kpi.spark} tone={kpi.barTone} />
-                      </div>
-                      <Progress
-                        size="sm"
-                        aria-label={`${kpi.label} at ${kpi.progress}%`}
-                        value={kpi.progress}
-                        tone={kpi.progressTone}
-                      />
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                    <Gauge className="text-primary size-4" aria-hidden="true" />
+                    API latency
+                  </CardTitle>
+                  <CardDescription>p95 by region · last 12h</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AreaChart
+                    aria-labelledby="latency-title"
+                    data={latency}
+                    index="hour"
+                    indexLabel="Hour"
+                    height={220}
+                    includeZero={false}
+                    formatValue={(value) => `${Math.round(value)} ms`}
+                    series={[
+                      { key: "usEast", label: "us-east" },
+                      { key: "euWest", label: "eu-west" },
+                      { key: "apSouth", label: "ap-south" },
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card shadow="sm" className="ring-border/60 min-w-0 ring-1">
+                <CardHeader>
+                  <CardTitle
+                    id="alerts-title"
+                    className="flex items-center gap-2 text-base"
+                  >
+                    <Bell className="text-warning size-4" aria-hidden="true" />
+                    Alert sources
+                  </CardTitle>
+                  <CardDescription>
+                    Alerts fired by service · 24h
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <BarList
+                    aria-labelledby="alerts-title"
+                    data={alertsByService}
+                    limit={5}
+                    labelHeader="Service"
+                    valueHeader="Alerts"
+                  />
+                </CardContent>
+              </Card>
             </div>
 
             {/* Incident load / severity band */}
             <div className="grid gap-3 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-              <Card shadow="sm" className="ring-border/60 ring-1">
+              <Card shadow="sm" className="ring-border/60 min-w-0 ring-1">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base">
+                  <CardTitle
+                    id="load-title"
+                    className="flex items-center gap-2 text-base"
+                  >
                     <Activity
                       className="text-primary size-4"
                       aria-hidden="true"
                     />
                     Incident load
                   </CardTitle>
-                  <CardDescription>Opened per hour · last 12h</CardDescription>
+                  <CardDescription>
+                    Opened and resolved per hour · last 12h
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div
-                    aria-hidden="true"
-                    className="flex h-24 items-end gap-1.5"
-                  >
-                    {loadBars.map((h, i) => {
-                      const max = Math.max(...loadBars);
-                      return (
-                        <span
-                          key={i}
-                          style={{ height: `${(h / max) * 100}%` }}
-                          className={`w-full rounded-t-sm ${
-                            h === max ? "bg-primary" : "bg-primary/30"
-                          }`}
-                        />
-                      );
-                    })}
-                  </div>
-                  <div className="text-muted-foreground mt-2 flex justify-between text-[0.7rem]">
-                    <span>12h ago</span>
-                    <span>now</span>
-                  </div>
+                  <BarChart
+                    aria-labelledby="load-title"
+                    data={load}
+                    index="hour"
+                    indexLabel="Hour"
+                    height={200}
+                    series={[
+                      { key: "opened", label: "Opened" },
+                      { key: "resolved", label: "Resolved" },
+                    ]}
+                  />
                 </CardContent>
               </Card>
 
-              <Card shadow="sm" className="ring-border/60 ring-1">
+              <Card shadow="sm" className="ring-border/60 min-w-0 ring-1">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-base">
                     <ShieldAlert

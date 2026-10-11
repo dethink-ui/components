@@ -1,0 +1,251 @@
+<template>
+  <style>
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-bfc7db5c00d21bc5-s.2vepgg3wcdr2q.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-89b21bb081cb7469-s.40kcwrf1wub16.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-3fe682a82f50d426-s.200l3jur7oygh.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+    @font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-70bc3e132a0a741e-s.p.269kn9uafm0ti.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #DEEBE9;
+      font-family: Manrope, sans-serif;
+    }
+
+    /* ---------- background montage ---------- */
+    #f04mi-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      background: #071D1C;
+      filter: blur(7px) saturate(1.15);
+      transform: scale(1.04);
+    }
+    .f04mi-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      transform-origin: 50% 50%;
+    }
+    .f04mi-layer img {
+      position: absolute;
+      display: block;
+      max-width: none;
+      height: auto;
+    }
+    /* Crops (source 1502px wide, 2x demo captures): each rect cropped to 16:9
+       inside the demo's inner canvas so borders / control bars fall outside. */
+    /* card-style demos: crop x 100..1404, y 97..831 → scale 1.4724 */
+    .f04mi-crop-card img { width: 2211.5px; left: -147.2px; top: -142.8px; }
+    /* liquid mesh: crop x 86..1420, y 250..1000 → scale 1.43928 */
+    .f04mi-crop-mesh img { width: 2161.8px; left: -123.8px; top: -359.8px; }
+    /* orbital glow: crop x 300..1420, y 300..930 → scale 1.714286 (orbits favoured) */
+    .f04mi-crop-orbit img { width: 2574.9px; left: -514.3px; top: -514.3px; }
+
+    #f04mi-scrim {
+      position: absolute;
+      inset: 0;
+      background: #071D1C;
+      opacity: 0.38;
+    }
+    #f04mi-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 55% at 50% 44%, rgba(7,29,28,0.55) 0%, rgba(7,29,28,0.2) 55%, rgba(7,29,28,0) 80%);
+      opacity: 0.6;
+    }
+
+    /* ---------- type lockup ---------- */
+    #f04mi-lockup-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    #f04mi-lockup {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 18cqh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    #f04mi-kicker {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 1.15cqw;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #B6F06B;
+      text-shadow: 0 2px 18px rgba(7,29,28,0.85);
+      margin-bottom: 2.2cqw;
+      white-space: nowrap;
+    }
+    #f04mi-kicker .f04mi-slash { color: #DEEBE9; opacity: 0.7; margin-right: 0.6em; }
+    .f04mi-word {
+      font-family: Manrope, sans-serif;
+      font-weight: 800;
+      font-size: 15cqw;
+      line-height: 0.86;
+      letter-spacing: -0.045em;
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+    #f04mi-motion {
+      color: #DEEBE9;
+      text-shadow: 0 6px 48px rgba(7,29,28,0.7), 0 2px 10px rgba(7,29,28,0.45);
+    }
+    #f04mi-motion .f04mi-ch { display: inline-block; }
+    #f04mi-included {
+      color: #B6F06B;
+      text-shadow: 0 6px 48px rgba(7,29,28,0.75), 0 2px 10px rgba(7,29,28,0.5);
+      transform-origin: 50% 55%;
+    }
+  </style>
+
+  <div id="root" data-composition-id="04-motion-included" data-width="1920" data-height="1080" data-duration="4.4">
+    <!-- Track 0: full-bleed effects montage (hard cuts on the beat) -->
+    <div id="f04mi-bg" class="clip" data-start="0" data-duration="4.4" data-track-index="0">
+      <div class="f04mi-layer f04mi-crop-card" id="f04mi-l-aurora"><img src="assets/ui-aurora-background.png" alt="" /></div>
+      <div class="f04mi-layer f04mi-crop-mesh" id="f04mi-l-mesh"><img src="assets/ui-liquid-mesh-background.png" alt="" /></div>
+      <div class="f04mi-layer f04mi-crop-orbit" id="f04mi-l-orbit"><img src="assets/ui-orbital-glow-background.png" alt="" /></div>
+      <div class="f04mi-layer f04mi-crop-card" id="f04mi-l-stars"><img src="assets/ui-starfield-background.png" alt="" /></div>
+      <div class="f04mi-layer f04mi-crop-card" id="f04mi-l-beams"><img src="assets/ui-magnetic-beams-background.png" alt="" /></div>
+      <div class="f04mi-layer f04mi-crop-card" id="f04mi-l-dots"><img src="assets/ui-dot-matrix-background.png" alt="" /></div>
+    </div>
+
+    <!-- Track 1: dimming scrim (light during montage, ~40% on the freeze) -->
+    <div id="f04mi-dim" class="clip" data-start="0" data-duration="4.4" data-track-index="1" style="position:absolute;inset:0;z-index:1;">
+      <div id="f04mi-vignette"></div>
+      <div id="f04mi-scrim"></div>
+    </div>
+
+    <!-- Track 2: type lockup -->
+    <div id="f04mi-lockup-layer" class="clip" data-start="0" data-duration="4.4" data-track-index="2">
+      <div id="f04mi-lockup">
+        <div id="f04mi-kicker"><span class="f04mi-slash">/</span>Effects &amp; Backgrounds</div>
+        <div id="f04mi-motion" class="f04mi-word"></div>
+        <div id="f04mi-included" class="f04mi-word">included.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "04-motion-included";
+      var BEAT = 60 / 128; // 0.46875s
+      var DOWNBEAT = 5 * BEAT; // 2.344s — "included." slam + aurora freeze
+
+      var tl = gsap.timeline({ paused: true });
+      var q = function (id) { return document.getElementById(id); };
+
+      // ---------- Scene 1: hard cuts on the beat grid (accelerating into the downbeat) ----------
+      var CUTS = [
+        { id: "f04mi-l-aurora", at: 0 },
+        { id: "f04mi-l-mesh", at: 1 * BEAT },
+        { id: "f04mi-l-orbit", at: 2 * BEAT },
+        { id: "f04mi-l-stars", at: 3 * BEAT },
+        { id: "f04mi-l-beams", at: 3.5 * BEAT },
+        { id: "f04mi-l-dots", at: 4 * BEAT }
+      ];
+      CUTS.forEach(function (cut, i) {
+        var el = q(cut.id);
+        el.style.zIndex = String(i + 1);
+        // Hard cut: instant opacity switch; each later layer covers the previous one.
+        tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.001, ease: "none", immediateRender: true }, cut.at);
+        // Punch-in on the cut: 1.08 → 1.0, long-tail expo out.
+        tl.fromTo(el, { scale: 1.08 }, { scale: 1, duration: 0.6, ease: "expo.out" }, cut.at);
+      });
+      // Freeze on the downbeat: hard cut back to the aurora layer by dropping every layer above it.
+      CUTS.slice(1).forEach(function (cut) {
+        tl.fromTo(q(cut.id), { opacity: 1 }, { opacity: 0, duration: 0.001, ease: "none", immediateRender: false }, DOWNBEAT);
+      });
+      tl.fromTo(q("f04mi-l-aurora"), { scale: 1.05 }, { scale: 1, duration: 0.9, ease: "expo.out", immediateRender: false }, DOWNBEAT);
+
+      // ---------- Scene 2: "motion" per-char build (content-driven sequencing) ----------
+      // Pre-computed start times from content: each char holds half a beat, starting on 0.6s.
+      var WORD = "motion";
+      var motionEl = q("f04mi-motion");
+      var START = 0.6;
+      var PER_CHAR = BEAT / 2;
+      var cumulative = START;
+      var CHAR_TIMELINE = WORD.split("").map(function (ch) {
+        var span = document.createElement("span");
+        span.className = "f04mi-ch";
+        span.textContent = ch;
+        motionEl.appendChild(span);
+        var entry = { el: span, start: cumulative };
+        cumulative += PER_CHAR;
+        return entry;
+      });
+
+      // Mono kicker slides in with the first letter.
+      tl.fromTo(
+        q("f04mi-kicker"),
+        { opacity: 0, x: -40 },
+        { opacity: 1, x: 0, duration: 0.7, ease: "power4.out" },
+        START
+      );
+
+      CHAR_TIMELINE.forEach(function (entry) {
+        tl.fromTo(
+          entry.el,
+          { opacity: 0, yPercent: 38, scale: 1.18, filter: "blur(14px)" },
+          { opacity: 1, yPercent: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" },
+          entry.start
+        );
+      });
+
+      // Lockup rides lower (centred on "motion") during the build, then lifts as "included." lands.
+      tl.fromTo(
+        q("f04mi-lockup"),
+        { y: 120 },
+        { y: 0, duration: 0.7, ease: "expo.out" },
+        DOWNBEAT
+      );
+
+      // ---------- Scene 3: downbeat slam — "included." + aurora freeze + dim ----------
+      tl.fromTo(
+        q("f04mi-included"),
+        { opacity: 0, scale: 1.6, filter: "blur(18px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "power4.out" },
+        DOWNBEAT
+      );
+      // Impact kick on "motion" as the second line hits.
+      tl.fromTo(
+        motionEl,
+        { scale: 1 },
+        { scale: 0.97, duration: 0.08, ease: "power2.out", immediateRender: false },
+        DOWNBEAT + 0.06
+      );
+      tl.to(motionEl, { scale: 1, duration: 0.6, ease: "expo.out" }, DOWNBEAT + 0.14);
+
+      // Background dims ~40% so the lockup reads.
+      tl.fromTo(q("f04mi-scrim"), { opacity: 0.38 }, { opacity: 0.55, duration: 0.45, ease: "power3.out", immediateRender: false }, DOWNBEAT);
+      tl.fromTo(q("f04mi-vignette"), { opacity: 0.6 }, { opacity: 1, duration: 0.45, ease: "power3.out", immediateRender: false }, DOWNBEAT);
+
+      // Hold: a barely-there settle keeps the still frame alive without reading as motion.
+      tl.fromTo(
+        q("f04mi-lockup-layer"),
+        { scale: 1 },
+        { scale: 1.012, duration: 4 - (DOWNBEAT + 0.7), ease: "none", immediateRender: false },
+        DOWNBEAT + 0.7
+      );
+
+      // Pad the timeline to the full frame duration.
+      tl.set({}, {}, 4);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>

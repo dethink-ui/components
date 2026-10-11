@@ -1,0 +1,354 @@
+<template>
+  <style>
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a342834df7752944-s.1ypl14jhz9yyw.woff2")format("woff2");unicode-range:U+460-52F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-d3fe2f289711ac3f-s.2g9li78_0_it5.woff2")format("woff2");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-58c4895d0a0ef7cc-s.00u3xrku2lqty.woff2")format("woff2");unicode-range:U+370-377,U+37A-37F,U+384-38A,U+38C,U+38E-3A1,U+3A3-3FF}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-bfc7db5c00d21bc5-s.2vepgg3wcdr2q.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-6ab0db14f70d8ed6-s.2ttjmmx-9gnz1.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Manrope;font-style:normal;font-weight:200 800;font-display:swap;src:url("assets/fonts/captured-a343f882a40d2cc9-s.p.3259ncl47-hqj.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Bricolage Grotesque;font-style:normal;font-weight:200 800;font-stretch:100%;font-display:swap;src:url("assets/fonts/captured-033400d475fad6b1-s.11x_mcju407z-.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:Bricolage Grotesque;font-style:normal;font-weight:200 800;font-stretch:100%;font-display:swap;src:url("assets/fonts/captured-26daee0352f50a5f-s.456c9vb2_utt8.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:Bricolage Grotesque;font-style:normal;font-weight:200 800;font-stretch:100%;font-display:swap;src:url("assets/fonts/captured-017d9bea37084d9b-s.p.2fl0vhx7oyatw.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-13bf9871fe164e7f-s.3bz3aq452sydg.woff2")format("woff2");unicode-range:U+460-52F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-cc545e633e20c56d-s.2sb9jzhmrh7ny.woff2")format("woff2");unicode-range:U+301,U+400-45F,U+490-491,U+4B0-4B1,U+2116}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-71b036adf157cdcf-s.343obqi851wr5.woff2")format("woff2");unicode-range:U+370-377,U+37A-37F,U+384-38A,U+38C,U+38E-3A1,U+3A3-3FF}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-89b21bb081cb7469-s.40kcwrf1wub16.woff2")format("woff2");unicode-range:U+102-103,U+110-111,U+128-129,U+168-169,U+1A0-1A1,U+1AF-1B0,U+300-301,U+303-304,U+308-309,U+323,U+329,U+1EA0-1EF9,U+20AB}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-3fe682a82f50d426-s.200l3jur7oygh.woff2")format("woff2");unicode-range:U+100-2BA,U+2BD-2C5,U+2C7-2CC,U+2CE-2D7,U+2DD-2FF,U+304,U+308,U+329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:JetBrains Mono;font-style:normal;font-weight:100 800;font-display:swap;src:url("assets/fonts/captured-70bc3e132a0a741e-s.p.269kn9uafm0ti.woff2")format("woff2");unicode-range:U+??,U+131,U+152-153,U+2BB-2BC,U+2C6,U+2DA,U+2DC,U+304,U+308,U+329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+    #root {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      container-type: size;
+      color: #DEEBE9;
+      font-family: Manrope, sans-serif;
+    }
+
+    /* ---------- ground: dark field + faint 1px hairline grid ---------- */
+    #f03cb-bg {
+      position: absolute;
+      inset: 0;
+      background-color: #071D1C;
+    }
+    #f03cb-hairgrid {
+      position: absolute;
+      inset: -96px;
+      background-image:
+        repeating-linear-gradient(90deg, #1B3236 0 1px, transparent 1px 96px),
+        repeating-linear-gradient(0deg, #1B3236 0 1px, transparent 1px 96px);
+      opacity: 0.55;
+    }
+
+    /* ---------- camera + plates ---------- */
+    #f03cb-camlayer {
+      position: absolute;
+      inset: 0;
+    }
+    #f03cb-cam {
+      position: absolute;
+      inset: 0;
+      perspective: 2200px;
+      perspective-origin: 50% 40.7%;
+      transform-origin: 50% 40.7%;
+    }
+    .f03cb-plate {
+      position: absolute;
+      left: 960px;
+      top: 440px;
+      border: 1px solid #1B3236;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0B312D;
+      transform-origin: 50% 50%;
+    }
+    .f03cb-plate img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .f03cb-chip {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 9px 14px 8px;
+      background: #071D1C;
+      border: 1px solid #B6F06B;
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #B6F06B;
+      white-space: nowrap;
+      transform-origin: 0 0;
+    }
+    .f03cb-dim {
+      position: absolute;
+      inset: 0;
+      background: #071D1C;
+      opacity: 0;
+    }
+
+    /* ---------- lime hairlines between grid cells ---------- */
+    .f03cb-hl {
+      position: absolute;
+      background: #B6F06B;
+    }
+    .f03cb-hl-h { height: 1px; transform-origin: 50% 50%; }
+    .f03cb-hl-v { width: 1px; transform-origin: 50% 50%; }
+
+    /* ---------- headline band ---------- */
+    #f03cb-headlayer {
+      position: absolute;
+      inset: 0;
+    }
+    #f03cb-band {
+      position: absolute;
+      left: -40px;
+      right: -40px;
+      top: 370px;
+      height: 190px;
+      background: #071D1C;
+      border-top: 1px solid #B6F06B;
+      border-bottom: 1px solid #B6F06B;
+      transform-origin: 50% 50%;
+    }
+    #f03cb-head {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 370px;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.28em;
+      font-family: Manrope, sans-serif;
+      font-weight: 800;
+      font-size: 6.2cqw;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+    .f03cb-w { display: inline-block; }
+    #f03cb-w1 { color: #DEEBE9; }
+    #f03cb-w2 { color: #B6F06B; }
+  </style>
+
+  <div id="root" data-composition-id="03-component-blitz" data-width="1920" data-height="1080" data-duration="5.4">
+    <!-- Track 0: dark ground + hairline grid -->
+    <div id="f03cb-bg" class="clip" data-start="0" data-duration="5.4" data-track-index="0">
+      <div id="f03cb-hairgrid"></div>
+    </div>
+
+    <!-- Track 1: camera with the seven UI plates + lime grid hairlines -->
+    <div id="f03cb-camlayer" class="clip" data-start="0" data-duration="5.4" data-track-index="1">
+      <div id="f03cb-cam">
+        <div class="f03cb-plate" id="f03cb-p0"><img src="assets/ui-data-table.png" alt="" /><div class="f03cb-chip">/ Data Table</div><div class="f03cb-dim"></div></div>
+        <div class="f03cb-plate" id="f03cb-p1"><img src="assets/ui-command-palette.png" alt="" /><div class="f03cb-chip">/ Command Palette</div><div class="f03cb-dim"></div></div>
+        <div class="f03cb-plate" id="f03cb-p2"><img src="assets/ui-calendar.png" alt="" /><div class="f03cb-chip">/ Calendar</div><div class="f03cb-dim"></div></div>
+        <div class="f03cb-plate" id="f03cb-p3"><img src="assets/ui-chat.png" alt="" /><div class="f03cb-chip">/ Chat</div><div class="f03cb-dim"></div></div>
+        <div class="f03cb-plate" id="f03cb-p4"><img src="assets/ui-sidebar-shell.png" alt="" /><div class="f03cb-chip">/ Sidebar Shell</div><div class="f03cb-dim"></div></div>
+        <div class="f03cb-plate" id="f03cb-p5"><img src="assets/ui-timeline.png" alt="" /><div class="f03cb-chip">/ Timeline</div><div class="f03cb-dim"></div></div>
+        <div class="f03cb-plate" id="f03cb-p6"><img src="assets/ui-slot-planner.png" alt="" /><div class="f03cb-chip">/ Slot Planner</div><div class="f03cb-dim"></div></div>
+        <div id="f03cb-lines"></div>
+      </div>
+    </div>
+
+    <!-- Track 2: headline band -->
+    <div id="f03cb-headlayer" class="clip" data-start="0" data-duration="5.4" data-track-index="2">
+      <div id="f03cb-band"></div>
+      <div id="f03cb-head">
+        <span class="f03cb-w" id="f03cb-w1">real ui.</span>
+        <span class="f03cb-w" id="f03cb-w2">real products.</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    (function () {
+      var FID = "03-component-blitz";
+      var BEAT = 60 / 128; // 0.46875s
+      var q = function (id) { return document.getElementById(id); };
+      var tl = gsap.timeline({ paused: true });
+
+      // Stage centre for plates (px, inside the 1920x1080 frame)
+      var CX = 960, CY = 440;
+
+      // Plates in arrival order. Hero sizes preserve the natural PNG aspect ratio.
+      var P = [
+        { ar: 1502 / 860,  w: 1150 },          // data table — first + largest
+        { ar: 1502 / 1144, h: 680 },           // command palette
+        { ar: 1502 / 878,  w: 1000 },          // calendar
+        { ar: 1502 / 1482, h: 680 },           // chat
+        { ar: 1502 / 1488, h: 680 },           // sidebar shell
+        { ar: 1502 / 992,  w: 1000 },          // timeline
+        { ar: 1918 / 2038, h: 680 }            // slot planner
+      ];
+      P.forEach(function (p, i) {
+        if (p.w) { p.h = p.w / p.ar; } else { p.w = p.h * p.ar; }
+        p.el = q("f03cb-p" + i);
+        p.chip = p.el.querySelector(".f03cb-chip");
+        p.dim = p.el.querySelector(".f03cb-dim");
+        p.el.style.width = p.w.toFixed(1) + "px";
+        p.el.style.height = p.h.toFixed(1) + "px";
+        p.el.style.marginLeft = (-p.w / 2).toFixed(1) + "px";
+        p.el.style.marginTop = (-p.h / 2).toFixed(1) + "px";
+        p.el.style.zIndex = String(10 + i);
+        // entry side: even from right (+1), odd from left (-1); pushed back toward its own side
+        p.dir = i % 2 === 0 ? 1 : -1;
+      });
+
+      // ---------- Assembled 4+3 grid (row heights fitted to aspect ratios) ----------
+      var GAP = 24;
+      var ROWS = [
+        { H: 380, top: 73,  ids: [1, 3, 4, 6] },   // command · chat · sidebar · slot planner
+        { H: 330, top: 477, ids: [0, 2, 5] }       // data table · calendar · timeline
+      ];
+      var lines = q("f03cb-lines");
+      var hairlines = [];
+      var gridLeft = 1e9, gridRight = -1e9;
+      ROWS.forEach(function (row) {
+        var total = row.ids.reduce(function (s, id) { return s + row.H * P[id].ar; }, 0) + GAP * (row.ids.length - 1);
+        var x = CX - total / 2;
+        gridLeft = Math.min(gridLeft, x);
+        gridRight = Math.max(gridRight, x + total);
+        row.ids.forEach(function (id, k) {
+          var gw = row.H * P[id].ar;
+          P[id].gx = x + gw / 2 - CX;
+          P[id].gy = row.top + row.H / 2 - CY;
+          P[id].gs = row.H / P[id].h;
+          x += gw;
+          if (k < row.ids.length - 1) {
+            var v = document.createElement("div");
+            v.className = "f03cb-hl f03cb-hl-v";
+            v.style.left = (x + GAP / 2).toFixed(1) + "px";
+            v.style.top = (row.top + 6) + "px";
+            v.style.height = (row.H - 12) + "px";
+            lines.appendChild(v);
+            hairlines.push({ el: v, axis: "y" });
+            x += GAP;
+          }
+        });
+      });
+      var hz = document.createElement("div");
+      hz.className = "f03cb-hl f03cb-hl-h";
+      hz.style.left = (gridLeft - 30).toFixed(1) + "px";
+      hz.style.width = (gridRight - gridLeft + 60).toFixed(1) + "px";
+      hz.style.top = (ROWS[0].top + ROWS[0].H + GAP / 2) + "px";
+      lines.appendChild(hz);
+      hairlines.unshift({ el: hz, axis: "x" });
+
+      // ---------- depth levels for plates punched back during the blitz ----------
+      var LV = [
+        null,
+        { x: 600, y: 40,   s: 0.56, dim: 0.45, ry: 14 },
+        { x: 700, y: -200, s: 0.44, dim: 0.6,  ry: 18 },
+        { x: 740, y: 250,  s: 0.36, dim: 0.7,  ry: 20 },
+        { x: 760, y: -290, s: 0.30, dim: 0.78, ry: 22 },
+        { x: 770, y: 290,  s: 0.27, dim: 0.82, ry: 22 },
+        { x: 770, y: 0,    s: 0.24, dim: 0.86, ry: 22 }
+      ];
+
+      // Background: slow drift of the hairline grid under everything
+      tl.fromTo("#f03cb-hairgrid", { x: 0, y: 0 }, { x: -48, y: -24, duration: 5, ease: "none" }, 0);
+      // Camera: slow push-in underneath the whole shot
+      tl.fromTo("#f03cb-cam", { scale: 1 }, { scale: 1.035, duration: 5, ease: "none" }, 0);
+
+      // ---------- Scenes 1+2: one arrival per beat, previous plate punched back ----------
+      var ENTRY = 0.46;
+      var ARRIVE = [0];
+      for (var k = 1; k < P.length; k++) ARRIVE.push(1.5 * BEAT + (k - 1) * BEAT); // 0.703, 1.172 … 3.047
+
+      P.forEach(function (p, i) {
+        var at = ARRIVE[i];
+        var d = p.dir;
+        // slam in with motion-blur streak (x-stretch + 18px surface blur), tilted in 3D
+        tl.fromTo(p.el,
+          { x: d * 1150, y: 0, scaleX: 1.14, scaleY: 0.96, rotationY: d * -24, rotationZ: 0, opacity: 0, filter: "blur(18px)" },
+          { x: 0, y: 0, scaleX: 1, scaleY: 1, rotationY: d * -6, opacity: 1, filter: "blur(0px)", duration: ENTRY, ease: "expo.out", immediateRender: true },
+          at);
+        // chip pops beside the top-left corner
+        tl.fromTo(p.chip,
+          { scale: 0.6, opacity: 0, x: -12 },
+          { scale: 1, opacity: 1, x: 0, duration: 0.32, ease: "expo.out", immediateRender: true },
+          at + 0.14);
+
+        // on every later arrival this plate steps one level deeper in Z (cut-the-curve: same direction as the incoming move)
+        for (var j = i + 1; j < P.length; j++) {
+          var lv = LV[Math.min(j - i, LV.length - 1)];
+          var side = d; // incoming plate travels toward this plate's side
+          tl.to(p.el, {
+            x: side * lv.x, y: lv.y, scaleX: lv.s, scaleY: lv.s, rotationY: side * -lv.ry,
+            duration: 0.42, ease: j - i === 1 ? "power4.out" : "expo.out"
+          }, ARRIVE[j]);
+          tl.to(p.dim, { opacity: lv.dim, duration: 0.42, ease: "expo.out" }, ARRIVE[j]);
+        }
+      });
+
+      // ---------- Scene 3: snap into the 4+3 grid (center-outward stagger) ----------
+      var SNAP = 7.5 * BEAT; // 3.516s
+      var order = P.map(function (p, i) { return i; }).sort(function (a, b) {
+        var da = Math.hypot(P[a].gx, P[a].gy), db = Math.hypot(P[b].gx, P[b].gy);
+        return da - db;
+      });
+      order.forEach(function (id, n) {
+        var p = P[id];
+        var t = SNAP + n * 0.05;
+        tl.to(p.el, {
+          x: p.gx, y: p.gy, scaleX: p.gs, scaleY: p.gs, rotationY: 0,
+          duration: 0.7, ease: "expo.out"
+        }, t);
+        tl.to(p.dim, { opacity: 0, duration: 0.5, ease: "power3.out" }, t);
+        // counter-scale the chip so the label stays legible on the small tile
+        tl.to(p.chip, { scale: 0.62 / p.gs, duration: 0.7, ease: "expo.out" }, t);
+      });
+
+      // lime hairlines draw in between the cells
+      hairlines.forEach(function (h, n) {
+        var from = h.axis === "x" ? { scaleX: 0, opacity: 0 } : { scaleY: 0, opacity: 0 };
+        var to = h.axis === "x" ? { scaleX: 1, opacity: 0.9 } : { scaleY: 1, opacity: 0.9 };
+        to.duration = 0.5; to.ease = "expo.out"; to.immediateRender = true;
+        tl.fromTo(h.el, from, to, SNAP + 0.3 + n * 0.04);
+      });
+
+      // headline slams across the grid centre on a dark band
+      var HEAD = 8.5 * BEAT; // 3.984s
+      // chips under the band step aside so no label collides with the headline
+      tl.to(["#f03cb-p2 .f03cb-chip", "#f03cb-p5 .f03cb-chip"], { opacity: 0, duration: 0.15, ease: "power2.out" }, HEAD - 0.05);
+      tl.fromTo("#f03cb-band", { scaleY: 0, opacity: 1 }, { scaleY: 1, duration: 0.3, ease: "expo.out", immediateRender: true }, HEAD);
+      tl.fromTo("#f03cb-w1",
+        { x: -220, scale: 1.18, opacity: 0, filter: "blur(10px)" },
+        { x: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out", immediateRender: true },
+        HEAD + 0.04);
+      tl.fromTo("#f03cb-w2",
+        { x: 220, scale: 1.18, opacity: 0, filter: "blur(10px)" },
+        { x: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.42, ease: "expo.out", immediateRender: true },
+        HEAD + 0.1);
+
+      // hold with subtle deterministic jitter (~0.6s)
+      var JIT = [[2, -1], [-1, 2], [1, 1], [-2, 0], [0, -2], [2, 1], [-1, -1], [1, -2], [-2, 1], [0, 0]];
+      var J0 = 4.4;
+      JIT.forEach(function (v, n) {
+        var t = J0 + n * (0.6 / JIT.length);
+        tl.set("#f03cb-head", { y: v[1] * 1.5, x: v[0] * 1.5 }, t);
+        tl.set("#f03cb-camlayer", { x: v[0], y: v[1] }, t);
+      });
+
+      // pad to the full frame duration
+      tl.set({}, {}, 5);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines[FID] = tl;
+    })();
+  </script>
+</template>
