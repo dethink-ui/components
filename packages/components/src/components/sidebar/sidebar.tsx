@@ -35,6 +35,7 @@ import {
   type Variants,
 } from "motion/react";
 import { cn } from "../../utils/cn";
+import { getDethinkPortalOwner } from "../../utils/portal-owner";
 
 const subscribePortal = () => () => {};
 const getPortalSnapshot = () => document.body;
@@ -1329,8 +1330,14 @@ export const SidebarMobile = forwardRef<HTMLDivElement, SidebarMobileProps>(
       }
 
       const overlayElement = overlayRef.current;
+      // Overlays opened from inside the drawer (menus, dialogs) portal to
+      // containers on <body>; those must stay usable.
+      const ownedByDrawer = (element: Element) => {
+        const owner = getDethinkPortalOwner(element);
+        return owner !== null && overlayElement.contains(owner);
+      };
       const bodyChildren = Array.from(document.body.children).filter(
-        (element) => element !== overlayElement,
+        (element) => element !== overlayElement && !ownedByDrawer(element),
       );
       const previousInertState = bodyChildren.map(
         (element) => [element, element.hasAttribute("inert")] as const,

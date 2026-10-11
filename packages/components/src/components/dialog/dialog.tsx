@@ -36,6 +36,10 @@ import {
   useScopedOverlayState,
 } from "../../utils/provider-portal";
 import { cn } from "../../utils/cn";
+import {
+  canOpenWithoutTrigger,
+  TriggerlessPressRegistration,
+} from "./triggerless-press-registration";
 
 export type DialogSize = "sm" | "md" | "lg" | "xl" | "full";
 export type DialogScrollBehavior = "inside" | "outside";
@@ -363,6 +367,9 @@ export const Dialog = forwardRef<HTMLDivElement, DialogProps>(
               isOpen={resolvedOpen}
               onOpenChange={handleOpenChange}
             >
+              {canOpenWithoutTrigger(open, defaultOpen) ? (
+                <TriggerlessPressRegistration />
+              ) : null}
               {children}
             </AriaDialogTrigger>
           </DialogRootContext.Provider>
@@ -804,6 +811,9 @@ export const AlertDialog = forwardRef<HTMLDivElement, AlertDialogProps>(
             isOpen={resolvedOpen}
             onOpenChange={handleOpenChange}
           >
+            {canOpenWithoutTrigger(open, defaultOpen) ? (
+              <TriggerlessPressRegistration />
+            ) : null}
             {children}
           </AriaDialogTrigger>
         </DethinkPortalProvider>
