@@ -17,6 +17,10 @@
       "type": "registry:component"
     },
     {
+      "path": "packages/components/src/components/dialog/triggerless-press-registration.tsx",
+      "type": "registry:component"
+    },
+    {
       "path": "packages/components/src/utils/provider-portal.tsx",
       "type": "registry:lib"
     },
