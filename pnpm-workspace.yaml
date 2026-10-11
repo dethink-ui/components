@@ -29,3 +29,17 @@ minimumReleaseAgeExclude:
   - "@shikijs/themes@4.3.1"
   - "@shikijs/types@4.3.1"
   - shiki@4.3.1
+  - next@16.3.8
+  - source-map-js@1.2.2
+  - sharp@0.35.5
+overrides:
+  "source-map-js@<1.2.2": "1.2.2"
+  "sharp@<0.35.5": "0.35.5"
+auditConfig:
+  ignoreGhsas:
+    # Development tooling only; no published fixes as of 2026-10-11.
+    # Remove each exception once its patched version becomes available.
+    # https://github.com/advisories/GHSA-vfj7-8cjw-p6xm (braces)
+    - GHSA-vfj7-8cjw-p6xm
+    # https://github.com/advisories/GHSA-hp3w-g68c-fv3c (sprintf-js)
+    - GHSA-hp3w-g68c-fv3c
