@@ -1,6 +1,6 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   FilterBar,
   createFilter,
@@ -130,6 +130,10 @@ async function addField(
 }
 
 describe("typed value editors", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("adds a number condition and edits a between range", async () => {
     const { last, user } = setup();
 
@@ -176,6 +180,8 @@ describe("typed value editors", () => {
   });
 
   it("picks a date preset, a calendar day, a duration and a period", async () => {
+    vi.setSystemTime(now);
+
     const { last, user } = setup();
 
     await addField(user, "Closes");
